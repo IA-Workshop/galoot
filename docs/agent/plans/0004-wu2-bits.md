@@ -39,7 +39,7 @@ All commands from the worktree root with `eval "$(tools/jobpool env)"`, through 
 | 1 | `ctest --preset <p> -L '^core\.bits$'`; `static_assert(all_agree(1..4))` | Every function against a brute reference (index lists, inversion counts) for every mask with n = 1 to 8; in a constant evaluation for n = 1 to 4 |
 | 2 | as 1 | `reorder_sign` on all 65,536 pairs below 2^8; complement masks and signs for every blade, n = 1 to 8; a sample (scalar, antiscalar, each generator and its complement, three alternating patterns) at n = 12, 16, 32 including all pairs of the sample for `reorder_sign` |
 | 3 | as 1 | u ∧ right(u) = +e_1..n and left(u) ∧ u = +e_1..n by the test's own exterior product; left(right(u)) = u; left = (-1)^(gr ag) right; all blades, n = 1 to 8 |
-| 4 | as 1; `python3 -I check_rigid3_rows.py` (scratch) | 16 rows hand-derived, checked at compile and run time; the same 16 agree with `right()` and `left()` of `test/reference/conventions_check.py` |
+| 4 | as 1 | 16 rows hand-derived from the definition and checked at compile and run time. Each row was also compared, by hand, with the design study's rigid(3) table after converting its oriented names (e431 = -e134 and so on): all 16 agree. (Corrected after review N5: a scratch comparison with `test/reference/conventions_check.py` also agreed, but that script computes the complement by the same formula, so it is not an independent route, and the script was never committed; the claim is withdrawn.) |
 | 5 | `core.bits_rejects_*` (15), `core.bits_accepts_*` (5), `core.bits_consteval` | Abort with the message and `bits.hpp:` for n = 0, n = 33, and e3 at n = 2 in each of the five functions that take n; the antiscalar at n = 32 is accepted; a constant evaluation fails with the message and `assertion_failed` |
 | 6 | `cmake --workflow --preset lint`; `core.include_scan` | clang-tidy on every TU, `format-check`, header sets: no finding; include scan passes |
 | 7 | `cmake --workflow --preset <p>` from cleaned trees, for gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint | 32 of 32 each; wall 2.59, 3.98, 6.33, 2.20, 3.25, 4.53, 1.90 s (23.8 s total) |
@@ -64,6 +64,8 @@ Test time: CTest's total for the suite was 0.49 s (GCC) and 0.52 s (Clang) for 1
 
 Not checked: the measurement presets (P9 does not gate on them); pinned per-TU timings.
 
+Verification and validation status (V10): verification performed and passed (exhaustive checks against the definitions for n <= 8 at `6fba7fc`, extended at `8ac9d93` by the diagonal-product check; sampled at n = 12, 16, 32; fault injection). Validation performed against one referent only and passed: the rigid(3) complement table of the design study, which the study reports matches Terathon's signs. Lengyel's published complement pages were not reread in this unit (research note 0005 records their reading), so validation against the published source rests on that note.
+
 ### Next step
 
 W5 review of `feature/core-bits`. The reviewer gets plan 0004's criteria, the departures above, and the test list in the final report.
@@ -76,3 +78,26 @@ W5 review of `feature/core-bits`. The reviewer gets plan 0004's criteria, the de
 ### Agent cost (decision 0019)
 
 About 75 tool calls in one session; the harness reports no token counts to this agent.
+
+## W5 fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The review (`docs/agent/records/reviews/2026-10-31-wu2-bits.md`, of `7c3f5f0`) approved with non-blocking findings. Fixed on the branch after merging `develop` at `9586a9c` (`0129611`, records and decisions only):
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| N2 | n is `std::size_t` in every bits function and in `mask_bits`; grades stay `int` (decision 0051). Tests follow. (`4292517`) | `int n`; a `std::size_t` count from the metric needed a cast under `-Wconversion` | Both compilers build `-Wconversion -Werror` clean; lint clean after `8ac9d93` |
+| N1 | The abort program uses `mask_bits + 1`, `mask_bits`, `~mask_t{0}`; the test reference reads its width from `numeric_limits<mask_t>::digits` and checks `mask_bits` against it; case `n_33` renamed `n_above` (CTest `core.bits_rejects_<f>_n_above`). Messages and their CMake expectations unchanged. (`4292517`) | Literals 33, 32, 0xFFFFFFFF | No bound literal in the tests except the message text |
+| N9 | Usage errors print a usage line with `std::fputs` (no suppression); the sample capacity is 2n + 5 of the widest mask, with its derivation. (`4292517`) | Exit 2 silently; capacity 80 unexplained | Usage line on stderr; capacity 69 |
+| N8 | New case "In a diagonal metric, e_A e_B is reorder_sign times the squares of the common generators times e_(A xor B) ...": all 4,096 pairs of six generators, in R(6,0,0) and in squares (1, -1, 0, -1, 1, 0), against a bubble sort with contraction. (`106069e`) | Guarantee untested | Passes (16,384 assertions). With `reorder_sign` counting equal indices and the `static_assert`s removed, it fails 3,096 of them |
+| N4 | The snippet refuses a dirty header or test (exit 2), strips inside the `try`, and restores both files from the text it read. Two mutations rewritten for the unsigned count. (`d04ca79`) | `git checkout` restore; strip before `try` | With a scratch edit in the test: refused, exit 2, edit kept. Clean tree: 11 of 11 caught in both modes |
+| N5 | Criterion 4 corrected above; the V and V status line added. | | |
+| N6, N7 | Recorded by the coordinator; nothing changed. | | |
+
+P9 on `8ac9d93`, each from a tree cleaned with `ninja -t clean`, through `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, and lint (clang-tidy, `format-check`, header sets) each passed 32 of 32, `core.bits` running 13 cases and 96,789 assertions in each. Wall times (s): 2.94, 3.68, 4.92, 1.33, 1.79, 3.49, 1.80; total 19.95 s. `all_verify_interface_header_sets` built under gcc-debug (0.14 s) and clang-debug (0.30 s). An earlier P9 run on `d04ca79` passed six presets and failed lint on four clang-tidy findings in the test reference, fixed in `8ac9d93`.
+
+Departures in this pass (C20):
+
+1. `4292517` changes the header and its tests together, because the type change does not build otherwise (W2); W9's separate commit applies to `106069e` (new test) and `8ac9d93` (reference refactor).
+2. One run of `core_bits_test` was made directly, not through `tools/timed`, to read the doctest counts after adding N8.
+3. Reference markers (`// Reference:`) for the 13 test cases are not added yet; the coordinator schedules them after the M0 scripts merge.
+
