@@ -115,3 +115,32 @@ add_test(NAME tools.measure_header
     ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
+
+# The golden values that tests compare the library with. They come from the
+# reference scripts in test/reference/, never from the library, so this
+# target does not link galoot::core. A test that needs them links it and
+# includes <reference/golden.hpp>; the header also compiles on its own, in
+# all_verify_interface_header_sets.
+add_library(galoot_golden INTERFACE)
+target_sources(galoot_golden INTERFACE
+  FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES reference/golden.hpp)
+target_compile_features(galoot_golden INTERFACE cxx_std_23)
+set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+
+# reference.golden: the committed golden.hpp is byte for byte what golden.py
+# writes now, so a hand edit, or a header left stale after a change to the
+# reference scripts, fails. reference.golden_rejects shows that the check
+# fails on a copy changed in one place.
+add_test(NAME reference.golden
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.py
+    --check ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp)
+add_test(NAME reference.golden_rejects
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/golden_check_test.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/golden_check)
+set_tests_properties(reference.golden reference.golden_rejects PROPERTIES
+  LABELS "reference;reference.golden")
