@@ -27,7 +27,9 @@ the busy time of its sibling thread. Shared rows count instructions on each
 core type, because the sum does not depend on where the process ran; cycles
 and cache events are then `unavailable` (P14). A counter that perf did not run
 for its whole enabled time in pinned mode was multiplexed and is written as
-`unavailable` with a warning, never as a scaled estimate.
+`unavailable` with a warning, never as a scaled estimate. A pinned `build`
+run takes no counters itself, because the compile rows of its launcher take
+them on the same core; its counter fields are `unavailable`.
 """
 
 import fcntl
@@ -192,8 +194,9 @@ def parse_perf(out_path, events, mode):
     return values
 
 
-def run_measured(command):
-    """Runs the command and returns (exit status, cost fields)."""
+def run_measured(command, count=True):
+    """Runs the command and returns (exit status, cost fields). With count
+    false, perf is not used and the counter fields are unavailable."""
     mode, cpus, pinned_cpu = placement()
     events = PINNED_EVENTS if mode == "pinned" else SHARED_EVENTS
     sibling = sibling_of(pinned_cpu) if pinned_cpu is not None else None
@@ -212,11 +215,14 @@ def run_measured(command):
                         energy_uj())
 
     try:
-        try:
-            status, sample = launch(perf_command(events, perf_out) + command)
-            counters = parse_perf(perf_out, events, mode)
-        except OSError:  # perf is not installed or not on PATH
-            counters = None
+        counters = None
+        if count:
+            try:
+                status, sample = launch(perf_command(events, perf_out)
+                                        + command)
+                counters = parse_perf(perf_out, events, mode)
+            except OSError:  # perf is not installed or not on PATH
+                counters = None
         if counters is None:
             # perf did not run the command, because it is missing or could
             # not open its events; run the command directly, without counters.
@@ -295,7 +301,12 @@ def main(argv):
     kind, a, b, c = argv[:4]
     command = argv[5:]
     start = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    code, fields = run_measured(command)
+    # A pinned build step runs measured compiles on the same core, and two
+    # perf sessions of eight events each would multiplex its counters. The
+    # compile rows hold the counters, so the run row leaves them unavailable
+    # (plan 0002, section 4.7).
+    count = not (kind == "run" and a == "build" and placement()[0] == "pinned")
+    code, fields = run_measured(command, count)
     if fields is None:
         return code
 
