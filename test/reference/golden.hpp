@@ -82,6 +82,7 @@ struct complement_pair {
 
 // The canonical name of each blade lists the indices of its generators in
 // increasing order. Indexed by mask.
+// Fact: bit i - 1 of a blade mask stands for e_i
 namespace blade_names {
 inline constexpr std::array<named_blade, 16> n4 = {{
     {0b0000, "1"},
@@ -139,6 +140,7 @@ inline constexpr std::array<named_blade, 32> n5 = {{
 
 // In conformal(3) the blade e45 is the wedge e4 ^ e5, not the product e4 e5,
 // so e4 e5 = -1 + e45. Every product of two of e4, e5, and e45.
+// Fact: e45 = e4 ^ e5 in conformal(3)
 namespace wedge_basis {
 inline constexpr std::array<product, 9> conformal_3_products = {{
     {0b01000, 0b01000, 0, {{{0, 0b00000}, {0, 0b00000}}}},
@@ -156,6 +158,7 @@ inline constexpr std::array<product, 9> conformal_3_products = {{
 // In R(p, q, r) the first p generators square to +1, the next q to -1, and
 // the last r to 0. Every R(p, q, r) with n = p + q + r generators, for n
 // from 1 to 6.
+// Fact: R(p, q, r) squares p generators to +1, q to -1, and r to 0
 namespace diagonal_signatures {
 inline constexpr std::array<diagonal_signature<1>, 3> n1 = {{
     {1, 0, 0, {1}},
@@ -256,6 +259,7 @@ inline constexpr std::array<diagonal_signature<6>, 28> n6 = {{
 
 // rigid(d) is R(d, 0, 1): e1 to ed are Euclidean and e(d+1) is the null
 // projective generator. The squares of its generators for d from 1 to 5.
+// Fact: rigid(d) is R(d, 0, 1)
 namespace rigid {
 inline constexpr std::array<int, 2> d1_squares = {1, 0};
 inline constexpr std::array<int, 3> d2_squares = {1, 1, 0};
@@ -270,6 +274,7 @@ inline constexpr std::array<int, 6> d5_squares = {1, 1, 1, 1, 1, 0};
 // R(d+1, 1, 0); and the change of basis, whose row i is e_i of conformal(d)
 // in the generators of R(d+1, 1, 0), with origin = (e(d+2) - e(d+1)) / 2 and
 // infinity = e(d+2) + e(d+1).
+// Fact: conformal(d) has null e(d+1) and e(d+2) with e(d+1) . e(d+2) = -1
 namespace conformal {
 inline constexpr std::array<std::array<int, 3>, 3> d1_gram = {{
     {1, 0, 0},
@@ -331,6 +336,7 @@ inline constexpr std::array<std::array<rational, 6>, 6> d4_in_diagonal = {{
 
 // The scalar unit is 1, and the antiscalar is e12...n with sign +1. The
 // antiscalars are indexed by n - 1, for n from 1 to 6.
+// Fact: the antiscalar is e12...n with sign +1
 namespace units {
 inline constexpr signed_blade scalar = {0b0, 1};
 inline constexpr std::array<named_blade, 6> antiscalars = {{
@@ -346,6 +352,7 @@ inline constexpr std::array<named_blade, 6> antiscalars = {{
 // The oriented names of rigid(3), from Lengyel's rigid geometric algebra
 // (rigidgeometricalgebra.org): a name lists generators in the order of their
 // product, so e31 = -e13 and e423 = +e234.
+// Fact: an oriented name lists generators in the order of their product
 namespace oriented_names {
 inline constexpr std::array<oriented_name, 16> rigid_3 = {{
     {"1", {0b0000, 1}},
@@ -370,6 +377,7 @@ inline constexpr std::array<oriented_name, 16> rigid_3 = {{
 // A result with no declared type lists its components by grade and, within a
 // grade, lexicographically by index list: e12, e13, e14, e23, e24, e34.
 // Every blade in that order.
+// Fact: results are ordered by grade, then by index list
 namespace result_order {
 inline constexpr std::array<mask, 16> n4 = {{
     0b0000,
@@ -428,6 +436,7 @@ inline constexpr std::array<mask, 32> n5 = {{
 // The reverse multiplies a blade of grade k by (-1)^(k(k-1)/2), the
 // antireverse does the same with the antigrade n - k, and the grade
 // involution multiplies by (-1)^k. Indexed by mask.
+// Fact: the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it
 namespace grade_signs {
 inline constexpr std::array<blade_signs, 16> n4 = {{
     {0b0000, 1, 1, 1},
@@ -485,6 +494,7 @@ inline constexpr std::array<blade_signs, 32> n5 = {{
 
 // The right complement satisfies u ^ right(u) = antiscalar and the left
 // complement left(u) ^ u = antiscalar. Indexed by mask.
+// Fact: u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
 namespace complements {
 inline constexpr std::array<complement_pair, 16> n4 = {{
     {0b0000, {0b1111, 1}, {0b1111, 1}},

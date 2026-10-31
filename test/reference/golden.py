@@ -6,9 +6,12 @@ no code with the library: clifford_reference.py multiplies in any symmetric
 integer form by diagonalizing it over fractions, and conventions_check.py
 holds the oriented blade names and the rigid(3) complement table of Lengyel's
 rigid geometric algebra (rigidgeometricalgebra.org). Where a convention is
-stated both as a definition and as a closed formula or table, the script
-computes both and stops if they differ, so each value is written only when two
-routes agree.
+stated both as a definition and as a closed formula, a table, or a worked
+example, the script computes both and stops if they differ: the complements,
+grade signs, oriented names, antiscalars, wedge-basis products, conformal
+change of basis, and result order are written only when two routes agree. The
+diagonal and rigid signatures have no second route; their squares are written
+from the definition as clifford_reference.py states it.
 
 Usage, with the interpreter isolated as for every reference script:
 
@@ -41,6 +44,9 @@ import conventions_check as conv
 
 BLADE_TABLE_SIZES = (4, 5)
 MAX_N = 6  # largest n of the signature tables
+
+# The worked example of the result order: the bivectors of n = 4.
+ORDER_EXAMPLE = ("e12", "e13", "e14", "e23", "e24", "e34")
 
 # Lengyel's oriented names in rigid(3): a name lists generators in the order
 # of their product, so e31 = e3 e1 = -e13.
@@ -166,14 +172,14 @@ def grade_signs(n, right, left):
 
 
 def result_order(n):
-    """Blades ordered by grade, then lexicographically by index list:
-    e12, e13, e14, e23, e24, e34. The order is checked pairwise."""
+    """Blades ordered by grade, then lexicographically by index list. The
+    bivectors of n = 4 are compared with the worked example of the
+    convention, ORDER_EXAMPLE."""
     order = sorted(range(1 << n),
                    key=lambda m: (ref.popcount(m), ref.indices(m)))
-    for a, b in itertools.pairwise(order):
-        ka, kb = ref.popcount(a), ref.popcount(b)
-        agree(ka < kb or (ka == kb and ref.indices(a) < ref.indices(b)), True,
-              f"order of {a} before {b}")
+    if n == 4:
+        bivectors = [ref.blade_name(m) for m in order if ref.popcount(m) == 2]
+        agree(bivectors, list(ORDER_EXAMPLE), "order of the bivectors of n = 4")
     return order
 
 
@@ -189,9 +195,13 @@ def canonical_names(n):
 
 
 def oriented_names():
-    """Each oriented name in rigid(3) as a mask and a sign. The sign from
-    conventions_check.parse, the parity of the order written, is compared
-    with the product of the generators in that order in R(4, 0, 0)."""
+    """Each oriented name in rigid(3) as a mask and a sign. The list of names
+    is compared with the names of conventions_check.py's complement table.
+    The sign from conventions_check.parse, the parity of the order written,
+    is compared with the product of the generators in that order in
+    R(4, 0, 0)."""
+    agree(list(RIGID_3_NAMES), list(conv.COMPLEMENT_TABLE),
+          "oriented names against conventions_check.py")
     alg = ref.Algebra(ref.r_pqr(4, 0, 0))
     out = []
     for name in RIGID_3_NAMES:
@@ -230,22 +240,21 @@ def wedge_basis_products():
 
 def diagonal_signatures(n):
     """Every R(p, q, r) with p + q + r = n: the first p generators square to
-    +1, the next q to -1, and the last r to 0."""
+    +1, the next q to -1, and the last r to 0, from clifford_reference.py.
+    One route only."""
     out = []
     for p in range(n, -1, -1):
         for q in range(n - p, -1, -1):
             r = n - p - q
             g = ref.r_pqr(p, q, r)
-            squares = [g[i][i] for i in range(n)]
-            agree(squares, [1] * p + [-1] * q + [0] * r, f"R({p},{q},{r})")
-            out.append((p, q, r, squares))
+            out.append((p, q, r, [g[i][i] for i in range(n)]))
     return out
 
 
 def rigid_squares(d):
-    """rigid(d) is R(d, 0, 1): e1 to ed Euclidean, e(d+1) null."""
+    """rigid(d) is R(d, 0, 1): e1 to ed Euclidean, e(d+1) null, from
+    clifford_reference.py. One route only."""
     g = ref.rigid(d)
-    agree(g, ref.r_pqr(d, 0, 1), f"rigid({d})")
     return [g[i][i] for i in range(d + 1)]
 
 
@@ -320,16 +329,25 @@ def emit_array(out, type_name, name, rows):
     out.append("}};")
 
 
-def open_namespace(out, name, text):
+NO_BREAK = "\N{NO-BREAK SPACE}"
+
+
+def open_namespace(out, name, fact, text):
+    """Opens a namespace of golden values with a comment that describes them
+    and, on its last line, states the fact they pin. Tests that use the
+    namespace state the same fact in their reference markers."""
+    if len(fact) > 71:
+        raise ValueError(f"fact of {name} is longer than one comment line")
     # No line break inside a signature such as R(d+1, 1, 0): its spaces are
-    # held as U+00A0 while the text is wrapped.
-    held = re.sub(r"\([^()]*\)", lambda m: m.group(0).replace(" ", " "),
+    # held as no-break spaces while the text is wrapped.
+    held = re.sub(r"\([^()]*\)", lambda m: m.group(0).replace(" ", NO_BREAK),
                   text)
     out.append("")
-    out.extend(line.replace(" ", " ")
+    out.extend(line.replace(NO_BREAK, " ")
                for line in textwrap.wrap(held, width=77, initial_indent="// ",
                                          subsequent_indent="// ",
                                          break_on_hyphens=False))
+    out.append(f"// Fact: {fact}")
     out.append(f"namespace {name} {{")
 
 
@@ -425,6 +443,7 @@ def generate():
     out = HEADER_START.splitlines()
 
     open_namespace(out, "blade_names",
+                   "bit i - 1 of a blade mask stands for e_i",
                    "The canonical name of each blade lists the indices of its "
                    "generators in increasing order. Indexed by mask.")
     for n in BLADE_TABLE_SIZES:
@@ -435,6 +454,7 @@ def generate():
     close_namespace(out, "blade_names")
 
     open_namespace(out, "wedge_basis",
+                   "e45 = e4 ^ e5 in conformal(3)",
                    "In conformal(3) the blade e45 is the wedge e4 ^ e5, not "
                    "the product e4 e5, so e4 e5 = -1 + e45. Every product of "
                    "two of e4, e5, and e45.")
@@ -448,6 +468,7 @@ def generate():
     close_namespace(out, "wedge_basis")
 
     open_namespace(out, "diagonal_signatures",
+                   "R(p, q, r) squares p generators to +1, q to -1, and r to 0",
                    "In R(p, q, r) the first p generators square to +1, the "
                    "next q to -1, and the last r to 0. Every R(p, q, r) with "
                    "n = p + q + r generators, for n from 1 to 6.")
@@ -458,6 +479,7 @@ def generate():
     close_namespace(out, "diagonal_signatures")
 
     open_namespace(out, "rigid",
+                   "rigid(d) is R(d, 0, 1)",
                    "rigid(d) is R(d, 0, 1): e1 to ed are Euclidean and e(d+1) "
                    "is the null projective generator. The squares of its "
                    "generators for d from 1 to 5.")
@@ -468,6 +490,8 @@ def generate():
 
     check_conformal_basis_against_conventions_check()
     open_namespace(out, "conformal",
+                   "conformal(d) has null e(d+1) and e(d+2) with "
+                   "e(d+1) . e(d+2) = -1",
                    "In conformal(d), e1 to ed are Euclidean, e(d+1) is the "
                    "origin and e(d+2) the point at infinity, both null, with "
                    "e(d+1) . e(d+2) = -1. For d from 1 to 4: the Gram matrix; "
@@ -488,6 +512,7 @@ def generate():
     close_namespace(out, "conformal")
 
     open_namespace(out, "units",
+                   "the antiscalar is e12...n with sign +1",
                    "The scalar unit is 1, and the antiscalar is e12...n with "
                    "sign +1. The antiscalars are indexed by n - 1, for n from "
                    "1 to 6.")
@@ -500,6 +525,8 @@ def generate():
     close_namespace(out, "units")
 
     open_namespace(out, "oriented_names",
+                   "an oriented name lists generators in the order of their "
+                   "product",
                    "The oriented names of rigid(3), from Lengyel's rigid "
                    "geometric algebra (rigidgeometricalgebra.org): a name "
                    "lists generators in the order of their product, so "
@@ -510,6 +537,7 @@ def generate():
     close_namespace(out, "oriented_names")
 
     open_namespace(out, "result_order",
+                   "results are ordered by grade, then by index list",
                    "A result with no declared type lists its components by "
                    "grade and, within a grade, lexicographically by index "
                    "list: e12, e13, e14, e23, e24, e34. Every blade in that "
@@ -527,6 +555,7 @@ def generate():
         tables[n] = (right, left, grade_signs(n, right, left))
 
     open_namespace(out, "grade_signs",
+                   "the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it",
                    "The reverse multiplies a blade of grade k by "
                    "(-1)^(k(k-1)/2), the antireverse does the same with the "
                    "antigrade n - k, and the grade involution multiplies by "
@@ -539,6 +568,7 @@ def generate():
     close_namespace(out, "grade_signs")
 
     open_namespace(out, "complements",
+                   "u ^ right(u) = antiscalar and left(u) ^ u = antiscalar",
                    "The right complement satisfies u ^ right(u) = antiscalar "
                    "and the left complement left(u) ^ u = antiscalar. "
                    "Indexed by mask.")
