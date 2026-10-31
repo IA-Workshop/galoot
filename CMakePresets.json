@@ -1,0 +1,539 @@
+{
+  "version": 12,
+  "cmakeMinimumRequired": {
+    "major": 4,
+    "minor": 4,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_LINKER_TYPE": "LLD",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_TEST_BUILD_DEPENDS": "ON"
+      }
+    },
+    {
+      "name": "measured",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "GALOOT_PRESET": "${presetName}",
+        "GALOOT_COMPILE_RECORD": "${sourceDir}/build/${presetName}/compile.tsv"
+      }
+    },
+    {
+      "name": "gcc",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "clang",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "checks",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS"
+      }
+    },
+    {
+      "name": "sanitizers",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined"
+      }
+    },
+    {
+      "name": "measurement",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off",
+        "GALOOT_COMPILE_RECORD": "${sourceDir}/docs/agent/records/performance/compile.tsv"
+      }
+    },
+    {
+      "name": "gcc-debug",
+      "displayName": "GCC, -O0, checking on",
+      "inherits": [
+        "measured",
+        "gcc",
+        "checks"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g",
+        "GALOOT_CHECKING": "ON"
+      }
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "GCC, -O2, checking off",
+      "inherits": [
+        "measured",
+        "gcc",
+        "checks"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O2",
+        "GALOOT_CHECKING": "OFF"
+      }
+    },
+    {
+      "name": "gcc-asan",
+      "displayName": "GCC, -O1, ASan and UBSan, checking on",
+      "inherits": [
+        "measured",
+        "gcc",
+        "sanitizers"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O1 -g",
+        "GALOOT_CHECKING": "ON"
+      }
+    },
+    {
+      "name": "clang-debug",
+      "displayName": "Clang, -O0, checking on",
+      "inherits": [
+        "measured",
+        "clang",
+        "checks"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g",
+        "GALOOT_CHECKING": "ON"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Clang, -O2, checking off",
+      "inherits": [
+        "measured",
+        "clang",
+        "checks"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O2",
+        "GALOOT_CHECKING": "OFF"
+      }
+    },
+    {
+      "name": "clang-asan",
+      "displayName": "Clang, -O1, ASan and UBSan, checking on",
+      "inherits": [
+        "measured",
+        "clang",
+        "sanitizers"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O1 -g",
+        "GALOOT_CHECKING": "ON"
+      }
+    },
+    {
+      "name": "lint",
+      "displayName": "Clang with clang-tidy, -O0, checking on",
+      "inherits": [
+        "base",
+        "clang",
+        "checks"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g",
+        "GALOOT_CHECKING": "ON",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
+      }
+    },
+    {
+      "name": "gcc-measure",
+      "displayName": "GCC, -O2, measurement (P4, P6), no assertions",
+      "inherits": [
+        "measurement",
+        "measured",
+        "gcc"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O2",
+        "GALOOT_CHECKING": "OFF"
+      }
+    },
+    {
+      "name": "gcc-measure-o3",
+      "displayName": "GCC, -O3, measurement comparison only, no assertions",
+      "inherits": [
+        "measurement",
+        "measured",
+        "gcc"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3",
+        "GALOOT_CHECKING": "OFF"
+      }
+    },
+    {
+      "name": "clang-measure",
+      "displayName": "Clang, -O2, measurement (P4, P6), no assertions",
+      "inherits": [
+        "measurement",
+        "measured",
+        "clang"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O2",
+        "GALOOT_CHECKING": "OFF"
+      }
+    },
+    {
+      "name": "clang-measure-o3",
+      "displayName": "Clang, -O3, measurement comparison only, no assertions",
+      "inherits": [
+        "measurement",
+        "measured",
+        "clang"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3",
+        "GALOOT_CHECKING": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug"
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release"
+    },
+    {
+      "name": "gcc-asan",
+      "configurePreset": "gcc-asan"
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release"
+    },
+    {
+      "name": "clang-asan",
+      "configurePreset": "clang-asan"
+    },
+    {
+      "name": "lint",
+      "configurePreset": "lint",
+      "targets": [
+        "all",
+        "all_verify_interface_header_sets",
+        "format-check"
+      ]
+    },
+    {
+      "name": "gcc-measure",
+      "configurePreset": "gcc-measure"
+    },
+    {
+      "name": "gcc-measure-o3",
+      "configurePreset": "gcc-measure-o3"
+    },
+    {
+      "name": "clang-measure",
+      "configurePreset": "clang-measure"
+    },
+    {
+      "name": "clang-measure-o3",
+      "configurePreset": "clang-measure-o3"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-base",
+      "hidden": true,
+      "execution": {
+        "jobs": "",
+        "noTestsAction": "error"
+      },
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "test-sanitizers",
+      "hidden": true,
+      "inherits": "test-base",
+      "environment": {
+        "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+        "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+      }
+    },
+    {
+      "name": "gcc-debug",
+      "configurePreset": "gcc-debug",
+      "inherits": "test-base"
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "gcc-release",
+      "inherits": "test-base"
+    },
+    {
+      "name": "gcc-asan",
+      "configurePreset": "gcc-asan",
+      "inherits": "test-sanitizers"
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
+      "inherits": "test-base"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release",
+      "inherits": "test-base"
+    },
+    {
+      "name": "clang-asan",
+      "configurePreset": "clang-asan",
+      "inherits": "test-sanitizers"
+    },
+    {
+      "name": "lint",
+      "configurePreset": "lint",
+      "inherits": "test-base"
+    },
+    {
+      "name": "gcc-measure",
+      "configurePreset": "gcc-measure",
+      "inherits": "test-base"
+    },
+    {
+      "name": "gcc-measure-o3",
+      "configurePreset": "gcc-measure-o3",
+      "inherits": "test-base"
+    },
+    {
+      "name": "clang-measure",
+      "configurePreset": "clang-measure",
+      "inherits": "test-base"
+    },
+    {
+      "name": "clang-measure-o3",
+      "configurePreset": "clang-measure-o3",
+      "inherits": "test-base"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "gcc-debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-debug"
+        },
+        {
+          "type": "build",
+          "name": "gcc-debug"
+        },
+        {
+          "type": "test",
+          "name": "gcc-debug"
+        }
+      ]
+    },
+    {
+      "name": "gcc-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-release"
+        },
+        {
+          "type": "build",
+          "name": "gcc-release"
+        },
+        {
+          "type": "test",
+          "name": "gcc-release"
+        }
+      ]
+    },
+    {
+      "name": "gcc-asan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-asan"
+        },
+        {
+          "type": "build",
+          "name": "gcc-asan"
+        },
+        {
+          "type": "test",
+          "name": "gcc-asan"
+        }
+      ]
+    },
+    {
+      "name": "clang-debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-debug"
+        },
+        {
+          "type": "build",
+          "name": "clang-debug"
+        },
+        {
+          "type": "test",
+          "name": "clang-debug"
+        }
+      ]
+    },
+    {
+      "name": "clang-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-release"
+        },
+        {
+          "type": "build",
+          "name": "clang-release"
+        },
+        {
+          "type": "test",
+          "name": "clang-release"
+        }
+      ]
+    },
+    {
+      "name": "clang-asan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-asan"
+        },
+        {
+          "type": "build",
+          "name": "clang-asan"
+        },
+        {
+          "type": "test",
+          "name": "clang-asan"
+        }
+      ]
+    },
+    {
+      "name": "lint",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "lint"
+        },
+        {
+          "type": "build",
+          "name": "lint"
+        },
+        {
+          "type": "test",
+          "name": "lint"
+        }
+      ]
+    },
+    {
+      "name": "gcc-measure",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-measure"
+        },
+        {
+          "type": "build",
+          "name": "gcc-measure"
+        },
+        {
+          "type": "test",
+          "name": "gcc-measure"
+        }
+      ]
+    },
+    {
+      "name": "gcc-measure-o3",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcc-measure-o3"
+        },
+        {
+          "type": "build",
+          "name": "gcc-measure-o3"
+        },
+        {
+          "type": "test",
+          "name": "gcc-measure-o3"
+        }
+      ]
+    },
+    {
+      "name": "clang-measure",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-measure"
+        },
+        {
+          "type": "build",
+          "name": "clang-measure"
+        },
+        {
+          "type": "test",
+          "name": "clang-measure"
+        }
+      ]
+    },
+    {
+      "name": "clang-measure-o3",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "clang-measure-o3"
+        },
+        {
+          "type": "build",
+          "name": "clang-measure-o3"
+        },
+        {
+          "type": "test",
+          "name": "clang-measure-o3"
+        }
+      ]
+    }
+  ]
+}
