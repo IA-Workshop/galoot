@@ -1,6 +1,6 @@
 # 0002 WU1: build skeleton
 
-- Status: proposed, not claimed. The unit is claimed when this plan is committed to `develop` (W7).
+- Status: implemented on `feature/build` (2026-10-31). The W5 review (`docs/agent/records/reviews/2026-10-31-wu1-build-skeleton.md`) asked for B1 to B3 and N1 to N4, which section 15 records as done. Criteria 1 to 14 are met; criterion 15 is the merge into `develop`, made by the coordinating session.
 - Unit: WU1 of plan 0001 (milestone M0). Branch: `feature/build`, in the worktree `.claude/worktrees/build`.
 - Written by: Claude (agent, build-expert, Opus 5.5), 2026-10-31, against `develop` at 2862040, where P13 already includes the decision 0018 sentence. Inputs: the governance (CONSTITUTION, WORKFLOW, PERFORMANCE, STYLE, VVUQ), research notes 0001 and 0002, plan 0001, and decisions 0006, 0011 to 0014, and 0018.
 - Probes: the facts marked "probed" below come from throwaway runs in `docs/agent/workbench/` on 2026-10-31. They were deleted afterward and are not V1 evidence; WU1 repeats what it relies on (V10).
@@ -351,4 +351,111 @@ The holder script was probed in the workbench, where the free-slot check read 24
 
 ## 12. Next step
 
-The owner starts the pool and answers the open questions. A contributor commits this plan to `develop` to claim WU1, then creates the worktree `.claude/worktrees/build` on `feature/build`.
+Superseded by section 13.
+
+## 13. Outcome (2026-10-31, Claude, agent, build-expert)
+
+### Done
+
+- The build of sections 4.3 to 4.8, with the owner's rulings of decisions 0020 and 0022, at `f5f6ddd` on `feature/build`: `CMakeLists.txt`, `CMakePresets.json` (eleven visible configure presets: the seven of 4.4 and the four measurement presets), `cmake/galoot_testing.cmake`, `include/galoot/core.hpp`, `include/galoot/core/assert.hpp`, nine CTest tests, `tools/measure`, the changed `tools/timed`, and `tools/include_scan.py`.
+- The decision records of 4.10, numbered 0024 to 0031 because `develop` took 0023 meanwhile; lessons-learned 0001; the snippet `docs/agent/snippets/runs_tsv_merge.py`.
+- `develop` (at `aa8051c`) merged into `feature/build`, and `runs.tsv` rebuilt after that merge (lessons-learned 0001, item 4).
+- Every preset's workflow, from a clean build tree, on `f5f6ddd` (section 14).
+
+### Departures from this plan, beyond section 1 (C20)
+
+1. Labels. The component label names the header or facility under test, so one label can hold several tests: `core.assert` (four tests), `core.headers` (`core.bare_compile`, `core.include_scan`), `core.runner` (`core.zero_cases`), `core.smoke`, and `tools.include_scan`. Section 4.3 did not say what the component of a non-program test is (decision 0025).
+2. Criterion 1 says "the seven configure presets of 4.4". The file has eleven: the seven, plus the four measurement presets that 4.4 also lists. Each has a build, test, and workflow preset.
+3. `runs.tsv` has 26 columns, not 27: `wall_s` is not repeated after the nine P13 columns (decision 0028).
+4. `test/expect_abort.cmake` became `test/expect_output.cmake`, which checks a result and any number of literals. It has two users: `core.assert_checking` and `tools.include_scan_rejects`. The fixtures are four, not three: a fixture for the snake_case name rule was added so that rule can fail too (V2).
+5. A pinned `build` step's run row takes no counters. Two nested perf sessions of eight events multiplexed every counter (lessons-learned 0001, item 1; decision 0028). Section 4.7 assumed both rows could count.
+6. The cache variable `GALOOT_COMPILE_RECORD` (not in 4.7) carries decision 0020, item 4: correctness presets write `build/<preset>/compile.tsv`; measurement presets write the committed `docs/agent/records/performance/compile.tsv`. The pinned baseline used separate trees, `build/<preset>-pinned`, configured with the committed path.
+7. `GALOOT_CHECKING` reaches the build through `$<BUILD_INTERFACE:...>` on `galoot_core`, not a directory definition, and the two fixed-mode programs do not link `galoot::core` (decision 0030; lessons-learned 0001, item 2).
+8. Levels not fixed by the plan, now stated in each preset: asan at `-O1 -g`; debug and lint at `-O0 -g`; release with no `-DNDEBUG` (CMake's default release flags carry it; nothing in Galoot reads it).
+9. The `-dirty` mark of a revision ignores changes under `docs/agent/records/performance/`, because `tools/timed` changes `runs.tsv` on every run and so marked every row dirty.
+10. The misformatted-copy check of criterion 8 ran in the session scratchpad, not `docs/agent/workbench/`; both are outside what is committed.
+11. The doctest-expert review of the smoke test (section 8) was not made.
+
+### In progress
+
+Nothing on this branch. The W5 review by `blind-reviewer` and the merge into `develop` (criterion 15) are arranged by the coordinating session.
+
+### Next step
+
+1. W5 review of `feature/build` against sections 3 and 5 and the departures above.
+2. Before merging: merge `develop` into `feature/build` again, rebuild `runs.tsv` with `docs/agent/snippets/runs_tsv_merge.py` if the union merge doubled it, and renumber decisions 0024 to 0031 if `develop` took any of those numbers (risk 11).
+3. Merge into `develop` with a message naming the selection (all nine tests), the configurations (the eleven presets), the outcome, and the wall time (P13). After the merge, each active branch that merges `develop` runs the snippet once (its usage names the swapped sides for that direction).
+
+### Open questions
+
+1. A configure-time override of the optimization level (`-DCMAKE_CXX_FLAGS_RELEASE=-O3`) is not visible in `compile.tsv` or `runs.tsv`, which name only the preset. Decision 0020 asks that "the run record names it". Proposal: an `options` column in `compile.tsv` holding the compile command's `-O` level, or the rule that a changed level always gets its own preset.
+2. Pinning keeps a run on CPU 2 but does not keep other processes off CPU 2. Only the sibling's busy time is recorded. Should pinned rows also record the pinned CPU's busy time beyond the run's own?
+3. Until every branch runs the new `tools/timed`, rows in the old nine-column format keep arriving through merges and need the snippet. Should the old rows instead be read as `--` by convention, with no padding written?
+4. Whether `DOCTEST_CONFIG_SUPER_FAST_ASSERTS` keeps its savings on real tests (decision 0025) is checked at M1.
+
+### Agent cost (decision 0019)
+
+Estimate: about 400k input tokens over about 80 tool calls. Actual: about 100 tool calls in one session; the harness did not report tokens to this agent, so tokens are unavailable here.
+
+## 14. Evidence
+
+All on `feature/build` at `f5f6ddd`, unless a row says otherwise. Every command ran from the worktree root with `eval "$(tools/jobpool env)"` (23 slots), through `tools/timed`, whose rows are in `runs.tsv`.
+
+| Criterion | Command | Outcome |
+| --- | --- | --- |
+| 1 | `cmake --list-presets=all`; a JSON read of `CMakePresets.json` | 11 configure, build, test, and workflow presets; version 12; no build preset has `jobs`; every test preset inherits `"jobs": ""` and `noTestsAction: error`; `cmake_minimum_required(VERSION 4.4)` |
+| 2 | `cmake -S . -B <scratch> -G Ninja -DCMAKE_CXX_COMPILER=g++` (at `c171240`) | Fails: "GALOOT_CHECKING is not set." With `-DGALOOT_CHECKING=yes`: "GALOOT_CHECKING must be ON or OFF". Every visible preset sets it in its own body |
+| 3 | `ninja -C build/<p> -t clean; tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`, for all eleven presets | Each: 9 of 9 tests passed. Wall times (s): gcc-debug 2.23, gcc-release 3.41, gcc-asan 5.13, clang-debug 1.92, clang-release 2.33, clang-asan 3.46, lint 1.59, gcc-measure 3.22, gcc-measure-o3 3.68, clang-measure 2.09, clang-measure-o3 2.27 |
+| 4 | `ctest --preset gcc-debug -N -L '^core$'`; `-N -L '^core\.smoke$'`; `-L '^nosuch$'` (at `5134bb5`) | 8 tests, exactly the `core.*` ones; 1 test; "No tests were found", exit 8. `core.zero_cases` passes in every preset |
+| 5 | `ctest -V -R '^core\.assert_(consteval|checking)$'`; Clang's `LastTest.log` | Both compilers echo the line holding the literal message; `core.assert_consteval_wrong_message` passes through `WILL_FAIL`; both compile-fail tests carry `RESOURCE_LOCK galoot_build_tree`. The escaping was checked separately with `cmake -P` on a string holding every regex metacharacter |
+| 6 | as for 5 | `core.assert_checking`: "Subprocess aborted" and `galoot: assertion failed: assert_fail: argc is never zero (...assert_fail.cpp:9)`. `core.assert_unchecked` exits 0 |
+| 7 | `cmake --build --preset <p> --target all_verify_interface_header_sets` for gcc-debug and clang-debug; the lint build preset | Two TUs, one per header of `galoot_core`, on each |
+| 8 | `cmake --build --preset lint` (in the lint workflow); a scratch copy with `std::abort( ) ;` in `assert.hpp` (at `c171240`) | Lint: no clang-tidy finding, `format-check` passes. Scratch copy: `format-check` exits 1 with three `-Wclang-format-violations`. clang-tidy failed the first lint build on two real findings, since fixed, which shows it can fail |
+| 9 | the workflows of 3 | `core.include_scan`, `tools.include_scan_rejects` (all four fixture messages), and `core.bare_compile` pass on both compilers |
+| 10 | clean build of gcc-debug and clang-debug, then a count against `ninja -t commands all` (at `5134bb5`) | 4 new rows for 4 compile commands on each; every row has 27 fields, `mode` `shared`, `inst_p_u` and `inst_e_u` numeric, and cycle and cache fields `unavailable` |
+| 11 | `taskset -c 2 tools/timed build <p> pinned:<object> -- ninja -C build/<p>-pinned -j1 <object>` (at `5134bb5-dirty`: the uncommitted change was the pinned-build rule, committed unchanged as `c171240`); the launcher with `perf` hidden from `PATH` | Pinned rows: `mode` `pinned`, `cpus` 2, all eight counters numeric, which the recorder writes only when perf reports 100.00% running; no multiplex warning. `energy_pkg_j`, `other_cpu_s`, `sibling_busy_s` numeric. Without perf: all nine counter fields `unavailable`, exit statuses 0 and 1 passed through |
+| 12 | `env -u MAKEFLAGS tools/timed build ...`; `MAKEFLAGS=...fifo:/run/user/1000/no-such.fifo tools/timed test ... -- ctest ...`; `tools/timed check - guard-probe -- true` (at `5134bb5`) | Exit 2 with a message for a build step, a missing FIFO, and `ninja` under step `test`; the other command runs and is recorded. New rows have the nine P13 columns first |
+| 13 | `git diff --stat develop -- include/ext` | Empty. Files and their users: section 7, plus `test/expect_output.cmake` (two tests), the fourth fixture, the snippet (merges across the header extension), and lessons-learned 0001 |
+| 14 | `ls docs/agent/decisions/` | 0024 to 0031 committed |
+| 15 | | Not met yet: the merge into `develop` |
+
+Pre-core P1 baseline, pinned to CPU 2, sibling CPU 3 busy 0.00 s, other agents' work on the machine (other CPU time 0.30 s to 0.36 s during the runner compiles), debug presets (`compile.tsv`, rows of 2026-10-31T21:4x):
+
+| TU | Compiler | Wall s | Peak MiB | Instructions | Cycles |
+| --- | --- | --- | --- | --- | --- |
+| doctest runner | GCC 16.2.1 | 1.227 | 347 | 11.12 G | 6.38 G |
+| doctest runner | Clang 23.1.4 | 0.873 | 281 | 7.48 G | 4.48 G |
+| smoke test | GCC 16.2.1 | 0.057 | 44 | 0.239 G | 0.115 G |
+| smoke test | Clang 23.1.4 | 0.061 | 101 | 0.162 G | 0.106 G |
+
+Notes 0001 and 0002 had the runner at 9.7 G instructions (GCC) and 6.9 G (Clang) at `-O0`, and at about 1.4 s and 345 MiB (GCC) and 1.0 s and 274 MiB (Clang). The instruction counts here are 15% and 8% higher. The inferred cause, not checked: this build adds `-g`, `-D_GLIBCXX_ASSERTIONS`, `-ffp-contract=off`, and `DOCTEST_CONFIG_SUPER_FAST_ASSERTS` to the S4 flags that note 0001's Table 1 commands used. The four rows just before these in `compile.tsv` are the multiplexed attempt.
+
+Launcher overhead (at `5134bb5-dirty`, as for criterion 11), from the median difference of 15 pinned compiles of the smoke TU with and without `tools/measure tu` (GCC, `-O0`): 25.6 ms and 26.0 ms in two runs, and 61.3 ms in a third run that had a wide spread (77 ms to 100 ms) and was not traced. Contention on CPU 2 is the inferred cause; the next run measured CPU 2 as free. The launcher around `true` alone takes 23.9 ms, of which Python startup with its imports is about 15 ms.
+
+Not checked: the CTest-side handling of an escaped pattern that contains regex metacharacters (only `cmake -P` was checked); the `ninja -t deps` and `test_prep/<test>` selections of section 4.9; token return when a client is killed; ASan under `ptrace`; a pool restart while builds run.
+
+## 15. W5 fixes (2026-10-31, Claude, agent, build-expert, Opus 5.5)
+
+The review of head `a00259c` returned "merge after fixes". Each fix below was shown to fail before it where practical, by a mutation or by the test written first, and to pass after. N5 to N16 are carried in plan 0003 and were not taken on here.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| B1, `compile.tsv` header race | `append_row` tests `os.fstat(...).st_size == 0` after `flock` (`9385e56`). New test `tools.measure_header`: holds the lock on an empty record while four launchers queue on it (counted in `/proc/locks`), then counts header lines (`5087d4a`) | 4 headers from 4 launchers, exit 1 | 1 header, 4 rows. A fresh clang-debug tree: 1 header, 6 rows for 6 compile commands (criterion 10 on a clean build) |
+| B2, detail namespace | `galoot::core::detail` in `assert.hpp`; `GALOOT_ASSERT` expands to it (`39f98e9`). A smoke test case calls `galoot::core::detail::checking_now()` (`5087d4a`) | The smoke test does not compile: "'galoot::core' has not been declared" | Compiles and passes. Decision 0030 never named the namespace, so it needed no change; section 4.3's `galoot::detail` is superseded |
+| N1, compile-fail for the wrong reason | The helper runs the build through `test/expect_output.cmake` and requires a failed build, the literal MESSAGE, and each REQUIRE literal; the assertion tests require `assertion_failed` (`8100c8c`). The regex escaping is gone | With `x % 2 == no_such_name` on the message line, `core.assert_consteval` passed on GCC and Clang | The same mutation fails on both: "output lacks 'assertion_failed'". Restored source passes |
+| N2, zero-cases rule not checked | Configure-time check that `core.smoke`'s `FAIL_REGULAR_EXPRESSION` equals `GALOOT_ZERO_CASES_REGEX` (`9ed0f7c`) | With the rule dropped from `galoot_add_test`: configures, and `core.smoke` and `core.zero_cases` pass | Configure fails: "core.smoke's FAIL_REGULAR_EXPRESSION is 'NOTFOUND'" |
+| N3, `;` in MESSAGE | FATAL_ERROR (`8100c8c`) | `MESSAGE "a;b"` configured, as `PASS_REGULAR_EXPRESSION "a;b"` (two alternatives) | Configure fails: "MESSAGE may not contain ';'" |
+| N4, guard bypass | Step `test` needs the pool, whatever the command (`fca52fa`) | `env -u MAKEFLAGS tools/timed test ... -- taskset -c 2 ctest ...` ran, exit 0 | Exit 2 with a message; `nice ctest` also refused; other steps run |
+| B3, merge and P9 | `develop` (`63e2014`) merged with `--no-commit`; it brought only records, decisions, and plans, and left `runs.tsv` with one header | | P9 below, on the merged tree |
+
+P9 on the merged tree (revision recorded as `0863bad-dirty`, the uncommitted merge), each from a clean build tree through `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, and lint (clang-tidy, both header checks, `format-check`) each passed 10 of 10 tests. Wall times (s): 2.38, 3.34, 5.49, 1.89, 2.47, 3.44, 1.66. `all_verify_interface_header_sets` built under gcc-debug and clang-debug. Total, with the two header-check builds: 9 runs, 21.08 s, no failure. The measurement presets were not rerun; they passed at `f5f6ddd`, and P9 does not gate on them.
+
+Departures in this pass (C20):
+
+1. Commit `5087d4a` holds the B1 and B2 tests before their fixes, as W9 asks, so at that commit the build fails and `tools.measure_header` fails. This is against W2's "building at every recorded step".
+2. One `ctest -V` run, made only to read the N1 mutation's output, was not run through `tools/timed`.
+3. `develop`'s rows in `runs.tsv` are not padded, following decision 0032, item 3; the rows padded earlier on this branch stay as they are.
+4. N4 narrows decision 0022, item 3 ("other commands unchanged"): a step named `test` that runs no CTest, such as a Python reference script, is now refused without the pool.
+5. A pinned or wrapped CTest run under a step name other than `build` or `test` still passes the guard.
+
+After this section was first written, `develop` moved to `b250d55` (spikes C, D, and F: research notes 0010 to 0012 and records only), and it was merged into `feature/build` as `e8ff61f`. The union merge doubled `runs.tsv` (two headers; the base's 669 earlier rows twice), because this branch had padded those rows. The file was rebuilt before the merge commit as this branch's version followed by `develop`'s 2125 appended rows, unpadded (decision 0032, item 3), and the merge commit holds one header. No file that a build or test reads differs from `9bed7f5`, so the P9 run above stands for `e8ff61f` (P10). The merge of `feature/build` into `develop` meets the same doubling if `develop` appends rows again, and needs the same rebuild: the branch's version, then `develop`'s rows appended since the merge base.
