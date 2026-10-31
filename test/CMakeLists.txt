@@ -86,7 +86,7 @@ galoot_add_test(MODULE core COMPONENT bits)
 # the assert programs above do, so these run in every preset. Each function
 # that takes n is tried with n below and above the range and with e3 in an
 # algebra of two generators; core.bits_accepts_<function> gives it the widest
-# input in range, the antiscalar of 32 generators, and must exit 0.
+# input in range, the antiscalar of mask_bits generators, and must exit 0.
 add_executable(core_bits_assert_fail core/bits_assert_fail.cpp)
 target_include_directories(core_bits_assert_fail PRIVATE
   ${PROJECT_SOURCE_DIR}/include)
@@ -101,16 +101,16 @@ foreach(function IN ITEMS antigrade complement_mask right_complement_sign
   add_test(NAME core.bits_rejects_${function}_n_0
     COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
       bits.hpp: -- ${program} n_0)
-  add_test(NAME core.bits_rejects_${function}_n_33
+  add_test(NAME core.bits_rejects_${function}_n_above
     COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
-      bits.hpp: -- ${program} n_33)
+      bits.hpp: -- ${program} n_above)
   add_test(NAME core.bits_rejects_${function}_mask
     COMMAND ${expect_output} "Subprocess aborted" ${bits_mask_message}
       bits.hpp: -- ${program} mask)
   add_test(NAME core.bits_accepts_${function}
     COMMAND ${program} widest)
   set_tests_properties(core.bits_rejects_${function}_n_0
-    core.bits_rejects_${function}_n_33 core.bits_rejects_${function}_mask
+    core.bits_rejects_${function}_n_above core.bits_rejects_${function}_mask
     core.bits_accepts_${function} PROPERTIES LABELS "core;core.bits")
 endforeach()
 

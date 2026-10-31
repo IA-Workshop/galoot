@@ -21,6 +21,7 @@
 // functions unchanged.
 
 #include <bit>
+#include <cstddef>
 #include <cstdint>
 #include <limits>
 
@@ -34,7 +35,7 @@ namespace galoot::core {
 using mask_t = std::uint32_t;
 
 /// The number of generators a mask can hold.
-inline constexpr int mask_bits = std::numeric_limits<mask_t>::digits;
+inline constexpr std::size_t mask_bits = std::numeric_limits<mask_t>::digits;
 
 // The assertion messages below are literals that name this bound.
 static_assert(mask_bits == 32, "update the messages that say 1 to 32");
@@ -44,20 +45,20 @@ namespace detail {
 /// The mask of e_1 to e_n, that is, of the antiscalar.
 ///
 /// Requires: 1 <= n <= mask_bits; the caller checks it.
-[[nodiscard]] constexpr mask_t low_bits(int n) noexcept {
+[[nodiscard]] constexpr mask_t low_bits(std::size_t n) noexcept {
   // A right shift of all ones, because 1 << n is undefined at n = mask_bits.
-  return ~mask_t{0} >> static_cast<unsigned>(mask_bits - n);
+  return ~mask_t{0} >> (mask_bits - n);
 }
 
 /// Whether n is a number of generators these functions accept.
-[[nodiscard]] constexpr bool valid_count(int n) noexcept {
+[[nodiscard]] constexpr bool valid_count(std::size_t n) noexcept {
   return n >= 1 && n <= mask_bits;
 }
 
 /// Whether every generator of `a` is one of e_1 to e_n.
 ///
 /// Requires: valid_count(n).
-[[nodiscard]] constexpr bool in_algebra(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr bool in_algebra(mask_t a, std::size_t n) noexcept {
   return (a & ~low_bits(n)) == 0;
 }
 
@@ -66,7 +67,9 @@ namespace detail {
 /// The grade of the blade of `a`: its number of generators.
 ///
 /// Requires: nothing; every mask is a blade of some algebra.
-/// Guarantees: 0 <= grade(a) <= mask_bits.
+/// Guarantees: 0 <= grade(a) <= mask_bits. Grades are int, the type of
+/// std::popcount, so that sign formulas such as k(k - 1)/2 and differences of
+/// grades need no unsigned arithmetic.
 [[nodiscard]] constexpr int grade(mask_t a) noexcept {
   return std::popcount(a);
 }
@@ -77,10 +80,11 @@ namespace detail {
 /// Requires: 1 <= n <= mask_bits, and `a` names only e_1 to e_n; checked by
 /// GALOOT_ASSERT.
 /// Guarantees: 0 <= antigrade(a, n) <= n.
-[[nodiscard]] constexpr int antigrade(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr int antigrade(mask_t a, std::size_t n) noexcept {
   GALOOT_ASSERT(detail::valid_count(n), "n must be from 1 to 32");
   GALOOT_ASSERT(detail::in_algebra(a, n), "blade has a generator beyond e_n");
-  return n - grade(a);
+  // Exact, because n <= mask_bits once the checks hold.
+  return static_cast<int>(n) - grade(a);
 }
 
 /// The sign of reordering e_A e_B into increasing order: -1 when the number of
@@ -110,7 +114,8 @@ namespace detail {
 /// GALOOT_ASSERT.
 /// Guarantees: a | complement_mask(a, n) is the antiscalar's mask and
 /// a & complement_mask(a, n) is 0. Applied twice, it returns `a`.
-[[nodiscard]] constexpr mask_t complement_mask(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr mask_t complement_mask(mask_t a,
+                                               std::size_t n) noexcept {
   GALOOT_ASSERT(detail::valid_count(n), "n must be from 1 to 32");
   GALOOT_ASSERT(detail::in_algebra(a, n), "blade has a generator beyond e_n");
   return ~a & detail::low_bits(n);
@@ -123,7 +128,8 @@ namespace detail {
 /// Requires: 1 <= n <= mask_bits, and `a` names only e_1 to e_n; checked by
 /// GALOOT_ASSERT in complement_mask.
 /// Guarantees: returns -1 or +1, with u ∧ (s e_C) = +e_12...n.
-[[nodiscard]] constexpr int right_complement_sign(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr int right_complement_sign(mask_t a,
+                                                  std::size_t n) noexcept {
   // e_A ∧ e_C = reorder_sign(A, C) e_12...n, and the sign is its own inverse.
   return reorder_sign(a, complement_mask(a, n));
 }
@@ -137,7 +143,8 @@ namespace detail {
 /// Guarantees: returns -1 or +1, with (s e_C) ∧ u = +e_12...n. It equals
 /// (-1)^(gr ag) times the right complement's sign, and the left complement of
 /// the right complement of u is u.
-[[nodiscard]] constexpr int left_complement_sign(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr int left_complement_sign(mask_t a,
+                                                 std::size_t n) noexcept {
   return reorder_sign(complement_mask(a, n), a);
 }
 
@@ -158,7 +165,7 @@ namespace detail {
 /// Requires: 1 <= n <= mask_bits, and `a` names only e_1 to e_n; checked by
 /// GALOOT_ASSERT in antigrade.
 /// Guarantees: returns -1 or +1.
-[[nodiscard]] constexpr int antireverse_sign(mask_t a, int n) noexcept {
+[[nodiscard]] constexpr int antireverse_sign(mask_t a, std::size_t n) noexcept {
   const int m = antigrade(a, n);
   return (m * (m - 1) / 2) % 2 == 0 ? 1 : -1;
 }

@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <initializer_list>
+#include <limits>
 
 #include <galoot/core/bits.hpp>
 
@@ -18,10 +18,16 @@ namespace {
 
 using galoot::core::mask_t;
 
-// A list of generator indices, counting from 1; two blades of up to 32
-// generators each fit end to end.
+// Every generator a mask can name, read from the mask type itself.
+constexpr int mask_width = std::numeric_limits<mask_t>::digits;
+constexpr auto widest_n = static_cast<std::size_t>(mask_width);
+
+static_assert(galoot::core::mask_bits == widest_n);
+
+// A list of generator indices, counting from 1; two blades of the widest mask
+// fit end to end.
 struct index_list {
-  std::array<int, 64> at{};
+  std::array<int, 2 * mask_width> at{};
   int size = 0;
 };
 
@@ -47,7 +53,7 @@ constexpr bool contains(const index_list& list, int index) {
 // in increasing order.
 constexpr index_list indices_of(mask_t mask) {
   index_list list;
-  for (int i = 1; i <= 32; ++i) {
+  for (int i = 1; i <= mask_width; ++i) {
     if (((mask >> static_cast<unsigned>(i - 1)) & 1U) == 1U) {
       push(list, i);
     }
@@ -64,9 +70,9 @@ constexpr mask_t mask_of(const index_list& list) {
 }
 
 // The indices among 1 to n that `list` lacks, in increasing order.
-constexpr index_list missing_from(const index_list& list, int n) {
+constexpr index_list missing_from(const index_list& list, std::size_t n) {
   index_list rest;
-  for (int i = 1; i <= n; ++i) {
+  for (int i = 1; i <= static_cast<int>(n); ++i) {
     if (!contains(list, i)) {
       push(rest, i);
     }
@@ -127,9 +133,9 @@ constexpr signed_blade wedge(mask_t a, mask_t b) {
 
 // The antiscalar is +e_12...n, the generators in increasing order with sign
 // +1.
-constexpr signed_blade antiscalar(int n) {
+constexpr signed_blade antiscalar(std::size_t n) {
   index_list all;
-  for (int i = 1; i <= n; ++i) {
+  for (int i = 1; i <= static_cast<int>(n); ++i) {
     push(all, i);
   }
   return {.sign = 1, .mask = mask_of(all)};
@@ -141,7 +147,7 @@ constexpr bool operator==(signed_blade x, signed_blade y) {
 
 constexpr int expected_grade(mask_t a) { return indices_of(a).size; }
 
-constexpr int expected_antigrade(mask_t a, int n) {
+constexpr int expected_antigrade(mask_t a, std::size_t n) {
   return missing_from(indices_of(a), n).size;
 }
 
@@ -149,19 +155,19 @@ constexpr int expected_reorder_sign(mask_t a, mask_t b) {
   return sorting_sign(concat(indices_of(a), indices_of(b)));
 }
 
-constexpr mask_t expected_complement_mask(mask_t a, int n) {
+constexpr mask_t expected_complement_mask(mask_t a, std::size_t n) {
   return mask_of(missing_from(indices_of(a), n));
 }
 
 // u ∧ (s e_C) = +e_12...n holds exactly when s is the sign of sorting A
 // followed by C, because a sign is its own inverse.
-constexpr int expected_right_sign(mask_t a, int n) {
+constexpr int expected_right_sign(mask_t a, std::size_t n) {
   const index_list la = indices_of(a);
   return sorting_sign(concat(la, missing_from(la, n)));
 }
 
 // (s e_C) ∧ u = +e_12...n: the sign of sorting C followed by A.
-constexpr int expected_left_sign(mask_t a, int n) {
+constexpr int expected_left_sign(mask_t a, std::size_t n) {
   const index_list la = indices_of(a);
   return sorting_sign(concat(missing_from(la, n), la));
 }
@@ -174,7 +180,7 @@ constexpr int expected_reverse_sign(mask_t a) {
 
 // The antireverse is the reverse with the antigrade in place of the grade:
 // the sign of reversing a list as long as the blade's complement.
-constexpr int expected_antireverse_sign(mask_t a, int n) {
+constexpr int expected_antireverse_sign(mask_t a, std::size_t n) {
   return sorting_sign(reversed(missing_from(indices_of(a), n)));
 }
 
@@ -189,17 +195,15 @@ constexpr int expected_involution_sign(mask_t a) {
 
 // The masks of an algebra of n generators, all of them for n up to 8; the
 // exhaustive ranges below are these.
-constexpr int exhaustive_n = 8;
+constexpr std::size_t exhaustive_n = 8;
 
-constexpr mask_t blade_count(int n) {
-  return mask_t{1} << static_cast<unsigned>(n);
-}
+constexpr mask_t blade_count(std::size_t n) { return mask_t{1} << n; }
 
 // Every function agrees with its definition on every blade, and the reorder
 // sign on every pair of blades, of an algebra of n generators. Run in a
 // constant evaluation, so that the compile-time path of the header is proved
 // as well as the run-time one.
-constexpr bool all_agree(int n) {
+constexpr bool all_agree(std::size_t n) {
   for (mask_t a = 0; a < blade_count(n); ++a) {
     using namespace galoot::core;
     if (grade(a) != expected_grade(a) ||
@@ -227,14 +231,15 @@ static_assert(all_agree(3));
 static_assert(all_agree(4));
 
 // A sample of the masks of an algebra of n generators, for n too large to
-// check exhaustively: the scalar, each generator, each blade of grade n - 1,
-// the antiscalar, and the alternating patterns of generators.
+// check exhaustively: the scalar, the antiscalar, each generator, each blade
+// of grade n - 1, and three alternating patterns of generators. That is
+// 2n + 5 masks, so the widest mask sets the capacity.
 struct mask_sample {
-  std::array<mask_t, 80> at{};
+  std::array<mask_t, (2 * mask_width) + 5> at{};
   int size = 0;
 };
 
-constexpr mask_sample sample_of(int n) {
+constexpr mask_sample sample_of(std::size_t n) {
   mask_sample s;
   const auto add = [&s](mask_t m) {
     s.at.at(static_cast<std::size_t>(s.size)) = m;
@@ -243,8 +248,8 @@ constexpr mask_sample sample_of(int n) {
   const mask_t all = antiscalar(n).mask;
   add(0);
   add(all);
-  for (int i = 0; i < n; ++i) {
-    const mask_t generator = mask_t{1} << static_cast<unsigned>(i);
+  for (std::size_t i = 0; i < n; ++i) {
+    const mask_t generator = mask_t{1} << i;
     add(generator);
     add(all & ~generator);
   }
@@ -330,7 +335,7 @@ TEST_CASE("The reference gives hand-worked sorting signs and exterior "
 
 TEST_CASE("grade and antigrade count the generators in and out of a blade, "
           "for every blade with n up to 8") {
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -353,7 +358,7 @@ TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
 
 TEST_CASE("complement_mask lists the generators a blade lacks, for every "
           "blade with n up to 8") {
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -365,7 +370,7 @@ TEST_CASE("complement_mask lists the generators a blade lacks, for every "
 
 TEST_CASE("The complement signs match their definitions, for every blade "
           "with n up to 8") {
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -380,7 +385,7 @@ TEST_CASE("The complement signs match their definitions, for every blade "
 TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade "
           "with n up to 8") {
   using namespace galoot::core;
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -398,7 +403,7 @@ TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade 
 TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
           "blade with n up to 8") {
   using namespace galoot::core;
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -425,9 +430,9 @@ TEST_CASE("The 16 complements of rigid(3) hold at run time") {
 }
 
 TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
-          "antiscalar is +1, for n from 1 to 32") {
+          "antiscalar is +1, for every n up to the widest mask") {
   using namespace galoot::core;
-  for (int n = 1; n <= mask_bits; ++n) {
+  for (std::size_t n = 1; n <= widest_n; ++n) {
     CAPTURE(n);
     CHECK(complement_mask(0, n) == antiscalar(n).mask);
     CHECK(right_complement_sign(0, n) == 1);
@@ -438,7 +443,7 @@ TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
 
 TEST_CASE("The reverse, antireverse, and grade involution signs match their "
           "definitions, for every blade with n up to 8") {
-  for (int n = 1; n <= exhaustive_n; ++n) {
+  for (std::size_t n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
       CAPTURE(a);
@@ -452,9 +457,9 @@ TEST_CASE("The reverse, antireverse, and grade involution signs match their "
 }
 
 TEST_CASE("Every function matches its definition on a sample of blades at "
-          "n = 12, 16, and 32, the widest mask") {
+          "n = 12, 16, and the widest mask") {
   using namespace galoot::core;
-  for (const int n : {12, 16, 32}) {
+  for (const std::size_t n : std::array<std::size_t, 3>{12, 16, widest_n}) {
     const mask_sample s = sample_of(n);
     for (int p = 0; p < s.size; ++p) {
       const mask_t a = s.at.at(static_cast<std::size_t>(p));
