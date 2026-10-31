@@ -9,9 +9,9 @@
 //
 // The first three must abort with the precondition's message, which the tests
 // core.bits_rejects_* check, and `widest` must exit 0. The input is chosen at
-// run time, so no call is evaluated at compile time.
+// run time, so no call is evaluated at compile time. A usage error exits 2,
+// which fails every test that runs this program.
 #include <cstddef>
-#include <cstdio>
 #include <span>
 #include <string_view>
 
@@ -67,8 +67,6 @@ int main(int argc, char** argv) {
   }
 
   if (!call(given.front(), in)) {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,modernize-use-std-print)
-    std::fprintf(stderr, "bits_assert_fail: no function of that name\n");
     return 2;
   }
   // Reached only when the call returned, so the input was accepted.

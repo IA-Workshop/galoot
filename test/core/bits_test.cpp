@@ -18,8 +18,6 @@ namespace {
 
 using galoot::core::mask_t;
 
-// The reference.
-
 // A list of generator indices, counting from 1; two blades of up to 32
 // generators each fit end to end.
 struct index_list {
@@ -45,8 +43,8 @@ constexpr bool contains(const index_list& list, int index) {
   return false;
 }
 
-// Bit i - 1 of a mask stands for e_i, and the canonical blade lists its
-// indices in increasing order (CONVENTIONS.md, "Generators and blades").
+// Bit i - 1 of a mask stands for e_i, and the mask's blade lists its indices
+// in increasing order.
 constexpr index_list indices_of(mask_t mask) {
   index_list list;
   for (int i = 1; i <= 32; ++i) {
@@ -107,9 +105,9 @@ constexpr int sorting_sign(const index_list& list) {
   return inversions % 2 == 0 ? 1 : -1;
 }
 
-// e_A ∧ e_B as a sign and a mask: zero when A and B share a generator,
-// otherwise the sign of sorting A followed by B times the blade of A ∪ B
-// (CONVENTIONS.md, "Products").
+// The exterior product e_A ∧ e_B as a sign and a mask: zero when A and B share
+// a generator, otherwise the sign of sorting A followed by B times the blade of
+// A ∪ B.
 struct signed_blade {
   int sign;
   mask_t mask;
@@ -127,8 +125,8 @@ constexpr signed_blade wedge(mask_t a, mask_t b) {
   return {.sign = sorting_sign(both), .mask = mask_of(both)};
 }
 
-// The antiscalar e_12...n with sign +1 (CONVENTIONS.md, "Generators and
-// blades"), built from its index list.
+// The antiscalar is +e_12...n, the generators in increasing order with sign
+// +1.
 constexpr signed_blade antiscalar(int n) {
   index_list all;
   for (int i = 1; i <= n; ++i) {
@@ -140,9 +138,6 @@ constexpr signed_blade antiscalar(int n) {
 constexpr bool operator==(signed_blade x, signed_blade y) {
   return x.sign == y.sign && x.mask == y.mask;
 }
-
-// Expected values, each from the definition in CONVENTIONS.md that the
-// header cites.
 
 constexpr int expected_grade(mask_t a) { return indices_of(a).size; }
 
@@ -172,15 +167,13 @@ constexpr int expected_left_sign(mask_t a, int n) {
 }
 
 // The reverse writes the generators of a blade in the opposite order, so its
-// sign is that of sorting the reversed list (CONVENTIONS.md, "Grade
-// operations").
+// sign is that of sorting the reversed list.
 constexpr int expected_reverse_sign(mask_t a) {
   return sorting_sign(reversed(indices_of(a)));
 }
 
-// The antireverse uses the antigrade in place of the grade: the sign of
-// reversing a list as long as the blade's complement (CONVENTIONS.md, "Grade
-// operations").
+// The antireverse is the reverse with the antigrade in place of the grade:
+// the sign of reversing a list as long as the blade's complement.
 constexpr int expected_antireverse_sign(mask_t a, int n) {
   return sorting_sign(reversed(missing_from(indices_of(a), n)));
 }
@@ -261,14 +254,13 @@ constexpr mask_sample sample_of(int n) {
   return s;
 }
 
-// The 16 rows of the complement table of rigid(3), from
-// CONVENTIONS.md, "Complements and duals" and the design study, rewritten from
-// Lengyel's oriented names to canonical masks and signs. Each row was derived
-// by hand from the definition: right sign = the sign of sorting A then C, left
-// sign = the sign of sorting C then A. For example e2 has C = {1, 3, 4}; A
-// then C is (2, 1, 3, 4) with one inversion, so right(e2) = -e134, which is
-// e431 in Lengyel's names; C then A is (1, 3, 4, 2) with two, so
-// left(e2) = +e134 = -e431.
+// The 16 complements of rigid(3), the algebra R(3,0,1) of four generators,
+// written with masks in increasing order rather than Lengyel's oriented names
+// (e431 = e4 ∧ e3 ∧ e1 = -e134). Each row was worked by hand from
+// u ∧ right(u) = +e1234 and left(u) ∧ u = +e1234: the right sign is the sign
+// of sorting A then C, and the left sign that of sorting C then A. For e2,
+// C = {1, 3, 4}; (2, 1, 3, 4) has one inversion, so right(e2) = -e134 = e431,
+// and (1, 3, 4, 2) has two, so left(e2) = +e134 = -e431.
 struct complement_row {
   mask_t blade;
   mask_t complement;
@@ -310,8 +302,7 @@ static_assert(rigid3_table_holds());
 
 } // namespace
 
-TEST_CASE("Bit i - 1 of a mask stands for e_i, and e124 is the mask 0b1011 "
-          "(CONVENTIONS.md, Generators and blades)") {
+TEST_CASE("Bit i - 1 of a mask stands for e_i, so e124 is the mask 0b1011") {
   // The reference reads masks this way; this case pins the reading itself.
   CHECK(mask_of(indices_of(0b1011U)) == 0b1011U);
   CHECK(indices_of(0b1011U).size == 3);
@@ -322,8 +313,8 @@ TEST_CASE("Bit i - 1 of a mask stands for e_i, and e124 is the mask 0b1011 "
   CHECK(galoot::core::complement_mask(0b1011U, 4) == 0b0100U);
 }
 
-TEST_CASE("The reference itself: sorting signs and wedges of known blades "
-          "(CONVENTIONS.md, Products)") {
+TEST_CASE("The reference gives hand-worked sorting signs and exterior "
+          "products") {
   // Values worked by hand, so that a defect in the reference cannot pass
   // every case below unnoticed.
   index_list three_two_one;
@@ -338,7 +329,7 @@ TEST_CASE("The reference itself: sorting signs and wedges of known blades "
 }
 
 TEST_CASE("grade and antigrade count the generators in and out of a blade, "
-          "for every blade with n up to 8 (CONVENTIONS.md, notation)") {
+          "for every blade with n up to 8") {
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
@@ -350,7 +341,7 @@ TEST_CASE("grade and antigrade count the generators in and out of a blade, "
 }
 
 TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
-          "of masks below 2^8 (CONVENTIONS.md, Products)") {
+          "of masks below 2^8") {
   for (mask_t a = 0; a < blade_count(exhaustive_n); ++a) {
     for (mask_t b = 0; b < blade_count(exhaustive_n); ++b) {
       CAPTURE(a);
@@ -361,7 +352,7 @@ TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
 }
 
 TEST_CASE("complement_mask lists the generators a blade lacks, for every "
-          "blade with n up to 8 (CONVENTIONS.md, Complements and duals)") {
+          "blade with n up to 8") {
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
@@ -373,7 +364,7 @@ TEST_CASE("complement_mask lists the generators a blade lacks, for every "
 }
 
 TEST_CASE("The complement signs match their definitions, for every blade "
-          "with n up to 8 (CONVENTIONS.md, Complements and duals)") {
+          "with n up to 8") {
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
@@ -387,7 +378,7 @@ TEST_CASE("The complement signs match their definitions, for every blade "
 }
 
 TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade "
-          "with n up to 8 (CONVENTIONS.md, Complements and duals)") {
+          "with n up to 8") {
   using namespace galoot::core;
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
@@ -405,7 +396,7 @@ TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade 
 }
 
 TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
-          "blade with n up to 8 (CONVENTIONS.md, Complements and duals)") {
+          "blade with n up to 8") {
   using namespace galoot::core;
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
@@ -423,8 +414,7 @@ TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
   }
 }
 
-TEST_CASE("The 16-entry complement table of rigid(3) holds at run time "
-          "(CONVENTIONS.md, Complements and duals)") {
+TEST_CASE("The 16 complements of rigid(3) hold at run time") {
   // The same table is checked in a constant evaluation above.
   for (const complement_row& row : rigid3_complements) {
     CAPTURE(row.blade);
@@ -435,8 +425,7 @@ TEST_CASE("The 16-entry complement table of rigid(3) holds at run time "
 }
 
 TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
-          "antiscalar is +1, for n from 1 to 32 (CONVENTIONS.md, Generators "
-          "and blades)") {
+          "antiscalar is +1, for n from 1 to 32") {
   using namespace galoot::core;
   for (int n = 1; n <= mask_bits; ++n) {
     CAPTURE(n);
@@ -448,8 +437,7 @@ TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
 }
 
 TEST_CASE("The reverse, antireverse, and grade involution signs match their "
-          "definitions, for every blade with n up to 8 (CONVENTIONS.md, Grade "
-          "operations)") {
+          "definitions, for every blade with n up to 8") {
   for (int n = 1; n <= exhaustive_n; ++n) {
     for (mask_t a = 0; a < blade_count(n); ++a) {
       CAPTURE(n);
@@ -464,8 +452,7 @@ TEST_CASE("The reverse, antireverse, and grade involution signs match their "
 }
 
 TEST_CASE("Every function matches its definition on a sample of blades at "
-          "n = 12, 16, and 32, the widest mask (CONVENTIONS.md, Generators "
-          "and blades)") {
+          "n = 12, 16, and 32, the widest mask") {
   using namespace galoot::core;
   for (const int n : {12, 16, 32}) {
     const mask_sample s = sample_of(n);
