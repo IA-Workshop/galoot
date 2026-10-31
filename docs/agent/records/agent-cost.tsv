@@ -8,3 +8,8 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	WU1	blind reviewer (W5)	opus	220829	67	851	reported by harness as subagent_tokens
 2026-10-31	spikes-C-D-F	spike author	opus	417866	159	3069	reported by harness as subagent_tokens
 2026-10-31	WU1-fixes	build-expert implementer (resumed; delta since last row)	opus	53998	32	435	cumulative 368275 less the 314277 logged earlier
+2026-10-31	WU2	bits implementer	opus	253815	84	1045	reported by harness as subagent_tokens
+2026-10-31	M0-closure	scripts implementer	opus	264885	83	1134	reported by harness as subagent_tokens
+2026-10-31	WU3	metric implementer	opus	277533	73	1190	reported by harness as subagent_tokens
+2026-10-31	M0-closure	blind reviewer (W5)	opus	184017	50	567	reported by harness as subagent_tokens
+2026-10-31	WU2	blind reviewer (W5)	opus	205524	59	697	reported by harness as subagent_tokens
