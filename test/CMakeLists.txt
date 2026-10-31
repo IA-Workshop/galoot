@@ -23,6 +23,15 @@ set(expect_output
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
 
+# core.zero_cases below runs the smoke program with its own copy of the rule,
+# so check here that galoot_add_test gave core.smoke the same rule (W5 review
+# of WU1, finding N2).
+get_test_property(core.smoke FAIL_REGULAR_EXPRESSION smoke_zero_cases)
+if(NOT smoke_zero_cases STREQUAL GALOOT_ZERO_CASES_REGEX)
+  message(FATAL_ERROR "core.smoke's FAIL_REGULAR_EXPRESSION is "
+    "'${smoke_zero_cases}', not the zero-cases rule '${GALOOT_ZERO_CASES_REGEX}'")
+endif()
+
 # core.zero_cases: a filter that matches no test case fails (S14). WILL_FAIL
 # inverts the zero-cases failure, so this passes only if the rule fires.
 add_test(NAME core.zero_cases
