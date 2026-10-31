@@ -89,7 +89,7 @@ Numbered criteria from the gates plan, merged. Each is checkable. "Ref script" i
 
 ## 6. Milestones and gates
 
-Every gate requires: a report that opens with departures (C20) and carries a V10 table; an auditor run on the gated `develop` revision; a W5 review record for every merge in the milestone; `runs.tsv` entries; owner acceptance recorded as the outcome here (W11). A gate that fails twice with no new understanding halts under W8. Work units (WU) come from the architecture plan and are listed in section 8.
+Every gate requires: a report that opens with departures (C20) and carries a V10 table; an auditor run on the gated `develop` revision; a W5 review record for every merge in the milestone; `runs.tsv` entries; a snippets coalescing review in `docs/agent/snippets/reviews/` (decision 0021); owner acceptance recorded as the outcome here (W11). A gate that fails twice with no new understanding halts under W8. Work units (WU) come from the architecture plan and are listed in section 8.
 
 | # | Milestone | Work units | Exit evidence | Owner decides |
 | --- | --- | --- | --- | --- |
