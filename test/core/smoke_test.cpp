@@ -24,3 +24,8 @@ TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time "
   // takes the run-time branch of GALOOT_ASSERT.
   CHECK(checked_identity(2) == 2);
 }
+
+TEST_CASE("GALOOT_ASSERT checks at run time exactly when GALOOT_CHECKING is 1, "
+          "through names in galoot::core::detail (STYLE S6; decision 0030)") {
+  CHECK(galoot::core::detail::checking_now() == (GALOOT_CHECKING == 1));
+}

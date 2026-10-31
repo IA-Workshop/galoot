@@ -94,3 +94,13 @@ add_test(NAME tools.include_scan_rejects
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
   LABELS "tools;tools.include_scan")
+
+# tools.measure_header: launchers that open an empty record at once write one
+# header between them (W5 review of WU1, finding B1).
+add_test(NAME tools.measure_header
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_header_test.py
+    ${PROJECT_SOURCE_DIR}/tools/measure
+    ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
+set_tests_properties(tools.measure_header PROPERTIES
+  LABELS "tools;tools.measure")
