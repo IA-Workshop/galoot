@@ -1,6 +1,6 @@
 # 0023 Wording of the wedge in CONVENTIONS 4.1
 
-- Status: proposed; a CONVENTIONS change takes effect when the owner ratifies it
+- Status: accepted; ratified by the owner on 2026-10-31 ("proceed with recommendations on the 4.1 ruling"), and CONVENTIONS is now version 1.4
 - Date: 2026-10-31
 - Proposed by: Claude (agent), from the blind review of 2026-10-31 (finding 6)
 
@@ -20,4 +20,4 @@ Option 3, with option 2 stated as a theorem: "The wedge a ∧ b is the exterior 
 
 ## Consequences
 
-CONVENTIONS moves to 1.4 when ratified. No code depends on it yet.
+CONVENTIONS is version 1.4. No code depends on it yet.
