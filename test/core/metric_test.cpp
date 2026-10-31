@@ -25,7 +25,7 @@ using matrix = std::array<std::array<int, N>, N>;
 // A matrix written out row by row.
 template <std::size_t N>
 // NOLINTNEXTLINE(*-avoid-c-arrays): a C array lets N be deduced from braces.
-constexpr matrix<N> written(const int (&rows)[N][N]) {
+constexpr matrix<N> written(const int (&rows)[N][N]) noexcept {
   matrix<N> m{};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
@@ -203,12 +203,17 @@ const core::metric<2> runtime_value::value{written({{1, 0}, {0, 1}})};
 struct member_value {
   core::metric<2> value{written({{1, 0}, {0, 1}})};
 };
-// Has the members a metric has, but is not a metric.
+// Has the members a metric has, but is not a metric. metric_like rejects it
+// before reading generator_count.
 struct lookalike_metric {
   std::array<std::array<int, 2>, 2> gram;
-  static constexpr std::size_t generator_count = 2;
-  [[nodiscard]] constexpr bool is_symmetric() const { return true; }
-  [[nodiscard]] constexpr bool entries_in_range() const { return true; }
+  [[maybe_unused]] static constexpr std::size_t generator_count = 2;
+  [[nodiscard]] constexpr bool is_symmetric() const {
+    return gram[0][1] == gram[1][0];
+  }
+  [[nodiscard]] constexpr bool entries_in_range() const {
+    return gram[0][0] <= core::max_form_entry;
+  }
 };
 struct lookalike {
   static constexpr lookalike_metric value{written({{1, 0}, {0, 1}})};
