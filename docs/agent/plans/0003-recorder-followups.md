@@ -8,3 +8,7 @@
 - Evidence: the recorder test output and one row of each kind, with the revision and command.
 - Agent cost: tracked for information only (decision 0019); record in `docs/agent/records/agent-cost.tsv`.
 - Open questions: none.
+
+## Additional scope from the WU1 review (non-blocking findings N5 to N16)
+
+Findings N5, N6, N7, N8, N9, N10, N12, N13, N14, N15, and N16 of `docs/agent/records/reviews/2026-10-31-wu1-build-skeleton.md` are carried here, except that N9 and N10 are decision-record edits and N12 is a re-record of the P1 baseline on a clean revision. N11 is a process note for the next review request. The blocking findings B1 to B3 and the cheap N1 to N4 are fixed on `feature/build` before it merges.
