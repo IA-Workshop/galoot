@@ -71,7 +71,7 @@ A name fixed by mathematical notation keeps its form: basis names such as `e41` 
 
 ### S11 Comments
 
-Comments state why: intent, invariants, the convention or equation applied, and its source (`// Right complement; conventions.md, "Complements"`). They do not narrate the code. Each declaration in a public header has a `///` comment immediately before it that states what the function requires, guarantees, and preserves, and the conventions it relies on, cited by section of `docs/conventions.md` rather than restated.
+Comments state why: intent, invariants, the convention or equation applied, and its source (`// Right complement; CONVENTIONS.md, "Complements"`). They do not narrate the code. Each declaration in a public header has a `///` comment immediately before it that states what the function requires, guarantees, and preserves, and the conventions it relies on, cited by section of [CONVENTIONS.md](CONVENTIONS.md) rather than restated.
 
 ### S12 Statements and constants
 
@@ -88,3 +88,7 @@ Tests use doctest, under `test/`, with one file per component named `<component>
 ### S15 Floating point
 
 No header relies on options that relax IEEE 754 semantics, and a header whose correctness depends on those semantics, such as a robust predicate, stops compilation with `#error` when the compiler reports such an option. The test build states its floating-point options, including the contraction of multiply-add, so that declared variation (V14) has a recorded cause. Every comparison within a tolerance names its tolerance as a constant with its basis beside it (V12).
+
+### S16 Direct code
+
+Code takes the most direct form that meets its present requirement (C12): a function before a class, a concrete type before a template, and a template parameter only where two present uses differ in it. A helper, wrapper, overload, or option is added only with a present caller, and a short repetition that reads plainly is kept in preference to an abstraction that hides it. A clever construction is replaced by a plain one wherever the plain one costs no more in build or run time, as measured under [PERFORMANCE.md](PERFORMANCE.md).

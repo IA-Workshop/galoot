@@ -2,7 +2,7 @@
 
 Status: draft for adoption by the owner.
 
-This constitution states what Galoot is for and the rules that hold for all of its work. Three documents beside it add detail: [WORKFLOW.md](WORKFLOW.md) says how a change moves from idea to release, [VVUQ.md](VVUQ.md) says what counts as evidence that Galoot is correct, and [STYLE.md](STYLE.md) sets the style of the C++ source. They may add requirements but never relax this one, and where they conflict with it, this document governs.
+This constitution states what Galoot is for and the rules that hold for all of its work. Four documents beside it add detail: [WORKFLOW.md](WORKFLOW.md) says how a change moves from idea to release, [VVUQ.md](VVUQ.md) says what counts as evidence that Galoot is correct, [PERFORMANCE.md](PERFORMANCE.md) says how Galoot's build, run, and development costs are measured and kept in proportion, and [STYLE.md](STYLE.md) sets the style of the C++ source. They may add requirements but never relax this one, and where they conflict with it, this document governs.
 
 The constitution names no programming language, tool, or platform. Those are choices recorded as decisions (C18), and they can change while this document stays the same.
 
@@ -31,7 +31,7 @@ The core covers finite-dimensional algebras whose basis elements multiply to a s
 
 ### C3 Derived, not listed
 
-Every product, operation, and named type that follows from a signature is derived from it. Hand-written product tables, per-algebra special cases, and per-type operation lists are defects. A hand-written form is allowed only as a replacement for a derived form, verified against it and justified by measurement.
+Every product, operation, and named type that follows from a signature is derived from it. Hand-written product tables, per-algebra special cases, and per-type operation lists are defects. A hand-written, precompiled, or cached form is allowed only as a replacement for a derived form, verified against it and justified by measurement.
 
 ### C4 One mechanism
 
@@ -53,7 +53,7 @@ Structure constants, meaning the signs, phases, and coefficients of generated te
 
 ### C8 Nothing hidden
 
-An operation that discards components, changes representation, or assumes a property of its input, such as unit norm, states this in its name or interface. Lossy conversions happen only on explicit request. A checking mode verifies that whatever an operation discarded was zero.
+An operation that discards components, changes representation, or assumes a property of its input, such as unit norm, states this in its name or interface. Lossy conversions happen only on explicit request. A checking mode verifies that whatever an operation discarded was zero. Throughout Galoot, including its build and tests, behavior is declared rather than left to defaults, inference, or the environment; where predicting an outcome needs a hidden rule, the rule is made visible in the code or the interface.
 
 ### C9 Errors in the terms of the algebra
 
@@ -63,7 +63,7 @@ Misuse is reported at the earliest point it is detectable, in terms of the signa
 
 ### C10 One convention per concept
 
-Basis order and names, orientation signs, complement and dual signs, angle conventions, and the meaning of each shorthand notation are fixed in one written conventions specification, and tests pin each one. A concept has one convention; an alternative is available only under its own explicit name. A convention changes only when the owner ratifies the change to the conventions specification (C18).
+Basis order and names, orientation signs, complement and dual signs, angle conventions, and the meaning of each shorthand notation are fixed in one written conventions specification, [CONVENTIONS.md](CONVENTIONS.md), and tests pin each one. A concept has one convention; an alternative is available only under its own explicit name. A convention changes only when the owner ratifies the change to the conventions specification (C18).
 
 ### C11 Disagreeing sources
 
@@ -71,13 +71,13 @@ Where published sources or other implementations disagree on a convention or a v
 
 ## Compactness and structure
 
-### C12 Compactness
+### C12 Compactness and simplicity
 
-Every part of the core exists for a present use. Among designs that meet a requirement, the simplest is chosen, measured by what a reader must hold in mind to understand, verify, and change it. Generality, options, and optimizations beyond present requirements wait until the requirement is real; anticipated needs are written down as notes, not built. Code and documentation that no longer serve a purpose are deleted. Complexity that cannot be removed is confined to the generative mechanism (C4), documented in place, and covered by the strongest evidence VVUQ.md defines.
+Complexity is the main source of defects, cost, and misunderstanding, so every part of Galoot, including its tests, build, tooling, and records, exists for a present use. The mathematics is as complex as it is, and that complexity is accepted; everything added on top of it bears the burden of proof. Among designs that meet a requirement, the simplest is chosen, measured by what a reader must hold in mind to understand, verify, and change it, not by its size or the sophistication of its construction. Generality, options, and optimizations beyond present requirements wait until the requirement is real or the owner records it as one; anticipated needs are written down as notes, not built. Every layer, wrapper, extension point, and option has a present user, and one without a user is removed. A direct implementation is the reference against which each optimized or generalized replacement is verified, and the replacement shows by measurement that it is needed (C3). Code, options, and documentation that no longer serve a purpose are deleted, and the removal of a public interface is announced to its users in the release that removes it (W13). Complexity that cannot be removed is confined to the generative mechanism (C4), documented in place, and covered by the strongest evidence VVUQ.md defines.
 
 ### C13 Layering
 
-Components depend only on components below them, and the dependencies form no cycle. The core depends on nothing beyond its language's standard facilities, can be used by adding its source to a project with no build system or third-party package, and never refers to anything that depends on it. Extensions reach the core only through its public interface.
+Components depend only on components below them, and the dependencies form no cycle. The core depends on nothing beyond its language's standard facilities, can be used by adding its source to a project with no build system or third-party package, and never refers to anything that depends on it. Extensions reach the core only through its public interface. Adopting, replacing, or removing a dependency of an extension, the tests, or the tooling is a decision (C18) that weighs, against an owned implementation, the part of the dependency that is used, how actively it is supported, and the cost of carrying it, including its license and its exposure to compromise. A dependency that one person supports has a record of how the work continues if that support ends.
 
 ### C14 Measured cost
 
@@ -113,7 +113,7 @@ A report states what was verified and how, what was not verified, and what remai
 
 ## Amendment
 
-This document, WORKFLOW.md, VVUQ.md, and STYLE.md change only when the owner ratifies the change, recorded under C18.
+This document, WORKFLOW.md, VVUQ.md, PERFORMANCE.md, and STYLE.md change only when the owner ratifies the change, recorded under C18.
 
 ## Revision history
 
@@ -121,3 +121,5 @@ This document, WORKFLOW.md, VVUQ.md, and STYLE.md change only when the owner rat
 | --- | --- |
 | 2026-10-31 | First draft, from the design study of 2026-10-30 |
 | 2026-10-31 | STYLE.md added; decision records need no approval; the owner ratifies governance documents and the conventions specification |
+| 2026-10-31 | PERFORMANCE.md added; C3 admits precompiled and cached forms on the same terms as hand-written ones |
+| 2026-10-31 | Simplicity provisions from the governance harness folded into C8, C12, and C13 |

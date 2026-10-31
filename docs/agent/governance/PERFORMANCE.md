@@ -1,0 +1,91 @@
+# Galoot performance
+
+Status: draft for adoption by the owner.
+
+This document says how Galoot's costs are measured and kept in proportion to their use. It adds detail to C6, C12, and C14 of the [constitution](CONSTITUTION.md) and to V15 of [VVUQ.md](VVUQ.md), and it sets the scope of the test runs that [WORKFLOW.md](WORKFLOW.md) asks for.
+
+Galoot has three costs:
+
+- Build cost: the time and memory a compiler spends generating structures. Galoot is header-only and generates its code at compile time, so every user pays this cost on every build.
+- Run cost: the speed and memory use of the generated code.
+- Development cost: the machine time and agent cost of building and testing Galoot itself.
+
+All three are measured and recorded. None has a bound unless the owner sets one (C14). A notable change in a measured cost is reported with its cause.
+
+## Build cost
+
+### P1 Build cost is measured
+
+The build records, for each test and benchmark translation unit, its wall time and the compiler's peak memory, on each supported compiler. A change to the core records both before and after the change (W10). Where a cost needs explaining, the compiler's own time report attributes it to parsing, template instantiation, constant evaluation, or code generation.
+
+### P2 Growth with use
+
+A benchmark measures build cost against the number of generators and against the number of distinct operations a program instantiates, each over at least three sizes, so that the rate of growth is visible. Build cost that grows with the dimension of the algebra while the use stays fixed contradicts C6 and is recorded as a defect.
+
+### P3 Work done once
+
+Each distinct table, meaning a signature, an operation, and its input blade sets, is generated once per translation unit and reused (STYLE S7). A header costs little beyond parsing for the structures a program does not use, and a program includes only the modules it uses. A precomputed or cached table replaces generation only under C3.
+
+## Run cost
+
+### P4 Generated code
+
+The code generated for an operation is what a careful person would write by hand for it: straight-line arithmetic over the terms that can be nonzero, with no run-time branching on basis elements, no allocation, and no indirection. Representative operations are checked by reading the compiler's output at the optimization level users build with, and by a benchmark against a hand-written form (C3, V15).
+
+### P5 Memory layout
+
+A named type stores only the components that can be nonzero (C6), contiguously, so its size is its number of components times the size of its scalar, which a compile-time check confirms. Values are trivially copyable aggregates (STYLE S8), so arrays of them are dense and are traversed in memory order. Other layouts, for vector units or for arrays of components, are extensions chosen by measurement.
+
+### P6 Benchmarks
+
+A run-time benchmark takes inputs the compiler cannot know and uses its results, so that the optimizer cannot fold or remove the work it measures. It repeats over separate runs, not only over iterations within one run, and reports a central value with its spread. A comparison states its baseline, and both sides share the revision, toolchain, options, machine, and workload (V15). A benchmark on a shared machine holds the processors it measures for its duration, and where the other load on the machine is unknown, its record says so.
+
+### P7 Performance history
+
+The measurements of P1, P2, and P6 are kept in `docs/agent/records/performance/`, each with its revision, toolchain, machine, options, and workload. Once the history shows how a quantity varies, a change that can affect the quantity is compared with the history by a criterion stated before the comparison, and a change beyond the variation is reported with its cause. A change of compiler, library, or machine is marked in the history so that it is not read as a change of the code.
+
+## Development cost
+
+### P8 Test scope follows change scope
+
+A test run holds the tests a change can affect, and no others until a merge needs more (P9). These are the tests of each component the change touches and of each component that includes one of them, directly or through others, together with each new or changed test and each test that failed at its last run. A change to something many tests share widens the run:
+
+| Change | Tests that run |
+| --- | --- |
+| A component's header | Its tests, and the tests of every component that includes it |
+| A test, or a helper shared by tests | The tests that use it |
+| The build description, compiler options, or toolchain | Every test built under what changed |
+| A vendored dependency in `include/ext/` | Every test that uses it |
+| A reference script or data in `test/reference/` | The checks that read it |
+| Documentation only | None |
+
+Tests carry labels for their module and component, so a selection is named by labels rather than listed test by test.
+
+### P9 Scope by merge level
+
+Each merge runs the checks for the scope it integrates. A lower level never runs more than the level above it.
+
+| Point | Checks that run |
+| --- | --- |
+| During work and before each commit | The selection of P8 in one configuration |
+| Merge into a feature or subfeature branch | The selection of P8 for everything the branch changed since it left its parent, in each configuration the change can affect |
+| Merge into `develop` | The full suite on each supported compiler, one of them under the sanitizers of STYLE S5, and the mechanical style checks (W5) |
+| Release | The full suite in every supported configuration, the benchmarks, and an update of the performance history (W13) |
+
+A test long enough to slow the edit and test cycle carries the label `slow`. It runs before a commit only when the change touches the component it tests, and otherwise from the next merge level up. Deferral moves a check to a later merge; it never omits one.
+
+### P10 Runs not repeated
+
+A passing run is evidence for the revision and configuration it ran on, so a run is not repeated on an unchanged revision and configuration. After a fix, the tests that failed run first, and then the selection. A test is never rerun to get a pass: a test that both passes and fails on one revision is a defect of the test or of the code (W9).
+
+### P11 Shared machine
+
+Several workstreams, of people and of agents, share the development machine. Each works in its own checkout of the repository with its own build directory, so that no two builds write the same files. Concurrent workstreams draw their parallel build and test jobs from one pool of job slots shared across the machine, so that together they share the processors rather than oversubscribing them; a limit set inside one build tree does not do this, because it cannot see the others. The size of the pool is the owner's decision (C14). A workstream does not start a build or a run that the free processors and memory cannot serve. A run that measures performance (P1, P6) does not overlap other heavy work on the machine.
+
+### P12 Build only what runs
+
+A run builds only the targets its selection needs. Build directories persist between runs, so builds are incremental. A clean build is made only when the build description or the toolchain changes, or when a build is suspected to be stale.
+
+### P13 Record of a run
+
+The message of each merge names the selection that ran, its configurations, its outcome, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).

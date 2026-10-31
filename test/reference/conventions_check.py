@@ -1,6 +1,7 @@
-"""Exact checks of the sign conventions in docs/conventions.md.
+"""Exact checks of the sign conventions in CONVENTIONS.md.
 
-This is an independent reference (VVUQ V1, kind 3): a small Clifford algebra
+This is an independent reference (VVUQ V1, kind 3) for the conventions
+specification, docs/agent/governance/CONVENTIONS.md: a small Clifford algebra
 over rationals that shares no code with the library. Run it with
 `python3 -I test/reference/conventions_check.py`; it exits nonzero on any
 failure.

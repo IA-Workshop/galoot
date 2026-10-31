@@ -22,7 +22,7 @@ A unit that changes the core, a convention, a public interface, or a dependency,
 
 1. Plan: state the goal and criteria (W1), with a written plan where W3 requires one.
 2. Implement: make the smallest change that meets the goal, in the style of the surrounding code. Look for existing parts before adding new ones, and delete what the change makes dead. For a new capability, write the direct derived form first (C3), and optimize only after measurement shows the need.
-3. Verify: produce the evidence VVUQ.md asks for, with tests written alongside the code they test. During development, run the tests the change can affect; before the change merges to `develop`, run the full suite.
+3. Verify: produce the evidence VVUQ.md asks for, with tests written alongside the code they test. Run the tests the change can affect, widening the run at each merge as [PERFORMANCE.md](PERFORMANCE.md) P8 and P9 state.
 4. Review: someone other than the author reviews the change before it merges to `develop` (W5).
 5. Record: write the decisions, notes, and lessons the unit produced (W6), and state the verification and validation status of its results (V10).
 
@@ -34,12 +34,14 @@ A change merges to `develop` only after three checks pass: the mechanical style 
 
 | Location | Holds |
 | --- | --- |
+| `docs/agent/governance/` | The constitution, this document, VVUQ.md, PERFORMANCE.md, STYLE.md, and the conventions specification CONVENTIONS.md (C10). Each changes only by a change the owner ratifies. |
 | `docs/agent/decisions/` | One file per decision (C18): context, options weighed, decision, consequences, and status. Any contributor enters a decision record without the owner's approval. A recorded decision is not rewritten; a later decision supersedes it, and both stay. |
 | `docs/agent/plans/` | Plans under W3, each closed with its outcome. |
+| `docs/agent/records/` | Measurements, including the performance history of PERFORMANCE.md P7. |
 | `docs/agent/research-notes/` | Findings from sources: the claim, the source, who checked it and how, and what was confirmed as opposed to inferred (V9). |
 | `docs/agent/lessons-learned/` | Mistakes and surprises: what happened, the cause, and what now detects it. |
 | `docs/agent/workbench/` | Scratch work. Nothing relied upon lives here, and it may be cleared at any time. |
-| `docs/` | Documentation for users, including the design study and the conventions specification. |
+| `docs/` | Documentation for users, including the design study. |
 
 Record files carry a sortable prefix and a short descriptive name, such as `0001-dual-sign-convention.md`.
 
@@ -54,7 +56,7 @@ Every change is committed to version control with a message that says what chang
 | `feature/<name>` | One unit of work or a group of related units, branched from `develop` | Any contributor, agents included |
 | `feature/<name>/<part>` | A subfeature: one part of a feature, branched from its feature | Any contributor, agents included |
 
-Merges into `develop`, feature, and subfeature branches need no authorization or action from the owner. A merge into a feature or subfeature branch needs the tests the change can affect to pass; a merge into `develop` needs W5.
+Merges into `develop`, feature, and subfeature branches need no authorization or action from the owner. A branch merges only into the branch it was made from, one merge at a time into the same branch. Before the merge, the parent's current state is merged into the branch and the checks of [PERFORMANCE.md](PERFORMANCE.md) P9 for that level pass on the result; a merge into `develop` also needs W5. A fix is made on a branch from the most upstream branch the defect affects and merged there, and each descendant branch receives it by merging its parent in. Workstreams that run at the same time each use their own checkout of the repository (P11).
 
 ### W8 Stopping rule
 
@@ -66,7 +68,7 @@ A defect found outside the current unit is reported to the owner and noted in th
 
 ### W10 Resource records
 
-A unit that changes the core records the build time, build memory, and test time of the affected suites before and after the change (C14). Agent work records its agent cost. No bounds apply unless the owner sets them.
+A unit that changes the core records the build time, build memory, and test time of the affected suites before and after the change (C14, PERFORMANCE.md P1). Agent work records its agent cost. No bounds apply unless the owner sets them.
 
 ### W11 Phases
 
@@ -78,4 +80,4 @@ Documentation is written for human readers in plain American English, and it cha
 
 ### W13 Releases
 
-A release is a merge of `develop` into `master` together with a tag naming the release's version. Only the owner merges into `master` or creates release tags, and does so with no open blocking defect and with evidence current for the released revision. Each component is versioned semantically, and each release of the core records the version of the conventions specification it implements.
+A release is a merge of `develop` into `master` together with a tag naming the release's version. Only the owner merges into `master` or creates release tags, and does so with no open blocking defect and with evidence current for the released revision. Each component is versioned semantically, and each release of the core records the version of the conventions specification it implements. The release record lists each public interface the release removes or changes incompatibly (C12).
