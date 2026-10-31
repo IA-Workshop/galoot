@@ -16,20 +16,20 @@ Items marked Done are already in the governance documents and await ratification
 
 ## Style
 
-6. Proposed, as a sentence in STYLE S9: "An operation whose input can be degenerate, such as a zero norm, the logarithm of a pure translation, or the square root of a half-turn, states the degenerate set and returns a failure value on it. On a rounding scalar, a branch between formulas is decided as V13 requires, never by an exact comparison with zero." Source: the thesis's formulas branch on exact equality and divide by zero at these points (0003).
-7. Proposed, as sentences in STYLE S14: "A `SUBCASE` never appears inside a loop. At most one `TEST_CASE`, `INFO`, or `CAPTURE` appears on a line. A test run that executes no test cases fails." Sources: doctest issue #1208 and measurements; the Clang 22 change; the zero-match exit code (0001). These rules are now in the doctest-expert agent; the proposal makes them binding on people too.
+6. Done (ratified), as a sentence in STYLE S9: "An operation whose input can be degenerate, such as a zero norm, the logarithm of a pure translation, or the square root of a half-turn, states the degenerate set and returns a failure value on it. On a rounding scalar, a branch between formulas is decided as V13 requires, never by an exact comparison with zero." Source: the thesis's formulas branch on exact equality and divide by zero at these points (0003).
+7. Done (ratified), as sentences in STYLE S14: "A `SUBCASE` never appears inside a loop. At most one `TEST_CASE`, `INFO`, or `CAPTURE` appears on a line. A test run that executes no test cases fails." Sources: doctest issue #1208 and measurements; the Clang 22 change; the zero-match exit code (0001). These rules are now in the doctest-expert agent; the proposal makes them binding on people too.
 8. Plan: a plan formatter that names the blades and lists the terms of a generated table, kept from Versor's introspection, for debugging and for error messages (C9; 0003, App. A.4).
 
 ## Process
 
-9. Proposed, as a sentence in VVUQ V9: "A formula or table from a published source is a reference only after it is recomputed from the definitions; an erratum found this way is recorded in a research note." Sources: errata found in the thesis (0003), a reversed moment sign on the wiki's Flector page, and the negated conformal Duals table (0005).
+9. Done (ratified), as a sentence in VVUQ V9: "A formula or table from a published source is a reference only after it is recomputed from the definitions; an erratum found this way is recorded in a research note." Sources: errata found in the thesis (0003), a reversed moment sign on the wiki's Flector page, and the negated conformal Duals table (0005).
 10. Plan: the validation cases (V8) with independent answers, by phase:
     - Phase 2 (rigid): crystallographic point and space groups built from mirror flectors, with known group orders (0003, §3.2 to 3.3); exp and log round trips; Denavit–Hartenberg chains against matrices (0003, §4.3).
     - Phase 3 (conformal): the line-to-circle boost (0003, §5.3.1); Bennett-linkage closure, once a primary source for the angle relation is read (0003).
     - Mesh: Romero's seven-point example, the 12 lattice points on x² + y² = 25, grids, and random points checked by Euler count and empty circles (0004).
 11. Proposed: the conformal checks from note 0005's scratch scripts move into `test/reference/` when phase 3 begins, rather than now, because no conformal code exists yet (C12).
-12. Owner decision: the size of the machine's shared pool of job slots (PERFORMANCE P11, C14). The recommendation is 32, one per hardware thread. It prevents oversubscription and limits no workstream below what the machine provides (0002, F6).
-13. Owner decision: whether to report the two wiki errata to Lengyel, after a person looks at the live pages (0005).
+12. Owner decision: the size of the machine's shared pool of job slots (PERFORMANCE P11, C14). The machine has 32 hardware threads on 24 physical cores: 8 performance cores with two threads each and 16 efficiency cores with one (P14). The recommendation is 24, one per physical core. The Linux scheduler prefers an idle core to the second thread of a busy one, so 24 jobs tend to fill every core once, while the 8 spare threads keep the editor, language server, and agent sessions responsive. A second job on a performance core's other thread adds little throughput to compile-heavy work and slows both jobs (0002, F6).
+13. Decided by the owner: reporting errata to outside parties is out of scope for all agents.
 
 ## Planning
 
@@ -41,7 +41,7 @@ Items marked Done are already in the governance documents and await ratification
 
 ## The design study
 
-19. The design study is canonical, so these corrections are for the owner to make or approve: its reference list still marks Romero et al. "abstract only", and the least-squares circle fits it attributes to that paper come from the paper's precursors (0004); its flector formula is the one that 5.6 corrects (CONVENTIONS section 8).
+19. Done, as the owner authorized: the design study's Romero entries now record that the full text was read (0004), and its flector formula carries the grade involution of 5.6. Its attribution of the least-squares circle fits to the precursors was already correct.
 
 ## Open questions
 

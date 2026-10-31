@@ -1,4 +1,181 @@
-/build
+# Galoot .gitignore
+#
+# A leading slash anchors a pattern to the repository root. Patterns without
+# one apply at any depth and are kept to names that cannot collide with a
+# tracked path. Check a change with `git ls-files -ci --exclude-standard`,
+# which must print nothing.
+
+# --- CMake and Ninja --------------------------------------------------------
+# Preset builds live in build/<presetName> (CMakePresets.json is tracked).
+/build/
 /CMakeUserPresets.json
-/.claude/worktrees/
+# Editor link to one preset's compilation database.
+/compile_commands.json
+# Default binary directories of IDEs that do not use the presets.
+/out/
+/cmake-build-*/
+# Leftovers of an accidental in-source configure.
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+DartConfiguration.tcl
+install_manifest.txt
+build.ninja
+.ninja_deps
+.ninja_log
+/Testing/
+/_deps/
+/_CPack_Packages/
+/install/
+
+# --- Compiler output --------------------------------------------------------
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.d
+*.gch
+*.pch
+*.pcm
+*.gcm
+gcm.cache/
+*.dSYM/
+*.dwo
+
+# --- Profiling, coverage, and core dumps ------------------------------------
+# Clang -ftime-trace JSON lands beside each object, inside /build/.
+# perf
+perf.data
+perf.data.old
+# gprof
+gmon.out
+# gcov and llvm-cov
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+lcov.info
+coverage.info
+/coverage/
+# Valgrind tools
+callgrind.out.*
+cachegrind.out.*
+massif.out.*
+vgcore.*
+# Core dumps. Not a bare `core`: it would hide include/galoot/core/.
+/core
+core.[0-9]*
+
+# --- Records are never ignored ----------------------------------------------
+# The measurement history (PERFORMANCE.md P7) may hold files that the build
+# and profiling patterns above match. Nothing above this line hides a record;
+# the sections below still apply inside records.
+!/docs/agent/records/**
+
+# --- Python (test/reference) ------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.ipynb_checkpoints/
+.venv/
+/venv/
+
+# --- Agent scratch (WORKFLOW.md W6) -----------------------------------------
+# Nothing relied upon lives in the workbench, and it may be cleared at any
+# time. A placeholder may be tracked so that the directory exists in clones.
+/docs/agent/workbench/*
+!/docs/agent/workbench/README.md
+!/docs/agent/workbench/.gitkeep
+
+# --- Claude Code ------------------------------------------------------------
+# .claude/agents/ and .claude/settings.json are shared; these are per user.
 /.claude/settings.local.json
+/.claude/worktrees/
+/CLAUDE.local.md
+
+# --- VS Code ----------------------------------------------------------------
+# Shared: extension recommendations, tasks, launch configurations, snippets.
+# Local: settings.json (CMake Tools and other extensions write per-user,
+# per-checkout state there) and every cache the extensions keep here.
+/.vscode/*
+!/.vscode/extensions.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/*.code-snippets
+*.code-workspace
+.history/
+*.vsix
+
+# --- Other editors and language servers -------------------------------------
+# clangd index (the .clangd config file stays trackable)
+/.cache/
+/.clangd/
+.ccls-cache/
+# CLion and other JetBrains IDEs
+/.idea/
+# Visual Studio
+/.vs/
+*.user
+*.suo
+# Qt Creator
+CMakeLists.txt.user*
+# Sublime Text
+*.sublime-workspace
+# Vim and Neovim
+*.swp
+*.swo
+*.swn
+Session.vim
+.netrwhist
+# Emacs
+\#*\#
+.#*
+# Tag databases
+/tags
+/TAGS
+/GTAGS
+/GRTAGS
+/GPATH
+/cscope.*
+
+# --- Merge and patch leftovers ----------------------------------------------
+*.orig
+*.rej
+
+# --- Operating systems ------------------------------------------------------
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.DocumentRevisions-V100
+.TemporaryItems
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump

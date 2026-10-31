@@ -1,6 +1,6 @@
 # Galoot conventions specification
 
-Status: version 1.2. Versions to 1.1 were ratified by the owner on 2026-10-31; 1.2 changes only evidence labels and recorded disagreements, no convention, and awaits ratification. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
+Status: version 1.2, ratified by the owner on 2026-10-31. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
@@ -125,4 +125,4 @@ These choices had no settled source and were ratified with this version:
 | 0.1 | 2026-10-31 | First proposal |
 | 1.0 | 2026-10-31 | Ratified by the owner, unchanged from 0.1 |
 | 1.1 | 2026-10-31 | Ranking of sources added, as the owner directed |
-| 1.2 | 2026-10-31 | Confirmed label added from note 0005; 6.1 clarified; 6.2 split into 6.2 to 6.4; flector, dual, and partner rows updated and a conformal-duals row added; no convention changed |
+| 1.2 | 2026-10-31 | Confirmed label added from note 0005; 6.1 clarified; 6.2 split into 6.2 to 6.4; flector, dual, and partner rows updated and a conformal-duals row added; no convention changed; ratified |

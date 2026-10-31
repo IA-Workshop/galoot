@@ -49,7 +49,7 @@ Multivectors and descriptors are aggregates: trivially copyable, without virtual
 
 ### S9 Failures
 
-The core throws no exceptions. A failure the caller is designed to handle, such as unitizing an object of zero weight, is returned in the result type, using `std::expected` or `std::optional`. A precondition that the type system cannot express is checked by `GALOOT_ASSERT` in checking builds and documented at the declaration. Results marked `[[nodiscard]]` include every function whose result is its only effect.
+The core throws no exceptions. A failure the caller is designed to handle, such as unitizing an object of zero weight, is returned in the result type, using `std::expected` or `std::optional`. A precondition that the type system cannot express is checked by `GALOOT_ASSERT` in checking builds and documented at the declaration. Results marked `[[nodiscard]]` include every function whose result is its only effect. An operation whose input can be degenerate, such as a zero norm, the logarithm of a pure translation, or the square root of a half-turn, states the degenerate set and returns a failure value on it. On a rounding scalar, a branch between formulas is decided as V13 requires, never by an exact comparison with zero.
 
 ## Source
 
@@ -83,7 +83,7 @@ Named functions are the interface; each overloaded operator is a one-line alias 
 
 ### S14 Tests
 
-Tests use doctest, under `test/`, with one file per component named `<component>_test.cpp`. Each test case names the behavior it fixes and its reference (V2). Compile-time properties are tested with `static_assert`, and rejected uses with tests that fail to compile when the rejection is lost. Randomized tests take their seed from one place and print it on failure (V7). Exact reference values come from the independent scripts in `test/reference/` (V1).
+Tests use doctest, under `test/`, with one file per component named `<component>_test.cpp`. Each test case names the behavior it fixes and its reference (V2). Compile-time properties are tested with `static_assert`, and rejected uses with tests that fail to compile when the rejection is lost. Randomized tests take their seed from one place and print it on failure (V7). Exact reference values come from the independent scripts in `test/reference/` (V1). A `SUBCASE` never appears inside a loop, at most one `TEST_CASE`, `INFO`, or `CAPTURE` appears on a line, and a test run that executes no test cases fails (research note 0001).
 
 ### S15 Floating point
 

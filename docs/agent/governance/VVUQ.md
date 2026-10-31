@@ -51,7 +51,7 @@ A generated structure is validated against the mathematics it claims to be: defi
 
 ### V9 Sources and sampled claims
 
-A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1).
+A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1). A formula or table from a published source is a reference only after it is recomputed from the definitions, and an erratum found this way is recorded in a research note.
 
 ### V10 Status in reports
 

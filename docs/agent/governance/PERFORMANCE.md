@@ -80,7 +80,7 @@ A passing run is evidence for the revision and configuration it ran on, so a run
 
 ### P11 Shared machine
 
-Several workstreams, of people and of agents, share the development machine. Each works in its own checkout of the repository with its own build directory, so that no two builds write the same files. Concurrent workstreams draw their parallel build and test jobs from one pool of job slots shared across the machine, so that together they share the processors rather than oversubscribing them; a limit set inside one build tree does not do this, because it cannot see the others. The size of the pool is the owner's decision (C14). A workstream does not start a build or a run that the free processors and memory cannot serve. A run that measures performance (P1, P6) does not overlap other heavy work on the machine.
+Several workstreams, of people and of agents, share the development machine. Each works in its own checkout of the repository with its own build directory, so that no two builds write the same files. Concurrent workstreams draw their parallel build and test jobs from one pool of job slots shared across the machine, so that together they share the processors rather than oversubscribing them; a limit set inside one build tree does not do this, because it cannot see the others. The size of the pool is the owner's decision (C14), made with P14 in mind. A workstream does not start a build or a run that the free processors and memory cannot serve. A run that measures performance (P1, P6) does not overlap other heavy work on the machine.
 
 ### P12 Build only what runs
 
@@ -89,3 +89,9 @@ A run builds only the targets its selection needs. Build directories persist bet
 ### P13 Record of a run
 
 The message of each merge names the selection that ran, its configurations, its outcome, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).
+
+## The development machine
+
+### P14 Processors of two kinds
+
+The development machine has performance cores, each running two hardware threads, and efficiency cores, each running one at a lower clock rate with smaller caches. The same work takes different times on the two kinds, and two threads on one performance core slow each other. So a measurement of time (P1, P6) runs pinned to one performance core whose other thread is idle, records the processor it ran on, and also records the count of retired instructions, which does not depend on clock rate. Times measured on different kinds of core, or with different load on the core's other thread, are not compared. Peak memory does not depend on the kind of core. A test's timeout allows for the test running on an efficiency core. The shared pool of P11 is sized against physical cores, not hardware threads, so that concurrent jobs fill every core once before any core runs two, and the remaining threads stay free for interactive work.
