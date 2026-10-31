@@ -22,5 +22,6 @@ At the end of each milestone, before its gate report, an agent surveys the workb
 | [fault injection for the reference engine](../records/spikes/spike-b/fault_injection.py) | Shows each check of the reference engine catches its target fault | Spike B | Candidate for DoD-14 |
 | [constexpr plan generator](../records/spikes/spike-a/gen.hpp) | Throwaway `constexpr` blade product and plan generator | Spike A | Source of ideas for WU6, not reused as is |
 | [runs.tsv merge rebuild](runs_tsv_merge.py) | Rebuilds a run or compile record after a union merge doubled it, during `git merge --no-commit`, without padding rows (decision 0032, item 3) | WU1 and plan 0003, for merges across the one-time header extensions | In use until every branch has merged plan 0003; delete at the M0 review if no branch needs it |
+| [jobserver check](jobserver_check.py) | Shows, on a private FIFO pool, the slots Ninja returns when killed or interrupted, and how many jobs run when the pool restarts under a build or is missing | Plan 0003, the token-loss and pool-restart checks the WU1 review listed as not made | Rerun when Ninja or `tools/jobpool` changes |
 
 The spike files stay where Spikes A and B committed them, so the notes that cite them remain valid. The first coalescing review, at M0, decides which move here.

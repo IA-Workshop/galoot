@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# Starts, stops, and inspects the machine-wide pool of build job slots
-# (PERFORMANCE.md P11): a GNU Make FIFO jobserver held open by a transient
+# Starts, stops, and inspects the machine-wide pool of build job slots, which
+# lets builds in several checkouts share the processors instead of each
+# running a job per CPU: a GNU Make FIFO jobserver held open by a transient
 # user service. The service outlives any one session, so a lost session
 # leaves the pool running until someone runs `tools/jobpool stop`.
 #
-# Usage: tools/jobpool start [tokens]   start the pool (default 23, decision 0020)
-#        tools/jobpool stop [--force]   remove the pool; refuses while slots are in use
-#        tools/jobpool status           show whether it runs and how many slots are free
+# A client is a process other than the service that holds the FIFO open;
+# Ninja holds it for its whole build. A client killed with SIGKILL never
+# returns the slots it held, so they are lost until the pool restarts. A
+# client that already holds the FIFO keeps using it after the path is
+# replaced, so a restart under running builds serves them from the old pool
+# and new builds from the new one, up to twice the slots.
+#
+# Usage: tools/jobpool start [tokens]   start the pool (default 23 slots)
+#        tools/jobpool stop [--force]   remove the pool; refuses while a client holds it
+#        tools/jobpool status           show free slots, clients, and lost slots
 #        tools/jobpool env              print the MAKEFLAGS line for a shell
 set -u
 
@@ -24,6 +32,19 @@ PY
 }
 
 running() { systemctl --user is-active --quiet "$unit.service"; }
+
+# Prints "pid (command)" for each client holding the FIFO open.
+clients() {
+  local holder fd pid
+  holder=$(systemctl --user show "$unit.service" -p MainPID --value)
+  find /proc/[0-9]*/fd -maxdepth 1 -lname "$fifo" 2>/dev/null |
+    while read -r fd; do
+      pid=${fd#/proc/}
+      pid=${pid%%/*}
+      [[ $pid == "$holder" || $pid == "$$" ]] && continue
+      echo "$pid ($(cat "/proc/$pid/comm" 2>/dev/null))"
+    done | sort -un
+}
 
 total_slots() {
   systemctl --user show "$unit.service" -p Description --value 2>/dev/null |
@@ -53,20 +74,29 @@ case ${1:-} in
     ;;
   stop)
     running || { echo "not running"; exit 0; }
+    holding=$(clients)
+    if [[ -n $holding && ${2:-} != "--force" ]]; then
+      echo "clients hold the pool: $(echo $holding)" >&2
+      echo "they would keep the old pool beside a new one; wait for them, or run: tools/jobpool stop --force" >&2
+      exit 1
+    fi
     total=$(total_slots)
     free=$(free_slots)
-    if [[ -n $total && $free -lt $total && ${2:-} != "--force" ]]; then
-      echo "$((total - free)) of $total slots are in use; builds may still be running." >&2
-      echo "wait for them, or run: tools/jobpool stop --force" >&2
-      exit 1
+    if [[ -z $holding && -n $total && $free -lt $total ]]; then
+      echo "$((total - free)) of $total slots were lost by clients that never returned them"
     fi
     systemctl --user stop "$unit.service" && echo "stopped"
     ;;
   status)
-    if running; then
-      echo "running: $(free_slots) of $(total_slots) slots free at $fifo"
-    else
-      echo "not running"; exit 1
+    running || { echo "not running"; exit 1; }
+    total=$(total_slots)
+    free=$(free_slots)
+    holding=$(clients)
+    echo "running: $free of $total slots free at $fifo"
+    if [[ -n $holding ]]; then
+      echo "clients: $(echo $holding)"
+    elif [[ -n $total && $free -lt $total ]]; then
+      echo "no client holds the pool, so $((total - free)) slots are lost; restart it to recover them: tools/jobpool stop && tools/jobpool start $total"
     fi
     ;;
   env)
