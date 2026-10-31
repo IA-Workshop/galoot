@@ -2881,3 +2881,4 @@ utc_start	revision	branch	step	preset	selection	wall_s	exit	host	mode	cpus	user_
 2026-10-31T22:14:29Z	63e2014f8bdc-dirty	develop	build	-	spike-f:named:clang++:O2:subscript:64	0.280	0	ds-001
 2026-10-31T22:14:29Z	63e2014f8bdc-dirty	develop	build	-	spike-f:named:clang++:O2:subscript:256	0.550	0	ds-001
 2026-10-31T22:14:11Z	63e2014f8bdc-dirty	develop	test	-	spike-f:run_named	18.750	0	ds-001
+2026-10-31T22:20:09Z	eb9a8fa45654	develop	workflow	clang-debug	all-clean	2.860	0	ds-001	shared	0-31	3.357	1.119	286204	10895785982	701709922	unavailable	unavailable	unavailable	unavailable	unavailable	unavailable	unavailable	73.826	3.92	unavailable
