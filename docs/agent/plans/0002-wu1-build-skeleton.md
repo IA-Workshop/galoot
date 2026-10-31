@@ -343,7 +343,7 @@ The holder script was probed in the workbench, where the free-slot check read 24
 - Question 2: `GALOOT_CHECKING` defaults to 0 when no value is given, documented at the macro. Checking is ON for debug, asan, and lint, and OFF for release.
 - Question 5: WU1 extends the `runs.tsv` header once, in place. For rows that lack the expanded fields, the cell holds `--` (not blank, not zero, and not `unavailable`); `unavailable` is for a quantity the machine cannot expose in a run that was made with the new recorder.
 - Question 10: only rows from gate and measurement runs are committed to `compile.tsv`; routine rows stay in the build tree.
-- Question 7: the owner approved the proposed flags on 2026-10-31: the S4 warning flags and `-ffp-contract=off` in every preset, `-O2` for release, `-D_GLIBCXX_ASSERTIONS` in every preset, the sanitizer flags for asan, and a separate measurement preset without `_GLIBCXX_ASSERTIONS` for P4 and P6. A `-O3` variant is a measurement-only addition (decision 0020, item 5).
+- Question 7: the owner approved the proposed flags on 2026-10-31: the S4 warning flags and `-ffp-contract=off` in every preset, `-O2` for release, `-D_GLIBCXX_ASSERTIONS` in every preset, the sanitizer flags for asan, and a separate measurement preset without `_GLIBCXX_ASSERTIONS` for P4 and P6. `-O2` stays the default and the level is customizable in the build configuration (decision 0020, item 5).
 - Questions 3, 4, 6, 8, 9, 11, and 12 keep their recommendations unless the owner objects before WU1 starts.
 
 ## 12. Next step
