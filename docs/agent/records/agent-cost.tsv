@@ -11,3 +11,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	WU2	bits implementer	opus	253815	84	1045	reported by harness as subagent_tokens
 2026-10-31	M0-closure	scripts implementer	opus	264885	83	1134	reported by harness as subagent_tokens
 2026-10-31	WU3	metric implementer	opus	277533	73	1190	reported by harness as subagent_tokens
+2026-10-31	M0-closure	blind reviewer (W5)	opus	184017	50	567	reported by harness as subagent_tokens
