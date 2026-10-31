@@ -283,7 +283,9 @@ def append_row(path, columns, row):
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "a", encoding="utf-8") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
-        if f.tell() == 0:
+        # The size, not f.tell(): the position was fixed when the file was
+        # opened, before another writer may have added the header.
+        if os.fstat(f.fileno()).st_size == 0:
             f.write("\t".join(columns) + "\n")
         f.write("\t".join(row[c] for c in columns) + "\n")
 
