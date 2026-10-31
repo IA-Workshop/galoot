@@ -1,0 +1,21 @@
+set	compiler	opt	metric	n	cap	limits	exit	wall_s	user_s	sys_s	maxrss_kib	instructions	plan_terms	sibling_busy	load1	diagnostic
+cap	g++	O0	euclidean	4	4	raised	0	0.113	0.076	0.036	69656	855193048	256	0.00	1.11	
+cap	clang++	O0	euclidean	4	4	raised	0	0.123	0.090	0.033	112120	1196550246	256	0.00	1.11	
+cap	g++	O0	euclidean	5	4	raised	0	0.174	0.133	0.040	80348	1858406328	1024	0.00	1.11	
+cap	clang++	O0	euclidean	5	4	raised	0	0.261	0.221	0.039	113184	3575828907	1024	0.03	1.11	
+cap	g++	O0	euclidean	6	4	raised	0	0.434	0.376	0.045	127116	6684165133	4096	0.00	1.11	
+cap	clang++	O0	euclidean	6	4	raised	0	0.821	0.780	0.039	118060	15466823688	4096	0.00	1.11	
+cap	g++	O0	euclidean	7	4	raised	0	1.442	1.389	0.051	329120	29421789540	16384	0.00	1.10	
+cap	clang++	O0	euclidean	7	4	raised	0	3.571	3.528	0.038	138200	73597264881	16384	0.00	1.10	
+cap	g++	O0	euclidean	8	4	raised	0	6.349	6.229	0.111	1218052	135201339233	65536	0.00	1.10	
+cap	clang++	O0	euclidean	8	4	raised	0	17.602	17.512	0.070	216916	353800254113	65536	0.00	1.09	
+cap	g++	O0	conformal	4	4	raised	0	0.117	0.080	0.035	69624	874205069	256	0.00	1.07	
+cap	clang++	O0	conformal	4	4	raised	0	0.163	0.107	0.054	112228	1236572002	256	0.00	1.07	
+cap	g++	O0	conformal	5	4	raised	0	0.177	0.135	0.041	80256	1933805090	1024	0.00	1.07	
+cap	clang++	O0	conformal	5	4	raised	0	0.249	0.214	0.034	113492	3748635923	1024	0.00	1.07	
+cap	g++	O0	conformal	6	4	raised	0	0.431	0.371	0.051	129112	6947884069	4096	0.02	1.06	
+cap	clang++	O0	conformal	6	4	raised	0	0.842	0.806	0.035	118248	16139129983	4096	0.00	1.06	
+cap	g++	O0	conformal	7	4	raised	0	1.495	1.434	0.058	343684	30599595270	16384	0.00	1.06	
+cap	clang++	O0	conformal	7	4	raised	0	3.720	3.673	0.042	137916	76021500857	16384	0.00	1.06	
+cap	g++	O0	conformal	8	4	raised	0	6.595	6.468	0.116	1276992	140307502992	65536	0.00	1.06	
+cap	clang++	O0	conformal	8	4	raised	0	18.141	18.055	0.064	216764	363013057444	65536	0.00	1.05	

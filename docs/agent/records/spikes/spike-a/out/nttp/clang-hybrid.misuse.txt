@@ -1,0 +1,8 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:10: error: no matching function for call to 'gp'
+  173 |   return gp(a, b).c[0];
+      |          ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:153:1: note: candidate template ignored: deduced conflicting types for parameter 'Algebra' ('hybrid::conformal3' vs. 'hybrid::r410')
+  153 | gp(const mv<Algebra, A>& a, const mv<Algebra, B>& b) {
+      | ^
+1 error generated.
+timed: build spike-a:nttp-misuse:clang++:HYBRID took 0.212 s (exit 1)

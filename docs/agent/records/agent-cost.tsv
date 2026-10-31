@@ -2,3 +2,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	plan-0001	architecture planner	fable	145820	29	809	reported by harness as subagent_tokens
 2026-10-31	plan-0001	gates planner	opus	141404	14	530	reported by harness as subagent_tokens
 2026-10-31	plan-0002	WU1 plan author	opus	201873	53	851	reported by harness as subagent_tokens
+2026-10-31	spikes-A-B	spike author	opus	255978	101	2547	reported by harness as subagent_tokens

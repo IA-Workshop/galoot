@@ -1,0 +1,15 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp: In function ‘double misuse(const cga_vector&, const r410_vector&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12: error: no matching function for call to ‘gp(const cga_vector&, const r410_vector&)’
+  173 |   return gp(a, b).c[0];
+      |          ~~^~~~~~
+  • there is 1 candidate
+    • candidate 1: ‘template<class Algebra, blade_set<...auto...> A, blade_set<...auto...> B> hybrid::mv<Algebra, result_set<Algebra::value, A, B>()> hybrid::gp(const mv<Algebra, A>&, const mv<Algebra, B>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:153:1:
+        153 | gp(const mv<Algebra, A>& a, const mv<Algebra, B>& b) {
+            | ^~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting types for parameter ‘Algebra’ (‘hybrid::conformal3’ and ‘hybrid::r410’)
+          /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12:
+            173 |   return gp(a, b).c[0];
+                |          ~~^~~~~~
+timed: build spike-a:nttp-misuse:g++:HYBRID took 0.192 s (exit 1)

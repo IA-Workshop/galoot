@@ -1,0 +1,13 @@
+set	compiler	opt	metric	n	cap	limits	exit	wall_s	user_s	sys_s	maxrss_kib	instructions	plan_terms	sibling_busy	load1	diagnostic
+dense	g++	O0	dense	4	2^n	raised	0	0.145	0.112	0.033	77956	1585139990	832	0.00	1.18	
+dense	g++	O2	dense	4	2^n	raised	0	0.166	0.135	0.030	87580	2351538044	832	0.00	1.18	
+dense	clang++	O0	dense	4	2^n	raised	0	0.207	0.177	0.029	112792	2845258181	832	0.00	1.18	
+dense	clang++	O2	dense	4	2^n	raised	0	0.216	0.180	0.035	119744	2923092743	832	0.04	1.18	
+dense	g++	O0	dense	5	2^n	raised	0	0.578	0.532	0.045	188252	11073286666	4864	0.00	1.18	
+dense	g++	O2	dense	5	2^n	raised	0	0.942	0.888	0.052	271296	19228872865	4864	0.00	1.18	
+dense	clang++	O0	dense	5	2^n	raised	0	1.323	1.271	0.050	117192	25121409592	4864	0.00	1.24	
+dense	clang++	O2	dense	5	2^n	raised	0	1.368	1.324	0.042	123860	25910389209	4864	0.00	1.24	
+dense	g++	O0	dense	6	2^n	raised	0	5.673	5.540	0.125	1520296	124555874453	27136	0.00	1.24	
+dense	g++	O2	dense	6	2^n	raised	0	9.825	9.621	0.189	2467084	217492824158	27136	0.00	1.22	
+dense	clang++	O0	dense	6	2^n	raised	0	13.927	13.866	0.039	137784	285602870968	27136	0.00	1.19	
+dense	clang++	O2	dense	6	2^n	raised	0	14.369	14.298	0.049	144792	296147132453	27136	0.00	1.15	
