@@ -119,6 +119,7 @@ The commands that start the pool are in the final report and in section 9. WU1 s
   - Build types and optimization flags are set in the preset (open question 7), not left to CMake defaults.
   - The asan presets add `-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer` to compile and link flags.
   - The `lint` preset uses Clang with `CMAKE_CXX_CLANG_TIDY` and no compiler launcher.
+- Measurement presets (owner-approved, decision 0020): `gcc-measure`, `clang-measure` (`-O2`), `gcc-measure-o3`, and `clang-measure-o3` (`-O3`). They share every other option, omit `_GLIBCXX_ASSERTIONS`, set `GALOOT_CHECKING` OFF, and exist for P4 assembly reads and P6 benchmarks. The `-O3` pair is for comparison only: it is never a correctness or release preset, and the run record names the level. Whether the generated kernels respond to `-O3` is a tracked question, not an assertion.
 - Build presets: one per configure preset, with no `jobs`. The `lint` build preset builds `all`, `all_verify_interface_header_sets`, and `format-check`.
 - Test presets: `"execution": {"jobs": "", "noTestsAction": "error"}` and `"output": {"outputOnFailure": true}`. With `noTestsAction: error`, a label filter that matches no test exits 8 instead of 0 (probed). The asan test presets set `ASAN_OPTIONS` and `UBSAN_OPTIONS` explicitly (C8). No test timeout is set, because a timeout would be a bound (C14, decision 0013).
 - Workflow presets: configure, build, and test for each visible preset.
