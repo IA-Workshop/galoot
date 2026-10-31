@@ -1,0 +1,31 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In member function ‘constexpr cdf::mv<Alg, B, T>::operator cdf::mv<Alg, To, T>() const’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:273:26: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  273 |     static_assert(false, lossy<B, To>());
+      |                          ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::gp(const X&, const Y&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:394:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  394 |   static_assert(false, algebras_differ<X, Y>());
+      |                        ^~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:445:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  445 |   static_assert(false, mixed_parity<V>());
+      |                        ^~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::get(const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:508:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  508 |   static_assert(false, missing_name<Name, B>());
+      |                        ^~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘constexpr const cdf::blade_set<2> cdf::blades_of<cdf::rga3, cdf::fixed_string<3>{std::array<char, 3>{"e1"}}, cdf::fixed_string<3>{std::array<char, 3>{"e5"}}>’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24:   required from here
+   56 |   using Bad = mv<rga3, blades_of<rga3, "e1", "e5">>;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:141:16:   in ‘constexpr’ expansion of ‘cdf::parse_name<3>(cdf::fixed_string<3>{std::array<char, 3>{"e5"}}, cdf::rga3::value.spike::metric<4>::g.std::array<std::array<int, 4>, 4>::size())’
+  141 |     {parse_name(Names, Alg::value.g.size()).mask...},
+      |      ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:97:46: error: call to non-‘constexpr’ function ‘void cdf::blade_name_is_not_valid_in_this_algebra()’
+   97 |       blade_name_is_not_valid_in_this_algebra();
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:76:6: note: ‘void cdf::blade_name_is_not_valid_in_this_algebra()’ declared here
+   76 | void blade_name_is_not_valid_in_this_algebra();
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1plus: all warnings being treated as errors

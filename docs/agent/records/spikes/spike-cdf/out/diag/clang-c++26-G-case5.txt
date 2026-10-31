@@ -1,0 +1,11 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:14: error: variable has incomplete type 'const void'
+   74 |   const auto r = gp(a, a);
+      |              ^
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:402:17: error: static assertion failed: gp: the scalar type must be the same for both operands and support +, -, * and conversion from an integer coefficient
+  402 |   static_assert(false, "gp: the scalar type must be the same for both "
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:18: note: in instantiation of function template specialization 'cdf::gp<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>, cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>>' requested here
+   74 |   const auto r = gp(a, a);
+      |                  ^
+2 errors generated.

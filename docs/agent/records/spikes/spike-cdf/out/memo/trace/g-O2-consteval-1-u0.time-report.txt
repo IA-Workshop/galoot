@@ -1,0 +1,14 @@
+
+Time variable                                  wall           GGC
+ phase setup                        :   0.01 (  3%)  1849k (  6%)
+ phase parsing                      :   0.19 ( 96%)    29M ( 93%)
+ |name lookup                       :   0.02 (  9%)  1179k (  4%)
+ |overload resolution               :   0.01 (  5%)  1962k (  6%)
+ preprocessing                      :   0.05 ( 28%)  2467k (  8%)
+ parser (global)                    :   0.04 ( 19%)    11M ( 37%)
+ parser struct body                 :   0.03 ( 17%)  5808k ( 18%)
+ parser inl. func. body             :   0.01 (  5%)   785k (  2%)
+ parser inl. meth. body             :   0.03 ( 13%)  4357k ( 13%)
+ template instantiation             :   0.02 ( 10%)  4083k ( 13%)
+ TOTAL                              :   0.19           31M
+timed: build spike-d:trace:g-O2-consteval-1-u0 took 0.209 s (exit 0)

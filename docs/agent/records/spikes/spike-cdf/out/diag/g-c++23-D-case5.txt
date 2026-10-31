@@ -1,0 +1,11 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:20: error: use of deleted function ‘void cdf::gp(const X&, const Y&) [with X = mv<rga3, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}, length>; Y = mv<rga3, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}, length>]’
+   74 |   const auto r = gp(a, a);
+      |                  ~~^~~~~~
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:381:6: note: declared here
+  381 | void gp(const X&, const Y&) = delete;
+      |      ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:20: note: use ‘-fdiagnostics-all-candidates’ to display considered candidates
+   74 |   const auto r = gp(a, a);
+      |                  ~~^~~~~~

@@ -1,0 +1,18 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In member function ‘constexpr cdf::mv<Alg, B, T>::operator cdf::mv<Alg, To, T>() const’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:273:26: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  273 |     static_assert(false, lossy<B, To>());
+      |                          ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::gp(const X&, const Y&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:394:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  394 |   static_assert(false, algebras_differ<X, Y>());
+      |                        ^~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:445:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  445 |   static_assert(false, mixed_parity<V>());
+      |                        ^~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::get(const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:508:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  508 |   static_assert(false, missing_name<Name, B>());
+      |                        ^~~~~~~~~~~~
+cc1plus: all warnings being treated as errors

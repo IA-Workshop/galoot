@@ -1,0 +1,8 @@
+probes/cxx26.cpp: In instantiation of ‘void f() [with int K = 5]’:
+probes/cxx26.cpp:29:20:   required from here
+   29 | template void f<5>();
+      |                    ^
+probes/cxx26.cpp:28:45: error: static assertion failed: blade e5 not in set
+   28 | template <int K> void f() { static_assert(K < 4, make_msg(K)); }
+      |                                           ~~^~~
+  • the comparison reduces to ‘(5 < 4)’

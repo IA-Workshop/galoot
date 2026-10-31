@@ -177,3 +177,7 @@ Each grid point runs `tools/timed build - spike-a:<set>:<compiler>:<opt>:<metric
 3. Should Galoot's test build raise Clang's step limit so that some exhaustive proofs can be `static_assert`s, or run them all at run time? I recommend run time (C12): one mechanism, no limit flags.
 4. The GCC diagnostic misprint and the double evaluation at -O2 may be worth reporting upstream; neither was searched for in GCC's bug tracker.
 5. Not measured: the rga3 typed pairs that plan 0001 section 9 lists for Spike A. Only full plans and vector × vector were measured; typed pairs belong with WU6's P2 grid.
+
+## Correction from Spike D (2026-10-31)
+
+The finding that the full plan compiles at default limits up to n = 5 on Clang was measured at -O0 only. Note 0011 (D5) shows that Clang at -O1 and above fails the n = 5 plan at its default step limit (2^20) and passes at 2^21, because libstdc++ 16 enables `_GLIBCXX_ASSERTIONS` only without `__OPTIMIZE__` and an optimized build calls `__is_constant_evaluated()` on every checked access. Default-limit claims in this note hold for -O0.

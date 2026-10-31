@@ -1,0 +1,8 @@
+In file included from probes/sys_use.cpp:3:
+probes/sys/ugsa.hpp:6:43: error: static assertion failed due to requirement '5 < 4': hi
+    6 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                           ^~~~~
+probes/sys_use.cpp:4:15: note: in instantiation of function template specialization 'f<5>' requested here
+    4 | template void f<FK>();
+      |               ^
+1 error generated.

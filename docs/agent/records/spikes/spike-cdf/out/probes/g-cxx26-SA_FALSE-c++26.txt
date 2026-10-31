@@ -1,0 +1,8 @@
+probes/cxx26.cpp: In instantiation of ‘void f() [with T = int]’:
+probes/cxx26.cpp:40:22:   required from here
+   40 | template void f<int>();
+      |                      ^
+probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid
+   39 | template <class T> void f() { static_assert(false, "f: never valid"); }
+      |                                             ^~~~~
+  • ‘false’ evaluates to false

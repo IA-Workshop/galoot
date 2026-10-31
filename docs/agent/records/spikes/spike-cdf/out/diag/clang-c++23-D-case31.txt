@@ -1,0 +1,7 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:62:15: error: conversion function from 'const mv<[...], blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}>' to 'const mv<[...], blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>' invokes a deleted function
+   62 |   const Point r = q;
+      |               ^   ~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:268:13: note: 'operator mv<blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>' has been explicitly marked deleted here
+  268 |   constexpr operator mv<Alg, To, T>() const = delete;
+      |             ^
+1 error generated.

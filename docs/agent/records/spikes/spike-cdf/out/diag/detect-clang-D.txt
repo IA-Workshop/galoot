@@ -1,0 +1,8 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:99:28: error: implicit instantiation of undefined template 'detection_answers<32>'
+   99 | detection_answers<answers> show; // incomplete type: prints the value
+      |                            ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:98:25: note: template is declared here
+   98 | template <int A> struct detection_answers;
+      |                         ^
+1 error generated.
+timed: build spike-c:detect:clang++:c++23:D took 0.171 s (exit 1)

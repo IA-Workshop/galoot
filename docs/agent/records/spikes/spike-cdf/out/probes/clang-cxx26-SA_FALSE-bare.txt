@@ -1,0 +1,7 @@
+probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid
+   39 | template <class T> void f() { static_assert(false, "f: never valid"); }
+      |                                             ^~~~~
+probes/cxx26.cpp:40:15: note: in instantiation of function template specialization 'f<int>' requested here
+   40 | template void f<int>();
+      |               ^
+1 error generated.

@@ -1,0 +1,7 @@
+probes/cxx26.cpp: In function ‘void h()’:
+probes/cxx26.cpp:35:13: error: use of deleted function ‘void g(int)’: g: integers are not accepted
+   35 | void h() { g(1); }
+      |            ~^~~
+probes/cxx26.cpp:34:6: note: declared here
+   34 | void g(int) = delete("g: integers are not accepted");
+      |      ^

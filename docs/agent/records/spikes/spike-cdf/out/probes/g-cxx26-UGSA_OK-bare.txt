@@ -1,0 +1,4 @@
+probes/cxx26.cpp: In function ‘void f()’:
+probes/cxx26.cpp:31:50: warning: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]
+   31 | template <int K> void f() { static_assert(K < 4, make_msg(K)); }
+      |                                                  ^~~~~~~~

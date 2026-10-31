@@ -1,0 +1,34 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:140:46: error: constexpr variable 'blades_of<cdf::rga3, fixed_string<3>{{"e1"}}, fixed_string<3>{{"e5"}}>' must be initialized by a constant expression
+  140 | inline constexpr blade_set<sizeof...(Names)> blades_of = {
+      |                                              ^           ~
+  141 |     {parse_name(Names, Alg::value.g.size()).mask...},
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  142 |     {parse_name(Names, Alg::value.g.size()).sign...}};
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24: note: in instantiation of variable template specialization 'cdf::blades_of<cdf::rga3, fixed_string<3>{{"e1"}}, fixed_string<3>{{"e5"}}>' requested here
+   56 |   using Bad = mv<rga3, blades_of<rga3, "e1", "e5">>;
+      |                        ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:97:7: note: non-constexpr function 'blade_name_is_not_valid_in_this_algebra' cannot be used in a constant expression
+   97 |       blade_name_is_not_valid_in_this_algebra();
+      |       ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:141:6: note: in call to 'parse_name<3UL>(<template param fixed_string<3>{{"e5"}}>, 4)'
+  141 |     {parse_name(Names, Alg::value.g.size()).mask...},
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:76:6: note: declared here
+   76 | void blade_name_is_not_valid_in_this_algebra();
+      |      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24: error: non-type template argument is not a constant expression
+   56 |   using Bad = mv<rga3, blades_of<rga3, "e1", "e5">>;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24: note: initializer of 'blades_of<cdf::rga3, fixed_string<3>{{"e1"}}, fixed_string<3>{{"e5"}}>' is not a constant expression
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24: note: in call to 'blade_set(blades_of)'
+   56 |   using Bad = mv<rga3, blades_of<rga3, "e1", "e5">>;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:140:46: note: declared here
+  140 | inline constexpr blade_set<sizeof...(Names)> blades_of = {
+      |                                              ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:57:9: error: unknown type name 'Bad'
+   57 |   const Bad b{};
+      |         ^
+3 errors generated.

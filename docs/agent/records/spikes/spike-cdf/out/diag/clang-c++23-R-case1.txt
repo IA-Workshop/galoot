@@ -1,0 +1,7 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:18: error: no matching function for call to 'gp'
+   51 |   const auto r = gp(p, v);
+      |                  ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:331:46: note: candidate template ignored: deduced conflicting types for parameter 'Alg' ('cdf::rga3' vs. 'cdf::r400')
+  331 | constexpr mv<Alg, gp_blades<Alg, A, B>(), T> gp(const mv<Alg, A, T>& a,
+      |                                              ^
+1 error generated.

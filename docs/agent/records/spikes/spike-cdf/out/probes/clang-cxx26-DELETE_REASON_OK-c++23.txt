@@ -1,0 +1,4 @@
+probes/cxx26.cpp:37:22: error: '= delete' with a message is a C++2c extension [-Werror,-Wc++26-extensions]
+   37 | void g(int) = delete("g: integers are not accepted");
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

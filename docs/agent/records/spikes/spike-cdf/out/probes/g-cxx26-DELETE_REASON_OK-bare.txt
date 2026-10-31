@@ -1,0 +1,3 @@
+probes/cxx26.cpp:37:21: warning: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]
+   37 | void g(int) = delete("g: integers are not accepted");
+      |                     ^

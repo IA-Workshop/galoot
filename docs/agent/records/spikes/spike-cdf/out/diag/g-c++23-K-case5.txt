@@ -1,0 +1,13 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:14: error: deduced type ‘const void’ for ‘r’ is incomplete
+   74 |   const auto r = gp(a, a);
+      |              ^
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘void cdf::gp(const X&, const Y&) [with X = mv<rga3, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}, length>; Y = mv<rga3, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}, length>]’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:20:   required from here
+   74 |   const auto r = gp(a, a);
+      |                  ~~^~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:367:17: error: static assertion failed: gp: the scalar type must be the same for both operands and support +, -, * and conversion from an integer coefficient
+  367 |   static_assert(false, "gp: the scalar type must be the same for both "
+      |                 ^~~~~
+  • ‘false’ evaluates to false

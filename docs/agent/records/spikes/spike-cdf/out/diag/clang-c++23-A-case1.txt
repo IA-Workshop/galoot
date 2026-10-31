@@ -1,0 +1,11 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:358:17: error: static assertion failed: gp: the operands belong to different algebras
+  358 |   static_assert(false, "gp: the operands belong to different algebras");
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:18: note: in instantiation of function template specialization 'cdf::gp<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>, cdf::mv<cdf::r400, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>>' requested here
+   51 |   const auto r = gp(p, v);
+      |                  ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:14: error: variable has incomplete type 'const void'
+   51 |   const auto r = gp(p, v);
+      |              ^
+2 errors generated.

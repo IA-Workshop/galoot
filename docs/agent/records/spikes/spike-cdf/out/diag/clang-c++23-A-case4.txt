@@ -1,0 +1,11 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:423:17: error: static assertion failed: transform: the versor has blades of both parities, so it is neither even nor odd (CONVENTIONS 4.4)
+  423 |   static_assert(false, "transform: the versor has blades of both parities, "
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:70:18: note: in instantiation of function template specialization 'cdf::transform<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, blade_set<2>{{{0, 1}}, {{1, 1}}}, double>' requested here
+   70 |   const auto r = transform(p, v);
+      |                  ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:70:14: error: variable has incomplete type 'const void'
+   70 |   const auto r = transform(p, v);
+      |              ^
+2 errors generated.

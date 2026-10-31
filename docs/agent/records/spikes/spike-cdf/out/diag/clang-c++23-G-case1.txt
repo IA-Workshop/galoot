@@ -1,0 +1,24 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:273:40: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+  273 |     static_assert(false, lossy<B, To>());
+      |                                        ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:394:47: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+  394 |   static_assert(false, algebras_differ<X, Y>());
+      |                                               ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:445:41: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+  445 |   static_assert(false, mixed_parity<V>());
+      |                                         ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:508:47: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+  508 |   static_assert(false, missing_name<Name, B>());
+      |                                               ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:14: error: variable has incomplete type 'const void'
+   51 |   const auto r = gp(p, v);
+      |              ^
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:394:17: error: static assertion failed: gp: the operands belong to different algebras, rga3 and r400
+  394 |   static_assert(false, algebras_differ<X, Y>());
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:18: note: in instantiation of function template specialization 'cdf::gp<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>, cdf::mv<cdf::r400, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>>' requested here
+   51 |   const auto r = gp(p, v);
+      |                  ^
+6 errors generated.
