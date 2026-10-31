@@ -20,10 +20,9 @@ namespace {
 using galoot::core::mask_t;
 
 // Every generator a mask can name, read from the mask type itself.
-constexpr int mask_width = std::numeric_limits<mask_t>::digits;
-constexpr auto widest_n = static_cast<std::size_t>(mask_width);
+constexpr std::size_t mask_width = std::numeric_limits<mask_t>::digits;
 
-static_assert(galoot::core::mask_bits == widest_n);
+static_assert(galoot::core::mask_bits == mask_width);
 
 // A list of generator indices, counting from 1; two blades of the widest mask
 // fit end to end.
@@ -54,9 +53,9 @@ constexpr bool contains(const index_list& list, int index) {
 // in increasing order.
 constexpr index_list indices_of(mask_t mask) {
   index_list list;
-  for (int i = 1; i <= mask_width; ++i) {
-    if (((mask >> static_cast<unsigned>(i - 1)) & 1U) == 1U) {
-      push(list, i);
+  for (std::size_t bit = 0; bit < mask_width; ++bit) {
+    if (((mask >> bit) & 1U) == 1U) {
+      push(list, static_cast<int>(bit) + 1);
     }
   }
   return list;
@@ -73,7 +72,7 @@ constexpr mask_t mask_of(const index_list& list) {
 // The indices among 1 to n that `list` lacks, in increasing order.
 constexpr index_list missing_from(const index_list& list, std::size_t n) {
   index_list rest;
-  for (int i = 1; i <= static_cast<int>(n); ++i) {
+  for (int i = 1; std::cmp_less_equal(i, n); ++i) {
     if (!contains(list, i)) {
       push(rest, i);
     }
@@ -136,7 +135,7 @@ constexpr signed_blade wedge(mask_t a, mask_t b) {
 // +1.
 constexpr signed_blade antiscalar(std::size_t n) {
   index_list all;
-  for (int i = 1; i <= static_cast<int>(n); ++i) {
+  for (int i = 1; std::cmp_less_equal(i, n); ++i) {
     push(all, i);
   }
   return {.sign = 1, .mask = mask_of(all)};
@@ -471,7 +470,7 @@ TEST_CASE("The 16 complements of rigid(3) hold at run time") {
 TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
           "antiscalar is +1, for every n up to the widest mask") {
   using namespace galoot::core;
-  for (std::size_t n = 1; n <= widest_n; ++n) {
+  for (std::size_t n = 1; n <= mask_width; ++n) {
     CAPTURE(n);
     CHECK(complement_mask(0, n) == antiscalar(n).mask);
     CHECK(right_complement_sign(0, n) == 1);
@@ -498,7 +497,7 @@ TEST_CASE("The reverse, antireverse, and grade involution signs match their "
 TEST_CASE("Every function matches its definition on a sample of blades at "
           "n = 12, 16, and the widest mask") {
   using namespace galoot::core;
-  for (const std::size_t n : std::array<std::size_t, 3>{12, 16, widest_n}) {
+  for (const std::size_t n : std::array<std::size_t, 3>{12, 16, mask_width}) {
     const mask_sample s = sample_of(n);
     for (int p = 0; p < s.size; ++p) {
       const mask_t a = s.at.at(static_cast<std::size_t>(p));
@@ -526,10 +525,12 @@ TEST_CASE("In a diagonal metric, e_A e_B is reorder_sign times the squares of "
           "of six generators") {
   // Euclidean, and one with every kind of square, so that a zero or negative
   // square of a common generator shows in the coefficient.
-  constexpr std::array<std::array<int, 6>, 2> metrics{{
-      {1, 1, 1, 1, 1, 1},
-      {1, -1, 0, -1, 1, 0},
-  }};
+  constexpr std::array<std::array<int, 6>, 2> metrics{
+      {
+          {1, 1, 1, 1, 1, 1},
+          {1, -1, 0, -1, 1, 0},
+      },
+  };
   constexpr mask_t count = mask_t{1} << 6U;
   for (const std::array<int, 6>& squares : metrics) {
     for (mask_t a = 0; a < count; ++a) {
