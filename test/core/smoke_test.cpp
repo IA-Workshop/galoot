@@ -18,8 +18,8 @@ static_assert(checked_identity(1) == 1);
 
 } // namespace
 
-// Reference: contract: GALOOT_ASSERT returns normally when its condition is
-//   true, as its comment in galoot/core/assert.hpp states
+// Reference: contract: GALOOT_ASSERT acts only on a false condition, as its
+//   comment in galoot/core/assert.hpp states, so a true one returns normally
 TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time "
           "(STYLE S9; plan 0002, section 4.5)") {
   // A CHECK argument is not manifestly constant-evaluated, so the call

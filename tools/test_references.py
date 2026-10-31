@@ -1,10 +1,12 @@
-"""Check that every test case states its reference, and trace conventions to
-the test cases that pin them.
+"""Check that test cases state their references, that tests using golden
+values state the facts those values pin, and trace a specification's items to
+the tests that pin them.
 
 Usage:
   python3 -I tools/test_references.py markers <path>...
-  python3 -I tools/test_references.py trace <table> <conventions> <golden.hpp>
-      <path>...
+  python3 -I tools/test_references.py golden <golden.hpp> <path>...
+  python3 -I tools/test_references.py trace <table> <specification>
+      <golden.hpp> <path>...
 
 A <path> that is a directory is searched for files named *_test.cpp, which are
 the only files the build compiles into test programs; a <path> that is a file
@@ -31,54 +33,135 @@ rests on, in words a reader understands without other documents:
 
 A regression guard is the only source of its marker, and a test case whose
 name contains "regression" carries one. The text cites only published
-sources, never a numbered rule or a project record such as a decision, plan,
-or review: the reader is told the reason, not where it was written down.
+sources, never a project document, a numbered rule of one, or a project
+record such as a decision, plan, or review: the reader is told the reason, not
+where it was written down.
+
+Golden values
+-------------
+`golden` reads the namespaces of <golden.hpp>. The comment above each one
+ends with a line `// Fact: <fact>`, the fact its values pin. A test case that
+uses a namespace states its fact in its marker. So does a static_assert
+outside any test case, which carries a marker of the same form directly above
+it. A use is `golden::<namespace>`, or a namespace alias of one, in code (not
+in comments or strings). `using` declarations and directives that name golden
+values are rejected, because they hide which test uses which values, and so is
+a use anywhere else, such as in a helper function: pass the values to the
+helper from the test case instead. A fact is matched ignoring case and runs
+of whitespace, with the wedge sign read as ^ and the minus sign as -.
 
 Traceability
 ------------
 `trace` reads <table>, a Markdown table with the columns Item, Fact, and
-Golden values: a conventions item, a fact of it in the words a test's
-marker states it, and the namespaces of golden.hpp that hold values of that
-fact. It checks that every item in the table exists in <conventions>, that
-the namespaces in the table are exactly those of <golden.hpp>, and that a
-test case that uses a golden namespace (`<namespace>::` between its TEST_CASE
-line and the next) states that namespace's fact in its marker. It then prints
-each item with the test cases whose markers state one of its facts, and the
-items of <conventions> that no test case pins. A use of golden values in a
-helper outside the test case is not seen.
+Implemented (yes or no): a specification item, a fact of it, and whether the
+library implements it. It checks that every item exists in <specification>
+(lines that start with the item number, such as `3.1 `), and that every fact
+of <golden.hpp> is in the table. A test case or marked static_assert pins an
+item when its marker states one of the item's facts. The command prints each
+item with what pins it, and fails if an implemented item has no test.
 """
 
 import os
 import re
 import sys
 
-TEST_CASE = re.compile(r"^\s*TEST_CASE\w*\s*\(")
+TEST_CASE = re.compile(r"^[ \t]*TEST_CASE\w*\s*\(", re.MULTILINE)
+STATIC_ASSERT = re.compile(r"\bstatic_assert\s*\(")
 STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
 KINDS = ("proof", "identity", "independent value", "comparison", "contract",
          "regression guard")
 SOURCE = re.compile(rf"^({'|'.join(KINDS)}): \S")
-# A pointer to a project record or a numbered rule instead of a reason.
+# A pointer to a project document, record, or rule instead of a reason. A
+# token such as C3, S2, or V4 is mathematics on its own and a rule only after
+# the name of the document that numbers it.
+DOCUMENTS = r"constitution|workflow|vvuq|performance|style|conventions"
 POINTER = re.compile(
-    r"(?i:\b(?:decisions?|plans?|research notes?|notes?|reviews?|lessons?)"
-    r" \d{4}\b|\bspikes? [A-F]\b|\bworkbench\b|docs/agent\b"
-    r"|\b(?:Claude|Opus|Sonnet|Haiku|Fable)\b)"
-    r"|\bCONVENTIONS\b|\b[CWSPV]\d{1,2}\b|\bDoD-\d+\b")
-CONVENTIONS_ITEM = re.compile(r"^(\d+\.\d+) ")
+    rf"(?i:\b(?:{DOCUMENTS}))(?:\.md)?\b,? *(?:§ *)?(?:[CWSPV]\d+|kind \d)"
+    r"|\b(?:CONSTITUTION|WORKFLOW|VVUQ|PERFORMANCE|STYLE|CONVENTIONS)\b"
+    r"|(?i:\bconventions specification\b|\b(?:section|item) \d+\.\d+\b"
+    r"|\b(?:decisions?|plans?|research notes?|notes?|reviews?|lessons?)"
+    r" \d{4}\b|\blessons-learned\b|\bspikes? [A-F]\b|\bworkbench\b"
+    r"|docs/agent\b|\bWU\d+\b|\bDoD-\d+\b|\b(?:milestone|gate) M\d+\b"
+    r"|\bM\d+ (?:gate|milestone)\b"
+    r"|\b(?:Claude|Opus|Sonnet|Haiku|Fable)\b)")
+FACT_LINE = re.compile(r"^// Fact:(.*)$")
+NAMESPACE = re.compile(r"^namespace (\w+) \{")
+GOLDEN_USE = re.compile(r"(?<![\w:])(?:::)?golden::(\w+)")
+ALIAS = re.compile(r"\bnamespace\s+(\w+)\s*=\s*(?:::)?golden(?:::(\w+))?\s*;")
+USING = re.compile(r"\busing\s+(?:namespace\s+)?(?:::)?golden\b")
+SPEC_ITEM = re.compile(r"^(\d+\.\d+) ")
 TABLE_ROW = re.compile(r"^\|\s*(\d+\.\d+)\s*\|([^|]*)\|([^|]*)\|\s*$")
-GOLDEN_NAMESPACE = re.compile(r"^namespace (\w+) \{")
 
 
-class TestCase:
-    """A TEST_CASE: where it is, its name, its marker, and its body up to the
-    next TEST_CASE."""
+def normalize(text):
+    text = text.replace("\N{LOGICAL AND}", "^").replace("\N{MINUS SIGN}", "-")
+    return " ".join(text.lower().split())
 
-    def __init__(self, path, line, name, marker_line, marker, body):
+
+def code_only(text):
+    """The text with every comment and every string or character literal
+    replaced by spaces, keeping newlines, so offsets and lines still match."""
+    out = list(text)
+    i, n = 0, len(text)
+
+    def blank(start, end):
+        for k in range(start, end):
+            if out[k] != "\n":
+                out[k] = " "
+
+    while i < n:
+        if text.startswith("//", i):
+            end = text.find("\n", i)
+            end = n if end < 0 else end
+        elif text.startswith("/*", i):
+            end = text.find("*/", i + 2)
+            end = n if end < 0 else end + 2
+        elif text.startswith('R"', i) and (i == 0 or not
+                                            text[i - 1].isalnum()):
+            open_paren = text.find("(", i)
+            delimiter = text[i + 2:open_paren]
+            end = text.find(f"){delimiter}\"", open_paren)
+            end = n if end < 0 else end + len(delimiter) + 2
+        elif text[i] in "\"'" and not (text[i] == "'" and i > 0 and
+                                       text[i - 1].isalnum()):
+            # A ' after a digit or letter is a digit separator, as in 1'000.
+            quote, end = text[i], i + 1
+            while end < n and text[end] != quote:
+                end += 2 if text[end] == "\\" else 1
+            end += 1
+        else:
+            i += 1
+            continue
+        blank(i, end)
+        i = end
+    return "".join(out)
+
+
+def matching(code, open_at, opener, closer):
+    """The offset just past the bracket that closes code[open_at]."""
+    depth = 0
+    for k in range(open_at, len(code)):
+        if code[k] == opener:
+            depth += 1
+        elif code[k] == closer:
+            depth -= 1
+            if depth == 0:
+                return k + 1
+    return len(code)
+
+
+class Check:
+    """A TEST_CASE, or a static_assert outside test cases: where it is, its
+    name (empty for a static_assert), its marker, and its code."""
+
+    def __init__(self, kind, path, line, name, marker_line, marker, code):
+        self.kind = kind
         self.path = path
         self.line = line
         self.name = name
         self.marker_line = marker_line  # None when there is no marker
         self.marker = marker
-        self.body = body
+        self.code = code
 
     def where(self):
         return f"{self.path}:{self.line}"
@@ -87,11 +170,68 @@ class TestCase:
         return f"{self.path}:{self.marker_line}"
 
 
-def normalize(text):
-    return " ".join(text.split())
+def marker_above(lines, index):
+    """The marker in the comment block directly above lines[index], as
+    (line number, text), or (None, None)."""
+    top = index
+    while top > 0 and lines[top - 1].lstrip().startswith("//"):
+        top -= 1
+    block = [line.lstrip()[2:].strip() for line in lines[top:index]]
+    if not block or not block[0].startswith("Reference:"):
+        return None, None
+    text = " ".join([block[0][len("Reference:"):]] + block[1:])
+    return top + 1, " ".join(text.split())
 
 
-def test_files(paths):
+class Source:
+    """One test file, split into its test cases, its static_asserts outside
+    test cases, and the rest of its code."""
+
+    def __init__(self, path):
+        self.path = path
+        with open(path, encoding="utf-8") as f:
+            self.text = f.read()
+        self.code = code_only(self.text)
+        self.lines = self.text.splitlines()
+        self.test_cases = []
+        self.static_asserts = []
+        covered = []
+
+        for match in TEST_CASE.finditer(self.code):
+            start = match.start()
+            args_end = matching(self.code, match.end() - 1, "(", ")")
+            body = self.code.find("{", args_end)
+            end = len(self.code) if body < 0 else \
+                matching(self.code, body, "{", "}")
+            name = "".join(STRING.findall(self.text[start:args_end]))
+            self.test_cases.append(self.check("TEST_CASE", start, end, name))
+            covered.append((start, end))
+
+        for match in STATIC_ASSERT.finditer(self.code):
+            start = match.start()
+            if any(a <= start < b for a, b in covered):
+                continue
+            end = matching(self.code, match.end() - 1, "(", ")")
+            self.static_asserts.append(
+                self.check("static_assert", start, end, ""))
+            covered.append((start, end))
+
+        rest = list(self.code)
+        for a, b in covered:
+            rest[a:b] = [" "] * (b - a)
+        self.rest = "".join(rest)
+
+    def line_of(self, offset):
+        return self.code.count("\n", 0, offset) + 1
+
+    def check(self, kind, start, end, name):
+        line = self.line_of(start)
+        marker_line, marker = marker_above(self.lines, line - 1)
+        return Check(kind, self.path, line, name, marker_line, marker,
+                     self.code[start:end])
+
+
+def read_sources(paths):
     files = []
     for path in paths:
         if os.path.isdir(path):
@@ -100,178 +240,196 @@ def test_files(paths):
                           if n.endswith("_test.cpp")]
         else:
             files.append(path)
-    return sorted(files)
+    return [Source(f) for f in sorted(files)]
 
 
-def read_test_cases(path):
-    with open(path, encoding="utf-8") as f:
-        lines = f.read().splitlines()
-    starts = [i for i, line in enumerate(lines) if TEST_CASE.match(line)]
-    cases = []
-    for k, i in enumerate(starts):
-        end = starts[k + 1] if k + 1 < len(starts) else len(lines)
-
-        # The name is the string literals up to the line that opens the body.
-        head = []
-        for line in lines[i:end]:
-            head.append(line)
-            if "{" in line:
-                break
-        name = "".join(STRING.findall(" ".join(head)))
-
-        top = i
-        while top > 0 and lines[top - 1].lstrip().startswith("//"):
-            top -= 1
-        block = [line.lstrip()[2:].strip() for line in lines[top:i]]
-        marker_line, marker = None, None
-        if block and block[0].startswith("Reference:"):
-            marker_line = top + 1
-            marker = normalize(" ".join([block[0][len("Reference:"):]] +
-                                        block[1:]))
-        cases.append(TestCase(path, i + 1, name, marker_line, marker,
-                              "\n".join(lines[i:end])))
-    return cases
-
-
-def sources(marker):
-    return [s.strip() for s in marker.split(";") if s.strip()]
-
-
-def check_markers(cases):
+def marker_findings(check):
+    if check.marker is None:
+        return [f"{check.where()}: {check.kind} has no reference marker: a "
+                "comment "
+                "block starting '// Reference:' directly above it"]
     findings = []
-    for case in cases:
-        if case.marker is None:
-            findings.append(f"{case.where()}: TEST_CASE has no reference "
-                            "marker: a comment block starting "
-                            "'// Reference:' directly above it")
-            continue
-        at = case.marker_where()
-        listed = sources(case.marker)
-        kinds = []
-        for source in listed:
-            match = SOURCE.match(source)
-            if match:
-                kinds.append(match.group(1))
-            else:
-                findings.append(f"{at}: reference source is not "
-                                f"'<kind>: <text>' with a kind of "
-                                f"{', '.join(KINDS)}: '{source}'")
-        if not listed:
-            findings.append(f"{at}: reference marker states no source")
-        if "regression guard" in kinds and len(listed) > 1:
-            findings.append(f"{at}: a regression guard is the only source of "
-                            "its reference")
-        if ("regression" in case.name.lower() and
-                "regression guard" not in kinds):
-            findings.append(f"{case.where()}: test case named as a regression "
-                            "test is not labeled 'regression guard:'")
-        pointer = POINTER.search(case.marker)
-        if pointer:
-            findings.append(f"{at}: reference points to a record or a "
-                            f"numbered rule instead of stating the reason: "
-                            f"'{pointer.group(0)}'")
+    at = check.marker_where()
+    listed = [s.strip() for s in check.marker.split(";") if s.strip()]
+    kinds = []
+    for source in listed:
+        match = SOURCE.match(source)
+        if match:
+            kinds.append(match.group(1))
+        else:
+            findings.append(f"{at}: reference source is not '<kind>: <text>' "
+                            f"with a kind of {', '.join(KINDS)}: '{source}'")
+    if not listed:
+        findings.append(f"{at}: reference marker states no source")
+    if "regression guard" in kinds and len(listed) > 1:
+        findings.append(f"{at}: a regression guard is the only source of its "
+                        "reference")
+    if "regression" in check.name.lower() and "regression guard" not in kinds:
+        findings.append(f"{check.where()}: test case named as a regression "
+                        "test is not labeled 'regression guard:'")
+    pointer = POINTER.search(check.marker)
+    if pointer:
+        findings.append(f"{at}: reference points to a document or a record "
+                        f"instead of stating the reason: '{pointer.group(0)}'")
     return findings
 
 
-def read_lines(path):
+def read_golden(path):
+    """The fact of each namespace of the golden header, and the findings."""
     with open(path, encoding="utf-8") as f:
-        return f.read().splitlines()
+        lines = f.read().splitlines()
+    facts, findings = {}, []
+    for number, line in enumerate(lines, 1):
+        match = NAMESPACE.match(line)
+        if not match or match.group(1) == "golden":
+            continue
+        name = match.group(1)
+        fact_line = FACT_LINE.match(lines[number - 2]) if number > 1 else None
+        fact = fact_line.group(1).strip() if fact_line else ""
+        if name in facts:
+            findings.append(f"{path}:{number}: namespace {name} is defined "
+                            "twice")
+        elif not fact:
+            findings.append(f"{path}:{number}: namespace {name} states no "
+                            "fact: its comment ends with no '// Fact:' line")
+        else:
+            facts[name] = fact
+    if not facts:
+        findings.append(f"{path}: no namespace with a fact")
+    return facts, findings
+
+
+def golden_findings(golden_path, sources):
+    facts, findings = read_golden(golden_path)
+    for source in sources:
+        aliases = {}
+        for match in ALIAS.finditer(source.code):
+            aliases[match.group(1)] = match.group(2)  # None for golden itself
+
+        def uses(code):
+            """Each golden namespace the code uses, with its first offset."""
+            used = {}
+            for m in GOLDEN_USE.finditer(code):
+                used.setdefault(m.group(1), m.start())
+            for alias, target in aliases.items():
+                pattern = rf"(?<![\w:]){alias}::" + ("" if target else r"(\w+)")
+                for m in re.finditer(pattern, code):
+                    used.setdefault(target or m.group(1), m.start())
+            return {name: at for name, at in used.items() if name in facts}
+
+        for match in USING.finditer(source.code):
+            findings.append(f"{source.path}:{source.line_of(match.start())}: "
+                            "'using' hides which test uses golden values; "
+                            "name them as golden::<namespace> or through a "
+                            "namespace alias")
+
+        for check in source.test_cases + source.static_asserts:
+            used = uses(check.code)
+            if not used:
+                continue
+            if check.kind == "static_assert":
+                findings += marker_findings(check)
+            marker = normalize(check.marker or "")
+            for name in sorted(used):
+                if normalize(facts[name]) not in marker:
+                    findings.append(f"{check.where()}: uses golden values of "
+                                    f"{name} but its reference does not state "
+                                    f"'{facts[name]}'")
+
+        rest = ALIAS.sub(lambda m: " " * len(m.group(0)), source.rest)
+        for name, at in sorted(uses(rest).items()):
+            findings.append(f"{source.path}:{source.line_of(at)}: "
+                            f"golden values of {name} are used outside a test "
+                            "case or a static_assert; pass them in from the "
+                            "test case")
+    return findings
 
 
 def read_table(path):
-    """Rows of (line, item, fact, namespaces) from the Markdown table."""
-    rows = []
-    for number, line in enumerate(read_lines(path), 1):
-        match = TABLE_ROW.match(line)
-        if match:
-            item, fact, golden = match.groups()
-            namespaces = re.findall(r"`(\w+)`", golden)
-            rows.append((number, item, normalize(fact), namespaces))
+    with open(path, encoding="utf-8") as f:
+        rows = []
+        for number, line in enumerate(f.read().splitlines(), 1):
+            match = TABLE_ROW.match(line)
+            if match:
+                item, fact, implemented = (g.strip() for g in match.groups())
+                rows.append((number, item, fact, implemented))
     return rows
 
 
-def trace(table_path, conventions_path, golden_path, cases):
-    findings = []
-    items = [m.group(1) for line in read_lines(conventions_path)
-             if (m := CONVENTIONS_ITEM.match(line))]
-    golden = [m.group(1) for line in read_lines(golden_path)
-              if (m := GOLDEN_NAMESPACE.match(line)) and m.group(1) != "golden"]
-    rows = read_table(table_path)
+def trace(table, specification, golden_path, sources):
+    with open(specification, encoding="utf-8") as f:
+        items = [m.group(1) for line in f if (m := SPEC_ITEM.match(line))]
+    facts, findings = read_golden(golden_path)
+    rows = read_table(table)
     if not rows:
-        findings.append(f"{table_path}: no rows of the form "
-                        "| item | fact | golden values |")
+        findings.append(f"{table}: no rows of the form "
+                        "| item | fact | implemented |")
 
-    fact_of = {}
-    for number, item, fact, namespaces in rows:
-        at = f"{table_path}:{number}"
+    table_facts = set()
+    for number, item, fact, implemented in rows:
+        at = f"{table}:{number}"
         if item not in items:
-            findings.append(f"{at}: {conventions_path} has no item {item}")
+            findings.append(f"{at}: {specification} has no item {item}")
         if not fact:
             findings.append(f"{at}: item {item} has an empty fact")
-        for namespace in namespaces:
-            if namespace in fact_of:
-                findings.append(f"{at}: golden namespace {namespace} is "
-                                "listed twice")
-            elif namespace not in golden:
-                findings.append(f"{at}: {golden_path} has no namespace "
-                                f"{namespace}")
-            fact_of[namespace] = fact
-    for namespace in golden:
-        if namespace not in fact_of:
-            findings.append(f"{golden_path}: namespace {namespace} is not in "
-                            f"{table_path}")
+        if implemented not in ("yes", "no"):
+            findings.append(f"{at}: Implemented is '{implemented}', not yes "
+                            "or no")
+        table_facts.add(normalize(fact))
+    for name, fact in facts.items():
+        if normalize(fact) not in table_facts:
+            findings.append(f"{golden_path}: the fact of namespace {name}, "
+                            f"'{fact}', is not in {table}")
 
-    for case in cases:
-        marker = case.marker or ""
-        for namespace, fact in sorted(fact_of.items()):
-            if (re.search(rf"\b{namespace}::", case.body) and
-                    fact not in marker):
-                findings.append(f"{case.where()}: uses golden values of "
-                                f"{namespace} but its reference does not "
-                                f"state '{fact}'")
-
+    checks = [c for s in sources for c in s.test_cases + s.static_asserts
+              if c.marker]
     pinned_by = {item: [] for item in items}
     for _, item, fact, _ in rows:
         if item not in pinned_by or not fact:
             continue
-        for case in cases:
-            if (case.marker and fact in case.marker and
-                    case.where() not in pinned_by[item]):
-                pinned_by[item].append(case.where())
+        for check in checks:
+            if (normalize(fact) in normalize(check.marker) and
+                    check.where() not in pinned_by[item]):
+                pinned_by[item].append(check.where())
+    for number, item, _, implemented in rows:
+        if implemented == "yes" and item in pinned_by and not pinned_by[item]:
+            findings.append(f"{table}:{number}: item {item} is implemented "
+                            "and no test states its fact")
     return findings, pinned_by
 
 
 def main(argv):
-    if len(argv) >= 2 and argv[0] == "markers":
-        command, paths = "markers", argv[1:]
-    elif len(argv) >= 5 and argv[0] == "trace":
-        command, paths = "trace", argv[4:]
-    else:
+    commands = {"markers": 2, "golden": 3, "trace": 5}
+    if not argv or argv[0] not in commands or len(argv) < commands[argv[0]]:
         sys.exit("usage: test_references.py markers <path>...\n"
-                 "       test_references.py trace <table> <conventions> "
+                 "       test_references.py golden <golden.hpp> <path>...\n"
+                 "       test_references.py trace <table> <specification> "
                  "<golden.hpp> <path>...")
-
-    cases = [c for f in test_files(paths) for c in read_test_cases(f)]
-    if not cases:
+    command = argv[0]
+    paths = argv[commands[command] - 1:]
+    sources = read_sources(paths)
+    if not any(s.test_cases for s in sources):
         print(f"no test cases found under {' '.join(paths)}")
         return 1
 
     if command == "markers":
-        findings = check_markers(cases)
-        for finding in findings:
-            print(finding)
+        cases = [c for s in sources for c in s.test_cases]
+        findings = [f for c in cases for f in marker_findings(c)]
         if not findings:
             print(f"{len(cases)} test cases, each with a reference marker")
-        return 1 if findings else 0
-
-    findings, pinned_by = trace(*argv[1:4], cases)
+    elif command == "golden":
+        findings = golden_findings(argv[1], sources)
+        if not findings:
+            print("every use of golden values states its fact")
+    else:
+        findings, pinned_by = trace(*argv[1:4], sources)
+        for item, where in pinned_by.items():
+            if where:
+                print(f"{item}: {', '.join(where)}")
+        untested = [item for item, where in pinned_by.items() if not where]
+        print(f"items with no test: {', '.join(untested) or 'none'}")
     for finding in findings:
         print(finding)
-    for item, where in pinned_by.items():
-        if where:
-            print(f"{item}: {', '.join(where)}")
-    untested = [item for item, where in pinned_by.items() if not where]
-    print(f"items with no test: {', '.join(untested) or 'none'}")
     return 1 if findings else 0
 
 
