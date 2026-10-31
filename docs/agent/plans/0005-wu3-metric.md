@@ -48,7 +48,7 @@ Wall times of the full-suite workflows (s): gcc-debug 3.41, gcc-release 5.89, gc
 
 | Test | Fixes | Expected value and its source |
 | --- | --- | --- |
-| core.metric, R splits | every R<N>(p, q, r), n ≤ 6 (84 splits) | diagonal e_(i+1)² = +1 for i < p, −1 for p ≤ i < p + q, 0 after; off-diagonal 0 (definition of R(p, q, r), null generators last) |
+| core.metric, R splits | every R<N>(p, q, r), n ≤ 6 (83 splits) | diagonal e_(i+1)² = +1 for i < p, −1 for p ≤ i < p + q, 0 after; off-diagonal 0 (definition of R(p, q, r), null generators last) |
 | core.metric, R literals | R(1,1,1), R(2,2,2), R(4,1,0) | diag(1, −1, 0); diag(1, 1, −1, −1, 0, 0); diag(1, 1, 1, 1, −1), written out |
 | core.metric, rigid | rigid(d), d ≤ 5; rigid(3) | diag(1 × d, 0); diag(1, 1, 1, 0) written out; rigid(3) == R(3, 0, 1) |
 | core.metric, conformal | conformal(d), d ≤ 4; conformal(3) | e1..ed square to 1, e(d+1), e(d+2) to 0, e(d+1)·e(d+2) = −1, else 0; the 5 × 5 matrix written out |
@@ -151,7 +151,7 @@ Before: the tests of `708c5dc`/`c8dfa51` against the header of `b12f07d`. After:
 
 At `ed2a3e2`, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug 3.60 s, gcc-release 3.52 s, gcc-asan 3.80 s, clang-debug 3.15 s, clang-release 3.56 s, clang-asan 3.33 s, lint 3.06 s (clang-tidy, header sets, format-check); 19 of 19 tests in each; total 24.0 s. `all_verify_interface_header_sets` built under gcc-debug and clang-debug. Nothing deferred.
 
-Cost (track-only, shared mode): `metric_test` 0.20 s, 93 MiB, 2.03 G instructions on GCC (was 0.29 s, 84 MiB, 1.73 G); on Clang 0.17 s, 121 MiB, at least 1.79 G (its efficiency-core count is `unavailable`; was 1.16 G). The rise is the compile-time expansion of the R sweep over 84 splits as template instantiations, which the derived `R<P, Q, Z>` requires. The header-check TU of `metric.hpp` costs 0.45 G (GCC) and 0.38 G (Clang).
+Cost (track-only, shared mode): `metric_test` 0.20 s, 93 MiB, 2.03 G instructions on GCC (was 0.29 s, 84 MiB, 1.73 G); on Clang 0.17 s, 121 MiB, at least 1.79 G (its efficiency-core count is `unavailable`; was 1.16 G). The rise is the compile-time expansion of the R sweep over 83 splits as template instantiations, which the derived `R<P, Q, Z>` requires. The header-check TU of `metric.hpp` costs 0.45 G (GCC) and 0.38 G (Clang).
 
 ### Next step
 
