@@ -57,13 +57,15 @@ set_tests_properties(core.assert_checking core.assert_unchecked PROPERTIES
 # and the diagnostic shows its message (decision 0012).
 galoot_add_compile_fail_test(NAME assert_consteval MODULE core COMPONENT assert
   SOURCE core/assert_consteval_fail.cpp
-  MESSAGE "assert_consteval_fail: odd input to checked_half")
+  MESSAGE "assert_consteval_fail: odd input to checked_half"
+  REQUIRE assertion_failed)
 # Its twin expects a message the source does not contain, so the helper can
 # fail (VVUQ V2); WILL_FAIL turns that failure into a pass.
 galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
   MODULE core COMPONENT assert
   SOURCE core/assert_consteval_fail.cpp
-  MESSAGE "assert_consteval_fail: a message the source does not contain")
+  MESSAGE "assert_consteval_fail: a message the source does not contain"
+  REQUIRE assertion_failed)
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 

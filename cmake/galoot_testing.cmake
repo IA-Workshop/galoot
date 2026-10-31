@@ -25,31 +25,40 @@ function(galoot_add_test)
 endfunction()
 
 # galoot_add_compile_fail_test(NAME <name> MODULE <module>
-#   COMPONENT <component> SOURCE <file> MESSAGE <literal>)
+#   COMPONENT <component> SOURCE <file> MESSAGE <literal>
+#   [REQUIRE <literal>...])
 #
-# Registers the test <module>.<name>, which compiles <file> and passes only if
-# the compiler's output contains <literal>. The literal is escaped here, so a
-# test cannot pass on a loose pattern (plan 0002, departure 7). The exit code
-# is ignored once a pass expression is set, and a different error does not
-# contain the literal, so an unrelated failure fails the test (research note
-# 0001, F11). The object library is outside `all`, and the test builds it in
-# this build tree, so compile-fail tests take a lock: two Ninja processes in
-# one tree could corrupt .ninja_log and .ninja_deps (inferred).
+# Registers the test <module>.<name>, which builds <file> and passes only if
+# the build fails and its output contains <literal> and every REQUIRE literal,
+# each as written (test/expect_output.cmake; plan 0002, departure 7). A
+# GALOOT_ASSERT message reaches the diagnostic only through the source line
+# the compiler echoes, so an unrelated error on that line would show it too;
+# such tests also require `assertion_failed`, which only the failed assertion
+# names (W5 review of WU1, finding N1). MESSAGE may not contain `;`, which
+# CMake would split into two literals (finding N3); a `;` in a REQUIRE value
+# cannot be told from two values, so it splits too. The object library is
+# outside `all`, and the test builds it in this build tree, so compile-fail
+# tests take a lock: two Ninja processes in one tree could corrupt .ninja_log
+# and .ninja_deps (inferred).
 function(galoot_add_compile_fail_test)
   cmake_parse_arguments(PARSE_ARGV 0 arg ""
-    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "")
+    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE")
+  if(arg_MESSAGE MATCHES ";")
+    message(FATAL_ERROR "galoot_add_compile_fail_test(${arg_NAME}): MESSAGE "
+      "may not contain ';': ${arg_MESSAGE}")
+  endif()
+
   set(target ${arg_MODULE}_${arg_NAME}_compile_fail)
   add_library(${target} OBJECT EXCLUDE_FROM_ALL ${arg_SOURCE})
   target_link_libraries(${target} PRIVATE galoot::core)
   # The source is meant not to compile, so there is nothing to lint.
   set_target_properties(${target} PROPERTIES SKIP_LINTING ON)
 
-  string(REGEX REPLACE "([][.*+?^$|(){}\\\\])" "\\\\\\1" pattern
-    "${arg_MESSAGE}")
   add_test(NAME ${arg_MODULE}.${arg_NAME}
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${target})
+    COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/test/expect_output.cmake
+      -- 1 ${arg_MESSAGE} ${arg_REQUIRE}
+      -- ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${target})
   set_tests_properties(${arg_MODULE}.${arg_NAME} PROPERTIES
     LABELS "${arg_MODULE};${arg_MODULE}.${arg_COMPONENT}"
-    PASS_REGULAR_EXPRESSION "${pattern}"
     RESOURCE_LOCK galoot_build_tree)
 endfunction()
