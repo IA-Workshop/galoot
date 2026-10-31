@@ -1,5 +1,7 @@
-"""Check the core's headers for what they include and how they are named
-(constitution C13; STYLE S6; plan 0001, DoD-6). Snippet candidate.
+"""Check the core's headers for what they include and how they are named.
+The core must build from its headers alone, with nothing but the standard
+library, so a stray include is a defect even when the machine happens to
+provide the header.
 
 Usage: python3 -I tools/include_scan.py <include-root>
 
@@ -9,12 +11,15 @@ header under galoot/core/. Prints one line per finding, as
 
 - an include that names neither a C++23 standard header nor an existing core
   header (quoted includes resolve against the including file's directory);
+- an #include_next, whose target depends on the order of the user's include
+  paths, and a computed #include, whose target this scan cannot know;
 - a cycle in the core's include graph;
 - an include guard not named from the path (galoot/core/bits.hpp has
   GALOOT_CORE_BITS_HPP), as an #ifndef and #define that open the file;
-- a header name that is not snake_case.hpp.
+- a header name that is not snake_case.hpp, and a file under galoot/core/
+  that is not a .hpp header.
 
-Namespaces (S6) are left to review.
+Namespaces are left to review.
 """
 
 import os
@@ -44,21 +49,23 @@ csignal cstdarg cstddef cstdint cstdio cstdlib cstring ctime cuchar cwchar
 cwctype
 """.split())
 
-INCLUDE = re.compile(r'^\s*#\s*include\s*([<"])([^>"]+)[>"]')
+DIRECTIVE = re.compile(r"^\s*#\s*(include_next|include)\b\s*(.*)$")
+HEADER_NAME = re.compile(r'^([<"])([^>"]+)[>"]')
 NAME = re.compile(r"^[a-z][a-z0-9_]*\.hpp$")
 
 
-def core_headers(root):
-    """Returns the core's headers as paths relative to root, sorted."""
-    found = []
+def core_files(root):
+    """Returns the core's headers and the other files under galoot/core/,
+    each as sorted paths relative to root."""
+    headers, others = [], []
     if os.path.isfile(os.path.join(root, "galoot", "core.hpp")):
-        found.append("galoot/core.hpp")
+        headers.append("galoot/core.hpp")
     for directory, _, files in os.walk(os.path.join(root, "galoot", "core")):
         for name in files:
-            if name.endswith(".hpp"):
-                path = os.path.join(directory, name)
-                found.append(os.path.relpath(path, root).replace(os.sep, "/"))
-    return sorted(found)
+            path = os.path.join(directory, name)
+            path = os.path.relpath(path, root).replace(os.sep, "/")
+            (headers if name.endswith(".hpp") else others).append(path)
+    return sorted(headers), sorted(others)
 
 
 def expected_guard(header):
@@ -76,9 +83,9 @@ def check_guard(header, lines, findings):
 
 
 def scan(root):
-    headers = core_headers(root)
+    headers, others = core_files(root)
     known = set(headers)
-    findings = []
+    findings = [f"{path}: not a .hpp header" for path in others]
     graph = {}
 
     for header in headers:
@@ -91,10 +98,21 @@ def scan(root):
 
         graph[header] = []
         for number, line in enumerate(lines, 1):
-            match = INCLUDE.match(line)
+            match = DIRECTIVE.match(line)
             if not match:
                 continue
-            delimiter, target = match.groups()
+            directive, operand = match.groups()
+            if directive == "include_next":
+                findings.append(f"{header}:{number}: #include_next depends "
+                                "on the order of the user's include paths")
+                continue
+            name = HEADER_NAME.match(operand)
+            if not name:
+                operand = operand.split("//")[0].strip()
+                findings.append(f"{header}:{number}: computed #include "
+                                f"{operand} cannot be checked")
+                continue
+            delimiter, target = name.groups()
             if delimiter == '"':
                 base = os.path.dirname(header)
                 target = os.path.normpath(os.path.join(base, target))
@@ -104,7 +122,7 @@ def scan(root):
                 pass
             else:
                 findings.append(
-                    f"{header}:{number}: {delimiter}{match.group(2)}"
+                    f"{header}:{number}: {delimiter}{name.group(2)}"
                     f"{'>' if delimiter == '<' else delimiter} is not a C++23 "
                     "standard header or a core header")
 
