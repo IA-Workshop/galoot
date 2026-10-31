@@ -5,3 +5,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	spikes-A-B	spike author	opus	255978	101	2547	reported by harness as subagent_tokens
 2026-10-31	spike-B-review	blind reviewer	fable	99539	18	618	reported by harness as subagent_tokens
 2026-10-31	WU1	build-expert implementer	opus	314277	114	1710	reported by harness as subagent_tokens
+2026-10-31	WU1	blind reviewer (W5)	opus	220829	67	851	reported by harness as subagent_tokens
