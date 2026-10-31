@@ -14,6 +14,10 @@ STYLE S11 gains a paragraph: code, comments, build files, scripts, and user docu
 
 Existing citations are removed in a cleanup unit after the units in flight (recorder, bits, metric, M0 closure) merge, so that the cleanup does not conflict with their branches. `core.hpp` is fixed now. A mechanical check (a script like the include scan) that flags the patterns "decision NNNN", "plan NNNN", "research note", and provision numbers in human-facing files joins that unit.
 
+## Amendment, 2026-10-31
+
+The owner tightened the ruling: "there should be no citations of any provisions or agent work of any sort in code. refer to the code style in the upper directory. the code and comments should read as if a HUMAN wrote them and as if a human will be reading them. if the agent must make a note for future reference, record it in the agent documents area." STYLE S11 was rewritten accordingly. The allowance for citing the conventions specification by section title is withdrawn: a convention is restated where it is applied. Only published sources may be cited. The code style guide at `utils/code-style` applies to all code, comments, tests (names and messages included), build files, scripts, generated files, and user documentation. The cleanup unit covers all of these, including citations of provisions and of the conventions specification, and its mechanical check flags decision, plan, note, review, spike, and workbench references, provision numbers, and the name of the conventions specification.
+
 ## Consequences
 
 Reviewers check new code against the paragraph at once. Header comments that explain a rule state the rule's reason, not its number.

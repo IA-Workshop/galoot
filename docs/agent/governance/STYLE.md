@@ -71,9 +71,9 @@ A name fixed by mathematical notation keeps its form: basis names such as `e41` 
 
 ### S11 Comments
 
-Comments state why: intent, invariants, the convention or equation applied, and its source (`// Right complement; CONVENTIONS.md, "Complements"`). They do not narrate the code. Each declaration in a public header has a `///` comment immediately before it that states what the function requires, guarantees, and preserves, and the conventions it relies on, cited by section of [CONVENTIONS.md](CONVENTIONS.md) rather than restated.
+Comments state why: intent, invariants, the equation or convention applied and stated in place (`// Right complement: u ^ right(u) = 1`), units, and the published source of a method where one exists. They do not narrate the code. Each declaration in a public header has a `///` comment immediately before it that states what the function requires, guarantees, and preserves, in terms a user of the library can read without the project's records.
 
-Code, comments, build files, scripts, and user documentation are written for human readers and never cite agent records: decisions, plans, research notes, reviews, lessons, the workbench, or the numbers of governance provisions. A comment states the reason in place. A citation of the conventions specification by section title, or of a published source, is allowed, because readers need it. The agent records themselves cite each other freely.
+All code is written as a human maintainer would write it, for a human reader, and follows the owner's general code style guide (`utils/code-style`). This covers source, comments, tests (including test names and failure messages), build files, scripts, generated files, and user documentation. None of them cites a governance provision (the numbered provisions of the constitution, workflow, VVUQ, performance, and style documents, or the conventions specification) or agent work of any sort: decisions, plans, research notes, reviews, lessons, spikes, records, the workbench, or agent names. A convention is restated where it is applied. The only citations are published sources: papers, books, standards, and the pages of the mathematics. A note that an agent needs for later work is written in the agent documents under `docs/agent/`, where the workflow places it.
 
 ### S12 Statements and constants
 
