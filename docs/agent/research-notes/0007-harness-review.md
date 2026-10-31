@@ -2,7 +2,7 @@
 
 - Subject: what Galoot should still adopt from the governance harness (`/home/brianm/projects/utils/governance-harness`) before implementation begins, taking the harness as guidelines rather than literal rules.
 - Read by: Claude (agent, Opus), 2026-10-31: the harness README and agent files, every provision of PRIN, PRIME, QA, VV, REPRO, INTPR, GUARD, RSRC, and AGENT, the GOV titles, and the standards CREW, INSTR, WPROC, TEST, KNOW, DOCS, THRT, CXX, and DEPS. Consolidated by the lead agent.
-- Status: proposals for the owner. None is in a governance document yet.
+- Status: the owner ratified candidates 1 to 9 and 11 to 13 and the W12 sentence on 2026-10-31, and they are in the governance documents. Candidate 9 was extended to resolve absolute paths before acting on files. Candidate 10 was agreed but does not apply to this project and was not adopted. Candidate 3 added the `blind-reviewer` and `auditor` agents.
 
 Galoot already covers honest reports (C20), stopping (W8), defects outside the unit (W9), never weakening tests (W9, V12, V16), an independent reviewer (W5), agent attribution (C17, W7), seeds (V7), source confirmation (V9), declared variation (V14), lessons (W6), and keeping process out of user documentation (W12). What it lacks concerns how agents behave at the edges of a unit: reporting, handing off, delegating, working in parallel, and acting irreversibly. Galoot also has no root `AGENTS.md` or `CLAUDE.md`, so only the two subagent files point an agent at the governance.
 

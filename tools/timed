@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Runs one build or test command and appends its wall time to the run log,
+# docs/agent/records/performance/runs.tsv (PERFORMANCE.md P13). The time is
+# tracked and noted, never asserted on, and the command's exit status is
+# passed through unchanged.
+#
+# Usage: tools/timed <step> <preset> <selection> -- <command> [args...]
+#   step       build or test
+#   preset     the CMake preset, or - for none
+#   selection  what ran: a target, a label regex, or "all"
+set -u
+
+if [[ $# -lt 5 || $4 != "--" ]]; then
+  echo "usage: tools/timed <step> <preset> <selection> -- <command> [args...]" >&2
+  exit 2
+fi
+step=$1 preset=$2 selection=$3
+shift 4
+
+root=$(git rev-parse --show-toplevel) || exit 2
+log=$root/docs/agent/records/performance/runs.tsv
+header="utc_start	revision	branch	step	preset	selection	wall_s	exit	host"
+[[ -s $log ]] || printf '%s\n' "$header" >"$log"
+
+revision=$(git -C "$root" rev-parse --short=12 HEAD)
+[[ -z $(git -C "$root" status --porcelain --untracked-files=no) ]] ||
+  revision+="-dirty"
+branch=$(git -C "$root" branch --show-current)
+start_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+start_ns=$(date +%s%N)
+
+"$@"
+status=$?
+
+end_ns=$(date +%s%N)
+wall=$(awk -v ns=$((end_ns - start_ns)) 'BEGIN { printf "%.3f", ns / 1e9 }')
+printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$start_utc" "$revision" \
+  "${branch:-detached}" "$step" "$preset" "$selection" "$wall" "$status" \
+  "$(hostname)" >>"$log"
+echo "timed: $step $selection took ${wall} s (exit $status)" >&2
+exit "$status"

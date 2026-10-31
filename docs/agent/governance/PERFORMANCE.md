@@ -80,7 +80,7 @@ A passing run is evidence for the revision and configuration it ran on, so a run
 
 ### P11 Shared machine
 
-Several workstreams, of people and of agents, share the development machine. Each works in its own checkout of the repository with its own build directory, so that no two builds write the same files. Concurrent workstreams draw their parallel build and test jobs from one pool of job slots shared across the machine, so that together they share the processors rather than oversubscribing them; a limit set inside one build tree does not do this, because it cannot see the others. The size of the pool is the owner's decision (C14), made with P14 in mind. A workstream does not start a build or a run that the free processors and memory cannot serve. A run that measures performance (P1, P6) does not overlap other heavy work on the machine.
+Several workstreams, of people and of agents, share the development machine. Each works in its own checkout of the repository with its own build directory, so that no two builds write the same files. Concurrent workstreams draw their parallel build and test jobs from one pool of job slots shared across the machine, so that together they share the processors rather than oversubscribing them; a limit set inside one build tree does not do this, because it cannot see the others. The owner sets the pool at 24 slots, one per physical core (C14, P14). A workstream does not start a build or a run that the free processors and memory cannot serve. A run that measures performance (P1, P6) does not overlap other heavy work on the machine.
 
 ### P12 Build only what runs
 
@@ -88,7 +88,7 @@ A run builds only the targets its selection needs. Build directories persist bet
 
 ### P13 Record of a run
 
-The message of each merge names the selection that ran, its configurations, its outcome, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).
+Each build and test run is timed by `tools/timed`, which appends its wall time, revision, branch, preset, selection, and exit status to `docs/agent/records/performance/runs.tsv`. These times are tracked and noted, never asserted on: they show how long the suites take and how that changes. The message of each merge names the selection that ran, its configurations, its outcome, its wall time, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).
 
 ## The development machine
 

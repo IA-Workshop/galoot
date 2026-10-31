@@ -33,9 +33,10 @@ Read before changing the build, and cite provisions by number in what you report
 
 ## Running builds on the shared machine
 
-- Several worktrees build at once (P11). Ninja pools, `-j`, and `-l` act only inside one build tree. Where a shared FIFO jobserver is exported in `MAKEFLAGS`, Ninja and CTest draw from it, so add no `-j` of your own. Its token count is the owner's decision (C14).
+- Several worktrees build at once (P11). Ninja pools, `-j`, and `-l` act only inside one build tree. The owner set the machine's shared pool at 24 job slots, one per physical core (P11, P14). It is a FIFO jobserver exported in `MAKEFLAGS`; Ninja and CTest draw from it, so add no `-j` of your own. A FIFO loses its tokens when the last process holding it closes, so the pool needs one long-lived process that keeps it open; if none is running, report that rather than starting builds without it.
 - Never use `ctest --test-load` with a value below the machine's current load: CTest then starts no tests and appears to hang.
 - Build only what a selection needs (P12). After a first build, `ninja -C build/<preset> -t deps` maps each object to the headers it includes, which gives the tests a header change affects. With `CMAKE_TEST_BUILD_DEPENDS ON`, the target `test_prep/<test>` builds exactly what one test needs.
+- Run every build and test command through `tools/timed <step> <preset> <selection> -- <command>`, which logs its wall time to `docs/agent/records/performance/runs.tsv` (P13). Note the time in your report; never treat it as a pass or fail.
 - Build directories persist. Make a clean build only when the build description or toolchain changes, or a build is suspected to be stale.
 
 ## Measuring build cost

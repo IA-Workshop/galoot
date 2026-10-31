@@ -51,11 +51,11 @@ A generated structure is validated against the mathematics it claims to be: defi
 
 ### V9 Sources and sampled claims
 
-A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1). A formula or table from a published source is a reference only after it is recomputed from the definitions, and an erratum found this way is recorded in a research note.
+A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1). A formula or table from a published source is a reference only after it is recomputed from the definitions, and an erratum found this way is recorded in a research note. A source that could not be retrieved is recorded as not read. A substitute, such as a preprint, an abstract, or a secondary account, is named as such, with how it may differ from the source. Quoted external text is marked as a quotation with its source.
 
 ### V10 Status in reports
 
-Every reported result and every release states, separately, whether verification and validation were performed and whether they passed. A result that lacks either is labeled unverified or unvalidated.
+Every reported result and every release states, separately, whether verification and validation were performed and whether they passed. A result that lacks either is labeled unverified or unvalidated. A reported value or finding names the revision, command, and seed that produce it, and a result that comes from unrecorded or scratch steps is labeled not reproducible until its steps are committed.
 
 ## Uncertainty
 

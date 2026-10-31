@@ -859,7 +859,7 @@ Wick rotation fits the same pattern: an outermorphism with complex coefficients 
 A representation functor ρ assigns each generator a Kronecker product of small local matrices, chosen from the signature at compile time:
 
 - **Clifford R(p,q,r):** nondegenerate generators in pairs per qubit, Z⊗…⊗Z⊗X or Y (times i for negative squares), and each degenerate generator on its own qubit as Z⊗…⊗Z⊗σ₊. This satisfied all relations and was faithful over the reals (all 2ⁿ blades independent) for R(3,0,1), R(4,1,0), R(1,3,0), R(3,1,0), R(3,0,0) and R(2,0,1), using 4×4 or 8×8 matrices.
-- **Tier 1 graded signatures:** clock and shift matrices with Fradkin–Kadanoff strings, the qudit analogue of the same construction.
+- **Tier 1 graded signatures:** clock and shift matrices with Fradkin–Kadanoff strings, the qudit analog of the same construction.
 
 Every blade then maps to a single Kronecker product, so three exports follow from one primitive:
 
