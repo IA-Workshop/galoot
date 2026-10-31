@@ -1,8 +1,6 @@
 # Galoot conventions specification
 
-Status: version 1.2, ratified by the owner on 2026-10-31. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
-
-Version 1.3 is proposed on 2026-10-31 (decision 0009) and awaits ratification: it adds the component marker to each section, the blade definition in 1.1 for non-diagonal metrics, and items 4.4 and 4.5. Until ratified, those additions are Proposed and version 1.2 governs.
+Status: version 1.3, ratified by the owner on 2026-10-31. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
@@ -142,4 +140,4 @@ These choices had no settled source and were ratified with this version:
 | 1.0 | 2026-10-31 | Ratified by the owner, unchanged from 0.1 |
 | 1.1 | 2026-10-31 | Ranking of sources added, as the owner directed |
 | 1.2 | 2026-10-31 | Confirmed label added from note 0005; 6.1 clarified; 6.2 split into 6.2 to 6.4; flector, dual, and partner rows updated and a conformal-duals row added; no convention changed; ratified |
-| 1.3 | 2026-10-31 | Proposed, not ratified: component markers; non-diagonal blade definition in 1.1; 4.4 and 4.5 added (decision 0009) |
+| 1.3 | 2026-10-31 | Ratified by the owner: component markers; non-diagonal blade definition in 1.1; 4.4 and 4.5 added (decision 0009) |
