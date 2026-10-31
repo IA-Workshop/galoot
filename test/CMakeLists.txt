@@ -115,3 +115,128 @@ add_test(NAME tools.measure_header
     ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
+
+# The golden values that tests compare the library with. They come from the
+# reference scripts in test/reference/, never from the library, so this
+# target does not link galoot::core. A test that needs them links it and
+# includes <reference/golden.hpp>; the header also compiles on its own, in
+# all_verify_interface_header_sets.
+add_library(galoot_golden INTERFACE)
+target_sources(galoot_golden INTERFACE
+  FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES reference/golden.hpp)
+target_compile_features(galoot_golden INTERFACE cxx_std_23)
+set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+
+# reference.golden: the committed golden.hpp is byte for byte what golden.py
+# writes now, so a hand edit, or a header left stale after a change to the
+# reference scripts, fails. reference.golden_rejects shows that the check
+# fails on a copy changed in one place.
+add_test(NAME reference.golden
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.py
+    --check ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp)
+add_test(NAME reference.golden_rejects
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/golden_check_test.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/golden_check)
+set_tests_properties(reference.golden reference.golden_rejects PROPERTIES
+  LABELS "reference;reference.golden")
+
+# tests.reference_markers: every test case states the evidence it rests on,
+# in a '// Reference:' comment of one fixed form (tools/test_references.py).
+# tests.golden_facts: every test case or static_assert that uses golden
+# values states, in that comment, the fact that golden.hpp gives for them.
+add_test(NAME tests.reference_markers
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${PROJECT_SOURCE_DIR}/tools/test_references.py markers
+    ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME tests.golden_facts
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${PROJECT_SOURCE_DIR}/tools/test_references.py golden
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(tests.reference_markers tests.golden_facts
+  PROPERTIES LABELS "tests;tests.references")
+
+# tools.test_references_*: each command of tools/test_references.py reports
+# every defect of its rejecting fixtures, one per test case or table row,
+# and passes its accepting fixtures.
+set(reference_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_references)
+set(test_references
+  ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/test_references.py)
+set(pointer "reference points to a document or a record instead of stating the reason")
+add_test(NAME tools.test_references_markers_rejects
+  COMMAND ${expect_output} 1
+    "markers_bad.cpp:5: TEST_CASE has no reference marker"
+    "markers_bad.cpp:9: TEST_CASE has no reference marker"
+    "markers_bad.cpp:11: reference source is not '<kind>: <text>'"
+    "markers_bad.cpp:14: a regression guard is the only source of its reference"
+    "markers_bad.cpp:18: test case named as a regression test is not labeled"
+    "markers_bad.cpp:20: ${pointer}: 'decision 9999'"
+    "markers_bad.cpp:23: ${pointer}: 'section 3.1'"
+    "markers_bad.cpp:26: ${pointer}: 'WU1'"
+    "markers_bad.cpp:29: ${pointer}: 'VVUQ kind 3'"
+    "markers_bad.cpp:32: ${pointer}: 'STYLE S9'"
+    "markers_bad.cpp:35: ${pointer}: 'M0 gate'"
+    "markers_bad.cpp:38: ${pointer}: 'lessons-learned'"
+    "markers_bad.cpp:41: ${pointer}: 'constitution C13'"
+    "markers_bad.cpp:44: ${pointer}: 'DoD-6'"
+    -- ${test_references} markers ${reference_fixtures}/markers_bad.cpp)
+add_test(NAME tools.test_references_markers_accepts
+  COMMAND ${expect_output} 0
+    "5 test cases, each with a reference marker"
+    -- ${test_references} markers ${reference_fixtures}/markers_good.cpp)
+add_test(NAME tools.test_references_golden_rejects
+  COMMAND ${expect_output} 1
+    "golden_bad_header.hpp:24: namespace alpha is defined twice"
+    "golden_bad_header.hpp:29: namespace delta states no fact"
+    "golden_bad.cpp:6: 'using' hides which test uses golden values"
+    "golden_bad.cpp:11: uses golden values of alpha but its reference does not state 'the fact of alpha'"
+    "golden_bad.cpp:16: uses golden values of beta but its reference does not state 'e1 ^ e2 = -e2 ^ e1'"
+    "golden_bad.cpp:20: static_assert has no reference marker"
+    "golden_bad.cpp:20: uses golden values of gamma but its reference does not state 'the fact of gamma'"
+    "golden_bad.cpp:8: golden values of alpha are used outside a test case or a static_assert"
+    -- ${test_references} golden ${reference_fixtures}/golden_bad_header.hpp
+      ${reference_fixtures}/golden_bad.cpp)
+add_test(NAME tools.test_references_golden_accepts
+  COMMAND ${expect_output} 0
+    "every use of golden values states its fact"
+    -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp)
+add_test(NAME tools.test_references_trace_rejects
+  COMMAND ${expect_output} 1
+    "trace_bad_table.md:7: item 1.2 is implemented and no test states its fact"
+    "trace_bad_table.md:8: ${reference_fixtures}/trace_conventions.md has no item 9.9"
+    "trace_bad_table.md:9: Implemented is 'maybe', not yes or no"
+    "trace_bad_table.md:10: item 3.1 has an empty fact"
+    "golden_fixture.hpp: the fact of namespace beta, 'e1 ^ e2 = -e2 ^ e1', is not in"
+    -- ${test_references} trace ${reference_fixtures}/trace_bad_table.md
+      ${reference_fixtures}/trace_conventions.md
+      ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp)
+add_test(NAME tools.test_references_trace_no_rows
+  COMMAND ${expect_output} 1
+    "trace_empty_table.md: no rows of the form | item | fact | implemented |"
+    -- ${test_references} trace ${reference_fixtures}/trace_empty_table.md
+      ${reference_fixtures}/trace_conventions.md
+      ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp)
+add_test(NAME tools.test_references_trace_accepts
+  COMMAND ${expect_output} 0
+    "1.1: ${reference_fixtures}/golden_good.cpp:12"
+    "1.2: ${reference_fixtures}/golden_good.cpp:17"
+    "2.1: ${reference_fixtures}/golden_good.cpp:23"
+    "items with no test: 3.1"
+    -- ${test_references} trace ${reference_fixtures}/trace_good_table.md
+      ${reference_fixtures}/trace_conventions.md
+      ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp)
+set_tests_properties(
+  tools.test_references_markers_rejects tools.test_references_markers_accepts
+  tools.test_references_golden_rejects tools.test_references_golden_accepts
+  tools.test_references_trace_rejects tools.test_references_trace_no_rows
+  tools.test_references_trace_accepts
+  PROPERTIES LABELS "tools;tools.test_references")

@@ -170,18 +170,21 @@ def random_point(rng):
     return point(*(Fraction(rng.randint(-5, 5)) for _ in range(3)))
 
 
+# Right and left complements of each oriented name of rigid(3).
+COMPLEMENT_TABLE = {
+    "1": ("e1234", "e1234"), "e1": ("e423", "-e423"),
+    "e2": ("e431", "-e431"), "e3": ("e412", "-e412"),
+    "e4": ("e321", "-e321"), "e23": ("-e41", "-e41"),
+    "e31": ("-e42", "-e42"), "e12": ("-e43", "-e43"),
+    "e41": ("-e23", "-e23"), "e42": ("-e31", "-e31"),
+    "e43": ("-e12", "-e12"), "e423": ("-e1", "e1"),
+    "e431": ("-e2", "e2"), "e412": ("-e3", "e3"),
+    "e321": ("-e4", "e4"), "e1234": ("1", "1"),
+}
+
+
 def check_complements():
-    table = {
-        "1": ("e1234", "e1234"), "e1": ("e423", "-e423"),
-        "e2": ("e431", "-e431"), "e3": ("e412", "-e412"),
-        "e4": ("e321", "-e321"), "e23": ("-e41", "-e41"),
-        "e31": ("-e42", "-e42"), "e12": ("-e43", "-e43"),
-        "e41": ("-e23", "-e23"), "e42": ("-e31", "-e31"),
-        "e43": ("-e12", "-e12"), "e423": ("-e1", "e1"),
-        "e431": ("-e2", "e2"), "e412": ("-e3", "e3"),
-        "e321": ("-e4", "e4"), "e1234": ("1", "1"),
-    }
-    for u, (r, l) in table.items():
+    for u, (r, l) in COMPLEMENT_TABLE.items():
         check(right(blade(u)) == blade(r), f"right complement of {u}")
         check(left(blade(u)) == blade(l), f"left complement of {u}")
 
