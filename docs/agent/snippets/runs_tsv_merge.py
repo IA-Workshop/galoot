@@ -1,36 +1,37 @@
-"""Rebuild runs.tsv after a merge that the union driver doubled. Snippet
-candidate.
+"""Rebuild a run or compile record that a union merge doubled. Snippet.
 
-Why: WU1 extended the header of docs/agent/records/performance/runs.tsv
-once, in place, and wrote `--` into the new cells of every earlier row
-(decision 0020, item 3). That rewrote every line, so a merge with a branch
-that only appended rows becomes one conflict, and the union merge driver
-(.gitattributes) keeps both versions: two headers, and the old rows twice.
-This script writes the file as it should be: the side with the current
-header, then the rows the other side appended since the merge base, each row
-padded with `--` to the current header (plan 0002, risk 10; lessons-learned
-0001).
+The records under docs/agent/records/ merge with git's union driver
+(.gitattributes), which keeps the lines of both sides wherever both changed
+the same region. When one side rewrote lines the other kept, as happened
+once when every old row was padded with `--`, the whole file is one
+conflict and the merged file holds two headers and the old rows twice. This
+writes the file as it should be: the header that extends the other side's,
+this side's rows, then the rows the other side appended since the merge
+base. Rows are copied as they are and never padded; a reader treats the
+cells a row lacks as `--` (`tools/measure read`).
 
-Usage: runs_tsv_merge.py <base> <side with the new header> <appending side>
-
-Right after the merge commit, from the worktree root, with m=HEAD:
+Usage, from the worktree root, during `git merge --no-commit` and before the
+merge is committed, so that no commit holds the doubled file:
 
   f=docs/agent/records/performance/runs.tsv
-  base=$(git merge-base "$m^1" "$m^2")
-  # Merging develop into a branch that has the new header (develop appended):
-  python3 -I docs/agent/snippets/runs_tsv_merge.py <(git show "$base:$f") \
-    <(git show "$m^1:$f") <(git show "$m^2:$f") > "$PWD/$f.new"
-  # Merging such a branch into develop, the sides swap: pass "$m^2:$f" as
-  # the side with the new header and "$m^1:$f" as the appending side.
+  base=$(git merge-base HEAD MERGE_HEAD)
+  python3 -I docs/agent/snippets/runs_tsv_merge.py \
+    <(git show "$base:$f" 2>/dev/null) <(git show "HEAD:$f") \
+    <(git show "MERGE_HEAD:$f") > "$PWD/$f.new"
   mv "$PWD/$f.new" "$PWD/$f"
+  tools/measure read "$PWD/$f" > /dev/null && git add "$f"
 
-then check that the file has one header line and one field count, and
-commit. It refuses (exit 1) if a row has more cells than the header, or if
-the other side changed a row instead of appending.
+The base may lack the file. The script refuses, with exit 1 and nothing
+written, when neither side's header extends the other's, when either side
+changed or removed a row of the base instead of appending (a row that only
+gained trailing `--` cells counts as unchanged), or when a row has more
+cells than the header. `tools/measure read` then checks the result for a
+repeated header and over-long rows.
 
-Written for: the merge of feature/build (WU1) into develop, and each branch
-that merges develop afterward while it still has old-format rows. Last
-checked at the merge of develop into feature/build, 2026-10-31.
+Written for merges across the one-time extensions of the run and compile
+record headers. Last checked on 2026-10-31 at 1082f97 (feature/recorder),
+by scratch merges that doubled a record with padded rows and that added the
+record on both sides of a base without it.
 """
 
 import sys
@@ -41,25 +42,44 @@ def read(path):
         return f.read().splitlines()
 
 
-def main(base_path, new_path, appending_path):
-    base, ours, theirs = read(base_path), read(new_path), read(appending_path)
-    header = ours[0].split("\t")
+def unchanged(row, base_row):
+    """Whether row is base_row, possibly with trailing `--` cells added."""
+    if row == base_row:
+        return True
+    added = row[len(base_row):].split("\t")
+    return row.startswith(base_row) and added[0] == "" and all(
+        cell == "--" for cell in added[1:])
 
-    def padded(row):
-        cells = row.split("\t")
-        if len(cells) > len(header):
+
+def main(base_path, ours_path, theirs_path):
+    base, ours, theirs = read(base_path), read(ours_path), read(theirs_path)
+    base_rows = base[1:]
+
+    ours_columns, theirs_columns = ours[0].split("\t"), theirs[0].split("\t")
+    if ours_columns[:len(theirs_columns)] == theirs_columns:
+        header = ours[0]
+    elif theirs_columns[:len(ours_columns)] == ours_columns:
+        header = theirs[0]
+    else:
+        sys.exit("neither side's header extends the other's; merge by hand")
+
+    for side, lines in (("this side", ours), ("the other side", theirs)):
+        kept = lines[1:len(base_rows) + 1]
+        if len(kept) < len(base_rows) or not all(
+                unchanged(row, base_row)
+                for row, base_row in zip(kept, base_rows)):
+            sys.exit(f"{side} changed or removed rows of the merge base; "
+                     "merge by hand")
+
+    out = [header] + ours[1:] + theirs[len(base_rows) + 1:]
+    width = len(header.split("\t"))
+    for row in out[1:]:
+        if len(row.split("\t")) > width:
             sys.exit(f"row has more cells than the header: {row}")
-        return "\t".join(cells + ["--"] * (len(header) - len(cells)))
-
-    base_rows = set(padded(r) for r in base[1:])
-    if any(padded(r) not in base_rows for r in theirs[1:len(base)]):
-        sys.exit("the other side changed existing rows; merge by hand")
-    out = [ours[0]] + [padded(r) for r in ours[1:]]
-    out += [padded(r) for r in theirs[len(base):]]
     sys.stdout.write("\n".join(out) + "\n")
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
-        sys.exit("usage: runs_tsv_merge.py <base> <new-header side> <appending side>")
+        sys.exit("usage: runs_tsv_merge.py <base> <this side> <other side>")
     main(*sys.argv[1:])
