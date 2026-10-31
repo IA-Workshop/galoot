@@ -1,5 +1,5 @@
-// Fixture for tools/test_references.py markers: every test case but the last
-// has one defect in its reference marker. Not compiled.
+// Fixture for tools/test_references.py markers: each test case has one
+// defect in its reference marker. Not compiled.
 #include <doctest/doctest.h>
 
 TEST_CASE("a test case with no comment above it") {}
@@ -17,9 +17,29 @@ TEST_CASE("a regression guard with a second source") {}
 // Reference: identity: (ab)c = a(bc)
 TEST_CASE("regression of the product table, not labeled as a guard") {}
 
-// Reference: proof: as decision 0034 explains
-TEST_CASE("a marker that points to a record instead of a reason") {}
+// Reference: proof: as decision 9999 explains
+TEST_CASE("a pointer to a numbered record") {}
 
-// Reference: independent value: right complements from
-//   u ^ right(u) = antiscalar, computed by test/reference/golden.py
-TEST_CASE("a well-formed marker continued on a second line") {}
+// Reference: proof: section 3.1 of the conventions specification
+TEST_CASE("a pointer to a section of a project document") {}
+
+// Reference: proof: as in WU1
+TEST_CASE("a pointer to a unit of work") {}
+
+// Reference: independent value: VVUQ kind 3
+TEST_CASE("a pointer to a kind of evidence by document") {}
+
+// Reference: contract: STYLE S9
+TEST_CASE("a pointer to a style rule") {}
+
+// Reference: contract: checked at the M0 gate
+TEST_CASE("a pointer to a milestone gate") {}
+
+// Reference: proof: see lessons-learned
+TEST_CASE("a pointer to the lessons") {}
+
+// Reference: proof: constitution C13
+TEST_CASE("a pointer to a provision of the constitution") {}
+
+// Reference: proof: DoD-6
+TEST_CASE("a pointer to a definition-of-done criterion") {}
