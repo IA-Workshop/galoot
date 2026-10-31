@@ -73,6 +73,8 @@ A name fixed by mathematical notation keeps its form: basis names such as `e41` 
 
 Comments state why: intent, invariants, the convention or equation applied, and its source (`// Right complement; CONVENTIONS.md, "Complements"`). They do not narrate the code. Each declaration in a public header has a `///` comment immediately before it that states what the function requires, guarantees, and preserves, and the conventions it relies on, cited by section of [CONVENTIONS.md](CONVENTIONS.md) rather than restated.
 
+Code, comments, build files, scripts, and user documentation are written for human readers and never cite agent records: decisions, plans, research notes, reviews, lessons, the workbench, or the numbers of governance provisions. A comment states the reason in place. A citation of the conventions specification by section title, or of a published source, is allowed, because readers need it. The agent records themselves cite each other freely.
+
 ### S12 Statements and constants
 
 Statements in a function body are grouped into blocks that each perform one step, separated by one blank line, with a comment at the head of a block whose step is not evident. A numeric constant fixed by a published source or a recorded choice is defined once, by name, with its source. Code is never disabled by commenting it out.
