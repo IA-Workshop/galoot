@@ -115,3 +115,13 @@ add_test(NAME tools.measure_header
     ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
+
+# tools.measure_record: the fields of a cost row, and the reader's `--` for
+# cells that rows written before a column existed lack.
+add_test(NAME tools.measure_record
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_record_test.py
+    ${PROJECT_SOURCE_DIR}/tools/measure
+    ${CMAKE_CURRENT_BINARY_DIR}/measure_record)
+set_tests_properties(tools.measure_record PROPERTIES
+  LABELS "tools;tools.measure")

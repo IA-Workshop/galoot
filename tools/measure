@@ -1,6 +1,5 @@
 #!/usr/bin/env -S python3 -I
-"""Run one command and record what it cost (PERFORMANCE.md P1, P13, P14;
-decision 0018). Snippet candidate: the per-command recorder.
+"""Run one command and record what it cost, or read a cost record.
 
 Usage:
   tools/measure tu <preset> <compiler> <record> -- <compiler-command...>
@@ -9,31 +8,55 @@ Usage:
   tools/measure run <step> <preset> <selection> -- <command...>
       Called by tools/timed. Appends one row to
       docs/agent/records/performance/runs.tsv.
+  tools/measure read <record> [<column>...]
+      Prints the record, or the named columns of it, with `--` in each cell a
+      row lacks.
 
 The command's output and exit status pass through unchanged; a command killed
-by signal N exits 128 + N. If recording fails, a warning goes to stderr and the
-status still passes through.
+by signal N exits 128 + N, and one that cannot start exits 127 and still gets
+a row. If recording fails, a warning goes to stderr and the status still
+passes through.
 
 Each row records wall, user, and system time, the peak resident set of the
 command and the children it waited for (wait4), user-space counters from
-`perf stat`, the package energy counter, and the CPU time the rest of the
-machine used meanwhile. A quantity the machine does not expose is written as
-`unavailable`, never as 0 (decision 0018).
+`perf stat`, the package energy counter, the CPU time the rest of the machine
+used meanwhile, and the compiler options. A quantity the machine does not
+expose is written as `unavailable`, never as 0, so that a missing figure
+cannot pass for a measured one. A row written before a column existed holds
+`--` there, or nothing at all: rows are never rewritten when the header
+grows, because a rewrite of every line conflicts with every branch that
+appends to the same record.
 
 Mode: `pinned` when the process may run on exactly one performance-core CPU
 (for example under `taskset -c 2`), `shared` otherwise. Pinned rows count
-instructions, cycles, and the L1d, L2, and LLC events on that core, and record
-the busy time of its sibling thread. Shared rows count instructions on each
-core type, because the sum does not depend on where the process ran; cycles
-and cache events are then `unavailable` (P14). A counter that perf did not run
-for its whole enabled time in pinned mode was multiplexed and is written as
+instructions, cycles, and the L1d, L2, and LLC events on that core, and
+record the busy time of its sibling thread and the busy time of other
+processes on the pinned CPU itself, because either slows the run. Those two
+come from /proc/stat, sampled at the kernel's clock tick (10 ms at 100 Hz),
+so a figure near zero can come out slightly negative. Shared rows count
+instructions on each core type, because the sum does not depend on where the
+process ran; cycles and cache events are then `unavailable`, since they mean
+different things on the two core types. A counter that perf did not run for
+its whole enabled time in pinned mode was multiplexed and is written as
 `unavailable` with a warning, never as a scaled estimate. A pinned `build`
 run takes no counters itself, because the compile rows of its launcher take
-them on the same core; its counter fields are `unavailable`.
+them on the same core, and two perf sessions of eight events on one core
+multiplex each other; its counter fields are `unavailable`.
+
+Options: a compile row holds the compiler's arguments other than the source,
+the object, and the dependency-file arguments, with paths inside the checkout
+made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
+CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
+after -C, -B, --build, or --test-dir in the command, else build/<preset>. It
+holds `-` for a run with no build tree (preset `-` and no such argument), and
+`unavailable` when the tree has no readable cache. The cache is read after
+the command, so a configure step records the options it set.
 """
 
 import fcntl
 import os
+import re
+import shlex
 import socket
 import subprocess
 import sys
@@ -41,6 +64,8 @@ import tempfile
 import time
 
 UNAVAILABLE = "unavailable"
+MISSING = "--"
+NO_TREE = "-"
 
 RUN_HEAD = ("utc_start revision branch step preset selection wall_s exit "
             "host").split()
@@ -49,14 +74,14 @@ TU_HEAD = ("utc_start revision branch preset compiler source object exit "
 COST_HEAD = ("mode cpus wall_s user_s sys_s maxrss_kib inst_p_u inst_e_u "
              "cycles_u l1d_loads_u l1d_misses_u l2_refs_u l2_misses_u "
              "llc_refs_u llc_misses_u energy_pkg_j other_cpu_s "
-             "sibling_busy_s").split()
-# wall_s appears in both P13's nine columns and the cost columns; a run row
-# keeps it in its P13 place and omits the duplicate.
-RUN_COLUMNS = RUN_HEAD + [c for c in COST_HEAD if c != "wall_s"]
-TU_COLUMNS = TU_HEAD + COST_HEAD
+             "sibling_busy_s pinned_other_s").split()
+# wall_s appears in both the run columns and the cost columns; a run row
+# keeps it in its run place and omits the duplicate.
+RUN_COLUMNS = RUN_HEAD + [c for c in COST_HEAD if c != "wall_s"] + ["options"]
+TU_COLUMNS = TU_HEAD + COST_HEAD + ["options"]
 
 # Counter fields and the perf events behind them. The eight pinned events fit
-# the performance core's counters without multiplexing (plan 0002, 4.7).
+# the performance core's counters without multiplexing.
 PINNED_EVENTS = {
     "inst_p_u": "cpu_core/instructions/u",
     "cycles_u": "cpu_core/cycles/u",
@@ -74,6 +99,13 @@ SHARED_EVENTS = {
 COUNTER_FIELDS = ["inst_p_u", "inst_e_u", "cycles_u", "l1d_loads_u",
                   "l1d_misses_u", "l2_refs_u", "l2_misses_u", "llc_refs_u",
                   "llc_misses_u"]
+
+# Compiler arguments that the source, object, and dependency-file columns or
+# Ninja's bookkeeping cover; the first set takes the next argument with it.
+NOT_OPTIONS_WITH_VALUE = {"-c", "-o", "-MT", "-MF", "-MQ"}
+NOT_OPTIONS = {"-MD", "-MMD"}
+TREE_ARGUMENTS = ("-C", "-B", "--build", "--test-dir")
+CACHE_ENTRY = re.compile(r"^([A-Za-z0-9_]+):[A-Z]+=(.*)$")
 
 RAPL = "/sys/class/powercap/intel-rapl:0"
 PERF_CORE_CPUS = "/sys/bus/event_source/devices/cpu_core/cpus"
@@ -166,74 +198,97 @@ def perf_command(events, out_path):
 
 
 def parse_perf(out_path, events, mode):
-    """Maps counter fields to values, or returns None if perf did not run
-    the command (no counter lines)."""
+    """Maps counter fields to values, or returns None if perf wrote no
+    counter line, which means it never started the command."""
     try:
         with open(out_path, encoding="utf-8") as f:
             lines = f.read().splitlines()
     except OSError:
         return None
-    by_event = {}
-    for line in lines:
-        cells = line.split(",")
-        if len(cells) >= 5 and cells[2] in events.values():
-            by_event[cells[2]] = (cells[0], cells[4])
-    if not by_event:
+    # A counter line is value,unit,event,running time,percent running,...
+    counter_lines = [line.split(",") for line in lines
+                     if line and not line.startswith("#")
+                     and len(line.split(",")) >= 5]
+    if not counter_lines:
         return None
+    by_event = {cells[2]: cells for cells in counter_lines}
+    if not set(by_event) & set(events.values()):
+        warn("perf reported none of the requested events "
+             f"({', '.join(sorted(by_event))}); counters recorded as "
+             "unavailable")
     values = {}
     for field, event in events.items():
-        value, running = by_event.get(event, ("", ""))
-        if not value.isdigit():
-            values[field] = UNAVAILABLE
-        elif mode == "pinned" and running != "100.00":
+        value, _, _, running_time, running = by_event.get(
+            event, ["", "", "", "", ""])[:5]
+        if value.isdigit() and mode == "pinned" and running != "100.00":
             warn(f"{event} ran {running}% of its time (multiplexed); "
                  "recorded as unavailable")
             values[field] = UNAVAILABLE
-        else:
+        elif value.isdigit():
             values[field] = value
+        elif (value == "<not counted>" and running_time == "0"
+              and mode == "shared"):
+            # One instruction event per core type, each alone on its PMU, is
+            # never multiplexed, so zero running time means the command never
+            # ran on that core type: it retired no instructions there.
+            values[field] = "0"
+        else:
+            values[field] = UNAVAILABLE
     return values
 
 
+def launch(argv):
+    """Runs argv and returns (wait status, resource sample); raises OSError
+    if it cannot start."""
+    ticks0, energy0 = busy_ticks(), energy_uj()
+    t0 = time.monotonic()
+    child = subprocess.Popen(argv)
+    _, status, usage = os.wait4(child.pid, 0)
+    child.returncode = status  # wait4 reaped it; keep Popen from waiting
+    wall = time.monotonic() - t0
+    return status, (usage, wall, ticks0, busy_ticks(), energy0, energy_uj())
+
+
 def run_measured(command, count=True):
-    """Runs the command and returns (exit status, cost fields). With count
-    false, perf is not used and the counter fields are unavailable."""
+    """Runs the command once and returns (exit status, cost fields). With
+    count false, perf is not used and the counter fields are unavailable."""
     mode, cpus, pinned_cpu = placement()
     events = PINNED_EVENTS if mode == "pinned" else SHARED_EVENTS
     sibling = sibling_of(pinned_cpu) if pinned_cpu is not None else None
-    fd, perf_out = tempfile.mkstemp(prefix="galoot-measure-", suffix=".csv")
-    os.close(fd)
+    status = sample = None
+    counters = {}
 
-    def launch(argv):
-        """Runs argv; raises OSError if it cannot start."""
-        ticks0, energy0 = busy_ticks(), energy_uj()
-        t0 = time.monotonic()
-        child = subprocess.Popen(argv)
-        _, status, usage = os.wait4(child.pid, 0)
-        child.returncode = status  # wait4 reaped it; keep Popen from waiting
-        wall = time.monotonic() - t0
-        return status, (usage, wall, ticks0, busy_ticks(), energy0,
-                        energy_uj())
+    if count:
+        fd, perf_out = tempfile.mkstemp(prefix="galoot-measure-",
+                                        suffix=".csv")
+        os.close(fd)
+        try:
+            status, sample = launch(perf_command(events, perf_out) + command)
+            parsed = parse_perf(perf_out, events, mode)
+        except OSError as error:
+            warn(f"cannot run perf ({error}); counters recorded as "
+                 "unavailable")
+        else:
+            # Without a counter line perf stopped before the command: it
+            # could not open its events, or the command could not start. A
+            # perf killed by a signal may have started the command, and
+            # running it again would repeat a build or a test.
+            if parsed is None and not os.WIFSIGNALED(status):
+                warn("perf did not start the command; running it without "
+                     "counters")
+                status = None
+            counters = parsed or {}
+        finally:
+            os.unlink(perf_out)
 
-    try:
-        counters = None
-        if count:
-            try:
-                status, sample = launch(perf_command(events, perf_out)
-                                        + command)
-                counters = parse_perf(perf_out, events, mode)
-            except OSError:  # perf is not installed or not on PATH
-                counters = None
-        if counters is None:
-            # perf did not run the command, because it is missing or could
-            # not open its events; run the command directly, without counters.
-            try:
-                status, sample = launch(command)
-            except OSError as error:
-                warn(f"cannot run {command[0]}: {error}")
-                return 127, None
-            counters = {}
-    finally:
-        os.unlink(perf_out)
+    if status is None:
+        try:
+            status, sample = launch(command)
+        except OSError as error:
+            warn(f"cannot run {command[0]}: {error}")
+            fields = {c: UNAVAILABLE for c in COST_HEAD}
+            fields.update(mode=mode, cpus=cpus)
+            return 127, fields
 
     if os.WIFSIGNALED(status):
         code = 128 + os.WTERMSIG(status)
@@ -254,13 +309,61 @@ def run_measured(command, count=True):
         "energy_pkg_j": energy_joules(energy0, energy1),
         "other_cpu_s": f"{machine - own:.2f}",
         "sibling_busy_s": UNAVAILABLE,
+        "pinned_other_s": UNAVAILABLE,
     }
     if sibling is not None:
         key = f"cpu{sibling}"
         fields["sibling_busy_s"] = f"{(ticks1[key] - ticks0[key]) / hz:.2f}"
+    if pinned_cpu is not None:
+        # Every process of the run is confined to this CPU, so its busy
+        # time beyond the run's own is other processes'.
+        key = f"cpu{pinned_cpu}"
+        fields["pinned_other_s"] = (
+            f"{(ticks1[key] - ticks0[key]) / hz - own:.2f}")
     for field in COUNTER_FIELDS:
         fields[field] = counters.get(field, UNAVAILABLE)
     return code, fields
+
+
+def compile_options(command, top):
+    options = []
+    args = iter(command[1:])
+    for arg in args:
+        if arg in NOT_OPTIONS_WITH_VALUE:
+            next(args, None)
+        elif arg not in NOT_OPTIONS:
+            options.append(arg.replace(top + "/", "") if top else arg)
+    return shlex.join(options)
+
+
+def build_tree(command, preset, top):
+    for arg, value in zip(command, command[1:] + [""]):
+        if arg in TREE_ARGUMENTS and value and not value.startswith("-"):
+            return value
+        if arg[:2] in ("-C", "-B") and len(arg) > 2:
+            return arg[2:]
+    if preset == NO_TREE:
+        return None
+    return os.path.join(top, "build", preset)
+
+
+def build_options(tree):
+    if tree is None:
+        return NO_TREE
+    cache = {}
+    try:
+        with open(os.path.join(tree, "CMakeCache.txt"), encoding="utf-8") as f:
+            for line in f:
+                match = CACHE_ENTRY.match(line.rstrip("\n"))
+                if match:
+                    cache[match[1]] = match[2]
+    except OSError:
+        return UNAVAILABLE
+    build_type = cache.get("CMAKE_BUILD_TYPE", "").upper()
+    flags = [cache.get("CMAKE_CXX_FLAGS", "")]
+    if build_type:
+        flags.append(cache.get(f"CMAKE_CXX_FLAGS_{build_type}", ""))
+    return " ".join(f for f in flags if f)
 
 
 def git(*args):
@@ -272,22 +375,36 @@ def git(*args):
 def revision_and_branch():
     revision = git("rev-parse", "--short=12", "HEAD") or UNAVAILABLE
     # The run and compile logs change with every run, so they do not make a
-    # revision dirty; any other change to a tracked file does.
-    if git("status", "--porcelain", "--untracked-files=no", "--", ":(top)",
+    # revision dirty; any other change to a tracked file does. Without
+    # optional locks, git status does not take the index lock, so a
+    # recorded compile cannot make a concurrent commit fail.
+    if git("--no-optional-locks", "status", "--porcelain",
+           "--untracked-files=no", "--", ":(top)",
            ":(top,exclude)docs/agent/records/performance"):
         revision += "-dirty"
     return revision, git("branch", "--show-current") or "detached"
 
 
 def append_row(path, columns, row):
+    cells = [row[c] for c in columns]
+    if any("\t" in cell or "\n" in cell for cell in cells):
+        raise ValueError("a cell holds a tab or a newline")
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
+    with open(path, "a+", encoding="utf-8") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         # The size, not f.tell(): the position was fixed when the file was
         # opened, before another writer may have added the header.
         if os.fstat(f.fileno()).st_size == 0:
             f.write("\t".join(columns) + "\n")
-        f.write("\t".join(row[c] for c in columns) + "\n")
+        else:
+            f.seek(0)
+            header = f.readline().rstrip("\n").split("\t")
+            if header != columns:
+                raise ValueError(
+                    f"{path} has {len(header)} columns, not this recorder's "
+                    f"{len(columns)}; extend its header line in place, or "
+                    "remove it if it is a build tree's own record")
+        f.write("\t".join(cells) + "\n")
 
 
 def argument_after(args, flag):
@@ -297,37 +414,61 @@ def argument_after(args, flag):
     return UNAVAILABLE
 
 
+def read_record(path, wanted):
+    with open(path, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+    header = lines[0].split("\t")
+    unknown = [c for c in wanted if c not in header]
+    if unknown:
+        sys.exit(f"measure: {path} has no column {', '.join(unknown)}")
+    picks = [header.index(c) for c in wanted] or range(len(header))
+
+    out = ["\t".join(header[i] for i in picks)]
+    for number, line in enumerate(lines[1:], 2):
+        if line == lines[0]:
+            sys.exit(f"measure: {path}:{number} repeats the header; a union "
+                     "merge doubled the file")
+        cells = line.split("\t")
+        if len(cells) > len(header):
+            sys.exit(f"measure: {path}:{number} has {len(cells)} cells for "
+                     f"{len(header)} columns")
+        cells += [MISSING] * (len(header) - len(cells))
+        out.append("\t".join(cells[i] for i in picks))
+    print("\n".join(out))
+    return 0
+
+
 def main(argv):
+    if argv[:1] == ["read"] and len(argv) >= 2:
+        return read_record(argv[1], argv[2:])
     if len(argv) < 6 or argv[0] not in ("tu", "run") or argv[4] != "--":
         sys.exit(__doc__.split("\n\n")[1])
     kind, a, b, c = argv[:4]
     command = argv[5:]
     start = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-    # A pinned build step runs measured compiles on the same core, and two
-    # perf sessions of eight events each would multiplex its counters. The
-    # compile rows hold the counters, so the run row leaves them unavailable
-    # (plan 0002, section 4.7).
     count = not (kind == "run" and a == "build" and placement()[0] == "pinned")
     code, fields = run_measured(command, count)
-    if fields is None:
-        return code
 
     try:
         revision, branch = revision_and_branch()
+        top = git("rev-parse", "--show-toplevel")
         row = dict(fields, utc_start=start, revision=revision, branch=branch,
                    exit=str(code), host=socket.gethostname())
         if kind == "tu":
-            top = git("rev-parse", "--show-toplevel")
             source = argument_after(command, "-c")
             if top and source.startswith(top + "/"):
                 source = source[len(top) + 1:]
             row.update(preset=a, compiler=b, source=source,
-                       object=argument_after(command, "-o"))
+                       object=argument_after(command, "-o"),
+                       options=compile_options(command, top))
             append_row(c, TU_COLUMNS, row)
         else:
-            top = git("rev-parse", "--show-toplevel")
+            if not top:
+                raise ValueError("not in a git checkout, so there is no "
+                                 "run log to append to")
             log = os.path.join(top, "docs/agent/records/performance/runs.tsv")
-            row.update(step=a, preset=b, selection=c)
+            row.update(step=a, preset=b, selection=c,
+                       options=build_options(build_tree(command, b, top)))
             append_row(log, RUN_COLUMNS, row)
             print(f"timed: {a} {c} took {fields['wall_s']} s (exit {code})",
                   file=sys.stderr)
