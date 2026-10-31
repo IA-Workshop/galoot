@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
-# Runs one build or test command and appends its wall time to the run log,
-# docs/agent/records/performance/runs.tsv (PERFORMANCE.md P13). The time is
-# tracked and noted, never asserted on, and the command's exit status is
-# passed through unchanged.
+# Runs one build or test command and records it in the run log,
+# docs/agent/records/performance/runs.tsv (PERFORMANCE.md P13): wall time,
+# revision, branch, preset, selection, and exit status, then the decision 0018
+# quantities that tools/measure takes (peak memory, user-space counters,
+# package energy, and the processors used). The figures are tracked and noted,
+# never asserted on, and the command's exit status is passed through unchanged.
+#
+# Build and CTest steps need the machine's shared job-slot pool (P11), because
+# Ninja without it runs as many jobs as there are processors. They are refused
+# with exit 2 when MAKEFLAGS names no FIFO jobserver or the FIFO is missing
+# (decision 0022). A build step is one with step `build`, or a command that is
+# ninja, make, ctest, or `cmake --build` or `cmake --workflow`. Other commands
+# run unchanged.
 #
 # Usage: tools/timed <step> <preset> <selection> -- <command> [args...]
-#   step       build or test
+#   step       build or test (or another word for other commands)
 #   preset     the CMake preset, or - for none
 #   selection  what ran: a target, a label regex, or "all"
 set -u
@@ -14,28 +23,26 @@ if [[ $# -lt 5 || $4 != "--" ]]; then
   echo "usage: tools/timed <step> <preset> <selection> -- <command> [args...]" >&2
   exit 2
 fi
-step=$1 preset=$2 selection=$3
-shift 4
+step=$1
+
+uses_pool=false
+case ${5##*/} in
+  ninja | make | ctest) uses_pool=true ;;
+  cmake) [[ " ${*:6} " == *" --build "* || " ${*:6} " == *" --workflow "* ]] &&
+    uses_pool=true ;;
+esac
+[[ $step == build ]] && uses_pool=true
+
+if $uses_pool; then
+  fifo=
+  [[ ${MAKEFLAGS:-} =~ --jobserver-auth=fifo:([^[:space:]]+) ]] &&
+    fifo=${BASH_REMATCH[1]}
+  if [[ -z $fifo || ! -p $fifo ]]; then
+    echo "timed: refused: no shared job-slot pool (MAKEFLAGS='${MAKEFLAGS:-}')." >&2
+    echo "timed: check with tools/jobpool status, then run: eval \"\$(tools/jobpool env)\"" >&2
+    exit 2
+  fi
+fi
 
 root=$(git rev-parse --show-toplevel) || exit 2
-log=$root/docs/agent/records/performance/runs.tsv
-header="utc_start	revision	branch	step	preset	selection	wall_s	exit	host"
-[[ -s $log ]] || printf '%s\n' "$header" >"$log"
-
-revision=$(git -C "$root" rev-parse --short=12 HEAD)
-[[ -z $(git -C "$root" status --porcelain --untracked-files=no) ]] ||
-  revision+="-dirty"
-branch=$(git -C "$root" branch --show-current)
-start_utc=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-start_ns=$(date +%s%N)
-
-"$@"
-status=$?
-
-end_ns=$(date +%s%N)
-wall=$(awk -v ns=$((end_ns - start_ns)) 'BEGIN { printf "%.3f", ns / 1e9 }')
-printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$start_utc" "$revision" \
-  "${branch:-detached}" "$step" "$preset" "$selection" "$wall" "$status" \
-  "$(hostname)" >>"$log"
-echo "timed: $step $selection took ${wall} s (exit $status)" >&2
-exit "$status"
+exec "$root/tools/measure" run "$@"
