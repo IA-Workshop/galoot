@@ -51,3 +51,24 @@ Status: done on `feature/m0-scripts`, awaiting the W5 review and the merge, whic
 
 1. Ratify, or reverse, reading paths under `docs/agent/` from a CTest (departure 2).
 2. Whether item numbers of CONVENTIONS may appear in the agent-side trace table only, as here (they are agent records, which may cite each other).
+
+## W5 fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The review `docs/agent/records/reviews/2026-10-31-m0-scripts.md` returned "merge after fixes". Decision 0072 supersedes the traceability part of 0071. The outcome above stands except where this section changes it: `tests.convention_trace` and the fixtures `trace.cpp`, `trace_table.md`, `trace_golden.hpp` are gone, and the gate command replaces the CTest trace.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| B1 | `tests.golden_facts` (facts from the header's `// Fact:` lines) replaces `tests.convention_trace`; the item mapping is the gate command in `docs/agent/records/convention-trace.md` | `test/CMakeLists.txt` named `docs/agent` twice | Zero times; the gate command at `b3487d6` exits 0 and lists all 29 items with no test |
+| B2 | `develop` merged as `667401c` and `eb26cb6` | Two and then five records-only commits behind | Level with `develop` at `1143ea3`; P9 below |
+| N1 | Implemented column; trace fails on an implemented item with no test | Could not fail | `tools.test_references_trace_rejects` requires "item 1.2 is implemented and no test states its fact"; removing the check fails it (`mutation:no-implemented-check`) |
+| N2 | Pointer pattern of decision 0072 | Old pattern on the new fixtures: 4 of 10 pointer cases caught, and C3 and S2 rejected in `markers_good.cpp` | 10 of 10 caught (`tools.test_references_markers_rejects`); `markers_good.cpp`, with C3, C2, S2, V4, M2(R), passes (`..._markers_accepts`) |
+| N3 | Bivector order against the worked example; names against `conventions_check.COMPLEMENT_TABLE`; docstrings say the signatures have one route | A typo e23 → e32 in the names: the old `golden.py` exits 0 | Exits 1, "oriented names against conventions_check.py"; a wrong order example exits 1 too |
+| N4 | Aliases followed, `using` rejected, uses outside a test case or `static_assert` rejected, only `golden::`-qualified names count, facts matched ignoring case with ∧ as ^, marked file-scope `static_assert`s credited | Aliases and `using` escaped | Mutations `no-alias-uses`, `no-using-check`, `case-sensitive-facts`, `no-static-assert-credit` each fail their fixture test |
+| N6 | `*_accepts` fixtures that must exit 0; `golden_bad_header.hpp` (duplicate namespace, namespace with no fact); `trace_bad_table.md` (empty fact); `trace_empty_table.md` (no rows) | Only presence of findings checked | Seven fixture tests, three of them exit-0 runs |
+| N7 | `NO_BREAK = "\N{NO-BREAK SPACE}"` | Literal U+00A0 at lines 326 and 329 | `grep` for the byte finds none |
+| N8 | Fixture says "decision 9999" | "decision 0034" | Done |
+| N10 | First smoke marker: "acts only on a false condition, as its comment states, so a true one returns normally" | Said the header "states" the true case | Done |
+
+The new tests were committed (`7025d83`) before the script (`b3487d6`), and run against the old script: 8 of 9 failed (`before:new-tests-old-script`). That intermediate commit does not pass its tests (W2), which W9's separate commit asks for.
+
+P9 at `b3487d6`, incremental build trees, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 21 of 21. Wall times (s): 1.12, 1.40, 1.31, 1.62, 1.53, 1.36, 1.39; then `all_verify_interface_header_sets` on gcc-debug 0.42 and clang-debug 0.39. The merge `eb26cb6` brought only records (decision 0036, two reviews, `agent-cost.tsv`), which no build or test reads, so the run stands for it (P10).
