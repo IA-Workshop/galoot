@@ -1,5 +1,5 @@
 """Check that every test case states its reference, and trace conventions to
-the test cases that pin them. Snippet candidate.
+the test cases that pin them.
 
 Usage:
   python3 -I tools/test_references.py markers <path>...

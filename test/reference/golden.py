@@ -1,5 +1,5 @@
 """Writes test/reference/golden.hpp: exact values that tests compare the
-library with, each derived here from its definition. Snippet candidate.
+library with, each derived here from its definition.
 
 The values come from the two reference scripts beside this one, which share
 no code with the library: clifford_reference.py multiplies in any symmetric
