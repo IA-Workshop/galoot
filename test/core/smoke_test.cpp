@@ -18,6 +18,8 @@ static_assert(checked_identity(1) == 1);
 
 } // namespace
 
+// Reference: contract: GALOOT_ASSERT returns normally when its condition is
+//   true, as its comment in galoot/core/assert.hpp states
 TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time "
           "(STYLE S9; plan 0002, section 4.5)") {
   // A CHECK argument is not manifestly constant-evaluated, so the call
@@ -25,6 +27,8 @@ TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time "
   CHECK(checked_identity(2) == 2);
 }
 
+// Reference: contract: checking_now() is true at run time exactly when
+//   GALOOT_CHECKING is 1, as its comment in galoot/core/assert.hpp states
 TEST_CASE("GALOOT_ASSERT checks at run time exactly when GALOOT_CHECKING is 1, "
           "through names in galoot::core::detail (STYLE S6; decision 0030)") {
   CHECK(galoot::core::detail::checking_now() == (GALOOT_CHECKING == 1));

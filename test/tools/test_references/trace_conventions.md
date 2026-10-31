@@ -1,0 +1,7 @@
+# Fixture conventions for tools/test_references.py trace
+
+1.1 The first item.
+
+1.2 The second item.
+
+2.1 An item that no test case pins.

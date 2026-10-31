@@ -144,3 +144,53 @@ add_test(NAME reference.golden_rejects
     ${CMAKE_CURRENT_BINARY_DIR}/golden_check)
 set_tests_properties(reference.golden reference.golden_rejects PROPERTIES
   LABELS "reference;reference.golden")
+
+# tests.reference_markers: every test case states the evidence it rests on,
+# in a '// Reference:' comment of one fixed form (tools/test_references.py).
+add_test(NAME tests.reference_markers
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${PROJECT_SOURCE_DIR}/tools/test_references.py markers
+    ${CMAKE_CURRENT_SOURCE_DIR})
+# tests.convention_trace: the test cases that use golden values state the
+# fact those values pin, and the conventions without a test are listed. The
+# table of facts and the conventions are maintainers' documents, read here as
+# data.
+add_test(NAME tests.convention_trace
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${PROJECT_SOURCE_DIR}/tools/test_references.py trace
+    ${PROJECT_SOURCE_DIR}/docs/agent/records/convention-trace.md
+    ${PROJECT_SOURCE_DIR}/docs/agent/governance/CONVENTIONS.md
+    ${CMAKE_CURRENT_SOURCE_DIR}/reference/golden.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR})
+set_tests_properties(tests.reference_markers tests.convention_trace
+  PROPERTIES LABELS "tests;tests.references")
+
+# tools.test_references_rejects_*: each check reports each defect of its
+# fixtures, one defect per test case or table row.
+set(reference_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_references)
+add_test(NAME tools.test_references_rejects_markers
+  COMMAND ${expect_output} 1
+    "markers.cpp:5: TEST_CASE has no reference marker"
+    "markers.cpp:9: TEST_CASE has no reference marker"
+    "markers.cpp:11: reference source is not '<kind>: <text>'"
+    "markers.cpp:14: a regression guard is the only source of its reference"
+    "markers.cpp:18: test case named as a regression test is not labeled"
+    "markers.cpp:20: reference points to a record or a numbered rule instead of stating the reason: 'decision 0034'"
+    -- ${Python3_EXECUTABLE} -I
+      ${PROJECT_SOURCE_DIR}/tools/test_references.py markers
+      ${reference_fixtures}/markers.cpp)
+add_test(NAME tools.test_references_rejects_trace
+  COMMAND ${expect_output} 1
+    "trace_table.md:6: ${reference_fixtures}/trace_conventions.md has no item 9.9"
+    "trace_table.md:7: ${reference_fixtures}/trace_golden.hpp has no namespace missing"
+    "trace_golden.hpp: namespace gamma is not in"
+    "trace.cpp:6: uses golden values of alpha but its reference does not state 'the fact of alpha'"
+    "1.1: ${reference_fixtures}/trace.cpp:11"
+    "items with no test: 1.2, 2.1"
+    -- ${Python3_EXECUTABLE} -I
+      ${PROJECT_SOURCE_DIR}/tools/test_references.py trace
+      ${reference_fixtures}/trace_table.md ${reference_fixtures}/trace_conventions.md
+      ${reference_fixtures}/trace_golden.hpp ${reference_fixtures}/trace.cpp)
+set_tests_properties(tools.test_references_rejects_markers
+  tools.test_references_rejects_trace PROPERTIES
+  LABELS "tools;tools.test_references")
