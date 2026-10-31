@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Starts, stops, and inspects the machine-wide pool of build job slots
+# (PERFORMANCE.md P11): a GNU Make FIFO jobserver held open by a transient
+# user service. The service outlives any one session, so a lost session
+# leaves the pool running until someone runs `tools/jobpool stop`.
+#
+# Usage: tools/jobpool start [tokens]   start the pool (default 23, decision 0020)
+#        tools/jobpool stop [--force]   remove the pool; refuses while slots are in use
+#        tools/jobpool status           show whether it runs and how many slots are free
+#        tools/jobpool env              print the MAKEFLAGS line for a shell
+set -u
+
+unit=galoot-jobserver
+tokens_default=23
+fifo=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jobserver.fifo
+
+free_slots() {
+  python3 -I - "$fifo" <<'PY'
+import fcntl, os, struct, sys, termios
+fd = os.open(sys.argv[1], os.O_RDWR | os.O_NONBLOCK)
+print(struct.unpack("i", fcntl.ioctl(fd, termios.FIONREAD, b"\0" * 4))[0])
+os.close(fd)
+PY
+}
+
+running() { systemctl --user is-active --quiet "$unit.service"; }
+
+total_slots() {
+  systemctl --user show "$unit.service" -p Description --value 2>/dev/null |
+    sed -n 's/.* \([0-9][0-9]*\) slots$/\1/p'
+}
+
+case ${1:-} in
+  start)
+    n=${2:-$tokens_default}
+    [[ $n =~ ^[1-9][0-9]*$ ]] || { echo "tokens must be a positive integer" >&2; exit 2; }
+    if running; then echo "already running: $(free_slots) of $(total_slots) slots free"; exit 0; fi
+    systemctl --user reset-failed "$unit.service" 2>/dev/null
+    systemd-run --user --quiet --unit="$unit" \
+      --description="Galoot build job slots: $n slots" \
+      -p ExecStopPost="/usr/bin/rm -f $fifo" \
+      /usr/bin/bash -c '
+        set -eu
+        rm -f -- "$1"
+        mkfifo -m 600 -- "$1"
+        exec 3<>"$1"
+        printf "%*s" "$2" "" | tr " " "+" >&3
+        exec sleep infinity' _ "$fifo" "$n" || exit 1
+    for _ in 1 2 3 4 5 6 7 8 9 10; do [[ -p $fifo ]] && break; sleep 0.2; done
+    [[ -p $fifo ]] || { echo "pool did not start; see: systemctl --user status $unit" >&2; exit 1; }
+    echo "started: $(free_slots) slots free at $fifo"
+    echo "use:  export MAKEFLAGS=\"-j$((n + 1)) --jobserver-auth=fifo:$fifo\""
+    ;;
+  stop)
+    running || { echo "not running"; exit 0; }
+    total=$(total_slots)
+    free=$(free_slots)
+    if [[ -n $total && $free -lt $total && ${2:-} != "--force" ]]; then
+      echo "$((total - free)) of $total slots are in use; builds may still be running." >&2
+      echo "wait for them, or run: tools/jobpool stop --force" >&2
+      exit 1
+    fi
+    systemctl --user stop "$unit.service" && echo "stopped"
+    ;;
+  status)
+    if running; then
+      echo "running: $(free_slots) of $(total_slots) slots free at $fifo"
+    else
+      echo "not running"; exit 1
+    fi
+    ;;
+  env)
+    n=$(total_slots); n=${n:-$tokens_default}
+    echo "export MAKEFLAGS=\"-j$((n + 1)) --jobserver-auth=fifo:$fifo\""
+    ;;
+  *)
+    echo "usage: tools/jobpool start [tokens] | stop [--force] | status | env" >&2
+    exit 2
+    ;;
+esac
