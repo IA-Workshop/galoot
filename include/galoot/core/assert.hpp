@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-namespace galoot::detail {
+namespace galoot::core::detail {
 
 /// Reports a failed GALOOT_ASSERT and ends the program.
 ///
@@ -50,7 +50,7 @@ namespace galoot::detail {
   return GALOOT_CHECKING == 1;
 }
 
-} // namespace galoot::detail
+} // namespace galoot::core::detail
 
 /// Checks a precondition: GALOOT_ASSERT(condition, message).
 ///
@@ -66,8 +66,9 @@ namespace galoot::detail {
 // time and capture the caller's file and line.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define GALOOT_ASSERT(condition, message)                                      \
-  ((!::galoot::detail::checking_now() || static_cast<bool>(condition))         \
+  ((!::galoot::core::detail::checking_now() || static_cast<bool>(condition))   \
        ? static_cast<void>(0)                                                  \
-       : ::galoot::detail::assertion_failed(message, __FILE__, __LINE__))
+       : ::galoot::core::detail::assertion_failed(message, __FILE__,           \
+                                                  __LINE__))
 
 #endif // GALOOT_CORE_ASSERT_HPP
