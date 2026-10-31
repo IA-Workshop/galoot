@@ -1,0 +1,14 @@
+<gen>/diag-value.cpp: In function ‘int main()’:
+<gen>/diag-value.cpp:6:25: error: no matching function for call to ‘same(vec<galoot::core::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}>, vec<galoot::core::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}>)’
+    6 | int main() { return same(vec<core::conformal<3>()>{1}, vec<core::R<5>(4, 1, 0)>{2}); }
+      |                     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • there is 1 candidate
+    • candidate 1: ‘template<auto M> int same(vec<M>, vec<M>)’
+      <gen>/diag-value.cpp:5:23:
+          5 | template <auto M> int same(vec<M> a, vec<M> b) { return a.c + b.c; }
+            |                       ^~~~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting values for non-type parameter ‘M’ (‘galoot::core::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}’ and ‘galoot::core::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}’)
+          <gen>/diag-value.cpp:6:25:
+              6 | int main() { return same(vec<core::conformal<3>()>{1}, vec<core::R<5>(4, 1, 0)>{2}); }
+                |                     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

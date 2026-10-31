@@ -1,0 +1,7 @@
+<gen>/diag-value.cpp:6:21: error: no matching function for call to 'same'
+    6 | int main() { return same(vec<core::conformal<3>()>{1}, vec<core::R<5>(4, 1, 0)>{2}); }
+      |                     ^~~~
+<gen>/diag-value.cpp:5:23: note: candidate template ignored: deduced conflicting values for parameter 'M' ('<template param metric<3UL + 2>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, 0, -1}}, {{0, 0, 0, -1, 0}}}}}>' vs. '<template param metric<5UL>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, 1, 0}}, {{0, 0, 0, 0, -1}}}}}>')
+    5 | template <auto M> int same(vec<M> a, vec<M> b) { return a.c + b.c; }
+      |                       ^
+1 error generated.
