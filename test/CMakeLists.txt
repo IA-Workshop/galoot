@@ -115,3 +115,35 @@ add_test(NAME tools.measure_header
     ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
+
+# core.metric: the factories, accessors, and concept of metric.hpp.
+galoot_add_test(MODULE core COMPONENT metric)
+
+# Each check of metric.hpp rejects its misuse at compile time with a literal
+# message. A GALOOT_ASSERT message reaches the diagnostic only through the
+# echoed source line, so those tests also require `assertion_failed`; a
+# static_assert prints its message itself, after `static assertion failed`.
+galoot_add_compile_fail_test(NAME metric_asymmetric MODULE core COMPONENT metric
+  SOURCE core/metric_asymmetric_fail.cpp
+  MESSAGE "from_gram: the form must be symmetric"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_split MODULE core COMPONENT metric
+  SOURCE core/metric_split_fail.cpp
+  MESSAGE "R<N>(p, q, r): p + q + r must equal N"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_negative MODULE core COMPONENT metric
+  SOURCE core/metric_negative_fail.cpp
+  MESSAGE "R<N>(p, q, r): p, q, and r cannot be negative"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_entry_range MODULE core COMPONENT metric
+  SOURCE core/metric_entry_range_fail.cpp
+  MESSAGE "from_gram: an entry is beyond max_form_entry"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_zero MODULE core COMPONENT metric
+  SOURCE core/metric_zero_fail.cpp
+  MESSAGE "metric: an algebra has at least one generator, so n = 0 is rejected"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_bound MODULE core COMPONENT metric
+  SOURCE core/metric_bound_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
