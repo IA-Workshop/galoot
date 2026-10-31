@@ -1,6 +1,6 @@
 # 0001 Core v1 roadmap
 
-- Status: proposed. Nothing here takes effect until the owner accepts it (W11, C18).
+- Status: accepted by the owner on 2026-10-31, all of D1 to D17, with amendments to D4, D5, D6, D11, D13, and D16. Each is recorded in `docs/agent/decisions/` under the number of the same order (D1 is 0001, and so on). Where a decision record and section 7 differ, the record governs.
 - Written by: Claude (agent), 2026-10-31, merging two independent plans: an architecture and critical-path plan (Fable) and a definition-of-done and gates plan (Opus). Neither plan was checked against the repository line by line by the author of this merge; claims marked "computed" come from the architecture planner's read-only spikes, which are not yet committed as `test/reference/` scripts and so are not V1 evidence (V10).
 - Agent cost: the Opus planner used about 141k tokens over 14 tool calls. The Fable planner's cost was not reported. Estimates for later units belong in each unit's plan (W3).
 
@@ -183,4 +183,4 @@ Parallel lanes in separate worktrees (W7): the build lane (WU1, later WU17) with
 
 ## 11. Next step
 
-On the owner's answers to D1 to D3 and D6, commit WU0's decision records and WU1's skeleton plan to `develop` to claim them (W7). Start the spike lane in parallel.
+The decision records of WU0 are written (0001 to 0017). Remaining in M0: ratify the status lines of CONSTITUTION.md and PERFORMANCE.md (decision 0002), edit CONVENTIONS to 1.3 (0009), claim WU1 with its own plan, and start the spike lane (section 9) in the workbench. WU1 needs the shared job-slot server of P11 running.
