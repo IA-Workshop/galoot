@@ -9,6 +9,7 @@
 #include <array>
 #include <cstddef>
 #include <limits>
+#include <utility>
 
 #include <galoot/core/bits.hpp>
 
@@ -191,6 +192,44 @@ constexpr int expected_involution_sign(mask_t a) {
     sign = -sign;
   }
   return sign;
+}
+
+// The geometric product e_A e_B of basis blades in a diagonal metric whose
+// generator e_i squares to squares[i - 1]: write A then B, sort by swapping
+// out-of-order neighbors (each swap e_j e_i = -e_i e_j for i != j), then
+// replace each adjacent pair e_i e_i by its square. The result is a
+// coefficient times the blade of what remains.
+struct scaled_blade {
+  int coefficient;
+  mask_t mask;
+};
+
+constexpr scaled_blade diagonal_product(mask_t a, mask_t b,
+                                        const std::array<int, 6>& squares) {
+  index_list word = concat(indices_of(a), indices_of(b));
+  int coefficient = 1;
+  for (bool swapped = true; swapped;) {
+    swapped = false;
+    for (int p = 0; p + 1 < word.size; ++p) {
+      const auto here = static_cast<std::size_t>(p);
+      if (word.at.at(here) > word.at.at(here + 1)) {
+        std::swap(word.at.at(here), word.at.at(here + 1));
+        coefficient = -coefficient;
+        swapped = true;
+      }
+    }
+  }
+
+  index_list rest;
+  for (int p = 0; p < word.size; ++p) {
+    if (p + 1 < word.size && get(word, p) == get(word, p + 1)) {
+      coefficient *= squares.at(static_cast<std::size_t>(get(word, p) - 1));
+      ++p;
+    } else {
+      push(rest, get(word, p));
+    }
+  }
+  return {.coefficient = coefficient, .mask = mask_of(rest)};
 }
 
 // The masks of an algebra of n generators, all of them for n up to 8; the
@@ -477,6 +516,40 @@ TEST_CASE("Every function matches its definition on a sample of blades at "
         const mask_t b = s.at.at(static_cast<std::size_t>(q));
         CAPTURE(b);
         CHECK(reorder_sign(a, b) == expected_reorder_sign(a, b));
+      }
+    }
+  }
+}
+
+TEST_CASE("In a diagonal metric, e_A e_B is reorder_sign times the squares of "
+          "the common generators times e_(A xor B), for every pair of blades "
+          "of six generators") {
+  // Euclidean, and one with every kind of square, so that a zero or negative
+  // square of a common generator shows in the coefficient.
+  constexpr std::array<std::array<int, 6>, 2> metrics{{
+      {1, 1, 1, 1, 1, 1},
+      {1, -1, 0, -1, 1, 0},
+  }};
+  constexpr mask_t count = mask_t{1} << 6U;
+  for (const std::array<int, 6>& squares : metrics) {
+    for (mask_t a = 0; a < count; ++a) {
+      for (mask_t b = 0; b < count; ++b) {
+        CAPTURE(squares.at(1));
+        CAPTURE(a);
+        CAPTURE(b);
+        int common_squares = 1;
+        const index_list la = indices_of(a);
+        const index_list lb = indices_of(b);
+        for (int p = 0; p < la.size; ++p) {
+          if (contains(lb, get(la, p))) {
+            common_squares *=
+                squares.at(static_cast<std::size_t>(get(la, p) - 1));
+          }
+        }
+        const scaled_blade product = diagonal_product(a, b, squares);
+        CHECK(product.coefficient ==
+              galoot::core::reorder_sign(a, b) * common_squares);
+        CHECK(product.mask == (a ^ b));
       }
     }
   }
