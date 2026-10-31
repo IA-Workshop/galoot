@@ -22,5 +22,6 @@ At the end of each milestone, before its gate report, an agent surveys the workb
 | [fault injection for the reference engine](../records/spikes/spike-b/fault_injection.py) | Shows each check of the reference engine catches its target fault | Spike B | Candidate for DoD-14 |
 | [constexpr plan generator](../records/spikes/spike-a/gen.hpp) | Throwaway `constexpr` blade product and plan generator | Spike A | Source of ideas for WU6, not reused as is |
 | [runs.tsv merge rebuild](runs_tsv_merge.py) | Rebuilds `runs.tsv` after a union merge doubled it, padding old rows with `--` | WU1, for merges across the one-time header extension | In use until every branch has merged WU1; delete at the M0 review if no branch needs it |
+| [bits fault injection](bits_fault_injection.py) | Applies sign and range mutations to `bits.hpp`, builds, runs the `core.bits` tests, and restores the header; `--runtime-only` also drops the test's `static_assert`s so the run-time checks must catch each one | WU2, to show the bits tests can fail | Candidate; a general mutation driver for later core headers may replace it at the M1 review |
 
 The spike files stay where Spikes A and B committed them, so the notes that cite them remain valid. The first coalescing review, at M0, decides which move here.
