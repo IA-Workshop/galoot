@@ -1,6 +1,6 @@
 # 0018 Quantities recorded for every measured run
 
-- Status: accepted; the P13 sentence it adds awaits the owner's ratification
+- Status: accepted; the P13 sentence it adds is ratified
 - Date: 2026-10-31
 - Decided by: the owner, who recommended tracking these quantities on 2026-10-31. Recorded by Claude (agent).
 
@@ -14,4 +14,4 @@ Every recorded run (P1, P6, P13) captures, where the machine exposes it: wall ti
 
 ## Consequences
 
-`tools/timed` and the per-translation-unit launcher of WU1 grow these fields. Reading RAPL may need an owner action if its permissions change. The P13 sentence is a governance edit and takes effect when the owner ratifies it.
+`tools/timed` and the per-translation-unit launcher of WU1 grow these fields. Reading RAPL may need an owner action if its permissions change. The P13 sentence was ratified by the owner on 2026-10-31.
