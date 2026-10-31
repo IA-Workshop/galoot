@@ -9,17 +9,6 @@ project(galoot VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
-# Per-translation-unit cost record (PERFORMANCE P1; plan 0002, 4.7). The
-# presets that measure set GALOOT_PRESET and GALOOT_COMPILE_RECORD; the lint
-# preset sets neither. Every compile in the tree gets it, including the
-# header-check translation units (checked with ninja -t commands).
-if(PROJECT_IS_TOP_LEVEL AND DEFINED GALOOT_PRESET)
-  set(CMAKE_CXX_COMPILER_LAUNCHER
-    ${PROJECT_SOURCE_DIR}/tools/measure tu ${GALOOT_PRESET}
-    ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}
-    ${GALOOT_COMPILE_RECORD} --)
-endif()
-
 # The core. Its interface carries no warning, -Werror, or sanitizer flags:
 # those belong to Galoot's own builds, not to its users'.
 add_library(galoot_core INTERFACE)
@@ -43,6 +32,8 @@ endif()
 if(NOT GALOOT_CHECKING MATCHES "^(ON|OFF)$")
   message(FATAL_ERROR "GALOOT_CHECKING must be ON or OFF, not '${GALOOT_CHECKING}'.")
 endif()
+set(GALOOT_CHECKING "${GALOOT_CHECKING}" CACHE BOOL
+  "ON checks GALOOT_ASSERT conditions at run time; OFF checks them only in constant evaluation")
 # Every target that links galoot::core in this build gets the mode, including
 # the header-check targets of VERIFY_INTERFACE_HEADER_SETS. BUILD_INTERFACE
 # keeps it out of anything installed. A target that fixes its own mode does
@@ -51,6 +42,29 @@ endif()
 target_compile_definitions(galoot_core INTERFACE
   $<BUILD_INTERFACE:GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>>)
 
+# Per-translation-unit cost record: each compile runs through tools/measure,
+# which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. The
+# presets that measure set both, and the lint preset neither, since a compile
+# under clang-tidy does not cost what a user's compile does. The launcher
+# applies to every compile in the tree, the header-check units included.
+set(GALOOT_PRESET "" CACHE STRING
+  "Preset named in each compile cost row; empty records no compile costs")
+set(GALOOT_COMPILE_RECORD "" CACHE FILEPATH
+  "compile.tsv that each compile appends its cost row to, with GALOOT_PRESET")
+if(NOT GALOOT_PRESET STREQUAL "")
+  if(GALOOT_COMPILE_RECORD STREQUAL "")
+    message(FATAL_ERROR "GALOOT_PRESET is '${GALOOT_PRESET}', so each compile "
+      "records its cost, but GALOOT_COMPILE_RECORD names no file for the rows.")
+  endif()
+  set(CMAKE_CXX_COMPILER_LAUNCHER
+    ${PROJECT_SOURCE_DIR}/tools/measure tu ${GALOOT_PRESET}
+    ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}
+    ${GALOOT_COMPILE_RECORD} --)
+elseif(NOT GALOOT_COMPILE_RECORD STREQUAL "")
+  message(FATAL_ERROR "GALOOT_COMPILE_RECORD is set, but without "
+    "GALOOT_PRESET no compile records its cost there.")
+endif()
+
 # Each header compiles on its own (STYLE S6): one generated translation unit
 # per header, built by all_verify_interface_header_sets and not by all.
 set_property(TARGET galoot_core PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -58,7 +72,9 @@ set_property(TARGET galoot_core PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 # Layout check (STYLE S3) over the core's headers and the test sources,
 # without compiling. include/ext keeps its upstream layout.
 find_program(GALOOT_CLANG_FORMAT clang-format REQUIRED)
-file(GLOB_RECURSE galoot_test_sources
+# CONFIGURE_DEPENDS, so that a test source added later is checked without a
+# manual reconfigure.
+file(GLOB_RECURSE galoot_test_sources CONFIGURE_DEPENDS
   ${PROJECT_SOURCE_DIR}/test/*.cpp ${PROJECT_SOURCE_DIR}/test/*.hpp)
 add_custom_target(format-check
   COMMAND ${GALOOT_CLANG_FORMAT} --dry-run -Werror
