@@ -78,6 +78,49 @@ galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 
+# core.bits: the blade-mask functions against their definitions.
+galoot_add_test(MODULE core COMPONENT bits)
+
+# core.bits_rejects_<function>_<case>: out-of-range input aborts with the
+# precondition's message at run time. The program fixes the checking mode, as
+# the assert programs above do, so these run in every preset. Each function
+# that takes n is tried with n below and above the range and with e3 in an
+# algebra of two generators; core.bits_accepts_<function> gives it the widest
+# input in range, the antiscalar of 32 generators, and must exit 0.
+add_executable(core_bits_assert_fail core/bits_assert_fail.cpp)
+target_include_directories(core_bits_assert_fail PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_bits_assert_fail PRIVATE cxx_std_23)
+target_compile_definitions(core_bits_assert_fail PRIVATE GALOOT_CHECKING=1)
+set(bits_count_message "galoot: assertion failed: n must be from 1 to 32 (")
+set(bits_mask_message
+  "galoot: assertion failed: blade has a generator beyond e_n (")
+foreach(function IN ITEMS antigrade complement_mask right_complement_sign
+    left_complement_sign antireverse_sign)
+  set(program $<TARGET_FILE:core_bits_assert_fail> ${function})
+  add_test(NAME core.bits_rejects_${function}_n_0
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
+      bits.hpp: -- ${program} n_0)
+  add_test(NAME core.bits_rejects_${function}_n_33
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
+      bits.hpp: -- ${program} n_33)
+  add_test(NAME core.bits_rejects_${function}_mask
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_mask_message}
+      bits.hpp: -- ${program} mask)
+  add_test(NAME core.bits_accepts_${function}
+    COMMAND ${program} widest)
+  set_tests_properties(core.bits_rejects_${function}_n_0
+    core.bits_rejects_${function}_n_33 core.bits_rejects_${function}_mask
+    core.bits_accepts_${function} PROPERTIES LABELS "core;core.bits")
+endforeach()
+
+# core.bits_consteval: a blade beyond the algebra ends a constant evaluation,
+# and the diagnostic shows the precondition.
+galoot_add_compile_fail_test(NAME bits_consteval MODULE core COMPONENT bits
+  SOURCE core/bits_consteval_fail.cpp
+  MESSAGE "blade has a generator beyond e_n"
+  REQUIRE assertion_failed)
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition (C13; plan 0001, DoD-6).
 add_test(NAME core.bare_compile
