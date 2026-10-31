@@ -1,0 +1,47 @@
+# Static checks for Galoot's C++; see docs/agent/governance/STYLE.md (S4).
+# Each excluded check carries its reason, as STYLE.md S1 requires.
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -modernize-use-trailing-return-type,
+  -misc-non-private-member-variables-in-classes,
+  -cppcoreguidelines-non-private-member-variables-in-classes
+# bugprone-easily-swappable-parameters: products take two operands of one
+#   type by design (a * b); the check flags every binary operation.
+# *-magic-numbers: structure constants and published coefficients (1/2, 2)
+#   are the mathematics; named constants are still required where S12 asks.
+# readability-identifier-length: mathematical notation uses one-letter
+#   names (a, b, p, Q, F); Core Guidelines NL.7 allows them in small scopes.
+# modernize-use-trailing-return-type: a layout preference, not a defect.
+# *-non-private-member-variables-in-classes: multivectors and descriptors
+#   are aggregates with public members (S8), as structural template
+#   arguments require.
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(^|/)include/galoot/'
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.ConstexprVariableCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: lower_case
+  readability-identifier-naming.ConceptCase: lower_case
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: lower_case
+  readability-identifier-naming.TemplateParameterCase: CamelCase
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  readability-identifier-naming.MacroDefinitionPrefix: GALOOT_
+  # Names fixed by mathematical notation keep their case (S10).
+  readability-identifier-naming.ParameterIgnoredRegexp: '^[A-Z]$'
+  readability-identifier-naming.VariableIgnoredRegexp: '^[A-Z]$'

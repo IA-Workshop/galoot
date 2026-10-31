@@ -1,0 +1,22 @@
+# Layout of Galoot's C++ source; see docs/agent/governance/STYLE.md (S3).
+# LLVM's K&R-derived layout matches Core Guidelines NL.17; left pointer
+# alignment matches NL.18.
+BasedOnStyle: LLVM
+Standard: Latest
+ColumnLimit: 80
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+AlwaysBreakTemplateDeclarations: Yes
+RequiresClausePosition: OwnLine
+InsertNewlineAtEOF: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<galoot/'
+    Priority: 2
+  - Regex: '^<doctest'
+    Priority: 3
+  - Regex: '^<[a-z_]+>$'
+    Priority: 1
+  - Regex: '.*'
+    Priority: 4
