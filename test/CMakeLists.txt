@@ -101,6 +101,9 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/cycle_a.hpp: include cycle: galoot/core/cycle_a.hpp -> galoot/core/cycle_b.hpp -> galoot/core/cycle_a.hpp"
     "galoot/core/wrong_guard.hpp:1: include guard should be GALOOT_CORE_WRONG_GUARD_HPP"
     "galoot/core/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
+    "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
+    "galoot/core/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
