@@ -1,6 +1,6 @@
 # 0002 WU1: build skeleton
 
-- Status: implemented on `feature/build` (2026-10-31); awaiting the W5 review and the merge into `develop`. Criteria 1 to 14 are met with the evidence of section 14; criterion 15 is the merge itself. See section 13.
+- Status: implemented on `feature/build` (2026-10-31). The W5 review (`docs/agent/records/reviews/2026-10-31-wu1-build-skeleton.md`) asked for B1 to B3 and N1 to N4, which section 15 records as done. Criteria 1 to 14 are met; criterion 15 is the merge into `develop`, made by the coordinating session.
 - Unit: WU1 of plan 0001 (milestone M0). Branch: `feature/build`, in the worktree `.claude/worktrees/build`.
 - Written by: Claude (agent, build-expert, Opus 5.5), 2026-10-31, against `develop` at 2862040, where P13 already includes the decision 0018 sentence. Inputs: the governance (CONSTITUTION, WORKFLOW, PERFORMANCE, STYLE, VVUQ), research notes 0001 and 0002, plan 0001, and decisions 0006, 0011 to 0014, and 0018.
 - Probes: the facts marked "probed" below come from throwaway runs in `docs/agent/workbench/` on 2026-10-31. They were deleted afterward and are not V1 evidence; WU1 repeats what it relies on (V10).
@@ -433,3 +433,27 @@ Notes 0001 and 0002 had the runner at 9.7 G instructions (GCC) and 6.9 G (Clang)
 Launcher overhead (at `5134bb5-dirty`, as for criterion 11), from the median difference of 15 pinned compiles of the smoke TU with and without `tools/measure tu` (GCC, `-O0`): 25.6 ms and 26.0 ms in two runs, and 61.3 ms in a third run that had a wide spread (77 ms to 100 ms) and was not traced. Contention on CPU 2 is the inferred cause; the next run measured CPU 2 as free. The launcher around `true` alone takes 23.9 ms, of which Python startup with its imports is about 15 ms.
 
 Not checked: the CTest-side handling of an escaped pattern that contains regex metacharacters (only `cmake -P` was checked); the `ninja -t deps` and `test_prep/<test>` selections of section 4.9; token return when a client is killed; ASan under `ptrace`; a pool restart while builds run.
+
+## 15. W5 fixes (2026-10-31, Claude, agent, build-expert, Opus 5.5)
+
+The review of head `a00259c` returned "merge after fixes". Each fix below was shown to fail before it where practical, by a mutation or by the test written first, and to pass after. N5 to N16 are carried in plan 0003 and were not taken on here.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| B1, `compile.tsv` header race | `append_row` tests `os.fstat(...).st_size == 0` after `flock` (`9385e56`). New test `tools.measure_header`: holds the lock on an empty record while four launchers queue on it (counted in `/proc/locks`), then counts header lines (`5087d4a`) | 4 headers from 4 launchers, exit 1 | 1 header, 4 rows. A fresh clang-debug tree: 1 header, 6 rows for 6 compile commands (criterion 10 on a clean build) |
+| B2, detail namespace | `galoot::core::detail` in `assert.hpp`; `GALOOT_ASSERT` expands to it (`39f98e9`). A smoke test case calls `galoot::core::detail::checking_now()` (`5087d4a`) | The smoke test does not compile: "'galoot::core' has not been declared" | Compiles and passes. Decision 0030 never named the namespace, so it needed no change; section 4.3's `galoot::detail` is superseded |
+| N1, compile-fail for the wrong reason | The helper runs the build through `test/expect_output.cmake` and requires a failed build, the literal MESSAGE, and each REQUIRE literal; the assertion tests require `assertion_failed` (`8100c8c`). The regex escaping is gone | With `x % 2 == no_such_name` on the message line, `core.assert_consteval` passed on GCC and Clang | The same mutation fails on both: "output lacks 'assertion_failed'". Restored source passes |
+| N2, zero-cases rule not checked | Configure-time check that `core.smoke`'s `FAIL_REGULAR_EXPRESSION` equals `GALOOT_ZERO_CASES_REGEX` (`9ed0f7c`) | With the rule dropped from `galoot_add_test`: configures, and `core.smoke` and `core.zero_cases` pass | Configure fails: "core.smoke's FAIL_REGULAR_EXPRESSION is 'NOTFOUND'" |
+| N3, `;` in MESSAGE | FATAL_ERROR (`8100c8c`) | `MESSAGE "a;b"` configured, as `PASS_REGULAR_EXPRESSION "a;b"` (two alternatives) | Configure fails: "MESSAGE may not contain ';'" |
+| N4, guard bypass | Step `test` needs the pool, whatever the command (`fca52fa`) | `env -u MAKEFLAGS tools/timed test ... -- taskset -c 2 ctest ...` ran, exit 0 | Exit 2 with a message; `nice ctest` also refused; other steps run |
+| B3, merge and P9 | `develop` (`63e2014`) merged with `--no-commit`; it brought only records, decisions, and plans, and left `runs.tsv` with one header | | P9 below, on the merged tree |
+
+P9 on the merged tree (revision recorded as `0863bad-dirty`, the uncommitted merge), each from a clean build tree through `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, and lint (clang-tidy, both header checks, `format-check`) each passed 10 of 10 tests. Wall times (s): 2.38, 3.34, 5.49, 1.89, 2.47, 3.44, 1.66. `all_verify_interface_header_sets` built under gcc-debug and clang-debug. Total, with the two header-check builds: 9 runs, 21.08 s, no failure. The measurement presets were not rerun; they passed at `f5f6ddd`, and P9 does not gate on them.
+
+Departures in this pass (C20):
+
+1. Commit `5087d4a` holds the B1 and B2 tests before their fixes, as W9 asks, so at that commit the build fails and `tools.measure_header` fails. This is against W2's "building at every recorded step".
+2. One `ctest -V` run, made only to read the N1 mutation's output, was not run through `tools/timed`.
+3. `develop`'s rows in `runs.tsv` are not padded, following decision 0032, item 3; the rows padded earlier on this branch stay as they are.
+4. N4 narrows decision 0022, item 3 ("other commands unchanged"): a step named `test` that runs no CTest, such as a Python reference script, is now refused without the pool.
+5. A pinned or wrapped CTest run under a step name other than `build` or `test` still passes the guard.
