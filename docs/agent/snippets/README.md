@@ -21,5 +21,6 @@ At the end of each milestone, before its gate report, an agent surveys the workb
 | [table diff against the reference](../records/spikes/spike-a/diff_reference.py) | Compares a generated plan table with `clifford_reference.py` output | Spike A | Candidate for WU6 |
 | [fault injection for the reference engine](../records/spikes/spike-b/fault_injection.py) | Shows each check of the reference engine catches its target fault | Spike B | Candidate for DoD-14 |
 | [constexpr plan generator](../records/spikes/spike-a/gen.hpp) | Throwaway `constexpr` blade product and plan generator | Spike A | Source of ideas for WU6, not reused as is |
+| [runs.tsv merge rebuild](runs_tsv_merge.py) | Rebuilds `runs.tsv` after a union merge doubled it, padding old rows with `--` | WU1, for merges across the one-time header extension | In use until every branch has merged WU1; delete at the M0 review if no branch needs it |
 
 The spike files stay where Spikes A and B committed them, so the notes that cite them remain valid. The first coalescing review, at M0, decides which move here.
