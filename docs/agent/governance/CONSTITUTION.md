@@ -1,6 +1,6 @@
 # Galoot constitution
 
-Status: draft for adoption by the owner.
+Status: ratified by the owner on 2026-10-31 (decision 0002).
 
 This constitution states what Galoot is for and the rules that hold for all of its work. Four documents beside it add detail: [WORKFLOW.md](WORKFLOW.md) says how a change moves from idea to release, [VVUQ.md](VVUQ.md) says what counts as evidence that Galoot is correct, [PERFORMANCE.md](PERFORMANCE.md) says how Galoot's build, run, and development costs are measured and kept in proportion, and [STYLE.md](STYLE.md) sets the style of the C++ source. They may add requirements but never relax this one, and where they conflict with it, this document governs.
 
@@ -124,3 +124,4 @@ This document, WORKFLOW.md, VVUQ.md, PERFORMANCE.md, and STYLE.md change only wh
 | 2026-10-31 | PERFORMANCE.md added; C3 admits precompiled and cached forms on the same terms as hand-written ones |
 | 2026-10-31 | Simplicity provisions from the governance harness folded into C8, C12, and C13 |
 | 2026-10-31 | C17 and C20 extended from research note 0007: sources of instructions, the root AGENTS.md, departures first, current results, and marked claims |
+| 2026-10-31 | Ratified by the owner with PERFORMANCE.md (decision 0002) |

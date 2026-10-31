@@ -2,6 +2,8 @@
 
 Status: version 1.2, ratified by the owner on 2026-10-31. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
+Version 1.3 is proposed on 2026-10-31 (decision 0009) and awaits ratification: it adds the component marker to each section, the blade definition in 1.1 for non-diagonal metrics, and items 4.4 and 4.5. Until ratified, those additions are Proposed and version 1.2 governs.
+
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
 - Checked: verified exactly by [`test/reference/conventions_check.py`](../../../test/reference/conventions_check.py), which shares no code with the library.
@@ -11,11 +13,15 @@ This specification fixes the conventions that every part of Galoot shares: how g
 
 Sources rank as follows. The design study is the most canonical reference for Galoot. For mathematical conventions, Lengyel's wikis ([rigidgeometricalgebra.org](https://rigidgeometricalgebra.org), [conformalgeometricalgebra.org](https://conformalgeometricalgebra.org)) are the preferred source. Colapinto's thesis and the Versor library inform generic-programming technique, not conventions. A disagreement between ranked sources is recorded in section 8 (constitution C11), and the owner decides it.
 
+Each section carries a component marker: *core* for what the core implements and *model* for what an extension implements on the core (constitution C2). Sections 1 to 4 and 7 are core; section 5 belongs to the rga3 model and section 6 to the cga3 model.
+
 Notation: n is the number of generators, gr(u) the grade and ag(u) = n − gr(u) the antigrade of a blade u, **1** the scalar unit, and 𝟙 the antiscalar.
 
 ## 1 Generators and blades
 
-1.1 Generators are named e1 to en, counting from 1. A blade is stored as a bitmask in which bit i − 1 stands for e_i. The canonical blade of a mask lists its indices in increasing order, so the mask {1, 2, 4} is e124. (Proposed)
+Component: core.
+
+1.1 Generators are named e1 to en, counting from 1. A blade is stored as a bitmask in which bit i − 1 stands for e_i. The canonical blade of a mask lists its indices in increasing order, so the mask {1, 2, 4} is e124. In a metric that is not diagonal, the blade of a mask is the wedge product e_a1 ∧ … ∧ e_ak of its generators, not their geometric product, so that e45 = e4 ∧ e5 in conformal(3) while e4 ⟑ e5 = −1 + e45. (Proposed)
 
 1.2 In the diagonal signature R(p, q, r), the first p generators square to +1, the next q to −1, and the last r to 0. This puts a null generator last, as in Lengyel's rigid algebra; some libraries and texts put it first, as e0. (Proposed)
 
@@ -45,13 +51,21 @@ Notation: n is the number of generators, gr(u) the grade and ag(u) = n − gr(u)
 
 ## 4 Products
 
+Component: core.
+
 4.1 The geometric product is ⟑. The wedge a ∧ b keeps the terms of a ⟑ b whose blades share no generator. The dot a • b = aᵀGb is a scalar, and the antidot a ∘ b = aᵀ𝔾b multiplies 𝟙, where G and 𝔾 are the metric exomorphism and antiexomorphism. (Confirmed)
 
 4.2 The geometric antiproduct is a ⟇ b = left(right(a) ⟑ right(b)), and the antiwedge is a ∨ b = left(right(a) ∧ right(b)). Both products and both antiproducts are associative, and the De Morgan laws hold with either complement: right(a ⟑ b) = right(a) ⟇ right(b), right(a ∧ b) = right(a) ∨ right(b), and the same with left. (Checked)
 
 4.3 The projection of a onto b is b ∨ (a ∧ b☆). For a point projected onto a unitized plane, the result has weight +1. (Checked)
 
+4.4 `transform(x, V)` applies a versor V to x by the parity of V's blades: an even V gives V ⟇ x ⟇ Ṽ, as in 5.4, and an odd V gives −V ⟇ x̂ ⟇ Ṽ, as in 5.6. A V with blades of both parities is rejected at compile time. The result has the blade set of x, and in checking mode every discarded part is verified to be zero (C8). `compose(Q2, Q1)` is Q2 ⟇ Q1 and applies Q1 first. (Proposed)
+
+4.5 A conversion to a blade set that omits blades of the input is lossy, is named `truncate<Blades>(x)`, and in checking mode verifies that what it drops is zero: exactly for an exact scalar, and within the operation's forward error bound for a rounding scalar (decision 0010). It is never implicit. (Proposed)
+
 ## 5 Rigid objects in rigid(3)
+
+Component: model (rga3). Sections 5.4 and 5.6 are instances of 4.4.
 
 5.1 A point is x e1 + y e2 + z e3 + w e4, with weight w; it is unitized when w = 1. (Confirmed)
 
@@ -68,6 +82,8 @@ Notation: n is the number of generators, gr(u) the grade and ag(u) = n − gr(u)
 5.7 Constructors take geometric quantities: `rotation(l, theta)` turns by theta and builds l sin(θ/2) + 𝟙 cos(θ/2), and `translation(d)` moves by d and builds ½d on e23, e31, e12 plus 𝟙. Raw motor coefficients hold half-angles and half-distances. (Proposed)
 
 ## 6 Conformal objects in conformal(3)
+
+Component: model (cga3).
 
 6.1 The round point with center p and squared radius r² is p + e4 + ½(p² + r²)e5. Its square P • P is −r², so a round point of zero radius is null and an imaginary round has r² < 0. A round point is not the dual of the sphere with its center and radius: that sphere is its container, and the bulk dual of the real sphere with center p and radius r is −(p + e4 + ½(p² − r²)e5). (Confirmed; the value of P • P also Checked)
 
@@ -126,3 +142,4 @@ These choices had no settled source and were ratified with this version:
 | 1.0 | 2026-10-31 | Ratified by the owner, unchanged from 0.1 |
 | 1.1 | 2026-10-31 | Ranking of sources added, as the owner directed |
 | 1.2 | 2026-10-31 | Confirmed label added from note 0005; 6.1 clarified; 6.2 split into 6.2 to 6.4; flector, dual, and partner rows updated and a conformal-duals row added; no convention changed; ratified |
+| 1.3 | 2026-10-31 | Proposed, not ratified: component markers; non-diagonal blade definition in 1.1; 4.4 and 4.5 added (decision 0009) |

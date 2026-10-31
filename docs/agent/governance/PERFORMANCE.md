@@ -1,6 +1,6 @@
 # Galoot performance
 
-Status: draft for adoption by the owner.
+Status: ratified by the owner on 2026-10-31 (decision 0002).
 
 This document says how Galoot's costs are measured and kept in proportion to their use. It adds detail to C6, C12, and C14 of the [constitution](CONSTITUTION.md) and to V15 of [VVUQ.md](VVUQ.md), and it sets the scope of the test runs that [WORKFLOW.md](WORKFLOW.md) asks for.
 
@@ -20,7 +20,7 @@ The build records, for each test and benchmark translation unit, its wall time a
 
 ### P2 Growth with use
 
-A benchmark measures build cost against the number of generators and against the number of distinct operations a program instantiates, each over at least three sizes, so that the rate of growth is visible. Build cost that grows with the dimension of the algebra while the use stays fixed contradicts C6 and is recorded as a defect.
+A benchmark measures build cost against the number of generators and against the number of distinct operations a program instantiates, each over at least three sizes, so that the rate of growth is visible. Build cost that grows with the dimension of the algebra while the use stays fixed contradicts C6 and is recorded as a defect, unless the growth follows from the algebra's own structure, such as the sparsity and symmetry pattern of its signature data; that growth is measured in compiler instruction counts over at least three sizes, reported, and never blocks progress (decision 0005). Proposed, awaiting ratification.
 
 ### P3 Work done once
 
