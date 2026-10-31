@@ -1,0 +1,10 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:70:18: error: no matching function for call to 'transform'
+   70 |   const auto r = transform(p, v);
+      |                  ^~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:413:25: note: candidate template ignored: constraints not satisfied [with Alg = cdf::rga3, X = blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, V = blade_set<2>{{{0, 1}}, {{1, 1}}}, T = double]
+  413 | constexpr mv<Alg, X, T> transform(const mv<Alg, X, T>& x,
+      |                         ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:412:12: note: because 'one_parity(blade_set<2>{{{0, 1}}, {{1, 1}}})' evaluated to false
+  412 |   requires(one_parity(V))
+      |            ^
+1 error generated.

@@ -1,0 +1,13 @@
+compiler	std	form	answers	gp_different_algebras	gp_scalar_without_mul	get_missing_e1	convertible_motor_to_point	transform_mixed_parity	gp_point_point_correct	hard_errors
+g++	c++23	R	32	ill-formed	ill-formed	ill-formed	ill-formed	ill-formed	well-formed	0
+g++	c++23	K	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	0
+g++	c++23	A	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	4
+g++	c++23	P	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	4
+g++	c++23	D	32	ill-formed	ill-formed	ill-formed	ill-formed	ill-formed	well-formed	0
+g++	c++26	G	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	0
+clang++	c++23	R	32	ill-formed	ill-formed	ill-formed	ill-formed	ill-formed	well-formed	0
+clang++	c++23	K	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	0
+clang++	c++23	A	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	4
+clang++	c++23	P	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	4
+clang++	c++23	D	32	ill-formed	ill-formed	ill-formed	ill-formed	ill-formed	well-formed	0
+clang++	c++26	G	63	well-formed	well-formed	well-formed	well-formed	well-formed	well-formed	0

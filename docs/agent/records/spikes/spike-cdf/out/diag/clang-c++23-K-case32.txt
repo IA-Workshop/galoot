@@ -1,0 +1,8 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:262:19: error: static assertion failed: conversion drops blades of its input: this is a lossy conversion, request it with truncate<Blades>(x)
+  262 |     static_assert(false, "conversion drops blades of its input: this is a "
+      |                   ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:65:37: note: in instantiation of function template specialization 'cdf::mv<cdf::rga3, blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}>::operator mv<blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>' requested here
+   65 |   const auto r = static_cast<Point>(q);
+      |                                     ^
+1 error generated.

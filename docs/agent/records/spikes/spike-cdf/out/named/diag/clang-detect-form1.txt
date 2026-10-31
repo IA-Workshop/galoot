@@ -1,0 +1,7 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/named_detect.cpp:12:102: error: implicit instantiation of undefined template 'answers<14>'
+   12 | answers<(g_e1<Line> ? 1 : 0) + (s_e1<Line> ? 2 : 0) + (g_e41<Line> ? 4 : 0) + (s_e41<Line> ? 8 : 0)> show;
+      |                                                                                                      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/named_detect.cpp:11:25: note: template is declared here
+   11 | template <int A> struct answers;
+      |                         ^
+1 error generated.

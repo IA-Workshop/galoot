@@ -1,0 +1,13 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/out/named/diag/subscript-missing.cpp:34:19: error: call to consteval function 'cdf::name_in<cdf::rga3, blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}>::name_in<3UL>' is not a constant expression
+   34 |   sink = sink + l["e1"];
+      |                   ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:186:7: note: non-constexpr function 'blade_is_not_in_this_blade_set' cannot be used in a constant expression
+  186 |       blade_is_not_in_this_blade_set();
+      |       ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/out/named/diag/subscript-missing.cpp:34:19: note: in call to 'name_in<3UL>("e1")'
+   34 |   sink = sink + l["e1"];
+      |                   ^~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:177:6: note: declared here
+  177 | void blade_is_not_in_this_blade_set();
+      |      ^
+1 error generated.

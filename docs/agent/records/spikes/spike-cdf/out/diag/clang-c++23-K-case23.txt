@@ -1,0 +1,11 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:24: error: invalid operands to binary expression ('void' and 'const value_type' (aka 'const double'))
+   60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+      |          ~~~~~~~~~~~~~ ^ ~~~~~~
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:483:17: error: static assertion failed: get<name>: no blade of this name, with this orientation, is in the blade set
+  483 |   static_assert(false, "get<name>: no blade of this name, with this "
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:10: note: in instantiation of function template specialization 'cdf::get<fixed_string<4>{{"e14"}}, cdf::rga3, blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, double>' requested here
+   60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+      |          ^
+2 errors generated.

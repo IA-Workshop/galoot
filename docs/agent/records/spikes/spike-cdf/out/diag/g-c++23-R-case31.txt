@@ -1,0 +1,4 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:62:19: error: conversion from ‘mv<[...],cdf::blade_set<8>{std::array<unsigned int, 8>{std::__array_traits<unsigned int, 8>::_Type{0, 9, 10, 12, 6, 5, 3, 15}}, std::array<int, 8>{std::__array_traits<int, 8>::_Type{1, -1, -1, -1, 1, -1, 1, 1}}}>’ to non-scalar type ‘mv<[...],cdf::blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}>’ requested
+   62 |   const Point r = q;
+      |                   ^

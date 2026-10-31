@@ -1,0 +1,4 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:99:28: error: aggregate ‘detection_answers<32> show’ has incomplete type and cannot be defined
+   99 | detection_answers<answers> show; // incomplete type: prints the value
+      |                            ^~~~
+timed: build spike-c:detect:g++:c++23:R took 0.209 s (exit 1)

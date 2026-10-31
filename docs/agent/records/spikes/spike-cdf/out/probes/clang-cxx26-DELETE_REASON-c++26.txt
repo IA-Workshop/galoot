@@ -1,0 +1,7 @@
+probes/cxx26.cpp:35:12: error: call to deleted function 'g': g: integers are not accepted
+   35 | void h() { g(1); }
+      |            ^
+probes/cxx26.cpp:34:6: note: candidate function has been explicitly deleted
+   34 | void g(int) = delete("g: integers are not accepted");
+      |      ^
+1 error generated.

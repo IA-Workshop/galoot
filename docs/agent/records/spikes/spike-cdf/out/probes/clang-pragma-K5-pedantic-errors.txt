@@ -1,0 +1,7 @@
+probes/pragma.cpp:15:43: error: static assertion failed due to requirement '5 < 4': hi
+   15 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                           ^~~~~
+probes/pragma.cpp:21:15: note: in instantiation of function template specialization 'f<5>' requested here
+   21 | template void f<FK>();
+      |               ^
+1 error generated.

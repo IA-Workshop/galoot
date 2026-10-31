@@ -1,0 +1,8 @@
+probes/pragma.cpp: In instantiation of ‘void f() [with int K = 5]’:
+probes/pragma.cpp:21:21:   required from here
+   21 | template void f<FK>();
+      |                     ^
+probes/pragma.cpp:15:45: error: static assertion failed: hi
+   15 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                           ~~^~~
+  • the comparison reduces to ‘(5 < 4)’

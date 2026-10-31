@@ -1,0 +1,14 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘constexpr const cdf::blade_set<2> cdf::blades_of<cdf::rga3, cdf::fixed_string<3>{std::array<char, 3>{"e1"}}, cdf::fixed_string<3>{std::array<char, 3>{"e5"}}>’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:56:24:   required from here
+   56 |   using Bad = mv<rga3, blades_of<rga3, "e1", "e5">>;
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:141:16:   in ‘constexpr’ expansion of ‘cdf::parse_name<3>(cdf::fixed_string<3>{std::array<char, 3>{"e5"}}, cdf::rga3::value.spike::metric<4>::g.std::array<std::array<int, 4>, 4>::size())’
+  141 |     {parse_name(Names, Alg::value.g.size()).mask...},
+      |      ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:97:46: error: call to non-‘constexpr’ function ‘void cdf::blade_name_is_not_valid_in_this_algebra()’
+   97 |       blade_name_is_not_valid_in_this_algebra();
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:76:6: note: ‘void cdf::blade_name_is_not_valid_in_this_algebra()’ declared here
+   76 | void blade_name_is_not_valid_in_this_algebra();
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

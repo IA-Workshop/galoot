@@ -1,0 +1,12 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:24: error: invalid operands of types ‘void’ and ‘const std::array<double, 4>::value_type’ {aka ‘const double’} to binary ‘operator+’
+   60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘void cdf::get(const mv<Alg, B, T>&) [with fixed_string<...auto...> Name = fixed_string<4>{std::array<char, 4>{"e14"}}; Alg = rga3; blade_set<...auto...> B = blade_set<6>{std::array<unsigned int, 6>{std::__array_traits<unsigned int, 6>::_Type{9, 10, 12, 6, 5, 3}}, std::array<int, 6>{std::__array_traits<int, 6>::_Type{-1, -1, -1, 1, -1, 1}}}; T = double]’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:20:   required from here
+   60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+      |          ~~~~~~~~~~^~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:508:17: error: static assertion failed: get<e14>: not in the blade set {-e14, -e24, -e34, e23, -e13, e12}
+  508 |   static_assert(false, missing_name<Name, B>());
+      |                 ^~~~~
+  • ‘false’ evaluates to false

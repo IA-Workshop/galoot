@@ -1,0 +1,85 @@
+compiler	opt	init	memo	uses	exit	clang_fill_evaluations	clang_size_evaluations	clang_fill_eval_s	clang_fill_events	gcc_constexpr_eval_s	gcc_constexpr_eval_mem
+g++	O0	consteval	baseline	0	0						
+g++	O0	consteval	none	1	0					0.06	20M
+g++	O0	consteval	none	16	0					0.06	22M
+g++	O0	consteval	variable_template	1	0					0.06	20M
+g++	O0	consteval	variable_template	16	0					0.06	20M
+g++	O0	consteval	class_static	1	0					0.06	20M
+g++	O0	consteval	class_static	16	0					0.06	20M
+g++	O0	consteval	function_local	1	0					0.06	20M
+g++	O0	consteval	function_local	16	0					0.06	20M
+g++	O0	constexpr	baseline	0	0						
+g++	O0	constexpr	none	1	0					0.09	20M
+g++	O0	constexpr	none	16	0					0.06	22M
+g++	O0	constexpr	variable_template	1	0					0.09	20M
+g++	O0	constexpr	variable_template	16	0					0.06	20M
+g++	O0	constexpr	class_static	1	0					0.06	20M
+g++	O0	constexpr	class_static	16	0					0.06	20M
+g++	O0	constexpr	function_local	1	0					0.06	20M
+g++	O0	constexpr	function_local	16	0					0.06	20M
+g++	O2	consteval	baseline	0	0						
+g++	O2	consteval	none	1	0					0.06	19M
+g++	O2	consteval	none	16	0					0.06	21M
+g++	O2	consteval	variable_template	1	0					0.06	19M
+g++	O2	consteval	variable_template	16	0					0.06	19M
+g++	O2	consteval	class_static	1	0					0.06	19M
+g++	O2	consteval	class_static	16	0					0.06	19M
+g++	O2	consteval	function_local	1	0					0.06	19M
+g++	O2	consteval	function_local	16	0					0.06	19M
+g++	O2	constexpr	baseline	0	0						
+g++	O2	constexpr	none	1	0					0.06	19M
+g++	O2	constexpr	none	16	0					0.06	21M
+g++	O2	constexpr	variable_template	1	0					0.06	19M
+g++	O2	constexpr	variable_template	16	0					0.06	19M
+g++	O2	constexpr	class_static	1	0					0.06	19M
+g++	O2	constexpr	class_static	16	0					0.06	19M
+g++	O2	constexpr	function_local	1	0					0.06	19M
+g++	O2	constexpr	function_local	16	0					0.06	19M
+clang++	O0	consteval	baseline	0	0	0	0	0.000			
+clang++	O0	consteval	none	1	0	1	1	0.189	EvaluateAsInitializer:plan		
+clang++	O0	consteval	none	16	0	16	1	3.008	EvaluateAsInitializer:plan		
+clang++	O0	consteval	variable_template	1	0	1	1	0.190	EvaluateAsInitializer:memo::plan_v		
+clang++	O0	consteval	variable_template	16	0	1	1	0.188	EvaluateAsInitializer:memo::plan_v		
+clang++	O0	consteval	class_static	1	0	1	1	0.191	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O0	consteval	class_static	16	0	1	1	0.190	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O0	consteval	function_local	1	0	1	1	0.188	EvaluateAsConstantExpr:</home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/memo.cpp:84:29, col:50>		
+clang++	O0	consteval	function_local	16	0	1	1	0.190	EvaluateAsConstantExpr:</home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/memo.cpp:84:29, col:50>		
+clang++	O0	constexpr	baseline	0	0	0	0	0.000			
+clang++	O0	constexpr	none	1	0	1	1	0.191	EvaluateAsInitializer:plan		
+clang++	O0	constexpr	none	16	0	16	1	3.031	EvaluateAsInitializer:plan		
+clang++	O0	constexpr	variable_template	1	0	1	1	0.190	EvaluateAsInitializer:memo::plan_v		
+clang++	O0	constexpr	variable_template	16	0	1	1	0.187	EvaluateAsInitializer:memo::plan_v		
+clang++	O0	constexpr	class_static	1	0	1	1	0.190	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O0	constexpr	class_static	16	0	1	1	0.191	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O0	constexpr	function_local	1	0	1	1	0.190	EvaluateAsInitializer:p		
+clang++	O0	constexpr	function_local	16	0	1	1	0.190	EvaluateAsInitializer:p		
+clang++	O2	consteval	baseline	0	0	0	0	0.000			
+clang++	O2	consteval	none	1	0	1	1	0.192	EvaluateAsInitializer:plan		
+clang++	O2	consteval	none	16	0	16	1	3.091	EvaluateAsInitializer:plan		
+clang++	O2	consteval	variable_template	1	0	1	1	0.193	EvaluateAsInitializer:memo::plan_v		
+clang++	O2	consteval	variable_template	16	0	1	1	0.192	EvaluateAsInitializer:memo::plan_v		
+clang++	O2	consteval	class_static	1	0	1	1	0.192	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O2	consteval	class_static	16	0	1	1	0.194	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O2	consteval	function_local	1	0	1	1	0.193	EvaluateAsConstantExpr:</home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/memo.cpp:84:29, col:50>		
+clang++	O2	consteval	function_local	16	0	1	1	0.192	EvaluateAsConstantExpr:</home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/memo.cpp:84:29, col:50>		
+clang++	O2	constexpr	baseline	0	0	0	0	0.000			
+clang++	O2	constexpr	none	1	0	1	1	0.194	EvaluateAsInitializer:plan		
+clang++	O2	constexpr	none	16	0	16	1	3.142	EvaluateAsInitializer:plan		
+clang++	O2	constexpr	variable_template	1	0	1	1	0.192	EvaluateAsInitializer:memo::plan_v		
+clang++	O2	constexpr	variable_template	16	0	1	1	0.194	EvaluateAsInitializer:memo::plan_v		
+clang++	O2	constexpr	class_static	1	0	1	1	0.192	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O2	constexpr	class_static	16	0	1	1	0.194	EvaluateAsInitializer:memo::plan_c<memo::r500, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}, blade_set<32>{{{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...}}}>::value		
+clang++	O2	constexpr	function_local	1	0	1	1	0.193	EvaluateAsInitializer:p		
+clang++	O2	constexpr	function_local	16	0	1	1	0.195	EvaluateAsInitializer:p		
+g++	O0	consteval	distinct	1	0					0.06	20M
+g++	O0	consteval	distinct	4	0					0.09	32M
+g++	O0	consteval	distinct	16	0					0.20	79M
+g++	O2	consteval	distinct	1	0					0.06	19M
+g++	O2	consteval	distinct	4	0					0.08	31M
+g++	O2	consteval	distinct	16	0					0.19	76M
+clang++	O0	consteval	distinct	1	0	1	1	0.195	EvaluateAsInitializer:plan		
+clang++	O0	consteval	distinct	4	0	4	4	0.756	EvaluateAsInitializer:plan		
+clang++	O0	consteval	distinct	16	0	16	16	3.165	EvaluateAsInitializer:plan		
+clang++	O2	consteval	distinct	1	0	1	1	0.196	EvaluateAsInitializer:plan		
+clang++	O2	consteval	distinct	4	0	4	4	0.773	EvaluateAsInitializer:plan		
+clang++	O2	consteval	distinct	16	0	16	16	3.076	EvaluateAsInitializer:plan		

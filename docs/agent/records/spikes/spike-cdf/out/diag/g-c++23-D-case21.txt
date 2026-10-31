@@ -1,0 +1,11 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:54:19: error: use of deleted function ‘void cdf::get(const mv<Alg, B, T>&) [with fixed_string<...auto...> Name = fixed_string<3>{std::array<char, 3>{"e1"}}; Alg = rga3; blade_set<...auto...> B = blade_set<6>{std::array<unsigned int, 6>{std::__array_traits<unsigned int, 6>::_Type{9, 10, 12, 6, 5, 3}}, std::array<int, 6>{std::__array_traits<int, 6>::_Type{-1, -1, -1, 1, -1, 1}}}; T = double]’
+   54 |   return get<"e1">(l) + p.c[0] + q.c[0];
+      |          ~~~~~~~~~^~~
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:490:6: note: declared here
+  490 | void get(const mv<Alg, B, T>&) = delete;
+      |      ^~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:54:19: note: use ‘-fdiagnostics-all-candidates’ to display considered candidates
+   54 |   return get<"e1">(l) + p.c[0] + q.c[0];
+      |          ~~~~~~~~~^~~

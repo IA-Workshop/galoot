@@ -1,0 +1,18 @@
+unit	flags	exit	first_error
+memo	-O0	0	
+memo	-O1	1	constexpr evaluation hit maximum step limit; possible infinite loop?
+memo	-O2	1	constexpr evaluation hit maximum step limit; possible infinite loop?
+memo	-O0 -D__OPTIMIZE__=1	1	constexpr evaluation hit maximum step limit; possible infinite loop?
+memo	-O2 -U__OPTIMIZE__	0	
+memo	-O2 -fconstexpr-steps=1048576	1	constexpr evaluation hit maximum step limit; possible infinite loop?
+memo	-O2 -fconstexpr-steps=2097152	0	
+plan_tu	-O0	0	
+plan_tu	-O2	0	
+memo:none	g++ -pedantic-errors	0	
+memo:variable_template	g++ -pedantic-errors	0	
+memo:class_static	g++ -pedantic-errors	0	
+memo:function_local	g++ -pedantic-errors	0	
+memo:none	clang++ -pedantic-errors	0	
+memo:variable_template	clang++ -pedantic-errors	0	
+memo:class_static	clang++ -pedantic-errors	0	
+memo:function_local	clang++ -pedantic-errors	0	

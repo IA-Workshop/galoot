@@ -1,0 +1,14 @@
+In file included from probes/sys_use.cpp:3:
+probes/sys/ugsa.hpp: In function ‘void f()’:
+probes/sys/ugsa.hpp:6:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+    6 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                                  ^~~~~
+probes/sys/ugsa.hpp: In instantiation of ‘void f() [with int K = 5]’:
+probes/sys_use.cpp:4:21:   required from here
+    4 | template void f<FK>();
+      |                     ^
+probes/sys/ugsa.hpp:6:45: error: static assertion failed: hi
+    6 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                           ~~^~~
+  • the comparison reduces to ‘(5 < 4)’
+cc1plus: all warnings being treated as errors

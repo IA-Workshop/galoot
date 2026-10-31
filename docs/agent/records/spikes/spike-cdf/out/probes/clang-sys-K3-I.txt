@@ -1,0 +1,5 @@
+In file included from probes/sys_use.cpp:3:
+probes/sys/ugsa.hpp:6:57: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+    6 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                                         ^
+1 error generated.

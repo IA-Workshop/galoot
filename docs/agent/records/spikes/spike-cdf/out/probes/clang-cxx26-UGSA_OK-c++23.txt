@@ -1,0 +1,4 @@
+probes/cxx26.cpp:31:61: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]
+   31 | template <int K> void f() { static_assert(K < 4, make_msg(K)); }
+      |                                                             ^
+1 error generated.

@@ -1,0 +1,25 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:70:27: error: no matching function for call to ‘transform(const cdf::rga3_types::Point&, const Mixed&)’
+   70 |   const auto r = transform(p, v);
+      |                  ~~~~~~~~~^~~~~~
+  • there is 1 candidate
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+    • candidate 1: ‘template<class Alg, blade_set<...auto...> X, blade_set<...auto...> V, class T>  requires (ring_scalar<T>) && cdf::one_parity(V) constexpr cdf::mv<Alg, A, T> cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:413:25:
+        413 | constexpr mv<Alg, X, T> transform(const mv<Alg, X, T>& x,
+            |                         ^~~~~~~~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In substitution of ‘template<class Alg, blade_set<...auto...> X, blade_set<...auto...> V, class T>  requires (ring_scalar<T>) && cdf::one_parity(V) constexpr cdf::mv<Alg, A, T> cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg = cdf::rga3; blade_set<...auto...> X = cdf::blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}; blade_set<...auto...> V = cdf::blade_set<2>{std::array<unsigned int, 2>{std::__array_traits<unsigned int, 2>::_Type{0, 1}}, std::array<int, 2>{std::__array_traits<int, 2>::_Type{1, 1}}}; T = double]’:
+          • required from here
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:70:27:   
+               70 |   const auto r = transform(p, v);
+                  |                  ~~~~~~~~~^~~~~~
+          • required by the constraints of ‘template<class Alg, blade_set<...auto...> X, blade_set<...auto...> V, class T>  requires (ring_scalar<T>) && cdf::one_parity(V) constexpr cdf::mv<Alg, A, T> cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:413:25:   
+              413 | constexpr mv<Alg, X, T> transform(const mv<Alg, X, T>& x,
+                  |                         ^~~~~~~~~
+          • the expression ‘cdf::one_parity(V) [with V = cdf::blade_set<2>{{{0, 1}}, {{1, 1}}}]’ evaluated to ‘false’
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:412:22:
+              412 |   requires(one_parity(V))
+                  |           ~~~~~~~~~~~^~~~

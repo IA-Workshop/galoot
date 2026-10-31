@@ -1,0 +1,6 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:65:37: error: could not convert ‘q’ from ‘const cdf::rga3_types::Motor’ {aka ‘const cdf::mv<cdf::rga3, cdf::blade_set<8>{std::array<unsigned int, 8>{std::__array_traits<unsigned int, 8>::_Type{0, 9, 10, 12, 6, 5, 3, 15}}, std::array<int, 8>{std::__array_traits<int, 8>::_Type{1, -1, -1, -1, 1, -1, 1, 1}}}>’} to ‘std::array<double, 4>’
+   65 |   const auto r = static_cast<Point>(q);
+      |                                     ^
+      |                                     |
+      |                                     const cdf::rga3_types::Motor {aka const cdf::mv<cdf::rga3, cdf::blade_set<8>{std::array<unsigned int, 8>{std::__array_traits<unsigned int, 8>::_Type{0, 9, 10, 12, 6, 5, 3, 15}}, std::array<int, 8>{std::__array_traits<int, 8>::_Type{1, -1, -1, -1, 1, -1, 1, 1}}}>}
