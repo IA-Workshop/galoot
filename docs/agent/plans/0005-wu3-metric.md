@@ -22,7 +22,12 @@
 5. Style rulings arrived mid-unit (decision 0034, then the tightened STYLE S11 at `f62ec2f`). Every file this unit wrote restates its conventions in place and cites no record, provision, or CONVENTIONS section. Old files were not cleaned, as directed.
 6. Two clang-tidy checks (`cppcoreguidelines-pro-bounds-constant-array-index`, `cppcoreguidelines-pro-bounds-avoid-unchecked-container-access`) are suppressed in one block per file, with the reason, in `metric.hpp` and `metric_test.cpp`; two more are suppressed at single lines (`readability-identifier-naming` for `R`, `avoid-c-arrays` for the deduced braced parameters, `readability-use-anyofallof` for one loop). Every later core header that indexes by generator will meet the first two; a project-wide exclusion is the owner's decision.
 7. `test/CMakeLists.txt`, `CMakeLists.txt` (the header set), and `include/galoot/core.hpp` (the umbrella include) are shared with WU2. This unit added only: one `galoot_add_test(MODULE core COMPONENT metric)`, six `galoot_add_compile_fail_test(NAME metric_* ...)` calls and their comment, the line `include/galoot/core/metric.hpp` in `target_sources`, and `#include <galoot/core/metric.hpp>` in `core.hpp` (whose comment was reworded because it said the umbrella was empty).
-8. Lesson, kept here to avoid a number clash with lessons written by parallel units: the first mutation script hid the build output, so two mutations that broke the build ran the previous binary and "passed". The rerun showed both caught at compile time by the test's `static_assert`s. A mutation run must check the build's exit status before reading the tests.
+8. Lesson (moved to `docs/agent/lessons-learned/0060-mutation-runs-check-the-build.md` after the review, N8): the first mutation script hid the build output, so two mutations that broke the build ran the previous binary and "passed". The rerun showed both caught at compile time by the test's `static_assert`s. A mutation run must check the build's exit status before reading the tests.
+
+### Verification and validation status (V10)
+
+- Verification: performed and passed at `1dc00cb`, and again after the review follow-up at `ed2a3e2` (section below). Kind 1 (exhaustive over every Gram matrix for n ≤ 6 against definitions restated in the test) for criteria 1, 4, 5; compile-fail and abort tests for the checks.
+- Validation: not performed. The metric is data; the referent for the signatures (Clifford algebra relations, the conformal model) is checked when products exist (WU6, WU12). Status: unvalidated.
 
 ### Acceptance criteria
 
@@ -97,3 +102,57 @@ About 75 tool calls in one session; the harness does not report tokens to this a
 ### Next step
 
 W5 blind review of `feature/core-metric` against this plan and the departures above, then the merge into `develop` (the coordinator's). Before the merge, `develop` is merged into the branch; expect conflicts with WU2 in `CMakeLists.txt` (header set), `include/galoot/core.hpp`, and `test/CMakeLists.txt`, each resolved by keeping both units' lines, and a possible `runs.tsv` union doubling (snippet `runs_tsv_merge.py`).
+
+## Review follow-up (2026-10-31, Claude, agent, Opus 5.5)
+
+The W5 review of `b12f07d` (`docs/agent/records/reviews/2026-10-31-wu3-metric.md`) returned "merge after named fixes". The owner's rulings are decisions 0035 and 0036; the author's choices within them are decision 0061, which supersedes decision 0060 items 1 to 3.
+
+### Departures (C20)
+
+1. `mask_t` is redeclared in `metric.hpp` as `std::uint32_t`, identical to `bits.hpp` (WU2, not on `develop`), so that WU3 does not rely on unfinished work (decision 0061, item 3). The second unit to merge replaces it with `#include <galoot/core/bits.hpp>`.
+2. Commit `708c5dc` holds the changed tests before the code they judge (W9, review N6), so at that commit the unit test does not build and five tests fail; this is against W2's "building at every step". The test-only fix `c8dfa51` is likewise separate. In the first pass, the tests were committed with the code (`6f458b0`), which the review records as N6.
+3. N11 (the `metric_like` cost at three sizes) is not done; it belongs with WU17's growth grid.
+4. N13 is met by the comment ("must be square"), not by a catch-all (decision 0061, item 6).
+5. The remaining `//` lines between a `///` block and its declaration are the two `NOLINTNEXTLINE` markers that clang-tidy needs on the line above the flagged name (`R`) and statement; each carries its reason on the same line. `from_gram`'s marker moved to the end of its line (N10).
+
+### Fixes, with before and after
+
+Before: the tests of `708c5dc`/`c8dfa51` against the header of `b12f07d`. After: `d6d9b10`. Mutations: each applied to the header of `d6d9b10`, built and run on the presets named, then restored from git (lesson 0060: a build failure is a kill).
+
+| Finding | Fix | Before | After | Mutation |
+| --- | --- | --- | --- | --- |
+| 0035.1, N4, N5 | `R<P, Q, Z, MaxN>()`, n = P + Q + Z; each count checked against MaxN before the sum | `R<P, Q, Z>` does not exist; `core.metric_count_wrap` fails | `R<SIZE_MAX, 0, 2>()` rejected: "metric: n is larger than MaxN" | count check removed: `core.metric_count_wrap` fails |
+| 0035.2, 0036.2, N3 | `entry_type = int`; `max_form_entry = isqrt(max / 2)` | literal 32767 and a comment assuming 32-bit `int` | derived; the test checks 2k² ≤ `INT_MAX` < 2(k+1)² | |
+| 0036.1, N2 | `metric<N>` and `metric_like` accept N ≤ `digits(mask_t)`; 16 is only the factories' default MaxN | `metric_like<r17>` false | `metric_like<above_default>` and `metric_like<widest>` (n = 32) true; `core.metric_max_n_width` and `core.metric_type_width` reject 33 | |
+| 0035.3 | Two bounds checks excluded in `.clang-tidy` with the reason; block suppressions removed from `metric.hpp` and `metric_test.cpp` | `NOLINTBEGIN/END` in both files | none; lint clean | |
+| B1 | `GALOOT_ASSERT(i < N, ...)` in `is_null` | `core.metric_is_null` fails (no abort) | aborts with "metric::is_null: the index must be below n" | assertion removed: `core.metric_is_null` fails |
+| N1 | constant-expression guard in `metric_like` | hard error: GCC "not usable in a constant expression"; Clang "substitution into constraint expression resulted in a non-constant expression" | `metric_like<runtime_value>` and `metric_like<member_value>` false on both compilers | guard removed: build fails on both compilers |
+| N7 | (test) lookalike type | no test | `!metric_like<lookalike>` | `is_metric_v` dropped: build fails on both compilers |
+| N9 | `from_gram<N, MaxN>` | `from_gram<MaxN, N>` | `from_gram<1, 32>({{1}})` in the test | |
+| N10, N13 | `///` for `gram`; "must be square" in `from_gram`'s comment; NOLINT moved | | | |
+| N8 | V&V status line above; lesson file 0060 | | | |
+| N12 | `develop` (`319be69`) merged as `ed2a3e2`; records only, no conflict; `runs.tsv` has 3009 rows, all distinct | | | |
+
+### Tests changed or added (W9)
+
+| Test | Change | Expected |
+| --- | --- | --- |
+| core.metric | `R<P, Q, Z>()` throughout; the R-split sweep expands over every (p, q, z) with n ≤ 6 at compile time; bound checks against `numeric_limits`; new concept cases | as before for the matrices; `metric_like` true for rga3, cga3, n = 17 built with MaxN 17, n = 32 built with MaxN 32; false for no value, int value, `int`, `metric<4>`, lookalike, non-constexpr static value, non-static member value, asymmetric, entry `max_form_entry + 1`, n = 0; 2k² ≤ `INT_MAX` < 2(k+1)² for k = `max_form_entry`; ±k in range, ±(k+1) not; n = `max_generators` by default and n = 32 with MaxN = 32 accepted |
+| core.metric_split, core.metric_negative | removed: neither misuse can be written | |
+| core.metric_zero | `R<0, 0, 0>()` | "metric: an algebra has at least one generator, so n = 0 is rejected" |
+| core.metric_entry_range | `from_gram({{max_form_entry + 1}})` | "from_gram: an entry is beyond max_form_entry" |
+| core.metric_count_wrap (new) | `R<SIZE_MAX, 0, 2>()` | "metric: n is larger than MaxN, the largest number of generators accepted" |
+| core.metric_max_n_width (new) | `R<1, 0, 0, 33>()` | "metric: MaxN is larger than the number of bits in a blade mask" |
+| core.metric_type_width (new) | `metric<33>` by hand | "metric: n is larger than the number of bits in a blade mask" |
+| core.metric_is_null (new) | `rigid<3>().is_null(argc + 3)` at run time, checking build | abort with "galoot: assertion failed: metric::is_null: the index must be below n (" |
+| core.metric_asymmetric, core.metric_bound | unchanged | as before |
+
+### P9 on the merged revision
+
+At `ed2a3e2`, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug 3.60 s, gcc-release 3.52 s, gcc-asan 3.80 s, clang-debug 3.15 s, clang-release 3.56 s, clang-asan 3.33 s, lint 3.06 s (clang-tidy, header sets, format-check); 19 of 19 tests in each; total 24.0 s. `all_verify_interface_header_sets` built under gcc-debug and clang-debug. Nothing deferred.
+
+Cost (track-only, shared mode): `metric_test` 0.20 s, 93 MiB, 2.03 G instructions on GCC (was 0.29 s, 84 MiB, 1.73 G); on Clang 0.17 s, 121 MiB, at least 1.79 G (its efficiency-core count is `unavailable`; was 1.16 G). The rise is the compile-time expansion of the R sweep over 84 splits as template instantiations, which the derived `R<P, Q, Z>` requires. The header-check TU of `metric.hpp` costs 0.45 G (GCC) and 0.38 G (Clang).
+
+### Next step
+
+Re-review of the delta `b12f07d..ed2a3e2`, then the merge into `develop` (the coordinator's). If WU2 merges first, replace the `mask_t` declaration in `metric.hpp` with an include of `bits.hpp`, and resolve the one-line conflicts in `CMakeLists.txt` and `core.hpp` by keeping both lines. Reference markers wait for the M0 scripts, as directed.
