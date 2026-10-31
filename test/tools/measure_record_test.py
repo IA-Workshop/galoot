@@ -72,7 +72,8 @@ class Scratch:
         with open(os.path.join(self.top, record), encoding="utf-8") as f:
             lines = f.read().splitlines()
         header = lines[0].split("\t")
-        return [dict(zip(header, line.split("\t"))) for line in lines[1:]]
+        return [dict(zip(header, line.split("\t"), strict=True))
+                for line in lines[1:]]
 
 
 def perf_ran_but_named_no_event(s):

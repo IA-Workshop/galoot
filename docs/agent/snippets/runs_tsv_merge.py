@@ -67,7 +67,7 @@ def main(base_path, ours_path, theirs_path):
         kept = lines[1:len(base_rows) + 1]
         if len(kept) < len(base_rows) or not all(
                 unchanged(row, base_row)
-                for row, base_row in zip(kept, base_rows)):
+                for row, base_row in zip(kept, base_rows, strict=True)):
             sys.exit(f"{side} changed or removed rows of the merge base; "
                      "merge by hand")
 

@@ -337,7 +337,7 @@ def compile_options(command, top):
 
 
 def build_tree(command, preset, top):
-    for arg, value in zip(command, command[1:] + [""]):
+    for arg, value in zip(command, command[1:] + [""], strict=True):
         if arg in TREE_ARGUMENTS and value and not value.startswith("-"):
             return value
         if arg[:2] in ("-C", "-B") and len(arg) > 2:
