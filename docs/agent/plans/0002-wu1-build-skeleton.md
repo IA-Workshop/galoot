@@ -337,6 +337,14 @@ The holder script was probed in the workbench, where the free-slot check read 24
 11. Install and export: deferred until a user, or added in WU1 as build-expert's structure section describes?
 12. Should the stock doctest `main` stay until the first randomized test needs a custom one (note 0001, open question 2)?
 
+### Owner answers recorded 2026-10-31 (decision 0020)
+
+- Question 1: the pool has 23 tokens.
+- Question 2: `GALOOT_CHECKING` defaults to 0 when no value is given, documented at the macro. Checking is ON for debug, asan, and lint, and OFF for release.
+- Question 5: WU1 extends the `runs.tsv` header once, in place. For rows that lack the expanded fields, the cell holds `--` (not blank, not zero, and not `unavailable`); `unavailable` is for a quantity the machine cannot expose in a run that was made with the new recorder.
+- Question 10: only rows from gate and measurement runs are committed to `compile.tsv`; routine rows stay in the build tree.
+- Question 7 (flags) awaits the owner. Questions 3, 4, 6, 8, 9, 11, and 12 keep their recommendations unless the owner objects before WU1 starts.
+
 ## 12. Next step
 
 The owner starts the pool and answers the open questions. A contributor commits this plan to `develop` to claim WU1, then creates the worktree `.claude/worktrees/build` on `feature/build`.
