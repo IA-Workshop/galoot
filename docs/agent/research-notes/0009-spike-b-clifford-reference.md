@@ -92,18 +92,18 @@ The survey output, verbatim except for the column order. "Multi" is the number o
 
 - **Claim.** In each of these 14 tables every coefficient is an integer, and checks 1 to 3 pass. Checked: Exhaustive for each listed signature (every pair and every triple).
 - **Claim.** For integer forms in general this is Sampled evidence only: ten forms, seed 20261031, entries in [−3, 3], two or three of each n from 2 to 5. It supports the derivation in B3; it does not prove it.
-- **Claim.** In every random form the largest coefficient magnitude equals |det g|. Checked: Exhaustive for the 14 tables. Inferred: the pseudoscalar square is e_{1…n} e_{1…n} = (−1)^{n(n−1)/2} det g, which would explain it. For n = 16 with entries of moderate size, det g can exceed the range of a 32-bit integer, so the plan coefficient type matters (bears on DoD-7 and decision 0004; not measured here).
+- **Withdrawn after review (see B5).** In every random form the largest coefficient magnitude equals |det g|; this is false in general, and |det g| is only a lower bound. The text that follows is the original claim. Checked: Exhaustive for the 14 tables. Inferred: the pseudoscalar square is e_{1…n} e_{1…n} = (−1)^{n(n−1)/2} det g, which would explain it. For n = 16 with entries of moderate size, det g can exceed the range of a 32-bit integer, so the plan coefficient type matters (bears on DoD-7 and decision 0004; not measured here).
 - **Claim.** In dense random forms most pairs give several terms, up to 14 at n = 5. So the "single term per pair" picture holds only for diagonal forms, and a plan's term count depends on the form, not only on n. Checked: Exhaustive for the listed forms.
 
 ### B3 Integer coefficients for every integer form (question 3)
 
-- **Claim.** If g is a symmetric integer matrix, every coefficient of e_A e_B in the wedge-monomial basis is an integer. Checked: Derivation, below, not reviewed by anyone else. It is consistent with the 14 exhaustive tables of B2.
+- **Claim.** If g is a symmetric integer matrix, every coefficient of e_A e_B in the wedge-monomial basis is an integer. Checked: Derivation, below; independently reviewed and confirmed (B5). It is consistent with the 14 exhaustive tables of B2.
 
 Derivation. Let Λ be the set of integer combinations of the wedge monomials e_A. For a generator e_i and any x, the Clifford product satisfies e_i x = e_i ⌋ x + e_i ∧ x (the Chevalley identity). For x = e_B, the wedge e_i ∧ e_B is ±e_{B∪{i}} or 0, and the left contraction e_i ⌋ e_B = Σ_p (−1)^(p−1) g(i, b_p) e_{B∖b_p} has integer coefficients, so e_i Λ ⊆ Λ. Now let a be the lowest index of A, with A' = A ∖ {a}. Then e_A = e_a ∧ e_{A'} = e_a e_{A'} − e_a ⌋ e_{A'}, and the contraction is an integer combination of wedge monomials of grade |A| − 2. So e_A x = e_a (e_{A'} x) − (e_a ⌋ e_{A'}) x. By induction on the grade of A, with e_∅ = 1 as the base, e_A Λ ⊆ Λ for every A. ∎
 
 The same recursion is what Spike A's C++ generator computes, so the derivation also explains why that generator needs only integer arithmetic.
 
-- **Consequence.** Wedge-basis coefficients are never non-integer, and so never non-dyadic, for any n. Non-dyadic rationals appear only in the orthogonal squares and in T: for example −10/3 in random[3] and random[8], 118/15 in random[2], and −875/48 in random[7]. Checked: Exhaustive (script output above).
+- **Consequence.** Wedge-basis coefficients are never non-integer, and so never non-dyadic, for any n (Derivation, confirmed in B5; Exhaustive only for the 14 listed signatures). Non-dyadic rationals appear only in the orthogonal squares and in T: for example −10/3 in random[3] and random[8], 118/15 in random[2], and −875/48 in random[7]. Checked: Exhaustive (script output above).
 - **Proven by exhaustion**: integrality and checks 1 to 3 for the 14 listed signatures. **Proven by derivation**: integrality for every symmetric integer form, pending review. **Sampled**: the other observations of B2 (term counts, max |c| = |det g|) for forms outside the list.
 
 ### B4 Independence and cross-check
@@ -137,3 +137,13 @@ Toolchain: Python 3.14.8. Machine: Intel Core i9-14900K, Linux 7.3.0-4-cachyos.
 2. The derivation in B3 should be reviewed by someone other than its author before it is cited as kind 1 evidence for forms outside the list.
 3. Exhaustive associativity costs (2ⁿ)³ table lookups, about 3.7 s for this set in Python. At n = 6 that is 262,144 triples per form, which is still practical; n = 8 (16.7 million triples) would need sampling or the C++ side.
 4. The plan coefficient type: is `int` enough? That max |c| = |det g| was observed, not proven, so it is no bound. The pseudoscalar square alone reaches |det g|, which for n = 16 forms with entries of a few units can exceed 2³¹ (Inferred). Decide in WU6 with DoD-7.
+
+### B5 Independent review (2026-10-31)
+
+A blind reviewer (Claude Fable 5.1, no access to this note's argument until after writing its own) derived the result independently, then ran the script and its own Chevalley-route check. Full record: `docs/agent/records/reviews/2026-10-31-integer-coefficients.md`; its scripts are in `docs/agent/records/spikes/spike-b-review/`.
+
+- **Confirmed (kind 1, derivation).** For every symmetric integer g, every coefficient of e_A e_B in the wedge-monomial basis is an integer, and this holds for all pairs if and only if g is integral. The proof uses the operators e_i ∧ and the contraction by g, which satisfy the defining relation with g, so the exterior algebra is a Clifford module; the factor 2 sits in the relation, not in the lattice. The recursive blade and the antisymmetrized blade of CONVENTIONS 1.1 are the same element.
+- **Half-integer forms.** For g = ½ × an integer matrix the coefficients are dyadic and not integral in general; the denominator divides 2^((|A|+|B|−|C|)/2). Example: g = [[0, ½],[½, 0]] gives e_1 e_2 = ½ + e_12.
+- **Corrected.** The largest coefficient is not |det g|: it is at least max |g_ij| (e_i e_ij = g_ii e_j − g_ij e_i), and 61 of about 300 seeded forms violate the earlier claim. A plan's coefficient type cannot be sized from |det g|.
+- **Corroborated (kind 3).** The reviewer's tables agree with the script's on all 14 signatures and 9 half-integer forms, with no mismatches.
+- **Referred to the conventions owner.** CONVENTIONS 4.1 defines the wedge as the terms of a ⟑ b whose blades share no generator, which is the diagonal-metric rule. In conformal(3) it would make e4 ∧ e5 equal −1 + e45, against 1.1. A reworded definition is proposed in decision 0023.
