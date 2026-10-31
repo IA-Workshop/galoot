@@ -22,6 +22,10 @@ set(expect_output
 
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
+# The mode the configuration declares, passed to the test directly rather
+# than through galoot::core, so that a mode lost on the way fails the test.
+target_compile_definitions(core_smoke_test PRIVATE
+  GALOOT_EXPECTED_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
 
 # core.zero_cases below runs the smoke program with its own copy of the rule,
 # so check here that galoot_add_test gave core.smoke the same rule (W5 review

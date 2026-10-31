@@ -1,6 +1,5 @@
-// Smoke test of the build skeleton (plan 0002, section 4.5): the doctest
-// runner, the labels, the compiler launcher, and both core headers work
-// together.
+// Smoke test of the build: the doctest runner, the test labels, the compiler
+// launcher, and the core headers work together.
 #include <galoot/core.hpp> // IWYU pragma: keep; the umbrella must compile here
 #include <galoot/core/assert.hpp>
 
@@ -13,19 +12,20 @@ constexpr int checked_identity(int x) {
   return x;
 }
 
-// A true condition passes a constant evaluation (decision 0012).
+// A true condition never reaches the non-constexpr assertion_failed, so the
+// call is still a constant expression.
 static_assert(checked_identity(1) == 1);
 
 } // namespace
 
-TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time "
-          "(STYLE S9; plan 0002, section 4.5)") {
+TEST_CASE("GALOOT_ASSERT with a true condition returns normally at run time") {
   // A CHECK argument is not manifestly constant-evaluated, so the call
   // takes the run-time branch of GALOOT_ASSERT.
   CHECK(checked_identity(2) == 2);
 }
 
-TEST_CASE("GALOOT_ASSERT checks at run time exactly when GALOOT_CHECKING is 1, "
-          "through names in galoot::core::detail (STYLE S6; decision 0030)") {
-  CHECK(galoot::core::detail::checking_now() == (GALOOT_CHECKING == 1));
+TEST_CASE("GALOOT_ASSERT checks at run time exactly when the build "
+          "configuration turns checking on") {
+  CHECK(galoot::core::detail::checking_now() ==
+        (GALOOT_EXPECTED_CHECKING == 1));
 }
