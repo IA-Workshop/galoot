@@ -9,9 +9,11 @@
 # Build and CTest steps need the machine's shared job-slot pool (P11), because
 # Ninja without it runs as many jobs as there are processors. They are refused
 # with exit 2 when MAKEFLAGS names no FIFO jobserver or the FIFO is missing
-# (decision 0022). A build step is one with step `build`, or a command that is
-# ninja, make, ctest, or `cmake --build` or `cmake --workflow`. Other commands
-# run unchanged.
+# (decision 0022). Such a step is one with step `build` or `test`, or a command
+# that is ninja, make, ctest, or `cmake --build` or `cmake --workflow`. Step
+# `test` is refused whatever the command, so that a wrapper such as taskset,
+# env, or nice in front of ctest cannot hide it (W5 review of WU1, finding
+# N4). Other commands run unchanged.
 #
 # Usage: tools/timed <step> <preset> <selection> -- <command> [args...]
 #   step       build or test (or another word for other commands)
@@ -31,7 +33,7 @@ case ${5##*/} in
   cmake) [[ " ${*:6} " == *" --build "* || " ${*:6} " == *" --workflow "* ]] &&
     uses_pool=true ;;
 esac
-[[ $step == build ]] && uses_pool=true
+[[ $step == build || $step == test ]] && uses_pool=true
 
 if $uses_pool; then
   fifo=
