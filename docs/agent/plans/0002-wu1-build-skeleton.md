@@ -347,6 +347,8 @@ The holder script was probed in the workbench, where the free-slot check read 24
 - Question 7: the owner approved the proposed flags on 2026-10-31: the S4 warning flags and `-ffp-contract=off` in every preset, `-O2` for release, `-D_GLIBCXX_ASSERTIONS` in every preset, the sanitizer flags for asan, and a separate measurement preset without `_GLIBCXX_ASSERTIONS` for P4 and P6. `-O2` stays the default and the level is customizable in the build configuration (decision 0020, item 5).
 - Questions 3, 4, 6, 8, 9, 11, and 12 keep their recommendations unless the owner objects before WU1 starts.
 
+- Questions 3, 4, 6, 8, 9, 11, and 12 were ruled on 2026-10-31 and recorded in decision 0022: the umbrella is `include/galoot/core.hpp`; tests use `test/<module>/<component>_test.cpp`; `tools/timed` refuses build and CTest steps without the pool; no test `.clang-tidy` yet; no energy threshold; install and export deferred; doctest's built-in `main` through `DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN` only.
+
 ## 12. Next step
 
 The owner starts the pool and answers the open questions. A contributor commits this plan to `develop` to claim WU1, then creates the worktree `.claude/worktrees/build` on `feature/build`.
