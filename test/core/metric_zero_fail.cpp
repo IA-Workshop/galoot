@@ -5,7 +5,7 @@
 namespace {
 
 struct empty_algebra {
-  static constexpr auto value = galoot::core::R<0>(0, 0, 0);
+  static constexpr auto value = galoot::core::R<0, 0, 0>();
 };
 
 } // namespace

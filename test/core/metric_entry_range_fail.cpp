@@ -5,7 +5,8 @@
 namespace {
 
 struct huge_entry {
-  static constexpr auto value = galoot::core::from_gram({{32768}});
+  static constexpr auto value =
+      galoot::core::from_gram({{galoot::core::max_form_entry + 1}});
 };
 
 } // namespace

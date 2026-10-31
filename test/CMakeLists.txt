@@ -127,14 +127,6 @@ galoot_add_compile_fail_test(NAME metric_asymmetric MODULE core COMPONENT metric
   SOURCE core/metric_asymmetric_fail.cpp
   MESSAGE "from_gram: the form must be symmetric"
   REQUIRE "assertion_failed")
-galoot_add_compile_fail_test(NAME metric_split MODULE core COMPONENT metric
-  SOURCE core/metric_split_fail.cpp
-  MESSAGE "R<N>(p, q, r): p + q + r must equal N"
-  REQUIRE "assertion_failed")
-galoot_add_compile_fail_test(NAME metric_negative MODULE core COMPONENT metric
-  SOURCE core/metric_negative_fail.cpp
-  MESSAGE "R<N>(p, q, r): p, q, and r cannot be negative"
-  REQUIRE "assertion_failed")
 galoot_add_compile_fail_test(NAME metric_entry_range MODULE core COMPONENT metric
   SOURCE core/metric_entry_range_fail.cpp
   MESSAGE "from_gram: an entry is beyond max_form_entry"
@@ -147,3 +139,30 @@ galoot_add_compile_fail_test(NAME metric_bound MODULE core COMPONENT metric
   SOURCE core/metric_bound_fail.cpp
   MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
   REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_count_wrap MODULE core COMPONENT metric
+  SOURCE core/metric_count_wrap_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_max_n_width MODULE core COMPONENT metric
+  SOURCE core/metric_max_n_width_fail.cpp
+  MESSAGE "metric: MaxN is larger than the number of bits in a blade mask"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
+  SOURCE core/metric_type_width_fail.cpp
+  MESSAGE "metric: n is larger than the number of bits in a blade mask"
+  REQUIRE "static assertion failed")
+
+# core.metric_is_null: an index past the last generator aborts at run time in
+# a checking build. Like the assert programs, it fixes its own checking mode.
+add_executable(core_metric_is_null_checking core/metric_is_null_fail.cpp)
+target_include_directories(core_metric_is_null_checking PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_metric_is_null_checking PRIVATE cxx_std_23)
+target_compile_definitions(core_metric_is_null_checking PRIVATE
+  GALOOT_CHECKING=1)
+add_test(NAME core.metric_is_null
+  COMMAND ${expect_output} "Subprocess aborted"
+    "galoot: assertion failed: metric::is_null: the index must be below n ("
+    -- $<TARGET_FILE:core_metric_is_null_checking>)
+set_tests_properties(core.metric_is_null PROPERTIES
+  LABELS "core;core.metric")
