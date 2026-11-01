@@ -1,0 +1,19 @@
+before 0f1039a, after c97fac5; instructions retired on the pinned core, mean of the repeats, with the spread (max - min)
+
+Fixed use as n grows: the four typed pairs' plans, the unit minus its baseline
+gcc before: n=4 0.186 G (+0.0%, spread 0.4 M, baseline 0.807 G); n=8 0.196 G (+5.2%, spread 0.4 M, baseline 0.811 G); n=12 0.205 G (+10.2%, spread 0.8 M, baseline 0.817 G); n=16 0.215 G (+15.7%, spread 0.8 M, baseline 0.826 G)
+gcc after: n=4 0.180 G (+0.0%, spread 0.3 M, baseline 0.807 G); n=8 0.180 G (+0.2%, spread 0.2 M, baseline 0.811 G); n=12 0.180 G (+0.2%, spread 0.4 M, baseline 0.817 G); n=16 0.180 G (+0.2%, spread 0.6 M, baseline 0.825 G)
+clang before: n=4 0.347 G (+0.0%, spread 1.4 M, baseline 0.747 G); n=8 0.373 G (+7.7%, spread 1.6 M, baseline 0.752 G); n=12 0.406 G (+17.0%, spread 2.8 M, baseline 0.759 G); n=16 0.439 G (+26.5%, spread 2.7 M, baseline 0.771 G)
+clang after: n=4 0.342 G (+0.0%, spread 3.0 M, baseline 0.748 G); n=8 0.348 G (+1.5%, spread 3.1 M, baseline 0.752 G); n=12 0.355 G (+3.6%, spread 3.0 M, baseline 0.760 G); n=16 0.365 G (+6.5%, spread 2.0 M, baseline 0.770 G)
+
+Header and test units
+gcc bits.hpp: before 0.2251 G (spread 0.0 M), after 0.2255 G (spread 0.0 M), change +0.4 M (+0.16%)
+gcc blade_product.hpp: before 0.6528 G (spread 0.0 M), after 0.6528 G (spread 0.1 M), change -0.1 M (-0.01%)
+gcc core.hpp: before 0.7571 G (spread 0.2 M), after 0.7568 G (spread 0.3 M), change -0.3 M (-0.04%)
+gcc bits_test: before 3.5187 G (spread 2.3 M), after 3.5235 G (spread 0.4 M), change +4.8 M (+0.14%)
+gcc blade_product_test: before 8.2471 G (spread 1.6 M), after 8.2229 G (spread 4.9 M), change -24.1 M (-0.29%)
+clang bits.hpp: before 0.1963 G (spread 0.1 M), after 0.1972 G (spread 0.2 M), change +0.9 M (+0.44%)
+clang blade_product.hpp: before 0.5441 G (spread 1.7 M), after 0.5436 G (spread 0.6 M), change -0.5 M (-0.09%)
+clang core.hpp: before 0.7376 G (spread 1.6 M), after 0.7381 G (spread 2.8 M), change +0.5 M (+0.07%)
+clang bits_test: before 2.9644 G (spread 5.2 M), after 2.9816 G (spread 0.6 M), change +17.2 M (+0.58%)
+clang blade_product_test: before 5.1300 G (spread 9.8 M), after 5.1273 G (spread 9.4 M), change -2.8 M (-0.05%)

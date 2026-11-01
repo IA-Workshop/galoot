@@ -1,0 +1,13 @@
+reorder_counts_equal: caught (static assertion failed)
+reorder_opposite_order: caught (static assertion failed)
+reorder_always_plus: caught (static assertion failed)
+right_sign_swapped: caught (static assertion failed)
+left_sign_swapped: caught (static assertion failed)
+reverse_k_plus_1: caught (static assertion failed)
+antireverse_uses_grade: caught (static assertion failed)
+involution_mod_4: caught (static assertion failed)
+complement_drops_top: caught (static assertion failed)
+count_rejects_32: caught by 6 tests: core.bits, core.bits_accepts_antigrade, core.bits_accepts_complement_mask, core.bits_accepts_right_complement_sign, core.bits_accepts_left_complement_sign, core.bits_accepts_antireverse_sign
+count_accepts_0: caught by 5 tests: core.bits_rejects_antigrade_n_0, core.bits_rejects_complement_mask_n_0, core.bits_rejects_right_complement_sign_n_0, core.bits_rejects_left_complement_sign_n_0, core.bits_rejects_antireverse_sign_n_0
+count_accepts_above: caught by 5 tests: core.bits_rejects_antigrade_n_above, core.bits_rejects_complement_mask_n_above, core.bits_rejects_right_complement_sign_n_above, core.bits_rejects_left_complement_sign_n_above, core.bits_rejects_antireverse_sign_n_above
+mask_check_dropped: caught by 6 tests: core.bits_rejects_antigrade_mask, core.bits_rejects_complement_mask_mask, core.bits_rejects_right_complement_sign_mask, core.bits_rejects_left_complement_sign_mask, core.bits_rejects_antireverse_sign_mask, core.bits_consteval

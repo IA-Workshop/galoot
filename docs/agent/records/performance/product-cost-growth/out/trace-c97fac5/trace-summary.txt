@@ -1,0 +1,111 @@
+Clang 23 -ftime-trace at c97fac5, mean of 3 pinned repeats; plans - baseline at each n
+event	unit	n=4	n=8	n=12	n=16
+CodeGen Function	count	4	4	4	4
+CodeGen Function	us	195	191	192	188
+EvaluateAsBooleanCondition	count	161	161	161	161
+EvaluateAsBooleanCondition	us	292	289	290	294
+EvaluateAsConstantExpr	count	214	214	214	214
+EvaluateAsConstantExpr	us	251	473	790	1316
+EvaluateAsInitializer	count	123	123	123	123
+EvaluateAsInitializer	us	12562	12483	12604	12539
+EvaluateAsRValue	count	284	284	284	284
+EvaluateAsRValue	us	285	284	286	248
+EvaluateForOverflow	count	110	110	110	110
+EvaluateForOverflow	us	67	40	83	58
+InstantiateClass	count	29	29	29	29
+InstantiateClass	us	1413	-147	1212	-354
+InstantiateFunction	count	65	65	65	65
+InstantiateFunction	us	34776	33899	34379	34192
+OptFunction	count	2	2	2	2
+OptFunction	us	-80	-107	-100	-115
+ParseClass	count	0	0	0	0
+ParseClass	us	-797	-180	2557	30
+RunPass	count	136	136	136	136
+RunPass	us	-90	-120	-112	-131
+Total AAManager	us	13	12	12	14
+Total AllocTokenPass	us	1	1	1	1
+Total AlwaysInlinerPass	us	344	305	342	307
+Total AnnotationRemarksPass	us	-3	-3	-3	-4
+Total AssumptionAnalysis	us	1	1	1	1
+Total Backend	us	286	191	255	188
+Total BasicAA	us	5	5	5	5
+Total BuildCFG	us	367	342	368	361
+Total CheckConstraintSatisfaction	us	7889	7134	8257	7824
+Total CodeGen Function	us	195	192	192	187
+Total CodeGenPasses	us	-47	-76	-60	-86
+Total CoroConditionalWrapper	us	0	0	1	1
+Total DominatorTreeAnalysis	us	3	3	3	3
+Total EntryExitInstrumenterPass	us	1	1	1	1
+Total EvaluateAsBooleanCondition	us	296	287	290	295
+Total EvaluateAsConstantExpr	us	243	454	836	1333
+Total EvaluateAsInitializer	us	12560	12476	12623	12550
+Total EvaluateAsInt	us	15	16	22	18
+Total EvaluateAsRValue	us	290	271	290	294
+Total EvaluateForOverflow	us	59	44	69	51
+Total EvaluateKnownConstInt	us	1	2	3	-1
+Total ExecuteCompiler	us	24951	25508	32770	26509
+Total Frontend	us	24678	25249	32437	26234
+Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0	0	0	0
+Total InstantiateClass	us	942	54	854	13
+Total InstantiateFunction	us	24858	24348	24669	24563
+Total LowerCommentStringPass	us	0	0	0	0
+Total ModuleToFunctionPassAdaptor	us	-1	-2	-2	-2
+Total OptFunction	us	-81	-108	-101	-114
+Total OptModule	us	-48	-76	-60	-86
+Total Optimizer	us	344	303	341	308
+Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0	0	0	0
+Total ParseClass	us	-758	-176	2514	32
+Total ParseDeclarationOrFunctionDefinition	us	-43	-4	3542	-259
+Total ParseFunctionDefinition	us	725	-304	774	-152
+Total PerformPendingInstantiations	us	-8	-5	0	0
+Total ProfileSummaryAnalysis	us	0	0	0	0
+Total RunPass	us	-94	-119	-112	-132
+Total ScopedNoAliasAA	us	0	0	0	0
+Total Source	us	-840	-678	5640	-331
+Total TargetIRAnalysis	us	286	249	278	247
+Total TargetLibraryAnalysis	us	1	0	0	0
+Total TypeBasedAA	us	0	0	0	0
+Total isIntegerConstantExpr	us	0	2	6	2
+instructions		396806693	399948399	410472813	419362249
+
+Costliest events of the plans unit, first repeat: kind, detail, count, microseconds at n = 4 and at n = 16
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {32768, 1}}	0	2	0	13739
+InstantiateClass	std::span<const galoot::core::oriented_blade>	1	1	8048	8168
+InstantiateClass	std::span<galoot::core::detail::plan_term>	1	1	7652	7529
+InstantiateClass	std::span<const galoot::core::detail::plan_term>	1	1	6130	5791
+EvaluateAsInitializer	plan	4	4	5718	5688
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<8>{{{{0, 1}, {32769, -1}, {32770, -1}, {	0	1	0	5527
+EvaluateAsInitializer	count	4	4	5315	5275
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<6>{{{{32769, -1}, {32770, -1}, {32772, -	0	1	0	4983
+ParseClass	std::numeric_limits	28	28	3445	3446
+ParseClass	std::char_traits	6	6	3093	3068
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::oriented_blade *, s	1	1	2881	2866
+InstantiateFunction	galoot::core::detail::filled_gp<15UL, 2UL, 16UL>	0	1	0	2549
+EvaluateAsConstantExpr	</home/brianm/projects/utils/math-core/galoot/.claude/worktrees/product-cost-growth/includ	95	95	249	2454
+ParseClass	std::ranges::__detail::__max_size_type	1	1	1958	1943
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<galoot::core::detail::plan_term *, std:	1	1	1864	1801
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::detail::plan_term *	1	1	1824	1755
+InstantiateClass	std::common_reference<galoot::core::detail::plan_term &, galoot::core::detail::plan_term &	2	2	1397	1412
+ParseClass	std::hash	29	29	1342	1344
+ParseClass	std::ranges::__detail::__max_diff_type	1	1	1327	1283
+InstantiateFunction	galoot::core::detail::generate_gp<2UL, 16UL>	0	1	0	963
+ParseClass	std::basic_string_view	1	1	864	907
+InstantiateFunction	galoot::core::detail::generate_gp<8UL, 16UL>	0	1	0	895
+ParseClass	std::__compare::_Strong_order	1	1	976	890
+InstantiateFunction	galoot::core::detail::blade_product<2UL, 16UL>	0	1	0	810
+InstantiateFunction	galoot::core::detail::blade_product<8UL, 16UL>	0	1	0	757
+ParseClass	std::span	1	1	657	743
+ParseClass	std::common_iterator	1	1	711	716
+InstantiateClass	std::__and_<std::__not_<std::__is_tuple_like<std::reverse_iterator<__gnu_cxx::__normal_ite	3	3	673	700
+EvaluateAsInitializer	defects	4	4	701	685
+InstantiateFunction	std::__detail::_Synth3way::operator()<const galoot::core::oriented_blade *, const galoot::	1	1	698	657
+InstantiateFunction	std::__detail::_Synth3way::_S_noexcept<const galoot::core::oriented_blade *, const galoot:	1	1	659	620
+EvaluateAsInitializer	capacity	4	4	635	615
+ParseClass	std::pair	1	1	634	588
+InstantiateFunction	std::__detail::_Synth3way::operator()<galoot::core::detail::plan_term *, galoot::core::det	1	1	537	512
+ParseClass	std::basic_const_iterator	1	1	506	511
+InstantiateFunction	galoot::core::detail::add_blade_product<2UL, 16UL>	0	1	0	499
+ParseClass	std::__make_signed	12	12	563	498
+InstantiateClass	std::__and_<std::__not_<std::__is_tuple_like<__gnu_cxx::__normal_iterator<const galoot::co	2	2	487	496
+ParseClass	alg	1	1	448	483
+ParseClass	std::counted_iterator	1	1	467	473
