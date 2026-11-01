@@ -213,3 +213,11 @@ Criterion 4's "checked by script at 57f9d1b" refers to a script that is not in t
 - Reviewed head: `26cc06e`; build inputs `57f9d1b`; claim `4895a40`.
 - My checks: all at `26cc06e`. Mutants were applied to a detached worktree at `26cc06e` and restored after each one.
 - Trial merge: `26cc06e` with `develop` at `37a562d`, clean, aborted.
+
+## Delta review of 0aeb46b (comment-only header change after the review)
+
+Reviewed by the coordinating agent (Claude Sonnet 5.5), 2026-11-01. The diff of `include/` from `26cc06e` to the head contains only `///` comment lines. The reworded comment of `product_plan` now states that libstdc++ 16 defines `_GLIBCXX_ASSERTIONS` itself in an unoptimized build, that GCC's sanitizers add about 2% to 4%, and that the counts are those of the plan's own evaluations, and the comment of `unary_map` says the check of an algebra's metric costs more than the product's plan at n = 16. These are the points of findings F6 and F7. No finding.
+
+## Open item carried to the merge
+
+The slowest GCC canary test, `gp_full5`, took 5.46 s on gcc-debug and 5.43 s on gcc-release in the final runs, over the 5 s threshold of the plan's `slow` rule, because it now compiles eleven times for the check above the threshold. The coordinator accepts this: the canary is split into one test per unit and runs in parallel, no single test dominates the suite, and the slow label stays off. Decision 0132 item 4 says no single test exceeded 5 s; that statement was true of the earlier runs only.
