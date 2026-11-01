@@ -1,6 +1,6 @@
 # 0013 WU7: typed results, the operation parameter, unary maps, and conjugated plans
 
-- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). Not started.
+- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). WU7a implemented on `feature/core-plan-results`, awaiting its W5 review (Outcome, WU7a, below). WU7b not started.
 - Unit: WU7 of plan 0001, in two parts run one after the other: WU7a on branch `feature/core-plan-results` (worktree `.claude/worktrees/core-plan-results`), then WU7b on branch `feature/core-plan-maps` (worktree `.claude/worktrees/core-plan-maps`), branched from `develop` after WU7a merges. Each part has its own W5 review and merge. WU7b is claimed by a dated line in this plan when WU7a has merged (as plan 0011 did for WU6b).
 - Decision numbers 0110 to 0119. Plan 0012 claimed 0104 to 0109; 0108 and 0109 were not used, and are left alone so that no number has two claimants.
 - Goal: grow `include/galoot/core/plan.hpp` from "the geometric-product terms of two blade sets" into the data that every product and every per-blade operation of the core needs: a typed result (the blade set a result is stored on, and each term's position in it), one generator with an operation parameter (geometric product and wedge), unary maps (reverse, antireverse, grade involution, right and left complement) as per-blade sign and permutation data, the antiproducts as complement-conjugated plans, and a CTest that fails when a plan is generated twice in one translation unit.
@@ -265,3 +265,108 @@ No bound applies. The outcome of each part compares these with the actuals.
 4. The C4 reading for the wedge's pair rule (departure 6).
 5. The evaluation check form, Clang only (departure 7).
 6. Carried: the GCC -O0 debug size of `static constexpr` locals, and the `metric_like` P2 exception (departure 11).
+
+## Outcome, WU7a (2026-11-01, Claude, agent, Opus 5.5, cpp-expert, implementer)
+
+Status: done on `feature/core-plan-results`, awaiting the W5 blind review. Code and tests final at `d6ea717` (the header last changed there, in its `///` comment; the code last changed at `38f2b30`); all seven presets from new, empty build trees at `86226f7`, whose code and tests are `d6ea717`'s. This section and the W10 after rows are committed after it and change records only.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. Owner answers: the owner said to proceed with the plan's defaults for questions 1 to 5, and they are recorded as decisions: 0117 (questions 1 and 2, the split and the WU9 and WU10 boundaries), 0111 (question 3, `gp_plan` replaced), 0110 (question 4, the wedge as its definition), 0112 (question 5, durations on Clang only). Decision 0117 uses the first number of the plan's unassigned range (0117 to 0119). Question 6 (the GCC -O0 debug size of `static constexpr` locals, and the `metric_like` P2 exception) is not decided; see "Open questions".
+2. Names that differ from the plan: the enumeration is `BinaryOperation`, not `binary_operation`, because STYLE S10 and `.clang-tidy` require CamelCase for an enumeration type (decision 0110 item 1); the typed plan is `typed_plan<R, T>` with `typed_term`; the typing functions are `collect_result` and `type_terms`, with `typed_defects_of` for the checks.
+3. Rejections beyond the plan's one (`wedge_beyond_n`): `wedge_pair_beyond_n` and `_second` (the wedge's own range check, which no set check precedes in a direct call, one per operand) and `result_room` (`collect_result`'s room check). A test of the evaluation script's own rules beyond the plan: `tools.evaluated_once_passes`, `_rejects_twice`, `_rejects_few` on hand-written traces.
+4. Commits that change the header after the test commit `7818335`, for the review: `38f2b30` (a format fix and the clang-tidy suppression of decision 0110 item 6; no code change) and `d6ea717` (comment only). Commits that change tests after it: `04c12c1` (lint layout: trailing commas, `const`, `std::ranges::all_of`, named terms; no expected value). Lint and format-check failed at `7818335` and pass from `04c12c1`; `7818335`'s message does not say so.
+5. Migration (criterion 7, `9430423`): every expected value of B1 to B8 and of the seven rejections is unchanged. The test reads a typed plan back to mask-level terms (`gp_terms`, `read_back`). Changed in form, as its message lists: the two functions of B7 read `product_plan`'s own terms; B8's assertion that the plan is `std::array<plan_term, 15>` became that its terms are `std::array<typed_term, 15>`; test names and comments name `product_plan` and `generate_plan`; the rejection messages' prefix is "product plan:", and the set rejections forbid every generation message in full, which also closes a gap of the old prefix "gp plan: a generated" (it did not cover "generated terms are out of order or repeated").
+6. Verification on the tree before a commit: `3bca0e6`, `9430423`, and `11ad0aa` were checked on the working tree before the commit (runs logged as `<parent>-dirty`), with content equal to the commit except `11ad0aa`, whose unit's `static_assert`s were laid out differently after that run; `11ad0aa` itself was then checked on all four Clang presets. Every other commit was checked after it was made.
+7. The first seven-preset run at `86226f7` reconfigured the existing trees with `--fresh`, which keeps the objects, so its builds were incremental (0.7 s on gcc-debug); it is not counted. All seven were then built from new, empty trees (`build/final-<preset>`), which is the run reported below.
+8. Steps outside `tools/timed` (P13 lapse): one direct run of `build/final-gcc-debug/test/core_plan_test` to read its counts (20 test cases, 815 assertions), after the timed CTest runs; the earlier probes compiled through `tools/timed`.
+9. The limits script's first run had a defect of the script (its Clang wedge unit divided by the size of an empty plan, failing `-Wdivision-by-zero`); the run was repeated whole with the fixed script (`27e227f`).
+10. The mutation driver's `wedge_capacity_gp` was first killed only by `-Wunused-parameter`; it was rewritten and rerun with three added mutants (`records/mutations/0013-plan-results/survivors.md`).
+11. Not done here, as briefed: the agent-cost row, the W5 review, any delta review, and the merge. The knowledge-base branch `kb/constant-evaluation-memoization` is not merged into the knowledge base's `develop`.
+
+### Done
+
+| Commit | What |
+| --- | --- |
+| `6c129a8` | W10 before rows (fresh gcc-debug and clang-debug trees at `0bbb968`, 80 rows each; 124 of 124 on both) |
+| `3bca0e6` | `BinaryOperation`, `pair_capacity`, `plan_capacity(op, ...)`, `pair_terms` (the two pair rules), `generate_plan`, `collect_result`, `typed_term`, `type_terms`, `typed_plan`, `typed_defects_of`, `make_product_plan`, `product_plan`; `gp_plan` kept, forwarding |
+| `9430423` | Migration of WU6b's tests and rejections (criterion 7) |
+| `0fce606` | `gp_plan`, `make_gp_plan`, `generate_gp`, the two-set `plan_capacity`, `filled_gp` removed |
+| `7818335` | Tests C1 to C10 and criterion 5, four rejections, the 4.1 wedge trace row `yes` |
+| `38f2b30`, `04c12c1` | Format and lint fixes (item 4) |
+| `11ad0aa` | `core.plan_evaluated_once` (Clang only), `test/tools/evaluated_once.py`, its fixtures and tests |
+| `27e227f`, `36e4f0f` | Limits record (`records/performance/plan-results/`), the mutation driver |
+| `19b52b6` | Mutation results and `survivors.md`; decisions 0110, 0111, 0112, 0117 |
+| `d6ea717` | Measured limits in `product_plan`'s `///` comment |
+| `86226f7` | P2 record (`out/growth-d6ea717/`) and decision 0113 |
+
+### Tests, for the reviewer
+
+`core.plan` at `86226f7`: 20 test cases, 815 assertions, and namespace-scope `static_assert`s; 15 compile-fail tests `core.plan_*`; on Clang `core.plan_evaluated_once`. The trace gate finds 4.1's wedge fact at `plan_test.cpp:1539`.
+
+| Case | Expected |
+| --- | --- |
+| C1 typed reads back | both operations, `full<n>` × `full<n>` of the 42 forms (n ≤ 6), typed at run time: result set = distinct output blades, sign +1, in the test's own order (grade, then index list); every term reads back; positions in range |
+| C2 typed rigid(3) pairs | P ⟑ P and P ∧ P typed in full by hand; L ⟑ G 15 terms on (e1, e2, e3, e4, e124, e134, e234), L ∧ G none, P ∧ L 12 on the trivectors, M ⟑ P 28 and M ∧ P 16 on vectors and trivectors, L ⟑ L 27 on (1, bivectors, e1234), L ∧ L 6 on e1234, each term by the test's diagonal or wedge rule |
+| C3 wedge rule | every pair of the 42 forms: no term on a shared generator, else the test's inversion sign on A ∪ B; = grade |A| + |B| part of `blade_product`; the same for every form of one n; = the product in R(0,0,n), n = 1 to 6 |
+| C4 associativity | every triple of blades of the 42 forms, over the wedge plan |
+| C5 conformal(3) vectors | V ⟑ V 25 terms on 1 and ten bivectors, e4 e5 = −1 + e45, e5 e4 = −1 − e45; V ∧ V 20 terms, no scalar |
+| C6 sparse, n = 8, 12, 16 | ten product terms on eight result blades; eight wedge terms on seven |
+| C7 result order | P ∧ P lists e14 before e23; the results of `full<4>` and `full<5>` in R(n,0,0) equal the golden canonical lists |
+| C8 checks at each bound | `typed_defects_of` on hand-written plans, each defect alone; `collect_result` and `type_terms` at their stated bounds |
+| C9 repeated, empty | a mask listed twice shares one position; empty sets give `typed_plan<0, 0>` |
+| C10 compile time = run time | `full<4>` of rigid(3), R(4,0,0), R(1,3,0), conformal(2), `full<3>` of the degenerate form, both operations, against direct calls in a `static_assert`; rigid(3) also at run time on a metric read through `volatile` |
+| Criterion 5 | the wedge = top-grade part of the four golden product tables |
+| C11 | `core.plan_evaluated_once`: median initializer below a tenth of the median generator instantiation, three plans |
+
+### Acceptance criteria (WU7a)
+
+1. Met (C1), exhaustive over the 42 forms, on all seven presets at `86226f7`.
+2. Met (C3).
+3. Met (C4).
+4. Met (C2, C5, C6, C10).
+5. Met (golden wedge case).
+6. Met: every generation-time check of the typed plan fires on a generator or typing mutant, and `defects_of` and `typed_defects_of` are tested at each bound (`survivors.md`).
+7. Met (`9430423`, item 5): same expected values; the messages are the only changed text of the rejections, and the set rejections forbid every message generation would add.
+8. Met: decision 0113. The typed and sparse pairs and the conformal(3) vectors build for both operations in all three configurations on both compilers; `full<n>` ceilings are stated in the `///` comment. Reported drop (C14): GCC's product ceiling falls from 7 to 6 in the diagonal, rigid, and conformal forms, stopped in the direct typing's linear scans at n = 7; Clang's ceilings and GCC's dense ceiling are unchanged.
+9. Met: `core.plan_evaluated_once` passes on clang-debug, clang-release, clang-asan, and lint at `86226f7` (new trees) and at `11ad0aa`; `locals_plain` and `locals_plain_twice` fail it on clang-debug in both mutation modes; `twice_static_locals` passes it, because nothing is generated again.
+10. Met: decision 0113 and `records/performance/plan-results/out/growth-d6ea717/`. Growth from n = 4 to 16 is about 18 M (GCC) and 23 M (Clang), before and after alike: the `metric_like` check of decision 0107; typing adds +119 M and +195 M at every n.
+11. Met: the seven presets from new, empty trees at `86226f7`, each building and passing every test (131 on GCC presets, 132 on Clang presets, which add `core.plan_evaluated_once`); gcc-debug, clang-debug, and lint also built `all_verify_interface_header_sets` and `format-check`, and lint's clang-tidy is clean. The trace gate and the marker check (78 test cases) exit 0 as scripts at `86226f7`; markers, golden facts, citations, golden regeneration, and the include scan pass as CTests in every preset. W10 before at `0bbb968`, after at `86226f7`, both from new trees.
+
+Mutation summary: 81 mutants on gcc-debug and clang-debug in both modes; 68 killed everywhere, 10 equivalent (removals of checks a correct generator cannot trip), `locals_plain` and `locals_plain_twice` killed on Clang only by design, `twice_static_locals` surviving by design. Unresolved: none. Two static_asserts and one test case of WU6b have no mutant of this unit (`survivors.md`). Job pool: 23 of 23 free before and after every heavy run; never stopped or started.
+
+### Costs (W10; new trees, shared mode, track-only)
+
+Before at `0bbb968`, after at `86226f7`; instructions of both kinds of core added; rows in `compile.tsv`.
+
+| Unit | gcc-debug before | gcc-debug after | clang-debug before | clang-debug after |
+| --- | --- | --- | --- | --- |
+| `core.hpp` alone (header set) | 0.808 G, 72 MiB | 0.901 G, 77 MiB (+11.5%) | 0.750 G, 107 MiB | 0.912 G, 110 MiB (+21.7%) |
+| `plan.hpp` alone | 0.808 G, 73 MiB | 0.902 G, 77 MiB | 0.750 G, 103 MiB | 0.908 G, 110 MiB |
+| `smoke_test.cpp` | 1.006 G, 83 MiB | 1.099 G, 87 MiB | 0.847 G, 119 MiB | 1.008 G, 123 MiB |
+| `plan_test.cpp` | 9.548 G, 238 MiB | 21.088 G, 330 MiB, 1.89 s (+121%) | 11.328 G, 206 MiB | 23.099 G, 285 MiB, 1.90 s (+104%) |
+| `plan_evaluated_once.cpp` (Clang CTest) | | | | 2.019 G, 136 MiB |
+| other test units | | unchanged within 0.1% | | unchanged within 0.1% |
+| compile-fail sources | 65, 40.66 G | 69, 44.86 G | 65, 34.18 G | 69, 39.08 G |
+| all compiles | 80, 93.6 G | 84, 109.7 G | 80, 91.8 G | 85, 111.0 G |
+| CTest, whole suite | 124 tests, 1.58 s | 131 tests, 2.15 s | 124 tests, 1.84 s | 132 tests, 1.66 s |
+
+Notable, reported with cause (P2 note, C14): `plan.hpp` costs every includer of `core.hpp` +0.09 G on GCC and +0.16 G on Clang more than before, attributed by a Clang trace mostly to `std::span` instantiations over the new element types (decision 0113). `plan_test.cpp` doubles: the new compile-time checks (typed rigid(3), conformal(3), and sparse plans of both operations, and the ten `full<4>`/`full<3>` typed plans compared with direct calls in a constant evaluation). The CTest times are shared-mode and not compared.
+
+### Verification and validation
+
+Verification: performed by C1 to C10 and the golden wedge case (kinds 1 to 3 over the stated finite ranges: n ≤ 6 for C1, C3, C4) and passed on all seven presets at `86226f7`. Validation: for the wedge, the Grassmann case (R(0,0,n), C3) and the golden tables (LDLᵀ route); otherwise not applicable beyond what `blade_product`'s referents give (plan 0011, A6 to A8): a typed plan is its mask-level plan with each output written as a position in a canonical list. Reproduction, from the worktree root with the pool exported: `python3 -I docs/agent/records/performance/plan-results/measure_results.py limits <out> [cpu]` and `... growth 0bbb968 <out> 3 10`; `python3 -I docs/agent/records/mutations/0013-plan-results/mutate.py <preset> [--runtime] [mutation...]`.
+
+### Open questions for the owner
+
+1. Carried (departure 11, item 2 of the handoff): keep the `static constexpr` locals, which cost GCC -O0 debug object size, or prefer smaller debug objects? If plain locals are chosen, `core.plan_evaluated_once` fails on Clang by design, and a different remedy for Clang's second evaluation is needed first. Not decided here.
+2. Carried (decision 0107 item 4): is the per-algebra `metric_like` check an accepted exception to P2? The P2 record here shows the same growth, of the same size, before and after typing. Not decided here.
+3. New: the drop of GCC's `full<7>` product ceiling, and the header cost of `plan.hpp` to every includer of `core.hpp` (decision 0113). Reported with their causes; no bound is set, and no cheaper form is built.
+
+### Knowledge base
+
+Branch `kb/constant-evaluation-memoization` of the knowledge base (worktree `knowledge-base-worktrees/constant-evaluation-memoization`): `performance-engineering/memoizing-constant-evaluation.md` (new, indexed in that directory's README) and `exercise-archive/cpp-repeated-constant-evaluation.md` (new); commits `44c6e9d`, `60b77d8`; `tools/check_links.py` reports 0 problems. Not merged into its `develop`.
+
+### Next
+
+The W5 blind review of WU7a (it reruns the wedge shared-generator and result-order mutants and runs the evaluation check against a plain-locals copy); fixes in their own commits; a delta review of any core fix; then the merge, which the coordinator makes. WU7b is claimed by a dated line here after that merge. Agent cost: about 200 tool calls; token counts are not visible to me.
