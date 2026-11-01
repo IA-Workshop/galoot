@@ -17,6 +17,13 @@
 
 #include <reference/golden.hpp>
 
+// A value declared but defined elsewhere, as a header may declare it. It
+// has external linkage, so that the missing definition is not an error.
+// NOLINTNEXTLINE(misc-use-internal-linkage): internal would need a definition.
+struct declared_value_1 {
+  static const galoot::core::metric<1> value;
+};
+
 namespace {
 
 namespace core = galoot::core;
@@ -143,9 +150,7 @@ struct member_value {
   core::metric<2> value{written({{1, 0}, {0, 1}})};
 };
 // The same three with one generator, where the only entry is a square.
-struct declared_value_1 {
-  static const core::metric<1> value;
-};
+// declared_value_1 is declared before the anonymous namespace.
 struct runtime_value_1 {
   static const core::metric<1> value;
 };
