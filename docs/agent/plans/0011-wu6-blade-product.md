@@ -227,6 +227,7 @@ The outcome compares these with the actuals. No bound applies.
 7. The exhaustive associativity check over (2^6)^3 triples for every n = 6 signature with dense term lists may take seconds in a debug build; if it slows the edit cycle it carries the `slow` label and runs from the next merge level up (P9), never omitted.
 8. The compile-fail lane (plan 0010) may merge during this unit; the rejection tests here use `galoot_add_compile_fail_test` by its unchanged signature, and a merge of `develop` before the review resolves any adjacent edit in `test/CMakeLists.txt`.
 9. Lessons 0060 to 0062 apply: a mutation run checks the build's exit status; scripted edits assert their anchors; before-and-after costs come from clean revisions; a lost pool slot is reported.
+10. Stack use at run time (added 2026-11-01 after the W5 review of WU6a, finding F10). Each level of `blade_product`'s recursion holds one scratch `term_list<Capacity>`, of Capacity × 16 + 8 bytes, and the recursion is up to the grade deep. At the full capacity of n = 16, 2^15, that is 512 KiB a level: the antiscalar of R(16,0,0) squared at run time with that capacity segfaults at the default 8 MiB stack and runs at 16 MiB (GCC 16.2.1, -O0; `records/performance/stack-probe/`). Constant evaluation is not affected. WU6b's `generate_gp`, the identity suite above n = 6, and any run-time use keep capacities small (`plan_capacity` over the pairs a program uses), or the scratch moves off the stack, by a decision with a measurement.
 
 ## 12. Deferred
 
