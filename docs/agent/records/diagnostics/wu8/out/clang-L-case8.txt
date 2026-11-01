@@ -1,0 +1,16 @@
+program.cpp:60:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
+   60 |   const Point s = q;
+      |               ^   ~
+../../../../../include/galoot/core/mv.hpp:182:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
+  182 | struct mv
+      |        ^~
+../../../../../include/galoot/core/mv.hpp:182:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
+  182 | struct mv
+      |        ^~
+../../../../../include/galoot/core/mv.hpp:224:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  224 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+../../../../../include/galoot/core/mv.hpp:223:14: note: because '!(sizeof...(Values) == 1 && multivector<const galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double> &>)' evaluated to false
+  223 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
+      |              ^
+1 error generated.
