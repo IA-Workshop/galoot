@@ -1,0 +1,40 @@
+{
+ "traceEvents": [
+  {
+   "ph": "X",
+   "name": "InstantiateFunction",
+   "ts": 0,
+   "dur": 9000,
+   "args": {
+    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::gp, alg, set1, set1>"
+   }
+  },
+  {
+   "ph": "X",
+   "name": "EvaluateAsInitializer",
+   "ts": 0,
+   "dur": 4,
+   "args": {
+    "detail": "galoot::core::detail::product_plan"
+   }
+  },
+  {
+   "ph": "X",
+   "name": "InstantiateFunction",
+   "ts": 0,
+   "dur": 5000,
+   "args": {
+    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::gp, alg, set2, set2>"
+   }
+  },
+  {
+   "ph": "X",
+   "name": "EvaluateAsInitializer",
+   "ts": 0,
+   "dur": 6,
+   "args": {
+    "detail": "galoot::core::detail::product_plan"
+   }
+  }
+ ]
+}

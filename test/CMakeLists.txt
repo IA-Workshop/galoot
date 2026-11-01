@@ -491,6 +491,57 @@ galoot_add_compile_fail_test(NAME plan_result_room MODULE core COMPONENT plan
   SOURCE core/plan_result_room_fail.cpp
   MESSAGE "more result blades than places for them"
   REQUIRE "assertion_failed" "plan.hpp")
+
+# core.plan_evaluated_once: a plan that one unit reads several times is
+# generated once. The unit core/plan_evaluated_once.cpp is compiled with the
+# library's flags and Clang's -ftime-trace, and tools/evaluated_once.py
+# compares the time of each plan's initializer with the instantiation of the
+# function that generates it, which holds the generation (the script states
+# the rule). The test exists only where the compiler is Clang: GCC writes no
+# such trace, and its cache of constant-evaluated calls would serve a second
+# generation of a plan from the first, so a GCC unit could not show one.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  galoot_compile_command(compile)
+  set(evaluated_once_trace
+    ${CMAKE_CURRENT_BINARY_DIR}/core_plan_evaluated_once.json)
+  add_test(NAME core.plan_evaluated_once
+    COMMAND ${Python3_EXECUTABLE} -I
+      ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
+      ${evaluated_once_trace} galoot::core::detail::product_plan
+      galoot::core::detail::make_product_plan
+      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
+        -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
+        -o core_plan_evaluated_once.o
+        -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(core.plan_evaluated_once PROPERTIES
+    LABELS "core;core.plan")
+endif()
+
+# tools.evaluated_once_*: the trace check passes on a trace of three plans
+# whose initializers copy them, and fails on one whose initializers generate
+# them again and on one of two plans, too few to tell.
+set(evaluated_once ${Python3_EXECUTABLE} -I
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py)
+set(evaluated_once_names galoot::core::detail::product_plan
+  galoot::core::detail::make_product_plan)
+set(evaluated_once_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once)
+add_test(NAME tools.evaluated_once_passes
+  COMMAND ${expect_output} 0 "ratio 0.0007"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/once.json
+      ${evaluated_once_names})
+add_test(NAME tools.evaluated_once_rejects_twice
+  COMMAND ${expect_output} 1 "so it generates the plan again"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/twice.json
+      ${evaluated_once_names})
+add_test(NAME tools.evaluated_once_rejects_few
+  COMMAND ${expect_output} 1 "fewer than 3 of either"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/few.json
+      ${evaluated_once_names})
+set_tests_properties(tools.evaluated_once_passes
+  tools.evaluated_once_rejects_twice tools.evaluated_once_rejects_few
+  PROPERTIES LABELS "tools;tools.evaluated_once")
 # The tag is checked by the concept on product_plan itself, whose failure the
 # compiler reports in its own words; both name the concept. The function that
 # generates the plan carries the concept too, so the test forbids its name:
