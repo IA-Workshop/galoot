@@ -32,8 +32,8 @@ Checks: >
 #   cppcoreguidelines-pro-bounds-avoid-unchecked-container-access: Gram
 #   matrices and blade tables are indexed by generator, with each index
 #   bounded by a loop over n or checked by GALOOT_ASSERT. A constant
-#   evaluation rejects any access out of bounds, and the test builds check
-#   every std::array access at run time with _GLIBCXX_ASSERTIONS.
+#   evaluation rejects any access out of bounds, and the correctness presets
+#   check every std::array access at run time with _GLIBCXX_ASSERTIONS.
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(^|/)include/galoot/'
 CheckOptions:

@@ -17,17 +17,13 @@
 
 #include <array>
 #include <cstddef>
-#include <cstdint>
 #include <limits>
 #include <type_traits>
 
 #include <galoot/core/assert.hpp>
+#include <galoot/core/bits.hpp>
 
 namespace galoot::core {
-
-/// The mask of a basis blade: bit i - 1 stands for the generator e_i. An
-/// algebra has at most as many generators as a mask has bits.
-using mask_t = std::uint32_t;
 
 /// The type of an entry of a Gram matrix.
 using entry_type = int;
@@ -54,7 +50,7 @@ consteval entry_type isqrt(entry_type x) {
 
 /// The number of generators that the factories accept unless their MaxN
 /// says otherwise. Galoot is tested up to 16 generators; a factory given a
-/// larger MaxN, up to the bits of mask_t, builds an algebra that every later
+/// larger MaxN, up to mask_bits, builds an algebra that every later
 /// part of the library accepts but that is not tested.
 inline constexpr std::size_t max_generators = 16;
 
@@ -72,12 +68,12 @@ inline constexpr entry_type max_form_entry =
 /// aggregate written by hand is checked by metric_like before an algebra can
 /// use it.
 ///
-/// Requires: N is at most the number of bits of mask_t.
+/// Requires: N <= mask_bits, the number of generators a blade mask holds.
 /// Guarantees: a structural type, so a metric can be a template argument;
 /// trivially copyable, and never allocates.
 template <std::size_t N>
 struct metric {
-  static_assert(N <= std::numeric_limits<mask_t>::digits,
+  static_assert(N <= mask_bits,
                 "metric: n is larger than the number of bits in a blade mask");
 
   /// gram[i][j] is the inner product e_(i+1) . e_(j+1), so row and column i
@@ -147,7 +143,7 @@ namespace detail {
 // and each message names its misuse.
 template <std::size_t N, std::size_t MaxN>
 consteval void check_generator_count() {
-  static_assert(MaxN <= std::numeric_limits<mask_t>::digits,
+  static_assert(MaxN <= mask_bits,
                 "metric: MaxN is larger than the number of bits in a blade "
                 "mask");
   static_assert(N >= 1, "metric: an algebra has at least one generator, so "
@@ -169,7 +165,7 @@ inline constexpr bool is_metric_v<metric<N>> = true;
 /// count is named Z, for the generators that square to zero, because the
 /// function itself is R.
 ///
-/// Requires: 1 <= n <= MaxN, and MaxN at most the number of bits of mask_t,
+/// Requires: 1 <= n <= MaxN, and MaxN <= mask_bits,
 /// each checked at compile time with a message that names it. A negative
 /// count does not convert to std::size_t, so it fails to compile.
 /// Guarantees: e1 to eP square to +1, the next Q generators to -1, and the
