@@ -279,10 +279,13 @@ template <std::size_t Capacity, std::size_t N>
 blade_product(const metric<N>& g, mask_t a, mask_t b) noexcept {
   // In an algebra of mask_bits generators every mask is in range, and the
   // shift by N, the width of mask_t, would be undefined.
-  bool in_range = true;
-  if constexpr (N < mask_bits) {
-    in_range = ((a | b) >> N) == 0;
-  }
+  const bool in_range = [&] {
+    if constexpr (N < mask_bits) {
+      return ((a | b) >> N) == 0;
+    } else {
+      return true;
+    }
+  }();
   GALOOT_ASSERT(in_range, "blade has a generator beyond e_n");
 
   term_list<Capacity> out{};
