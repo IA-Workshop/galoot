@@ -50,6 +50,11 @@ TYPE_TEST = ("    detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>>
 MUTATIONS = [
     ("no_symmetry", CONDITION,
      "      if (a < -max_form_entry || a > max_form_entry) {\n", True),
+    # Dropping `a != b` leaves b unused, which -Werror turns into a build
+    # failure before any run-time test can run; reading g_ij twice removes the
+    # symmetry check with no warning.
+    ("mirror_read_twice", "      const entry_type b = m.gram[j][i];\n",
+     "      const entry_type b = m.gram[i][j];\n", True),
     ("no_range", CONDITION, "      if (a != b) {\n", True),
     ("no_lower_bound", CONDITION,
      "      if (a != b || a > max_form_entry) {\n", True),
