@@ -11,6 +11,7 @@
 #include <array>
 #include <cstddef>
 #include <limits>
+#include <optional>
 #include <span>
 #include <string_view>
 #include <utility>
@@ -307,15 +308,25 @@ constexpr mask_sample sample_of(std::size_t n) {
   return s;
 }
 
-// The indices of the generators in a canonical blade name such as "e124",
-// one digit each; "1" names the scalar.
-constexpr index_list indices_named(std::string_view name) {
+// The indices of the generators in a canonical blade name: "1" for the
+// scalar, or "e" followed by one digit per generator in increasing order, as
+// in "e124". Any other text, such as "e21", gives no value.
+constexpr std::optional<index_list> indices_named(std::string_view name) {
   index_list list;
   if (name == "1") {
     return list;
   }
+  if (name.size() < 2 || name.front() != 'e') {
+    return std::nullopt;
+  }
+  int previous = 0;
   for (const char digit : name.substr(1)) {
-    push(list, digit - '0');
+    const int index = digit - '0';
+    if (index <= previous || index > 9) {
+      return std::nullopt;
+    }
+    push(list, index);
+    previous = index;
   }
   return list;
 }
@@ -368,8 +379,10 @@ static_assert(grade_signs_match(golden::grade_signs::n5, 5));
 
 } // namespace
 
-// Reference: proof: bit i - 1 of a blade mask stands for e_i, so the mask
-//   0b1011 is e124, of grade 3, and its complement in four generators is e3
+// Reference: independent value: bit i - 1 of a blade mask stands for e_i,
+//   worked by hand: the mask 0b1011 is e124, of grade 3, with complement e3
+//   in four generators, and bit 1 is e2 and bit 0 is e1, so e2 e1 = -e12
+//   gives reorder_sign(0b010, 0b001) = -1 and reorder_sign(0b001, 0b010) = +1
 TEST_CASE("Bit i - 1 of a mask stands for e_i, so e124 is the mask 0b1011") {
   // The reference reads masks this way; this case pins the reading itself.
   CHECK(mask_of(indices_of(0b1011U)) == 0b1011U);
@@ -379,11 +392,13 @@ TEST_CASE("Bit i - 1 of a mask stands for e_i, so e124 is the mask 0b1011") {
   CHECK(get(indices_of(0b1011U), 2) == 4);
   CHECK(galoot::core::grade(0b1011U) == 3);
   CHECK(galoot::core::complement_mask(0b1011U, 4) == 0b0100U);
+  CHECK(galoot::core::reorder_sign(0b010U, 0b001U) == -1);
+  CHECK(galoot::core::reorder_sign(0b001U, 0b010U) == 1);
 }
 
 // Reference: independent value: worked by hand, sorting (3, 2, 1) takes three
-//   swaps, e2 ^ e1 = -e12, e1 ^ e23 = e123, and the wedge of two blades that
-//   share a generator is zero
+//   swaps, e2 ^ e1 = -e12, e1 ^ e23 = e123, e12 ^ e2 = 0 because the two
+//   share e2, and the antiscalar of four generators is +e1234
 TEST_CASE("The reference gives hand-worked sorting signs and exterior "
           "products") {
   // Values worked by hand, so that a defect in the reference cannot pass
@@ -397,6 +412,23 @@ TEST_CASE("The reference gives hand-worked sorting signs and exterior "
   CHECK(wedge(0b001U, 0b110U) == signed_blade{.sign = 1, .mask = 0b111U});
   CHECK(wedge(0b011U, 0b010U).sign == 0);
   CHECK(antiscalar(4) == signed_blade{.sign = 1, .mask = 0b1111U});
+}
+
+// Reference: independent value: worked by hand, a canonical name is 1 or an e
+//   followed by its generators in increasing order, so e124 reads as
+//   (1, 2, 4), and e21, e11, 124, e, and ex are not canonical names
+TEST_CASE("The blade-name reader accepts only canonical names") {
+  CHECK(indices_named("1").value().size == 0);
+  const index_list e124 = indices_named("e124").value();
+  CHECK(e124.size == 3);
+  CHECK(get(e124, 0) == 1);
+  CHECK(get(e124, 1) == 2);
+  CHECK(get(e124, 2) == 4);
+  CHECK_FALSE(indices_named("e21").has_value());
+  CHECK_FALSE(indices_named("e11").has_value());
+  CHECK_FALSE(indices_named("124").has_value());
+  CHECK_FALSE(indices_named("e").has_value());
+  CHECK_FALSE(indices_named("ex").has_value());
 }
 
 // Reference: proof: the grade of a blade is its number of generators and its
@@ -413,9 +445,10 @@ TEST_CASE("grade and antigrade count the generators in and out of a blade, "
   }
 }
 
-// Reference: proof: e_A e_B is (-1)^s times the blade of A then B sorted,
-//   where s counts the swaps of out-of-order neighbors. Exhaustive over
-//   every pair of masks below 2^8
+// Reference: proof: reorder_sign(A, B) is (-1)^s, where s is the number of
+//   swaps of out-of-order neighbors that sort the indices of A followed by
+//   those of B, equal indices never swapped. Exhaustive over every pair of
+//   masks below 2^8
 TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
           "of masks below 2^8") {
   for (mask_t a = 0; a < blade_count(exhaustive_n); ++a) {
@@ -502,8 +535,9 @@ TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
 }
 
 // Reference: independent value: u ^ right(u) = antiscalar and left(u) ^ u =
-//   antiscalar, by the golden complements of every blade of four generators,
-//   whose algebra includes rigid(3), and of five
+//   antiscalar, by the golden complements of every blade of four and of five
+//   generators. Complements do not depend on the metric, so the four-generator
+//   values serve rigid(3) and every other algebra of four generators
 TEST_CASE("The complements of every blade of four and five generators match "
           "the golden values") {
   const auto check = [](std::span<const golden::complement_pair> rows,
@@ -531,7 +565,9 @@ TEST_CASE("grade and complement_mask agree with the golden blade names, for "
     for (const golden::named_blade& entry : names) {
       CAPTURE(n);
       CAPTURE(entry.blade);
-      const index_list named = indices_named(entry.name);
+      const std::optional<index_list> read = indices_named(entry.name);
+      REQUIRE(read.has_value());
+      const index_list& named = read.value();
       CHECK(mask_of(named) == entry.blade);
       CHECK(galoot::core::grade(entry.blade) == named.size);
       CHECK(galoot::core::complement_mask(entry.blade, n) ==
