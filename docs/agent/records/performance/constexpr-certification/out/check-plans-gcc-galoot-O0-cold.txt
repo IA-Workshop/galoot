@@ -38,4 +38,26 @@ full-wedge-dense-n4	collect	186150	186150	+0.00000	yes	include/galoot/core/plan.
 full-wedge-dense-n5	collect	1093326	1093326	+0.00000	yes	include/galoot/core/plan.hpp:414:10
 full-wedge-dense-n6	collect	6558946	6558946	+0.00000	yes	include/galoot/core/plan.hpp:414:10
 full-wedge-dense-n7	collect	39732810	39732810	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-1	fill	156646	156646	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-2	typed	4389924	4389924	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-3	typed	1046377	1046377	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-4	fill	8928	8928	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-5	typed	717213	717213	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-6	fill	181656	181656	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-7	typed	136854	136854	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-8	fill	37256	37256	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-10	collect	1753283	1753283	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-11	collect	11323482	11323482	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-12	typed	83409	83409	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-13	collect	119879202	119879202	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-14	collect	93341498	93341498	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-15	typed	3092401	3092401	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-16	fill	160816065	160816065	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-17	typed	12610815	12610815	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-18	fill	244369	244369	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-19	typed	17875653	17875653	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-20	collect	18863663	18863663	+0.00000	yes	include/galoot/core/plan.hpp:414:10
+random-21	typed	1338149	1338149	+0.00000	yes	include/galoot/core/plan.hpp:426:10
+random-22	fill	312083	312083	+0.00000	yes	include/galoot/core/plan.hpp:399:10
+random-23	fill	11426842	11426842	+0.00000	yes	include/galoot/core/plan.hpp:399:10
 # largest relative error, plan: 0.00000
