@@ -1,6 +1,6 @@
 # 0029 Floating-point options in the presets
 
-- Status: accepted
+- Status: accepted; that release presets leave NDEBUG undefined is recorded in decision 0041
 - Date: 2026-10-31
 - Recorded by: Claude (agent, build-expert, WU1), under C18; a decision record takes effect when recorded, and the owner may reverse it.
 

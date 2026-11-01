@@ -22,6 +22,10 @@ set(expect_output
 
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
+# The mode the configuration declares, passed to the test directly rather
+# than through galoot::core, so that a mode lost on the way fails the test.
+target_compile_definitions(core_smoke_test PRIVATE
+  GALOOT_EXPECTED_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
 
 # core.zero_cases below runs the smoke program with its own copy of the rule,
 # so check here that galoot_add_test gave core.smoke the same rule (W5 review
@@ -146,6 +150,9 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/cycle_a.hpp: include cycle: galoot/core/cycle_a.hpp -> galoot/core/cycle_b.hpp -> galoot/core/cycle_a.hpp"
     "galoot/core/wrong_guard.hpp:1: include guard should be GALOOT_CORE_WRONG_GUARD_HPP"
     "galoot/core/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
+    "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
+    "galoot/core/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
@@ -159,6 +166,16 @@ add_test(NAME tools.measure_header
     ${PROJECT_SOURCE_DIR}/tools/measure
     ${CMAKE_CURRENT_BINARY_DIR}/measure_header)
 set_tests_properties(tools.measure_header PROPERTIES
+  LABELS "tools;tools.measure")
+
+# tools.measure_record: the fields of a cost row, and the reader's `--` for
+# cells that rows written before a column existed lack.
+add_test(NAME tools.measure_record
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_record_test.py
+    ${PROJECT_SOURCE_DIR}/tools/measure
+    ${CMAKE_CURRENT_BINARY_DIR}/measure_record)
+set_tests_properties(tools.measure_record PROPERTIES
   LABELS "tools;tools.measure")
 
 # The golden values that tests compare the library with. They come from the
