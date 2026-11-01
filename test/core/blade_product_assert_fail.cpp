@@ -1,7 +1,8 @@
 // Misuse of galoot/core/blade_product.hpp at run time in a checking build.
 // The argument names the input:
 //
-//   beyond_n       blade_product of e4 in R(3,0,0)
+//   beyond_n       blade_product of e4 in R(3,0,0), e4 the first operand
+//   beyond_n_second  the same, with e4 the second operand
 //   capacity       e1 e2 in [[0, 1], [1, 0]], two terms, with capacity 1
 //   overflow       e12345 e12345 in a form whose det g is about 2^75
 //   sum_above      a sum just above the largest coefficient
@@ -36,6 +37,9 @@ bool run(std::string_view input) {
   if (input == "beyond_n") {
     static_cast<void>(
         core::detail::blade_product<4>(core::R<3, 0, 0>(), 0b1000U, 0U));
+  } else if (input == "beyond_n_second") {
+    static_cast<void>(
+        core::detail::blade_product<4>(core::R<3, 0, 0>(), 0U, 0b1000U));
   } else if (input == "capacity") {
     static_cast<void>(core::detail::blade_product<1>(
         core::from_gram({{0, 1}, {1, 0}}), 0b01U, 0b10U));
@@ -74,8 +78,9 @@ bool run(std::string_view input) {
 int main(int argc, char** argv) {
   if (argc != 2 ||
       !run(std::span<char*>(argv, static_cast<std::size_t>(argc)).back())) {
-    std::fputs("usage: blade_product_assert_fail beyond_n|capacity|overflow|"
-               "sum_above|sum_below|product_above|product_below|"
+    std::fputs("usage: blade_product_assert_fail beyond_n|beyond_n_second|"
+               "capacity|overflow|sum_above|sum_below|product_above|"
+               "product_below|"
                "product_below_second\n",
                stderr);
     return 2;
