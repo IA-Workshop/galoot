@@ -2259,6 +2259,21 @@ static_assert(equals_typing<antiwedge, 1>(
     conformal2::value, core::full<4>, core::full<4>,
     product_plan<antiwedge, conformal2, core::full<4>, core::full<4>>));
 
+// Whether pair_terms accepts the operation Op.
+template <BinaryOperation Op>
+constexpr bool has_pair_rule = requires(const core::metric<4>& g) {
+  // clang-tidy reads the operation, once substituted, as a C-style cast of
+  // its value, which the source does not have.
+  // NOLINTNEXTLINE(modernize-avoid-c-style-cast)
+  core::detail::pair_terms<Op, 8>(g, mask_t{}, mask_t{});
+};
+
+// Reference: contract: pair_terms is the rule of one pair for the geometric
+// product and the wedge only, and the antiproducts, which conjugate those
+// rules, are rejected by its constraint
+static_assert(has_pair_rule<gp> && has_pair_rule<wedge>);
+static_assert(!has_pair_rule<antigp> && !has_pair_rule<antiwedge>);
+
 // Reference: contract: a map term is a trivially copyable aggregate, and a
 // typed map is a structural one, so that it can be a template argument
 static_assert(std::is_aggregate_v<map_term>);
@@ -3237,6 +3252,10 @@ TEST_CASE("The checks of a typed map find each defect at its bound") {
   CHECK(none_but(map_defects_of(right_complement, 4, e1_e2,
                                 two(on_e134, on_e234, e1_to_1,
                                     {.a = 2, .out = 0, .coefficient = -1})),
+                 &map_defects::not_per_input));
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_e2,
+                                two(on_e134, on_e234, e1_to_1,
+                                    {.a = 0, .out = 0, .coefficient = -1})),
                  &map_defects::not_per_input));
 
   // The blade: a complement lands on the other generators, a sign operation
