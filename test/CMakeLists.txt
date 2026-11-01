@@ -325,6 +325,36 @@ function(galoot_expected_findings file out)
   string(REPLACE "\n" ";" lines "${text}")
   set(${out} ${lines} PARENT_SCOPE)
 endfunction()
+
+# tests.citations: no build file, header, test, script, or generated file
+# points the reader to a project document, a numbered rule, or a project
+# record in place of the reason itself, because a reader of the code has none
+# of them. The file of patterns and the fixtures that hold such text on
+# purpose are skipped. tools.test_references_citations_* show that the check
+# rejects each pattern and passes text that only resembles one.
+add_test(NAME tests.citations
+  COMMAND ${test_references} citations
+    --exclude ${PROJECT_SOURCE_DIR}/tools/citation_patterns.txt
+    --exclude ${reference_fixtures}/markers_bad.cpp
+    --exclude ${reference_fixtures}/markers_bad.expected
+    --exclude ${reference_fixtures}/trace_bad_table.expected
+    --exclude ${reference_fixtures}/citations_bad
+    --exclude ${reference_fixtures}/citations_bad.expected
+    ${PROJECT_SOURCE_DIR}/include/galoot ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_SOURCE_DIR}/test ${PROJECT_SOURCE_DIR}/tools
+    ${PROJECT_SOURCE_DIR}/CMakeLists.txt ${PROJECT_SOURCE_DIR}/CMakePresets.json
+    ${PROJECT_SOURCE_DIR}/.clang-format ${PROJECT_SOURCE_DIR}/.clang-tidy)
+set_tests_properties(tests.citations PROPERTIES
+  LABELS "tests;tests.citations")
+galoot_expected_findings(${reference_fixtures}/citations_bad.expected
+  citations_bad_findings)
+add_test(NAME tools.test_references_citations_rejects
+  COMMAND ${expect_output} 1 ${citations_bad_findings}
+    -- ${test_references} citations ${reference_fixtures}/citations_bad)
+add_test(NAME tools.test_references_citations_accepts
+  COMMAND ${expect_output} 0
+    "3 files, none citing a project document or record"
+    -- ${test_references} citations ${reference_fixtures}/citations_good)
 galoot_expected_findings(${reference_fixtures}/markers_bad.expected
   markers_bad_findings)
 add_test(NAME tools.test_references_markers_rejects
@@ -387,4 +417,5 @@ set_tests_properties(
   tools.test_references_golden_helper_header
   tools.test_references_trace_rejects tools.test_references_trace_no_rows
   tools.test_references_trace_accepts
+  tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
