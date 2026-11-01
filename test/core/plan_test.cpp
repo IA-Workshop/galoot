@@ -2985,6 +2985,46 @@ TEST_CASE("unary_term gives the image of one blade") {
         term{.blade = top - 1U, .coefficient = -1});
 }
 
+namespace {
+
+// Whether generate_map, writing the right complements of the rigid(3) point
+// into Places places that start as `blank`, writes the images of the first
+// min(Places, 4) blades and leaves every other place as it was: right(e1) =
+// e234, right(e2) = -e134, right(e3) = e124, and right(e4) = -e123.
+template <std::size_t Places>
+constexpr bool writes_only_its_places() {
+  const plan_term blank{.a = 9, .b = 9, .out = 9, .coefficient = 9};
+  const std::array<plan_term, 4> images{
+      {
+          {.a = 0, .b = 0, .out = e234, .coefficient = 1},
+          {.a = 1, .b = 0, .out = e134, .coefficient = -1},
+          {.a = 2, .b = 0, .out = e124, .coefficient = 1},
+          {.a = 3, .b = 0, .out = e123, .coefficient = -1},
+      },
+  };
+  std::array<plan_term, Places> out{};
+  out.fill(blank);
+  generate_map(right_complement, 4, point.blades, out);
+  for (std::size_t k = 0; k < Places; ++k) {
+    if (out.at(k) != (k < images.size() ? images.at(k) : blank)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+} // namespace
+
+// Reference: contract: generate_map writes the first out.size() terms, so an
+// output one place shorter than the set gets only the first three images, and
+// one place longer keeps its last place unwritten
+static_assert(writes_only_its_places<3>() && writes_only_its_places<5>());
+TEST_CASE("generate_map writes only the places of its output") {
+  CHECK(writes_only_its_places<3>());
+  CHECK(writes_only_its_places<4>());
+  CHECK(writes_only_its_places<5>());
+}
+
 // Reference: contract: a mask listed twice in a set is not rejected, and
 // each place that lists it gets its own term, here right(e1) = e234 for +e1
 // and -e1 in rigid(3), which land on one position of the result, and a map
