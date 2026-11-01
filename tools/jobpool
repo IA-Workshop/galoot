@@ -2,8 +2,10 @@
 # Starts, stops, and inspects the machine-wide pool of build job slots, which
 # lets builds in several checkouts share the processors instead of each
 # running a job per CPU: a GNU Make FIFO jobserver held open by a transient
-# user service. The service outlives any one session, so a lost session
-# leaves the pool running until someone runs `tools/jobpool stop`.
+# user service. The service outlives any one session, but it stops itself
+# after it has had no client for the idle time (30 minutes by default), so a
+# lost session does not leave the pool running for good. A build started after
+# that needs `tools/jobpool ensure` first.
 #
 # A client is a process other than the service that holds the FIFO open;
 # Ninja holds it for its whole build. A client killed with SIGKILL never
@@ -12,15 +14,22 @@
 # replaced, so a restart under running builds serves them from the old pool
 # and new builds from the new one, up to twice the slots.
 #
-# Usage: tools/jobpool start [tokens]   start the pool (default 23 slots)
+# Usage: tools/jobpool start [tokens] [--idle MINUTES]
+#                                       start the pool (default 23 slots, idle
+#                                       stop after 30 minutes; 0 never stops)
+#        tools/jobpool ensure           start the pool with the defaults unless it is running
 #        tools/jobpool stop [--force]   remove the pool; refuses while a client holds it
 #        tools/jobpool status           show free slots, clients, and lost slots
 #        tools/jobpool env              print the MAKEFLAGS line for a shell
 set -u
 
-unit=galoot-jobserver
+# The unit name, the FIFO path, and the poll interval can be overridden, so
+# that a test can run a pool of its own beside the real one.
+unit=${JOBPOOL_UNIT:-galoot-jobserver}
 tokens_default=23
-fifo=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jobserver.fifo
+idle_default=30
+poll=${JOBPOOL_POLL_SECONDS:-30}
+fifo=${JOBPOOL_FIFO:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jobserver.fifo}
 
 free_slots() {
   python3 -I - "$fifo" <<'PY'
@@ -51,22 +60,86 @@ total_slots() {
     sed -n 's/.* \([0-9][0-9]*\) slots$/\1/p'
 }
 
+# Counts the processes that hold the FIFO open, other than the service's main
+# shell (pid $2) and its descendants: the clients that keep the pool alive.
+count_clients() {
+  python3 -I - "$1" "$2" <<'PY'
+import os, sys
+fifo, main = sys.argv[1], int(sys.argv[2])
+
+
+def parent(pid):
+    try:
+        with open(f"/proc/{pid}/stat") as f:
+            return int(f.read().rsplit(")", 1)[1].split()[1])
+    except OSError:
+        return 0
+
+
+count = 0
+for entry in os.listdir("/proc"):
+    if not entry.isdigit():
+        continue
+    try:
+        held = any(
+            os.readlink(f"/proc/{entry}/fd/{fd}") == fifo
+            for fd in os.listdir(f"/proc/{entry}/fd")
+        )
+    except OSError:
+        continue
+    if not held:
+        continue
+    pid = int(entry)
+    while pid > 1 and pid != main:
+        pid = parent(pid)
+    if pid != main:
+        count += 1
+print(count)
+PY
+}
+
+# The service body: makes the FIFO, fills it with $2 tokens, and then waits.
+# With an idle time of $3 minutes it exits, which removes the FIFO, once no
+# process but this one and its children has held the FIFO for that long. The
+# watcher closes descriptor 3, so its children are not mistaken for clients.
+serve() {
+  local fifo=$1 n=$2 idle=$3 poll=$4 quiet=$SECONDS
+  rm -f -- "$fifo"
+  mkfifo -m 600 -- "$fifo"
+  exec 3<>"$fifo"
+  printf "%*s" "$n" "" | tr " " "+" >&3
+  [[ $idle -gt 0 ]] || exec sleep infinity
+  while sleep "$poll" 3>&-; do
+    if [[ $(count_clients "$fifo" $$ 3>&-) -gt 0 ]]; then
+      quiet=$SECONDS
+    elif ((SECONDS - quiet >= idle * 60)); then
+      exit 0
+    fi
+  done
+}
+
 case ${1:-} in
-  start)
-    n=${2:-$tokens_default}
+  _serve) set -eu; serve "$2" "$3" "$4" "$5" ;;
+  _count_clients) count_clients "$2" "$3" ;;
+  start|ensure)
+    n=$tokens_default
+    idle=$idle_default
+    shift
+    while [[ $# -gt 0 ]]; do
+      case $1 in
+        --idle) idle=${2:-}; shift 2 || shift ;;
+        *) n=$1; shift ;;
+      esac
+    done
     [[ $n =~ ^[1-9][0-9]*$ ]] || { echo "tokens must be a positive integer" >&2; exit 2; }
+    [[ $idle =~ ^[0-9]+$ ]] || { echo "--idle takes a whole number of minutes (0 for never)" >&2; exit 2; }
     if running; then echo "already running: $(free_slots) of $(total_slots) slots free"; exit 0; fi
     systemctl --user reset-failed "$unit.service" 2>/dev/null
     systemd-run --user --quiet --unit="$unit" \
       --description="Galoot build job slots: $n slots" \
       -p ExecStopPost="/usr/bin/rm -f $fifo" \
-      /usr/bin/bash -c '
-        set -eu
-        rm -f -- "$1"
-        mkfifo -m 600 -- "$1"
-        exec 3<>"$1"
-        printf "%*s" "$2" "" | tr " " "+" >&3
-        exec sleep infinity' _ "$fifo" "$n" || exit 1
+      --setenv=JOBPOOL_IDLE_MINUTES="$idle" \
+      "$(readlink -f "$0")" _serve "$fifo" "$n" "$idle" "$poll" || exit 1
     for _ in 1 2 3 4 5 6 7 8 9 10; do [[ -p $fifo ]] && break; sleep 0.2; done
     [[ -p $fifo ]] || { echo "pool did not start; see: systemctl --user status $unit" >&2; exit 1; }
     echo "started: $(free_slots) slots free at $fifo"
@@ -89,10 +162,12 @@ case ${1:-} in
     ;;
   status)
     running || { echo "not running"; exit 1; }
+    idle=$(systemctl --user show "$unit.service" -p Environment --value | sed -n 's/.*JOBPOOL_IDLE_MINUTES=\([0-9]*\).*/\1/p')
     total=$(total_slots)
     free=$(free_slots)
     holding=$(clients)
     echo "running: $free of $total slots free at $fifo"
+    if [[ ${idle:-0} -gt 0 ]]; then echo "stops itself after ${idle} minutes without a client"; fi
     if [[ -n $holding ]]; then
       echo "clients: $(echo $holding)"
     elif [[ -n $total && $free -lt $total ]]; then
@@ -104,7 +179,7 @@ case ${1:-} in
     echo "export MAKEFLAGS=\"-j$((n + 1)) --jobserver-auth=fifo:$fifo\""
     ;;
   *)
-    echo "usage: tools/jobpool start [tokens] | stop [--force] | status | env" >&2
+    echo "usage: tools/jobpool start [tokens] [--idle MINUTES] | ensure | stop [--force] | status | env" >&2
     exit 2
     ;;
 esac
