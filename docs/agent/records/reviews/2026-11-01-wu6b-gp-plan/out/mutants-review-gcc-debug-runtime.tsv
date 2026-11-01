@@ -1,0 +1,26 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+r_make_capacity_one	gcc-debug	0	8	core.plan_overflow	killed	-	-	-
+r_make_capacity_two	gcc-debug	0	8	core.plan_overflow	killed	-	-	-
+r_range_or	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second	killed	-	-	-
+r_range_n_plus_one	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_range_skip_last	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_31	killed	-	-	-
+r_sign_check_or	gcc-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+r_guard_or	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_guard_range_only	gcc-debug	0	0	-	SURVIVED	-	-	-
+r_guard_signs_only	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_n_is_mask_bits	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_sign_second_from_first_place	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | gp_plan accepts the generators of the widest algebra	-
+r_sign_first_from_last_place	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+r_sign_negated	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra | Two uses of one plan read the same plan	-
+r_sign_by_equality	gcc-debug	0	0	-	SURVIVED	-	-	-
+r_write_at_k	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra | Two uses of one plan read the same plan	-
+r_fill_one_short	gcc-debug	1	-	-	killed	plan_test.cpp:342	-	test/core/plan_test.cpp:265:51: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 14>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+r_capacity_first_operand_only	gcc-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:69:32: error: unused variable ‘y’ [-Werror=unused-variable]
+r_capacity_ge	gcc-debug	0	0	-	SURVIVED	-	-	-
+r_defects_skip_first	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_defects_skip_last	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_order_numeric	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_order_new_a_needs_b	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_defects_sizes_swapped	gcc-debug	0	0	-	SURVIVED	-	-	-
+r_defects_n_widest	gcc-debug	0	0	-	SURVIVED	-	-	-
+r_count_plain	gcc-debug	0	0	-	SURVIVED	-	-	-

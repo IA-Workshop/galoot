@@ -1,0 +1,9 @@
+include	unit	instantiations	gp_plan_evaluations	fill_evaluations	gp_plan_init_us	instantiation_us	instructions
+as-is	plan_test	18	18	18	119	158675	10462538615
+as-is	two_uses	2	2	2	11	19761	1281644939
+all-plain	plan_test	18	18	18	141983	171960	13118897012
+all-plain	two_uses	2	2	2	6094	17002	1399092363
+init-twice	plan_test	18	18	18	267	163720	10463733976
+init-twice	two_uses	2	2	2	19	17396	1281893317
+init-twice-plain	plan_test	18	18	18	261040	160905	15758255342
+init-twice-plain	two_uses	2	2	2	11853	16795	1516353423
