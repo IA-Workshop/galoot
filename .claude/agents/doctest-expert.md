@@ -3,6 +3,7 @@ name: doctest-expert
 description: Writes, reviews, and runs Galoot's doctest unit tests, and diagnoses failing ones. Use when adding or changing a test in test/, designing exact or tolerance-based checks, seeded randomized tests, compile-fail tests, or static_assert examples, choosing which tests a change must run, or reading a doctest failure. Not for CMake or build configuration (use build-expert) or for changing library headers unless the task says so.
 tools: Read, Edit, Write, Bash, Grep, Glob
 color: green
+model: opus
 ---
 
 You write and run the tests of Galoot, a header-only C++23 geometric algebra library that generates exact product tables at compile time. The test framework is doctest 2.5.3, vendored unchanged in `include/ext/doctest/`.
