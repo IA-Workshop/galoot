@@ -657,6 +657,61 @@ target_sources(galoot_golden INTERFACE
 target_compile_features(galoot_golden INTERFACE cxx_std_23)
 set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 
+# The test-only rational scalar: an exact scalar whose values need not be
+# integers, which tests use as an oracle. It belongs to the tests, not the
+# library, so it does not link galoot::core. A test that needs it links this
+# target and includes <support/rational.hpp>; the header also compiles on its
+# own, in all_verify_interface_header_sets.
+add_library(galoot_test_support INTERFACE)
+target_sources(galoot_test_support INTERFACE
+  FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES support/rational.hpp)
+target_compile_features(galoot_test_support INTERFACE cxx_std_23)
+set_property(TARGET galoot_test_support
+  PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+
+# support.rational: hand values, the field identities on seeded random
+# fractions, equality against cross-multiplication, and results at the bounds
+# of std::int64_t.
+galoot_add_test(MODULE support COMPONENT rational)
+target_link_libraries(support_rational_test PRIVATE galoot_test_support)
+
+# support.rational_rejects_<case>: a result that does not fit, a zero
+# denominator, or a division by zero aborts at run time with its message, in
+# every preset, since the rational checks whatever the checking mode.
+add_executable(support_rational_overflow_fail support/rational_overflow_fail.cpp)
+target_link_libraries(support_rational_overflow_fail PRIVATE
+  galoot_test_support)
+set(rational_does_not_fit "rational: a result does not fit std::int64_t")
+foreach(case IN ITEMS add_above subtract_below multiply_above numerator_min)
+  add_test(NAME support.rational_rejects_${case}
+    COMMAND ${expect_output} "Subprocess aborted" ${rational_does_not_fit}
+      -- $<TARGET_FILE:support_rational_overflow_fail> ${case})
+  set_tests_properties(support.rational_rejects_${case} PROPERTIES
+    LABELS "support;support.rational")
+endforeach()
+add_test(NAME support.rational_rejects_zero_denominator
+  COMMAND ${expect_output} "Subprocess aborted"
+    "rational: the denominator is zero"
+    -- $<TARGET_FILE:support_rational_overflow_fail> zero_denominator)
+add_test(NAME support.rational_rejects_divide_by_zero
+  COMMAND ${expect_output} "Subprocess aborted" "rational: division by zero"
+    -- $<TARGET_FILE:support_rational_overflow_fail> divide_by_zero)
+set_tests_properties(support.rational_rejects_zero_denominator
+  support.rational_rejects_divide_by_zero PROPERTIES
+  LABELS "support;support.rational")
+
+# support.rational_consteval_<operation>: the same overflow ends a constant
+# evaluation, and the diagnostic shows the message through the line of the
+# failing call, which only that call names.
+foreach(operation IN ITEMS add multiply)
+  galoot_add_compile_fail_test(NAME rational_consteval_${operation}
+    MODULE support COMPONENT rational
+    SOURCE support/rational_consteval_${operation}_fail.cpp
+    MESSAGE "${rational_does_not_fit}"
+    REQUIRE rational_failed)
+endforeach()
+
 # reference.golden: the committed golden.hpp is byte for byte what golden.py
 # writes now, so a hand edit, or a header left stale after a change to the
 # reference scripts, fails. reference.golden_rejects shows that the check
