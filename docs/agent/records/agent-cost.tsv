@@ -64,3 +64,9 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0013	WU7 planner (math-expert role)	opus	321708	61	1103	reported by harness as subagent_tokens
 2026-11-01	plan-0013	WU7a implementer (cpp-expert role)	opus	630786	194	3426	reported by harness as subagent_tokens (cumulative across the review-fix round)
 2026-11-01	plan-0013	WU7a blind reviewer (W5)	opus	300144	79	1025	reported by harness as subagent_tokens
+2026-11-01	plan-0013	WU7b implementer (cpp-expert role), incl. review-fix rounds	opus	673511	286	0	reported by harness as subagent_tokens (cumulative over four resumptions; wall time not summed)
+2026-11-01	plan-0013	WU7b blind reviewer (W5)	opus	358413	112	1451	reported by harness as subagent_tokens
+2026-11-01	plan-0014	metric_like planner and implementer (cpp-expert role), incl. review-fix round	opus	360085	151	2567	reported by harness as subagent_tokens (cumulative)
+2026-11-01	plan-0014	metric_like blind reviewer (W5)	opus	238928	89	1745	reported by harness as subagent_tokens
+2026-11-01	research	metric_like cheaper-check proof (research/metric-like-proof)	opus	294043	89	1513	reported by harness as subagent_tokens
+2026-11-01	research	job pool generalization survey (research/jobpool-generalization)	opus	220486	103	1420	reported by harness as subagent_tokens
