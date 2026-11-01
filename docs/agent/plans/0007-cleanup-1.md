@@ -1,0 +1,18 @@
+# 0007 Cleanup 1: citations, gate hardening, test gaps, snippets review
+
+- Status: claimed; branch `feature/cleanup-1`, worktree `.claude/worktrees/cleanup-1`; decision numbers 0080 to 0089.
+- Goal: bring the files merged so far into line with the style ruling and the review findings that were deferred, so the next units start from a clean base, and close M0.
+- Scope:
+  1. Remove every citation of a governance provision or of agent work from human-facing files: `include/`, `test/` (sources, CMake, test names, comments, messages), `cmake/`, `CMakeLists.txt`, `CMakePresets.json`, `tools/` (comments and docstrings), and generated files. State the reason in place. The deliberate pointer text in the rejecting fixtures under `test/tools/test_references/` stays and is excluded from the new check.
+  2. `CMakePresets.json` names a path under `docs/agent` for the measurement presets' committed compile record. Propose and record a design that keeps agent paths out of build files (recommended: measurement presets write to the build tree, and a documented gate step copies the gate and measurement rows into the committed record), and implement it.
+  3. A mechanical check, run as a CTest over the human-facing files named above, that flags citations: decision, plan, research note, review, lesson, spike, workbench, and agent-name references, provision tokens with a document name, and the name of the conventions specification. It has a rejection test on fixtures that must exit 1 and an accepting case that exits 0, and it excludes the fixtures that hold deliberate text.
+  4. Trace gate hardening (review findings of the M0 delta): fail on a convention item that has no table row (D2); flag a table line with an extra `|`; evaluate Implemented per row and not per item; scan helper headers under `test/` for uses of golden values (D6); close the remaining pointer forms (D4); clear the lint nit (D7).
+  5. Recorder test gaps: a stand-in perf that records its `-e` list so the test checks `task-clock` is requested (R-N1); read the program once in the build-tree rule (R-N2); git failing, as opposed to missing (R-N3); a single blank line as a header (R-N5); the `cases` dict and docstring nits (R-N6).
+  6. Metric nits: a FORBID twin for `conformal<SIZE_MAX - 1>()` (R1), document that `;` splits FORBID literals or reject it (R3), reflow two comments (R5).
+  7. The snippets coalescing review for M0 and M1: survey the workbench, `docs/agent/records/spikes/`, and the unit scratch files; write `docs/agent/snippets/reviews/M0-M1.md` (reusable, duplicate, merge, delete, promote to `tools/` or `test/`); apply only moves inside the snippets directory.
+- Definition of done: every item above done with evidence, or reported as not done with the reason; the full suite passes on all seven presets; the new citation check passes on the tree; the trace gate passes and fails on its new rejection fixtures.
+- Acceptance criteria: (1) a grep of the human-facing files for the citation patterns returns nothing outside the excluded fixtures; (2) each new check has a rejection test that fails when the check is disabled (mutation shown); (3) no expected value of an existing test changes without a recorded reason; (4) commits keep W2 where a split is possible without a failing commit; (5) plan closed with its outcome and a verification and validation line.
+- Evidence: test output per preset, mutation runs, and the before and after greps.
+- Agent cost: tracked for information only (decision 0019).
+- Review: W5 blind review before the merge.
+- Open questions: item 2 is a design choice the unit proposes; it is recorded as a decision and the owner may reverse it.
