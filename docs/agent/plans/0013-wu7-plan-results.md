@@ -1,6 +1,6 @@
 # 0013 WU7: typed results, the operation parameter, unary maps, and conjugated plans
 
-- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). WU7a merged into `develop` on 2026-11-01 after its W5 review (Outcome and review fixes, WU7a, below). WU7b claimed 2026-11-01 on `feature/core-plan-maps` (implementer: Claude, agent, Opus 5.5). WU7b done on its branch 2026-11-01, awaiting its W5 review (Outcome, WU7b, below).
+- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). WU7a merged into `develop` on 2026-11-01 after its W5 review (Outcome and review fixes, WU7a, below). WU7b claimed 2026-11-01 on `feature/core-plan-maps` (implementer: Claude, agent, Opus 5.5). WU7b done on its branch 2026-11-01; W5 review accepted it after fixes, applied (W5 review fixes, WU7b, below).
 - Unit: WU7 of plan 0001, in two parts run one after the other: WU7a on branch `feature/core-plan-results` (worktree `.claude/worktrees/core-plan-results`), then WU7b on branch `feature/core-plan-maps` (worktree `.claude/worktrees/core-plan-maps`), branched from `develop` after WU7a merges. Each part has its own W5 review and merge. WU7b is claimed by a dated line in this plan when WU7a has merged (as plan 0011 did for WU6b).
 - Decision numbers 0110 to 0119. Plan 0012 claimed 0104 to 0109; 0108 and 0109 were not used, and are left alone so that no number has two claimants.
 - Goal: grow `include/galoot/core/plan.hpp` from "the geometric-product terms of two blade sets" into the data that every product and every per-blade operation of the core needs: a typed result (the blade set a result is stored on, and each term's position in it), one generator with an operation parameter (geometric product and wedge), unary maps (reverse, antireverse, grade involution, right and left complement) as per-blade sign and permutation data, the antiproducts as complement-conjugated plans, and a CTest that fails when a plan is generated twice in one translation unit.
@@ -507,3 +507,36 @@ Branch `kb/antiproduct-identity-proofs` (worktree `knowledge-base-worktrees/anti
 ### Next
 
 The W5 blind review of WU7b, which reruns the run-reversal and left-right-swap mutants; fixes in their own commits; a delta review of any core fix; then the merge, which the coordinator makes. Agent cost: about 200 tool calls; token counts are not visible to me.
+
+## W5 review fixes, WU7b (2026-11-01, Claude, agent, Opus 5.5, cpp-expert)
+
+The W5 review (`records/reviews/2026-11-01-wu7b-plan-maps.md`, blind-reviewer, Opus 5.5, head `50c7c70`, merged onto the branch at `4436186`) accepted WU7b after fixes. F1 to F5 are applied below. The outcome above is left as written; this section corrects it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. `1ec92a0` (F3) failed `tests.reference_markers` on gcc-debug and clang-debug: its marker stood above the new `static_assert`, leaving the test case below it without one. Its other tests passed. `7e5c369` gives the test case its own marker, and its message says so. Every other code or test commit of this pass was checked at itself on a clean tree.
+2. F4's measurement (`a133375`, `out/sparse-438dbc1-lock-held/`) ran while another workstream held the `math-tools` timing lock, which was still held after a 20-minute wait. It is pinned to CPU 10, labeled in its directory name, and is a ratio of retired instructions, which load does not change. I did not take the lock.
+3. F2 also suppresses the 6 findings that WU7a's readers had: a defect found outside this unit (W9), small and in scope, so fixed here.
+4. `8cb3409` (F4) changes a comment in `include/galoot/core/plan.hpp` and needs the delta review of decision 0094 item 3, which is not done here.
+5. Steps outside `tools/timed` (P13): `clang-format` and the Python syntax checks of the scripts.
+6. The outcome above is corrected by this section rather than edited in place, as for WU7a.
+
+### Findings and what was done
+
+| Finding | Commit | Result |
+| --- | --- | --- |
+| F1 the cause and class of the antiproduct's growth | `438dbc1` (decision 0116, correction section), this commit | the capacity is not a cause (the reviewer's capacity-1 copy: about 1%); the growth follows the route (products of complements of grade n − k through `blade_product`'s recursion) in a diagonal form whose pair results stay one term, so it is a C6 defect found, reported under P2 and decision 0005; the remedy (a pair rule whose cost follows the inputs' grades, such as one from the antimetric) waits for the owner's decision under C4 and is not built; the mathematics of it is on `research/antiproduct-growth`. Open question 2 of the outcome is corrected below |
+| F2 lint of the evaluation unit | `25c48df` (test) | one `NOLINTBEGIN/NOLINTEND(misc-use-internal-linkage)` block with its reason; 14 findings, 8 from WU7b and 6 from WU7a (a defect found outside the unit, W9, small and in scope, fixed here); clang-tidy by hand on the unit: 0 findings at `25c48df` |
+| F3 `generate_map` at its output bound | `1ec92a0`, `7e5c369` (test) | outputs of 3, 4, and 5 places for the 4-blade point, in a `static_assert` and at run time; `map_output_unbounded` (the review's M21) killed on gcc-debug and clang-debug in both modes at `2ad9ae9` (`results-2ad9ae9-*-F3.tsv`) |
+| F4 the sparse cost in `product_plan`'s comment | `a133375` (record), `8cb3409` (comment only) | "several times more" becomes the measured factors: 2.5 times on GCC 16 and 2.6 times on Clang 23 from n = 4 to n = 16 through the geometric antiproduct, against 1.2 and 1.1 through the geometric product (`measure_maps.py sparse` at `438dbc1`, three repeats). Listed for a delta review |
+| F5 the debug-size question | the merge of `develop` (`b48a797`, `develop` at `c4b2e70`, no conflicts; both sides' rows of `runs.tsv` kept), this commit | closed by the owner in decision 0118 (`f556ad8`): keep the `static constexpr` locals |
+
+### Open questions, corrected
+
+1. The GCC -O0 debug size of `static constexpr` locals: closed by decision 0118 (keep them). The `metric_like` P2 exception stays the owner's; plan 0014 (`feature/metric-like-single-pass`, not merged) addresses its cost.
+2. The geometric antiproduct's growth at fixed use (+268% on GCC, +463% on Clang from n = 4 to 16 for four rigid(3) pairs in R(n−1,0,1)) is a C6 defect found, not an open question of structure (decision 0116, correction). Its remedy waits for the owner's decision under C4; it does not block a merge (decision 0005), and the owner decides whether it blocks a release.
+3. Unchanged: the two Clang ceilings that depend on `_GLIBCXX_ASSERTIONS`.
+
+### Checks
+
+Each fix was checked at its own commit (affected selection on gcc-debug and clang-debug, the six cheap gates, clang-tidy of the touched targets, `format-check`). The P9 checks for the merge into `develop` ran at this commit: they are recorded, with their revision, in the commit that follows.
