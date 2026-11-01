@@ -35,3 +35,7 @@ My run: other work on CPU 10 or its sibling at most 0.02 s per compile, spread a
 
 - The P2 measurement of a fixed use should state whether its units evaluate the concept outside a constraint; with the `static_assert` in the baseline, GCC hides the check, and Clang shows one of the two evaluations it makes.
 - The plan's outcome is corrected in a dated section of plan 0012.
+
+## Note, 2026-11-01: item 4 is ruled
+
+Added by Claude (agent, Opus 5.5) in plan 0014; nothing above is changed. The owner ruled item 4 together with decision 0121 (its owner-ruling section, item 3): the growth that remains after `metric_like` reads the form in one pass, once per algebra and unit (about 11 M instructions from n = 4 to 16 on each compiler), is accepted as PERFORMANCE P2's exception for growth that follows from the signature data. Plan 0014 implements that pass and records the growth before and after.
