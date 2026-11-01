@@ -183,3 +183,24 @@ The delta review (`docs/agent/records/reviews/2026-10-31-wu3-metric-delta.md`, o
 Departures: the declared-only `metric<1>` tag sits outside the anonymous namespace, because Clang rejects a declared-only member with internal linkage, with one `misc-use-internal-linkage` suppression carrying its reason. The tests (`36f4d9f`, `64dc0ac`) and the code (`10aeff3`) are separate commits, so `36f4d9f` does not build (W9 over W2, as before). The `mask_t` redeclaration stays until WU2 is on `develop`.
 
 P9 at `10aeff3`: gcc-debug 3.51 s, gcc-release 3.57 s, gcc-asan 3.89 s, clang-debug 3.39 s, clang-release 3.42 s, clang-asan 3.60 s, lint 3.17 s; 31 of 31 in each; 24.5 s in total; header sets built on both debug presets. Marker check: 11 test cases marked; golden check passes; the trace gate passes (1.2 at `metric_test.cpp:213, 226`; 1.3 at `252, 288`; 1.4 at `275, 288, 319`).
+
+## Second delta review and the bits merge (2026-10-31, Claude, agent, Opus 5.5)
+
+The second delta review (`docs/agent/records/reviews/2026-10-31-wu3-metric-delta2.md`) says merge, with non-blocking findings N1 to N5. `develop` (`507a747` and a cost row; it brings `bits.hpp`, the recorder, the markers and trace gate, and the W5 changes) merged as `02e7093`. Conflicts, each resolved by keeping both sides: `include/galoot/core.hpp` (bits, then metric), the header set in `CMakeLists.txt` (assert, bits, metric), `test/CMakeLists.txt` (both units' blocks), and `docs/agent/records/convention-trace.md` (every `yes` kept: 1.1, 1.5, 2.1, 3.1 from bits; 1.2 to 1.4 from metric). The snippets README merged without conflict. Six old-format `build/*/compile.tsv` files of this worktree (gcc and clang debug, release, and asan), whose header lacked `pinned_other_s`, were listed and deleted; their figures are in the sections above.
+
+Item 1.1 (bit i - 1 of a blade mask stands for e_i) is pinned by the bits tests; the metric adds nothing to it.
+
+| Finding | Fix | Evidence |
+| --- | --- | --- |
+| mask_t | `metric.hpp` includes `bits.hpp` and bounds n by `mask_bits`; the redeclaration is gone (decision 0062) | P9 below |
+| N1 | `static_assert(golden::diagonal_signatures::nK.size() == splits_of(K))`, with (n + 1)(n + 2) / 2 splits, for K = 1 to 6 | a golden row dropped with its size adjusted: the build fails at the static_assert |
+| N2 | `FORBID <literal>...` in `test/expect_output.cmake` and the compile-fail helper; `core.metric_count_wrap_zero` forbids "at least one generator" for `R<SIZE_MAX, 0, 1>()`; `tools.expect_output_forbid` (WILL_FAIL) and `tools.expect_output_forbid_absent` test the option | R's `if constexpr` removed: the test fails with "output contains forbidden 'at least one generator'" |
+| N3 | accepted: one true message for a call that is wrong twice (decision 0062, item 2) | |
+| N4 | recorded here (history is not rewritten) | |
+| N5 | `.clang-tidy` says the correctness presets check std::array accesses; written-out values are marked "independent value" throughout; the from_gram and max_form_entry markers cover what their cases check; the change-of-basis test name says the signatures differ only at d = 3 | markers check: 28 test cases marked |
+
+N4, the state of earlier commits: `22983f6` fails the lint build (the conformal(0) basis initializers; fixed in `d9de465`). `708c5dc`, `36f4d9f`, and `64dc0ac` hold tests ahead of the header they judge and do not build. The message of `36f4d9f` says "the next commit makes it false"; the commit that does is `10aeff3`, after `64dc0ac`. The message of `64dc0ac` says Clang "rejects" the declared-only member; it is a warning (`-Wundefined-internal`) that `-Werror` turns into an error.
+
+P9 at `a01add5`: gcc-debug 4.47 s, gcc-release 4.40 s, gcc-asan 4.96 s, clang-debug 3.61 s, clang-release 4.39 s, clang-asan 4.46 s, lint 2.41 s; 57 of 57 in each; 28.7 s in total; header sets built on both debug presets. Marker check: 28 test cases marked; golden check passes; the trace gate passes (1.2 at `metric_test.cpp:218, 239`; 1.3 at `265, 301`; 1.4 at `288, 301, 332`; bits' items 1.1, 1.5, 2.1, 3.1 pinned by `bits_test.cpp`).
+
+Still open: the three-size cost of `metric_like` (review N11), for WU17.
