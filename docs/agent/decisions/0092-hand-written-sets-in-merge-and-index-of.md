@@ -40,3 +40,7 @@ The review of the fix commits (`docs/agent/records/reviews/2026-10-31-unreviewed
    - FORBID "twice" on `core.blade_set_index_of_absent`.
    - 300 seeded random merges and lookups.
 4. `index_of` now checks the signs once per set and scans only after the position found for a repeat (decision 0093). The rules it checks are unchanged: the signs, and that the looked-up mask appears once.
+5. Mutants of the fixed header found three more gaps on both compilers, each closed in this unit:
+   - Dropping the shift of the first input's flags survived, because no test repeated a mask in the first input with an insertion between the two listings. `core.blade_set_merge_repeated_after_shift` (e2 e1 e2) now kills it.
+   - Starting the repeat scan two places on survived, because the existing test's repeat was two places away. `core.blade_set_index_of_repeated_adjacent` (e2 e1 e1) now kills it.
+   - Removing the guard that ran the repeat check only for a present mask survived. For an absent mask the position found is the size of the set, and the scan starts after it, so the guard had no effect. Unlike `e191731`, this conclusion rests on reading the loop bounds, not on the survivor alone. The guard is removed in `3cda375`, and `core.blade_set_index_of_absent`, which forbids "twice", still gives its one message on both compilers.
