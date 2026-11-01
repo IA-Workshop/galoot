@@ -178,6 +178,117 @@ struct lookalike {
   static constexpr lookalike_metric value{written({{1, 0}, {0, 1}})};
 };
 
+// A value reached through a reference is read like any other.
+constexpr core::metric<2> plane = core::R<2, 0, 0>();
+struct by_reference {
+  static constexpr const core::metric<2>& value = plane;
+};
+// A constant reference to a metric that is not constant: the reference can
+// be named at compile time, but no entry of the metric can be read.
+// NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
+core::metric<2> runtime_plane = core::R<2, 0, 0>();
+struct by_reference_to_runtime {
+  static constexpr const core::metric<2>& value = runtime_plane;
+};
+// The same with one generator, whose only entry is a square.
+// NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
+core::metric<1> runtime_line = core::R<1, 0, 0>();
+struct by_reference_to_runtime_1 {
+  static constexpr const core::metric<1>& value = runtime_line;
+};
+// A metric passed as a template argument, named by a reference member.
+template <core::metric<3> M>
+struct from_parameter {
+  static constexpr const auto& value = M;
+};
+
+// The widest metric a blade mask allows, with the entry in the last row and
+// first column changed, so that only its last pair of entries disagrees.
+constexpr core::metric<mask_width> broken_corner() {
+  auto m = core::R<mask_width, 0, 0, mask_width>();
+  m.gram[mask_width - 1][0] = 1;
+  return m;
+}
+struct widest_broken {
+  static constexpr auto value = broken_corner();
+};
+
+// The six values that the exhaustive checks below draw entries from: two
+// below -max_form_entry, the two bounds of the range, and two above
+// max_form_entry. Whether a matrix meets the requirement depends on each
+// entry only through which of those three classes it falls in and whether it
+// equals its mirrored entry. Two values in each class give every pattern of
+// classes and equalities that an int matrix can have, so a check that agrees
+// with the requirement on all matrices over these values agrees on all int
+// matrices of that size.
+constexpr core::entry_type bound = core::max_form_entry;
+constexpr std::array<core::entry_type, 6> sample_entries{
+    std::numeric_limits<core::entry_type>::min(),
+    -bound - 1,
+    -bound,
+    bound,
+    bound + 1,
+    std::numeric_limits<core::entry_type>::max()};
+
+// The number of N x N matrices over sample_entries, 6^(N * N).
+template <std::size_t N>
+constexpr std::size_t sample_count() {
+  std::size_t count = 1;
+  for (std::size_t k = 0; k < N * N; ++k) {
+    count *= sample_entries.size();
+  }
+  return count;
+}
+
+// Matrix number k over sample_entries: entry k_ij is digit i * N + j of k in
+// base 6.
+template <std::size_t N>
+constexpr core::metric<N> sample_metric(std::size_t k) {
+  core::metric<N> m{};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      m.gram[i][j] = sample_entries[k % sample_entries.size()];
+      k /= sample_entries.size();
+    }
+  }
+  return m;
+}
+
+// The requirement on a metric, read over every position: each entry within
+// max_form_entry in magnitude, and equal to its mirrored entry.
+template <std::size_t N>
+constexpr bool meets_requirement(const core::metric<N>& m) {
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      const core::entry_type g = m.gram[i][j];
+      if (g != m.gram[j][i] || g < -bound || g > bound) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+template <std::size_t N, std::size_t K>
+struct sampled {
+  static constexpr core::metric<N> value = sample_metric<N>(K);
+};
+
+// The number of matrices over sample_entries on which metric_like and the
+// requirement disagree, and the number metric_like accepts.
+template <std::size_t N, std::size_t... K>
+consteval int concept_disagreements(std::index_sequence<K...> /*matrices*/) {
+  return ((core::metric_like<sampled<N, K>> ==
+                   meets_requirement(sample_metric<N>(K))
+               ? 0
+               : 1) +
+          ... + 0);
+}
+template <std::size_t N, std::size_t... K>
+consteval int concept_accepted(std::index_sequence<K...> /*matrices*/) {
+  return ((core::metric_like<sampled<N, K>> ? 1 : 0) + ... + 0);
+}
+
 // metric_like accepts a tag that carries a valid metric of any n up to the
 // width of a blade mask, whatever bound its factory used, and is false for
 // every other type: no value, a value that is not a metric or only looks like
@@ -200,6 +311,34 @@ static_assert(!core::metric_like<member_value_1>);
 static_assert(!core::metric_like<asymmetric>);
 static_assert(!core::metric_like<entry_too_large>);
 static_assert(!core::metric_like<no_generators>);
+
+// Whether a value can be read at compile time does not depend on how it is
+// reached: through a reference to a constant metric, or as a template
+// argument, it can; through a reference to a metric that is not constant it
+// cannot, and the concept is false rather than an error.
+static_assert(core::metric_like<by_reference>);
+static_assert(core::metric_like<from_parameter<core::conformal<1>()>>);
+static_assert(!core::metric_like<by_reference_to_runtime>);
+static_assert(!core::metric_like<by_reference_to_runtime_1>);
+
+// An asymmetry in the last pair of the widest metric is found.
+static_assert(!core::metric_like<widest_broken>);
+
+// On every matrix of one and two generators over sample_entries, the concept
+// agrees with the requirement. A matrix meets it exactly when each diagonal
+// entry is one of the two values in range and each mirrored pair holds one
+// value in range twice, which is 2^(n(n + 1) / 2) matrices: 2 of the 6 for
+// n = 1 and 8 of the 1296 for n = 2.
+static_assert(sample_count<1>() == 6);
+static_assert(sample_count<2>() == 1296);
+static_assert(concept_disagreements<1>(
+                  std::make_index_sequence<sample_count<1>()>()) == 0);
+static_assert(concept_disagreements<2>(
+                  std::make_index_sequence<sample_count<2>()>()) == 0);
+static_assert(
+    concept_accepted<1>(std::make_index_sequence<sample_count<1>()>()) == 2);
+static_assert(
+    concept_accepted<2>(std::make_index_sequence<sample_count<2>()>()) == 8);
 
 // A metric is a structural, trivially copyable aggregate, so it can be a
 // template argument and copied as plain data.

@@ -251,6 +251,15 @@ galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
   MESSAGE "metric: n is larger than the number of bits in a blade mask"
   REQUIRE "static assertion failed")
 
+# core.metric_like_no_generators: a tag whose metric has no generators fails
+# metric_like, and the diagnostic names the generator count, not a later
+# requirement that would also fail.
+galoot_add_compile_fail_test(NAME metric_like_no_generators
+  MODULE core COMPONENT metric
+  SOURCE core/metric_like_no_generators_fail.cpp
+  MESSAGE "generator_count"
+  REQUIRE "metric_like")
+
 # tools.expect_output_forbid: a forbidden literal in the output fails the
 # check, which WILL_FAIL turns into a pass; its twin passes because the
 # literal is absent.
