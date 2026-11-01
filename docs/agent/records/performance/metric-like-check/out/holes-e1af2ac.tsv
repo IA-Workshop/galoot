@@ -1,0 +1,75 @@
+probe	tree	macro	compiler	compiles	first error
+hand_aggregate	base	-	g++	True	
+hand_aggregate	type	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/hand_aggregate.cpp:10:15: error: static assertion failed
+hand_aggregate	single	-	g++	True	
+hand_aggregate	cached	-	g++	True	
+hand_aggregate	cached-flat	-	g++	True	
+mutated_copy	base	-	g++	True	
+mutated_copy	type	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/mutated_copy.cpp:15:15: error: static assertion failed
+mutated_copy	single	-	g++	True	
+mutated_copy	cached	-	g++	True	
+mutated_copy	cached-flat	-	g++	True	
+forged_by_bit_cast	base	-	g++	True	
+forged_by_bit_cast	type	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/forged_by_bit_cast.cpp:15:15: error: static assertion failed
+forged_by_bit_cast	single	-	g++	True	
+forged_by_bit_cast	cached	-	g++	True	
+forged_by_bit_cast	cached-flat	-	g++	True	
+specialized	base	-	g++	True	
+specialized	type	-	g++	True	
+specialized	single	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:21: error: static assertion failed
+specialized	cached	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:21: error: static assertion failed
+specialized	cached-flat	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:21: error: static assertion failed
+specialized_data	base	-	g++	True	
+specialized_data	type	-	g++	True	
+specialized_data	single	-	g++	True	
+specialized_data	cached	-	g++	True	
+specialized_data	cached-flat	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized_data.cpp:33:21: error: static assertion failed
+const_class_member	-	-	g++	True	
+forged_by_memcpy	-	-	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/forged_by_memcpy.cpp:18:19: error: ‘void* __builtin_memcpy(void*
+sealed	-	-	g++	True	
+sealed	-	TRY_AGGREGATE	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:72:54: error: no matching function for call to ‘seale
+sealed	-	TRY_CONSTRUCTOR	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:78:34: error: ‘consteval sealed_metric<N>::sealed_met
+sealed	-	TRY_MUTATION	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:84:16: error: assignment of read-only location ‘m.sea
+sealed	-	TRY_ASSIGNMENT	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:92:7: error: use of deleted function ‘sealed_metric<2
+sealed_pointer	-	-	g++	True	
+sealed_pointer	-	TRY_BIT_CAST	g++	False	/usr/include/c++/16/bit:96:33: error: ‘__builtin_bit_cast’ is not a constant expression because ‘sealed_metric<2>’ contains a pointer type
+wrapped	-	-	g++	True	
+wrapped	-	TRY_INVALID	g++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/wrapped.cpp:17:57: error: static assertion failed: signature: th
+wrapped	-	TRY_SPECIALIZED	g++	True	
+hand_aggregate	base	-	clang++	True	
+hand_aggregate	type	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/hand_aggregate.cpp:10:15: error: static assertion failed due to 
+hand_aggregate	single	-	clang++	True	
+hand_aggregate	cached	-	clang++	True	
+hand_aggregate	cached-flat	-	clang++	True	
+mutated_copy	base	-	clang++	True	
+mutated_copy	type	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/mutated_copy.cpp:15:15: error: static assertion failed due to re
+mutated_copy	single	-	clang++	True	
+mutated_copy	cached	-	clang++	True	
+mutated_copy	cached-flat	-	clang++	True	
+forged_by_bit_cast	base	-	clang++	True	
+forged_by_bit_cast	type	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/forged_by_bit_cast.cpp:15:15: error: static assertion failed due
+forged_by_bit_cast	single	-	clang++	True	
+forged_by_bit_cast	cached	-	clang++	True	
+forged_by_bit_cast	cached-flat	-	clang++	True	
+specialized	base	-	clang++	True	
+specialized	type	-	clang++	True	
+specialized	single	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:15: error: static assertion failed
+specialized	cached	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:15: error: static assertion failed
+specialized	cached-flat	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized.cpp:25:15: error: static assertion failed
+specialized_data	base	-	clang++	True	
+specialized_data	type	-	clang++	True	
+specialized_data	single	-	clang++	True	
+specialized_data	cached	-	clang++	True	
+specialized_data	cached-flat	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/specialized_data.cpp:33:15: error: static assertion failed
+const_class_member	-	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/const_class_member.cpp:16:15: error: static assertion failed due
+forged_by_memcpy	-	-	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/forged_by_memcpy.cpp:21:18: error: constexpr variable 'forged' m
+sealed	-	-	clang++	True	
+sealed	-	TRY_AGGREGATE	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:72:28: error: no matching constructor for initializat
+sealed	-	TRY_CONSTRUCTOR	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:76:28: error: calling a private constructor of class 
+sealed	-	TRY_MUTATION	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:84:16: error: cannot assign to non-static data member
+sealed	-	TRY_ASSIGNMENT	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed.cpp:92:5: error: object of type 'sealed_metric<2>' cannot
+sealed_pointer	-	-	clang++	True	
+sealed_pointer	-	TRY_BIT_CAST	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/sealed_pointer.cpp:66:16: error: constexpr variable 'forged' mus
+wrapped	-	-	clang++	True	
+wrapped	-	TRY_INVALID	clang++	False	/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/metric-like-proof/docs/agent/records/performance/metric-like-check/holes/wrapped.cpp:17:43: error: static assertion failed due to require
+wrapped	-	TRY_SPECIALIZED	clang++	True	
