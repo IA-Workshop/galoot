@@ -614,14 +614,19 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// The counts below are exact for Clang 23.1, whose classic constant
 /// evaluator allows 1,048,576 steps by default, and for GCC 16.2, which
 /// allows 33,554,432 operations, each with libstdc++ 16 and
-/// _GLIBCXX_ASSERTIONS defined. GCC's counts are taken with its cache of
-/// constant calls turned off; with the cache on, as GCC builds by default,
-/// the count is never higher, so a GCC count over the limit does not mean
-/// that the plan fails to build. Without _GLIBCXX_ASSERTIONS, libstdc++
-/// checks each subscript through a function call, which costs Clang more
-/// steps, and another compiler version, evaluator, or standard library
-/// counts differently. For full<n> with full<n>, in steps on Clang and
-/// operations on GCC:
+/// _GLIBCXX_ASSERTIONS defined, which libstdc++ 16 defines by itself in a
+/// build without optimization unless _GLIBCXX_NO_ASSERTIONS is defined.
+/// GCC's counts are taken with its cache of constant calls turned off; with
+/// the cache on, as GCC builds by default, the count is never higher, so a
+/// GCC count over the limit does not mean that the plan fails to build.
+/// Without _GLIBCXX_ASSERTIONS, libstdc++ checks each subscript through a
+/// function call, which both compilers count as more; GCC's sanitizers add
+/// checks that GCC counts too, about 2% to 4% more; and another compiler
+/// version, evaluator, or standard library counts differently. The counts are
+/// those of the plan's own evaluations: a translation unit also evaluates
+/// other things, such as the check of an algebra's metric, done once for each
+/// algebra. For full<n> with full<n>, in steps on Clang and operations on
+/// GCC:
 /// - geometric product, R(n,0,0): n = 5, 655,239 and 3,611,426; n = 6,
 ///   5,110,503 (over Clang's limit) and 25,853,002; n = 7, 203,069,770 on
 ///   GCC (over its limit).
@@ -641,7 +646,8 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// e1 e_n} with {e1, e2, e_n} in R(n-1,0,1) cost 3,136 steps and 18,252
 /// operations at every n from 4 to 16 through the geometric product, and
 /// 9,137 and 49,347 at n = 4 but 77,513 and 443,211 at n = 16 through the
-/// geometric antiproduct.
+/// geometric antiproduct. At n = 16 the check of the algebra's metric costs
+/// more than the geometric product's plan of these sets.
 /// Guarantees: generated once in each translation unit for each Op, Alg, A,
 /// and B that it uses, because the generator keeps its steps in static
 /// constexpr locals (checked on Clang, where plain locals would generate it
