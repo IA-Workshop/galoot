@@ -370,3 +370,40 @@ Branch `kb/constant-evaluation-memoization` of the knowledge base (worktree `kno
 ### Next
 
 The W5 blind review of WU7a (it reruns the wedge shared-generator and result-order mutants and runs the evaluation check against a plain-locals copy); fixes in their own commits; a delta review of any core fix; then the merge, which the coordinator makes. WU7b is claimed by a dated line here after that merge. Agent cost: about 200 tool calls; token counts are not visible to me.
+
+## W5 review fixes, WU7a (2026-11-01, Claude, agent, Opus 5.5, cpp-expert)
+
+The W5 review (`records/reviews/2026-11-01-wu7a-plan-results.md`, blind-reviewer, Opus 5.5, head `0607515`) accepted WU7a after fixes. F1 to F5 are applied below; F6 is the owner's and is not acted on here. The outcome above is left as written; this section corrects it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. Correction of the outcome's departure 4 (F1). It said lint and format-check failed at `7818335` and passed from `04c12c1`. The review built each commit from its committed tree: `format-check` failed at `3bca0e6`, `9430423`, `0fce606`, and `7818335` (the layout of `pair_capacity`, `plan.hpp:90` and `:91`) and passes from `38f2b30`; clang-tidy (the lint preset's `all`) failed at `9430423`, `0fce606`, and `7818335` (the cast false positive at the `product_plan` line, and at `7818335` also trailing commas in `plan_test.cpp`) and at `38f2b30` (the trailing commas), and passes from `04c12c1`; at `3bca0e6` clang-tidy passes. Two commit messages are wrong in the same way and stay as history: `3bca0e6` reports lint of the header sets only, where the cast finding does not appear, and `38f2b30` says lint and format-check "pass here", while lint does not pass there. Every commit builds and passes its full suite on gcc-debug and clang-debug (the review's table), so the units' tests held at each step; the mechanical checks did not.
+2. F2 is killed first by a compiler warning. The mutant `wedge_range_shift` fails the build by `-Wshift-count-overflow` at the wedge's instantiation for N = 32, which only the new test case creates; with that warning off, both compilers still reject the new test's plan in its constant evaluation (`records/mutations/0013-plan-results/survivors.md`, "After the W5 review").
+3. F4 is taken by extending the test, not by recording a reading.
+4. F5 changes comments of `include/galoot/core/plan.hpp` (`0098409`), so it needs the delta review of decision 0094 item 3; not done here.
+5. The reviewer's worktree `.claude/worktrees/review-wu7a` is left in place, as the coordinator instructed.
+
+### Findings and what was done
+
+| Finding | Commit | Result |
+| --- | --- | --- |
+| F1 record of the mechanical checks | this commit | item 1 above |
+| F2 the wedge at the widest algebra | `7d63026` (test) | "The wedge plan accepts the generators of the widest algebra": R(32,0,0), {e1, −e32}, result (e1,32 with +1), terms (0, 1, 0, −1) and (1, 0, 0, +1), and a run-time count of 2. `wedge_range_shift` killed on gcc-debug and clang-debug in both modes at `d4bcb8d` (item 2) |
+| F3 one-sided bounds | `f06d035` (test) | result signs 0 and 2 in the bound test of the typed checks; a test case of `pair_capacity` (wedge 1 for disjoint, shared, and scalar pairs; product 2, 8, and 1). `result_sign_negative_only` and `wedge_capacity_zero` killed on both compilers in both modes at `d4bcb8d` |
+| F4 run time for every form of criterion 4 | `d4bcb8d` (test) | "product_plan equals its typing run at run time" now covers R(4,0,0), R(1,3,0), conformal(2) (`full<4>`), and the degenerate form (`full<3>`), both operations, on metrics read through `volatile`, beside rigid(3). Criterion 4 is met in full |
+| F5 two comments | `0098409` (comments only) | the result set is exactly the blades that can be nonzero for a scalar type in which no nonzero integer vanishes; generating once per unit comes from the generator's static locals, checked on Clang only |
+| F6 header cost and ceiling | none | for the owner (open question 3 of the outcome) |
+
+Mutation records: `results-d4bcb8d-<preset>[-runtime]-review.tsv` and the section added to `survivors.md` (`32e600e`).
+
+### Checks per commit
+
+- `7d63026`: `core_plan_test` and `core.plan` with the `tests` label on gcc-debug (17 of 17), clang-debug (18 of 18), and lint (`core.plan`, 13 of 13, clang-tidy of `core_plan_test` clean).
+- `f06d035`: the same on gcc-debug (17 of 17) and clang-debug (`core.plan`, 13 of 13).
+- `d4bcb8d`: gcc-debug (17 of 17), clang-debug and lint (`core.plan`, 13 of 13 each).
+- `0098409`: `all`, the header sets, and `format-check` on gcc-debug with `core.plan`, `core.smoke`, `core.headers`, `tests`, `reference` (22 of 22); clang-debug the same with `tools.evaluated_once` (26 of 26); lint the header sets and `core_plan_test` (15 of 15).
+- The four W5 checks at the final head are in the report of this pass and in the merge message.
+
+### Next
+
+The delta review of `0098409` (comments of `plan.hpp`) and of the three test commits; then the merge, which the coordinator makes. The agent-cost row is the coordinator's.
