@@ -5,7 +5,8 @@ before the tests, because CTest runs whatever program is on disk."""
 import subprocess
 import sys
 
-ROOT = "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/core-blade-set"
+ROOT = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                      capture_output=True, text=True, check=True).stdout.strip()
 HEADER = f"{ROOT}/include/galoot/core/blade_set.hpp"
 
 MUTATIONS = [
@@ -54,6 +55,16 @@ MUTATIONS = [
      "static_assert(std::cmp_less_equal(K, N),"),
     ("name_assert", "GALOOT_ASSERT(compact,", "GALOOT_ASSERT(true || compact,"),
     ("name_digit", "static_cast<char>('1' + bit)", "static_cast<char>('0' + bit)"),
+    ("merge_sign_check", "u.bad_sign = u.bad_sign || !is_sign(blade.sign);",
+     "u.bad_sign = u.bad_sign || false;"),
+    ("merge_repeat_check", "        u.repeated_mask = true;\n",
+     "        u.repeated_mask = false;\n"),
+    ("index_sign_check", "found.bad_sign = found.bad_sign || !is_sign(blade.sign);",
+     "found.bad_sign = found.bad_sign || false;"),
+    ("index_repeat_check", "static_assert(found.count <= 1,", "static_assert(found.count <= 2,"),
+    ("widest_count", "  return N >= 1 && N <= mask_bits;", "  return N >= 1 && N < mask_bits;"),
+    ("names_above_9_tail", "\"are read only for n up to 9, and a larger algebra takes \"",
+     "\"are read only for n up to 9, and a larger algebra needs \""),
     ("separator", "while (at < text.size() && text[at] == ' ') {",
      "while (false && at < text.size() && text[at] == ' ') {"),
 ]
@@ -67,7 +78,8 @@ def main():
     preset = sys.argv[1]
     only = set(sys.argv[2:])
     original = open(HEADER, encoding="utf-8").read()
-    print("mutation\tpreset\tbuild_exit\ttest_exit\tfailed_tests\tkilled")
+    print("mutation\tpreset\tbuild_exit\ttest_exit\tfailed_tests\tkilled\t"
+          "first_build_error")
     try:
         for name, anchor, replacement in MUTATIONS:
             if only and name not in only:
@@ -83,9 +95,14 @@ def main():
             failed = [line.split(" - ")[1].split()[0]
                       for line in test.stdout.splitlines() if " - core." in line]
             killed = build.returncode != 0 or test.returncode != 0
+            # Why the build failed, so that a kill by a broken build can be
+            # told apart from a kill by the tests.
+            errors = [line for line in build.stdout.splitlines()
+                      if "error:" in line]
+            first_error = errors[0].split(ROOT + "/")[-1] if errors else "-"
             print(f"{name}\t{preset}\t{build.returncode}\t{test.returncode}\t"
-                  f"{','.join(failed) or '-'}\t{'killed' if killed else 'SURVIVED'}",
-                  flush=True)
+                  f"{','.join(failed) or '-'}\t{'killed' if killed else 'SURVIVED'}"
+                  f"\t{first_error[:200]}", flush=True)
     finally:
         with open(HEADER, "w", encoding="utf-8") as f:
             f.write(original)

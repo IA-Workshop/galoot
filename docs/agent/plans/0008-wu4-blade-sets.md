@@ -103,16 +103,19 @@ Rejections, each a CTest labeled `core.blade_set` that runs on every preset and 
 | Tests per preset | 57 | 79 |
 | CTest time, gcc-debug / gcc-release / gcc-asan | 3.27 / 3.06 / 3.23 s | 11.27 / 9.23 / 9.45 s (`core.blade_set` label 7.52 / 6.51 / 6.89 s) |
 | CTest time, clang-debug / clang-release / clang-asan / lint | 3.29 / 3.17 / 3.05 / 1.49 s | 9.54 / 9.34 / 10.06 / 6.56 s |
-| `smoke_test.cpp` (includes `core.hpp`), gcc-debug | 0.194 s, 78,720 KiB, 0.842 G instructions | 0.200 s, 78,484 KiB, 0.871 G |
-| `smoke_test.cpp`, clang-debug | 0.211 s, 117,932 KiB, 0.643 G | 0.184 s, 117,692 KiB, 0.644 G |
-| `blade_set_test.cpp`, gcc-debug / -release / -asan | new | 0.75 / 1.14 / 1.63 s; 226 / 225 / 286 MiB; 8.1 / 10.3 / 16.8 G |
-| `blade_set_test.cpp`, clang-debug / -release / -asan | new | 1.15 / 1.25 / 1.43 s; 175 / 178 / 187 MiB; 18.9 / 19.5 / 21.3 G |
+| `smoke_test.cpp` (includes `core.hpp`), gcc-debug | 0.201 s, 68,992 KiB, 0.651 G instructions | 0.200 s, 78,484 KiB, 0.885 G (+36%) |
+| `smoke_test.cpp`, clang-debug | 0.128 s, 113,732 KiB, 0.480 G | 0.184 s, 117,692 KiB, 0.650 G (+35%) |
+| `#include <galoot/core.hpp>` alone, reviewer's measurement at f9441f7 | GCC 0.488 G, 59 MB; Clang 0.378 G, 103 MB | GCC 0.721 G, 70 MB (+48%); Clang 0.548 G, 107 MB (+45%) |
+| `blade_set_test.cpp`, gcc-debug | new | 0.75 s; 226 MiB; 8.17 G |
+| `blade_set_test.cpp`, clang-debug | new | 1.15 s; 175 MiB; 18.88 G |
 
-A Clang time trace of `blade_set_test.cpp` puts most of its cost in the exhaustive sweeps of the test: the grade-pair merges at n = 6 (140 ms), the 512-name list at n = 9 (137 ms), and the subset pairs at n = 2 (78 ms). The header's own parse of that list takes 32 ms. Clang first exceeded its constant-evaluation step limit when the test re-sorted its reference list for every grade pair. The test now sorts it once per n, in a variable template. At the base revision, the gcc-debug and clang-debug compile records hold a second, cheaper `smoke_test.cpp` row (0.47 G and 0.35 G instructions), unexplained; the table uses the row from the same workflow step as the after figure. The workflow wall times in `runs.tsv` are not compared: the before runs were clean builds and the after runs incremental.
+Corrected after the W5 review (finding B1). The first version of this table took its before rows from `2976dcafb8e0-dirty` compiles, which already included the uncommitted blade set header. So its "before" was an after. It also counted only instructions retired on performance cores. Each figure is now the sum over both kinds of core, which does not depend on where the compile ran. Instruction counts for the release and asan presets were dropped for the same reason, because they were performance-core counts only.
+
+A Clang time trace of `blade_set_test.cpp` puts most of its cost in the exhaustive sweeps of the test: the grade-pair merges at n = 6 (140 ms), the 512-name list at n = 9 (137 ms), and the subset pairs at n = 2 (78 ms). The header's own parse of that list takes 32 ms. Clang first exceeded its constant-evaluation step limit when the test re-sorted its reference list for every grade pair. The test now sorts it once per n, in a variable template. At the base revision, the gcc-debug and clang-debug compile records hold two `smoke_test.cpp` rows. The cheaper one, revision `2976dcafb8e0`, is the true before. The other, `2976dcafb8e0-dirty`, was compiled after `core.hpp` had begun to include the new header (corrected after the review; first reported here as unexplained). Most of the rise is `<string_view>`, which the header includes: the base plus `<string_view>` alone costs 0.665 G on GCC and 0.518 G on Clang, and the blade set code about 0.03 G (reviewer's measurement). The workflow wall times in `runs.tsv` are not compared: the before runs were clean builds and the after runs incremental.
 
 ### Verification and validation
 
-Verification: performed and passed. The blade sets, order, parser, and names are checked exhaustively against definitions written in the test (n up to 6, names up to 9), and against golden values from `test/reference/`, on both compilers in every preset. Every test was shown able to fail by mutation. Validation: performed for the oriented names of rigid(3), compared with Lengyel's names through the golden list (CONVENTIONS 1.6, Confirmed), and passed; not otherwise applicable to a storage layout.
+Verification: performed and passed. The blade sets, order, parser, and names are checked exhaustively against definitions written in the test (n up to 6, names up to 9), and against golden values from `test/reference/`, on both compilers in every preset. Every doctest case and every rejection test was shown able to fail by mutation. The namespace-scope `static_assert`s that a set is an aggregate and trivially copyable were not mutated (corrected after the review, finding N7). Validation: performed for the oriented names of rigid(3), compared with Lengyel's names through the golden list (CONVENTIONS 1.6, Confirmed), and passed; not otherwise applicable to a storage layout.
 
 ### Open
 

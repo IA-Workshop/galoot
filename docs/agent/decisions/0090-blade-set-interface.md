@@ -25,3 +25,18 @@ Plan 0008 fixes the content of `include/galoot/core/blade_set.hpp` in outline: `
 - Later units (the plan generator, `mv`) take blade sets as `template <blade_set S>` and read `S.blades`. A user names a set with `blades<4, "e41 e42 e43 e23 e31 e12">`; `blades<rga3, ...>` with an algebra tag is not provided, because no unit uses it yet.
 - `index_of` costs one variable template instantiation per (set, mask) pair. If a later unit needs many lookups, a `constexpr` position function over values can serve it, with the compile-time error moved to the caller's concept (`has_blade`, decision 0033).
 - Test cost (track-only): `blade_set_test.cpp` compiles in about 0.7 s (GCC) and 1.1 s (Clang) at -O0, dominated by the exhaustive sweeps in the test, not by the header (Clang time trace, plan 0008 record).
+
+## Note after the W5 review (2026-10-31)
+
+Added after the W5 review (`docs/agent/records/reviews/2026-10-31-wu4-blade-sets.md`); the record above is unchanged.
+
+- Item 1: the reviewer compiled the planned spelling. A consteval function returning `blade_set<count_names(text)>` fails on both compilers: GCC says "not a constant expression", and Clang "non-type template argument is not a constant expression". The "inferred" there is now checked by the reviewer. The reviewer also found no other C++23 spelling that keeps `blades<N>(...)`, and would keep `blades<N, "...">`.
+- Item 2: `make_merge` and `make_index_of` return no placeholder after a failed check, because their result type does not depend on the check. Each misuse still gives exactly one error, as the review confirmed on both compilers.
+- Measured limits (finding N5; the reviewer's measurement, repeated by the author with `-std=c++23 -fsyntax-only` and default limits):
+  - Clang 23.1.4 builds `full<13>` and `of_grade<32, 3>` (4,960 blades), and fails on its step limit for `full<14>`, `of_grade<16, 8>` (12,870), and `of_grade<32, 4>` (35,960).
+  - GCC 16.2.1 builds `full<15>`, `of_grade<16, 8>`, and `of_grade<32, 4>`, and fails `full<16>` on `-fconstexpr-ops-limit`.
+  - So the plan generator and `mv` do not rely on `full<N>` above n = 13. The `///` comments of `full` and `of_grade` state these limits.
+- The Consequences bullet on test cost stands. The header's own cost to every includer was not stated there, and the plan's first figures for it were wrong (finding B1).
+  - Measured by the reviewer at identical flags, both kinds of core added, from 2976dca to f9441f7: `#include <galoot/core.hpp>` alone rises from 0.488 G to 0.721 G instructions on GCC (+48%, 59 to 70 MB) and from 0.378 G to 0.548 G on Clang (+45%).
+  - Most of the rise is `<string_view>`: the base plus `<string_view>` alone costs 0.665 G on GCC and 0.518 G on Clang. The blade set code itself costs about 0.03 G.
+  - If that matters, `canonical_name` and the parser could work on character arrays and pointers instead of `std::string_view`. That is a follow-up for the owner to weigh, not done here.
