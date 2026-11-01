@@ -56,7 +56,8 @@ the object, and the dependency-file arguments, with paths inside the checkout
 made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
 CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
 after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest,
-where the program is the first of those four in the command, else
+where the program is the first of those four in the command, or the first
+after `cmake -E` (as in `cmake -E time ninja -C <tree>`), else
 build/<preset>. It holds `-` for a run with no build tree (preset `-` and no
 such argument), and `unavailable` when the tree has no readable cache. The
 cache is read after the command, so a configure step records the options it
@@ -366,11 +367,16 @@ def compile_options(command, top):
 
 def build_tree(command, preset, top):
     # The program is the first build program named, so that a later argument
-    # such as the label in `ctest -L make` is not taken for one.
+    # such as the label in `ctest -L make` is not taken for one. `cmake -E`
+    # runs a tool such as env or time, which may run another program, so
+    # the program is looked for again after it.
     program = None
     for arg, value in zip(command, command[1:] + [""], strict=True):
         if program is None and os.path.basename(arg) in TREE_ARGUMENTS:
             program = os.path.basename(arg)
+            continue
+        if program == "cmake" and arg == "-E":
+            program = None
             continue
         for flag in TREE_ARGUMENTS.get(program, ()):
             if arg == flag and value and not value.startswith("-"):
