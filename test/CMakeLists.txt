@@ -752,6 +752,7 @@ endforeach()
 mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR)
 mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
 mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
+mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
 mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
 # An algebra that is not one fails the class template's constraint, so the
 # diagnostic is the compiler's account of metric_like.
