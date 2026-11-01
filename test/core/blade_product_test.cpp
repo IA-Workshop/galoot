@@ -824,6 +824,18 @@ TEST_CASE("The product table of rigid(3) is the same at compile time and at "
   CHECK(mismatches == 0);
 }
 
+// Reference: independent value: in R(32,0,0), the widest algebra a mask
+//   holds, e32 e32 = 1 and e1 e32 = e1 ^ e32, so a blade on the top bit of
+//   the mask is within the algebra
+TEST_CASE("blade_product accepts the generators of the widest algebra") {
+  constexpr auto widest = core::R<mask_width, 0, 0, mask_width>();
+  constexpr mask_t top = mask_t{1} << (mask_width - 1);
+  static_assert(core::detail::blade_product<1>(widest, top, top).terms[0] ==
+                term{.blade = 0, .coefficient = 1});
+  CHECK(product(widest, top, top) == written({{0, 1}}));
+  CHECK(product(widest, e1, top) == written({{e1 | top, 1}}));
+}
+
 // Reference: contract: the guards accept every sum and product within -max
 //   to max, for max the largest coefficient_type, including the bounds
 //   themselves
