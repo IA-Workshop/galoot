@@ -277,9 +277,12 @@ constexpr void add_blade_product(term_list<Capacity>& out, const metric<N>& g,
 template <std::size_t Capacity, std::size_t N>
 [[nodiscard]] constexpr term_list<Capacity>
 blade_product(const metric<N>& g, mask_t a, mask_t b) noexcept {
-  // N == mask_bits is tested first, because a shift by the width of mask_t is
-  // undefined.
-  const bool in_range = N == mask_bits || ((a | b) >> N) == 0;
+  // In an algebra of mask_bits generators every mask is in range, and the
+  // shift by N, the width of mask_t, would be undefined.
+  bool in_range = true;
+  if constexpr (N < mask_bits) {
+    in_range = ((a | b) >> N) == 0;
+  }
   GALOOT_ASSERT(in_range, "blade has a generator beyond e_n");
 
   term_list<Capacity> out{};
