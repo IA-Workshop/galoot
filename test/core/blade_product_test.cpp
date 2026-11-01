@@ -774,10 +774,11 @@ TEST_CASE("Hand-derived products in conformal(3), the Witt form, a "
   CHECK(product(core::R<3, 0, 0>(), e13, e23) == written({{e12, -1}}));
 }
 
-// Reference: proof: the pseudoscalar of the wedge basis squares to
-//   (-1)^(n(n-1)/2) det g for every symmetric g, with det g by the Leibniz
-//   formula computed here, for every signature listed here; independent
-//   value: det g of the golden product tables, in which
+// Reference: independent value: the pseudoscalar of the wedge basis squares
+//   to (-1)^(n(n-1)/2) det g for every symmetric g, a theorem whose value is
+//   computed here with det g by the Leibniz formula and compared with the
+//   product for every signature listed here; independent value: det g of the
+//   golden product tables, in which
 //   e_i e_j + e_j e_i = 2 g_ij, with the values written out: conformal(3) -1,
 //   rigid(3) 0, the degenerate form 0, R(3,0,0) -1, R(1,3,0) -1, and the seeded
 //   random form 31
