@@ -49,3 +49,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0011	M2 WU6 planner	fable	287260	69	892	reported by harness as subagent_tokens
 2026-11-01	plan-0010	compile-fail lane implementer	opus	255369	111	2140	reported by harness as subagent_tokens
 2026-11-01	plan-0010	blind reviewer (W5)	opus	212029	73	1361	reported by harness as subagent_tokens
+2026-11-01	plan-0011	WU6a implementer incl. lint fix pass	opus	437897	136	2870	reported by harness as subagent_tokens (cumulative at last notice; the lint-fix round may be undercounted)
