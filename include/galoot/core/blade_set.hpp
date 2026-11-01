@@ -57,8 +57,9 @@ struct oriented_blade {
 /// the order in which it stores its coefficients.
 ///
 /// Requires: every sign is +1 or -1 and no mask appears twice. The
-/// constructors below guarantee it; a set written out by hand must keep it,
-/// and merge and index_of check it.
+/// constructors below guarantee it; a set written out by hand must keep it.
+/// merge checks both rules for its inputs; index_of checks the signs and that
+/// the mask it looks up appears once, but not that other masks are distinct.
 /// Guarantees: a structural, trivially copyable aggregate, so that a set can
 /// be a class-type template argument, and two sets with equal blades in the
 /// same order are the same template argument.
@@ -239,7 +240,9 @@ consteval auto make_of_grade() {
   }
 }
 
-constexpr bool is_sign(int sign) { return sign == 1 || sign == -1; }
+[[nodiscard]] constexpr bool is_sign(int sign) noexcept {
+  return sign == 1 || sign == -1;
+}
 
 // The union of two lists of blades in canonical order, in the first `size`
 // places of `blades`, which inputs hold each listed blade, and what was wrong
@@ -329,34 +332,49 @@ constexpr std::size_t position_of(const blade_set<K>& set, mask_t mask) {
   return at;
 }
 
-struct lookup {
-  bool bad_sign;
-  std::size_t count;
-};
-
-// Whether a sign of `set` is other than +1 or -1, and how many of its blades
-// have the mask `mask`. A check that no mask at all repeats would cost O(K^2)
-// steps, too many for a large set within the compilers' limits on constant
-// evaluation; a repeat of the mask looked up is what makes the answer wrong.
+// Whether a blade listed after position `at` has the mask of the blade at
+// `at`. Scanning only after the position found keeps a lookup at one pass over
+// the set; a check that no mask at all repeats would cost O(K^2) steps, too
+// many for a large set within the compilers' limits on constant evaluation.
 template <std::size_t K>
-constexpr lookup look_up(const blade_set<K>& set, mask_t mask) {
-  lookup found{};
-  for (const oriented_blade& blade : set.blades) {
-    found.bad_sign = found.bad_sign || !is_sign(blade.sign);
-    found.count += blade.mask == mask ? 1U : 0U;
+[[nodiscard]] constexpr bool repeats_after(const blade_set<K>& set,
+                                           std::size_t at) noexcept {
+  for (std::size_t j = at + 1; j < K; ++j) {
+    if (set.blades[j].mask == set.blades[at].mask) {
+      return true;
+    }
   }
-  return found;
+  return false;
 }
+
+template <std::size_t K>
+[[nodiscard]] constexpr bool all_signs(const blade_set<K>& set) noexcept {
+  // NOLINTNEXTLINE(readability-use-anyofallof): avoids <algorithm> here.
+  for (const oriented_blade& blade : set.blades) {
+    if (!is_sign(blade.sign)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Evaluated once for each set, however many lookups use it, so the check
+// adds almost nothing to a lookup.
+template <blade_set S>
+inline constexpr bool signs_valid = all_signs(S);
 
 template <blade_set S, mask_t Mask>
 consteval std::size_t make_index_of() {
-  constexpr auto found = look_up(S, Mask);
-  static_assert(!found.bad_sign,
+  static_assert(signs_valid<S>,
                 "index_of: the set holds a sign other than +1 or -1");
-  static_assert(found.count <= 1, "index_of: the set holds this mask twice");
   constexpr std::size_t at = position_of(S, Mask);
   static_assert(at < S.size(), "index_of: the set holds no blade with this "
                                "mask");
+  // Only a mask that is present can repeat.
+  if constexpr (at < S.size()) {
+    static_assert(!repeats_after(S, at),
+                  "index_of: the set holds this mask twice");
+  }
   return at;
 }
 
