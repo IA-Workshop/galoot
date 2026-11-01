@@ -1,0 +1,30 @@
+# Predicted thresholds from weights-clang-galoot-O0.tsv
+label	T	R	largest phase	threshold	next phase	next threshold	covered
+gp-r-5	1024	32	collect	655239	fill	639615	yes
+gp-r-6	4096	64	collect	5110503	typed	3384351	yes
+gp-r-7	16384	128	collect	40384167	typed	26118175	yes
+gp-dense-4	832	16	fill	681823	count	672665	yes
+gp-dense-5	4864	32	fill	8319054	count	8265544	yes
+wedge-r-5	243	32	collect	216396	typed	145281	yes
+wedge-r-6	729	64	collect	1309448	typed	847397	yes
+wedge-r-7	2187	128	collect	7970124	typed	5061153	yes
+antigp-r-5	1024	32	fill	883839	count	872569	yes
+antigp-r-6	4096	64	collect	5076962	fill	4247263	yes
+antigp-conformal-5	1024	32	fill	947839	count	936569	yes
+antigp-dense-4	832	16	fill	783583	count	774425	yes
+antigp-dense-5	4864	32	fill	8892878	count	8839368	yes
+antiwedge-r-5	243	32	fill	271653	count	268974	yes
+antiwedge-r-6	729	64	fill	1108607	count	1100582	yes
+antiwedge-r-7	2187	128	fill	4548233	count	4524170	yes
+gp-grades-3-7	448	98	typed	601471	collect	560101	yes
+sparse-gp-4	10	8	fill	3136	count	3020	yes
+sparse-gp-16	10	8	fill	3136	count	3020	yes
+sparse-antigp-4	8	6	fill	9137	count	9043	yes
+sparse-antigp-16	8	6	fill	77513	count	77419	yes
+reverse-7	128	128	collect	313635	map_typed	209954	yes
+reverse-8	256	256	collect	1251192	map_typed	813090	yes
+reverse-9	512	512	collect	5001049	map_typed	3199010	yes
+reverse-10	1024	1024	collect	20006885	map_typed	12689442	yes
+right_complement-8	256	256	map_typed	813090	collect	673062	yes
+right_complement-9	512	512	map_typed	3199010	collect	2656811	yes
+right_complement-10	1024	1024	map_typed	12689442	collect	10556464	yes
