@@ -134,3 +134,7 @@ The evaluation check against the plain-locals copy, which plan section 10 asks t
 - Head reviewed: `0607515`; code and tests: `d6ea717`.
 - Per-commit builds: `3bca0e6`, `9430423`, `0fce606`, `7818335`, `38f2b30`, `04c12c1`, `11ad0aa`, `d6ea717`.
 - Before-headers for limits and header cost: `0bbb968`.
+
+## Delta review of 0098409 (comment-only header change after the review)
+
+Reviewed by the coordinating agent (Claude Sonnet 5.5), 2026-11-01. The diff of `include/` from `d6ea717` to `dd875af` contains no line other than comments. The new wording of `plan.hpp` states the result-set claim only for scalar types in which no nonzero integer vanishes, and credits once-per-unit generation to the static constexpr locals, checked on Clang only. Both match what the review found (F5) and what `core.plan_evaluated_once` tests. No finding.
