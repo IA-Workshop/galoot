@@ -1,8 +1,10 @@
-"""Exact checks of the sign conventions in CONVENTIONS.md.
+"""Exact checks of Galoot's sign conventions: blade order and names,
+complements and duals, products and their De Morgan laws, and the rigid and
+conformal objects and transforms.
 
-This is an independent reference (VVUQ V1, kind 3) for the conventions
-specification, docs/agent/governance/CONVENTIONS.md: a small Clifford algebra
-over rationals that shares no code with the library. Run it with
+This is an independent reference: a small Clifford algebra over rationals that
+shares no code with the library, from which each convention is checked
+exactly. Run it with
 `python3 -I test/reference/conventions_check.py`; it exits nonzero on any
 failure.
 

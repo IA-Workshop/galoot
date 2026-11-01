@@ -1,4 +1,4 @@
-// A failing GALOOT_ASSERT at run time (plan 0002, section 4.5). Built with
+// A failing GALOOT_ASSERT at run time. Built with
 // GALOOT_CHECKING=1 it must abort with the message (core.assert_checking);
 // built with GALOOT_CHECKING=0 it must exit 0 (core.assert_unchecked).
 #include <galoot/core/assert.hpp>

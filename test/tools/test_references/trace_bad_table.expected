@@ -1,0 +1,8 @@
+trace_bad_table.md:7: item 1.2 is implemented and no test states its fact
+trace_bad_table.md:8: @reference_fixtures@/trace_conventions.md has no item 9.9
+trace_bad_table.md:9: Implemented is 'maybe', not yes or no
+trace_bad_table.md:10: item 3.1 has an empty fact
+golden_fixture.hpp: the fact of namespace beta, 'e1 ^ e2 = -e2 ^ e1', is not in
+trace_bad_table.md:11: item 1.1 is implemented and no test states its fact
+trace_bad_table.md:12: row of item 2.1 is not three cells between | signs
+trace_bad_table.md: item 4.1 of @reference_fixtures@/trace_conventions.md has no row

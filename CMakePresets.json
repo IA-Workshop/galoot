@@ -166,7 +166,7 @@
     },
     {
       "name": "gcc-measure",
-      "displayName": "GCC, -O2, measurement (P4, P6), no assertions",
+      "displayName": "GCC, -O2, for reading generated code and benchmarks, no assertions",
       "inherits": [
         "measurement",
         "measured",
@@ -194,7 +194,7 @@
     },
     {
       "name": "clang-measure",
-      "displayName": "Clang, -O2, measurement (P4, P6), no assertions",
+      "displayName": "Clang, -O2, for reading generated code and benchmarks, no assertions",
       "inherits": [
         "measurement",
         "measured",

@@ -1,4 +1,4 @@
-# Runs a command and checks how it ended and what it wrote. Snippet candidate.
+# Runs a command and checks how it ended and what it wrote.
 #
 # Usage: cmake -P expect_output.cmake -- <result> <literal>...
 #          [FORBID <literal>...] -- <command>...
@@ -10,8 +10,9 @@
 # not. The script fails, naming what was missing or present, if any check
 # fails.
 #
-# CTest cannot pass a test whose process aborts, whatever WILL_FAIL says
-# (plan 0002, departure 4), so a test that expects an abort runs through this.
+# CTest cannot pass a test whose process aborts, whatever WILL_FAIL or
+# PASS_REGULAR_EXPRESSION says, so a test that expects an abort runs through
+# this.
 
 # CMAKE_ARGV3 is the "--" that keeps cmake from parsing what follows.
 set(expected_result "${CMAKE_ARGV4}")

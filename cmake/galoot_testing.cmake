@@ -1,11 +1,14 @@
-# Test registration for Galoot (plan 0002, section 4.3; STYLE S14).
+# Test registration for Galoot: one doctest program per component, built from
+# test/<module>/<component>_test.cpp.
 #
 # Every test carries two labels, <module> and <module>.<component>, so that a
-# selection is named by anchored label regexes: ctest -L '^core$' or
-# ctest -L '^core\.assert$' (PERFORMANCE P8; research note 0002, F4).
+# run can select the tests a change affects by anchored label regexes:
+# ctest -L '^core$' or ctest -L '^core\.assert$'. -L matches a regex
+# against each label, so an unanchored 'core' would also select 'core.assert'.
 
 # A doctest run that executes no test case prints "test cases: 0 |", and
-# doctest still exits 0; this makes CTest fail it (research note 0001, F28).
+# doctest still exits 0; this makes CTest fail it, so that a filter or a
+# build that drops every test case cannot pass as a success.
 set(GALOOT_ZERO_CASES_REGEX "test cases: +0 \\|")
 
 # galoot_add_test(MODULE <module> COMPONENT <component>)
@@ -29,18 +32,25 @@ endfunction()
 #   [REQUIRE <literal>...] [FORBID <literal>...])
 #
 # Registers the test <module>.<name>, which builds <file> and passes only if
-# the build fails and its output contains <literal> and every REQUIRE literal,
-# each as written (test/expect_output.cmake; plan 0002, departure 7). A
-# GALOOT_ASSERT message reaches the diagnostic only through the source line
+# the build fails, its output contains <literal> and every REQUIRE literal,
+# and it contains no FORBID literal, each matched as written
+# (test/expect_output.cmake). FORBID is for a misuse whose diagnostic must
+# leave out a message that would be false. The values are literals rather
+# than regular expressions, so that no test passes on a loose pattern such as
+# .*, and because diagnostics quote C++ source full of regex metacharacters.
+#
+# A GALOOT_ASSERT message reaches the diagnostic only through the source line
 # the compiler echoes, so an unrelated error on that line would show it too;
 # such tests also require `assertion_failed`, which only the failed assertion
-# names (W5 review of WU1, finding N1). MESSAGE may not contain `;`, which
-# CMake would split into two literals (finding N3); a `;` in a REQUIRE value
-# cannot be told from two values, so it splits too. The object library is
-# outside `all`, and the test builds it in this build tree, so compile-fail
-# tests take a lock: two Ninja processes in one tree could corrupt .ninja_log
-# and .ninja_deps (inferred). Each FORBID literal must not appear, for a
-# misuse whose diagnostic must leave out a message that would be false.
+# names. MESSAGE may not contain `;`, which CMake would split into two
+# literals. A `;` in a REQUIRE or FORBID value cannot be told from two values,
+# so it splits too: "a;b" requires, or forbids, both "a" and "b", which errs
+# on the strict side.
+#
+# The object library is outside `all`, and the test builds it in this build
+# tree, so compile-fail tests take a lock: Ninja takes no lock on its build
+# and dependency logs (.ninja_log, .ninja_deps), so two Ninja processes in one
+# tree could corrupt them.
 function(galoot_add_compile_fail_test)
   cmake_parse_arguments(PARSE_ARGV 0 arg ""
     "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE;FORBID")

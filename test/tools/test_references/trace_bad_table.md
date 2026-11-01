@@ -1,5 +1,5 @@
 # Fixture table for tools/test_references.py trace: each row after the
-# first has one defect, the fact of beta is missing, and item 4.1 has no row
+# first has one defect, the fact of beta is missing, and one item has no row
 
 | Item | Fact | Implemented |
 | --- | --- | --- |
