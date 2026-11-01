@@ -36,8 +36,7 @@ METRIC_TEST = f"{ROOT}/test/core/metric_test.cpp"
 CONDITION = "      if (a != b || a < -max_form_entry || a > max_form_entry) {\n"
 LOOPS = ("  for (std::size_t i = 0; i < N; ++i) {\n"
          "    for (std::size_t j = 0; j <= i; ++j) {\n")
-COUNT_TEST = ("    // Taken from the type alone, so that gram[0][0] exists below.\n"
-              "    (std::remove_cvref_t<decltype(Alg::value)>::generator_count "
+COUNT_TEST = ("    (std::remove_cvref_t<decltype(Alg::value)>::generator_count "
               ">= 1) &&\n")
 GUARD = ("    requires {\n"
          "      typename std::integral_constant<entry_type, "
