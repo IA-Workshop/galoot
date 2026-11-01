@@ -1,0 +1,4 @@
+name	compiler	config	cache	threshold	kind	where	compiles
+full-gp-r-n3	clang	galoot-O2	warm	23383	limit	include/galoot/core/plan.hpp:453:27	12
+full-gp-r-n4	clang	galoot-O2	warm	123215	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-r-n5	clang	galoot-O2	warm	655239	limit	include/galoot/core/plan.hpp:469:27	13
