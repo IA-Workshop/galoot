@@ -437,8 +437,10 @@ foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 capacity overflow
 endforeach()
 
 # core.plan: product plans over two blade sets against the products of their
-# pairs, the single-term rule of diagonal forms, and values worked by hand.
+# pairs, the single-term rule of diagonal forms, values worked by hand, and
+# the golden product tables.
 galoot_add_test(MODULE core COMPONENT plan)
+target_link_libraries(core_plan_test PRIVATE galoot_golden)
 
 # core.plan_<case>: each misuse of gp_plan fails to compile with its message.
 # The sets are checked before anything is generated, so a set's test forbids

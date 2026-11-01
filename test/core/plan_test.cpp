@@ -28,6 +28,7 @@
 #include <doctest/doctest.h>
 
 #include "signatures.hpp"
+#include <reference/golden.hpp>
 
 namespace {
 
@@ -72,6 +73,15 @@ struct degenerate {
       {0, 1, 0},
       {1, 0, 0},
       {0, 0, 0},
+  });
+};
+// Seeded random form 1 of the reference scripts, dense, with up to four
+// terms in a product of blades.
+struct random1 {
+  static constexpr auto value = core::from_gram({
+      {2, 0, -3},
+      {0, 1, -3},
+      {-3, -3, -2},
   });
 };
 struct widest {
@@ -246,6 +256,53 @@ constexpr bool pair_terms_are(const std::array<plan_term, T>& plan,
   return k == wanted.size();
 }
 
+template <std::size_t K>
+constexpr core::blade_set<K> with_reverse_signs(core::blade_set<K> set) {
+  for (oriented_blade& blade : set.blades) {
+    blade.sign = generators_of(blade.mask) % 4 >= 2 ? -1 : 1;
+  }
+  return set;
+}
+
+// Whether `plan` is, in order, the products of the golden `table` for every
+// pair of `as` and `bs`, each term times s_a s_b.
+template <std::size_t T, std::size_t KA, std::size_t KB, std::size_t R>
+constexpr bool matches_table(const std::array<plan_term, T>& plan,
+                             const core::blade_set<KA>& as,
+                             const core::blade_set<KB>& bs,
+                             const std::array<golden::product, R>& table) {
+  std::size_t k = 0;
+  for (std::size_t a = 0; a < KA; ++a) {
+    for (std::size_t b = 0; b < KB; ++b) {
+      const oriented_blade& x = as.blades.at(a);
+      const oriented_blade& y = bs.blades.at(b);
+      std::size_t row = 0;
+      while (row < R &&
+             (table.at(row).a != x.mask || table.at(row).b != y.mask)) {
+        ++row;
+      }
+      if (row == R) {
+        return false;
+      }
+      const golden::product& p = table.at(row);
+      for (std::size_t t = 0; t < p.size; ++t) {
+        const plan_term expected{
+            .a = a,
+            .b = b,
+            .out = p.terms.at(t).blade,
+            .coefficient =
+                coefficient_type{x.sign} * y.sign * p.terms.at(t).coefficient,
+        };
+        if (k == T || plan.at(k) != expected) {
+          return false;
+        }
+        ++k;
+      }
+    }
+  }
+  return k == T;
+}
+
 // The ten terms of the sparse sets {1, e1, e_n, e1 ^ e_n} and {e1, e2, e_n}
 // in R(n - 1, 0, 1), worked by hand from e_i e_i = 1 for i < n, e_n e_n = 0,
 // and e_j e_i = -e_i e_j for i < j: e1 e1 = 1, e_n e1 = -e1n,
@@ -406,6 +463,16 @@ static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
                              }));
 static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
                              7, 7, {}));
+
+// Reference: independent value: the golden product table of seeded random
+// form 1, in which e_i e_j + e_j e_i = 2 g_ij, a dense form with up to four
+// terms in a product, so that the term lists of the plan need four places,
+// for every blade times every blade with the reverse's signs on the first set
+static_assert(random1::value.gram == golden::gp_tables::random_1_gram &&
+              matches_table(gp_plan<random1, with_reverse_signs(core::full<3>),
+                                    core::full<3>>,
+                            with_reverse_signs(core::full<3>), core::full<3>,
+                            golden::gp_tables::random_1));
 
 // Reference: contract: a plan term is a trivially copyable aggregate, and a
 // plan is a std::array of them
@@ -617,6 +684,24 @@ TEST_CASE("gp_plan equals generate_gp run at run time") {
                                            three.blades, three.blades);
   CHECK(again.written == gp_plan<degenerate, three, three>.size());
   CHECK(std::ranges::equal(again.terms, gp_plan<degenerate, three, three>));
+}
+
+// Reference: independent value: the golden product table of seeded random
+// form 1, in which e_i e_j + e_j e_i = 2 g_ij, a dense form with up to four
+// terms in a product, compared with gp_plan and with generate_gp run at run
+// time, for every blade times every blade with the reverse's signs on the
+// first set
+TEST_CASE("The plan of a dense form equals its golden product table") {
+  constexpr auto first = with_reverse_signs(core::full<3>);
+  constexpr const auto& second = core::full<3>;
+  CHECK(random1::value.gram == golden::gp_tables::random_1_gram);
+  CHECK(matches_table(gp_plan<random1, first, second>, first, second,
+                      golden::gp_tables::random_1));
+
+  const generated_plan again =
+      generate<4>(random1::value, first.blades, second.blades);
+  CHECK(again.written == gp_plan<random1, first, second>.size());
+  CHECK(std::ranges::equal(again.terms, gp_plan<random1, first, second>));
 }
 
 // Reference: contract: generate_gp writes as many terms as fit in its
