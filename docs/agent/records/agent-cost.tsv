@@ -42,3 +42,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	WU4	blind reviewer (W5)	opus	243368	94	1875	reported by harness as subagent_tokens
 2026-10-31	WU4	blade-set implementer (review fixes; delta)	opus	61694	45	3200	cumulative 412216 less 350522 logged earlier; tool calls 174 less 129
 2026-10-31	M0-M1-gate	auditor	opus	290178	97	763	reported by harness as subagent_tokens
+2026-10-31	M0-M1-gate	blind reviewer (W5 fix passes)	opus	unavailable	unavailable	unavailable	not reported on this notification
