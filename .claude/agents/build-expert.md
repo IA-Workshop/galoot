@@ -41,7 +41,7 @@ Read before changing the build, and cite provisions by number in what you report
 
 ## Measuring build cost
 
-- Record wall time, CPU time, and peak memory per translation unit through `CMAKE_CXX_COMPILER_LAUNCHER`, using a small launcher that runs the compiler, calls `wait4`, and appends a line to a locked file under `docs/agent/records/performance/` (P1, P7). Each record carries the revision, compiler, options, and machine.
+- Record wall time, CPU time, and peak memory per translation unit through `CMAKE_CXX_COMPILER_LAUNCHER` (`tools/measure tu`), which runs the compiler, calls `wait4`, and appends a line to the build tree's own `compile.tsv` under a lock (P1, P7). Each record carries the revision, compiler, options, and machine. Rows of a gate or measurement run reach the committed `docs/agent/records/performance/compile.tsv` only through the copy step in the second amendment of decision 0080 (the `copy_compile_rows` function; the earlier versions there are replaced), on a fresh tree built once at a committed revision; no build file names a path under `docs/agent`.
 - To attribute a cost, use Clang's `-ftime-trace`, which shows constant-evaluation events. GCC's `-ftime-report` has no line for constant evaluation.
 - Measurements that will be compared run without other heavy work on the machine (P6, P11), and the record says so.
 - The machine mixes core types (P14). CPUs 0 to 15 are the two threads of 8 performance cores, paired as 2k and 2k+1; CPUs 16 to 31 are 16 efficiency cores. Pin a timed run to one performance-core thread whose sibling is idle (for example `taskset -c 2`), record the CPU, and record `perf stat -e instructions:u` beside the time. Never compare times from different core types.

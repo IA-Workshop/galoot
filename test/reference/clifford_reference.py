@@ -1,19 +1,22 @@
 """Exact geometric-product tables for any symmetric integer Gram matrix.
 
-This is an independent reference (VVUQ V1, kind 3) for the library's product
-generator. It takes a route the library does not: it diagonalizes the form
+This is an independent reference for the library's product generator: it
+shares no code with the library and computes exact values from the
+definitions by a route the library does not take. It diagonalizes the form
 over fractions.Fraction (a symmetric LDL^T with pivoting), multiplies in the
 orthogonal basis by the single-term sign rule, and changes back to the stored
 basis. The library instead works in the stored basis with integer arithmetic.
 
 Blades are bitmasks with bit i-1 for e_i. In a metric that is not diagonal the
-blade of a mask is the wedge monomial e_a1 ^ ... ^ e_ak (decision 0003,
-CONVENTIONS 1.1), so e4 e5 = -1 + e45 in conformal(3).
+blade of a mask is the wedge monomial e_a1 ^ ... ^ e_ak, not the geometric
+product of its generators, so e4 e5 = -1 + e45 in conformal(3).
 
 Usage, with the interpreter isolated as for every reference script:
 
   python3 -I test/reference/clifford_reference.py
-      Validate and survey the Spike B signature set; exit nonzero on failure.
+      Validate and survey the built-in set of signatures (conformal(3),
+      R(1,3,0), rigid(3), a degenerate form that is not diagonal, and ten
+      seeded random forms); exit nonzero on failure.
   python3 -I test/reference/clifford_reference.py table SIGNATURE
       Print the full product table, one blade pair per line.
 
@@ -41,17 +44,19 @@ def diagonal_gram(squares):
 
 
 def r_pqr(p, q, r):
-    """CONVENTIONS 1.2: p squares of +1, then q of -1, then r of 0."""
+    """R(p, q, r): p squares of +1, then q of -1, then r of 0, so that a
+    null generator comes last."""
     return diagonal_gram([1] * p + [-1] * q + [0] * r)
 
 
 def rigid(d):
-    """CONVENTIONS 1.3: rigid(d) is R(d, 0, 1)."""
+    """rigid(d) is R(d, 0, 1): d Euclidean generators and a null one."""
     return r_pqr(d, 0, 1)
 
 
 def conformal(d):
-    """CONVENTIONS 1.4: e(d+1) and e(d+2) null, e(d+1) . e(d+2) = -1."""
+    """conformal(d): e1 to ed Euclidean, then the origin e(d+1) and the
+    point at infinity e(d+2), both null, with e(d+1) . e(d+2) = -1."""
     g = diagonal_gram([1] * d + [0, 0])
     g[d][d + 1] = g[d + 1][d] = -1
     return g
@@ -397,7 +402,8 @@ def main(argv):
 
     signatures = [("conformal(3)", conformal(3)), ("R(1,3,0)", r_pqr(1, 3, 0)),
                   ("rigid(3)", rigid(3)),
-                  # Degenerate and not diagonal (plan 0001, section 5).
+                  # Degenerate and not diagonal, with a zero first pivot,
+                  # so the diagonalization must pivot.
                   ("degenerate", [[0, 1, 0], [1, 0, 0], [0, 0, 0]])]
     signatures += [(f"random[{k}]", g) for k, g in enumerate(random_forms())]
 

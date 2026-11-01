@@ -1,0 +1,14 @@
+markers_bad.cpp:5: TEST_CASE has no reference marker
+markers_bad.cpp:9: TEST_CASE has no reference marker
+markers_bad.cpp:11: reference source is not '<kind>: <text>'
+markers_bad.cpp:14: a regression guard is the only source of its reference
+markers_bad.cpp:18: test case named as a regression test is not labeled
+markers_bad.cpp:20: reference points to a document or a record instead of stating the reason: 'decision 9999'
+markers_bad.cpp:23: reference points to a document or a record instead of stating the reason: 'section 3.1'
+markers_bad.cpp:26: reference points to a document or a record instead of stating the reason: 'WU1'
+markers_bad.cpp:29: reference points to a document or a record instead of stating the reason: 'VVUQ kind 3'
+markers_bad.cpp:32: reference points to a document or a record instead of stating the reason: 'STYLE S9'
+markers_bad.cpp:35: reference points to a document or a record instead of stating the reason: 'M0 gate'
+markers_bad.cpp:38: reference points to a document or a record instead of stating the reason: 'lessons-learned'
+markers_bad.cpp:41: reference points to a document or a record instead of stating the reason: 'constitution C13'
+markers_bad.cpp:44: reference points to a document or a record instead of stating the reason: 'DoD-6'

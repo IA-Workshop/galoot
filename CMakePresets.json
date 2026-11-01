@@ -22,8 +22,7 @@
       "hidden": true,
       "inherits": "base",
       "cacheVariables": {
-        "GALOOT_PRESET": "${presetName}",
-        "GALOOT_COMPILE_RECORD": "${sourceDir}/build/${presetName}/compile.tsv"
+        "GALOOT_PRESET": "${presetName}"
       }
     },
     {
@@ -61,8 +60,7 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off",
-        "CMAKE_EXE_LINKER_FLAGS": "",
-        "GALOOT_COMPILE_RECORD": "${sourceDir}/docs/agent/records/performance/compile.tsv"
+        "CMAKE_EXE_LINKER_FLAGS": ""
       }
     },
     {
@@ -166,7 +164,7 @@
     },
     {
       "name": "gcc-measure",
-      "displayName": "GCC, -O2, measurement (P4, P6), no assertions",
+      "displayName": "GCC, -O2, for reading generated code and benchmarks, no assertions",
       "inherits": [
         "measurement",
         "measured",
@@ -194,7 +192,7 @@
     },
     {
       "name": "clang-measure",
-      "displayName": "Clang, -O2, measurement (P4, P6), no assertions",
+      "displayName": "Clang, -O2, for reading generated code and benchmarks, no assertions",
       "inherits": [
         "measurement",
         "measured",

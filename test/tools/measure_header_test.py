@@ -1,5 +1,5 @@
 """tools.measure_header: concurrent first writers of a record write one
-header (W5 review of WU1, finding B1).
+header between them, not one each.
 
 Usage: python3 -I measure_header_test.py <tools/measure> <scratch directory>
 

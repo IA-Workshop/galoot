@@ -1,11 +1,13 @@
-# Galoot's build (plan 0002). The core is headers alone (constitution C13);
-# this file builds Galoot's own tests and checks, and declares their options
-# rather than leaving them to defaults (C8).
+# Galoot's build. The core is headers alone, usable without any build
+# system; this file builds Galoot's own tests and checks, and declares their
+# options rather than leaving them to defaults, so that every result can be
+# traced to a setting someone chose.
 cmake_minimum_required(VERSION 4.4)
 project(galoot VERSION 0.1.0 LANGUAGES CXX)
 
-# Extensions off (STYLE S2); module scanning off until a decision adopts
-# modules (research note 0002, F11).
+# Compiler extensions off, so the code stays standard C++23. Module scanning
+# off: Galoot ships headers, not modules, and the scan would otherwise run for
+# every C++23 source.
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
@@ -26,7 +28,8 @@ if(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
-# The checking mode is declared by every preset (plan 0001, DoD-20).
+# The checking mode changes what the tests check, so it is never a default:
+# every preset declares it.
 if(NOT DEFINED GALOOT_CHECKING)
   message(FATAL_ERROR
     "GALOOT_CHECKING is not set. Configure with a preset "
@@ -46,34 +49,45 @@ target_compile_definitions(galoot_core INTERFACE
   $<BUILD_INTERFACE:GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>>)
 
 # Per-translation-unit cost record: each compile runs through tools/measure,
-# which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. The
-# presets that measure set both, and the lint preset neither, since a compile
-# under clang-tidy does not cost what a user's compile does. The launcher
-# applies to every compile in the tree, the header-check units included.
+# which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. Every
+# preset but lint sets GALOOT_PRESET, since a compile under clang-tidy does
+# not cost what a user's compile does. The record is the build tree's own
+# compile.tsv by default, so a tree configured with -B beside a preset's own
+# tree keeps its rows apart, and the build writes nothing outside its source
+# and build trees. A record elsewhere, from -D or from an older cache, gets a
+# warning at every configure. The launcher applies to every compile in the
+# tree, the header-check units included.
 set(GALOOT_PRESET "" CACHE STRING
   "Preset named in each compile cost row; empty records no compile costs")
-set(GALOOT_COMPILE_RECORD "" CACHE FILEPATH
+set(GALOOT_COMPILE_RECORD "${CMAKE_BINARY_DIR}/compile.tsv" CACHE FILEPATH
   "compile.tsv that each compile appends its cost row to, with GALOOT_PRESET")
 if(NOT GALOOT_PRESET STREQUAL "")
   if(GALOOT_COMPILE_RECORD STREQUAL "")
     message(FATAL_ERROR "GALOOT_PRESET is '${GALOOT_PRESET}', so each compile "
       "records its cost, but GALOOT_COMPILE_RECORD names no file for the rows.")
   endif()
+  cmake_path(IS_PREFIX CMAKE_BINARY_DIR "${GALOOT_COMPILE_RECORD}" NORMALIZE
+    record_in_tree)
+  if(NOT record_in_tree)
+    message(WARNING "GALOOT_COMPILE_RECORD is ${GALOOT_COMPILE_RECORD}, "
+      "outside this build tree, so every compile here appends its cost row "
+      "to that file. Remove the entry from CMakeCache.txt to use the tree's "
+      "own compile.tsv.")
+  endif()
   set(CMAKE_CXX_COMPILER_LAUNCHER
     ${PROJECT_SOURCE_DIR}/tools/measure tu ${GALOOT_PRESET}
     ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}
     ${GALOOT_COMPILE_RECORD} --)
-elseif(NOT GALOOT_COMPILE_RECORD STREQUAL "")
-  message(FATAL_ERROR "GALOOT_COMPILE_RECORD is set, but without "
-    "GALOOT_PRESET no compile records its cost there.")
 endif()
 
-# Each header compiles on its own (STYLE S6): one generated translation unit
-# per header, built by all_verify_interface_header_sets and not by all.
+# Each header compiles on its own, so it includes what it uses: one generated
+# translation unit per header, built by all_verify_interface_header_sets and
+# not by all.
 set_property(TARGET galoot_core PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 
-# Layout check (STYLE S3) over the core's headers and the test sources,
-# without compiling. include/ext keeps its upstream layout.
+# Layout check over the core's headers and the test sources: clang-format
+# with the repository's .clang-format must leave them unchanged. It does not
+# compile. include/ext keeps its upstream layout.
 find_program(GALOOT_CLANG_FORMAT clang-format REQUIRED)
 # CONFIGURE_DEPENDS, so that a test source added later is checked without a
 # manual reconfigure.

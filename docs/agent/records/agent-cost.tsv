@@ -34,3 +34,9 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	WU3	metric implementer (bits merge, N1-N5; delta)	opus	38271	25	328	cumulative 442008 less 403737 logged earlier
 2026-10-31	WU3	blind reviewer (W5 delta 3)	opus	145341	43	421	reported by harness as subagent_tokens
 2026-10-31	cleanup-1	cleanup implementer	opus	368396	138	1718	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	blind reviewer (W5)	opus	253066	90	1073	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	cleanup implementer (review fixes; delta)	opus	61053	42	645	cumulative 429449 less 368396 logged earlier
+2026-10-31	cleanup-1	blind reviewer (W5 delta)	opus	150174	60	587	reported by harness as subagent_tokens
+2026-10-31	WU4	blade-set implementer	opus	350522	129	2522	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	cleanup implementer (delta-review fixes; delta)	opus	58132	41	576	cumulative 487581 less 429449 logged earlier
+2026-10-31	WU4	blind reviewer (W5)	opus	243368	94	1875	reported by harness as subagent_tokens

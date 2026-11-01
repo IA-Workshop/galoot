@@ -33,3 +33,10 @@ Each entry says what happened, the cause, and what now detects it (W6).
 - What happened: `// NOLINTNEXTLINE(check): <reason>` lines longer than 80 columns failed `format-check`. Reflowing them would have moved the code line away from the marker, so the suppression would have applied to a comment.
 - Cause: clang-format wraps comments at the column limit.
 - What detects it now: `format-check` fails on the long line. The reason goes on the lines above, and the marker line holds only the marker and check names.
+
+## Amendment, 2026-10-31 (cleanup unit 1, plan 0007; W5 delta review finding D6)
+
+Item 4's second detector, "more than one field count from `awk -F'\t' '{print NF}' | sort -u`", no longer detects anything. Rows written before a column existed are never padded (decision 0032, item 3), so a sound `runs.tsv` has rows of 9, 26, and 28 fields, and the check fires on every copy of it. What detects a doubled or mixed record now:
+
+- `grep -c '^utc_start' <record>` above 1, as before.
+- `tools/measure read <record> > /dev/null`, which exits 1 naming the line of a repeated header, an older shorter header left in the file, a row longer than the header, a blank line, or an empty file, and is tested by `tools.measure_record`.

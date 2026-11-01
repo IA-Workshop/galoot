@@ -46,20 +46,23 @@ running time equals the command's task-clock time, which shows the command
 spent all its time on the other type, and otherwise as `unavailable`. A
 counter that perf did not run for its whole enabled time in pinned mode was
 multiplexed and is written as `unavailable` with a warning, never as a scaled
-estimate. A pinned `build`
-run takes no counters itself, because the compile rows of its launcher take
-them on the same core, and two perf sessions of eight events on one core
-multiplex each other; its counter fields are `unavailable`.
+estimate. A pinned `build` run takes no counters itself, because the compile
+rows of its launcher take them on the same core, and two perf sessions of
+eight events on one core multiplex each other; its counter fields are
+`unavailable`.
 
 Options: a compile row holds the compiler's arguments other than the source,
 the object, and the dependency-file arguments, with paths inside the checkout
 made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
 CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
-after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest in
-the command, else build/<preset>. It
-holds `-` for a run with no build tree (preset `-` and no such argument), and
-`unavailable` when the tree has no readable cache. The cache is read after
-the command, so a configure step records the options it set.
+after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest,
+where the program is the first of those four in the command, or the first
+after `cmake -E` (as in `cmake -E time ninja -C <tree>`); after `cmake -E
+chdir <dir>`, the tree is <dir> or a tree named relative to it; else
+build/<preset>. It holds `-` for a run with no build tree (preset `-` and no
+such argument), and `unavailable` when the tree has no readable cache. The
+cache is read after the command, so a configure step records the options it
+set.
 """
 
 import fcntl
@@ -364,16 +367,34 @@ def compile_options(command, top):
 
 
 def build_tree(command, preset, top):
-    program = None
-    for arg, value in zip(command, command[1:] + [""], strict=True):
-        if os.path.basename(arg) in TREE_ARGUMENTS:
+    # The program is the first build program named, so that a later argument
+    # such as the label in `ctest -L make` is not taken for one. `cmake -E`
+    # runs a tool such as env or time, which may run another program, so
+    # the program is looked for again after it. `cmake -E chdir <dir>` runs
+    # it in <dir>, which is then its tree unless it names one, relative to
+    # <dir>.
+    program, directory = None, ""  # os.path.join("", path) is path
+    i = 0
+    while i < len(command):
+        arg = command[i]
+        value = command[i + 1] if i + 1 < len(command) else ""
+        if program is None and os.path.basename(arg) in TREE_ARGUMENTS:
             program = os.path.basename(arg)
-            continue
-        for flag in TREE_ARGUMENTS.get(program, ()):
-            if arg == flag and value and not value.startswith("-"):
-                return value
-            if len(flag) == 2 and arg.startswith(flag) and len(arg) > 2:
-                return arg[2:]
+        elif program == "cmake" and arg == "-E":
+            program = None
+            if value == "chdir" and i + 2 < len(command):
+                directory = os.path.join(directory, command[i + 2])
+                i += 3
+                continue
+        else:
+            for flag in TREE_ARGUMENTS.get(program, ()):
+                if arg == flag and value and not value.startswith("-"):
+                    return os.path.join(directory, value)
+                if len(flag) == 2 and arg.startswith(flag) and len(arg) > 2:
+                    return os.path.join(directory, arg[2:])
+        i += 1
+    if directory and program is not None:
+        return directory
     if preset == NO_TREE:
         return None
     return os.path.join(top, "build", preset)
@@ -411,8 +432,9 @@ def git(*args):
 
 def revision_and_branch():
     revision = git("rev-parse", "--short=12", "HEAD")
-    # The run and compile logs change with every run, so they do not make a
-    # revision dirty; any other change to a tracked file does. Without
+    # The run log changes with every run, and the committed compile record
+    # when a gate's rows are copied into it, so neither makes a revision
+    # dirty; any other change to a tracked file does. Without
     # optional locks, git status does not take the index lock, so a
     # recorded compile cannot make a concurrent commit fail.
     status = git("--no-optional-locks", "status", "--porcelain",
@@ -456,10 +478,15 @@ def argument_after(args, flag):
 
 
 def read_record(path, wanted):
-    with open(path, encoding="utf-8") as f:
-        lines = f.read().splitlines()
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except OSError as error:
+        sys.exit(f"measure: cannot read {path}: {error.strerror}")
     if not lines:
         sys.exit(f"measure: {path} is empty")
+    if not lines[0]:
+        sys.exit(f"measure: {path}:1 is blank where the header line should be")
     header = lines[0].split("\t")
     unknown = [c for c in wanted if c not in header]
     if unknown:
