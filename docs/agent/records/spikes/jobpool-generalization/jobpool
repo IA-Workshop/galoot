@@ -1,0 +1,587 @@
+#!/usr/bin/env python3
+"""A machine-wide pool of build job slots for one user.
+
+The pool is a GNU Make jobserver of the FIFO style (GNU Make 4.4 and later,
+Ninja 1.13 and later, CTest 3.29 and later, Cargo, and other clients): a
+named pipe preloaded with one byte per slot. A client reads a byte to start a
+job and writes it back when the job ends. A transient systemd user service
+holds the pipe open, because a FIFO's contents are discarded when the last
+descriptor on it closes. Builds in any number of checkouts and sessions that
+name the pipe in MAKEFLAGS then share the slots instead of each running a job
+per processor.
+
+The FIFO protocol is anonymous: the pool cannot tell which process holds a
+byte, so a client killed with SIGKILL never returns the slots it held. When no
+process holds the pipe open no slot can be in use, so at that moment the
+service restores any missing bytes and drains any surplus ones.
+
+Every client also runs one job without a byte (the protocol's implicit slot),
+so k clients started directly can run slots + k jobs. `run` closes that gap
+by taking a byte for the command it starts and returning it when the command
+exits, and it holds the pipe open while the command runs, so the pool cannot
+stop under it.
+
+Usage:
+  jobpool start [SLOTS] [--slots N] [--idle DURATION] [--no-repair]
+  jobpool ensure [same options]   start the pool unless it is running
+  jobpool run [--no-slot] [--] COMMAND [ARGS...]
+  jobpool status                  exit 0 healthy, 1 not running, 3 lost or surplus slots
+  jobpool env                     print the MAKEFLAGS line; exit 1 if not running
+  jobpool repair                  restore lost or drain surplus slots now
+  jobpool stop [--force]          refuses while a client holds the pool
+  jobpool config                  print the settings in effect
+
+Settings come from built-in defaults, then the config file
+($JOBPOOL_CONFIG, or $XDG_CONFIG_HOME/jobpool/config), then the environment
+(JOBPOOL_SLOTS, JOBPOOL_RESERVE, JOBPOOL_IDLE, JOBPOOL_POLL_SECONDS,
+JOBPOOL_UNIT, JOBPOOL_FIFO, JOBPOOL_REPAIR), then the command line. The config
+file holds `key = value` lines with the keys slots, reserve, idle,
+poll_seconds, unit, fifo, and repair.
+
+The default slot count is the number of physical cores less `reserve` (1 by
+default). Two hardware threads of one core do not do twice the work of one,
+so sizing by threads would put two jobs on a core before every core has one.
+"""
+
+import contextlib
+import fcntl
+import glob
+import os
+import re
+import select
+import signal
+import struct
+import subprocess
+import sys
+import termios
+import time
+
+TOKEN = b"+"
+SERVICE_SUFFIX = ".service"
+# Characters that systemd would expand or split in a unit's command line.
+UNSAFE_IN_UNIT = re.compile(r"[\s$%\\\"']")
+
+
+class UsageError(Exception):
+    pass
+
+
+def physical_cores():
+    siblings = set()
+    for path in glob.glob("/sys/devices/system/cpu/cpu[0-9]*/topology/thread_siblings_list"):
+        try:
+            with open(path) as f:
+                siblings.add(f.read().strip())
+        except OSError:
+            continue
+    return len(siblings) or os.cpu_count() or 1
+
+
+def parse_duration(text):
+    """Seconds in "30m", "90s", "2h", or a bare number of minutes."""
+    match = re.fullmatch(r"(\d+(?:\.\d+)?)([smh]?)", text.strip())
+    if not match:
+        raise UsageError(f"not a duration: {text!r} (examples: 30m, 90s, 2h, 0)")
+    value = float(match[1])
+    return value * {"s": 1, "m": 60, "h": 3600, "": 60}[match[2]]
+
+
+def format_duration(seconds):
+    if seconds % 3600 == 0:
+        return f"{seconds // 3600:.0f}h"
+    if seconds % 60 == 0:
+        return f"{seconds // 60:.0f}m"
+    return f"{seconds:g}s"
+
+
+def positive_int(text, what):
+    if not re.fullmatch(r"[1-9]\d*", str(text)):
+        raise UsageError(f"{what} must be a positive whole number, not {text!r}")
+    return int(text)
+
+
+def config_path():
+    if "JOBPOOL_CONFIG" in os.environ:
+        return os.environ["JOBPOOL_CONFIG"]
+    base = os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")
+    return os.path.join(base, "jobpool", "config")
+
+
+def load_settings():
+    runtime = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+    settings = {
+        "slots": None,
+        "reserve": "1",
+        "idle": "30m",
+        "poll_seconds": "30",
+        "unit": "jobpool",
+        "fifo": os.path.join(runtime, "jobpool.fifo"),
+        "repair": "auto",
+    }
+    path = config_path()
+    try:
+        with open(path) as f:
+            for number, line in enumerate(f, 1):
+                line = line.split("#", 1)[0].strip()
+                if not line:
+                    continue
+                key, sep, value = (part.strip() for part in line.partition("="))
+                if not sep or key not in settings:
+                    raise UsageError(f"{path}:{number}: expected one of {', '.join(settings)} = value")
+                settings[key] = value
+    except FileNotFoundError:
+        pass
+    # An empty variable counts as unset, as it does for most build tools.
+    for key in settings:
+        if os.environ.get(f"JOBPOOL_{key.upper()}"):
+            settings[key] = os.environ[f"JOBPOOL_{key.upper()}"]
+    return settings
+
+
+class Pool:
+    def __init__(self, settings):
+        if not str(settings["reserve"]).isdigit():
+            raise UsageError(f"reserve must be a whole number, not {settings['reserve']!r}")
+        reserve = int(settings["reserve"])
+        if settings["slots"] in (None, ""):
+            self.slots = max(1, physical_cores() - reserve)
+            self.slots_source = f"{physical_cores()} physical cores less {reserve}"
+        else:
+            self.slots = positive_int(settings["slots"], "slots")
+            self.slots_source = "set"
+        if self.slots > 4096:
+            raise UsageError("slots above 4096 would not fit a pipe buffer")
+        self.idle = parse_duration(settings["idle"])
+        self.poll = float(settings["poll_seconds"])
+        self.unit = settings["unit"]
+        self.repair = settings["repair"] == "auto"
+        if settings["repair"] not in ("auto", "off"):
+            raise UsageError("repair must be auto or off")
+        # Clients name the FIFO by path, and /proc shows the path a process
+        # opened in its canonical form, so the pool always uses that form.
+        fifo = os.path.abspath(settings["fifo"])
+        self.fifo = os.path.join(os.path.realpath(os.path.dirname(fifo)), os.path.basename(fifo))
+        self.lock_path = self.fifo + ".lock"
+
+    # The service.
+
+    def running(self):
+        return subprocess.run(
+            ["systemctl", "--user", "is-active", "--quiet", self.unit + SERVICE_SUFFIX]
+        ).returncode == 0
+
+    def service_env(self):
+        out = subprocess.run(
+            ["systemctl", "--user", "show", self.unit + SERVICE_SUFFIX, "-p", "Environment", "--value"],
+            capture_output=True, text=True,
+        ).stdout
+        return dict(word.split("=", 1) for word in out.split() if "=" in word)
+
+    def running_slots(self):
+        value = self.service_env().get("JOBPOOL_SLOTS", "")
+        return int(value) if value.isdigit() else None
+
+    def start(self, out=sys.stdout):
+        if self.running():
+            print(f"already running: {self.describe_free()}", file=out)
+            return 0
+        script = os.path.realpath(sys.argv[0])
+        for value in (script, sys.executable, self.fifo, self.unit):
+            if UNSAFE_IN_UNIT.search(value):
+                raise UsageError(f"cannot pass {value!r} to systemd: it has a space, quote, $, % or backslash")
+        settings = {
+            "JOBPOOL_SLOTS": str(self.slots),
+            "JOBPOOL_IDLE": f"{self.idle:g}s",
+            "JOBPOOL_POLL_SECONDS": f"{self.poll:g}",
+            "JOBPOOL_UNIT": self.unit,
+            "JOBPOOL_FIFO": self.fifo,
+            "JOBPOOL_REPAIR": "auto" if self.repair else "off",
+            "JOBPOOL_CONFIG": "/dev/null",
+        }
+        command = [
+            "systemd-run", "--user", "--quiet", "--collect", f"--unit={self.unit}",
+            f"--description=Build job slots: {self.slots}",
+            f"--property=ExecStopPost={sys.executable} -I {script} _cleanup",
+        ]
+        command += [f"--setenv={key}={value}" for key, value in settings.items()]
+        command += [sys.executable, "-I", script, "_serve"]
+        if subprocess.run(command).returncode != 0:
+            return 1
+        deadline = time.monotonic() + 5
+        while not os.path.exists(self.fifo) and time.monotonic() < deadline:
+            time.sleep(0.05)
+        if not os.path.exists(self.fifo):
+            print(f"jobpool: the pool did not start; see: systemctl --user status {self.unit}", file=sys.stderr)
+            return 1
+        print(f"started: {self.describe_free()}", file=out)
+        return 0
+
+    def stop(self, force):
+        if not self.running():
+            print("not running")
+            return 0
+        clients = self.clients()
+        if clients and not force:
+            print(f"jobpool: clients hold the pool: {format_clients(clients)}", file=sys.stderr)
+            print("jobpool: they would keep using it beside a new one; wait for them, or use --force",
+                  file=sys.stderr)
+            return 1
+        return subprocess.run(["systemctl", "--user", "stop", self.unit + SERVICE_SUFFIX]).returncode
+
+    # The FIFO.
+
+    def identity(self):
+        try:
+            st = os.stat(self.fifo)
+        except FileNotFoundError:
+            return None
+        return st.st_dev, st.st_ino
+
+    def holders(self, identity, exclude=()):
+        """Pids of processes that hold the FIFO open, found by inode, so that
+        another path to the same FIFO (a bind mount, a symlinked directory)
+        still matches."""
+        name = os.path.basename(self.fifo)
+        found = set()
+        for proc in os.listdir("/proc"):
+            if not proc.isdigit() or int(proc) in exclude:
+                continue
+            try:
+                fds = os.listdir(f"/proc/{proc}/fd")
+            except OSError:
+                continue
+            for fd in fds:
+                link = f"/proc/{proc}/fd/{fd}"
+                try:
+                    if name not in os.readlink(link):
+                        continue
+                    st = os.stat(link)
+                except OSError:
+                    continue
+                if (st.st_dev, st.st_ino) == identity:
+                    found.add(int(proc))
+                    break
+        return sorted(found)
+
+    def clients(self):
+        identity = self.identity()
+        if identity is None:
+            return []
+        main = subprocess.run(
+            ["systemctl", "--user", "show", self.unit + SERVICE_SUFFIX, "-p", "MainPID", "--value"],
+            capture_output=True, text=True,
+        ).stdout.strip()
+        exclude = {os.getpid()}
+        if main.isdigit():
+            exclude.add(int(main))
+        return self.holders(identity, exclude)
+
+    def open_fifo(self):
+        return os.open(self.fifo, os.O_RDWR | os.O_NONBLOCK | os.O_CLOEXEC)
+
+    @contextlib.contextmanager
+    def lock(self, exclusive, wait=True):
+        """The service takes this lock exclusively while it decides to stop or
+        to repair; `run` takes it shared while it opens the FIFO. So `run`
+        either opens the FIFO before the service counts its clients, and is
+        counted, or finds it already removed and starts a new pool."""
+        fd = os.open(self.lock_path, os.O_RDWR | os.O_CREAT | os.O_CLOEXEC, 0o600)
+        try:
+            flags = (fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH) | (0 if wait else fcntl.LOCK_NB)
+            try:
+                fcntl.flock(fd, flags)
+            except BlockingIOError:
+                yield False
+                return
+            yield True
+        finally:
+            os.close(fd)
+
+    def describe_free(self):
+        total = self.running_slots() or self.slots
+        try:
+            fd = self.open_fifo()
+        except FileNotFoundError:
+            return f"FIFO {self.fifo} is missing"
+        try:
+            return f"{free_bytes(fd)} of {total} slots free at {self.fifo}"
+        finally:
+            os.close(fd)
+
+    def makeflags(self, total):
+        kept = [w for w in os.environ.get("MAKEFLAGS", "").split()
+                if not re.match(r"-j|--jobs|--jobserver-(auth|fds)=", w)]
+        return " ".join(kept + [f"-j{total}", f"--jobserver-auth=fifo:{self.fifo}"])
+
+
+def free_bytes(fd):
+    return struct.unpack("i", fcntl.ioctl(fd, termios.FIONREAD, b"\0" * 4))[0]
+
+
+def balance(fd, slots):
+    """Brings the FIFO back to `slots` bytes; only safe while no client holds
+    it. Returns the change."""
+    change = slots - free_bytes(fd)
+    if change > 0:
+        os.write(fd, TOKEN * change)
+    elif change < 0:
+        os.read(fd, -change)
+    return change
+
+
+def format_clients(pids):
+    def name(pid):
+        try:
+            with open(f"/proc/{pid}/comm") as f:
+                return f.read().strip()
+        except OSError:
+            return "?"
+    return " ".join(f"{pid} ({name(pid)})" for pid in pids)
+
+
+def serve(pool):
+    with contextlib.suppress(FileNotFoundError):
+        os.unlink(pool.fifo)
+    os.mkfifo(pool.fifo, 0o600)
+    fd = pool.open_fifo()
+    identity = pool.identity()
+    os.write(fd, TOKEN * pool.slots)
+
+    def remove_fifo():
+        if pool.identity() == identity:
+            os.unlink(pool.fifo)
+
+    def on_signal(number, _frame):
+        remove_fifo()
+        sys.exit(128 + number)
+
+    for number in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(number, on_signal)
+
+    # Monotonic time, so that a change of the wall clock does not end or
+    # extend the idle time.
+    last_client = time.monotonic()
+    while True:
+        time.sleep(pool.poll)
+        with pool.lock(exclusive=True, wait=False) as locked:
+            if not locked:
+                last_client = time.monotonic()
+                continue
+            if pool.holders(identity, exclude={os.getpid()}):
+                last_client = time.monotonic()
+                continue
+            if pool.repair:
+                change = balance(fd, pool.slots)
+                if change > 0:
+                    print(f"restored {change} slots that clients took and never returned", flush=True)
+                elif change < 0:
+                    print(f"drained {-change} surplus slots that clients wrote back", flush=True)
+            if pool.idle and time.monotonic() - last_client >= pool.idle:
+                print(f"stopping: no client for {format_duration(pool.idle)}", flush=True)
+                remove_fifo()
+                return 0
+
+
+def status(pool):
+    if not pool.running():
+        print("not running")
+        return 1
+    total = pool.running_slots() or pool.slots
+    env = pool.service_env()
+    try:
+        fd = pool.open_fifo()
+    except FileNotFoundError:
+        print(f"running, but the FIFO {pool.fifo} is missing")
+        return 3
+    try:
+        free = free_bytes(fd)
+    finally:
+        os.close(fd)
+    clients = pool.clients()
+    print(f"running: {free} of {total} slots free at {pool.fifo}")
+    idle = parse_duration(env.get("JOBPOOL_IDLE", "0s"))
+    if idle:
+        print(f"stops itself after {format_duration(idle)} without a client")
+    if clients:
+        print(f"clients: {format_clients(clients)}")
+        return 0
+    if free < total:
+        print(f"no client holds the pool, so {total - free} slots are lost; recover them with: jobpool repair")
+        return 3
+    if free > total:
+        print(f"no client holds the pool, yet {free - total} surplus slots are in it; "
+              "drain them with: jobpool repair")
+        return 3
+    return 0
+
+
+def repair(pool):
+    if not pool.running():
+        print("not running")
+        return 1
+    identity = pool.identity()
+    with pool.lock(exclusive=True):
+        clients = pool.clients()
+        if clients:
+            print(f"jobpool: clients hold the pool, so slots in use cannot be told from lost ones: "
+                  f"{format_clients(clients)}", file=sys.stderr)
+            return 1
+        fd = pool.open_fifo()
+        try:
+            if pool.identity() != identity:
+                print("jobpool: the pool was replaced; nothing to repair", file=sys.stderr)
+                return 1
+            change = balance(fd, pool.running_slots() or pool.slots)
+        finally:
+            os.close(fd)
+    if change > 0:
+        print(f"restored {change} slots")
+    elif change < 0:
+        print(f"drained {-change} surplus slots")
+    else:
+        print("nothing to repair")
+    return 0
+
+
+def open_current(pool):
+    """Opens the FIFO of a running pool, starting one if needed."""
+    for _ in range(5):
+        if not pool.running() and pool.start(out=sys.stderr) != 0:
+            return None
+        with pool.lock(exclusive=False):
+            try:
+                fd = pool.open_fifo()
+            except FileNotFoundError:
+                continue
+            st = os.fstat(fd)
+            if pool.identity() == (st.st_dev, st.st_ino):
+                return fd
+            os.close(fd)
+        time.sleep(0.1)
+    return None
+
+
+def take_slot(fd):
+    announced = False
+    while True:
+        try:
+            return os.read(fd, 1)
+        except BlockingIOError:
+            if not announced:
+                print("jobpool: waiting for a free job slot", file=sys.stderr)
+                announced = True
+            select.select([fd], [], [], 5)
+
+
+def run(pool, argv, with_slot):
+    identity = pool.identity()
+    if identity and os.environ.get("JOBPOOL_HELD") == "%d:%d" % identity:
+        # Already inside a command that `run` gave a slot of this pool; that
+        # slot is this command's implicit one.
+        os.execvp(argv[0], argv)
+
+    fd = open_current(pool)
+    if fd is None:
+        print("jobpool: could not open the pool", file=sys.stderr)
+        return 1
+    total = pool.running_slots() or pool.slots
+    token = take_slot(fd) if with_slot else b""
+    st = os.fstat(fd)
+    env = dict(os.environ, MAKEFLAGS=pool.makeflags(total),
+               JOBPOOL_HELD=f"{st.st_dev}:{st.st_ino}" if with_slot else "")
+    # A terminal's Ctrl-C reaches the command directly; this process waits so
+    # that it can return the slot after the command ends.
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    try:
+        child = subprocess.Popen(argv, env=env, restore_signals=True,
+                                 preexec_fn=lambda: signal.signal(signal.SIGINT, signal.SIG_DFL))
+    except OSError as error:
+        os.write(fd, token)
+        print(f"jobpool: {argv[0]}: {error.strerror}", file=sys.stderr)
+        return 127
+
+    def forward(number, _frame):
+        child.send_signal(number)
+
+    for number in (signal.SIGTERM, signal.SIGHUP):
+        signal.signal(number, forward)
+    try:
+        code = child.wait()
+    finally:
+        os.write(fd, token)
+        os.close(fd)
+    return 128 - code if code < 0 else code
+
+
+def parse_start_options(args, settings):
+    while args:
+        arg = args.pop(0)
+        if arg in ("--slots", "--idle"):
+            if not args:
+                raise UsageError(f"{arg} needs a value")
+            settings[arg[2:]] = args.pop(0)
+        elif arg == "--no-repair":
+            settings["repair"] = "off"
+        elif re.fullmatch(r"\d+", arg):
+            settings["slots"] = arg
+        else:
+            raise UsageError(f"unknown option {arg!r}")
+
+
+def main(args):
+    if not args:
+        raise UsageError("usage:" + __doc__.split("Usage:", 1)[1].split("\n\n", 1)[0])
+    command, args = args[0], list(args[1:])
+    settings = load_settings()
+    if command in ("start", "ensure"):
+        parse_start_options(args, settings)
+        return Pool(settings).start()
+    pool = Pool(settings)
+    if command == "run":
+        with_slot = True
+        if args and args[0] == "--no-slot":
+            with_slot = False
+            args.pop(0)
+        if args and args[0] == "--":
+            args.pop(0)
+        if not args:
+            raise UsageError("run needs a command")
+        return run(pool, args, with_slot)
+    if command == "status":
+        return status(pool)
+    if command == "env":
+        if not pool.running() or pool.identity() is None:
+            print("jobpool: not running; start it with: jobpool ensure", file=sys.stderr)
+            return 1
+        print(f'export MAKEFLAGS="{pool.makeflags(pool.running_slots() or pool.slots)}"')
+        return 0
+    if command == "repair":
+        return repair(pool)
+    if command == "stop":
+        return pool.stop(force=args == ["--force"])
+    if command == "config":
+        print(f"config file: {config_path()}")
+        print(f"slots: {pool.slots} ({pool.slots_source})")
+        print(f"idle: {format_duration(pool.idle) if pool.idle else 'never'}")
+        print(f"poll: {pool.poll:g}s")
+        print(f"repair: {'auto' if pool.repair else 'off'}")
+        print(f"unit: {pool.unit}")
+        print(f"fifo: {pool.fifo}")
+        return 0
+    if command == "_serve":
+        return serve(pool)
+    if command == "_cleanup":
+        # Runs after the service ends however it ended, so that a pool killed
+        # with SIGKILL leaves no FIFO that no process fills.
+        with contextlib.suppress(FileNotFoundError):
+            os.unlink(pool.fifo)
+        return 0
+    raise UsageError(f"unknown command {command!r}")
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except UsageError as error:
+        print(f"jobpool: {error}", file=sys.stderr)
+        sys.exit(2)
