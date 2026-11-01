@@ -1,0 +1,1 @@
+closed sign identity holds for every pair of masks, n = 1 to 8
