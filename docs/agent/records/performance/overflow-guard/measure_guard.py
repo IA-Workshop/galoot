@@ -2,7 +2,9 @@
 """Measure what the coefficient guards of blade_product.hpp cost in constant
 evaluation.
 
-Usage, from the repository root: measure_guard.py <out-dir> [repeats] [cpu]
+Usage, from the repository root:
+  measure_guard.py <out-dir> [repeats] [cpu]
+  measure_guard.py --default-limits <out-dir>
 
 Each compile constant-evaluates the full product table of one n = 5 form, all
 32 x 32 products of blades with a term list of capacity 16, and checks the
@@ -19,6 +21,12 @@ Every compile runs through tools/timed, which appends its row (wall time,
 peak memory, retired instructions on both kinds of core) to the run log,
 pinned to `cpu` (default 6) with taskset. The selection names the point:
 overflow-guard:<compiler>:<form>:<guarded|unguarded>:<repeat>.
+
+With --default-limits, each table is compiled once per compiler, header, and
+optimization level (-O0 and -O2) at the compilers' default limits instead,
+and <out-dir>/default-limits.tsv records the exit status and the first line
+of the diagnostic that names a limit, if any. Selections:
+overflow-guard-default-limits:<compiler>:<form>:<guard>:<level>.
 """
 
 import pathlib
@@ -98,10 +106,50 @@ def unguarded_include(root, out):
     return include
 
 
+LIMIT_TEXT = ("step limit", "operation count exceeds", "constexpr-ops-limit",
+              "constexpr-loop-limit", "constexpr-depth")
+
+
+def default_limits(root, out):
+    includes = {"guarded": root / "include",
+                "unguarded": unguarded_include(root, out)}
+    rows = ["compiler\tform\tguard\tlevel\texit\tlimit_diagnostic"]
+    for form, (expression, terms) in FORMS.items():
+        source = out / f"table_{form}.cpp"
+        source.write_text(UNIT.format(form=expression, terms=terms),
+                          encoding="utf-8")
+        for compiler, (program, *_) in COMPILERS.items():
+            for guard, include in includes.items():
+                for level in ("-O0", "-O2"):
+                    flags = [f for f in FLAGS if f != "-O0"] + [level]
+                    selection = (f"overflow-guard-default-limits:{compiler}:"
+                                 f"{form}:{guard}:{level}")
+                    command = [str(root / "tools" / "timed"), "measure", "-",
+                               selection, "--", program, *flags,
+                               f"-I{include}", str(source)]
+                    result = subprocess.run(command, cwd=root,
+                                            capture_output=True, text=True)
+                    limit = next((line.strip().replace(f"{root}/", "")
+                                  for line in
+                                  result.stderr.splitlines()
+                                  if any(t in line for t in LIMIT_TEXT)), "-")
+                    rows.append(f"{compiler}\t{form}\t{guard}\t{level}\t"
+                                f"{result.returncode}\t{limit[:200]}")
+                    print(rows[-1], flush=True)
+    shutil.rmtree(out / "unguarded")
+    (out / "default-limits.tsv").write_text("\n".join(rows) + "\n",
+                                            encoding="utf-8")
+    return 0
+
+
 def main(argv):
     root = pathlib.Path(subprocess.run(
         ["git", "rev-parse", "--show-toplevel"], capture_output=True,
         text=True, check=True).stdout.strip())
+    if argv and argv[0] == "--default-limits":
+        out = pathlib.Path(argv[1]).resolve()
+        out.mkdir(parents=True, exist_ok=True)
+        return default_limits(root, out)
     out = pathlib.Path(argv[0]).resolve()
     repeats = int(argv[1]) if len(argv) > 1 else 3
     cpu = argv[2] if len(argv) > 2 else "6"
