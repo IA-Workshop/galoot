@@ -49,9 +49,12 @@ namespace galoot::core {
 ///
 /// Guarantees: a signed integer of 64 bits. Generation keeps every
 /// coefficient within -max to max, where max is
-/// std::numeric_limits<coefficient_type>::max(), and a coefficient that
-/// would leave that range fails GALOOT_ASSERT where it is formed, so no
-/// coefficient wraps silently.
+/// std::numeric_limits<coefficient_type>::max(). A coefficient that would
+/// leave that range fails GALOOT_ASSERT where it is formed: in a constant
+/// evaluation, which then fails to compile, and at run time when
+/// GALOOT_CHECKING is 1, which aborts. At run time with GALOOT_CHECKING 0,
+/// the default when a project only adds the headers, nothing is checked and
+/// such an overflow is undefined behavior.
 using coefficient_type = std::int64_t;
 
 namespace detail {
