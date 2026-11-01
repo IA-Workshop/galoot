@@ -50,8 +50,8 @@ consteval entry_type isqrt(entry_type x) {
 
 /// The number of generators that the factories accept unless their MaxN
 /// says otherwise. Galoot is tested up to 16 generators; a factory given a
-/// larger MaxN, up to mask_bits, builds an algebra that every later
-/// part of the library accepts but that is not tested.
+/// larger MaxN, up to mask_bits, builds an algebra that every later part of
+/// the library accepts but that is not tested.
 inline constexpr std::size_t max_generators = 16;
 
 /// The largest magnitude of an entry of a Gram matrix: the largest k for
@@ -165,9 +165,9 @@ inline constexpr bool is_metric_v<metric<N>> = true;
 /// count is named Z, for the generators that square to zero, because the
 /// function itself is R.
 ///
-/// Requires: 1 <= n <= MaxN, and MaxN <= mask_bits,
-/// each checked at compile time with a message that names it. A negative
-/// count does not convert to std::size_t, so it fails to compile.
+/// Requires: 1 <= n <= MaxN, and MaxN <= mask_bits, each checked at compile
+/// time with a message that names it. A negative count does not convert to
+/// std::size_t, so it fails to compile.
 /// Guarantees: e1 to eP square to +1, the next Q generators to -1, and the
 /// last Z to 0, and distinct generators are orthogonal. Null generators come
 /// last, as in the rigid algebra, where some texts put a null e0 first.

@@ -1,0 +1,53 @@
+# Patterns of text that points a reader to a project document, a numbered
+# rule of one, a project record, or the people and tools that wrote it,
+# instead of stating the reason in place. tools/test_references.py reads
+# this file: each line that is not blank and does not start with # is a
+# Python regular expression, and the lines are tried in this order, so where
+# two match at the same place the earlier one is reported. This file is the
+# one place the patterns are written, so the citation check is told to skip
+# it.
+#
+# A document name followed by one of its rule numbers, or by a kind of
+# evidence.
+(?i:\b(?:constitution|workflow|vvuq|performance|style|conventions)\b(?:\.md)?,?\s*(?:§\s*)?(?:[CWSPV]\d+|kind\s+\d))
+# The documents' names in capitals, as they are written.
+\b(?:CONSTITUTION|WORKFLOW|VVUQ|PERFORMANCE|STYLE|CONVENTIONS)\b
+# Their file names in any case.
+(?i:\b(?:constitution|workflow|vvuq|performance|style|conventions)\.md\b)
+(?i:\bconventions\s+specification\b)
+# A numbered section or item, the form the conventions take, and a section
+# sign followed by "of the conventions".
+(?i:\b(?:section|item)\s+\d+\.\d+\b)
+(?i:§\s*\d+(?:\.\d+)*\s+of\s+the\s+conventions\b)
+# A numbered decision, plan, review, or lesson, also in a file name's form
+# (plan-0007), and a research note.
+(?i:\b(?:decisions?|plans?|reviews?|lessons?)(?:\s+|-)\d+\b)
+(?i:\bnotes?\s+\d{4}\b)
+(?i:\bresearch[-\s]+notes?\b)
+(?i:\blessons?[-\s]+learned\b)
+(?i:\bspikes?\s+[A-F]\b|\bspike-[a-f]+\b)
+(?i:\bworkbench\b)
+# Agent records live under docs/agent. The run log that tools/timed and
+# tools/measure append to, and its directory, which tools/measure leaves out
+# of its check for uncommitted changes, are those tools' interface, not a
+# citation; any other path there is.
+docs/agent(?!/records/performance(?:/runs\.tsv)?\b(?!/))
+# Units of work, criteria, gates, review findings and tickets, and
+# departures.
+\bWU\d+\b
+\bDoD-\d+\b
+(?i:\b(?:milestone|gate)\s+M\d+\b|\bM\d+\s+(?:gate|milestone)\b)
+(?i:\b(?:findings?|tickets?)\s+[A-Z]\d+\b)
+(?i:\bdepartures?\s+\d+\b)
+# A bare workflow or performance rule number. Bare C, S, and V numbers are
+# also names in mathematics (the cyclic group C3, the sphere S2, the Klein
+# group V4), so they count only in a parenthesized list such as (C13, S6),
+# or after "per", "see", or "cf.", which point to a rule.
+\b[WP]\d{1,2}\b
+\((?:[CSV]\d{1,2}(?:,\s*|;\s*|\s+and\s+|\s+to\s+)?)+\)
+(?i:\b(?:per|see|cf\.?)\s+)[CSV]\d{1,2}\b
+# The names of agent models and of the project's agents.
+\b(?:Claude|Opus|Sonnet|Haiku|Fable)\b
+\b(?:blind-reviewer|doctest-expert|build-expert)\b
+(?i:\bauditor\b)
+(?i:\bsnippet\s+candidate\b)

@@ -6,10 +6,11 @@ Usage: python3 -I measure_record_test.py <tools/measure> <scratch directory>
 Copies tools/measure into a fresh git repository in the scratch directory and
 runs the copy there, because the recorder takes its revision from, and writes
 run rows into, the checkout that holds it; the real run log is never touched.
-A stand-in `perf` on PATH writes chosen counter lines and runs the command, so
-the cases do not depend on what the machine's counters report, and a `git` on
-PATH logs its arguments before running the real git. Prints one line per
-failed check and exits 1 if there is any.
+A stand-in `perf` on PATH records the events it was asked for, writes chosen
+counter lines, and runs the command, so the cases do not depend on what the
+machine's counters report. A `git` on PATH logs its arguments and then runs
+the real git, or fails when a case asks it to. Prints one line per failed
+check and exits 1 if there is any.
 """
 
 import os
@@ -19,9 +20,11 @@ import sys
 
 FAKE_PERF = """#!/bin/sh
 # Stands in for perf stat: runs the command after -- and writes the lines in
-# FAKE_PERF_OUTPUT to the file named by -o, as perf does when it exits.
+# FAKE_PERF_OUTPUT to the file named by -o, as perf does when it exits. The
+# event list after -e is written to FAKE_PERF_EVENTS.
 while [ "$1" != "--" ]; do
   if [ "$1" = "-o" ]; then out=$2; fi
+  if [ "$1" = "-e" ]; then printf '%s\\n' "$2" > "$FAKE_PERF_EVENTS"; fi
   shift
 done
 shift
@@ -32,7 +35,13 @@ exit $status
 """
 
 FAKE_GIT = """#!/bin/sh
+# Logs its arguments, then fails every command when FAKE_GIT_FAIL is "all",
+# fails only git status when it is "status", and otherwise runs the real git.
 printf '%s\\n' "$*" >> "$GIT_LOG"
+case "${{FAKE_GIT_FAIL:-}}: $* " in
+  all:*) exit 128 ;;
+  status:*" status "*) exit 128 ;;
+esac
 exec {git} "$@"
 """
 
@@ -55,6 +64,7 @@ class Scratch:
         self.measure = os.path.join(self.top, "tools", "measure")
         shutil.copy(measure, self.measure)
         self.git_log = os.path.join(self.top, "git.log")
+        self.perf_events = os.path.join(self.top, "perf-events.txt")
 
         # bin holds the logging git, stand-ins for the build programs, and,
         # when a case asks for it, the stand-in perf. The real perf is never
@@ -62,7 +72,7 @@ class Scratch:
         real_git = shutil.which("git")
         self.git = os.path.join(self.top, "bin", "git")
         self.write_script(self.git, FAKE_GIT.format(git=real_git))
-        for program in ("ninja", "ctest"):
+        for program in ("ninja", "ctest", "cmake"):
             os.symlink("/bin/true", os.path.join(self.top, "bin", program))
         git = [real_git, "-C", self.top, "-c", "user.name=test",
                "-c", "user.email=test@example.invalid"]
@@ -87,9 +97,11 @@ class Scratch:
         elif not enabled and os.path.exists(path):
             os.unlink(path)
 
-    def measure_cmd(self, args, perf_output="", cwd=None):
+    def measure_cmd(self, args, perf_output="", cwd=None, git_fails=""):
         env = {"PATH": os.path.join(self.top, "bin"),
-               "FAKE_PERF_OUTPUT": perf_output, "GIT_LOG": self.git_log}
+               "FAKE_PERF_OUTPUT": perf_output,
+               "FAKE_PERF_EVENTS": self.perf_events, "GIT_LOG": self.git_log,
+               "FAKE_GIT_FAIL": git_fails}
         return subprocess.run([sys.executable, "-I", self.measure, *args],
                               cwd=cwd or self.top, env=env,
                               capture_output=True, text=True, check=False)
@@ -150,34 +162,40 @@ def counters_per_core_type(s):
     # type reported <not counted> retired nothing only if the other type ran
     # for all of task-clock's time; otherwise its count is unknown.
     s.use_fake_perf(True)
+    counted = "1000,,cpu_core/instructions/u,5000,100.00,,"
+    not_counted = "<not counted>,,cpu_atom/instructions/u,0,0.00,,"
+    task_clock = "5.00,msec,task-clock:u,{},100.00,,"
     cases = {
-        "all time on the other type": "5000",
-        "other type short of task-clock": "6000",
-        "no task-clock line": None,
+        "all time on the other type":
+            ([counted, not_counted, task_clock.format(5000)], "0"),
+        "other type short of task-clock":
+            ([counted, not_counted, task_clock.format(6000)], "unavailable"),
+        "no task-clock line": ([counted, not_counted], "unavailable"),
+        "unsupported event":
+            ([counted, "<not supported>,,cpu_atom/instructions/u,0,0.00,,",
+              task_clock.format(5000)], "unavailable"),
     }
-    for task_clock in cases.values():
-        lines = ["1000,,cpu_core/instructions/u,5000,100.00,,",
-                 "<not counted>,,cpu_atom/instructions/u,0,0.00,,"]
-        if task_clock is not None:
-            lines.append(f"5.00,msec,task-clock:u,{task_clock},100.00,,")
+    for index, (name, (lines, inst_e_u)) in enumerate(cases.items()):
         s.measure_cmd(["tu", "p", "c", "types.tsv", "--", "/bin/true"],
                       perf_output="\n".join(lines))
-    s.measure_cmd(
-        ["tu", "p", "c", "types.tsv", "--", "/bin/true"],
-        perf_output="1000,,cpu_core/instructions/u,5000,100.00,,\n"
-        "<not supported>,,cpu_atom/instructions/u,0,0.00,,\n"
-        "5.00,msec,task-clock:u,5000,100.00,,")
-    whole, short, missing, unsupported = s.rows("types.tsv")
-    check("mode of an unpinned row", whole["mode"], "shared")
-    check("instructions on the core type the command ran on",
-          whole["inst_p_u"], "1000")
-    check("instructions on a core type never run on", whole["inst_e_u"], "0")
-    check("not counted while the other type ran less than task-clock",
-          short["inst_e_u"], "unavailable")
-    check("not counted without task-clock", missing["inst_e_u"],
-          "unavailable")
-    check("instructions of an unsupported event", unsupported["inst_e_u"],
-          "unavailable")
+        # Each case appends one row, so a case that writes none cannot be
+        # judged by the row of the case before it.
+        rows = s.rows("types.tsv")
+        check(f"rows after the case {name}", len(rows), index + 1)
+        row = rows[-1]
+        check(f"mode, {name}", row["mode"], "shared")
+        check(f"instructions on the type the command ran on, {name}",
+              row["inst_p_u"], "1000")
+        check(f"instructions on the other type, {name}", row["inst_e_u"],
+              inst_e_u)
+
+    # The check above needs task-clock's running time, so the shared event
+    # list must ask perf for it.
+    with open(s.perf_events, encoding="utf-8") as f:
+        events = f.read().strip().split(",")
+    check("shared events requested of perf", events,
+          ["cpu_core/instructions/u", "cpu_atom/instructions/u",
+           "task-clock"])
 
 
 def run_options(s):
@@ -198,6 +216,23 @@ def run_options(s):
     s.measure_cmd(["run", "test", "p", "preset-tree", "--", "/bin/true"])
     s.measure_cmd(["run", "test", "-", "no-tree", "--", "/bin/true"])
     s.measure_cmd(["run", "test", "r", "missing-tree", "--", "/bin/true"])
+    # A label or regex value that names a build program is not the program.
+    s.measure_cmd(["run", "test", "p", "label-named-make", "--",
+                   "ctest", "-L", "make", "-C", "Debug"])
+    s.measure_cmd(["run", "test", "q", "regex-named-ninja", "--",
+                   "ctest", "-R", "ninja", "-C", "Debug", "--test-dir", tree])
+    # cmake -E runs another program, which names the tree.
+    s.measure_cmd(["run", "test", "q", "cmake-e-env", "--",
+                   "cmake", "-E", "env", "FOO=1", "ctest", "--test-dir", tree])
+    s.measure_cmd(["run", "build", "q", "cmake-e-time", "--",
+                   "cmake", "-E", "time", "ninja", "-C", tree])
+    # cmake -E chdir runs the program in its directory, which is then its
+    # tree, or the base of a relative tree it names.
+    s.measure_cmd(["run", "build", "q", "cmake-e-chdir", "--",
+                   "cmake", "-E", "chdir", tree, "ninja"])
+    s.measure_cmd(["run", "build", "q", "cmake-e-chdir-relative", "--",
+                   "cmake", "-E", "chdir", os.path.join(s.top, "build"),
+                   "ninja", "-C", "p"])
     options = {row["selection"]: row["options"] for row in s.rows(RUN_LOG)}
     check("options of a run that names its tree", options["named-tree"],
           "-Wall -Werror -O1 -g")
@@ -210,6 +245,18 @@ def run_options(s):
     check("options of a run with no tree", options["no-tree"], "-")
     check("options of a run whose tree has no cache", options["missing-tree"],
           "unavailable")
+    check("options of ctest -L make, a label, not a program",
+          options["label-named-make"], "-Wall -Werror -O1 -g")
+    check("options of ctest -R ninja with --test-dir",
+          options["regex-named-ninja"], "-Wall -Werror -O1 -g")
+    check("options of ctest run by cmake -E env",
+          options["cmake-e-env"], "-Wall -Werror -O1 -g")
+    check("options of ninja run by cmake -E time",
+          options["cmake-e-time"], "-Wall -Werror -O1 -g")
+    check("options of ninja run by cmake -E chdir",
+          options["cmake-e-chdir"], "-Wall -Werror -O1 -g")
+    check("options of ninja -C relative to cmake -E chdir's directory",
+          options["cmake-e-chdir-relative"], "-Wall -Werror -O1 -g")
 
 
 def reader(s):
@@ -229,6 +276,7 @@ def reader(s):
     for name, text in (("repeated header", "a\tb\n1\t2\na\tb\n"),
                        ("older, shorter header", "a\tb\n1\t2\na\n3\n"),
                        ("blank line", "a\tb\n1\t2\n\n3\t4\n"),
+                       ("blank header line", "\n"),
                        ("empty file", "")):
         with open(record, "w", encoding="utf-8") as f:
             f.write(text)
@@ -240,6 +288,13 @@ def reader(s):
         f.write("a\tb\n1\t2\n")
     check("exit of a read of an unknown column",
           s.measure_cmd(["read", record, "z"]).returncode, 1)
+
+    missing = os.path.join(s.top, "no-such-record.tsv")
+    result = s.measure_cmd(["read", missing])
+    check("exit of a read of a missing file", result.returncode, 1)
+    check("a read of a missing file names it without a traceback",
+          (missing in result.stderr, "Traceback" in result.stderr),
+          (True, False))
 
 
 def record_with_another_header(s):
@@ -289,6 +344,19 @@ def git_attribution(s):
     row = s.rows("nogit.tsv")[0]
     check("revision without git", row["revision"], "unavailable")
     check("branch without git", row["branch"], "unavailable")
+
+    # git present but failing is not a detached HEAD, and a revision whose
+    # status git could not report is not known to be clean.
+    s.measure_cmd(["tu", "p", "c", "gitfails.tsv", "--", "/bin/true"],
+                  git_fails="all")
+    row = s.rows("gitfails.tsv")[0]
+    check("revision when git fails", row["revision"], "unavailable")
+    check("branch when git fails", row["branch"], "unavailable")
+    s.measure_cmd(["tu", "p", "c", "statusfails.tsv", "--", "/bin/true"],
+                  git_fails="status")
+    row = s.rows("statusfails.tsv")[0]
+    check("revision when git status fails", row["revision"], "unavailable")
+    check("branch when only git status fails", row["branch"], "main")
 
 
 def main(measure, directory):

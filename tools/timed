@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Runs one build or test command and records it in the run log,
-# docs/agent/records/performance/runs.tsv (PERFORMANCE.md P13): wall time,
-# revision, branch, preset, selection, and exit status, then the decision 0018
-# quantities that tools/measure takes (peak memory, user-space counters,
-# package energy, and the processors used). The figures are tracked and noted,
-# never asserted on, and the command's exit status is passed through unchanged.
+# docs/agent/records/performance/runs.tsv: wall time, revision, branch,
+# preset, selection, and exit status, then what tools/measure takes (peak
+# memory, user-space counters, package energy, and the processors used). The
+# figures are tracked and noted, never asserted on, and the command's exit
+# status is passed through unchanged.
 #
-# Build and CTest steps need the machine's shared job-slot pool (P11), because
-# Ninja without it runs as many jobs as there are processors. They are refused
-# with exit 2 when MAKEFLAGS names no FIFO jobserver or the FIFO is missing
-# (decision 0022). Such a step is one with step `build` or `test`, or a command
-# that is ninja, make, ctest, or `cmake --build` or `cmake --workflow`. Step
-# `test` is refused whatever the command, so that a wrapper such as taskset,
-# env, or nice in front of ctest cannot hide it (W5 review of WU1, finding
-# N4). Other commands run unchanged.
+# Build and CTest steps need the machine's shared job-slot pool, because Ninja
+# without it runs as many jobs as there are processors, and several
+# checkouts building at once would oversubscribe the machine. They are
+# refused with exit 2 when MAKEFLAGS names no FIFO jobserver or the FIFO is
+# missing. Such a step is one with step `build` or `test`, or a command that
+# is ninja, make, ctest, or `cmake --build` or `cmake --workflow`. Step `test`
+# is refused whatever the command, so that a wrapper such as taskset, env, or
+# nice in front of ctest cannot hide it. Other commands run unchanged.
 #
 # Usage: tools/timed <step> <preset> <selection> -- <command> [args...]
 #   step       build or test (or another word for other commands)

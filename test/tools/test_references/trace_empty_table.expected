@@ -1,0 +1,9 @@
+trace_empty_table.md: no rows of the form | item | fact | implemented |
+trace_empty_table.md: item 1.1 of @reference_fixtures@/trace_conventions.md has no row
+trace_empty_table.md: item 1.2 of @reference_fixtures@/trace_conventions.md has no row
+trace_empty_table.md: item 2.1 of @reference_fixtures@/trace_conventions.md has no row
+trace_empty_table.md: item 3.1 of @reference_fixtures@/trace_conventions.md has no row
+trace_empty_table.md: item 4.1 of @reference_fixtures@/trace_conventions.md has no row
+golden_fixture.hpp: the fact of namespace alpha, 'the fact of alpha', is not in @reference_fixtures@/trace_empty_table.md
+golden_fixture.hpp: the fact of namespace beta, 'e1 ^ e2 = -e2 ^ e1', is not in @reference_fixtures@/trace_empty_table.md
+golden_fixture.hpp: the fact of namespace gamma, 'the fact of gamma', is not in @reference_fixtures@/trace_empty_table.md

@@ -30,9 +30,8 @@ import sys
 # Table 24 (C++ library headers) and Table 25 (C++ headers for C library
 # facilities). Transcribed from the C++23 working draft N4950, not from the
 # published standard, and checked only against the headers that libstdc++ 16
-# installs. The deprecated headers of Annex D
-# (<codecvt>, <strstream>, and the <*.h> C headers) are left out: the core
-# does not use them.
+# installs. The deprecated headers of Annex D (<codecvt>, <strstream>, and the
+# <*.h> C headers) are left out: the core does not use them.
 STANDARD_HEADERS = frozenset("""
 algorithm any array atomic barrier bit bitset charconv chrono compare complex
 concepts condition_variable coroutine deque exception execution expected

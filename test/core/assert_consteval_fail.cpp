@@ -1,6 +1,7 @@
-// A failing GALOOT_ASSERT in a constant evaluation (plan 0002, section 4.5;
-// decision 0012). This file must not compile, and the diagnostic must show
-// the assertion's message (core.assert_consteval).
+// A failing GALOOT_ASSERT in a constant evaluation. The failed assertion
+// calls a function that is not constexpr, so the evaluation stops there:
+// this file must not compile, and the diagnostic must show the assertion's
+// message (core.assert_consteval).
 #include <galoot/core/assert.hpp>
 
 namespace {

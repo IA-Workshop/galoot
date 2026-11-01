@@ -1,8 +1,10 @@
-"""Exact checks of the sign conventions in CONVENTIONS.md.
+"""Exact checks of Galoot's sign conventions: blade order and names,
+complements and duals, products and their De Morgan laws, and the rigid and
+conformal objects and transforms.
 
-This is an independent reference (VVUQ V1, kind 3) for the conventions
-specification, docs/agent/governance/CONVENTIONS.md: a small Clifford algebra
-over rationals that shares no code with the library. Run it with
+This is an independent reference: a small Clifford algebra over rationals that
+shares no code with the library, from which each convention is checked
+exactly. Run it with
 `python3 -I test/reference/conventions_check.py`; it exits nonzero on any
 failure.
 
@@ -210,7 +212,9 @@ def check_identities(rng):
             check(wedge(a, right(bulk(b))) == expect,
                   f"a ^ bulk_dual(b) = (a . b) antiscalar, grade {k}")
             # Left duals differ by (-1)^(gr ag); in 4D that negates odd
-            # grades, which is the dual-sign disagreement of the spec.
+            # grades, so a library that uses left duals for points and
+            # planes gets the opposite sign of a ^ dual(b) there. This check
+            # tells the two choices apart.
             left_sign = (-1) ** (k * (N - k))
             check(wedge(a, left(bulk(b))) == scale(expect, left_sign),
                   f"left bulk dual sign at grade {k}")

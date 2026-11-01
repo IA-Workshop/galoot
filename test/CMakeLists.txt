@@ -1,10 +1,13 @@
-# Galoot's tests (STYLE S14; plan 0002, sections 4.3 to 4.6).
+# Galoot's tests: doctest programs, compile-fail tests, and checks of the
+# headers, the reference values, and the tools.
 include(${PROJECT_SOURCE_DIR}/cmake/galoot_testing.cmake)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
-# The doctest runner, compiled once with doctest's built-in main (decision
-# 0022; research note 0001, F1 and F2). DOCTEST_CONFIG_SUPER_FAST_ASSERTS
-# reaches every test through the PUBLIC definition (note 0001, F5).
+# The doctest runner, compiled once with doctest's built-in main, so that
+# each test program compiles only its own test cases and not doctest's
+# implementation. DOCTEST_CONFIG_SUPER_FAST_ASSERTS, which makes the binary
+# assertions cheaper to compile, reaches every test through the PUBLIC
+# definition.
 add_library(galoot_doctest_main OBJECT
   ${PROJECT_SOURCE_DIR}/include/ext/doctest/doctest.cpp)
 target_compile_definitions(galoot_doctest_main
@@ -13,7 +16,7 @@ target_compile_definitions(galoot_doctest_main
 target_include_directories(galoot_doctest_main SYSTEM PUBLIC
   ${PROJECT_SOURCE_DIR}/include/ext)
 target_compile_features(galoot_doctest_main PUBLIC cxx_std_23)
-# include/ext is never linted (STYLE S3, S4).
+# include/ext is vendored code with its upstream style, so it is not linted.
 set_target_properties(galoot_doctest_main PROPERTIES SKIP_LINTING ON)
 
 # Runs a command and checks its result and output (test/expect_output.cmake).
@@ -28,15 +31,16 @@ target_compile_definitions(core_smoke_test PRIVATE
   GALOOT_EXPECTED_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
 
 # core.zero_cases below runs the smoke program with its own copy of the rule,
-# so check here that galoot_add_test gave core.smoke the same rule (W5 review
-# of WU1, finding N2).
+# so check here that galoot_add_test gave core.smoke the same rule; otherwise
+# a change to one copy would leave core.zero_cases testing a rule no test
+# program uses.
 get_test_property(core.smoke FAIL_REGULAR_EXPRESSION smoke_zero_cases)
 if(NOT smoke_zero_cases STREQUAL GALOOT_ZERO_CASES_REGEX)
   message(FATAL_ERROR "core.smoke's FAIL_REGULAR_EXPRESSION is "
     "'${smoke_zero_cases}', not the zero-cases rule '${GALOOT_ZERO_CASES_REGEX}'")
 endif()
 
-# core.zero_cases: a filter that matches no test case fails (S14). WILL_FAIL
+# core.zero_cases: a filter that matches no test case fails. WILL_FAIL
 # inverts the zero-cases failure, so this passes only if the rule fires.
 add_test(NAME core.zero_cases
   COMMAND core_smoke_test --test-case=no-such-case)
@@ -56,8 +60,9 @@ foreach(mode IN ITEMS 1 0)
   target_compile_definitions(core_assert_mode_${mode} PRIVATE
     GALOOT_CHECKING=${mode})
 endforeach()
-# A process that aborts cannot pass through WILL_FAIL (plan 0002, departure
-# 4), so a script checks the abort and the literal message.
+# CTest reports a process killed by SIGABRT as "Subprocess aborted", and
+# neither WILL_FAIL nor PASS_REGULAR_EXPRESSION turns that into a pass, so a
+# script checks the abort and the literal message.
 add_test(NAME core.assert_checking
   COMMAND ${expect_output} "Subprocess aborted"
     "galoot: assertion failed: assert_fail: argc is never zero ("
@@ -67,13 +72,14 @@ set_tests_properties(core.assert_checking core.assert_unchecked PROPERTIES
   LABELS "core;core.assert")
 
 # core.assert_consteval: a false GALOOT_ASSERT ends a constant evaluation,
-# and the diagnostic shows its message (decision 0012).
+# and the diagnostic shows its message: assertion_failed is not constexpr,
+# so a call to it cannot be part of a constant expression.
 galoot_add_compile_fail_test(NAME assert_consteval MODULE core COMPONENT assert
   SOURCE core/assert_consteval_fail.cpp
   MESSAGE "assert_consteval_fail: odd input to checked_half"
   REQUIRE assertion_failed)
 # Its twin expects a message the source does not contain, so the helper can
-# fail (VVUQ V2); WILL_FAIL turns that failure into a pass.
+# fail; WILL_FAIL turns that failure into a pass.
 galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
   MODULE core COMPONENT assert
   SOURCE core/assert_consteval_fail.cpp
@@ -128,14 +134,14 @@ galoot_add_compile_fail_test(NAME bits_consteval MODULE core COMPONENT bits
   REQUIRE assertion_failed)
 
 # core.bare_compile: the core works with no build system and no options
-# beyond the language edition (C13; plan 0001, DoD-6).
+# beyond the language edition, so a user can add its headers to any project.
 add_test(NAME core.bare_compile
   COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors
     -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
     ${CMAKE_CURRENT_SOURCE_DIR}/core/bare_user.cpp)
 
 # core.include_scan: the core includes only standard and core headers, with
-# no cycle, guards named from paths, and snake_case names (C13, S6).
+# no cycle, guards named from paths, and snake_case names.
 add_test(NAME core.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
     ${PROJECT_SOURCE_DIR}/include)
@@ -145,7 +151,7 @@ set_tests_properties(core.bare_compile core.include_scan PROPERTIES
 # tools.include_scan_rejects: the scan reports each fixture's defect.
 set(fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/include_scan)
 add_test(NAME tools.include_scan_rejects
-  COMMAND ${expect_output} 1
+  COMMAND ${expect_output} 1 ONLY "."
     "galoot/core/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header or a core header"
     "galoot/core/cycle_a.hpp: include cycle: galoot/core/cycle_a.hpp -> galoot/core/cycle_b.hpp -> galoot/core/cycle_a.hpp"
     "galoot/core/wrong_guard.hpp:1: include guard should be GALOOT_CORE_WRONG_GUARD_HPP"
@@ -159,7 +165,7 @@ set_tests_properties(tools.include_scan_rejects PROPERTIES
   LABELS "tools;tools.include_scan")
 
 # tools.measure_header: launchers that open an empty record at once write one
-# header between them (W5 review of WU1, finding B1).
+# header between them, not one each.
 add_test(NAME tools.measure_header
   COMMAND ${Python3_EXECUTABLE} -I
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_header_test.py
@@ -208,6 +214,12 @@ galoot_add_compile_fail_test(NAME metric_conformal_wrap
   SOURCE core/metric_conformal_wrap_fail.cpp
   MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
   REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_conformal_wrap_zero
+  MODULE core COMPONENT metric
+  SOURCE core/metric_conformal_wrap_zero_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed"
+  FORBID "at least one generator")
 galoot_add_compile_fail_test(NAME metric_max_n_width MODULE core COMPONENT metric
   SOURCE core/metric_max_n_width_fail.cpp
   MESSAGE "metric: MaxN is larger than the number of bits in a blade mask"
@@ -303,34 +315,73 @@ set_tests_properties(tests.reference_markers tests.golden_facts
 
 # tools.test_references_*: each command of tools/test_references.py reports
 # every defect of its rejecting fixtures, one per test case or table row,
-# and passes its accepting fixtures.
+# and nothing else (ONLY "^/": every output line that starts with a path
+# must hold an expected finding), and passes its accepting fixtures.
 set(reference_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_references)
 set(test_references
   ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/test_references.py)
-set(pointer "reference points to a document or a record instead of stating the reason")
+# The findings that a rejecting fixture must produce, one per line, are read
+# from a file in the fixture directory, because they quote the citations the
+# fixtures hold on purpose, and tests.citations skips that text. In the file,
+# @reference_fixtures@ stands for the fixture directory.
+function(galoot_expected_findings file out)
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${file})
+  file(READ ${file} text)
+  string(CONFIGURE "${text}" text @ONLY)
+  string(STRIP "${text}" text)
+  # With no line, a rejecting test would pass on its exit status alone.
+  if(text STREQUAL "")
+    message(FATAL_ERROR "${file} lists no expected finding")
+  endif()
+  # A ; inside a line is passed as character 1, which expect_output.cmake
+  # reads as a ;, so that CMake does not split the line into two literals.
+  string(ASCII 1 semicolon)
+  string(REPLACE ";" "${semicolon}" text "${text}")
+  string(REPLACE "\n" ";" lines "${text}")
+  set(${out} ${lines} PARENT_SCOPE)
+endfunction()
+
+# tests.citations: no build file, header, test, script, or generated file
+# points the reader to a project document, a numbered rule, or a project
+# record in place of the reason itself, because a reader of the code has none
+# of them. The file of patterns and the fixtures that hold such text on
+# purpose are skipped. tools.test_references_citations_* show that the check
+# rejects each pattern and passes text that only resembles one.
+add_test(NAME tests.citations
+  COMMAND ${test_references} citations
+    --exclude ${PROJECT_SOURCE_DIR}/tools/citation_patterns.txt
+    --exclude ${reference_fixtures}/markers_bad.cpp
+    --exclude ${reference_fixtures}/markers_bad.expected
+    --exclude ${reference_fixtures}/trace_bad_table.expected
+    --exclude ${reference_fixtures}/trace_empty_table.expected
+    --exclude ${reference_fixtures}/citations_bad
+    --exclude ${reference_fixtures}/citations_bad.expected
+    ${PROJECT_SOURCE_DIR}/include/galoot ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_SOURCE_DIR}/test ${PROJECT_SOURCE_DIR}/tools
+    ${PROJECT_SOURCE_DIR}/CMakeLists.txt ${PROJECT_SOURCE_DIR}/CMakePresets.json
+    ${PROJECT_SOURCE_DIR}/.clang-format ${PROJECT_SOURCE_DIR}/.clang-tidy)
+set_tests_properties(tests.citations PROPERTIES
+  LABELS "tests;tests.citations")
+galoot_expected_findings(${reference_fixtures}/citations_bad.expected
+  citations_bad_findings)
+add_test(NAME tools.test_references_citations_rejects
+  COMMAND ${expect_output} 1 ONLY "^/" ${citations_bad_findings}
+    -- ${test_references} citations ${reference_fixtures}/citations_bad)
+add_test(NAME tools.test_references_citations_accepts
+  COMMAND ${expect_output} 0
+    "3 files, none citing a project document or record"
+    -- ${test_references} citations ${reference_fixtures}/citations_good)
+galoot_expected_findings(${reference_fixtures}/markers_bad.expected
+  markers_bad_findings)
 add_test(NAME tools.test_references_markers_rejects
-  COMMAND ${expect_output} 1
-    "markers_bad.cpp:5: TEST_CASE has no reference marker"
-    "markers_bad.cpp:9: TEST_CASE has no reference marker"
-    "markers_bad.cpp:11: reference source is not '<kind>: <text>'"
-    "markers_bad.cpp:14: a regression guard is the only source of its reference"
-    "markers_bad.cpp:18: test case named as a regression test is not labeled"
-    "markers_bad.cpp:20: ${pointer}: 'decision 9999'"
-    "markers_bad.cpp:23: ${pointer}: 'section 3.1'"
-    "markers_bad.cpp:26: ${pointer}: 'WU1'"
-    "markers_bad.cpp:29: ${pointer}: 'VVUQ kind 3'"
-    "markers_bad.cpp:32: ${pointer}: 'STYLE S9'"
-    "markers_bad.cpp:35: ${pointer}: 'M0 gate'"
-    "markers_bad.cpp:38: ${pointer}: 'lessons-learned'"
-    "markers_bad.cpp:41: ${pointer}: 'constitution C13'"
-    "markers_bad.cpp:44: ${pointer}: 'DoD-6'"
+  COMMAND ${expect_output} 1 ONLY "^/" ${markers_bad_findings}
     -- ${test_references} markers ${reference_fixtures}/markers_bad.cpp)
 add_test(NAME tools.test_references_markers_accepts
   COMMAND ${expect_output} 0
     "5 test cases, each with a reference marker"
     -- ${test_references} markers ${reference_fixtures}/markers_good.cpp)
 add_test(NAME tools.test_references_golden_rejects
-  COMMAND ${expect_output} 1
+  COMMAND ${expect_output} 1 ONLY "^/"
     "golden_bad_header.hpp:24: namespace alpha is defined twice"
     "golden_bad_header.hpp:29: namespace delta states no fact"
     "golden_bad.cpp:6: 'using' hides which test uses golden values"
@@ -339,6 +390,7 @@ add_test(NAME tools.test_references_golden_rejects
     "golden_bad.cpp:20: static_assert has no reference marker"
     "golden_bad.cpp:20: uses golden values of gamma but its reference does not state 'the fact of gamma'"
     "golden_bad.cpp:8: golden values of alpha are used outside a test case or a static_assert"
+    "golden_bad.cpp:6: golden values of gamma are used outside a test case or a static_assert"
     -- ${test_references} golden ${reference_fixtures}/golden_bad_header.hpp
       ${reference_fixtures}/golden_bad.cpp)
 add_test(NAME tools.test_references_golden_accepts
@@ -346,20 +398,23 @@ add_test(NAME tools.test_references_golden_accepts
     "every use of golden values states its fact"
     -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp)
+add_test(NAME tools.test_references_golden_helper_header
+  COMMAND ${expect_output} 1 ONLY "^/"
+    "helper_headers/helper.hpp:7: golden values of alpha are used outside a test case"
+    -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp ${reference_fixtures}/helper_headers)
+galoot_expected_findings(${reference_fixtures}/trace_bad_table.expected
+  trace_bad_findings)
 add_test(NAME tools.test_references_trace_rejects
-  COMMAND ${expect_output} 1
-    "trace_bad_table.md:7: item 1.2 is implemented and no test states its fact"
-    "trace_bad_table.md:8: ${reference_fixtures}/trace_conventions.md has no item 9.9"
-    "trace_bad_table.md:9: Implemented is 'maybe', not yes or no"
-    "trace_bad_table.md:10: item 3.1 has an empty fact"
-    "golden_fixture.hpp: the fact of namespace beta, 'e1 ^ e2 = -e2 ^ e1', is not in"
+  COMMAND ${expect_output} 1 ONLY "^/" ${trace_bad_findings}
     -- ${test_references} trace ${reference_fixtures}/trace_bad_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp)
+galoot_expected_findings(${reference_fixtures}/trace_empty_table.expected
+  trace_empty_findings)
 add_test(NAME tools.test_references_trace_no_rows
-  COMMAND ${expect_output} 1
-    "trace_empty_table.md: no rows of the form | item | fact | implemented |"
+  COMMAND ${expect_output} 1 ONLY "^/" ${trace_empty_findings}
     -- ${test_references} trace ${reference_fixtures}/trace_empty_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
@@ -369,7 +424,7 @@ add_test(NAME tools.test_references_trace_accepts
     "1.1: ${reference_fixtures}/golden_good.cpp:12"
     "1.2: ${reference_fixtures}/golden_good.cpp:17"
     "2.1: ${reference_fixtures}/golden_good.cpp:23"
-    "items with no test: 3.1"
+    "items with no test: 3.1, 4.1"
     -- ${test_references} trace ${reference_fixtures}/trace_good_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
@@ -377,6 +432,8 @@ add_test(NAME tools.test_references_trace_accepts
 set_tests_properties(
   tools.test_references_markers_rejects tools.test_references_markers_accepts
   tools.test_references_golden_rejects tools.test_references_golden_accepts
+  tools.test_references_golden_helper_header
   tools.test_references_trace_rejects tools.test_references_trace_no_rows
   tools.test_references_trace_accepts
+  tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
