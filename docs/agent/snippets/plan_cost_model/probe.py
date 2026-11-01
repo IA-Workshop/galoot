@@ -1,17 +1,25 @@
 #!/usr/bin/env -S python3 -I
-"""Measure the constant-evaluation cost of each phase of the product-plan
-generator, and of whole plans, as the smallest limit under which a unit
-compiles.
+"""Measure the constant-evaluation cost of each phase of the plan and map
+generators, and of whole plans and maps, as the smallest limit under which
+a unit compiles. Snippet.
 
 Usage, from the repository root, with the job pool exported
 (eval "$(tools/jobpool env)"):
 
   probe.py cases <set> <cases.tsv>
-      Writes the cases of a set: train (phase probes, for fitting),
-      train-gp (more probes of the geometric product's count and fill), test
-      (phase probes the fit never sees), plans (whole plans of full and
-      random sets), wide (whole plans of the sets programs write, n up to
-      16), with seeds from 20261101 for the random ones.
+      Writes the cases of a set (seeds from 20261102 for the random ones):
+        train       probes of every phase of a plan, all four products
+        train-gen   more probes of count and fill, all four products
+        train-map   probes of the phases of a map
+        test        probes of every phase of plans and maps that no fit sees
+        plans       whole plans of full<n>, every product and form, and
+                    random sets
+        maps        whole maps of full<n>, every map, and random sets
+        wide        whole plans of the sets programs write, n up to 16
+  probe.py verify <cases.tsv> <out.tsv> <compiler> [jobs]
+      Compiles each case once with a static_assert that the C++ phase
+      result equals the mirror's (a whole plan or map: only those of at most
+      2,000 terms), and writes one row per case: ok, or the compiler's error.
   probe.py run <cases.tsv> <out.tsv> <compiler> <config> <cache> [jobs]
           [weights.tsv]
       Finds the threshold of each case, starting each search at the
@@ -24,14 +32,18 @@ Usage, from the repository root, with the job pool exported
 
 Each case is one unit (written under <out.tsv>.units/). A phase probe holds
 the inputs of one phase as literals and evaluates that phase once, as its own
-constant evaluation, as make_product_plan does; its baseline is the same unit
-without that evaluation, measured too, so that a phase cheaper than the rest
-of the unit is reported as hidden rather than mistaken for its cost. A plan
-case reads product_plan, which runs every phase.
+constant evaluation, as make_product_plan and make_unary_map do; its
+baseline is the same unit without that evaluation, measured too, so that a
+phase cheaper than the rest of the unit is reported as hidden rather than
+mistaken for its cost. A plan case reads product_plan, which runs every
+phase, and a map case reads unary_map.
 
 The threshold counts what the compiler counts in the largest evaluation of
 the unit (harness.py). Every compile is -fsyntax-only: constant evaluation
 happens in the front end.
+
+Written for research note 0017 and refitted by plan 0015; last checked at
+the revision named in the snippets index.
 """
 
 import concurrent.futures
@@ -54,6 +66,7 @@ harness = load("harness")
 mirror = load("mirror")
 
 SEED = 20261101
+SEED_2 = 20261102
 PREAMBLE = ("#include <array>\n#include <cstddef>\n\n"
             "#include <galoot/core/blade_set.hpp>\n"
             "#include <galoot/core/metric.hpp>\n"
@@ -101,69 +114,166 @@ def set_expr(blades):
     return f"core::blade_set<{len(blades)}>{{{{{{{inner}}}}}}}"
 
 
+def is_map(case):
+    return case["op"] in mirror.UNARY
+
+
 def op_expr(op):
+    if op in mirror.UNARY:
+        return f"d::UnaryOperation::{op}"
     return f"d::BinaryOperation::{op}"
 
 
-def plan_literal(plan):
+def plan_array(plan):
     inner = ",\n    ".join(f"d::plan_term{{{a}, {b}, {m}U, {c}}}"
                            for a, b, m, c in plan)
-    return (f"[[maybe_unused]] constexpr std::array<d::plan_term, {len(plan)}> lit{{{{\n    "
-            f"{inner}}}}};\n")
+    return f"std::array<d::plan_term, {len(plan)}>{{{{\n    {inner}}}}}"
 
 
-def unit(case):
-    """The source of a case."""
+def plan_literal(plan):
+    return f"[[maybe_unused]] constexpr auto lit = {plan_array(plan)};\n"
+
+
+def blades_literal(masks):
+    return ", ".join(f"{{{m}U, 1}}" for m in masks)
+
+
+def typed_literal(result, typed):
+    R, T = len(result), len(typed)
+    terms = ", ".join(f"d::typed_term{{{a_}, {b_}, {o}, {c}}}"
+                      for a_, b_, o, c in typed)
+    return (f"d::typed_plan<{R}, {T}>{{"
+            f"core::blade_set<{R}>{{{{{{{blades_literal(result)}}}}}}}, "
+            f"std::array<d::typed_term, {T}>{{{{{terms}}}}}}}")
+
+
+def map_literal(result, typed):
+    R, K = len(result), len(typed)
+    terms = ", ".join(f"d::map_term{{{a_}, {o}, {c}}}"
+                      for a_, _, o, c in typed)
+    return (f"d::typed_map<{R}, {K}>{{"
+            f"core::blade_set<{R}>{{{{{{{blades_literal(result)}}}}}}}, "
+            f"std::array<d::map_term, {K}>{{{{{terms}}}}}}}")
+
+
+def found_literal(result, T):
+    return (f"d::collected_result<{T}>{{{{{{{blades_literal(result)}}}}}, "
+            f"{len(result)}}}")
+
+
+def none_found(fields):
+    return " && ".join(f"!probe.{f}" for f in fields)
+
+
+PLAN_DEFECTS = ("zero_coefficient", "beyond_first", "beyond_second",
+                "beyond_n", "out_of_order")
+TYPED_DEFECTS = ("result_out_of_order", "result_sign", "beyond_result",
+                 "result_unused", "out_of_order")
+MAP_DEFECTS = ("result_out_of_order", "result_sign", "beyond_result",
+               "result_unused", "not_per_input", "wrong_blade",
+               "complement_sign")
+VERIFY_LARGEST = 2000
+
+
+def unit(case, verify=False):
+    """The source of a case. With verify, the unit also asserts that the
+    C++ result equals the mirror's, or is None for a whole plan or map too
+    large to write out."""
     op, n = case["op"], case["n"]
     a, b = case["a"], case["b"]
     text = PREAMBLE + ("struct alg { static constexpr auto value = "
                        f"{metric_expr(case)}; }};\n")
     kind = case["kind"]
-    if kind == "plan":
+    if kind in ("plan", "map"):
         first = case.get("a_expr") or set_expr(a)
-        second = case.get("b_expr") or set_expr(b)
-        return text + (f"static_assert(d::product_plan<{op_expr(op)}, alg, "
-                       f"{first}, {second}>.terms.size() > 0);\n")
+        if kind == "plan":
+            second = case.get("b_expr") or set_expr(b)
+            read = (f"d::product_plan<{op_expr(op)}, alg, {first}, "
+                    f"{second}>")
+        else:
+            read = f"d::unary_map<{op_expr(op)}, alg, {first}>"
+        text += f"static_assert({read}.terms.size() > 0);\n"
+        if verify:
+            if kind == "plan":
+                _, result, typed, _ = mirror.phases(op, gram_of(case), a, b)
+                expected = typed_literal(result, typed)
+            else:
+                _, result, typed, _ = mirror.map_phases(op, n, a)
+                expected = map_literal(result, typed)
+            if len(typed) > VERIFY_LARGEST:
+                return None
+            text += f"static_assert({read} == {expected});\n"
+        return text
+
     phase = kind.removeprefix("baseline-")
     probe = not kind.startswith("baseline-")
-    plan, result, typed, _ = mirror.phases(op, gram_of(case), a, b)
-    capacity = mirror.plan_capacity(op, a, b, mirror.collections.Counter())
     text += f"[[maybe_unused]] constexpr auto A = {set_expr(a)};\n"
-    text += f"[[maybe_unused]] constexpr auto B = {set_expr(b)};\n"
-    if phase in ("capacity", "count", "fill"):
-        line = {
-            "capacity": f"d::plan_capacity({op_expr(op)}, A.blades, B.blades)",
-            "count": (f"d::generate_plan<{op_expr(op)}, {capacity}>"
-                      "(alg::value, A.blades, B.blades, {})"),
-            "fill": (f"d::filled_plan<{op_expr(op)}, {len(plan)}, "
-                     f"{capacity}>(alg::value, A.blades, B.blades)"),
-        }[phase]
-        if probe:
-            text += f"[[maybe_unused]] constexpr auto probe = {line};\n"
-        return text
-    text += plan_literal(plan)
-    R, T = len(result), len(plan)
-    if phase == "defects":
-        line = f"d::defects_of(lit, {len(a)}, {len(b)}, {n})"
-    elif phase == "collect":
-        line = "d::collected(lit)"
-    elif phase == "typed":
-        blades = ", ".join(f"{{{m}U, 1}}" for m in result)
-        text += (f"[[maybe_unused]] constexpr d::collected_result<{T}> found{{{{{{{blades}}}}}"
-                 f", {R}}};\n")
-        line = f"d::typed<{R}>(lit, found)"
-    elif phase == "typing":
-        blades = ", ".join(f"{{{m}U, 1}}" for m in result)
-        terms = ", ".join(f"d::typed_term{{{a_}, {b_}, {o}, {c}}}"
-                          for a_, b_, o, c in typed)
-        text += (f"[[maybe_unused]] constexpr d::typed_plan<{R}, {T}> typed_lit{{"
-                 f"core::blade_set<{R}>{{{{{{{blades}}}}}}}, "
-                 f"std::array<d::typed_term, {T}>{{{{{terms}}}}}}};\n")
-        line = "d::typed_defects_of(typed_lit.result, typed_lit.terms)"
+    if is_map(case):
+        terms, result, typed, _ = mirror.map_phases(op, n, a)
+        K, R = len(terms), len(result)
+        if phase == "map_fill":
+            line = f"d::filled_map<{K}>({op_expr(op)}, {n}, A.blades)"
+            check = f"probe == {plan_array(terms)}"
+        else:
+            text += plan_literal(terms)
+            if phase == "collect":
+                line = "d::collected(lit)"
+                check = (f"probe.size == {R} && probe.blades == "
+                         f"{found_literal(result, K)}.blades")
+            elif phase == "map_typed":
+                text += (f"[[maybe_unused]] constexpr auto found = "
+                         f"{found_literal(result, K)};\n")
+                line = f"d::typed_map_of<{R}>(lit, found)"
+                check = f"probe == {map_literal(result, typed)}"
+            elif phase == "map_defects":
+                text += (f"[[maybe_unused]] constexpr auto mapped = "
+                         f"{map_literal(result, typed)};\n")
+                line = f"d::map_defects_of({op_expr(op)}, {n}, A, mapped)"
+                check = none_found(MAP_DEFECTS)
+            else:
+                raise ValueError(phase)
     else:
-        raise ValueError(phase)
+        plan, result, typed, _ = mirror.phases(op, gram_of(case), a, b)
+        capacity = mirror.plan_capacity(op, a, b, n,
+                                        mirror.collections.Counter())
+        R, T = len(result), len(plan)
+        text += f"[[maybe_unused]] constexpr auto B = {set_expr(b)};\n"
+        if phase == "capacity":
+            line = f"d::plan_capacity({op_expr(op)}, A.blades, B.blades, {n})"
+            check = f"probe == {capacity}"
+        elif phase == "count":
+            line = (f"d::generate_plan<{op_expr(op)}, {capacity}>"
+                    "(alg::value, A.blades, B.blades, {})")
+            check = f"probe == {T}"
+        elif phase == "fill":
+            line = (f"d::filled_plan<{op_expr(op)}, {T}, {capacity}>"
+                    "(alg::value, A.blades, B.blades)")
+            check = f"probe == {plan_array(plan)}"
+        else:
+            text += plan_literal(plan)
+            if phase == "defects":
+                line = f"d::defects_of(lit, {len(a)}, {len(b)}, {n})"
+                check = none_found(PLAN_DEFECTS)
+            elif phase == "collect":
+                line = "d::collected(lit)"
+                check = (f"probe.size == {R} && probe.blades == "
+                         f"{found_literal(result, T)}.blades")
+            elif phase == "typed":
+                text += (f"[[maybe_unused]] constexpr auto found = "
+                         f"{found_literal(result, T)};\n")
+                line = f"d::typed<{R}>(lit, found)"
+                check = f"probe == {typed_literal(result, typed)}"
+            elif phase == "typing":
+                text += (f"[[maybe_unused]] constexpr auto typed_lit = "
+                         f"{typed_literal(result, typed)};\n")
+                line = "d::typed_defects_of(typed_lit.result, typed_lit.terms)"
+                check = none_found(TYPED_DEFECTS)
+            else:
+                raise ValueError(phase)
     if probe:
         text += f"[[maybe_unused]] constexpr auto probe = {line};\n"
+        if verify:
+            text += f"static_assert({check});\n"
     return text
 
 
@@ -186,24 +296,30 @@ def random_gram(rng, n, density):
     return "gram=" + "/".join(".".join(str(v) for v in row) for row in g)
 
 
-def phase_cases(prefix, rng, count, ops=("gp", "wedge"),
-                phases=PHASE_PROBES):
-    """Random inputs for the phases: forms, sizes, and operations."""
+PRODUCTS = ("gp", "wedge", "antigp", "antiwedge")
+
+
+def phase_cases(prefix, rng, count, ops=PRODUCTS, phases=PHASE_PROBES,
+                sizes=(3, 6), largest_events=None):
+    """Random inputs for the phases of a plan: forms, sizes, and
+    operations. With largest_events, an input whose generation takes more
+    of the mirror's events than that is left out, so that no probe costs
+    minutes a compile."""
     cases = []
     for i in range(count):
-        n = rng.randint(3, 6)
+        n = rng.randint(*sizes)
         op = rng.choice(ops)
         f = rng.choice(("r", "rigid", "conformal", "dense", "random"))
         f = random_gram(rng, n, rng.choice((0.2, 0.5))) if f == "random" else f
-        if f == "conformal" and n < 3:
-            f = "r"
         top = 1 << n
         ka = rng.randint(2, min(top, 24))
         kb = rng.randint(2, min(top, 24))
         a, b = random_set(rng, n, ka), random_set(rng, n, kb)
         base = {"op": op, "form": f, "n": n, "a": a, "b": b}
-        plan, _, _, _ = mirror.phases(op, gram_of(base), a, b)
+        plan, _, _, ev = mirror.phases(op, gram_of(base), a, b)
         if not plan:
+            continue
+        if largest_events and sum(ev["count"].values()) > largest_events:
             continue
         for phase in phases:
             for kind in (phase, f"baseline-{phase}"):
@@ -212,31 +328,70 @@ def phase_cases(prefix, rng, count, ops=("gp", "wedge"),
     return cases
 
 
-def plan_cases():
-    """Whole plans: the full sets of the recorded table, the typed rigid(3)
-    pairs, sparse pairs, and random sets."""
+def map_phase_cases(prefix, rng, count, phases=mirror.MAP_PHASES):
+    """Random inputs for the phases of a map: the operation, n, and a set of
+    distinct masks with random signs, sometimes in canonical order."""
     cases = []
-    for op in ("gp", "wedge"):
+    for i in range(count):
+        n = rng.randint(2, 7)
+        op = rng.choice(mirror.UNARY)
+        a = random_set(rng, n, rng.randint(2, min(1 << n, 40)))
+        if rng.random() < 0.3:
+            a.sort(key=lambda blade: mirror.canonical_key(blade[0]))
+        base = {"op": op, "form": "r", "n": n, "a": a, "b": []}
+        for phase in phases:
+            for kind in (phase, f"baseline-{phase}"):
+                cases.append({**base, "name": f"{prefix}{i}-{kind}",
+                              "kind": kind})
+    return cases
+
+
+def full_case(name, kind, op, f, n, b=True):
+    s = mirror.full(n)
+    case = {"name": name, "kind": kind, "op": op, "form": f, "n": n, "a": s,
+            "b": s if b else [], "a_expr": f"core::full<{n}>"}
+    if b:
+        case["b_expr"] = f"core::full<{n}>"
+    return case
+
+
+def plan_cases():
+    """Whole plans: full<n> times full<n> for every product and form, and
+    random sets."""
+    cases = []
+    for op in PRODUCTS:
         for f in ("r", "rigid", "conformal", "dense"):
             for n in range(3, 8):
-                if f == "dense" and op == "gp" and n > 6:
+                if f == "dense" and mirror.BASE[op] == "gp" and n > 6:
                     continue
-                s = mirror.full(n)
-                cases.append({"name": f"full-{op}-{f}-n{n}", "kind": "plan",
-                              "op": op, "form": f, "n": n, "a": s, "b": s,
-                              "a_expr": f"core::full<{n}>",
-                              "b_expr": f"core::full<{n}>"})
-    rng = random.Random(SEED + 1)
+                cases.append(full_case(f"full-{op}-{f}-n{n}", "plan", op, f,
+                                       n))
+    rng = random.Random(SEED_2 + 1)
     for i in range(24):
         n = rng.randint(4, 9)
-        op = rng.choice(("gp", "wedge"))
+        op = rng.choice(PRODUCTS)
         f = rng.choice(("r", "rigid", "conformal", "dense", "random"))
         f = random_gram(rng, n, 0.3) if f == "random" else f
         top = 1 << n
         a = random_set(rng, n, rng.randint(4, min(top, 96)))
         b = random_set(rng, n, rng.randint(4, min(top, 96)))
-        cases.append({"name": f"random-{i}", "kind": "plan", "op": op,
-                      "form": f, "n": n, "a": a, "b": b})
+        if mirror.phases(op, gram_of({"form": f, "n": n}), a, b)[0]:
+            cases.append({"name": f"random-{i}", "kind": "plan", "op": op,
+                          "form": f, "n": n, "a": a, "b": b})
+    return cases
+
+
+def map_cases():
+    """Whole maps: every map of full<n>, n = 3 to 10, and random sets."""
+    cases = [full_case(f"map-{op}-n{n}", "map", op, "r", n, b=False)
+             for op in mirror.UNARY for n in range(3, 11)]
+    rng = random.Random(SEED_2 + 7)
+    for i in range(12):
+        n = rng.randint(4, 12)
+        op = rng.choice(mirror.UNARY)
+        a = random_set(rng, n, rng.randint(4, min(1 << n, 300)))
+        cases.append({"name": f"randommap-{i}", "kind": "map", "op": op,
+                      "form": "r", "n": n, "a": a, "b": []})
     return cases
 
 
@@ -263,14 +418,30 @@ def rigid_set(names, n):
     return blades
 
 
+def right_complements(blades, n):
+    """The right complements of oriented blades: s e_A to s right(e_A)."""
+    out = []
+    for mask, sign in blades:
+        c = mirror.complement(mask, n)
+        out.append((c, sign * mirror.reorder_sign(mask, c,
+                                                  mirror.collections.Counter(),
+                                                  "x")))
+    return out
+
+
 def wide_cases():
     """Plans of the sets programs write, at n up to 16: the rigid(3) pairs
-    embedded with e4 as e_n, the sparse pairs, and random small sets."""
+    embedded with e4 as e_n, the sparse sets and their right complements,
+    and random small sets."""
     cases = []
     pairs = [("point", "point"), ("line", "plane"), ("motor", "point"),
-             ("point", "motor"), ("line", "line"), ("motor", "motor")]
+             ("point", "motor"), ("line", "line"), ("motor", "motor"),
+             ("plane", "plane")]
     for n in (4, 8, 12, 16):
-        for op in ("gp", "wedge"):
+        en = 1 << (n - 1)
+        sparse_a = [(0, 1), (1, 1), (en, 1), (en | 1, 1)]
+        sparse_b = [(1, 1), (2, 1), (en, 1)]
+        for op in PRODUCTS:
             for x, y in pairs:
                 a, b = rigid_set(RIGID_NAMES[x], n), rigid_set(RIGID_NAMES[y], n)
                 plan, _, _, _ = mirror.phases(op, mirror.form("rigid", n), a, b)
@@ -278,15 +449,19 @@ def wide_cases():
                     cases.append({"name": f"rigid-{op}-{x}-{y}-n{n}",
                                   "kind": "plan", "op": op, "form": "rigid",
                                   "n": n, "a": a, "b": b})
-            en = 1 << (n - 1)
-            cases.append({"name": f"sparse-{op}-n{n}", "kind": "plan",
-                          "op": op, "form": "rigid", "n": n,
-                          "a": [(0, 1), (1, 1), (en, 1), (en | 1, 1)],
-                          "b": [(1, 1), (2, 1), (en, 1)]})
-    rng = random.Random(SEED + 4)
+            for label, a, b in (
+                    ("sparse", sparse_a, sparse_b),
+                    ("cosparse", right_complements(sparse_a, n),
+                     right_complements(sparse_b, n))):
+                plan, _, _, _ = mirror.phases(op, mirror.form("rigid", n), a, b)
+                if plan:
+                    cases.append({"name": f"{label}-{op}-n{n}", "kind": "plan",
+                                  "op": op, "form": "rigid", "n": n, "a": a,
+                                  "b": b})
+    rng = random.Random(SEED_2 + 4)
     for i in range(16):
         n = rng.randint(10, 16)
-        op = rng.choice(("gp", "wedge"))
+        op = rng.choice(PRODUCTS)
         f = rng.choice(("r", "rigid", "conformal", "random"))
         f = random_gram(rng, n, 0.15) if f == "random" else f
         a = random_set(rng, n, rng.randint(2, 12))
@@ -317,7 +492,8 @@ def read_cases(path):
         row = dict(zip(header, line.split("\t")))
         row = {k: (None if v == "-" else v) for k, v in row.items()}
         row["n"] = int(row["n"])
-        row["a"], row["b"] = decode_set(row["a"]), decode_set(row["b"])
+        row["a"] = decode_set(row["a"] or "")
+        row["b"] = decode_set(row["b"] or "")
         cases.append(row)
     return cases
 
@@ -336,7 +512,7 @@ def guesses(cases, weights_path):
         if case["kind"].startswith("baseline-"):
             continue
         ev = cost.events_of(case)
-        phases = mirror.PHASES if kind == "plan" else (kind,)
+        phases = cost.phases_of(case) if kind in ("plan", "map") else (kind,)
         values = [cost.predict_phase(weights, rows, names, p, ev[p])[0]
                   for p in phases if p in weights]
         if values:
@@ -383,24 +559,69 @@ def run(cases_path, out_path, compiler, config, cache, jobs,
                   r["compiles"], flush=True)
 
 
+def verify(cases_path, out_path, compiler, jobs):
+    """Compiles each case once, with no limit to reach, and the
+    static_asserts of unit(case, verify=True)."""
+    out_path = pathlib.Path(out_path).resolve()
+    units = out_path.with_suffix(".units")
+    units.mkdir(parents=True, exist_ok=True)
+    pool = harness.Pool()
+    cases = [c for c in read_cases(cases_path)
+             if not c["kind"].startswith("baseline-")]
+    limit = [f"{harness.LIMIT_FLAG[compiler]}{harness.CEILING[compiler]}"]
+
+    def one(case):
+        text = unit(case, verify=True)
+        if text is None:
+            return case, "skipped (too large to write out)"
+        source = units / f"{case['name']}.cpp"
+        source.write_text(text, encoding="utf-8")
+        status, err = harness.compile_once(
+            pool, compiler, "galoot-O0", source,
+            f"cost-model-verify:{case['name']}:{compiler}", limit)
+        if status == 0:
+            return case, "ok"
+        return case, "FAILS: " + " ".join(err.split())[:300]
+
+    failed = 0
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write("name\tcompiler\tresult\n")
+        with concurrent.futures.ThreadPoolExecutor(jobs) as ex:
+            for case, result in ex.map(one, cases):
+                failed += result.startswith("FAILS")
+                f.write(f"{case['name']}\t{compiler}\t{result}\n")
+    print(f"{len(cases)} cases, {failed} where the C++ and the mirror differ")
+    return failed == 0
+
+
 def main(argv):
     if len(argv) >= 3 and argv[0] == "cases":
         which = argv[1]
         if which == "train":
-            cases = phase_cases("train", random.Random(SEED), 40)
-        elif which == "train-gp":
-            cases = phase_cases("traingp", random.Random(SEED + 3), 60,
-                                ("gp",), ("count", "fill"))
+            cases = phase_cases("train", random.Random(SEED_2), 60)
+        elif which == "train-gen":
+            cases = phase_cases("traingen", random.Random(SEED_2 + 3), 60,
+                                phases=("count", "fill"), sizes=(3, 8),
+                                largest_events=1_000_000)
+        elif which == "train-map":
+            cases = map_phase_cases("trainmap", random.Random(SEED_2 + 5), 60)
         elif which == "test":
-            cases = phase_cases("test", random.Random(SEED + 2), 16)
+            cases = (phase_cases("test", random.Random(SEED_2 + 2), 20) +
+                     map_phase_cases("testmap", random.Random(SEED_2 + 6), 16))
         elif which == "plans":
             cases = plan_cases()
+        elif which == "maps":
+            cases = map_cases()
         elif which == "wide":
             cases = wide_cases()
         else:
             sys.exit(__doc__)
         write_cases(argv[2], cases)
         print(len(cases), "cases")
+    elif len(argv) >= 4 and argv[0] == "verify":
+        ok = verify(argv[1], argv[2], argv[3],
+                    int(argv[4]) if len(argv) > 4 else 8)
+        sys.exit(0 if ok else 1)
     elif len(argv) >= 6 and argv[0] == "run":
         run(argv[1], argv[2], argv[3], argv[4], argv[5],
             int(argv[6]) if len(argv) > 6 else 8,

@@ -1,5 +1,6 @@
 #!/usr/bin/env -S python3 -I
-"""Fit and test the cost model of the product-plan generator.
+"""Fit, test, and apply the cost model of the plan and map generators.
+Snippet.
 
 The model: the count of one constant evaluation is a weighted sum of the
 event counts that mirror.py gives for its phase, plus a constant,
@@ -9,36 +10,56 @@ GCC) whether constant calls are cached, but not on the input. A unit's
 threshold is the largest cost of its evaluations (harness.py).
 
 Usage:
-  cost.py fit <cases.tsv> <thresholds.tsv> <weights.tsv>
-      Fits the weights of each phase from phase probes, exactly, over the
-      rationals. Prints each phase's weights, its rank, and its largest
-      residual. A phase probe whose threshold does not exceed its
-      baseline's measures the baseline, not the phase, and is left out.
+  cost.py fit <cases.tsv>:<thresholds.tsv>... <weights.tsv>
+      Fits the weights of each phase from the phase probes of the files,
+      exactly, over the rationals. Prints each phase's weights, its rank,
+      and its largest residual. A phase probe whose threshold does not
+      exceed its baseline's measures the baseline, not the phase, and is
+      left out.
   cost.py check <cases.tsv> <thresholds.tsv> <weights.tsv>
       Predicts each case of the file from the weights alone and prints the
       prediction against the measured threshold: phase probes phase by
-      phase, plan cases as the largest phase. Marks a case whose events lie
-      outside what the fit saw, where the prediction is an extrapolation.
+      phase, whole plans and maps as their largest phase. Marks a case
+      whose events lie outside what the fit saw, where the prediction is an
+      extrapolation.
   cost.py ceilings <weights.tsv> <limit> [largest n]
-      For full<n> times full<n> in each form and operation: the predicted
-      threshold of each phase, the largest, and whether it is at most
-      <limit>; then the same with the two typing phases replaced by a
-      binary search (estimated, see binary_search_estimate).
-  cost.py predict <weights.tsv> <op> <form> <n> <a> <b>
-      Predicts the cost of every phase of one plan; a and b are "full",
-      "grade:<k>", or lists mask:sign,...; form is r, rigid, conformal,
-      dense, or gram=<rows separated by />, entries by .>.
-  cost.py certify <weights.tsv> <limit> <relative> <absolute> <op> <form>
-          <n> <a> <b>
-      Whether the plan is certified to evaluate under <limit>: every phase
-      predicted, inside the span of the fit, and at most
-      limit / (1 + relative) - absolute, and no loop of the generator longer
-      than GCC's per-loop limit. "not certified" does not mean that the plan
-      fails: the certificate is a sufficient condition.
+      For full<n> times full<n> under each product and form, and the map of
+      full<n> under each map: T, R, the largest phase, its predicted
+      threshold, and whether it is at most <limit>.
+  cost.py predict <weights.tsv> <op> <form> <n> <a> [<b>]
+      Predicts every phase of one plan, or of one map when op names a map
+      and b is left out; a and b are "full", "grade:<k>", or lists
+      mask:sign,...; form is r, rigid, conformal, dense, or gram=<rows
+      separated by />, entries by .>.
+  cost.py certify <weights.tsv> <limit> <op> <form> <n> <a> [<b>]
+      Whether the plan or map is certified to evaluate under <limit>: every
+      phase predicted, inside the span of the fit, and at most the limit,
+      and, for GCC weights, no loop of the generator as long as GCC's
+      per-loop limit. "not certified" does not mean that it fails: the
+      certificate is a sufficient condition.
+  cost.py figures <weights.tsv>
+      The figures that the library's comments state and the thresholds of
+      its reference units (FIGURES below), each with its largest phase and
+      the next largest.
+  cost.py selfcheck <weights.tsv> <figures.txt> --train <c>:<t>...
+          --check <c>:<t>...
+      Refits from the training files and compares every weight and
+      training row with <weights.tsv>; predicts every measured case of
+      every file and compares it with its threshold; and compares a fresh
+      `figures` run with <figures.txt>. Prints each difference and exits 1
+      if there is one.
 
 For GCC, the threshold is the count plus one; for Clang it is the count
 (harness.py). Costs here are thresholds, so a unit compiles under a limit L
-exactly when every predicted threshold is at most L.
+exactly when every predicted threshold is at most L. On GCC the model is
+fitted with its call cache off (-fconstexpr-cache-depth=1), so its
+predictions are upper bounds of the counts with the cache on.
+
+Written for research note 0017 and extended to the antiproducts and the
+unary maps by plan 0015; last checked at the revision named in the snippets
+index. Any limit search on GCC must be the checked search of harness.py: a
+bisection alone can land on a limit that GCC evades and report a threshold
+too low.
 """
 
 import collections
@@ -71,10 +92,23 @@ def read_thresholds(path):
     return rows
 
 
+ALL_PHASES = mirror.PHASES + tuple(p for p in mirror.MAP_PHASES
+                                   if p not in mirror.PHASES)
+
+
 def events_of(case):
-    _, _, _, ev = mirror.phases(case["op"], probe.gram_of(case), case["a"],
-                                case["b"])
+    """The events of every phase of the case's plan or map."""
+    if probe.is_map(case):
+        _, _, _, ev = mirror.map_phases(case["op"], case["n"], case["a"])
+    else:
+        _, _, _, ev = mirror.phases(case["op"], probe.gram_of(case),
+                                    case["a"], case["b"])
     return ev
+
+
+def phases_of(case):
+    """The phases the model covers for the case's generator."""
+    return mirror.MAP_PHASES if probe.is_map(case) else mirror.PHASES
 
 
 def solve(rows, ys):
@@ -136,7 +170,7 @@ def training_rows(cases, thresholds):
     hidden = collections.Counter()
     for case in cases:
         kind = case["kind"]
-        if kind == "plan" or kind.startswith("baseline-"):
+        if kind in ("plan", "map") or kind.startswith("baseline-"):
             continue
         t = thresholds.get(case["name"])
         base = thresholds.get(case["name"].replace(f"-{kind}",
@@ -150,15 +184,23 @@ def training_rows(cases, thresholds):
     return data, hidden
 
 
-def fit(cases_path, thresholds_path, weights_path):
-    cases = probe.read_cases(cases_path)
-    thresholds = read_thresholds(thresholds_path)
-    data, hidden = training_rows(cases, thresholds)
+def fit_lines(pairs):
+    """The lines of a weights file fitted from (cases, thresholds) file
+    pairs, and a report of each phase."""
+    data = collections.defaultdict(list)
+    hidden = collections.Counter()
+    for cases_path, thresholds_path in pairs:
+        part, part_hidden = training_rows(probe.read_cases(cases_path),
+                                          read_thresholds(thresholds_path))
+        for phase, samples in part.items():
+            data[phase].extend(samples)
+        hidden.update(part_hidden)
     lines = ["phase\tevent\tweight"]
-    for phase in mirror.PHASES:
+    report = []
+    for phase in ALL_PHASES:
         samples = data.get(phase, [])
         if not samples:
-            print(f"{phase}: no samples ({hidden[phase]} hidden)")
+            report.append(f"{phase}: no samples ({hidden[phase]} hidden)")
             continue
         names = sorted({e for ev, _ in samples for e in ev})
         rows = [[1] + [ev.get(e, 0) for e in names] for ev, _ in samples]
@@ -167,17 +209,27 @@ def fit(cases_path, thresholds_path, weights_path):
         residuals = [y - sum(a * b for a, b in zip(r, w))
                      for r, y in zip(rows, ys)]
         worst = max(abs(r) for r in residuals)
-        print(f"{phase}: {len(samples)} samples ({hidden[phase]} hidden), "
-              f"{len(names) + 1} columns, rank {len(pivots)}, largest "
-              f"residual {float(worst):.3f}")
+        report.append(f"{phase}: {len(samples)} samples ({hidden[phase]} "
+                      f"hidden), {len(names) + 1} columns, rank "
+                      f"{len(pivots)}, largest residual {float(worst):.3f}")
         for i, name in enumerate(["const"] + names):
             if w[i] != 0:
-                print(f"    {name:28} {w[i]}")
+                report.append(f"    {name:28} {w[i]}")
             lines.append(f"{phase}\t{name}\t{w[i]}")
         # The rows themselves, so that check can test the span.
         for r in rows:
             lines.append(f"{phase}\t#row\t" + ",".join(map(str, r)))
         lines.append(f"{phase}\t#names\t" + ",".join(names))
+    return lines, report
+
+
+def pair_list(texts):
+    return [tuple(t.split(":", 1)) for t in texts]
+
+
+def fit(pair_texts, weights_path):
+    lines, report = fit_lines(pair_list(pair_texts))
+    print("\n".join(report))
     pathlib.Path(weights_path).write_text("\n".join(lines) + "\n",
                                           encoding="utf-8")
 
@@ -224,9 +276,9 @@ def check(cases_path, thresholds_path, weights_path):
             continue
         measured = int(t["threshold"])
         ev = events_of(case)
-        if kind == "plan":
+        if kind in ("plan", "map"):
             preds = {p: predict_phase(weights, rows, names, p, ev[p])
-                     for p in mirror.PHASES if p in weights}
+                     for p in phases_of(case) if p in weights}
             phase = max(preds, key=lambda p: preds[p][0])
             value, covered = preds[phase]
         else:
@@ -237,7 +289,7 @@ def check(cases_path, thresholds_path, weights_path):
             phase = kind
             value, covered = predict_phase(weights, rows, names, kind, ev[kind])
         error = (measured - float(value)) / measured
-        key = "plan" if kind == "plan" else phase
+        key = kind if kind in ("plan", "map") else phase
         worst[key] = max(worst[key], abs(error))
         print(f"{case['name']}\t{phase}\t{measured}\t{float(value):.0f}\t"
               f"{error:+.5f}\t{'yes' if covered else 'NO'}\t{t['where']}")
@@ -254,147 +306,250 @@ def parse_set(text, n):
     return probe.decode_set(text)
 
 
-def predict(weights_path, op, form_name, n, a_text, b_text):
-    weights, rows, names = read_weights(weights_path)
+def make_case(op, form_name, n, a_text, b_text=None):
     n = int(n)
-    case = {"op": op, "form": form_name, "n": n, "a": parse_set(a_text, n),
-            "b": parse_set(b_text, n)}
-    plan, result, _, ev = mirror.phases(op, probe.gram_of(case), case["a"],
-                                        case["b"])
-    print(f"T = {len(plan)} terms, R = {len(result)} result blades")
-    for phase in mirror.PHASES:
-        if phase in weights:
-            value, covered = predict_phase(weights, rows, names, phase,
-                                           ev[phase])
-            print(f"{phase:10} {float(value):16.0f}"
-                  f"{'' if covered else '  (extrapolated)'}")
+    return {"op": op, "form": form_name, "n": n, "a": parse_set(a_text, n),
+            "b": [] if b_text is None else parse_set(b_text, n),
+            "kind": "map" if op in mirror.UNARY else "plan"}
 
 
-def binary_search_estimate(weights, plan, result):
-    """Estimated thresholds of collect_result and type_terms if each found
-    its place by binary search over the canonical list instead of a linear
-    scan, as (low, high).
+def sizes_of(case):
+    """The number of terms and of result blades."""
+    if probe.is_map(case):
+        terms, result, _, _ = mirror.map_phases(case["op"], case["n"],
+                                                case["a"])
+    else:
+        terms, result, _, _ = mirror.phases(case["op"], probe.gram_of(case),
+                                            case["a"], case["b"])
+    return len(terms), len(result)
 
-    A binary search over s places makes floor(log2 s) + 1 comparisons. Each
-    comparison is taken to cost what one step of the present scan costs,
-    the weight of a canonical_less call in collect_result (low), or half as
-    much again, for the midpoint and the two bounds a binary search keeps
-    (high). What a term costs besides its scan, and the shifts of an
-    insertion, are kept at their fitted weights. These are estimates of code
-    that does not exist; only measurement of that code can confirm them."""
-    w_collect, w_typed = weights["collect"], weights["typed"]
-    step = max(w_collect.get("collect.cl_index", 0),
-               w_collect.get("collect.cl_grade", 0))
-    present_c = collections.Counter()
-    present_t = collections.Counter()
-    out = mirror.collect_result(plan, present_c)
-    mirror.typed_copy(out, present_t)
-    mirror.type_terms(plan, out, present_t)
-    fixed_c = (w_collect.get("const", 0) +
-               w_collect.get("collect.new_end", 0) * present_c["collect.new_end"]
-               + w_collect.get("collect.new_mid", 0) * present_c["collect.new_mid"]
-               + w_collect.get("collect.cl_equal", 0) * present_c["collect.repeat"]
-               + w_collect.get("collect.shift", 0) * present_c["collect.shift"])
-    comparisons_c = 0
-    size = 0
-    seen = set()
-    for _, _, mask, _ in plan:
-        comparisons_c += size.bit_length()
-        if mask not in seen:
-            seen.add(mask)
-            size += 1
-    fixed_t = (w_typed.get("const", 0) +
-               w_typed.get("type.term", 0) * len(plan) +
-               w_typed.get("typed.blade", 0) * len(result))
-    comparisons_t = len(plan) * len(result).bit_length()
-    return ((fixed_c + step * comparisons_c, fixed_c + Fraction(3, 2) * step
-             * comparisons_c),
-            (fixed_t + step * comparisons_t, fixed_t + Fraction(3, 2) * step
-             * comparisons_t))
+
+def predictions(weights, rows, names, case):
+    """(phase, predicted threshold, covered) for each phase, largest
+    first."""
+    ev = events_of(case)
+    found = [(p, *predict_phase(weights, rows, names, p, ev[p]))
+             for p in phases_of(case) if p in weights]
+    return sorted(found, key=lambda x: -x[1])
+
+
+def predict(weights_path, op, form_name, n, a_text, b_text=None):
+    weights, rows, names = read_weights(weights_path)
+    case = make_case(op, form_name, n, a_text, b_text)
+    t, r = sizes_of(case)
+    print(f"T = {t} terms, R = {r} result blades")
+    for phase, value, covered in predictions(weights, rows, names, case):
+        print(f"{phase:12} {float(value):16.0f}"
+              f"{'' if covered else '  (extrapolated)'}")
 
 
 def ceilings(weights_path, limit, largest=8):
     weights, rows, names = read_weights(weights_path)
     limit = int(limit)
     print(f"limit {limit}; phases predicted from {weights_path}")
-    print("op\tform\tn\tT\tR\tlargest phase\tpredicted\tbuilds\t"
-          "binary-search typing: largest phase, low, high, builds")
-    for op in ("gp", "wedge"):
-        for form_name in ("r", "rigid", "conformal", "dense"):
-            for n in range(3, int(largest) + 1):
-                if form_name == "dense" and op == "gp" and n > 6:
-                    continue
-                s = mirror.full(n)
-                plan, result, _, ev = mirror.phases(
-                    op, mirror.form(form_name, n), s, s)
-                preds = {p: predict_phase(weights, rows, names, p, ev[p])
-                         for p in mirror.PHASES if p in weights}
-                top = max(preds, key=lambda p: preds[p][0])
-                value = preds[top][0]
-                (cl, ch), (tl, th) = binary_search_estimate(weights, plan,
-                                                            result)
-                rest = {p: v for p, (v, _) in preds.items()
-                        if p not in ("collect", "typed")}
-                low = max([*rest.values(), cl, tl])
-                high = max([*rest.values(), ch, th])
-                low_phase = max({**rest, "collect": cl, "typed": tl}.items(),
-                                key=lambda kv: kv[1])[0]
-                verdict = ("yes" if high <= limit else
-                           "no" if low > limit else "unsure")
-                covered = "" if all(c for _, c in preds.values()) else " (x)"
-                print(f"{op}\t{form_name}\t{n}\t{len(plan)}\t{len(result)}\t"
-                      f"{top}{covered}\t{float(value):.0f}\t"
-                      f"{'yes' if value <= limit else 'no'}\t{low_phase}, "
-                      f"{float(low):.0f}, {float(high):.0f}, {verdict}",
-                      flush=True)
+    print("op\tform\tn\tT\tR\tlargest phase\tpredicted\tunder the limit")
+    grid = [(op, f, n) for op in probe.PRODUCTS
+            for f in ("r", "rigid", "conformal", "dense")
+            for n in range(3, int(largest) + 1)]
+    grid += [(op, "r", n) for op in mirror.UNARY
+             for n in range(3, int(largest) + 3)]
+    for op, form_name, n in grid:
+        b = None if op in mirror.UNARY else "full"
+        case = make_case(op, form_name, n, "full", b)
+        if probe.is_map(case) or form_name != "dense" or n <= 6:
+            t, r = sizes_of(case)
+            phase, value, covered = predictions(weights, rows, names, case)[0]
+            print(f"{op}\t{form_name}\t{n}\t{t}\t{r}\t{phase}"
+                  f"{'' if covered else ' (x)'}\t{float(value):.0f}\t"
+                  f"{'yes' if value <= limit else 'no'}", flush=True)
 
 
 # GCC refuses a loop of this many iterations (-fconstexpr-loop-limit); the
-# generator's longest loops run once per term.
+# generators' longest loops run once per term or per blade of a set.
 GCC_LOOP_LIMIT = 1 << 18
 
 
-def certify(weights_path, limit, relative, absolute, op, form_name, n, a_text,
-            b_text):
+def certify(weights_path, limit, op, form_name, n, a_text, b_text=None):
     weights, rows, names = read_weights(weights_path)
-    limit, n = int(limit), int(n)
-    allowed = Fraction(limit) / (1 + Fraction(relative)) - int(absolute)
-    case = {"op": op, "form": form_name, "n": n, "a": parse_set(a_text, n),
-            "b": parse_set(b_text, n)}
-    plan, result, _, ev = mirror.phases(op, probe.gram_of(case), case["a"],
-                                        case["b"])
+    limit = int(limit)
+    case = make_case(op, form_name, n, a_text, b_text)
+    t, r = sizes_of(case)
     reasons = []
-    worst = 0
-    for phase in mirror.PHASES:
-        value, covered = predict_phase(weights, rows, names, phase, ev[phase])
-        worst = max(worst, value)
+    found = predictions(weights, rows, names, case)
+    for phase, value, covered in found:
         if not covered:
             reasons.append(f"{phase} is outside what the fit saw")
-        if value > allowed:
-            reasons.append(f"{phase} predicted {float(value):.0f} > "
-                           f"{float(allowed):.0f}")
-    longest = max(len(plan), len(case["a"]), len(case["b"]))
+        if value > limit:
+            reasons.append(f"{phase} predicted {float(value):.0f} > {limit}")
+    longest = max(t, len(case["a"]), len(case["b"]))
     if "gcc" in pathlib.Path(weights_path).name and longest >= GCC_LOOP_LIMIT:
         reasons.append(f"a loop of {longest} iterations reaches GCC's loop "
                        "limit")
-    print(f"T = {len(plan)}, R = {len(result)}, largest phase predicted "
-          f"{float(worst):.0f}, allowed {float(allowed):.0f} of {limit}")
+    print(f"T = {t}, R = {r}, largest phase {found[0][0]} predicted "
+          f"{float(found[0][1]):.0f} of {limit}")
     print("certified" if not reasons else "not certified: " +
           "; ".join(reasons))
     return not reasons
 
 
+def sparse_sets(n):
+    """{1, e1, e_n, e1n} and {e1, e2, e_n}, as test/core writes them."""
+    en = 1 << (n - 1)
+    return ([(0, 1), (1, 1), (en, 1), (en | 1, 1)],
+            [(1, 1), (2, 1), (en, 1)])
+
+
+def figure_cases():
+    """The cases of FIGURES as (label, case)."""
+    out = []
+    for label, op, form_name, n, a_text, b_text in FIGURES:
+        if a_text == "sparse":
+            a, b = sparse_sets(n)
+            case = {"op": op, "form": form_name, "n": n, "a": a, "b": b,
+                    "kind": "plan"}
+        else:
+            case = make_case(op, form_name, n, a_text, b_text)
+        out.append((label, case))
+    return out
+
+
+# The figures stated in the comments of product_plan and unary_map and the
+# reference units of the canary test: (label, op, form, n, a, b).
+FIGURES = [
+    ("gp-r-5", "gp", "r", 5, "full", "full"),
+    ("gp-r-6", "gp", "r", 6, "full", "full"),
+    ("gp-r-7", "gp", "r", 7, "full", "full"),
+    ("gp-dense-4", "gp", "dense", 4, "full", "full"),
+    ("gp-dense-5", "gp", "dense", 5, "full", "full"),
+    ("wedge-r-5", "wedge", "r", 5, "full", "full"),
+    ("wedge-r-6", "wedge", "r", 6, "full", "full"),
+    ("wedge-r-7", "wedge", "r", 7, "full", "full"),
+    ("antigp-r-5", "antigp", "r", 5, "full", "full"),
+    ("antigp-r-6", "antigp", "r", 6, "full", "full"),
+    ("antigp-conformal-5", "antigp", "conformal", 5, "full", "full"),
+    ("antigp-dense-4", "antigp", "dense", 4, "full", "full"),
+    ("antigp-dense-5", "antigp", "dense", 5, "full", "full"),
+    ("antiwedge-r-5", "antiwedge", "r", 5, "full", "full"),
+    ("antiwedge-r-6", "antiwedge", "r", 6, "full", "full"),
+    ("antiwedge-r-7", "antiwedge", "r", 7, "full", "full"),
+    ("gp-grades-3-7", "gp", "r", 8, "grade:3", "grade:7"),
+    ("sparse-gp-4", "gp", "rigid", 4, "sparse", None),
+    ("sparse-gp-16", "gp", "rigid", 16, "sparse", None),
+    ("sparse-antigp-4", "antigp", "rigid", 4, "sparse", None),
+    ("sparse-antigp-16", "antigp", "rigid", 16, "sparse", None),
+    ("reverse-7", "reverse", "r", 7, "full", None),
+    ("reverse-8", "reverse", "r", 8, "full", None),
+    ("reverse-9", "reverse", "r", 9, "full", None),
+    ("reverse-10", "reverse", "r", 10, "full", None),
+    ("right_complement-8", "right_complement", "r", 8, "full", None),
+    ("right_complement-9", "right_complement", "r", 9, "full", None),
+    ("right_complement-10", "right_complement", "r", 10, "full", None),
+]
+
+
+def figures_text(weights_path):
+    weights, rows, names = read_weights(weights_path)
+    lines = [f"# Predicted thresholds from {pathlib.Path(weights_path).name}",
+             "label\tT\tR\tlargest phase\tthreshold\tnext phase\t"
+             "next threshold\tcovered"]
+    for label, case in figure_cases():
+        t, r = sizes_of(case)
+        found = predictions(weights, rows, names, case)
+        (p1, v1, _), (p2, v2, _) = found[0], found[1]
+        covered = all(c for _, _, c in found)
+        lines.append(f"{label}\t{t}\t{r}\t{p1}\t{v1}\t{p2}\t{v2}\t"
+                     f"{'yes' if covered else 'NO'}")
+    return "\n".join(lines) + "\n"
+
+
+def selfcheck(weights_path, figures_path, train, measured):
+    problems = []
+
+    # The fit: the committed weights are what the training data give.
+    lines, _ = fit_lines(train)
+    committed = pathlib.Path(weights_path).read_text(
+        encoding="utf-8").splitlines()
+    if lines != committed:
+        a, b = set(lines), set(committed)
+        for line in sorted(a - b)[:10]:
+            problems.append(f"refit gives {line!r}, not in {weights_path}")
+        for line in sorted(b - a)[:10]:
+            problems.append(f"{weights_path} has {line!r}, not in the refit")
+        if a == b:
+            problems.append(f"{weights_path} lists its lines in another order")
+
+    # The predictions: every measured case, exactly.
+    weights, rows, names = read_weights(weights_path)
+    checked = 0
+    for cases_path, thresholds_path in train + measured:
+        thresholds = read_thresholds(thresholds_path)
+        for case in probe.read_cases(cases_path):
+            kind = case["kind"]
+            t = thresholds.get(case["name"])
+            if kind.startswith("baseline-") or not t or \
+                    t["threshold"] == "fails":
+                continue
+            measured_value = int(t["threshold"])
+            if kind in ("plan", "map"):
+                _, value, _ = predictions(weights, rows, names, case)[0]
+            else:
+                base = thresholds.get(case["name"].replace(
+                    f"-{kind}", f"-baseline-{kind}"))
+                if base and measured_value <= int(base["threshold"]):
+                    continue
+                value, _ = predict_phase(weights, rows, names, kind,
+                                         events_of(case)[kind])
+            checked += 1
+            if value != measured_value:
+                problems.append(f"{case['name']}: predicted {value}, "
+                                f"measured {measured_value}")
+
+    # The figures.
+    fresh = figures_text(weights_path)
+    committed_figures = pathlib.Path(figures_path).read_text(encoding="utf-8")
+    if fresh != committed_figures:
+        for new, old in zip(fresh.splitlines(), committed_figures.splitlines()):
+            if new != old:
+                problems.append(f"figures: {old!r} is now {new!r}")
+        if len(fresh.splitlines()) != len(committed_figures.splitlines()):
+            problems.append("figures: the number of lines differs")
+
+    for p in problems:
+        print(p)
+    print(f"{checked} measured cases predicted; {len(problems)} differences")
+    return not problems
+
+
+def split_selfcheck(args):
+    train, measured, target = [], [], None
+    for a in args:
+        if a == "--train":
+            target = train
+        elif a == "--check":
+            target = measured
+        elif target is None:
+            sys.exit(__doc__)
+        else:
+            target.append(tuple(a.split(":", 1)))
+    return train, measured
+
+
 def main(argv):
-    if len(argv) == 4 and argv[0] == "fit":
-        fit(*argv[1:])
+    if len(argv) >= 3 and argv[0] == "fit":
+        fit(argv[1:-1], argv[-1])
     elif len(argv) == 4 and argv[0] == "check":
         check(*argv[1:])
     elif len(argv) in (3, 4) and argv[0] == "ceilings":
         ceilings(*argv[1:])
-    elif len(argv) == 10 and argv[0] == "certify":
+    elif len(argv) in (7, 8) and argv[0] == "certify":
         sys.exit(0 if certify(*argv[1:]) else 1)
-    elif len(argv) == 7 and argv[0] == "predict":
+    elif len(argv) in (6, 7) and argv[0] == "predict":
         predict(*argv[1:])
+    elif len(argv) == 2 and argv[0] == "figures":
+        sys.stdout.write(figures_text(argv[1]))
+    elif len(argv) >= 5 and argv[0] == "selfcheck":
+        train, measured = split_selfcheck(argv[3:])
+        sys.exit(0 if selfcheck(argv[1], argv[2], train, measured) else 1)
     else:
         sys.exit(__doc__)
 
