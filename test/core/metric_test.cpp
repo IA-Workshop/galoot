@@ -25,6 +25,20 @@ struct declared_value_1 {
   static const galoot::core::metric<1> value;
 };
 
+// A valid algebra whose stored verdict is replaced by false. The concept must
+// follow it, which shows that the concept answers from the stored verdict
+// rather than checking the matrix again at each use. A replacement must be
+// declared in a namespace that encloses the library's, so it is written here,
+// at global scope, before the tests that use the tag.
+namespace {
+struct stored_verdict_false {
+  static constexpr auto value = galoot::core::R<2, 0, 0>();
+};
+} // namespace
+template <>
+inline constexpr bool
+    galoot::core::detail::is_valid_form_v<stored_verdict_false> = false;
+
 namespace {
 
 namespace core = galoot::core;
@@ -326,6 +340,9 @@ static_assert(!core::metric_like<by_reference_to_runtime_1>);
 
 // An asymmetry in the last pair of the widest metric is found.
 static_assert(!core::metric_like<widest_broken>);
+
+// The concept follows the stored verdict of an algebra.
+static_assert(!core::metric_like<stored_verdict_false>);
 
 // On every matrix of one and two generators over sample_entries, the concept
 // agrees with the requirement. A matrix meets it exactly when each diagonal
