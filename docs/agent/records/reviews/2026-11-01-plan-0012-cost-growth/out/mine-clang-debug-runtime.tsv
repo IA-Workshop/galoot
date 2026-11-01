@@ -1,0 +1,16 @@
+mutant	preset	mode	build	test	status	failed_tests	static_asserts	first_error
+rv_any_below	clang-debug	runtime	0	8	killed	core.bits,core.blade_product,core.plan	-	-
+rv_only_adjacent	clang-debug	runtime	1	-	killed	-	blade_set_test.cpp:577	test/core/blade_set_test.cpp:577:15: error: static assertion failed due to requirement '!std::is_same_v<(anonymous namespace)::stored_on<galoot::core::blade_set
+rv_count_own	clang-debug	runtime	1	-	killed	-	blade_set_test.cpp:577	include/galoot/core/bits.hpp:101:59: error: unused parameter 'b' [-Werror,-Wunused-parameter]
+rv_index_mod16	clang-debug	runtime	0	8	killed	core.bits	-	-
+rv_index_mod8	clang-debug	runtime	0	8	killed	core.bits	-	-
+ct_flip_on_nonzero	clang-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+ct_skip_e_N	clang-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:812:37: error: invalid operands to binary expression ('Expression_lhs<const std::array<galoot::core::detail::plan_term, 3> &>' and 'std:
+ct_skip_own_generator	clang-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: invalid operands to binary expression ('const std::array<plan_term, 12UL>' and 'std::array<plan_term, 15>')
+ct_index_mod16	clang-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:812:37: error: invalid operands to binary expression ('Expression_lhs<const std::array<galoot::core::detail::plan_term, 3> &>' and 'std:
+ct_over_blade_with_i	clang-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: invalid operands to binary expression ('const std::array<plan_term, 24UL>' and 'std::array<plan_term, 15>')
+cr_flip_on_nonzero	clang-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+cr_skip_e_N	clang-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+cr_over_a	clang-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: invalid operands to binary expression ('const std::array<plan_term, 27UL>' and 'std::array<plan_term, 15>')
+cr_index_mod16	clang-debug	runtime	0	8	killed	core.blade_product	-	-
+cr_sign_starts_plus	clang-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
