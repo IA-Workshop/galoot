@@ -1,0 +1,5 @@
+# revision 398463d; python3 -I docs/agent/records/mutations/0011-blade-product/mutate.py clang-debug range_check_removed range_shift_off_by_one range_widest_shifted: the three range mutants rerun after the range flag became a const initialized by a lambda (range_shift_off_by_one's anchor moved into it). The other 36 mutants touch code that 398463d leaves unchanged; their rows are in results-b142837-clang-debug.tsv.
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+range_check_removed	clang-debug	0	8	core.blade_product_beyond_n,core.blade_product_rejects_beyond_n	killed	-	-	-
+range_shift_off_by_one	clang-debug	0	8	core.blade_product_beyond_n,core.blade_product_rejects_beyond_n	killed	-	-	-
+range_widest_shifted	clang-debug	1	8	core.blade_product	killed	874	-	include/galoot/core/blade_product.hpp:284:23: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
