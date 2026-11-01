@@ -55,4 +55,14 @@ wide-0	fill	159823	159823	+0.00000	yes	include/galoot/core/plan.hpp:453:27
 wide-1	collect	65858632	65858632	+0.00000	yes	include/galoot/core/plan.hpp:469:27
 wide-2	fill	2549	2549	+0.00000	yes	include/galoot/core/plan.hpp:453:27
 wide-3	fill	26385	26385	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-4	fill	1578530785	1578530785	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-5	fill	3652	3229	+0.11583	yes	include/galoot/core/metric.hpp:277:42
+wide-7	fill	32822	32822	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-8	fill	5834	5834	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-9	fill	5530	5530	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-10	fill	248193	248193	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-11	fill	471120	471120	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-13	collect	320707	320707	+0.00000	yes	include/galoot/core/plan.hpp:469:27
+wide-14	fill	24688	24688	+0.00000	yes	include/galoot/core/plan.hpp:453:27
+wide-15	fill	247214	247214	+0.00000	yes	include/galoot/core/plan.hpp:453:27
 # largest relative error, plan: 0.62076

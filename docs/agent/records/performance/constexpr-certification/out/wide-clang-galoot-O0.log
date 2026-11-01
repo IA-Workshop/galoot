@@ -54,3 +54,13 @@ wide-0 159823 limit include/galoot/core/plan.hpp:453:27 13
 wide-1 65858632 limit include/galoot/core/plan.hpp:469:27 13
 wide-2 2549 limit include/galoot/core/plan.hpp:453:27 11
 wide-3 26385 limit include/galoot/core/plan.hpp:453:27 12
+wide-4 1578530785 limit include/galoot/core/plan.hpp:453:27 13
+wide-5 3652 limit include/galoot/core/metric.hpp:277:42 24
+wide-7 32822 limit include/galoot/core/plan.hpp:453:27 12
+wide-8 5834 limit include/galoot/core/plan.hpp:453:27 12
+wide-9 5530 limit include/galoot/core/plan.hpp:453:27 12
+wide-10 248193 limit include/galoot/core/plan.hpp:453:27 13
+wide-11 471120 limit include/galoot/core/plan.hpp:453:27 13
+wide-13 320707 limit include/galoot/core/plan.hpp:469:27 13
+wide-14 24688 limit include/galoot/core/plan.hpp:453:27 12
+wide-15 247214 limit include/galoot/core/plan.hpp:453:27 13
