@@ -57,7 +57,8 @@ made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
 CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
 after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest,
 where the program is the first of those four in the command, or the first
-after `cmake -E` (as in `cmake -E time ninja -C <tree>`), else
+after `cmake -E` (as in `cmake -E time ninja -C <tree>`); after `cmake -E
+chdir <dir>`, the tree is <dir> or a tree named relative to it; else
 build/<preset>. It holds `-` for a run with no build tree (preset `-` and no
 such argument), and `unavailable` when the tree has no readable cache. The
 cache is read after the command, so a configure step records the options it
@@ -369,20 +370,31 @@ def build_tree(command, preset, top):
     # The program is the first build program named, so that a later argument
     # such as the label in `ctest -L make` is not taken for one. `cmake -E`
     # runs a tool such as env or time, which may run another program, so
-    # the program is looked for again after it.
-    program = None
-    for arg, value in zip(command, command[1:] + [""], strict=True):
+    # the program is looked for again after it. `cmake -E chdir <dir>` runs
+    # it in <dir>, which is then its tree unless it names one, relative to
+    # <dir>.
+    program, directory = None, ""  # os.path.join("", path) is path
+    i = 0
+    while i < len(command):
+        arg = command[i]
+        value = command[i + 1] if i + 1 < len(command) else ""
         if program is None and os.path.basename(arg) in TREE_ARGUMENTS:
             program = os.path.basename(arg)
-            continue
-        if program == "cmake" and arg == "-E":
+        elif program == "cmake" and arg == "-E":
             program = None
-            continue
-        for flag in TREE_ARGUMENTS.get(program, ()):
-            if arg == flag and value and not value.startswith("-"):
-                return value
-            if len(flag) == 2 and arg.startswith(flag) and len(arg) > 2:
-                return arg[2:]
+            if value == "chdir" and i + 2 < len(command):
+                directory = os.path.join(directory, command[i + 2])
+                i += 3
+                continue
+        else:
+            for flag in TREE_ARGUMENTS.get(program, ()):
+                if arg == flag and value and not value.startswith("-"):
+                    return os.path.join(directory, value)
+                if len(flag) == 2 and arg.startswith(flag) and len(arg) > 2:
+                    return os.path.join(directory, arg[2:])
+        i += 1
+    if directory and program is not None:
+        return directory
     if preset == NO_TREE:
         return None
     return os.path.join(top, "build", preset)
