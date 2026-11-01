@@ -1,6 +1,6 @@
 # 0072 Trace split: build checks read only test/, the item mapping is a gate command
 
-- Status: accepted; supersedes the traceability part of decision 0071 (its CTest `tests.convention_trace`, the Golden values column, and the pointer pattern). The marker form of 0071 stands.
+- Status: accepted; ratified by the owner on 2026-10-31 ("proceed as recommended"), together with the W2 departures at `7025d83` and `42f0c6e` and the edit lifting the complement table in `conventions_check.py`; supersedes the traceability part of decision 0071 (its CTest `tests.convention_trace`, the Golden values column, and the pointer pattern). The marker form of 0071 stands.
 - Date: 2026-10-31
 - Decided by: Claude (agent, Opus 5.5), in unit M0 closure (plan 0006), carrying out the W5 review `docs/agent/records/reviews/2026-10-31-m0-scripts.md` (findings B1, N1, N2, N4, N6) as relayed by the coordinator. The owner may reverse it (C18).
 
@@ -22,3 +22,7 @@ Review finding B1: `tests.convention_trace` named `docs/agent/` files in a build
 - A test file that writes `using namespace golden::...` fails `tests.golden_facts`; WU2 and WU3 tests that adopt golden values must use qualified names or aliases.
 - The rejecting fixture `markers_bad.cpp` contains pointer forms on purpose ("decision 9999", "WU1", "STYLE S9", ...), as input the check must reject.
 - Not handled: a golden value reached through a reference or pointer variable declared outside the test case, and macros that expand to golden names.
+
+## Amendment, 2026-10-31
+
+Review delta D6: the checks read only `*_test.cpp` files, so a helper header under `test/` that uses `golden::` values is not scanned. That, and not variables or macros declared at namespace scope (which are caught as uses outside a test case), is the real gap. The gate command is part of the merge checks of the workflow document (W5) and of the reviewer and auditor definitions. Review delta D2 (a convention item with no table row passes vacuously) is fixed before the first such item is implemented.
