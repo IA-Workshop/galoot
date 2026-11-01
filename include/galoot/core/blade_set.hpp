@@ -57,8 +57,9 @@ struct oriented_blade {
 /// the order in which it stores its coefficients.
 ///
 /// Requires: every sign is +1 or -1 and no mask appears twice. The
-/// constructors below guarantee it; a set written out by hand must keep it,
-/// and merge and index_of check it.
+/// constructors below guarantee it; a set written out by hand must keep it.
+/// merge checks both rules for its inputs; index_of checks the signs and that
+/// the mask it looks up appears once, but not that other masks are distinct.
 /// Guarantees: a structural, trivially copyable aggregate, so that a set can
 /// be a class-type template argument, and two sets with equal blades in the
 /// same order are the same template argument.
@@ -162,7 +163,7 @@ consteval bool valid_generator_count() {
 // The number of ways to choose k of n items. After step i, count is
 // C(n, i + 1): C(n, i) (n - i) = C(n, i + 1) (i + 1), so each division is
 // exact.
-constexpr std::size_t binomial(std::size_t n, std::size_t k) {
+[[nodiscard]] constexpr std::size_t binomial(std::size_t n, std::size_t k) {
   std::size_t count = 1;
   for (std::size_t i = 0; i < k; ++i) {
     count = count * (n - i) / (i + 1);
@@ -239,16 +240,19 @@ consteval auto make_of_grade() {
   }
 }
 
-constexpr bool is_sign(int sign) { return sign == 1 || sign == -1; }
+[[nodiscard]] constexpr bool is_sign(int sign) noexcept {
+  return sign == 1 || sign == -1;
+}
 
 // The union of two lists of blades in canonical order, in the first `size`
-// places of `blades`, with which input each blade came from, and what was
-// wrong with the inputs: a sign other than +1 or -1, a mask listed twice in
-// one input, or a mask in both inputs with opposite signs.
+// places of `blades`, which inputs hold each listed blade, and what was wrong
+// with the inputs: a sign other than +1 or -1, a mask listed twice in one
+// input, or a mask in both inputs with opposite signs.
 template <std::size_t Capacity>
 struct union_of {
   std::array<oriented_blade, Capacity> blades;
-  std::array<bool, Capacity> from_second;
+  std::array<bool, Capacity> in_first;
+  std::array<bool, Capacity> in_second;
   std::size_t size;
   bool bad_sign;
   bool repeated_mask;
@@ -256,33 +260,43 @@ struct union_of {
 };
 
 // Inserts each blade of `a` and then of `b` into a list kept in canonical
-// order, skipping a mask already in the list. A mask found again in the same
-// input is a repeated mask; found again from the other input, it is the same
-// blade, unless the signs differ.
+// order, skipping a mask already in the list. Each listed blade records which
+// inputs hold it, so a mask found again in an input that already gave it is a
+// repeat, whichever input listed it first. A mask found again from the other
+// input is the same blade, unless both signs are +1 or -1 and they differ; a
+// sign that is neither is reported as such, not as a conflict.
 template <std::size_t KA, std::size_t KB>
-constexpr union_of<KA + KB> unite(const blade_set<KA>& a,
-                                  const blade_set<KB>& b) {
+[[nodiscard]] constexpr union_of<KA + KB> unite(const blade_set<KA>& a,
+                                                const blade_set<KB>& b) {
   union_of<KA + KB> u{};
-  const auto insert = [&u](oriented_blade blade, bool from_second) {
+  const auto insert = [&u](oriented_blade blade, bool second) {
     u.bad_sign = u.bad_sign || !is_sign(blade.sign);
     std::size_t at = 0;
     while (at < u.size && canonical_less(u.blades[at].mask, blade.mask)) {
       ++at;
     }
     if (at < u.size && u.blades[at].mask == blade.mask) {
-      if (u.from_second[at] == from_second) {
+      const oriented_blade& listed = u.blades[at];
+      bool& seen = second ? u.in_second[at] : u.in_first[at];
+      if (seen) {
         u.repeated_mask = true;
-      } else {
-        u.opposite_signs = u.opposite_signs || u.blades[at].sign != blade.sign;
+        return;
+      }
+      seen = true;
+      if (is_sign(listed.sign) && is_sign(blade.sign) &&
+          listed.sign != blade.sign) {
+        u.opposite_signs = true;
       }
       return;
     }
     for (std::size_t j = u.size; j > at; --j) {
       u.blades[j] = u.blades[j - 1];
-      u.from_second[j] = u.from_second[j - 1];
+      u.in_first[j] = u.in_first[j - 1];
+      u.in_second[j] = u.in_second[j - 1];
     }
     u.blades[at] = blade;
-    u.from_second[at] = from_second;
+    u.in_first[at] = !second;
+    u.in_second[at] = second;
     ++u.size;
   };
   for (const oriented_blade& blade : a.blades) {
@@ -310,7 +324,8 @@ consteval auto make_merge() {
 
 // The position of `mask` in `set`, or the size of the set when it is absent.
 template <std::size_t K>
-constexpr std::size_t position_of(const blade_set<K>& set, mask_t mask) {
+[[nodiscard]] constexpr std::size_t position_of(const blade_set<K>& set,
+                                                mask_t mask) {
   std::size_t at = 0;
   while (at < K && set.blades[at].mask != mask) {
     ++at;
@@ -318,34 +333,48 @@ constexpr std::size_t position_of(const blade_set<K>& set, mask_t mask) {
   return at;
 }
 
-struct lookup {
-  bool bad_sign;
-  std::size_t count;
-};
-
-// Whether a sign of `set` is other than +1 or -1, and how many of its blades
-// have the mask `mask`. A check that no mask at all repeats would cost O(K^2)
-// steps, too many for a large set within the compilers' limits on constant
-// evaluation; a repeat of the mask looked up is what makes the answer wrong.
+// Whether a blade listed after position `at` has the mask of the blade at
+// `at`; false when `at` is the size of the set, since no blade follows it.
+// Scanning only after the position found keeps a lookup at one pass over the
+// set; a check that no mask at all repeats would cost O(K^2) steps, too many
+// for a large set within the compilers' limits on constant evaluation.
 template <std::size_t K>
-constexpr lookup look_up(const blade_set<K>& set, mask_t mask) {
-  lookup found{};
-  for (const oriented_blade& blade : set.blades) {
-    found.bad_sign = found.bad_sign || !is_sign(blade.sign);
-    found.count += blade.mask == mask ? 1U : 0U;
+[[nodiscard]] constexpr bool repeats_after(const blade_set<K>& set,
+                                           std::size_t at) noexcept {
+  for (std::size_t j = at + 1; j < K; ++j) {
+    if (set.blades[j].mask == set.blades[at].mask) {
+      return true;
+    }
   }
-  return found;
+  return false;
 }
+
+template <std::size_t K>
+[[nodiscard]] constexpr bool all_signs(const blade_set<K>& set) noexcept {
+  // NOLINTNEXTLINE(readability-use-anyofallof): avoids <algorithm> here.
+  for (const oriented_blade& blade : set.blades) {
+    if (!is_sign(blade.sign)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Evaluated once for each set, however many lookups use it. Measured over a
+// lookup of every blade of a set, the check costs little on Clang and about a
+// sixth of the rest of a lookup on GCC.
+template <blade_set S>
+inline constexpr bool signs_valid = all_signs(S);
 
 template <blade_set S, mask_t Mask>
 consteval std::size_t make_index_of() {
-  constexpr auto found = look_up(S, Mask);
-  static_assert(!found.bad_sign,
+  static_assert(signs_valid<S>,
                 "index_of: the set holds a sign other than +1 or -1");
-  static_assert(found.count <= 1, "index_of: the set holds this mask twice");
   constexpr std::size_t at = position_of(S, Mask);
   static_assert(at < S.size(), "index_of: the set holds no blade with this "
                                "mask");
+  static_assert(!repeats_after(S, at),
+                "index_of: the set holds this mask twice");
   return at;
 }
 
@@ -535,6 +564,12 @@ inline constexpr auto of_grade = detail::make_of_grade<N, K>();
 /// Requires: every sign is +1 or -1, no mask appears twice in one set, and no
 /// mask is in both sets with opposite signs, because the merged set could
 /// keep only one of the two orientations. Each is checked at compile time.
+/// Each blade is inserted into a list kept in canonical order, so the cost
+/// grows with the square of the sizes and depends on their order. Measured at
+/// the default limits on constant evaluation: Clang 23 merges full<7> with
+/// itself and two disjoint sets of 64 blades, but not two disjoint sets of
+/// 128; GCC 16 merges full<9> with itself and two disjoint sets of 256, but
+/// not two disjoint sets of 512, nor full<9> listed in reverse with itself.
 /// Guarantees: the size is the number of distinct masks in A and B.
 template <blade_set A, blade_set B>
 inline constexpr auto merge = detail::make_merge<A, B>();

@@ -40,3 +40,35 @@ Added after the W5 review (`docs/agent/records/reviews/2026-10-31-wu4-blade-sets
   - Measured by the reviewer at identical flags, both kinds of core added, from 2976dca to f9441f7: `#include <galoot/core.hpp>` alone rises from 0.488 G to 0.721 G instructions on GCC (+48%, 59 to 70 MB) and from 0.378 G to 0.548 G on Clang (+45%).
   - Most of the rise is `<string_view>`: the base plus `<string_view>` alone costs 0.665 G on GCC and 0.518 G on Clang. The blade set code itself costs about 0.03 G.
   - If that matters, `canonical_name` and the parser could work on character arrays and pointers instead of `std::string_view`. That is a follow-up for the owner to weigh, not done here.
+
+## Note, 2026-10-31 (plan 0009)
+
+`merge` has a much lower size limit than `full` and `of_grade`, because it inserts each blade into a list kept in canonical order, O(K²) for K blades (finding A6 of `docs/agent/records/reviews/2026-10-31-unreviewed-fix-passes.md`). Measured by the author on the header of `ddb7d2b`, with `-std=c++23 -fsyntax-only` at default limits, each compile logged in `runs.tsv` as `merge-bound:<compiler>:full<k>`:
+
+- Clang 23.1.4 merges `full<7>` with itself (128 blades each) and fails on its step limit for `full<8>`.
+- GCC 16.2.1 merges `full<9>` (512 each) and fails `full<10>` (1,024 each) on `-fconstexpr-ops-limit`.
+
+These agree with the reviewer's figures. The `///` comment of `merge` states them. A merge of large sets would need a sort of each input and a linear merge instead of the insertion, which no present use needs.
+
+## Note, 2026-11-01 (plan 0009, W5 review finding F1)
+
+The `merge` limit in the previous note held only for what was measured: a canonical set merged with itself. The insertion's cost depends on the order and overlap of the inputs, not only on their sizes (review `docs/agent/records/reviews/2026-11-01-blade-set-merge-fix.md`).
+
+Measured again by the author on the header of `e6f6601`, whose code `28ef08e` leaves unchanged apart from comments and `[[nodiscard]]`, with `-std=c++23 -fsyntax-only` at default limits, each compile logged in `runs.tsv` as `merge-bound:<compiler>:<shape><n>`. The disjoint inputs are the even-grade and odd-grade halves of `full<n>`, merged in both orders; "reversed" is `full<n>` listed in reverse, merged with itself.
+
+| Shape | Clang 23.1.4 | GCC 16.2.1 |
+| --- | --- | --- |
+| `full<7>` with itself | passes | passes |
+| `full<7>` reversed, with itself | passes | passes |
+| Two disjoint sets of 64 blades | passes | passes |
+| Two disjoint sets of 128 blades | fails on its step limit | passes |
+| `full<8>` with itself, and reversed | fails on its step limit | passes |
+| `full<9>` with itself | fails | passes |
+| Two disjoint sets of 256 blades | fails | passes |
+| `full<9>` reversed, with itself | fails | fails on `-fconstexpr-ops-limit` |
+| Two disjoint sets of 512 blades | fails | fails on `-fconstexpr-ops-limit` |
+
+This agrees with the reviewer's figures.
+
+- For one of the GCC 512 + 512 failures, GCC's first error names the bounds check of `std::array<bool, 1024>`, not the operation limit. With `-fconstexpr-ops-limit=4294967296` both orders compile and give 1,024 blades. So that error is how GCC reports the exhausted limit inside the subscript check, not an access out of range (inferred from that result).
+- The `///` comment of `merge` states these cases.

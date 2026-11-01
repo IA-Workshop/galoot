@@ -1,0 +1,26 @@
+# 3cda375, the final header: every mutant of the list, both compilers
+mutation	preset	build_exit	test_exit	failed_tests	killed	first_build_error
+merge_sign_first_only	gcc-debug	0	8	core.blade_set_merge_bad_sign_second	killed	-
+merge_no_flag_shift	gcc-debug	0	8	core.blade_set_merge_repeated_after_shift	killed	-
+merge_no_second_flag_shift	gcc-debug	1	0	-	killed	include/galoot/core/blade_set.hpp:314:20: error: static assertion failed: merge: a set holds one mask twice
+merge_repeat_first_only	gcc-debug	0	8	core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs	killed	-
+merge_opposite_any_sign	gcc-debug	0	8	core.blade_set_merge_bad_sign_no_conflict	killed	-
+merge_repeat_check	gcc-debug	0	8	core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift	killed	-
+merge_mark_seen	gcc-debug	0	8	core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs	killed	-
+index_sign_check	gcc-debug	0	8	core.blade_set_index_of_bad_sign	killed	-
+index_repeat_check	gcc-debug	0	8	core.blade_set_index_of_repeated_mask,core.blade_set_index_of_repeated_adjacent	killed	-
+index_repeat_from_next	gcc-debug	0	8	core.blade_set_index_of_repeated_adjacent	killed	-
+is_sign_zero	gcc-debug	0	8	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict	killed	-
+is_sign_minus	gcc-debug	1	8	core.blade_set_merge_opposite_signs	killed	include/galoot/core/blade_set.hpp:314:20: error: static assertion failed: merge: a set holds a sign other than +1 or -1
+merge_sign_first_only	clang-debug	0	8	core.blade_set_merge_bad_sign_second	killed	-
+merge_no_flag_shift	clang-debug	0	8	core.blade_set_merge_repeated_after_shift	killed	-
+merge_no_second_flag_shift	clang-debug	1	0	-	killed	include/galoot/core/blade_set.hpp:314:17: error: static assertion failed due to requirement '!u.repeated_mask': merge: a set holds one mask twice
+merge_repeat_first_only	clang-debug	0	8	core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs	killed	-
+merge_opposite_any_sign	clang-debug	0	8	core.blade_set_merge_bad_sign_no_conflict	killed	-
+merge_repeat_check	clang-debug	0	8	core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift	killed	-
+merge_mark_seen	clang-debug	0	8	core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs	killed	-
+index_sign_check	clang-debug	0	8	core.blade_set_index_of_bad_sign	killed	-
+index_repeat_check	clang-debug	0	8	core.blade_set_index_of_repeated_mask,core.blade_set_index_of_repeated_adjacent	killed	-
+index_repeat_from_next	clang-debug	0	8	core.blade_set_index_of_repeated_adjacent	killed	-
+is_sign_zero	clang-debug	0	8	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict	killed	-
+is_sign_minus	clang-debug	1	8	core.blade_set_merge_opposite_signs	killed	include/galoot/core/blade_set.hpp:314:17: error: static assertion failed due to requirement '!u.bad_sign': merge: a set holds a sign other than +1 or -1

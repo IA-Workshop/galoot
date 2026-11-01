@@ -1,0 +1,10 @@
+# The review's four survivors, written against the header as merged (develop before this unit), run at 9670158 (that header with this unit's first tests): python3 -I docs/agent/records/mutations/0009-blade-set-merge-fix/mutate.py --merged <preset>. merge_repeat_first_only survives there by design: its test fails against that header and came with the fix in 644939e.
+mutation	preset	build_exit	test_exit	failed_tests	killed	first_build_error
+merge_sign_first_only	gcc-debug	0	8	core.blade_set_merge_bad_sign_second	killed	-
+merge_no_flag_shift	gcc-debug	1	0	-	killed	include/galoot/core/blade_set.hpp:300:20: error: static assertion failed: merge: a set holds one mask twice
+merge_repeat_first_only	gcc-debug	0	0	-	SURVIVED	-
+index_count_exactly_one	gcc-debug	0	8	core.blade_set_index_of_absent	killed	-
+merge_sign_first_only	clang-debug	0	8	core.blade_set_merge_bad_sign_second	killed	-
+merge_no_flag_shift	clang-debug	1	0	-	killed	include/galoot/core/blade_set.hpp:300:17: error: static assertion failed due to requirement '!u.repeated_mask': merge: a set holds one mask twice
+merge_repeat_first_only	clang-debug	0	0	-	SURVIVED	-
+index_count_exactly_one	clang-debug	0	8	core.blade_set_index_of_absent	killed	-

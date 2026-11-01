@@ -1,0 +1,6 @@
+# c24bfe4: the two survivors against the new tests
+mutation	preset	build_exit	test_exit	failed_tests	killed	first_build_error
+merge_no_flag_shift	gcc-debug	0	8	core.blade_set_merge_repeated_after_shift	killed	-
+index_repeat_from_next	gcc-debug	0	8	core.blade_set_index_of_repeated_adjacent	killed	-
+merge_no_flag_shift	clang-debug	0	8	core.blade_set_merge_repeated_after_shift	killed	-
+index_repeat_from_next	clang-debug	0	8	core.blade_set_index_of_repeated_adjacent	killed	-
