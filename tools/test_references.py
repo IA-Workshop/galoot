@@ -79,7 +79,8 @@ Implemented (yes or no): a specification item, a fact of it, and whether the
 library implements it. An item may have several rows, one per fact; a fact
 may not contain `|`. It checks that the table's items and the items of
 <specification> (lines that start with the item number, such as `3.1 `) are
-the same, that every line that starts a row has exactly three cells, and that
+the same, that every line after a table's separator line is a row whose
+first cell is an item number and that has exactly three cells, and that
 every fact of <golden.hpp> is in the table. A test case or marked
 static_assert pins a row when its marker states the row's fact. The command
 prints each item with what pins any of its rows, and fails if a row marked
@@ -122,6 +123,7 @@ ALIAS = re.compile(r"\bnamespace\s+(\w+)\s*=\s*(?:::)?golden(?:::(\w+))?\s*;")
 USING = re.compile(r"\busing\s+(?:namespace\s+)?(?:::)?golden\b")
 SPEC_ITEM = re.compile(r"^(\d+\.\d+) ")
 ITEM = re.compile(r"\d+\.\d+")
+SEPARATOR_CELL = re.compile(r":?-{3,}:?")
 
 
 def normalize(text):
@@ -430,14 +432,22 @@ def read_table(path):
     """The rows of the table, as (line, item, fact, implemented), and a
     finding for each line that starts a row but is not one of three cells."""
     rows, findings = [], []
+    in_body = False  # past a table's separator line, before its end
     with open(path, encoding="utf-8") as f:
         for number, line in enumerate(f.read().splitlines(), 1):
             text = line.strip()
             if not text.startswith("|"):
+                in_body = False
                 continue
             cells = [c.strip() for c in text[1:].split("|")]
-            if not ITEM.fullmatch(cells[0]):
+            if not in_body:
+                in_body = all(SEPARATOR_CELL.fullmatch(c) for c in cells if c)
                 continue  # the header and the separator line
+            if not ITEM.fullmatch(cells[0]):
+                findings.append(f"{path}:{number}: row's first cell "
+                                f"'{cells[0]}' is not an item number such "
+                                "as 3.1")
+                continue
             if not text.endswith("|") or len(cells) != 4:
                 findings.append(f"{path}:{number}: row of item {cells[0]} is "
                                 "not three cells between | signs; a fact may "
