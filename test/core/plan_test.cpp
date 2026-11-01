@@ -1915,3 +1915,1387 @@ TEST_CASE("pair_capacity is 1 for the wedge and product_capacity for the "
   CHECK(pair_capacity(gp, e123, e1234, 4) == 8);
   CHECK(pair_capacity(gp, 0, 0, 4) == 1);
 }
+
+namespace {
+
+using core::detail::closed_form_right_sign;
+using core::detail::generate_map;
+using core::detail::map_term;
+using core::detail::term;
+using core::detail::typed_map;
+using core::detail::unary_map;
+using core::detail::unary_term;
+using core::detail::UnaryOperation;
+
+constexpr auto antigp = BinaryOperation::antigp;
+constexpr auto antiwedge = BinaryOperation::antiwedge;
+constexpr auto reverse = UnaryOperation::reverse;
+constexpr auto antireverse = UnaryOperation::antireverse;
+constexpr auto involution = UnaryOperation::grade_involution;
+constexpr auto right_complement = UnaryOperation::right_complement;
+constexpr auto left_complement = UnaryOperation::left_complement;
+
+constexpr std::array<UnaryOperation, 5> unary_operations{
+    reverse, antireverse, involution, right_complement, left_complement,
+};
+
+// The largest number of generators of the run-time checks of the maps.
+constexpr std::size_t largest_map_n = 10;
+
+// The set of the one blade of the mask M, with sign +1.
+template <mask_t M>
+constexpr core::blade_set<1> blade_of{{{{.mask = M, .sign = 1}}}};
+
+// Whether `map` has the result set `result`, each blade with sign +1, and
+// the terms `terms`, in that order.
+template <std::size_t R, std::size_t K>
+constexpr bool map_is(const typed_map<R, K>& map,
+                      std::initializer_list<mask_t> result,
+                      std::initializer_list<map_term> terms) {
+  return result_is(map.result, result) && terms.size() == K &&
+         std::ranges::equal(map.terms, terms);
+}
+
+// Whether a typed map is what generate_map, collect_result, and type_terms
+// give when they are called directly on the same set in n generators.
+template <std::size_t K, std::size_t R>
+constexpr bool equals_map_typing(UnaryOperation op, std::size_t n,
+                                 const core::blade_set<K>& set,
+                                 const typed_map<R, K>& map) {
+  std::array<plan_term, K> terms{};
+  generate_map(op, n, set.blades, terms);
+  std::array<oriented_blade, K> result{};
+  if (collect_result(terms, result) != R) {
+    return false;
+  }
+  for (std::size_t r = 0; r < R; ++r) {
+    if (result.at(r) != map.result.blades.at(r)) {
+      return false;
+    }
+  }
+  std::array<typed_term, K> typed{};
+  type_terms(terms, std::span(result).first(R), typed);
+  for (std::size_t k = 0; k < K; ++k) {
+    const map_term expected{
+        .a = typed.at(k).a,
+        .out = typed.at(k).out,
+        .coefficient = typed.at(k).coefficient,
+    };
+    if (typed.at(k).b != 0 || map.terms.at(k) != expected) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Reference: independent value: worked by hand from the definition of the
+// complements, u ^ right(u) = antiscalar and left(u) ^ u = antiscalar, and
+// from the reverse, which multiplies a blade of grade k by (-1)^(k(k-1)/2),
+// in rigid(3), for the oriented line e41 e42 e43 e23 e31 e12, that is
+// -e14, -e24, -e34, +e23, -e13, +e12: the reverse of a bivector is -1 times
+// it and its grade involution +1 times it; right(e41) = right(-e14) = -e23,
+// because e14 ^ e23 = +e1234, and in the same way right(e42) = +e13,
+// right(e43) = -e12, right(e23) = +e14, right(e31) = +e24, right(e12) = +e34;
+// a bivector has grade 2 and antigrade 2, so its left complement is its
+// right complement
+static_assert(map_is(unary_map<reverse, rga3, line>,
+                     {e12, e13, e14, e23, e24, e34},
+                     {
+                         {.a = 0, .out = 2, .coefficient = 1},
+                         {.a = 1, .out = 4, .coefficient = 1},
+                         {.a = 2, .out = 5, .coefficient = 1},
+                         {.a = 3, .out = 3, .coefficient = -1},
+                         {.a = 4, .out = 1, .coefficient = 1},
+                         {.a = 5, .out = 0, .coefficient = -1},
+                     }));
+static_assert(map_is(unary_map<involution, rga3, line>,
+                     {e12, e13, e14, e23, e24, e34},
+                     {
+                         {.a = 0, .out = 2, .coefficient = -1},
+                         {.a = 1, .out = 4, .coefficient = -1},
+                         {.a = 2, .out = 5, .coefficient = -1},
+                         {.a = 3, .out = 3, .coefficient = 1},
+                         {.a = 4, .out = 1, .coefficient = -1},
+                         {.a = 5, .out = 0, .coefficient = 1},
+                     }));
+static_assert(map_is(unary_map<right_complement, rga3, line>,
+                     {e12, e13, e14, e23, e24, e34},
+                     {
+                         {.a = 0, .out = 3, .coefficient = -1},
+                         {.a = 1, .out = 1, .coefficient = 1},
+                         {.a = 2, .out = 0, .coefficient = -1},
+                         {.a = 3, .out = 2, .coefficient = 1},
+                         {.a = 4, .out = 4, .coefficient = 1},
+                         {.a = 5, .out = 5, .coefficient = 1},
+                     }));
+static_assert(unary_map<left_complement, rga3, line> ==
+              unary_map<right_complement, rga3, line>);
+
+// Reference: independent value: worked by hand from u ^ right(u) =
+// antiscalar and left(u) ^ u = antiscalar in rigid(3): right(e1) = e234,
+// right(e2) = -e134, right(e3) = e124, right(e4) = -e123, since moving e_i
+// past the generators below it takes i - 1 transpositions; a vector has
+// antigrade 3, so its left complement is -1 times its right complement and
+// its antireverse is (-1)^(3 2 / 2) = -1 times it; and for the oriented plane
+// e423 e431 e412 e321, that is +e234, -e134, +e124, -e123, right(e423) = -e1,
+// right(e431) = -e2, right(e412) = -e3, right(e321) = -e4, and the left
+// complements are their negatives
+static_assert(map_is(unary_map<right_complement, rga3, point>,
+                     {e123, e124, e134, e234},
+                     {
+                         {.a = 0, .out = 3, .coefficient = 1},
+                         {.a = 1, .out = 2, .coefficient = -1},
+                         {.a = 2, .out = 1, .coefficient = 1},
+                         {.a = 3, .out = 0, .coefficient = -1},
+                     }));
+static_assert(map_is(unary_map<left_complement, rga3, point>,
+                     {e123, e124, e134, e234},
+                     {
+                         {.a = 0, .out = 3, .coefficient = -1},
+                         {.a = 1, .out = 2, .coefficient = 1},
+                         {.a = 2, .out = 1, .coefficient = -1},
+                         {.a = 3, .out = 0, .coefficient = 1},
+                     }));
+static_assert(map_is(unary_map<antireverse, rga3, point>, {e1, e2, e3, e4},
+                     {
+                         {.a = 0, .out = 0, .coefficient = -1},
+                         {.a = 1, .out = 1, .coefficient = -1},
+                         {.a = 2, .out = 2, .coefficient = -1},
+                         {.a = 3, .out = 3, .coefficient = -1},
+                     }));
+static_assert(map_is(unary_map<right_complement, rga3, plane>, {e1, e2, e3, e4},
+                     {
+                         {.a = 0, .out = 0, .coefficient = -1},
+                         {.a = 1, .out = 1, .coefficient = -1},
+                         {.a = 2, .out = 2, .coefficient = -1},
+                         {.a = 3, .out = 3, .coefficient = -1},
+                     }));
+static_assert(map_is(unary_map<left_complement, rga3, plane>, {e1, e2, e3, e4},
+                     {
+                         {.a = 0, .out = 0, .coefficient = 1},
+                         {.a = 1, .out = 1, .coefficient = 1},
+                         {.a = 2, .out = 2, .coefficient = 1},
+                         {.a = 3, .out = 3, .coefficient = 1},
+                     }));
+
+// The typed plan of one term, coefficient times the blade of `mask`, of the
+// first blades of two sets of one blade each.
+constexpr typed_plan<1, 1> one_term(mask_t mask, coefficient_type coefficient) {
+  return {
+      .result = {{{{.mask = mask, .sign = 1}}}},
+      .terms = {{{.a = 0, .b = 0, .out = 0, .coefficient = coefficient}}},
+  };
+}
+
+// Reference: independent value: worked by hand from a ⟇ b =
+// left(right(a) right(b)) and a v b = left(right(a) ^ right(b)) in rigid(3),
+// where e1, e2, e3 square to 1 and e4 to 0: right(e234) = -e1 and
+// (-e1)(-e1) = 1, whose left complement is the antiscalar, so
+// e234 ⟇ e234 = e1234; right(e123) = e4 and e4 e4 = 0, so e123 ⟇ e123 = 0;
+// right(e1) = e234 and e234 e234 = 0, so e1 ⟇ e1 = 0; right(e4) = -e123 and
+// e123 e123 = -1, so e4 ⟇ e4 = -e1234; right(e1234) = 1, so
+// e1234 ⟇ e1 = e1 ⟇ e1234 = e1, the antiscalar being the identity;
+// right(e134) = e2 and (-e1) ^ e2 = -e12, whose left complement is -e34, so
+// e234 v e134 = -e34; e234 ^ (-e1) = +e1234, so e1 v e234 = 1, while
+// e234 v e1 = -1
+static_assert(product_plan<antigp, rga3, blade_of<e234>, blade_of<e234>> ==
+              one_term(e1234, 1));
+static_assert(product_plan<antigp, rga3, blade_of<e123>, blade_of<e123>> ==
+              typed_plan<0, 0>{});
+static_assert(product_plan<antigp, rga3, blade_of<e1>, blade_of<e1>> ==
+              typed_plan<0, 0>{});
+static_assert(product_plan<antigp, rga3, blade_of<e4>, blade_of<e4>> ==
+              one_term(e1234, -1));
+static_assert(product_plan<antigp, rga3, blade_of<e1234>, blade_of<e1>> ==
+              one_term(e1, 1));
+static_assert(product_plan<antigp, rga3, blade_of<e1>, blade_of<e1234>> ==
+              one_term(e1, 1));
+static_assert(product_plan<antiwedge, rga3, blade_of<e234>, blade_of<e134>> ==
+              one_term(e34, -1));
+static_assert(product_plan<antiwedge, rga3, blade_of<e1>, blade_of<e234>> ==
+              one_term(0, 1));
+static_assert(product_plan<antiwedge, rga3, blade_of<e234>, blade_of<e1>> ==
+              one_term(0, -1));
+
+// Reference: independent value: worked by hand in conformal(3), where
+// e4 e5 = -1 + e45: right(e1235) = -e4, since e1235 ^ e4 takes one
+// transposition, and right(e1234) = e5, so right(e1235) right(e1234) =
+// -e4 e5 = 1 - e45; the left complement of 1 is e12345 and that of e45 is
+// e123, so e1235 ⟇ e1234 = -e123 + e12345, whose two terms come in canonical
+// order although the product of the complements lists the scalar first
+static_assert(
+    product_plan<antigp, conformal3, blade_of<e123 | e5>, blade_of<e1234>> ==
+    typed_plan<2, 2>{
+        .result =
+            {
+                {
+                    {
+                        {.mask = e123, .sign = 1},
+                        {.mask = e1234 | e5, .sign = 1},
+                    },
+                },
+            },
+        .terms =
+            {
+                {
+                    {.a = 0, .b = 0, .out = 0, .coefficient = -1},
+                    {.a = 0, .b = 0, .out = 1, .coefficient = 1},
+                },
+            },
+    });
+
+// Reference: independent value: counted by hand from a ⟇ b =
+// left(right(a) right(b)) and a v b = left(right(a) ^ right(b)) in rigid(3),
+// where a product of two blades is zero when both hold e4: the right
+// complements of the point's blades are three trivectors with e4 and -e123,
+// so a point antiproduct a point has the 7 pairs that involve e4, on the
+// three bivectors without e4 and e1234, and a point antiwedge a point has
+// none; the right complements of the plane's blades are the four vectors, so
+// a plane antiproduct a plane has 4 x 4 - 1 = 15 terms, on the bivectors and
+// e1234, and a plane antiwedge a plane has 12, on the bivectors: two planes
+// meet in a line; a line antiwedge a plane has 12, on the vectors: a line
+// meets a plane in a point; a motor antiproduct a point has 20 terms on the
+// eight odd blades, and a motor antiproduct a motor 48 terms on the scalar,
+// the bivectors, and e1234. In conformal(3) the right complements of the
+// vectors are the quadrivectors, so the vectors antiproduct the vectors have
+// 25 terms, on the trivectors and e12345, and antiwedge none
+static_assert(product_plan<antigp, rga3, point, point>.terms.size() == 7);
+static_assert(result_is(product_plan<antigp, rga3, point, point>.result,
+                        {e12, e13, e23, e1234}));
+static_assert(product_plan<antiwedge, rga3, point, point> ==
+              typed_plan<0, 0>{});
+static_assert(product_plan<antigp, rga3, plane, plane>.terms.size() == 15);
+static_assert(result_is(product_plan<antigp, rga3, plane, plane>.result,
+                        {e12, e13, e14, e23, e24, e34, e1234}));
+static_assert(read_back(product_plan<antiwedge, rga3, plane, plane>) ==
+              std::array<plan_term, 12>{
+                  {
+                      {.a = 0, .b = 1, .out = e34, .coefficient = 1},
+                      {.a = 0, .b = 2, .out = e24, .coefficient = -1},
+                      {.a = 0, .b = 3, .out = e23, .coefficient = 1},
+                      {.a = 1, .b = 0, .out = e34, .coefficient = -1},
+                      {.a = 1, .b = 2, .out = e14, .coefficient = 1},
+                      {.a = 1, .b = 3, .out = e13, .coefficient = -1},
+                      {.a = 2, .b = 0, .out = e24, .coefficient = 1},
+                      {.a = 2, .b = 1, .out = e14, .coefficient = -1},
+                      {.a = 2, .b = 3, .out = e12, .coefficient = 1},
+                      {.a = 3, .b = 0, .out = e23, .coefficient = -1},
+                      {.a = 3, .b = 1, .out = e13, .coefficient = 1},
+                      {.a = 3, .b = 2, .out = e12, .coefficient = -1},
+                  },
+              });
+static_assert(result_is(product_plan<antiwedge, rga3, plane, plane>.result,
+                        {e12, e13, e14, e23, e24, e34}));
+static_assert(product_plan<antiwedge, rga3, line, plane>.terms.size() == 12);
+static_assert(result_is(product_plan<antiwedge, rga3, line, plane>.result,
+                        {e1, e2, e3, e4}));
+static_assert(product_plan<antigp, rga3, motor, point>.terms.size() == 20);
+static_assert(result_is(product_plan<antigp, rga3, motor, point>.result,
+                        {e1, e2, e3, e4, e123, e124, e134, e234}));
+static_assert(product_plan<antigp, rga3, motor, motor>.terms.size() == 48);
+static_assert(result_is(product_plan<antigp, rga3, motor, motor>.result,
+                        {0, e12, e13, e14, e23, e24, e34, e1234}));
+static_assert(product_plan<antigp, conformal3, core::of_grade<5, 1>,
+                           core::of_grade<5, 1>>.terms.size() == 25);
+static_assert(result_is(
+    product_plan<antigp, conformal3, core::of_grade<5, 1>, core::of_grade<5, 1>>.result,
+    {
+        e123,
+        e124,
+        e12 | e5,
+        e134,
+        e13 | e5,
+        e14 | e5,
+        e234,
+        e23 | e5,
+        e24 | e5,
+        e34 | e5,
+        e1234 | e5,
+    }));
+static_assert(product_plan<antiwedge, conformal3, core::of_grade<5, 1>,
+                           core::of_grade<5, 1>> == typed_plan<0, 0>{});
+
+// Reference: contract: a typed map built at compile time is the same
+// functions run at run time, so the maps of every operation over every blade
+// of four and of five generators, and the antiproduct plans of every blade
+// times every blade of rigid(3) and conformal(2), equal a direct call in a
+// constant evaluation
+static_assert(equals_map_typing(reverse, 4, core::full<4>,
+                                unary_map<reverse, rga3, core::full<4>>));
+static_assert(equals_map_typing(antireverse, 4, core::full<4>,
+                                unary_map<antireverse, rga3, core::full<4>>));
+static_assert(equals_map_typing(involution, 4, core::full<4>,
+                                unary_map<involution, rga3, core::full<4>>));
+static_assert(
+    equals_map_typing(right_complement, 4, core::full<4>,
+                      unary_map<right_complement, rga3, core::full<4>>));
+static_assert(
+    equals_map_typing(left_complement, 4, core::full<4>,
+                      unary_map<left_complement, rga3, core::full<4>>));
+static_assert(equals_map_typing(reverse, 5, core::full<5>,
+                                unary_map<reverse, conformal3, core::full<5>>));
+static_assert(
+    equals_map_typing(antireverse, 5, core::full<5>,
+                      unary_map<antireverse, conformal3, core::full<5>>));
+static_assert(
+    equals_map_typing(involution, 5, core::full<5>,
+                      unary_map<involution, conformal3, core::full<5>>));
+static_assert(
+    equals_map_typing(right_complement, 5, core::full<5>,
+                      unary_map<right_complement, conformal3, core::full<5>>));
+static_assert(
+    equals_map_typing(left_complement, 5, core::full<5>,
+                      unary_map<left_complement, conformal3, core::full<5>>));
+static_assert(equals_typing<antigp, 8>(
+    rga3::value, core::full<4>, core::full<4>,
+    product_plan<antigp, rga3, core::full<4>, core::full<4>>));
+static_assert(equals_typing<antiwedge, 1>(
+    rga3::value, core::full<4>, core::full<4>,
+    product_plan<antiwedge, rga3, core::full<4>, core::full<4>>));
+static_assert(equals_typing<antigp, 8>(
+    conformal2::value, core::full<4>, core::full<4>,
+    product_plan<antigp, conformal2, core::full<4>, core::full<4>>));
+static_assert(equals_typing<antiwedge, 1>(
+    conformal2::value, core::full<4>, core::full<4>,
+    product_plan<antiwedge, conformal2, core::full<4>, core::full<4>>));
+
+// Reference: contract: a map term is a trivially copyable aggregate, and a
+// typed map is a structural one, so that it can be a template argument
+static_assert(std::is_aggregate_v<map_term>);
+static_assert(std::is_trivially_copyable_v<map_term>);
+static_assert(std::is_aggregate_v<typed_map<6, 6>>);
+static_assert(std::is_trivially_copyable_v<typed_map<6, 6>>);
+template <typed_map<6, 6> Map>
+constexpr std::size_t map_terms_of = Map.terms.size();
+static_assert(map_terms_of<unary_map<reverse, rga3, line>> == 6);
+
+// Every blade of n generators, with sign +1, in the order written here: by
+// grade, then by index list.
+std::vector<oriented_blade> all_blades(std::size_t n) {
+  std::vector<oriented_blade> all;
+  all.reserve(blade_count(n));
+  for (mask_t mask = 0; mask < (mask_t{1} << n); ++mask) {
+    all.push_back({.mask = mask, .sign = 1});
+  }
+  std::ranges::sort(all, comes_before, &oriented_blade::mask);
+  return all;
+}
+
+// The position of each mask in `set`, indexed by mask.
+std::vector<std::size_t> positions(std::span<const oriented_blade> set) {
+  std::vector<std::size_t> position(set.size());
+  for (std::size_t k = 0; k < set.size(); ++k) {
+    position.at(set[k].mask) = k;
+  }
+  return position;
+}
+
+// The number of pairs out of order in the index list of `mask` written
+// backwards: the transpositions that reverse the list.
+int reversal_inversions(mask_t mask) {
+  std::vector<std::size_t> list = indices_of(mask);
+  std::ranges::reverse(list);
+  int count = 0;
+  for (std::size_t p = 0; p < list.size(); ++p) {
+    for (std::size_t q = p + 1; q < list.size(); ++q) {
+      count += list.at(p) > list.at(q) ? 1 : 0;
+    }
+  }
+  return count;
+}
+
+// The image of the canonical blade of `mask` under `op` in n generators, by
+// the rule of each operation written here: the reverse by the transpositions
+// that reverse its index list, the antireverse the same for a list as long as
+// its antigrade (that of the other generators), the grade involution by
+// (-1)^k, and the complements as the blade C on the other generators with
+// the sign s that makes e_A ^ (s e_C) = e_12...n, or (s e_C) ^ e_A =
+// e_12...n, where e_X ^ e_Y = (-1)^(inversions of X then Y) e_12...n.
+term own_image(UnaryOperation op, mask_t mask, std::size_t n) {
+  const mask_t other = (mask_t{1} << n) - 1U - mask;
+  if (op == reverse) {
+    return {
+        .blade = mask,
+        .coefficient = parity_sign(reversal_inversions(mask)),
+    };
+  }
+  if (op == antireverse) {
+    return {
+        .blade = mask,
+        .coefficient = parity_sign(reversal_inversions(other)),
+    };
+  }
+  if (op == involution) {
+    return {
+        .blade = mask,
+        .coefficient = parity_sign(static_cast<int>(generators_of(mask))),
+    };
+  }
+  if (op == right_complement) {
+    return {
+        .blade = other,
+        .coefficient = parity_sign(inversions(mask, other)),
+    };
+  }
+  return {.blade = other, .coefficient = parity_sign(inversions(other, mask))};
+}
+
+// The mask-level map `op` of `set` in n generators, generated at run time.
+std::vector<plan_term> map_of(UnaryOperation op, std::size_t n,
+                              std::span<const oriented_blade> set) {
+  std::vector<plan_term> terms(set.size());
+  generate_map(op, n, set, terms);
+  return terms;
+}
+
+// The number of terms of the map `op` of `set` in n generators that are not,
+// at their own place and with second position 0, s_a times the image written
+// here, plus the mismatches of its typing.
+int map_mismatches(UnaryOperation op, std::size_t n,
+                   std::span<const oriented_blade> set) {
+  const std::vector<plan_term> map = map_of(op, n, set);
+  int mismatches = 0;
+  for (std::size_t k = 0; k < set.size(); ++k) {
+    const term image = own_image(op, set[k].mask, n);
+    const plan_term expected{
+        .a = k,
+        .b = 0,
+        .out = image.blade,
+        .coefficient = set[k].sign * image.coefficient,
+    };
+    mismatches += map.at(k) == expected ? 0 : 1;
+  }
+  return mismatches + typing_mismatches(map, typed_at_run_time(map));
+}
+
+// The number of blades of n generators whose images under the five maps
+// differ from the golden grade signs and complements, both indexed by mask.
+template <std::size_t Size>
+int golden_map_mismatches(
+    const std::array<golden::blade_signs, Size>& signs,
+    const std::array<golden::complement_pair, Size>& complements,
+    std::size_t n) {
+  const std::vector<oriented_blade> all = all_blades(n);
+  std::array<std::vector<plan_term>, 5> maps;
+  for (std::size_t op = 0; op < unary_operations.size(); ++op) {
+    maps.at(op) = map_of(unary_operations.at(op), n, all);
+  }
+  int mismatches = 0;
+  for (std::size_t k = 0; k < all.size(); ++k) {
+    const mask_t mask = all.at(k).mask;
+    const golden::blade_signs& sign = signs.at(mask);
+    const golden::complement_pair& pair = complements.at(mask);
+    const std::array<term, 5> expected{
+        {
+            {.blade = sign.blade, .coefficient = sign.reverse},
+            {.blade = sign.blade, .coefficient = sign.antireverse},
+            {.blade = sign.blade, .coefficient = sign.involution},
+            {.blade = pair.right.blade, .coefficient = pair.right.sign},
+            {.blade = pair.left.blade, .coefficient = pair.left.sign},
+        },
+    };
+    for (std::size_t op = 0; op < unary_operations.size(); ++op) {
+      const plan_term& got = maps.at(op).at(k);
+      mismatches += sign.blade == mask && pair.blade == mask &&
+                            got.out == expected.at(op).blade &&
+                            got.coefficient == expected.at(op).coefficient
+                        ? 0
+                        : 1;
+    }
+  }
+  return mismatches;
+}
+
+// The image of each blade of n generators under `op`, indexed by mask, read
+// from the map that generate_map writes over every blade.
+std::vector<term> images(UnaryOperation op, std::size_t n) {
+  const std::vector<oriented_blade> all = all_blades(n);
+  const std::vector<plan_term> map = map_of(op, n, all);
+  std::vector<term> image(all.size());
+  for (std::size_t k = 0; k < all.size(); ++k) {
+    image.at(all.at(k).mask) = {
+        .blade = map.at(k).out,
+        .coefficient = map.at(k).coefficient,
+    };
+  }
+  return image;
+}
+
+// The images of `outer` applied after `inner`, indexed by mask.
+std::vector<term> composed(const std::vector<term>& outer,
+                           const std::vector<term>& inner) {
+  std::vector<term> image(inner.size());
+  for (std::size_t mask = 0; mask < inner.size(); ++mask) {
+    const term& first = inner.at(mask);
+    const term& second = outer.at(first.blade);
+    image.at(mask) = {
+        .blade = second.blade,
+        .coefficient = first.coefficient * second.coefficient,
+    };
+  }
+  return image;
+}
+
+// Each blade of n generators times the sign `sign` gives it, indexed by mask.
+template <class Sign>
+std::vector<term> scaled_identity(std::size_t n, const Sign& sign) {
+  std::vector<term> image(blade_count(n));
+  for (std::size_t mask = 0; mask < image.size(); ++mask) {
+    const auto m = static_cast<mask_t>(mask);
+    image.at(mask) = {.blade = m, .coefficient = sign(m)};
+  }
+  return image;
+}
+
+// A plan of every blade times every blade of a form, generated at run time,
+// with the place where the run of each pair (a, b) starts, at a count + b,
+// and its end after the last pair.
+struct full_plan {
+  std::vector<plan_term> terms;
+  std::vector<std::size_t> starts;
+  std::size_t count;
+
+  [[nodiscard]] std::span<const plan_term> run(std::size_t a,
+                                               std::size_t b) const {
+    const std::size_t pair = (a * count) + b;
+    return std::span(terms).subspan(starts.at(pair),
+                                    starts.at(pair + 1) - starts.at(pair));
+  }
+};
+
+template <BinaryOperation Op, std::size_t N>
+full_plan full_plan_of(const core::metric<N>& g) {
+  constexpr auto& all = core::full<N>;
+  constexpr std::size_t capacity =
+      core::detail::base_operation(Op) == gp ? blade_count(N) / 2 : 1;
+  full_plan plan{
+      .terms = plan_of<Op, capacity>(g, all.blades, all.blades),
+      .starts = std::vector<std::size_t>((all.size() * all.size()) + 1),
+      .count = all.size(),
+  };
+  std::size_t at = 0;
+  for (std::size_t pair = 0; pair < all.size() * all.size(); ++pair) {
+    plan.starts.at(pair) = at;
+    while (at < plan.terms.size() &&
+           (plan.terms.at(at).a * all.size()) + plan.terms.at(at).b == pair) {
+      ++at;
+    }
+  }
+  plan.starts.back() = at;
+  return plan;
+}
+
+// A run of terms as (blade, coefficient), each coefficient times `scale`.
+std::vector<term> scaled_run(std::span<const plan_term> run,
+                             coefficient_type scale) {
+  std::vector<term> terms;
+  for (const plan_term& t : run) {
+    terms.push_back({.blade = t.out, .coefficient = scale * t.coefficient});
+  }
+  return terms;
+}
+
+// The number of pairs of blades of full<N> for which c(e_A x e_B), with c
+// the map `image` applied term by term and its terms sorted by grade then
+// index list here, is not, as a list of terms, c(e_A) y c(e_B), the run of
+// the plan `after` for the blades of c(e_A) and c(e_B) times their signs.
+int de_morgan_failures(const full_plan& before, const full_plan& after,
+                       const std::vector<term>& image,
+                       std::span<const oriented_blade> all) {
+  const std::vector<std::size_t> position = positions(all);
+  int failures = 0;
+  for (std::size_t a = 0; a < all.size(); ++a) {
+    for (std::size_t b = 0; b < all.size(); ++b) {
+      std::vector<term> mapped;
+      for (const plan_term& t : before.run(a, b)) {
+        const term& c = image.at(t.out);
+        mapped.push_back(
+            {.blade = c.blade, .coefficient = t.coefficient * c.coefficient});
+      }
+      std::ranges::sort(mapped, comes_before, &term::blade);
+      const term& ca = image.at(all[a].mask);
+      const term& cb = image.at(all[b].mask);
+      const std::vector<term> expected =
+          scaled_run(after.run(position.at(ca.blade), position.at(cb.blade)),
+                     ca.coefficient * cb.coefficient);
+      failures += mapped == expected ? 0 : 1;
+    }
+  }
+  return failures;
+}
+
+// The number of pairs of blades of full<N> for which c(e_A x e_B) is not,
+// as a list of terms, c(e_B) x c(e_A), for the map `image` applied term by
+// term and its terms sorted here: the product rule of the reverse for the
+// geometric product, and of the antireverse for the antiproduct.
+int reversal_rule_failures(const full_plan& plan,
+                           const std::vector<term>& image,
+                           std::span<const oriented_blade> all) {
+  int failures = 0;
+  for (std::size_t a = 0; a < all.size(); ++a) {
+    for (std::size_t b = 0; b < all.size(); ++b) {
+      std::vector<term> mapped;
+      for (const plan_term& t : plan.run(a, b)) {
+        const term& c = image.at(t.out);
+        mapped.push_back(
+            {.blade = c.blade, .coefficient = t.coefficient * c.coefficient});
+      }
+      std::ranges::sort(mapped, comes_before, &term::blade);
+      const coefficient_type signs =
+          image.at(all[a].mask).coefficient * image.at(all[b].mask).coefficient;
+      failures += mapped == scaled_run(plan.run(b, a), signs) ? 0 : 1;
+    }
+  }
+  return failures;
+}
+
+// (e_A x e_B) x e_C, multiplied out over the plan into `out`, indexed by
+// mask, for the blades at positions a, b, and c and the position of each
+// mask, `position`.
+void grouped_left(const full_plan& plan, std::span<const std::size_t> position,
+                  std::size_t a, std::size_t b, std::size_t c,
+                  std::vector<coefficient_type>& out) {
+  std::ranges::fill(out, 0);
+  for (const plan_term& ab : plan.run(a, b)) {
+    for (const plan_term& abc : plan.run(position[ab.out], c)) {
+      out.at(abc.out) += ab.coefficient * abc.coefficient;
+    }
+  }
+}
+
+// e_A x (e_B x e_C), in the same way.
+void grouped_right(const full_plan& plan, std::span<const std::size_t> position,
+                   std::size_t a, std::size_t b, std::size_t c,
+                   std::vector<coefficient_type>& out) {
+  std::ranges::fill(out, 0);
+  for (const plan_term& bc : plan.run(b, c)) {
+    for (const plan_term& abc : plan.run(a, position[bc.out])) {
+      out.at(abc.out) += bc.coefficient * abc.coefficient;
+    }
+  }
+}
+
+// The number of triples of blades of full<N> on which (e_A x e_B) x e_C and
+// e_A x (e_B x e_C), each multiplied out over the plan, differ.
+int associativity_failures(const full_plan& plan,
+                           std::span<const oriented_blade> all) {
+  const std::vector<std::size_t> position = positions(all);
+  std::vector<coefficient_type> left(all.size());
+  std::vector<coefficient_type> right(all.size());
+  int failures = 0;
+  for (std::size_t a = 0; a < all.size(); ++a) {
+    for (std::size_t b = 0; b < all.size(); ++b) {
+      for (std::size_t c = 0; c < all.size(); ++c) {
+        grouped_left(plan, position, a, b, c, left);
+        grouped_right(plan, position, a, b, c, right);
+        failures += left == right ? 0 : 1;
+      }
+    }
+  }
+  return failures;
+}
+
+// The number of blades e_A of full<N> for which u x e_A or e_A x u is not
+// e_A, for the blade u of the mask `unit` and the plan of the product x.
+int identity_failures(const full_plan& plan, mask_t unit,
+                      std::span<const oriented_blade> all) {
+  const std::size_t u = positions(all).at(unit);
+  int failures = 0;
+  for (std::size_t a = 0; a < all.size(); ++a) {
+    const std::vector<term> itself{{.blade = all[a].mask, .coefficient = 1}};
+    failures += scaled_run(plan.run(u, a), 1) == itself ? 0 : 1;
+    failures += scaled_run(plan.run(a, u), 1) == itself ? 0 : 1;
+  }
+  return failures;
+}
+
+// The number of blades u of n generators for which u v right(u) or
+// left(u) v u is not the scalar 1, over the antiwedge plan and the two
+// complement maps.
+int antiwedge_unit_failures(const full_plan& antiwedge_plan, std::size_t n,
+                            std::span<const oriented_blade> all) {
+  const std::vector<term> right = images(right_complement, n);
+  const std::vector<term> left = images(left_complement, n);
+  const std::vector<std::size_t> position = positions(all);
+  const std::vector<term> one{{.blade = 0, .coefficient = 1}};
+  int failures = 0;
+  for (std::size_t a = 0; a < all.size(); ++a) {
+    const term& r = right.at(all[a].mask);
+    const term& l = left.at(all[a].mask);
+    failures += scaled_run(antiwedge_plan.run(a, position.at(r.blade)),
+                           r.coefficient) == one
+                    ? 0
+                    : 1;
+    failures += scaled_run(antiwedge_plan.run(position.at(l.blade), a),
+                           l.coefficient) == one
+                    ? 0
+                    : 1;
+  }
+  return failures;
+}
+
+// The run of e_A x e_B for the antiproduct `op`, composed from golden values
+// alone: the right complements of e_A and e_B from `complements`, their
+// product from `table` for the geometric antiproduct or their wedge by the
+// rule written here for the antiwedge, and the left complement of each term
+// from `complements`, sorted here by grade, then index list.
+template <std::size_t Rows, std::size_t Size>
+std::vector<term>
+golden_antiproduct(BinaryOperation op,
+                   const std::array<golden::product, Rows>& table,
+                   const std::array<golden::complement_pair, Size>& complements,
+                   mask_t ma, mask_t mb) {
+  const golden::signed_blade ra = complements.at(ma).right;
+  const golden::signed_blade rb = complements.at(mb).right;
+  std::vector<term> product;
+  if (op == antigp) {
+    const auto row = std::ranges::find_if(table, [&](const golden::product& p) {
+      return p.a == ra.blade && p.b == rb.blade;
+    });
+    for (std::size_t t = 0; row != table.end() && t < row->size; ++t) {
+      product.push_back({
+          .blade = row->terms.at(t).blade,
+          .coefficient = row->terms.at(t).coefficient,
+      });
+    }
+  } else if ((ra.blade & rb.blade) == 0) {
+    product.push_back({
+        .blade = ra.blade | rb.blade,
+        .coefficient = parity_sign(inversions(ra.blade, rb.blade)),
+    });
+  }
+
+  std::vector<term> run;
+  for (const term& t : product) {
+    const golden::signed_blade left = complements.at(t.blade).left;
+    run.push_back({
+        .blade = left.blade,
+        .coefficient =
+            coefficient_type{ra.sign} * rb.sign * t.coefficient * left.sign,
+    });
+  }
+  std::ranges::sort(run, comes_before, &term::blade);
+  return run;
+}
+
+// The mask-level plan of the antiproduct `op` over `as` and `bs`, composed
+// from golden values: for each pair, in order of a and then b, s_a s_b times
+// the golden run of the pair.
+template <std::size_t Rows, std::size_t Size>
+std::vector<plan_term> golden_antiproduct_plan(
+    BinaryOperation op, const std::array<golden::product, Rows>& table,
+    const std::array<golden::complement_pair, Size>& complements,
+    std::span<const oriented_blade> as, std::span<const oriented_blade> bs) {
+  std::vector<plan_term> plan;
+  for (std::size_t a = 0; a < as.size(); ++a) {
+    for (std::size_t b = 0; b < bs.size(); ++b) {
+      for (const term& t :
+           golden_antiproduct(op, table, complements, as[a].mask, bs[b].mask)) {
+        plan.push_back({
+            .a = a,
+            .b = b,
+            .out = t.blade,
+            .coefficient =
+                coefficient_type{as[a].sign} * bs[b].sign * t.coefficient,
+        });
+      }
+    }
+  }
+  return plan;
+}
+
+// The number of places at which the antiproduct plans of every blade times
+// every blade, generated at run time in the form of `gram`, differ from the
+// golden composition, for both antiproducts.
+template <std::size_t N, std::size_t Rows, std::size_t Size>
+int golden_antiproduct_mismatches(
+    const std::array<std::array<int, N>, N>& gram,
+    const std::array<golden::product, Rows>& table,
+    const std::array<golden::complement_pair, Size>& complements) {
+  core::metric<N> g{};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      g.gram.at(i).at(j) = gram.at(i).at(j);
+    }
+  }
+  constexpr auto& all = core::full<N>;
+  int mismatches = 0;
+  mismatches +=
+      plan_of<antigp, blade_count(N) / 2>(g, all.blades, all.blades) ==
+              golden_antiproduct_plan(antigp, table, complements, all.blades,
+                                      all.blades)
+          ? 0
+          : 1;
+  mismatches += plan_of<antiwedge, 1>(g, all.blades, all.blades) ==
+                        golden_antiproduct_plan(antiwedge, table, complements,
+                                                all.blades, all.blades)
+                    ? 0
+                    : 1;
+  return mismatches;
+}
+
+// Whether the typed plan `plan`, read back, is the golden composition of the
+// antiproduct `op` over the sets `as` and `bs`.
+template <std::size_t R, std::size_t T, std::size_t Rows, std::size_t Size,
+          std::size_t KA, std::size_t KB>
+bool is_golden_antiproduct(
+    const typed_plan<R, T>& plan, BinaryOperation op,
+    const std::array<golden::product, Rows>& table,
+    const std::array<golden::complement_pair, Size>& complements,
+    const core::blade_set<KA>& as, const core::blade_set<KB>& bs) {
+  const std::array<plan_term, T> terms = read_back(plan);
+  return std::ranges::equal(
+      terms,
+      golden_antiproduct_plan(op, table, complements, as.blades, bs.blades));
+}
+
+} // namespace
+
+// Reference: proof: for every n from 1 to 10 and every blade of n
+// generators, each map is the rule written here: the reverse of a grade-k
+// blade is (-1)^(k(k-1)/2) times it, counted as the transpositions that
+// reverse its index list; the antireverse the same with the antigrade; the
+// grade involution (-1)^k; and u ^ right(u) = antiscalar and left(u) ^ u =
+// antiscalar, by this file's own count of inversions; at its own place, with
+// the input's sign folded in, typed onto the distinct blades in canonical
+// order. Even and odd n are both included, because for odd n the left and
+// right complements coincide
+TEST_CASE("Every map of every blade is its definition, typed onto its "
+          "result") {
+  for (std::size_t n = 1; n <= largest_map_n; ++n) {
+    INFO("n = " << n);
+    const std::vector<oriented_blade> all = all_blades(n);
+    const std::vector<oriented_blade> signed_blades = reverse_signs(all);
+    for (const UnaryOperation op : unary_operations) {
+      INFO("operation " << static_cast<int>(op));
+      CHECK(map_mismatches(op, n, all) == 0);
+      CHECK(map_mismatches(op, n, signed_blades) == 0);
+    }
+  }
+}
+
+// Reference: independent value: the golden grade signs, in which the reverse
+// of a grade-k blade is (-1)^(k(k-1)/2) times it, the antireverse the same
+// with the antigrade and the grade involution (-1)^k, and the golden
+// complements, in which u ^ right(u) = antiscalar and left(u) ^ u =
+// antiscalar, for three, four, and five generators: every map of every blade
+// has the golden image
+TEST_CASE("Every map of every blade is its golden image") {
+  CHECK(golden_map_mismatches(golden::grade_signs::n3, golden::complements::n3,
+                              3) == 0);
+  CHECK(golden_map_mismatches(golden::grade_signs::n4, golden::complements::n4,
+                              4) == 0);
+  CHECK(golden_map_mismatches(golden::grade_signs::n5, golden::complements::n5,
+                              5) == 0);
+}
+
+// Reference: proof: for every n from 1 to 10, composed over every blade from
+// the maps that generate_map writes: the reverse and the grade involution are
+// their own inverses; the left complement undoes the right one and the right
+// the left; applying either complement twice gives (-1)^(gr ag) times the
+// blade, with ag = n - gr; and the antireverse is the reverse conjugated by
+// the complements, left(reverse(right(u)))
+TEST_CASE("The maps compose as the involutions and complements do") {
+  for (std::size_t n = 1; n <= largest_map_n; ++n) {
+    INFO("n = " << n);
+    const std::vector<term> identity =
+        scaled_identity(n, [](mask_t) { return coefficient_type{1}; });
+    const std::vector<term> gr_ag = scaled_identity(n, [n](mask_t mask) {
+      const std::size_t gr = generators_of(mask);
+      return parity_sign(static_cast<int>(gr * (n - gr)));
+    });
+    const std::vector<term> reversed = images(reverse, n);
+    const std::vector<term> involuted = images(involution, n);
+    const std::vector<term> right = images(right_complement, n);
+    const std::vector<term> left = images(left_complement, n);
+    CHECK(composed(reversed, reversed) == identity);
+    CHECK(composed(involuted, involuted) == identity);
+    CHECK(composed(left, right) == identity);
+    CHECK(composed(right, left) == identity);
+    CHECK(composed(right, right) == gr_ag);
+    CHECK(composed(left, left) == gr_ag);
+    CHECK(images(antireverse, n) == composed(left, composed(reversed, right)));
+  }
+}
+
+// Reference: independent value: the golden product tables, in which
+// e_i e_j + e_j e_i = 2 g_ij, of rigid(3), conformal(3), a degenerate form,
+// and seeded random form 1, and the golden complements, in which
+// u ^ right(u) = antiscalar and left(u) ^ u = antiscalar: for every pair of
+// blades, the plan of the geometric antiproduct is left(right(a) right(b))
+// composed from golden values alone, and that of the antiwedge
+// left(right(a) ^ right(b)) with the wedge written here
+TEST_CASE("The antiproduct plans are the golden products conjugated by the "
+          "golden complements") {
+  CHECK(golden_antiproduct_mismatches(golden::gp_tables::rigid_3_gram,
+                                      golden::gp_tables::rigid_3,
+                                      golden::complements::n4) == 0);
+  CHECK(golden_antiproduct_mismatches(golden::gp_tables::conformal_3_gram,
+                                      golden::gp_tables::conformal_3,
+                                      golden::complements::n5) == 0);
+  CHECK(golden_antiproduct_mismatches(golden::gp_tables::degenerate_3_gram,
+                                      golden::gp_tables::degenerate_3,
+                                      golden::complements::n3) == 0);
+  CHECK(golden_antiproduct_mismatches(golden::gp_tables::random_1_gram,
+                                      golden::gp_tables::random_1,
+                                      golden::complements::n3) == 0);
+}
+
+// Reference: independent value: the golden product tables of rigid(3) and
+// conformal(3), in which e_i e_j + e_j e_i = 2 g_ij, and the golden
+// complements, in which u ^ right(u) = antiscalar and left(u) ^ u =
+// antiscalar: the typed antiproduct plans of the oriented point, line,
+// plane, and motor of rigid(3) and of the vectors of conformal(3), whose
+// counts and result sets are worked by hand above, read back as the golden
+// composition of each pair with the signs of its blades
+TEST_CASE("The typed antiproduct plans of rigid(3) and conformal(3) are the "
+          "golden compositions") {
+  const auto& rigid = golden::gp_tables::rigid_3;
+  const auto& four = golden::complements::n4;
+  CHECK(is_golden_antiproduct(product_plan<antigp, rga3, point, point>, antigp,
+                              rigid, four, point, point));
+  CHECK(is_golden_antiproduct(product_plan<antiwedge, rga3, point, point>,
+                              antiwedge, rigid, four, point, point));
+  CHECK(is_golden_antiproduct(product_plan<antigp, rga3, plane, plane>, antigp,
+                              rigid, four, plane, plane));
+  CHECK(is_golden_antiproduct(product_plan<antiwedge, rga3, plane, plane>,
+                              antiwedge, rigid, four, plane, plane));
+  CHECK(is_golden_antiproduct(product_plan<antiwedge, rga3, line, plane>,
+                              antiwedge, rigid, four, line, plane));
+  CHECK(is_golden_antiproduct(product_plan<antigp, rga3, motor, point>, antigp,
+                              rigid, four, motor, point));
+  CHECK(is_golden_antiproduct(product_plan<antigp, rga3, motor, motor>, antigp,
+                              rigid, four, motor, motor));
+  constexpr const auto& vectors = core::of_grade<5, 1>;
+  CHECK(
+      is_golden_antiproduct(product_plan<antigp, conformal3, vectors, vectors>,
+                            antigp, golden::gp_tables::conformal_3,
+                            golden::complements::n5, vectors, vectors));
+  CHECK(is_golden_antiproduct(
+      product_plan<antiwedge, conformal3, vectors, vectors>, antiwedge,
+      golden::gp_tables::conformal_3, golden::complements::n5, vectors,
+      vectors));
+}
+
+// Reference: proof: the De Morgan laws right(a ^ b) = right(a) v right(b) and
+// right(a b) = right(a) ⟇ right(b), and the same with the left complement,
+// for every pair of blades of every signature of up to six generators listed
+// here, each side computed from the plans and maps of the library and
+// compared as lists of terms
+TEST_CASE("The complements turn each product into its antiproduct") {
+  for_each_signature([](const char* name, const auto& g) {
+    constexpr std::size_t n = std::remove_cvref_t<decltype(g)>::generator_count;
+    INFO(name);
+    const std::vector<oriented_blade> all = all_blades(n);
+    const full_plan product = full_plan_of<gp>(g);
+    const full_plan antiproduct = full_plan_of<antigp>(g);
+    const full_plan exterior = full_plan_of<wedge>(g);
+    const full_plan antiexterior = full_plan_of<antiwedge>(g);
+    const std::vector<term> right = images(right_complement, n);
+    const std::vector<term> left = images(left_complement, n);
+    CHECK(de_morgan_failures(product, antiproduct, right, all) == 0);
+    CHECK(de_morgan_failures(exterior, antiexterior, right, all) == 0);
+    CHECK(de_morgan_failures(product, antiproduct, left, all) == 0);
+    CHECK(de_morgan_failures(exterior, antiexterior, left, all) == 0);
+  });
+}
+
+// Reference: identity: both antiproducts are associative, checked on every
+// triple of blades; the antiscalar is the identity of the geometric antiproduct
+// and 1 that of the geometric product, u v right(u) = 1 and left(u) v u = 1 for
+// every blade, and reverse(a b) = reverse(b) reverse(a) and antireverse(a ⟇ b)
+// = antireverse(b) ⟇ antireverse(a) for every pair of blades, each of every
+// signature of up to six generators listed here
+TEST_CASE("The antiproducts are associative, with their identities and "
+          "reversal rules") {
+  for_each_signature([](const char* name, const auto& g) {
+    constexpr std::size_t n = std::remove_cvref_t<decltype(g)>::generator_count;
+    INFO(name);
+    const std::vector<oriented_blade> all = all_blades(n);
+    const full_plan product = full_plan_of<gp>(g);
+    const full_plan antiproduct = full_plan_of<antigp>(g);
+    const full_plan antiexterior = full_plan_of<antiwedge>(g);
+    CHECK(associativity_failures(antiproduct, all) == 0);
+    CHECK(associativity_failures(antiexterior, all) == 0);
+    const mask_t antiscalar = (mask_t{1} << n) - 1U;
+    CHECK(identity_failures(antiproduct, antiscalar, all) == 0);
+    CHECK(identity_failures(product, 0, all) == 0);
+    CHECK(antiwedge_unit_failures(antiexterior, n, all) == 0);
+    CHECK(reversal_rule_failures(product, images(reverse, n), all) == 0);
+    CHECK(reversal_rule_failures(antiproduct, images(antireverse, n), all) ==
+          0);
+  });
+}
+
+// Reference: proof: the closed form of the right complement's sign,
+// (-1)^(k(k+1)/2 + i_1 + ... + i_k), is the sign that makes
+// e_A ^ (s e_C) = e_12...n, counted here as the inversions of A then C, for
+// every blade of every n from 1 to 10, so it does not depend on n
+TEST_CASE("The closed form of the right complement's sign counts its "
+          "inversions") {
+  for (std::size_t n = 1; n <= largest_map_n; ++n) {
+    INFO("n = " << n);
+    int mismatches = 0;
+    for (mask_t mask = 0; mask < (mask_t{1} << n); ++mask) {
+      const mask_t other = (mask_t{1} << n) - 1U - mask;
+      mismatches +=
+          closed_form_right_sign(mask) == parity_sign(inversions(mask, other))
+              ? 0
+              : 1;
+    }
+    CHECK(mismatches == 0);
+  }
+}
+
+// Reference: contract: unary_term gives the image of one canonical blade,
+// its own blade for the reverse, the antireverse, and the grade involution
+// and the blade of the other generators for the complements, with the sign
+// of each, here in rigid(3) for e4, whose right complement is -e123, and in
+// R(32,0,0) for the top generator, which the algebra of the most generators
+// a mask holds accepts
+TEST_CASE("unary_term gives the image of one blade") {
+  CHECK(unary_term(reverse, e12, 4) == term{.blade = e12, .coefficient = -1});
+  CHECK(unary_term(antireverse, e12, 4) ==
+        term{.blade = e12, .coefficient = -1});
+  CHECK(unary_term(involution, e4, 4) == term{.blade = e4, .coefficient = -1});
+  CHECK(unary_term(right_complement, e4, 4) ==
+        term{.blade = e123, .coefficient = -1});
+  CHECK(unary_term(left_complement, e4, 4) ==
+        term{.blade = e123, .coefficient = 1});
+  constexpr mask_t top = mask_t{1} << (mask_width - 1);
+  CHECK(unary_term(reverse, top, mask_width) ==
+        term{.blade = top, .coefficient = 1});
+  // e32 is preceded by the 31 other generators, an odd number.
+  CHECK(unary_term(right_complement, top, mask_width) ==
+        term{.blade = top - 1U, .coefficient = -1});
+}
+
+// Reference: contract: a mask listed twice in a set is not rejected, and
+// each place that lists it gets its own term, here right(e1) = e234 for +e1
+// and -e1 in rigid(3), which land on one position of the result, and a map
+// of an empty set has an empty result and no terms
+TEST_CASE("A repeated blade gets the map term of each place that lists it") {
+  constexpr core::blade_set<3> repeated{
+      {
+          {
+              {.mask = e1, .sign = 1},
+              {.mask = e2, .sign = 1},
+              {.mask = e1, .sign = -1},
+          },
+      },
+  };
+  CHECK(map_is(unary_map<right_complement, rga3, repeated>, {e134, e234},
+               {
+                   {.a = 0, .out = 1, .coefficient = 1},
+                   {.a = 1, .out = 0, .coefficient = -1},
+                   {.a = 2, .out = 1, .coefficient = -1},
+               }));
+  constexpr core::blade_set<0> none{};
+  CHECK(unary_map<reverse, rga3, none> == typed_map<0, 0>{});
+  CHECK(unary_map<left_complement, rga3, none> == typed_map<0, 0>{});
+}
+
+// Reference: contract: a typed map built at compile time is the same
+// functions run at run time, so the maps of every operation over every blade
+// of four and of five generators equal a run-time call with a number of
+// generators that the compiler cannot know, and the antiproduct plans of
+// every blade times every blade of rigid(3) and conformal(2) equal a
+// run-time call on a metric that the compiler cannot know
+TEST_CASE("unary_map and the antiproduct plans equal their typing run at run "
+          "time") {
+  const volatile std::size_t four_generators = 4;
+  const volatile std::size_t five_generators = 5;
+  const std::size_t four = four_generators;
+  const std::size_t five = five_generators;
+  CHECK(equals_map_typing(reverse, four, core::full<4>,
+                          unary_map<reverse, rga3, core::full<4>>));
+  CHECK(equals_map_typing(antireverse, four, core::full<4>,
+                          unary_map<antireverse, rga3, core::full<4>>));
+  CHECK(equals_map_typing(involution, four, core::full<4>,
+                          unary_map<involution, rga3, core::full<4>>));
+  CHECK(equals_map_typing(right_complement, four, core::full<4>,
+                          unary_map<right_complement, rga3, core::full<4>>));
+  CHECK(equals_map_typing(left_complement, four, core::full<4>,
+                          unary_map<left_complement, rga3, core::full<4>>));
+  CHECK(equals_map_typing(reverse, five, core::full<5>,
+                          unary_map<reverse, conformal3, core::full<5>>));
+  CHECK(equals_map_typing(antireverse, five, core::full<5>,
+                          unary_map<antireverse, conformal3, core::full<5>>));
+  CHECK(equals_map_typing(involution, five, core::full<5>,
+                          unary_map<involution, conformal3, core::full<5>>));
+  CHECK(equals_map_typing(
+      right_complement, five, core::full<5>,
+      unary_map<right_complement, conformal3, core::full<5>>));
+  CHECK(
+      equals_map_typing(left_complement, five, core::full<5>,
+                        unary_map<left_complement, conformal3, core::full<5>>));
+
+  constexpr const auto& all = core::full<4>;
+  const core::metric<4> rigid = at_run_time(rga3::value);
+  const core::metric<4> conformal = at_run_time(conformal2::value);
+  CHECK(equals_typing<antigp, 8>(rigid, all, all,
+                                 product_plan<antigp, rga3, all, all>));
+  CHECK(equals_typing<antiwedge, 1>(rigid, all, all,
+                                    product_plan<antiwedge, rga3, all, all>));
+  CHECK(equals_typing<antigp, 8>(conformal, all, all,
+                                 product_plan<antigp, conformal2, all, all>));
+  CHECK(equals_typing<antiwedge, 1>(
+      conformal, all, all, product_plan<antiwedge, conformal2, all, all>));
+}
+
+// Reference: contract: the geometric antiproduct of a pair needs as many
+// terms as the geometric product of the complements of its blades, half the
+// subsets of their generators together, and the antiwedge one; the capacity
+// of a plan is the largest over its pairs; and each antiproduct names its
+// base product
+TEST_CASE("The capacities of the antiproducts are those of their base "
+          "products over the complements") {
+  using core::detail::base_operation;
+  using core::detail::pair_capacity;
+  // The complements of e1 and e2 in four generators, e234 and e134, hold
+  // all four generators.
+  CHECK(pair_capacity(antigp, e1, e2, 4) == 8);
+  // The complement of e1234 is the scalar.
+  CHECK(pair_capacity(antigp, e1234, e1234, 4) == 1);
+  CHECK(pair_capacity(antigp, e123, e12, 4) == 2);
+  CHECK(pair_capacity(antigp, e1, e1, 3) == 2);
+  CHECK(pair_capacity(antiwedge, e1, e2, 4) == 1);
+  CHECK(pair_capacity(antiwedge, 0, 0, 4) == 1);
+  CHECK(plan_capacity(antigp, point.blades, point.blades, 4) == 8);
+  CHECK(plan_capacity(antigp, plane.blades, plane.blades, 4) == 2);
+  CHECK(plan_capacity(antiwedge, motor.blades, motor.blades, 4) == 1);
+  CHECK(base_operation(gp) == gp);
+  CHECK(base_operation(wedge) == wedge);
+  CHECK(base_operation(antigp) == gp);
+  CHECK(base_operation(antiwedge) == wedge);
+}
+
+// Reference: contract: an antiproduct's terms of one pair come in strictly
+// increasing canonical order, so the check of a generated plan, which
+// requires that order, reports the run of e1235 ⟇ e1234 in conformal(3) left
+// in the order of the product of the complements, e12345 before e123, and
+// accepts it reversed
+TEST_CASE("The check of a generated plan finds an antiproduct's run that "
+          "was not reversed") {
+  using core::detail::defects_of;
+  const std::array<plan_term, 2> reversed{
+      {
+          {.a = 0, .b = 0, .out = e123, .coefficient = -1},
+          {.a = 0, .b = 0, .out = e1234 | e5, .coefficient = 1},
+      },
+  };
+  const std::array<plan_term, 2> not_reversed{reversed.at(1), reversed.at(0)};
+  CHECK_FALSE(defects_of(reversed, 1, 1, 5).out_of_order);
+  CHECK(defects_of(not_reversed, 1, 1, 5).out_of_order);
+}
+
+// Reference: contract: the check of a typed map reports a result set out of
+// strictly increasing canonical order, a result sign other than +1, a
+// position at or past the size of the result, a result blade that no term
+// uses, a term that is not that of the input blade at its place, a term not
+// on the blade its operation gives the input (its own for the sign
+// operations, the other generators' for the complements), and a
+// complement's sign other than the input's sign times the closed form, each
+// alone, and accepts each value just within its bound. The sign check
+// applies to the complements only. In four generators right(e1) = e234 and
+// right(e2) = -e134, and the left complements are their negatives
+TEST_CASE("The checks of a typed map find each defect at its bound") {
+  using core::detail::map_defects;
+  using core::detail::map_defects_of;
+  // Whether `found` reports the defect `which` and no other, or none when
+  // `which` is null.
+  const auto none_but = [](const map_defects& found,
+                           bool map_defects::* which) {
+    const std::array<bool map_defects::*, 7> all{
+        &map_defects::result_out_of_order, &map_defects::result_sign,
+        &map_defects::beyond_result,       &map_defects::result_unused,
+        &map_defects::not_per_input,       &map_defects::wrong_blade,
+        &map_defects::complement_sign,
+    };
+    return std::ranges::all_of(all, [&](bool map_defects::* flag) {
+      return found.*flag == (flag == which);
+    });
+  };
+  const core::blade_set<2> e1_e2{
+      {
+          {
+              {.mask = e1, .sign = 1},
+              {.mask = e2, .sign = 1},
+          },
+      },
+  };
+  const auto two = [](oriented_blade first, oriented_blade second, map_term t0,
+                      map_term t1) {
+    return typed_map<2, 2>{.result = {{{first, second}}}, .terms = {{t0, t1}}};
+  };
+  const oriented_blade on_e134{.mask = e134, .sign = 1};
+  const oriented_blade on_e234{.mask = e234, .sign = 1};
+  const map_term e1_to_1{.a = 0, .out = 1, .coefficient = 1};
+  const map_term e2_to_0{.a = 1, .out = 0, .coefficient = -1};
+
+  // The right and left complements of e1 and e2, as generated.
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_e2,
+                                two(on_e134, on_e234, e1_to_1, e2_to_0)),
+                 nullptr));
+  CHECK(none_but(map_defects_of(left_complement, 4, e1_e2,
+                                two(on_e134, on_e234,
+                                    {.a = 0, .out = 1, .coefficient = -1},
+                                    {.a = 1, .out = 0, .coefficient = 1})),
+                 nullptr));
+
+  // The result set: canonical order, not mask order, no repeat, sign +1 on
+  // either side of it.
+  CHECK(none_but(
+      map_defects_of(right_complement, 4, e1_e2,
+                     two(on_e234, on_e134, {.a = 0, .out = 0, .coefficient = 1},
+                         {.a = 1, .out = 1, .coefficient = -1})),
+      &map_defects::result_out_of_order));
+  const core::blade_set<2> e4_e12{
+      {
+          {
+              {.mask = e4, .sign = 1},
+              {.mask = e12, .sign = 1},
+          },
+      },
+  };
+  CHECK(none_but(
+      map_defects_of(reverse, 4, e4_e12,
+                     two({.mask = e4, .sign = 1}, {.mask = e12, .sign = 1},
+                         {.a = 0, .out = 0, .coefficient = 1},
+                         {.a = 1, .out = 1, .coefficient = -1})),
+      nullptr));
+  const core::blade_set<2> e1_minus_e1{
+      {
+          {
+              {.mask = e1, .sign = 1},
+              {.mask = e1, .sign = -1},
+          },
+      },
+  };
+  CHECK(none_but(
+      map_defects_of(right_complement, 4, e1_minus_e1,
+                     two(on_e234, on_e234, {.a = 0, .out = 0, .coefficient = 1},
+                         {.a = 1, .out = 1, .coefficient = -1})),
+      &map_defects::result_out_of_order));
+  for (const int sign : {-1, 0, 2}) {
+    CHECK(none_but(map_defects_of(right_complement, 4, e1_e2,
+                                  two(on_e134, {.mask = e234, .sign = sign},
+                                      e1_to_1, e2_to_0)),
+                   &map_defects::result_sign));
+  }
+
+  // Positions within the result, and every result blade used.
+  const typed_map<1, 2> both_on_e234{
+      .result = {{{on_e234}}},
+      .terms =
+          {
+              {
+                  {.a = 0, .out = 0, .coefficient = 1},
+                  {.a = 1, .out = 0, .coefficient = -1},
+              },
+          },
+  };
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_minus_e1, both_on_e234),
+                 nullptr));
+  const typed_map<1, 2> one_past{
+      .result = {{{on_e234}}},
+      .terms =
+          {
+              {
+                  {.a = 0, .out = 0, .coefficient = 1},
+                  {.a = 1, .out = 1, .coefficient = -1},
+              },
+          },
+  };
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_minus_e1, one_past),
+                 &map_defects::beyond_result));
+  const typed_map<3, 2> extra_last{
+      .result = {{{on_e134, on_e234, {.mask = e1234, .sign = 1}}}},
+      .terms = {{e1_to_1, e2_to_0}},
+  };
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_e2, extra_last),
+                 &map_defects::result_unused));
+  const typed_map<3, 2> extra_first{
+      .result = {{{{.mask = e12, .sign = 1}, on_e134, on_e234}}},
+      .terms =
+          {
+              {
+                  {.a = 0, .out = 2, .coefficient = 1},
+                  {.a = 1, .out = 1, .coefficient = -1},
+              },
+          },
+  };
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_e2, extra_first),
+                 &map_defects::result_unused));
+
+  // One term per input, in order: a term at place k must have a = k.
+  CHECK(none_but(
+      map_defects_of(
+          right_complement, 4, e1_e2,
+          two(on_e134, on_e234, {.a = 1, .out = 1, .coefficient = 1}, e2_to_0)),
+      &map_defects::not_per_input));
+  CHECK(none_but(map_defects_of(right_complement, 4, e1_e2,
+                                two(on_e134, on_e234, e1_to_1,
+                                    {.a = 2, .out = 0, .coefficient = -1})),
+                 &map_defects::not_per_input));
+
+  // The blade: a complement lands on the other generators, a sign operation
+  // on the blade itself.
+  CHECK(none_but(
+      map_defects_of(right_complement, 4, e1_e2,
+                     two(on_e134, on_e234, {.a = 0, .out = 0, .coefficient = 1},
+                         {.a = 1, .out = 1, .coefficient = -1})),
+      &map_defects::wrong_blade));
+  const core::blade_set<1> just_e1{{{{.mask = e1, .sign = 1}}}};
+  const typed_map<1, 1> e1_on_e234{
+      .result = {{{on_e234}}},
+      .terms = {{{.a = 0, .out = 0, .coefficient = 1}}},
+  };
+  CHECK(none_but(map_defects_of(right_complement, 4, just_e1, e1_on_e234),
+                 nullptr));
+  CHECK(none_but(map_defects_of(reverse, 4, just_e1, e1_on_e234),
+                 &map_defects::wrong_blade));
+  const typed_map<1, 1> e1_on_e1{
+      .result = {{{{.mask = e1, .sign = 1}}}},
+      .terms = {{{.a = 0, .out = 0, .coefficient = 1}}},
+  };
+  CHECK(none_but(map_defects_of(reverse, 4, just_e1, e1_on_e1), nullptr));
+  CHECK(none_but(map_defects_of(right_complement, 4, just_e1, e1_on_e1),
+                 &map_defects::wrong_blade));
+
+  // The sign of a complement: the closed form times the input's sign, and
+  // for the left complement times (-1)^(k(n - k)), which is -1 for a vector
+  // of four generators and +1 for one of three.
+  CHECK(none_but(
+      map_defects_of(right_complement, 4, e1_e2,
+                     two(on_e134, on_e234,
+                         {.a = 0, .out = 1, .coefficient = -1}, e2_to_0)),
+      &map_defects::complement_sign));
+  CHECK(none_but(map_defects_of(left_complement, 4, e1_e2,
+                                two(on_e134, on_e234, e1_to_1, e2_to_0)),
+                 &map_defects::complement_sign));
+  const typed_map<1, 1> e1_on_e23{
+      .result = {{{{.mask = e23, .sign = 1}}}},
+      .terms = {{{.a = 0, .out = 0, .coefficient = 1}}},
+  };
+  CHECK(none_but(map_defects_of(left_complement, 3, just_e1, e1_on_e23),
+                 nullptr));
+  const core::blade_set<1> minus_e1{{{{.mask = e1, .sign = -1}}}};
+  CHECK(none_but(map_defects_of(right_complement, 4, minus_e1, e1_on_e234),
+                 &map_defects::complement_sign));
+  const typed_map<1, 1> minus_e1_on_e234{
+      .result = {{{on_e234}}},
+      .terms = {{{.a = 0, .out = 0, .coefficient = -1}}},
+  };
+  CHECK(
+      none_but(map_defects_of(right_complement, 4, minus_e1, minus_e1_on_e234),
+               nullptr));
+  // A sign operation's coefficient is not checked against a closed form.
+  CHECK(none_but(
+      map_defects_of(reverse, 4, just_e1,
+                     typed_map<1, 1>{
+                         .result = {{{{.mask = e1, .sign = 1}}}},
+                         .terms = {{{.a = 0, .out = 0, .coefficient = -1}}},
+                     }),
+      nullptr));
+}
