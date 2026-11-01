@@ -3,11 +3,13 @@ its reader fills cells that older rows lack.
 
 Usage: python3 -I measure_record_test.py <tools/measure> <scratch directory>
 
-Runs tools/measure inside a fresh git repository in the scratch directory, so
-that run rows go to that repository's run log and not to the real one. A
-stand-in `perf` on PATH writes chosen counter lines and runs the command, so
-the cases do not depend on what the machine's counters report. Prints one
-line per failed check and exits 1 if there is any.
+Copies tools/measure into a fresh git repository in the scratch directory and
+runs the copy there, because the recorder takes its revision from, and writes
+run rows into, the checkout that holds it; the real run log is never touched.
+A stand-in `perf` on PATH writes chosen counter lines and runs the command, so
+the cases do not depend on what the machine's counters report, and a `git` on
+PATH logs its arguments before running the real git. Prints one line per
+failed check and exits 1 if there is any.
 """
 
 import os
@@ -29,6 +31,11 @@ printf '%s\\n' "$FAKE_PERF_OUTPUT" > "$out"
 exit $status
 """
 
+FAKE_GIT = """#!/bin/sh
+printf '%s\\n' "$*" >> "$GIT_LOG"
+exec {git} "$@"
+"""
+
 RUN_LOG = "docs/agent/records/performance/runs.tsv"
 
 failures = []
@@ -41,31 +48,51 @@ def check(name, actual, expected):
 
 class Scratch:
     def __init__(self, measure, directory):
-        self.measure = os.path.abspath(measure)
         self.top = os.path.realpath(directory)
         shutil.rmtree(self.top, ignore_errors=True)
         os.makedirs(os.path.join(self.top, "bin"))
-        subprocess.run(["git", "init", "-q", self.top], check=True)
+        os.makedirs(os.path.join(self.top, "tools"))
+        self.measure = os.path.join(self.top, "tools", "measure")
+        shutil.copy(measure, self.measure)
+        self.git_log = os.path.join(self.top, "git.log")
 
-        # bin holds git and, when a case asks for it, the stand-in perf. The
-        # real perf is never on this PATH.
-        os.symlink(shutil.which("git"), os.path.join(self.top, "bin", "git"))
+        # bin holds the logging git, stand-ins for the build programs, and,
+        # when a case asks for it, the stand-in perf. The real perf is never
+        # on this PATH.
+        real_git = shutil.which("git")
+        self.git = os.path.join(self.top, "bin", "git")
+        self.write_script(self.git, FAKE_GIT.format(git=real_git))
+        for program in ("ninja", "ctest"):
+            os.symlink("/bin/true", os.path.join(self.top, "bin", program))
+        git = [real_git, "-C", self.top, "-c", "user.name=test",
+               "-c", "user.email=test@example.invalid"]
+        subprocess.run([real_git, "init", "-q", "-b", "main", self.top],
+                       check=True)
+        subprocess.run([*git, "add", "tools/measure"], check=True)
+        subprocess.run([*git, "commit", "-q", "-m", "recorder"], check=True)
+        self.revision = subprocess.run(
+            [*git, "rev-parse", "--short=12", "HEAD"], check=True,
+            capture_output=True, text=True).stdout.strip()
+
+    @staticmethod
+    def write_script(path, text):
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.chmod(path, 0o755)
 
     def use_fake_perf(self, enabled):
         path = os.path.join(self.top, "bin", "perf")
         if enabled and not os.path.exists(path):
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(FAKE_PERF)
-            os.chmod(path, 0o755)
+            self.write_script(path, FAKE_PERF)
         elif not enabled and os.path.exists(path):
             os.unlink(path)
 
-    def measure_cmd(self, args, perf_output=""):
+    def measure_cmd(self, args, perf_output="", cwd=None):
         env = {"PATH": os.path.join(self.top, "bin"),
-               "FAKE_PERF_OUTPUT": perf_output}
+               "FAKE_PERF_OUTPUT": perf_output, "GIT_LOG": self.git_log}
         return subprocess.run([sys.executable, "-I", self.measure, *args],
-                              cwd=self.top, env=env, capture_output=True,
-                              text=True, check=False)
+                              cwd=cwd or self.top, env=env,
+                              capture_output=True, text=True, check=False)
 
     def rows(self, record):
         """Returns the record's rows as dicts keyed by its header."""
@@ -107,8 +134,9 @@ def command_cannot_start(s):
 def compile_options(s):
     s.use_fake_perf(False)
     s.measure_cmd(["tu", "p", "c", "options.tsv", "--", "/bin/true",
-                   "-O2", "-g", f"-I{s.top}/include", "-MD", "-MT", "x.o",
-                   "-MF", "x.o.d", "-o", "x.o", "-c", f"{s.top}/src/x.cpp"])
+                   "-O2", "-g", f"-I{s.top}/include", "-MD", "-MMD",
+                   "-MT", "x.o", "-MF", "x.o.d", "-o", "x.o",
+                   "-c", f"{s.top}/src/x.cpp"])
     row = s.rows("options.tsv")[0]
     check("options of a compile row", row["options"], "-O2 -g -Iinclude")
     check("source of a compile row", row["source"], "src/x.cpp")
@@ -118,23 +146,36 @@ def compile_options(s):
 
 
 def counters_per_core_type(s):
-    # Unpinned, one instruction event per core type. A core type the command
-    # never ran on reports <not counted> with zero running time, which is a
-    # count of zero; <not supported> is no count at all.
+    # Unpinned, one instruction event per core type and task-clock. A core
+    # type reported <not counted> retired nothing only if the other type ran
+    # for all of task-clock's time; otherwise its count is unknown.
     s.use_fake_perf(True)
+    cases = {
+        "all time on the other type": "5000",
+        "other type short of task-clock": "6000",
+        "no task-clock line": None,
+    }
+    for task_clock in cases.values():
+        lines = ["1000,,cpu_core/instructions/u,5000,100.00,,",
+                 "<not counted>,,cpu_atom/instructions/u,0,0.00,,"]
+        if task_clock is not None:
+            lines.append(f"5.00,msec,task-clock:u,{task_clock},100.00,,")
+        s.measure_cmd(["tu", "p", "c", "types.tsv", "--", "/bin/true"],
+                      perf_output="\n".join(lines))
     s.measure_cmd(
         ["tu", "p", "c", "types.tsv", "--", "/bin/true"],
         perf_output="1000,,cpu_core/instructions/u,5000,100.00,,\n"
-        "<not counted>,,cpu_atom/instructions/u,0,0.00,,")
-    s.measure_cmd(
-        ["tu", "p", "c", "types.tsv", "--", "/bin/true"],
-        perf_output="1000,,cpu_core/instructions/u,5000,100.00,,\n"
-        "<not supported>,,cpu_atom/instructions/u,0,0.00,,")
-    counted, unsupported = s.rows("types.tsv")
-    check("mode of an unpinned row", counted["mode"], "shared")
+        "<not supported>,,cpu_atom/instructions/u,0,0.00,,\n"
+        "5.00,msec,task-clock:u,5000,100.00,,")
+    whole, short, missing, unsupported = s.rows("types.tsv")
+    check("mode of an unpinned row", whole["mode"], "shared")
     check("instructions on the core type the command ran on",
-          counted["inst_p_u"], "1000")
-    check("instructions on a core type never run on", counted["inst_e_u"], "0")
+          whole["inst_p_u"], "1000")
+    check("instructions on a core type never run on", whole["inst_e_u"], "0")
+    check("not counted while the other type ran less than task-clock",
+          short["inst_e_u"], "unavailable")
+    check("not counted without task-clock", missing["inst_e_u"],
+          "unavailable")
     check("instructions of an unsupported event", unsupported["inst_e_u"],
           "unavailable")
 
@@ -149,6 +190,10 @@ def run_options(s):
                 "CMAKE_CXX_FLAGS_DEBUG:UNINITIALIZED=-O1 -g\n"
                 "CMAKE_CXX_FLAGS_RELEASE:STRING=-O2\n")
     s.measure_cmd(["run", "build", "q", "named-tree", "--",
+                   "ninja", "-C", tree])
+    s.measure_cmd(["run", "test", "p", "ctest-configuration", "--",
+                   "ctest", "-C", "Debug"])
+    s.measure_cmd(["run", "build", "q", "not-a-build-program", "--",
                    "/bin/true", "-C", tree])
     s.measure_cmd(["run", "test", "p", "preset-tree", "--", "/bin/true"])
     s.measure_cmd(["run", "test", "-", "no-tree", "--", "/bin/true"])
@@ -158,6 +203,10 @@ def run_options(s):
           "-Wall -Werror -O1 -g")
     check("options of a run in its preset's tree", options["preset-tree"],
           "-Wall -Werror -O1 -g")
+    check("options of ctest -C, a configuration, not a tree",
+          options["ctest-configuration"], "-Wall -Werror -O1 -g")
+    check("options of -C for a program that takes no tree",
+          options["not-a-build-program"], "unavailable")
     check("options of a run with no tree", options["no-tree"], "-")
     check("options of a run whose tree has no cache", options["missing-tree"],
           "unavailable")
@@ -177,18 +226,76 @@ def reader(s):
     check("exit of a read with a row longer than the header",
           s.measure_cmd(["read", record]).returncode, 1)
 
+    for name, text in (("repeated header", "a\tb\n1\t2\na\tb\n"),
+                       ("older, shorter header", "a\tb\n1\t2\na\n3\n"),
+                       ("blank line", "a\tb\n1\t2\n\n3\t4\n"),
+                       ("empty file", "")):
+        with open(record, "w", encoding="utf-8") as f:
+            f.write(text)
+        result = s.measure_cmd(["read", record])
+        check(f"exit of a read with this defect: {name}", result.returncode, 1)
+        check(f"a read with this defect names the file: {name}",
+              record in result.stderr, True)
     with open(record, "w", encoding="utf-8") as f:
-        f.write("a\tb\n1\t2\na\tb\n")
-    check("exit of a read with a repeated header",
-          s.measure_cmd(["read", record]).returncode, 1)
+        f.write("a\tb\n1\t2\n")
     check("exit of a read of an unknown column",
           s.measure_cmd(["read", record, "z"]).returncode, 1)
+
+
+def record_with_another_header(s):
+    # Appending under a header that describes other columns would mislabel
+    # every cell, so the row is refused and the file left as it was.
+    s.use_fake_perf(False)
+    record = os.path.join(s.top, "other-header.tsv")
+    with open(record, "w", encoding="utf-8") as f:
+        f.write("utc_start\trevision\n")
+    result = s.measure_cmd(["tu", "p", "c", record, "--", "/bin/true"])
+    check("exit of a command whose record has another header",
+          result.returncode, 0)
+    with open(record, encoding="utf-8") as f:
+        check("record with another header after a row was refused",
+              f.read(), "utc_start\trevision\n")
+    check("warning for a record with another header",
+          "not recorded" in result.stderr, True)
+
+
+def git_attribution(s):
+    # The revision and branch are the recorder's checkout's, even for a
+    # compile that runs outside it, and git status takes no index lock.
+    s.use_fake_perf(False)
+    outside = s.top + "-outside"
+    shutil.rmtree(outside, ignore_errors=True)
+    os.makedirs(outside)
+    if os.path.exists(s.git_log):
+        os.unlink(s.git_log)
+    s.measure_cmd(["tu", "p", "c", "outside.tsv", "--", "/bin/true"],
+                  cwd=outside)
+    row = s.rows(os.path.join(outside, "outside.tsv"))[0]
+    check("revision of a compile outside the checkout", row["revision"],
+          s.revision)
+    check("branch of a compile outside the checkout", row["branch"], "main")
+    with open(s.git_log, encoding="utf-8") as f:
+        status_calls = [line for line in f if " status " in f" {line}"]
+    check("git status calls", len(status_calls), 1)
+    check("git status runs without optional locks",
+          all("--no-optional-locks status" in line for line in status_calls),
+          True)
+
+    os.rename(s.git, s.git + ".off")
+    try:
+        s.measure_cmd(["tu", "p", "c", "nogit.tsv", "--", "/bin/true"])
+    finally:
+        os.rename(s.git + ".off", s.git)
+    row = s.rows("nogit.tsv")[0]
+    check("revision without git", row["revision"], "unavailable")
+    check("branch without git", row["branch"], "unavailable")
 
 
 def main(measure, directory):
     s = Scratch(measure, directory)
     for case in (perf_ran_but_named_no_event, command_cannot_start,
-                 compile_options, counters_per_core_type, run_options, reader):
+                 compile_options, counters_per_core_type, run_options, reader,
+                 record_with_another_header, git_attribution):
         try:
             case(s)
         except (OSError, KeyError, IndexError, ValueError) as error:

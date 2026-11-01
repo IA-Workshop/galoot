@@ -27,6 +27,10 @@ cannot pass for a measured one. A row written before a column existed holds
 grows, because a rewrite of every line conflicts with every branch that
 appends to the same record.
 
+Revision and branch come from the checkout that holds this recorder, so a
+build tree outside it is still attributed; a field git cannot give is
+`unavailable`, and a detached HEAD is `detached`.
+
 Mode: `pinned` when the process may run on exactly one performance-core CPU
 (for example under `taskset -c 2`), `shared` otherwise. Pinned rows count
 instructions, cycles, and the L1d, L2, and LLC events on that core, and
@@ -36,9 +40,13 @@ come from /proc/stat, sampled at the kernel's clock tick (10 ms at 100 Hz),
 so a figure near zero can come out slightly negative. Shared rows count
 instructions on each core type, because the sum does not depend on where the
 process ran; cycles and cache events are then `unavailable`, since they mean
-different things on the two core types. A counter that perf did not run for
-its whole enabled time in pinned mode was multiplexed and is written as
-`unavailable` with a warning, never as a scaled estimate. A pinned `build`
+different things on the two core types. A core type the command never ran on
+reports `<not counted>`; it is written as 0 only when the other core type's
+running time equals the command's task-clock time, which shows the command
+spent all its time on the other type, and otherwise as `unavailable`. A
+counter that perf did not run for its whole enabled time in pinned mode was
+multiplexed and is written as `unavailable` with a warning, never as a scaled
+estimate. A pinned `build`
 run takes no counters itself, because the compile rows of its launcher take
 them on the same core, and two perf sessions of eight events on one core
 multiplex each other; its counter fields are `unavailable`.
@@ -47,7 +55,8 @@ Options: a compile row holds the compiler's arguments other than the source,
 the object, and the dependency-file arguments, with paths inside the checkout
 made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
 CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
-after -C, -B, --build, or --test-dir in the command, else build/<preset>. It
+after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest in
+the command, else build/<preset>. It
 holds `-` for a run with no build tree (preset `-` and no such argument), and
 `unavailable` when the tree has no readable cache. The cache is read after
 the command, so a configure step records the options it set.
@@ -96,6 +105,9 @@ SHARED_EVENTS = {
     "inst_p_u": "cpu_core/instructions/u",
     "inst_e_u": "cpu_atom/instructions/u",
 }
+# A software event whose running time is the command's CPU time on every core
+# type, against which a core type's missing count is checked.
+TASK_CLOCK = "task-clock"
 COUNTER_FIELDS = ["inst_p_u", "inst_e_u", "cycles_u", "l1d_loads_u",
                   "l1d_misses_u", "l2_refs_u", "l2_misses_u", "llc_refs_u",
                   "llc_misses_u"]
@@ -104,9 +116,14 @@ COUNTER_FIELDS = ["inst_p_u", "inst_e_u", "cycles_u", "l1d_loads_u",
 # Ninja's bookkeeping cover; the first set takes the next argument with it.
 NOT_OPTIONS_WITH_VALUE = {"-c", "-o", "-MT", "-MF", "-MQ"}
 NOT_OPTIONS = {"-MD", "-MMD"}
-TREE_ARGUMENTS = ("-C", "-B", "--build", "--test-dir")
+# The arguments that name a build tree, per program: -C is also ctest's
+# configuration and cmake's initial cache, so it counts only for ninja and
+# make.
+TREE_ARGUMENTS = {"ninja": ("-C",), "make": ("-C",),
+                  "cmake": ("-B", "--build"), "ctest": ("--test-dir",)}
 CACHE_ENTRY = re.compile(r"^([A-Za-z0-9_]+):[A-Z]+=(.*)$")
 
+CHECKOUT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 RAPL = "/sys/class/powercap/intel-rapl:0"
 PERF_CORE_CPUS = "/sys/bus/event_source/devices/cpu_core/cpus"
 
@@ -192,9 +209,10 @@ def energy_joules(before, after):
     return f"{delta / 1e6:.3f}"
 
 
-def perf_command(events, out_path):
+def perf_command(events, mode, out_path):
+    names = list(events.values()) + ([TASK_CLOCK] if mode == "shared" else [])
     return ["perf", "stat", "--no-scale", "-x,", "-o", out_path,
-            "-e", ",".join(events.values()), "--"]
+            "-e", ",".join(names), "--"]
 
 
 def parse_perf(out_path, events, mode):
@@ -212,6 +230,9 @@ def parse_perf(out_path, events, mode):
     if not counter_lines:
         return None
     by_event = {cells[2]: cells for cells in counter_lines}
+    # perf names the software event with its privilege suffix, task-clock:u.
+    task_clock_time = next((cells[3] for name, cells in by_event.items()
+                            if name.split(":")[0] == TASK_CLOCK), None)
     if not set(by_event) & set(events.values()):
         warn("perf reported none of the requested events "
              f"({', '.join(sorted(by_event))}); counters recorded as "
@@ -228,10 +249,15 @@ def parse_perf(out_path, events, mode):
             values[field] = value
         elif (value == "<not counted>" and running_time == "0"
               and mode == "shared"):
-            # One instruction event per core type, each alone on its PMU, is
-            # never multiplexed, so zero running time means the command never
-            # ran on that core type: it retired no instructions there.
-            values[field] = "0"
+            # Each core type's event runs while the command runs on that
+            # type, so when the other type's running time is all of
+            # task-clock's, the command never ran here and retired nothing.
+            # Otherwise the zero could be an event that never got a counter.
+            other = next(e for e in events.values() if e != event)
+            other_time = by_event.get(other, ["", "", "", ""])[3]
+            values[field] = ("0" if task_clock_time is not None
+                             and other_time == task_clock_time
+                             else UNAVAILABLE)
         else:
             values[field] = UNAVAILABLE
     return values
@@ -263,7 +289,8 @@ def run_measured(command, count=True):
                                         suffix=".csv")
         os.close(fd)
         try:
-            status, sample = launch(perf_command(events, perf_out) + command)
+            status, sample = launch(perf_command(events, mode, perf_out)
+                                    + command)
             parsed = parse_perf(perf_out, events, mode)
         except OSError as error:
             warn(f"cannot run perf ({error}); counters recorded as "
@@ -337,11 +364,16 @@ def compile_options(command, top):
 
 
 def build_tree(command, preset, top):
+    program = None
     for arg, value in zip(command, command[1:] + [""], strict=True):
-        if arg in TREE_ARGUMENTS and value and not value.startswith("-"):
-            return value
-        if arg[:2] in ("-C", "-B") and len(arg) > 2:
-            return arg[2:]
+        if os.path.basename(arg) in TREE_ARGUMENTS:
+            program = os.path.basename(arg)
+            continue
+        for flag in TREE_ARGUMENTS.get(program, ()):
+            if arg == flag and value and not value.startswith("-"):
+                return value
+            if len(flag) == 2 and arg.startswith(flag) and len(arg) > 2:
+                return arg[2:]
     if preset == NO_TREE:
         return None
     return os.path.join(top, "build", preset)
@@ -367,22 +399,31 @@ def build_options(tree):
 
 
 def git(*args):
-    result = subprocess.run(["git", *args], capture_output=True, text=True,
-                            check=False)
-    return result.stdout.strip() if result.returncode == 0 else ""
+    """Returns git's output in the recorder's checkout, or None if git
+    fails or is missing."""
+    try:
+        result = subprocess.run(["git", "-C", CHECKOUT, *args],
+                                capture_output=True, text=True, check=False)
+    except OSError:
+        return None
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def revision_and_branch():
-    revision = git("rev-parse", "--short=12", "HEAD") or UNAVAILABLE
+    revision = git("rev-parse", "--short=12", "HEAD")
     # The run and compile logs change with every run, so they do not make a
     # revision dirty; any other change to a tracked file does. Without
     # optional locks, git status does not take the index lock, so a
     # recorded compile cannot make a concurrent commit fail.
-    if git("--no-optional-locks", "status", "--porcelain",
-           "--untracked-files=no", "--", ":(top)",
-           ":(top,exclude)docs/agent/records/performance"):
+    status = git("--no-optional-locks", "status", "--porcelain",
+                 "--untracked-files=no", "--", ":(top)",
+                 ":(top,exclude)docs/agent/records/performance")
+    if not revision or status is None:
+        revision = UNAVAILABLE
+    elif status:
         revision += "-dirty"
-    return revision, git("branch", "--show-current") or "detached"
+    branch = git("branch", "--show-current")
+    return revision, UNAVAILABLE if branch is None else branch or "detached"
 
 
 def append_row(path, columns, row):
@@ -417,6 +458,8 @@ def argument_after(args, flag):
 def read_record(path, wanted):
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
+    if not lines:
+        sys.exit(f"measure: {path} is empty")
     header = lines[0].split("\t")
     unknown = [c for c in wanted if c not in header]
     if unknown:
@@ -425,10 +468,12 @@ def read_record(path, wanted):
 
     out = ["\t".join(header[i] for i in picks)]
     for number, line in enumerate(lines[1:], 2):
-        if line == lines[0]:
-            sys.exit(f"measure: {path}:{number} repeats the header; a union "
-                     "merge doubled the file")
         cells = line.split("\t")
+        if not line:
+            sys.exit(f"measure: {path}:{number} is blank")
+        if cells[0] == header[0]:
+            sys.exit(f"measure: {path}:{number} is a header line; a union "
+                     "merge doubled the file or left an older header in it")
         if len(cells) > len(header):
             sys.exit(f"measure: {path}:{number} has {len(cells)} cells for "
                      f"{len(header)} columns")
@@ -451,7 +496,7 @@ def main(argv):
 
     try:
         revision, branch = revision_and_branch()
-        top = git("rev-parse", "--show-toplevel")
+        top = git("rev-parse", "--show-toplevel") or ""
         row = dict(fields, utc_start=start, revision=revision, branch=branch,
                    exit=str(code), host=socket.gethostname())
         if kind == "tu":

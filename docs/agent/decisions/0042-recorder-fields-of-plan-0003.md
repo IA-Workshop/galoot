@@ -1,6 +1,6 @@
 # 0042 Recorder fields added by plan 0003
 
-- Status: accepted
+- Status: accepted; item 5 is superseded by decision 0043
 - Date: 2026-10-31
 - Recorded by: Claude (agent, build-expert, plan 0003), under C18; a decision record takes effect when recorded, and the owner may reverse it. Carries out decision 0032, items 1 to 3, and adds to the format of decision 0028.
 
