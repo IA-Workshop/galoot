@@ -130,6 +130,15 @@ MUTATIONS = [
      "struct term_list {\n  term_list() = default;\n"),
     ("term_list_not_structural", "  std::size_t length;\n",
      "  mutable std::size_t length;\n"),
+    # Three of the review's mutants, which the tests of the review's fixes
+    # must kill.
+    ("range_second_unchecked", "return ((a | b) >> N) == 0;",
+     "return (a >> N) == 0;"),
+    ("range_skip_below_top", "if constexpr (N < mask_bits) {",
+     "if constexpr (N + 1 < mask_bits) {"),
+    ("partial_sum_excursion", "    out.add(b, scale);\n    return;",
+     "    out.add(b ^ 1U, 1);\n    out.add(b, scale);\n    out.add(b ^ 1U, -1);\n"
+     "    return;"),
 ]
 
 STATIC_ASSERT_LINE = re.compile(
