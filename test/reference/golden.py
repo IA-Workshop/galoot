@@ -22,9 +22,12 @@ Usage, with the interpreter isolated as for every reference script:
       what the script writes now; exit 0 if it is the same.
 
 A blade is a bitmask in which bit i - 1 stands for generator e_i. The
-per-blade tables are written for n = 4 and n = 5: the sizes of rigid(3) and
-conformal(3), and one even and one odd n, which the left complement tells
-apart.
+per-blade tables of names and of the result order are written for n = 4 and
+n = 5: the sizes of rigid(3) and conformal(3), and one even and one odd n,
+which the left complement tells apart. The complements and the grade signs
+are also written for n = 3, the size of the other two forms whose product
+tables are written, so that a product of complements in every one of those
+forms can be composed from golden values alone.
 """
 
 import difflib
@@ -43,6 +46,9 @@ import clifford_reference as ref
 import conventions_check as conv
 
 BLADE_TABLE_SIZES = (4, 5)
+# The complement and grade-sign tables cover the size of every form of
+# GP_TABLE_FORMS as well.
+SIGN_TABLE_SIZES = (3, 4, 5)
 MAX_N = 6  # largest n of the signature tables
 
 # The forms whose full product tables are written out, by the name of their
@@ -618,7 +624,7 @@ def generate():
     close_namespace(out, "result_order")
 
     tables = {}
-    for n in BLADE_TABLE_SIZES:
+    for n in SIGN_TABLE_SIZES:
         right, left = complements(n)
         if n == 4:
             check_complements_against_rigid_3_table(right, left)
@@ -630,7 +636,7 @@ def generate():
                    "(-1)^(k(k-1)/2), the antireverse does the same with the "
                    "antigrade n - k, and the grade involution multiplies by "
                    "(-1)^k. Indexed by mask.")
-    for n in BLADE_TABLE_SIZES:
+    for n in SIGN_TABLE_SIZES:
         signs = tables[n][2]
         emit_array(out, "blade_signs", f"n{n}",
                    [f"{{{mask_literal(m, n)}, {', '.join(map(str, signs[m]))}}}"
@@ -642,7 +648,7 @@ def generate():
                    "The right complement satisfies u ^ right(u) = antiscalar "
                    "and the left complement left(u) ^ u = antiscalar. "
                    "Indexed by mask.")
-    for n in BLADE_TABLE_SIZES:
+    for n in SIGN_TABLE_SIZES:
         right, left, _ = tables[n]
         emit_array(out, "complement_pair", f"n{n}",
                    [f"{{{mask_literal(m, n)}, "
