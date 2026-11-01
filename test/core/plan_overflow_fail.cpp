@@ -19,6 +19,8 @@
 namespace {
 
 namespace core = galoot::core;
+using core::detail::BinaryOperation;
+using core::detail::product_plan;
 
 constexpr core::coefficient_type k = core::max_form_entry;
 constexpr core::coefficient_type max =
@@ -39,7 +41,8 @@ struct dense5 {
 
 constexpr core::blade_set<1> pseudoscalar{{{{.mask = 0b11111, .sign = 1}}}};
 
-static_assert(
-    core::detail::gp_plan<dense5, pseudoscalar, pseudoscalar>.size() == 1);
+constexpr const auto& plan =
+    product_plan<BinaryOperation::gp, dense5, pseudoscalar, pseudoscalar>;
+static_assert(plan.terms.size() == 1);
 
 } // namespace

@@ -442,14 +442,24 @@ endforeach()
 galoot_add_test(MODULE core COMPONENT plan)
 target_link_libraries(core_plan_test PRIVATE galoot_golden)
 
-# core.plan_<case>: each misuse of gp_plan fails to compile with its message.
-# The sets are checked before anything is generated, so a set's test forbids
-# the messages that generation would add: the product's own range check and
-# the checks of a generated plan.
-set(plan_range "gp plan: a blade set names a generator beyond e_n")
-set(plan_sign "gp plan: a blade set holds a sign other than +1 or -1")
-set(plan_generated "gp plan: a generated")
-foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31)
+# core.plan_<case>: each misuse of product_plan fails to compile with its
+# message. The sets are checked before anything is generated, so a set's test
+# forbids the messages that generation would add: the product's own range
+# check and the checks of a generated plan and of its typing.
+set(plan_range "product plan: a blade set names a generator beyond e_n")
+set(plan_sign "product plan: a blade set holds a sign other than +1 or -1")
+set(plan_generated
+  "product plan: a generated term has a zero coefficient"
+  "product plan: a generated term points past the first set"
+  "product plan: a generated term points past the second set"
+  "product plan: a generated term has a generator beyond e_n"
+  "product plan: generated terms are out of order or repeated"
+  "product plan: the result set is out of canonical order or repeats a blade"
+  "product plan: the result set holds a sign other than +1"
+  "product plan: a typed term points past the result set"
+  "product plan: the result set holds a blade that no term uses"
+  "product plan: typed terms are out of order or repeated")
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 wedge_beyond_n)
   galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
     SOURCE core/plan_${case}_fail.cpp
     MESSAGE "${plan_range}"
@@ -467,8 +477,72 @@ galoot_add_compile_fail_test(NAME plan_overflow MODULE core COMPONENT plan
   SOURCE core/plan_overflow_fail.cpp
   MESSAGE "${product_overflow}"
   REQUIRE "assertion_failed" "blade_product.hpp"
-  FORBID "gp plan:")
-# The tag is checked by the concept on gp_plan itself, whose failure the
+  FORBID "product plan:")
+# The wedge's own range check, reached by a direct call, which no set check
+# precedes, with the stray generator in either blade; and the room for the
+# result blades, which the plan always gives in full.
+foreach(case IN ITEMS wedge_pair_beyond_n wedge_pair_beyond_n_second)
+  galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
+    SOURCE core/plan_${case}_fail.cpp
+    MESSAGE "blade has a generator beyond e_n"
+    REQUIRE "assertion_failed" "plan.hpp")
+endforeach()
+galoot_add_compile_fail_test(NAME plan_result_room MODULE core COMPONENT plan
+  SOURCE core/plan_result_room_fail.cpp
+  MESSAGE "more result blades than places for them"
+  REQUIRE "assertion_failed" "plan.hpp")
+
+# core.plan_evaluated_once: a plan that one unit reads several times is
+# generated once. The unit core/plan_evaluated_once.cpp is compiled with the
+# library's flags and Clang's -ftime-trace, and tools/evaluated_once.py
+# compares the time of each plan's initializer with the instantiation of the
+# function that generates it, which holds the generation (the script states
+# the rule). The test exists only where the compiler is Clang: GCC writes no
+# such trace, and its cache of constant-evaluated calls would serve a second
+# generation of a plan from the first, so a GCC unit could not show one.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  galoot_compile_command(compile)
+  set(evaluated_once_trace
+    ${CMAKE_CURRENT_BINARY_DIR}/core_plan_evaluated_once.json)
+  add_test(NAME core.plan_evaluated_once
+    COMMAND ${Python3_EXECUTABLE} -I
+      ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
+      ${evaluated_once_trace} galoot::core::detail::product_plan
+      galoot::core::detail::make_product_plan
+      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
+        -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
+        -o core_plan_evaluated_once.o
+        -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(core.plan_evaluated_once PROPERTIES
+    LABELS "core;core.plan")
+endif()
+
+# tools.evaluated_once_*: the trace check passes on a trace of three plans
+# whose initializers copy them, and fails on one whose initializers generate
+# them again and on one of two plans, too few to tell.
+set(evaluated_once ${Python3_EXECUTABLE} -I
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py)
+set(evaluated_once_names galoot::core::detail::product_plan
+  galoot::core::detail::make_product_plan)
+set(evaluated_once_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once)
+add_test(NAME tools.evaluated_once_passes
+  COMMAND ${expect_output} 0 "ratio 0.0007"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/once.json
+      ${evaluated_once_names})
+add_test(NAME tools.evaluated_once_rejects_twice
+  COMMAND ${expect_output} 1 "so it generates the plan again"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/twice.json
+      ${evaluated_once_names})
+add_test(NAME tools.evaluated_once_rejects_few
+  COMMAND ${expect_output} 1 "fewer than 3 of either"
+    -- ${evaluated_once} ${evaluated_once_fixtures}/few.json
+      ${evaluated_once_names})
+set_tests_properties(tools.evaluated_once_passes
+  tools.evaluated_once_rejects_twice tools.evaluated_once_rejects_few
+  PROPERTIES LABELS "tools;tools.evaluated_once")
+# The tag is checked by the concept on product_plan itself, whose failure the
 # compiler reports in its own words; both name the concept. The function that
 # generates the plan carries the concept too, so the test forbids its name:
 # a diagnostic that leads with it would point the user at internal code.
@@ -476,7 +550,7 @@ galoot_add_compile_fail_test(NAME plan_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_not_metric_like_fail.cpp
   MESSAGE "metric_like"
-  FORBID "make_gp_plan")
+  FORBID "make_product_plan")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
