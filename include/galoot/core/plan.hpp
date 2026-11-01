@@ -493,6 +493,14 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// place that lists it gets its own terms, which may land on one position
 /// of the result. The plan is a constant evaluation, so the compiler's
 /// limits on constant evaluation bound the size of the sets in practice.
+/// Measured at the default limits, alike at -O0 and -O2 and with or without
+/// _GLIBCXX_ASSERTIONS: every blade times every blade, full<n> with full<n>,
+/// builds for n up to 5 on Clang 23 and up to 6 on GCC 16, for both
+/// operations, in R(n,0,0), R(n-1,0,1), and conformal(n-2); in a form with
+/// every entry nonzero, whose products have more terms, the geometric
+/// product builds for n up to 4 on Clang and 5 on GCC, and the wedge, which
+/// does not read the form, as in the others. Sets of a few blades cost what
+/// they use: four blades times three at n = 16 build on both.
 /// Guarantees: evaluated once in each translation unit for each Op, Alg, A,
 /// and B that it uses. No term has a zero coefficient, a refers to a
 /// position of A and b to one of B, and out to one of the result set, every
