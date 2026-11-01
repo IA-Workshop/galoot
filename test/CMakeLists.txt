@@ -145,6 +145,11 @@ galoot_add_compile_fail_test(NAME metric_count_wrap MODULE core COMPONENT metric
   SOURCE core/metric_count_wrap_fail.cpp
   MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
   REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_conformal_wrap
+  MODULE core COMPONENT metric
+  SOURCE core/metric_conformal_wrap_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
 galoot_add_compile_fail_test(NAME metric_max_n_width MODULE core COMPONENT metric
   SOURCE core/metric_max_n_width_fail.cpp
   MESSAGE "metric: MaxN is larger than the number of bits in a blade mask"

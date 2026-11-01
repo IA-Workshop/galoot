@@ -22,12 +22,12 @@ namespace {
 namespace core = galoot::core;
 
 template <std::size_t N>
-using matrix = std::array<std::array<int, N>, N>;
+using matrix = std::array<std::array<core::entry_type, N>, N>;
 
 // A matrix written out row by row.
 template <std::size_t N>
 // NOLINTNEXTLINE(*-avoid-c-arrays): a C array lets N be deduced from braces.
-constexpr matrix<N> written(const int (&rows)[N][N]) noexcept {
+constexpr matrix<N> written(const core::entry_type (&rows)[N][N]) noexcept {
   matrix<N> m{};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
@@ -42,11 +42,11 @@ constexpr matrix<N> written(const int (&rows)[N][N]) noexcept {
 // distinct generators of a diagonal signature are orthogonal.
 template <std::size_t N>
 constexpr int diagonal_mismatches(const core::metric<N>& m,
-                                  const std::array<int, N>& squares) {
+                                  const auto& squares) {
   int mismatches = 0;
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
-      const int expected = i == j ? squares[i] : 0;
+      const core::entry_type expected = i == j ? squares[i] : 0;
       mismatches += m.gram[i][j] == expected ? 0 : 1;
     }
   }
@@ -142,10 +142,21 @@ const core::metric<2> runtime_value::value{written({{1, 0}, {0, 1}})};
 struct member_value {
   core::metric<2> value{written({{1, 0}, {0, 1}})};
 };
+// The same three with one generator, where the only entry is a square.
+struct declared_value_1 {
+  static const core::metric<1> value;
+};
+struct runtime_value_1 {
+  static const core::metric<1> value;
+};
+const core::metric<1> runtime_value_1::value{written({{1}})};
+struct member_value_1 {
+  core::metric<1> value{written({{1}})};
+};
 // Has the members a metric has, but is not a metric. metric_like rejects it
 // before reading generator_count.
 struct lookalike_metric {
-  std::array<std::array<int, 2>, 2> gram;
+  std::array<std::array<core::entry_type, 2>, 2> gram;
   [[maybe_unused]] static constexpr std::size_t generator_count = 2;
   [[nodiscard]] constexpr bool is_symmetric() const {
     return gram[0][1] == gram[1][0];
@@ -174,6 +185,9 @@ static_assert(!core::metric_like<core::metric<4>>);
 static_assert(!core::metric_like<lookalike>);
 static_assert(!core::metric_like<runtime_value>);
 static_assert(!core::metric_like<member_value>);
+static_assert(!core::metric_like<declared_value_1>);
+static_assert(!core::metric_like<runtime_value_1>);
+static_assert(!core::metric_like<member_value_1>);
 static_assert(!core::metric_like<asymmetric>);
 static_assert(!core::metric_like<entry_too_large>);
 static_assert(!core::metric_like<no_generators>);
@@ -181,7 +195,7 @@ static_assert(!core::metric_like<no_generators>);
 // A metric is a structural, trivially copyable aggregate, so it can be a
 // template argument and copied as plain data.
 template <core::metric<4> M>
-constexpr int first_square = M.gram[0][0];
+constexpr core::entry_type first_square = M.gram[0][0];
 static_assert(first_square<core::rigid<3>()> == 1);
 static_assert(std::is_trivially_copyable_v<core::metric<5>>);
 static_assert(std::is_aggregate_v<core::metric<5>>);
@@ -232,7 +246,8 @@ TEST_CASE("R(1, 1, 1), R(2, 2, 2), and R(4, 1, 0) equal their matrices "
 // generator of R(0, 0, 1), and rigid(3) is written out from the definition
 TEST_CASE("rigid(d) is R(d, 0, 1): e1 to ed Euclidean and the projective "
           "generator e(d+1) null, for d from 0 to 5") {
-  CHECK(diagonal_mismatches(core::rigid<0>(), std::array<int, 1>{0}) == 0);
+  CHECK(diagonal_mismatches(core::rigid<0>(),
+                            std::array<core::entry_type, 1>{0}) == 0);
   CHECK(diagonal_mismatches(core::rigid<1>(), golden::rigid::d1_squares) == 0);
   CHECK(diagonal_mismatches(core::rigid<2>(), golden::rigid::d2_squares) == 0);
   CHECK(diagonal_mismatches(core::rigid<3>(), golden::rigid::d3_squares) == 0);
@@ -352,20 +367,20 @@ TEST_CASE("from_gram keeps a non-diagonal degenerate form entry by entry, "
 }
 
 // Reference: proof: max_form_entry is the largest k whose 2 x 2 Gram minor
-// 2 k^2 is at most the largest int
+// 2 k^2 is at most the largest entry_type
 TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
-          "in an int, and is_symmetric and entries_in_range judge "
+          "in entry_type, and is_symmetric and entries_in_range judge "
           "hand-written metrics against it at either sign") {
   constexpr long long k = core::max_form_entry;
-  constexpr long long int_max = std::numeric_limits<int>::max();
-  CHECK(2 * k * k <= int_max);
-  CHECK(2 * (k + 1) * (k + 1) > int_max);
+  constexpr long long entry_max = std::numeric_limits<core::entry_type>::max();
+  CHECK(2 * k * k <= entry_max);
+  CHECK(2 * (k + 1) * (k + 1) > entry_max);
 
   constexpr core::metric<2> asymmetric_form{written({{0, 1}, {2, 0}})};
   CHECK_FALSE(asymmetric_form.is_symmetric());
   CHECK(asymmetric_form.entries_in_range());
 
-  constexpr int top = core::max_form_entry;
+  constexpr core::entry_type top = core::max_form_entry;
   constexpr auto at_bound_entries = written({{top, -top}, {-top, top}});
   constexpr core::metric<2> at_bound{at_bound_entries};
   CHECK(at_bound.is_symmetric());
