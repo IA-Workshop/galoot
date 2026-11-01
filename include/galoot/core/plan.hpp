@@ -185,26 +185,31 @@ filled_gp(const metric<N>& g, std::span<const oriented_blade> as,
 }
 
 // Checks both sets once, before anything is generated, so that a misuse gives
-// its own message and no other. Then counts the terms in a constexpr local,
-// so the count is evaluated once per argument set, fills an array of that
+// its own message and no other. Then counts the terms, fills an array of that
 // size, and checks what is cheap to check of the result.
+//
+// Every local is static constexpr: its initializer is evaluated once, when
+// the function is instantiated. Clang evaluates the initializer of a plain
+// constexpr local again each time the call is evaluated, so the plan would be
+// generated twice, once for the static_asserts and once for the call.
 template <metric_like Alg, blade_set A, blade_set B>
 consteval auto make_gp_plan() {
-  constexpr std::size_t n = Alg::value.generator_count;
-  constexpr bool in_range = all_in_algebra(A, n) && all_in_algebra(B, n);
-  constexpr bool valid_signs = signs_valid<A> && signs_valid<B>;
+  static constexpr std::size_t n = Alg::value.generator_count;
+  static constexpr bool in_range = all_in_algebra(A, n) && all_in_algebra(B, n);
+  static constexpr bool valid_signs = signs_valid<A> && signs_valid<B>;
   static_assert(in_range, "gp plan: a blade set names a generator beyond e_n");
   static_assert(valid_signs,
                 "gp plan: a blade set holds a sign other than +1 or -1");
 
   if constexpr (in_range && valid_signs) {
-    constexpr std::size_t capacity = plan_capacity(A.blades, B.blades);
-    constexpr std::size_t count =
+    static constexpr std::size_t capacity = plan_capacity(A.blades, B.blades);
+    static constexpr std::size_t count =
         generate_gp<capacity>(Alg::value, A.blades, B.blades, {});
-    constexpr auto plan =
+    static constexpr auto plan =
         filled_gp<count, capacity>(Alg::value, A.blades, B.blades);
 
-    constexpr plan_defects defects = defects_of(plan, A.size(), B.size(), n);
+    static constexpr plan_defects defects =
+        defects_of(plan, A.size(), B.size(), n);
     static_assert(!defects.zero_coefficient,
                   "gp plan: a generated term has a zero coefficient");
     static_assert(!defects.beyond_first,
