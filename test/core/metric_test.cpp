@@ -25,6 +25,20 @@ struct declared_value_1 {
   static const galoot::core::metric<1> value;
 };
 
+// A valid algebra whose stored verdict is replaced by false. The concept must
+// follow it, which shows that the concept answers from the stored verdict
+// rather than checking the matrix again at each use. A replacement must be
+// declared in a namespace that encloses the library's, so it is written here,
+// at global scope, before the tests that use the tag.
+namespace {
+struct stored_verdict_false {
+  static constexpr auto value = galoot::core::R<2, 0, 0>();
+};
+} // namespace
+template <>
+inline constexpr bool
+    galoot::core::detail::is_valid_form_v<stored_verdict_false> = false;
+
 namespace {
 
 namespace core = galoot::core;
@@ -178,6 +192,120 @@ struct lookalike {
   static constexpr lookalike_metric value{written({{1, 0}, {0, 1}})};
 };
 
+// A value reached through a reference is read like any other.
+constexpr core::metric<2> plane = core::R<2, 0, 0>();
+struct by_reference {
+  static constexpr const core::metric<2>& value = plane;
+};
+// A constant reference to a metric that is not constant: the reference can
+// be named at compile time, but no entry of the metric can be read.
+// NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
+core::metric<2> runtime_plane{written({{1, 0}, {0, 1}})};
+struct by_reference_to_runtime {
+  static constexpr const core::metric<2>& value = runtime_plane;
+};
+// The same with one generator, whose only entry is a square.
+// NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
+core::metric<1> runtime_line{written({{1}})};
+struct by_reference_to_runtime_1 {
+  static constexpr const core::metric<1>& value = runtime_line;
+};
+// A metric passed as a template argument, named by a reference member.
+template <core::metric<3> M>
+struct from_parameter {
+  static constexpr const auto& value = M;
+};
+
+// The widest metric a blade mask allows, with the entry in the last row and
+// first column changed, so that only its last pair of entries disagrees.
+constexpr core::metric<mask_width> broken_corner() {
+  auto m = core::R<mask_width, 0, 0, mask_width>();
+  m.gram[mask_width - 1][0] = 1;
+  return m;
+}
+struct widest_broken {
+  static constexpr auto value = broken_corner();
+};
+
+// The six values that the exhaustive checks below draw entries from: two
+// below -max_form_entry, the two bounds of the range, and two above
+// max_form_entry. Whether a matrix meets the requirement depends on each
+// entry only through which of those three classes it falls in and whether it
+// equals its mirrored entry. Two values in each class give every pattern of
+// classes and equalities that an int matrix can have. So a check that, like
+// the requirement, looks at an entry only through its class and its mirror,
+// as the single pass does, and agrees with the requirement on all matrices
+// over these values, agrees on all int matrices of that size. A check that
+// treats some other value differently, such as 0, is not covered.
+constexpr core::entry_type bound = core::max_form_entry;
+constexpr std::array<core::entry_type, 6> sample_entries{
+    std::numeric_limits<core::entry_type>::min(),
+    -bound - 1,
+    -bound,
+    bound,
+    bound + 1,
+    std::numeric_limits<core::entry_type>::max(),
+};
+
+// The number of N x N matrices over sample_entries, 6^(N * N).
+template <std::size_t N>
+constexpr std::size_t sample_count() {
+  std::size_t count = 1;
+  for (std::size_t k = 0; k < N * N; ++k) {
+    count *= sample_entries.size();
+  }
+  return count;
+}
+
+// Matrix number k over sample_entries: entry k_ij is digit i * N + j of k in
+// base 6.
+template <std::size_t N>
+constexpr core::metric<N> sample_metric(std::size_t k) {
+  core::metric<N> m{};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      m.gram[i][j] = sample_entries[k % sample_entries.size()];
+      k /= sample_entries.size();
+    }
+  }
+  return m;
+}
+
+// The requirement on a metric, read over every position: each entry within
+// max_form_entry in magnitude, and equal to its mirrored entry.
+template <std::size_t N>
+constexpr bool meets_requirement(const core::metric<N>& m) {
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      const core::entry_type g = m.gram[i][j];
+      if (g != m.gram[j][i] || g < -bound || g > bound) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+template <std::size_t N, std::size_t K>
+struct sampled {
+  static constexpr core::metric<N> value = sample_metric<N>(K);
+};
+
+// The number of matrices over sample_entries on which metric_like and the
+// requirement disagree, and the number metric_like accepts.
+template <std::size_t N, std::size_t... K>
+consteval int concept_disagreements(std::index_sequence<K...> /*matrices*/) {
+  return ((core::metric_like<sampled<N, K>> ==
+                   meets_requirement(sample_metric<N>(K))
+               ? 0
+               : 1) +
+          ... + 0);
+}
+template <std::size_t N, std::size_t... K>
+consteval int concept_accepted(std::index_sequence<K...> /*matrices*/) {
+  return ((core::metric_like<sampled<N, K>> ? 1 : 0) + ... + 0);
+}
+
 // metric_like accepts a tag that carries a valid metric of any n up to the
 // width of a blade mask, whatever bound its factory used, and is false for
 // every other type: no value, a value that is not a metric or only looks like
@@ -200,6 +328,37 @@ static_assert(!core::metric_like<member_value_1>);
 static_assert(!core::metric_like<asymmetric>);
 static_assert(!core::metric_like<entry_too_large>);
 static_assert(!core::metric_like<no_generators>);
+
+// Whether a value can be read at compile time does not depend on how it is
+// reached: through a reference to a constant metric, or as a template
+// argument, it can; through a reference to a metric that is not constant it
+// cannot, and the concept is false rather than an error.
+static_assert(core::metric_like<by_reference>);
+static_assert(core::metric_like<from_parameter<core::conformal<1>()>>);
+static_assert(!core::metric_like<by_reference_to_runtime>);
+static_assert(!core::metric_like<by_reference_to_runtime_1>);
+
+// An asymmetry in the last pair of the widest metric is found.
+static_assert(!core::metric_like<widest_broken>);
+
+// The concept follows the stored verdict of an algebra.
+static_assert(!core::metric_like<stored_verdict_false>);
+
+// On every matrix of one and two generators over sample_entries, the concept
+// agrees with the requirement. A matrix meets it exactly when each diagonal
+// entry is one of the two values in range and each mirrored pair holds one
+// value in range twice, which is 2^(n(n + 1) / 2) matrices: 2 of the 6 for
+// n = 1 and 8 of the 1296 for n = 2.
+static_assert(sample_count<1>() == 6);
+static_assert(sample_count<2>() == 1296);
+static_assert(concept_disagreements<1>(
+                  std::make_index_sequence<sample_count<1>()>()) == 0);
+static_assert(concept_disagreements<2>(
+                  std::make_index_sequence<sample_count<2>()>()) == 0);
+static_assert(
+    concept_accepted<1>(std::make_index_sequence<sample_count<1>()>()) == 2);
+static_assert(
+    concept_accepted<2>(std::make_index_sequence<sample_count<2>()>()) == 8);
 
 // A metric is a structural, trivially copyable aggregate, so it can be a
 // template argument and copied as plain data.
@@ -411,6 +570,39 @@ TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
   constexpr core::metric<1> below{written({{-top - 1}})};
   CHECK_FALSE(above.entries_in_range());
   CHECK_FALSE(below.entries_in_range());
+}
+
+// Reference: proof: a form meets the requirement when g_ij = g_ji and
+// |g_ij| <= max_form_entry for every i and j, and over six entries with two
+// in each class (below, within, and above the range) that holds for
+// 2^(n(n + 1) / 2) of the matrices, 64 at n = 3; proof: the six entries
+// realize every pattern of classes and mirrored equalities, and the single
+// pass, like the requirement, sees an entry only through its class and its
+// mirror, so the check covers every int matrix of three generators
+TEST_CASE("At n = 3, the single pass that metric_like stores agrees with the "
+          "requirement and with is_symmetric() && entries_in_range() on "
+          "every matrix over the six sample entries, and accepts 64") {
+  constexpr std::size_t count = sample_count<3>();
+  static_assert(count == 10'077'696);
+
+  std::size_t disagreements = 0;
+  std::size_t accepted_by_pass = 0;
+  std::size_t accepted_by_members = 0;
+  std::size_t meeting_requirement = 0;
+  for (std::size_t k = 0; k < count; ++k) {
+    const auto m = sample_metric<3>(k);
+    const bool pass = core::detail::is_valid_form(m);
+    const bool members = m.is_symmetric() && m.entries_in_range();
+    const bool required = meets_requirement(m);
+    disagreements += pass == required && members == required ? 0 : 1;
+    accepted_by_pass += pass ? 1 : 0;
+    accepted_by_members += members ? 1 : 0;
+    meeting_requirement += required ? 1 : 0;
+  }
+  CHECK(disagreements == 0);
+  CHECK(meeting_requirement == 64);
+  CHECK(accepted_by_pass == 64);
+  CHECK(accepted_by_members == 64);
 }
 
 // Reference: contract: the factories accept n up to max_generators unless

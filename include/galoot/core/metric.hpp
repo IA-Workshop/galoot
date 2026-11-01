@@ -261,6 +261,33 @@ from_gram(const entry_type (&gram)[N][N]) {
   return m;
 }
 
+namespace detail {
+
+// Whether m is symmetric with every entry within max_form_entry, in one pass
+// over the pairs g_ij, g_ji with j <= i. When the two entries of a pair are
+// equal, the range check of one covers both, so every entry is checked.
+template <std::size_t N>
+constexpr bool is_valid_form(const metric<N>& m) noexcept {
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j <= i; ++j) {
+      const entry_type a = m.gram[i][j];
+      const entry_type b = m.gram[j][i];
+      if (a != b || a < -max_form_entry || a > max_form_entry) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+// The verdict for one algebra. A variable template is initialized once per
+// translation unit, so every later check of the same algebra reads the
+// stored result instead of reading the matrix again.
+template <class Alg>
+inline constexpr bool is_valid_form_v = is_valid_form(Alg::value);
+
+} // namespace detail
+
 /// A tag type that names an algebra and carries its metric.
 ///
 /// Requires of Alg: a static data member `value`, usable in a constant
@@ -268,14 +295,23 @@ from_gram(const entry_type (&gram)[N][N]) {
 /// every entry within max_form_entry in magnitude. Any N that metric<N>
 /// allows is accepted, whatever MaxN the factory was given. The concept tests
 /// the data only, and is false rather than an error for a type that has no
-/// such member. The guard reads every entry, so that it fails for a value
-/// that is not usable at compile time even when n = 1.
+/// such member or whose member cannot be read at compile time. The full
+/// check of the matrix runs once per algebra in each translation unit.
 template <class Alg>
 concept metric_like =
     detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>> &&
-    requires { typename std::bool_constant<Alg::value.entries_in_range()>; } &&
-    (Alg::value.generator_count >= 1) && Alg::value.is_symmetric() &&
-    Alg::value.entries_in_range();
+    // The number of generators comes from the type, which is known even when
+    // the value cannot be read at compile time or is a non-static member.
+    // It is checked before the read below, so that gram[0][0] exists.
+    (std::remove_cvref_t<decltype(Alg::value)>::generator_count >= 1) &&
+    // A value that cannot be read at compile time would make the stored
+    // verdict a compile error rather than false, so one entry is read here
+    // first. Inside a requires-expression, a read that fails makes the
+    // requirement false, not an error. One entry is enough: an entry can be
+    // read at compile time exactly when the whole value can.
+    requires {
+      typename std::integral_constant<entry_type, Alg::value.gram[0][0]>;
+    } && detail::is_valid_form_v<Alg>;
 
 } // namespace galoot::core
 
