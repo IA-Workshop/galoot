@@ -9,6 +9,7 @@
 #include <galoot/core/blade_product.hpp> // IWYU pragma: export
 #include <galoot/core/blade_set.hpp>     // IWYU pragma: export
 #include <galoot/core/metric.hpp>        // IWYU pragma: export
+#include <galoot/core/mv.hpp>            // IWYU pragma: export
 #include <galoot/core/plan.hpp>          // IWYU pragma: export
 
 #endif // GALOOT_CORE_HPP

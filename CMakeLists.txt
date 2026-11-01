@@ -23,6 +23,7 @@ target_sources(galoot_core INTERFACE
     include/galoot/core/blade_product.hpp
     include/galoot/core/blade_set.hpp
     include/galoot/core/metric.hpp
+    include/galoot/core/mv.hpp
     include/galoot/core/plan.hpp)
 target_compile_features(galoot_core INTERFACE cxx_std_23)
 
