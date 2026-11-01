@@ -125,3 +125,24 @@ Evidence:
 Cost: the bits test TU now takes 2.99 G instructions, 0.42 s, 130 MiB (gcc-debug) and 2.55 G, 0.33 s, 147 MiB (clang-debug), up from 2.11 G and 1.82 G, because of `golden.hpp`, `<span>` and `<string_view>`, and the four constant-evaluated golden checks (inferred; not attributed by a time report). `core.bits` runs in 0.06 s to 0.21 s.
 
 Departures: the markers are worded by the author, and the checker verifies their form and the presence of facts, not that the words are true of each test (review checks that). The test count is 16, not 13, after the golden cases.
+
+## Second delta review fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The review of `66122dd` (`docs/agent/records/reviews/2026-10-31-wu2-bits-delta2.md`) asked for fixes to L1 to L8; `develop` at `9d04f25` (records only) was merged first (`e3bf106`).
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| L1 | The mask-encoding case checks `reorder_sign(0b010, 0b001) == -1` and `reorder_sign(0b001, 0b010) == +1` (`8ccced4`); snippet mutation `reorder_opposite_order` (`ad9fbc8`) | With `reorder_sign` counting the opposite order, both cases credited to 1.1 passed | That case fails 2 of its 9 assertions (`CHECK( 1 == -1 )` at line 390); the golden-names case still passes, so 1.1 is earned by the bit-order check |
+| L2 | The mask-encoding case is marked `independent value` | `proof` | `independent value` |
+| L3 | Reorder marker: reorder_sign(A, B) is (-1)^s for the neighbor swaps that sort A then B, equal indices never swapped. Golden complements marker: complements do not depend on the metric, so the four-generator values serve rigid(3) and every algebra of four generators. Hand-worked marker: names e12 ^ e2 = 0 and the +e1234 antiscalar check | Loose wording | As stated |
+| L4 | `indices_named` returns `std::optional`: 1, or e followed by increasing digits; anything else gives no value. New case "The blade-name reader accepts only canonical names" (`8ccced4`, `d368a0a`) | "e21" and names without a leading e were read | "1" gives the empty list, "e124" gives (1, 2, 4); "e21", "e11", "124", "e", "ex" give no value. The golden-names case `REQUIRE`s a value for each golden name |
+| L5 | The snippet builds and tests the unmutated tree first (exit 2 on failure) and counts a build failure only if it is a static assertion (`ad9fbc8`) | An unknown preset printed "caught (build failed)" 12 times, exit 0 | `no-such-preset`: "refused: the unmutated tree does not build and pass core.bits", exit 2. gcc-debug: 13 of 13 caught in both modes, each build failure "static assertion failed" |
+| L6 | The last-checked line moved from the docstring to the snippets index row | In the script | In `docs/agent/snippets/README.md` |
+| L7 | Merged `develop` | | `e3bf106`; the metric branch merges after this one and reruns the gate |
+| L8 | Cost split below | Cause incomplete | Recorded |
+
+Departure: `8ccced4` fails the lint preset (two `bugprone-unchecked-optional-access` findings on `value()` in the new case); the commit command chained on a grep's status, not the build's. `d368a0a` fixes it by comparing whole optionals through a defaulted `index_list` equality. History is not rewritten.
+
+Build cost of the bits test (L8), gcc-debug retired instructions, as measured by the reviewer over three runs (spread within 0.3%): 2.284 G at `c9d9cad`. Adding `<span>` and `<string_view>`: +0.132 G. `golden.hpp`: +0.085 G. The four run-time golden cases: +0.487 G, mostly doctest's expansion of their assertions. The four golden `static_assert`s: +0.138 G. Removing the hand-worked rigid(3) table: -0.134 G. Head at `66122dd`: 2.99 G. This pass adds the parser case and `<optional>`, not separately measured.
+
+P9 on `ad9fbc8`, cleaned trees, `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`: 43 of 43 on each of gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, and lint; `core.bits` 17 cases and 97,296 assertions in each. Wall (s): 2.61, 3.63, 5.18, 2.28, 2.56, 3.64, 2.42; total 22.32. Header sets: gcc-debug 0.23 s, clang-debug 0.35 s. Gate: exit 0 (1.1 pinned at `bits_test.cpp:390` and `:565`; 1.5, 2.1, 3.1 as before). Markers: 19 test cases, each with a marker (17 bits, 2 smoke). Golden facts: every use states its fact.
