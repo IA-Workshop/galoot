@@ -1,6 +1,6 @@
 # 0125 Certified limits of product plans in place of a measured table
 
-- Status: proposed. Nothing here takes effect until the owner rules on items 1 to 6.
+- Status: accepted (owner ruling), 2026-11-01. The ruling is the last section; the proposal above it is kept as written. Proposed 2026-11-01; until the ruling, nothing here took effect.
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), performance-engineer role, researcher, from research note 0017.
 
@@ -42,3 +42,18 @@ The calibration is for the headers of `e1af2ac`. `develop` has since changed `ge
 - The `///` comment of `product_plan` (and later `unary_map` and the conjugated plans) is rewritten as item 1 (b) by a unit with its own plan and review; the measured ceilings of decisions 0103 and 0113 remain as history.
 - A compiler or standard-library upgrade fails `core.plan_cost_model` until the weights are refitted (about 800 units, ten minutes of compiles on the shared pool for Clang and thirty for GCC) and the committed thresholds and the comment's figures are regenerated.
 - A change to the generator's code changes the weights the same way, so the same unit that changes the generator refits the model, as it now remeasures the limits.
+
+## Owner ruling (2026-11-01)
+
+Recorded by Claude (agent, Opus 5.5), performance-engineer, when claiming the implementing unit (plan 0015). This section supersedes the proposal and "Consequences if accepted" where they differ; neither is rewritten.
+
+1. Item 1: (b). The `///` comments of `product_plan` and of the map and antiproduct generators state the cost law and certified examples in place of the measured ceilings.
+2. Item 2: (b). The canary CTest `core.plan_cost_model` compiles reference plans at their committed predicted thresholds and one below, so that a compiler, library, or generator change shows up.
+3. Item 3: (b). The predictor moves to `docs/agent/snippets/`, under the snippets index and its coalescing rules (decision 0021).
+4. Item 4: adopted. Any future limit measurement on GCC uses checked searches (a bisection confirmed by compiling just above its result).
+5. Item 5: no cheaper typing now.
+6. Item 6: the cold GCC bound is accepted with no margin.
+
+Condition set by the coordinator with the ruling: before any figure is used on `develop`, the weights of the generation phases and `mirror.py`'s copy of the generator are refitted against the current `develop` (the calibration was made at `e1af2ac`; since then WU7b changed `generate_plan` and `plan_capacity`, and `metric_like` became one cached pass at `890e72c`), and the implementing unit says what changed.
+
+Consequences, in place of those above: plan 0015 (branch `feature/plan-limits-certified`) refits the model against `develop`, extends it to the antiproducts and the unary maps, rewrites the two comments, adds the canary and its tests, and moves the scripts. The measured ceilings of decisions 0103, 0113, and 0116 remain as history.
