@@ -1,0 +1,9 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr bool apx::operator==(const X&, const Y&) [with X = mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>; Y = mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>]’:
+program.cpp:80:11:   required from here
+   80 |   r += (p == v) ? 1 : 0;
+      |        ~~~^~~~~
+fixture.hpp:243:17: error: static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+  243 |   static_assert(false, "==: the operands have different types; compare "
+      |                 ^~~~~
+  • ‘false’ evaluates to false

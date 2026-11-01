@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:121:19: error: static assertion failed due to requirement 'covers<gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, gc::blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>()': conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+  121 |     static_assert(covers<To, B>(), "conversion drops components of its input: "
+      |                   ^~~~~~~~~~~~~~~
+program.cpp:75:19: note: in instantiation of function template specialization 'apx::mv<rga3, gc::blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>::operator mv<gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>' requested here
+   75 |   const Point s = q;
+      |                   ^
+1 error generated.

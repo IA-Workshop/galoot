@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+./fixture.hpp:177:12: error: implicit instantiation of undefined template 'apx::lossy_conversion_from_to<apx::mvn<rga3, name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>, apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>>'
+  177 |     return lossy_conversion_from_to<mvn, mvn<Alg, To, T>>{};
+      |            ^
+program.cpp:75:19: note: in instantiation of function template specialization 'apx::mvn<rga3, name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>::operator mvn<name_list<12>{{"e1 e2 e3 e4"}}>' requested here
+   75 |   const Point s = q;
+      |                   ^
+./fixture.hpp:77:8: note: template is declared here
+   77 | struct lossy_conversion_from_to;
+      |        ^
+1 error generated.

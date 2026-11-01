@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:97:17: error: static assertion failed due to requirement 'blades_fit<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>()': mv: a blade of the set names a generator that the algebra does not have
+   97 |   static_assert(blades_fit<Alg, B>(),
+      |                 ^~~~~~~~~~~~~~~~~~~~
+program.cpp:97:15: note: in instantiation of template class 'apx::mv<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>' requested here
+   97 |   const Wrong x{};
+      |               ^
+1 error generated.

@@ -1,0 +1,9 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘struct apx::mv<rga3, galoot::core::blade_set<2>{std::array<galoot::core::oriented_blade, 2>{std::__array_traits<galoot::core::oriented_blade, 2>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{16, 1}}}}>’:
+program.cpp:97:15:   required from here
+   97 |   const Wrong x{};
+      |               ^
+fixture.hpp:97:35: error: static assertion failed: mv: a blade of the set names a generator that the algebra does not have
+   97 |   static_assert(blades_fit<Alg, B>(),
+      |                 ~~~~~~~~~~~~~~~~~~^~
+  • ‘apx::blades_fit<rga3, galoot::core::blade_set<2>{std::array<galoot::core::oriented_blade, 2>{std::__array_traits<galoot::core::oriented_blade, 2>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{16, 1}}}}>()’ evaluates to false

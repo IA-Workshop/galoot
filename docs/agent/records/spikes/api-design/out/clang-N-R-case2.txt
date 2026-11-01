@@ -1,0 +1,13 @@
+program.cpp:54:19: error: no matching function for call to 'make'
+   54 |   const Point s = apx::make<Point>(1, 2, 3);
+      |                   ^~~~~~~~~~~~~~~~
+./fixture.hpp:226:13: note: candidate template ignored: constraints not satisfied [with X = Point, A = <int, int, int>]
+  226 | constexpr X make(A... a) {
+      |             ^
+./fixture.hpp:225:12: note: because 'coefficients_for<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, int, int, int>' evaluated to false
+  225 |   requires coefficients_for<X, A...>
+      |            ^
+./fixture.hpp:221:23: note: because 'sizeof...(A) == apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>::set.size()' (3 == 4) evaluated to false
+  221 |     multivector<X> && sizeof...(A) == X::set.size() &&
+      |                       ^
+1 error generated.

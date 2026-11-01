@@ -1,0 +1,14 @@
+In file included from program.cpp:5:
+./fixture.hpp:260:17: error: static assertion failed: get<name>: the type has no component of this name with this orientation
+  260 |   static_assert(has_component<std::remove_cvref_t<X>, Name>,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:66:8: note: in instantiation of function template specialization 'apx::get<name_list<4>{{"e14"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' requested here
+   66 |   r += get<"e14">(l);
+      |        ^
+./fixture.hpp:260:17: note: because 'has_component<std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>, name_list<4>{{"e14"}}>' evaluated to false
+  260 |   static_assert(has_component<std::remove_cvref_t<X>, Name>,
+      |                 ^
+./fixture.hpp:208:24: note: because 'position_of_name<std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>, name_list<4>{{"e14"}}>() < std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>::set.size()' (6 < 6) evaluated to false
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^
+1 error generated.

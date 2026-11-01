@@ -1,0 +1,8 @@
+counted.cpp: In instantiation of ‘constexpr counted<K, T>::counted(A ...) [with A = {int, int, int}; long unsigned int K = 4; T = double]’:
+counted.cpp:50:29:   required from here
+   50 |   const counted<4> p{1, 2, 3};
+      |                             ^
+counted.cpp:28:32: error: static assertion failed: give one value for each component of the type, in the order the type lists them
+   28 |     static_assert(sizeof...(A) == K,
+      |                   ~~~~~~~~~~~~~^~~~
+  • the comparison reduces to ‘(3 == 4)’

@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}; X = mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}>&]’:
+program.cpp:66:18:   required from here
+   66 |   r += get<"e14">(l);
+      |        ~~~~~~~~~~^~~
+fixture.hpp:289:59: error: invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+  289 |   return no_component_named<Name, std::remove_cvref_t<X>>{};
+      |                                                           ^
+fixture.hpp:80:8: note: declaration of ‘struct apx::no_component_named<galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+   80 | struct no_component_named;
+      |        ^~~~~~~~~~~~~~~~~~

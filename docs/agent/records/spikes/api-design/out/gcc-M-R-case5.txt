@@ -1,0 +1,25 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:66:18: error: no matching function for call to ‘get<"e14">(Line&)’
+   66 |   r += get<"e14">(l);
+      |        ~~~~~~~~~~^~~
+  • there is 1 candidate
+In file included from program.cpp:5:
+    • candidate 1: ‘template<name_list<...auto...> Name, class X>  requires  has_component<typename std::remove_cvref<_Tp2>::type, Name> constexpr decltype(auto) apx::get(X&&)’
+      fixture.hpp:214:26:
+        214 | constexpr decltype(auto) get(X&& x) {
+            |                          ^~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • fixture.hpp: In substitution of ‘template<name_list<...auto...> Name, class X>  requires  has_component<typename std::remove_cvref<_Tp2>::type, Name> constexpr decltype(auto) apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}; X = apx::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}>&]’:
+          • required from here
+            program.cpp:66:18:   
+               66 |   r += get<"e14">(l);
+                  |        ~~~~~~~~~~^~~
+          • required for the satisfaction of ‘has_component<typename std::remove_cvref<_Tp2>::type, Name>’ [with X = apx::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>&; Name = galoot::core::detail::name_list<4>{{"e14"}}]
+            fixture.hpp:207:9:   
+              207 | concept has_component =
+                  |         ^~~~~~~~~~~~~
+          • the expression ‘(position_of_name<X, Name>)() < (X::set).size() [with X = apx::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>; Name = galoot::core::detail::name_list<4>{{"e14"}}]’ evaluated to ‘false’
+            fixture.hpp:208:52:
+              208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+                  |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~

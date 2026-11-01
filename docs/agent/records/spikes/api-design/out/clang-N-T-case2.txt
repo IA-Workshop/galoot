@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+./fixture.hpp:301:10: error: implicit instantiation of undefined template 'apx::coefficient_count_differs<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, 3>'
+  301 |   return coefficient_count_differs<X, sizeof...(A)>{};
+      |          ^
+program.cpp:54:24: note: in instantiation of function template specialization 'apx::make<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, int, int, int>' requested here
+   54 |   const Point s = apx::make<Point>(1, 2, 3);
+      |                        ^
+./fixture.hpp:86:8: note: template is declared here
+   86 | struct coefficient_count_differs;
+      |        ^
+1 error generated.
