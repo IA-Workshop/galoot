@@ -384,6 +384,57 @@ add_test(NAME core.blade_set_name_assert
 set_tests_properties(core.blade_set_name_assert PROPERTIES
   LABELS "core;core.blade_set")
 
+# core.blade_product: products of blades against the defining relations,
+# associativity, the wedge-monomial basis, rules computed in the test, and
+# the golden product tables.
+galoot_add_test(MODULE core COMPONENT blade_product)
+target_link_libraries(core_blade_product_test PRIVATE galoot_golden)
+
+# core.blade_product_<case>: each misuse of blade_product ends a constant
+# evaluation, and the diagnostic shows the line of the failed assertion.
+set(product_overflow "a product coefficient does not fit coefficient_type")
+foreach(case IN ITEMS beyond_n capacity overflow sum_overflow)
+  if(case STREQUAL "beyond_n")
+    set(message "blade has a generator beyond e_n")
+  elseif(case STREQUAL "capacity")
+    set(message "more product terms than the capacity")
+  else()
+    set(message "${product_overflow}")
+  endif()
+  galoot_add_compile_fail_test(NAME blade_product_${case}
+    MODULE core COMPONENT blade_product
+    SOURCE core/blade_product_${case}_fail.cpp
+    MESSAGE "${message}"
+    REQUIRE "assertion_failed" "blade_product.hpp")
+endforeach()
+
+# core.blade_product_rejects_<case>: the same misuse, and a sum or product
+# just past either bound of coefficient_type, abort at run time with the
+# message. Like the assert programs, the program fixes its own checking mode,
+# so these run in every preset.
+add_executable(core_blade_product_assert_fail core/blade_product_assert_fail.cpp)
+target_include_directories(core_blade_product_assert_fail PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_blade_product_assert_fail PRIVATE cxx_std_23)
+target_compile_definitions(core_blade_product_assert_fail PRIVATE
+  GALOOT_CHECKING=1)
+foreach(case IN ITEMS beyond_n capacity overflow sum_above sum_below
+    product_above product_below)
+  if(case STREQUAL "beyond_n")
+    set(message "blade has a generator beyond e_n")
+  elseif(case STREQUAL "capacity")
+    set(message "more product terms than the capacity")
+  else()
+    set(message "${product_overflow}")
+  endif()
+  add_test(NAME core.blade_product_rejects_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${message} (" blade_product.hpp:
+      -- $<TARGET_FILE:core_blade_product_assert_fail> ${case})
+  set_tests_properties(core.blade_product_rejects_${case} PROPERTIES
+    LABELS "core;core.blade_product")
+endforeach()
+
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
 add_test(NAME tools.measure_record
