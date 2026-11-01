@@ -101,3 +101,27 @@ Departures in this pass (C20):
 2. One run of `core_bits_test` was made directly, not through `tools/timed`, to read the doctest counts after adding N8.
 3. Reference markers (`// Reference:`) for the 13 test cases are not added yet; the coordinator schedules them after the M0 scripts merge.
 
+
+## Reference markers and golden values (2026-10-31, Claude, agent, Opus 5.5)
+
+After the M0 scripts merged into `develop` (`8327147`), on the coordinator's instruction:
+
+- Markers (`8a5f890`, before the merge so that the merge commit passes `tests.reference_markers`): each of the 13 test cases carries `// Reference: <kind>: <fact>`, with the trace table's wording where a case pins a convention. No test body changed. Checked with `develop`'s `tools/test_references.py markers` from a scratch copy: 13 test cases, each with a marker. A first attempt to merge was aborted (`git merge --abort`, after saving and re-appending the two `runs.tsv` rows it had added) because the merged tree failed that check.
+- Merge (`1f77713`): `develop` at `8327147`; `docs/agent/snippets/README.md` kept both sides' rows; `test/CMakeLists.txt` merged without conflict. gcc-debug: 43 of 43.
+- Golden values (`dbd2309`): `core_bits_test` links `galoot_golden` and includes `<reference/golden.hpp>`, with qualified `golden::` names. New test cases compare the header with `golden::complements` (n4, n5), `golden::blade_names` (n4, n5), `golden::units` (antiscalars for n = 1 to 6, and the scalar), and `golden::grade_signs` (n4, n5); four `static_assert`s, each with its own marker, compare `complements` and `grade_signs` in a constant evaluation. The hand-worked rigid(3) table and its case were removed: a comparison showed it equal to `golden::complements::n4` on all 16 rows, so the golden namespace now pins those values (W9: an expected-value table replaced by an equal, independently generated one). `golden::result_order` is not used: bits has no ordering; it belongs to the blade-set unit. The other golden namespaces (wedge basis, signatures, rigid, conformal, oriented names) are not bits facts.
+- Trace table: Implemented set to yes for the rows of 1.1 (bit i - 1 of a blade mask stands for e_i), 1.5, 2.1, and 3.1. The other 1.1 row (e45 = e4 ^ e5 in conformal(3)) stays no: bits does not implement the wedge basis.
+- Delta review L3 (in `dbd2309`): `diagonal_n = 6` names the size once, and the case captures the metric's index. L4 (`2ef0ee6`): the snippet gains the `count_accepts_above` mutation (n = `mask_bits` + 1 accepted), which the five `n_above` rejection tests catch; a wrong argument count or an unknown third argument prints the usage and exits 2; its last-checked line names `dbd2309`.
+
+Evidence:
+
+| Check | Command | Outcome |
+| --- | --- | --- |
+| Markers and golden facts | CTest `tests.reference_markers`, `tests.golden_facts` | Pass in every preset ("every use of golden values states its fact") |
+| Gate | `python3 -I tools/test_references.py trace docs/agent/records/convention-trace.md docs/agent/governance/CONVENTIONS.md test/reference/golden.hpp test` | Exit 0. 1.1: 2 checks; 1.5: 2; 2.1: 4 (2 test cases, 2 static_asserts); 3.1: 6 (4 test cases, 2 static_asserts). Items with no test: 1.2, 1.3, 1.4, 1.6, 1.7, 3.2 to 3.4, 4.1 to 4.5, 5.1 to 5.7, 6.1 to 6.4, 7.1 |
+| Golden cases can fail | sign mutations with the `static_assert`s removed, `core_bits_test --test-case=*golden*` | right sign swapped: complements case fails (8 assertions, the odd gr·ag blades of n = 4); reverse with k + 1: grade-signs case fails (24); complement dropping the top generator: complements, blade-names, and antiscalar cases fail (90) |
+| Fault injection | `bits_fault_injection.py <worktree> gcc-debug [--runtime-only]` at `dbd2309` | 12 of 12 caught in both modes; 9 `static_assert` lines removed in runtime-only mode |
+| P9 | `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>` on `2ef0ee6`, seven presets, cleaned trees | 43 of 43 each; `core.bits` 16 cases, 97,239 assertions. Wall (s): gcc-debug 2.55, gcc-release 3.53, gcc-asan 5.25, clang-debug 2.29, clang-release 2.57, clang-asan 3.60, lint 1.87; total 21.66. Header sets: gcc-debug 0.33 s, clang-debug 0.12 s |
+
+Cost: the bits test TU now takes 2.99 G instructions, 0.42 s, 130 MiB (gcc-debug) and 2.55 G, 0.33 s, 147 MiB (clang-debug), up from 2.11 G and 1.82 G, because of `golden.hpp`, `<span>` and `<string_view>`, and the four constant-evaluated golden checks (inferred; not attributed by a time report). `core.bits` runs in 0.06 s to 0.21 s.
+
+Departures: the markers are worded by the author, and the checker verifies their form and the presence of facts, not that the words are true of each test (review checks that). The test count is 16, not 13, after the golden cases.
