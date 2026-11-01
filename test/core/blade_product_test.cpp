@@ -503,6 +503,36 @@ int order_mismatches(const std::array<golden::product, K>& table) {
   return mismatches;
 }
 
+// For the products of every pair of blades: how many list their terms out of
+// increasing canonical order, and how many hold two terms of one grade whose
+// canonical order is not the numeric order of their masks, such as e14
+// before e23, so that the check can tell the two orders apart.
+struct product_order {
+  int unordered = 0;
+  int telling = 0;
+};
+
+template <std::size_t N>
+product_order order_of_products(const core::metric<N>& g) {
+  product_order count;
+  for (mask_t a = 0; a < blade_count(N); ++a) {
+    for (mask_t b = 0; b < blade_count(N); ++b) {
+      const list p = product(g, a, b);
+      bool telling = false;
+      for (std::size_t k = 1; k < p.size(); ++k) {
+        const mask_t before = p.terms.at(k - 1).blade;
+        const mask_t after = p.terms.at(k).blade;
+        count.unordered += by_grade_then_indices(before, after) ? 0 : 1;
+        telling =
+            telling || (indices_of(before).size == indices_of(after).size &&
+                        before > after);
+      }
+      count.telling += telling ? 1 : 0;
+    }
+  }
+  return count;
+}
+
 // Sums built through add, in two orders of the same terms.
 constexpr list added(std::initializer_list<written_term> terms) {
   list l{};
@@ -762,12 +792,23 @@ TEST_CASE("No product has more terms than product_capacity, and the bound is "
 }
 
 // Reference: independent value: results are ordered by grade, then by index
-//   list, read here from the index lists of the golden product tables, in
-//   which e_i e_j + e_j e_i = 2 g_ij; contract: add merges a blade added
-//   twice, removes a zero sum, and leaves the unused places zero, so that ==
+//   list, read here from the index lists of every product of every signature
+//   listed here, some of which hold blades such as e14 and e23 whose numeric
+//   order is the other way, and of the golden product tables, in which
+//   e_i e_j + e_j e_i = 2 g_ij; contract: add merges a blade added twice,
+//   removes a zero sum, and leaves the unused places zero, so that ==
 //   compares sums
 TEST_CASE("Term lists are in canonical order, merge repeated blades, and drop "
           "zero sums") {
+  int telling = 0;
+  for_each_signature([&telling](const char* name, const auto& g) {
+    const product_order count = order_of_products(g);
+    INFO(name);
+    CHECK(count.unordered == 0);
+    telling += count.telling;
+  });
+  CHECK(telling > 0);
+
   CHECK(order_mismatches(golden::gp_tables::rigid_3) == 0);
   CHECK(order_mismatches(golden::gp_tables::conformal_3) == 0);
   CHECK(order_mismatches(golden::gp_tables::degenerate_3) == 0);
