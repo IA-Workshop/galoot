@@ -34,3 +34,7 @@ Decision 0125 (owner ruling) asks for the cost law and certified examples in the
 
 - A compiler, standard-library, or generator change that moves a reference's largest phase fails `core.plan_cost_model` with the new threshold; the maintainer then refits (the commands are in the records' README), regenerates `figures-*.txt` and the comments' figures, and updates the thresholds.
 - A change to the antiproduct pair rule (the work on `research/antiproduct-growth`) needs a refit of `capacity`, `count`, and `fill` and of `mirror.py`'s `pair_capacity`, `factor_of`, `run_term`, and `generate_plan`, and new antiproduct figures and the `plan_cost_antigp_sparse16.cpp` threshold; the typing and map phases are unaffected unless their code changes.
+
+## Correction, 2026-11-01 (plan 0015 outcome)
+
+Item 6's wall times, 4.3 s and 4.7 s, were measured just before `22db6bc` was committed, on the same files (run-log revision `809a975-dirty`), not at `22db6bc`. In the serial suite runs of the final trees at `1f7cf28` the canary took 4.83 s (gcc-debug) and 5.00 s (clang-debug); none exceeded the criterion of 5 s. The text above is left as recorded.
