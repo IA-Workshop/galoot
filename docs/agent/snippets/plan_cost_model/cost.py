@@ -41,11 +41,16 @@ Usage:
       The figures that the library's comments state and the thresholds of
       its reference units (FIGURES below), each with its largest phase and
       the next largest.
+  cost.py comments <header> <figures.txt>...
+      Checks that every count in the /// comments of the header is the
+      threshold of a row of the figures files, or one of the compilers'
+      default limits; prints each that is not and exits 1 if there is one.
   cost.py selfcheck <weights.tsv> <figures.txt> --train <c>:<t>...
           --check <c>:<t>...
       Refits from the training files and compares every weight and
       training row with <weights.tsv>; predicts every measured case of
-      every file and compares it with its threshold; and compares a fresh
+      every file and compares it with its threshold, a case with no
+      measured threshold counting as a difference; and compares a fresh
       `figures` run with <figures.txt>. Prints each difference and exits 1
       if there is one.
 
@@ -64,6 +69,7 @@ too low.
 
 import collections
 import importlib.util
+import re
 import pathlib
 import sys
 from fractions import Fraction
@@ -433,6 +439,7 @@ FIGURES = [
     ("antiwedge-r-6", "antiwedge", "r", 6, "full", "full"),
     ("antiwedge-r-7", "antiwedge", "r", 7, "full", "full"),
     ("gp-grades-3-7", "gp", "r", 8, "grade:3", "grade:7"),
+    ("gp-vectors-full-6", "gp", "r", 6, "grade:1", "full"),
     ("sparse-gp-4", "gp", "rigid", 4, "sparse", None),
     ("sparse-gp-16", "gp", "rigid", 16, "sparse", None),
     ("sparse-antigp-4", "antigp", "rigid", 4, "sparse", None),
@@ -462,6 +469,33 @@ def figures_text(weights_path):
     return "\n".join(lines) + "\n"
 
 
+# Numbers the comments state that are limits, not counts.
+LIMITS = (1 << 20, 1 << 25, GCC_LOOP_LIMIT)
+COUNT = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b")
+
+
+def comments(header_path, figures_paths):
+    """Checks that every count in the /// comments of `header_path` is the
+    threshold of some row of the figures files, or a limit."""
+    known = set(LIMITS)
+    for path in figures_paths:
+        for line in pathlib.Path(path).read_text(
+                encoding="utf-8").splitlines()[2:]:
+            known.add(int(line.split("\t")[4]))
+    unknown = []
+    for number, line in enumerate(pathlib.Path(header_path).read_text(
+            encoding="utf-8").splitlines(), 1):
+        if not line.lstrip().startswith("///"):
+            continue
+        for text in COUNT.findall(line):
+            if int(text.replace(",", "")) not in known:
+                unknown.append(f"{header_path}:{number}: {text}")
+    for u in unknown:
+        print(u)
+    print(f"{len(unknown)} counts in the comments are not in the figures")
+    return not unknown
+
+
 def selfcheck(weights_path, figures_path, train, measured):
     problems = []
 
@@ -486,8 +520,13 @@ def selfcheck(weights_path, figures_path, train, measured):
         for case in probe.read_cases(cases_path):
             kind = case["kind"]
             t = thresholds.get(case["name"])
-            if kind.startswith("baseline-") or not t or \
-                    t["threshold"] == "fails":
+            # Every case of a committed case file was measured, baselines
+            # too, so a missing or failed measurement is a difference.
+            if not t or t["threshold"] == "fails":
+                problems.append(f"{case['name']}: no measured threshold in "
+                                f"{thresholds_path}")
+                continue
+            if kind.startswith("baseline-"):
                 continue
             measured_value = int(t["threshold"])
             if kind in ("plan", "map"):
@@ -554,6 +593,8 @@ def main(argv):
         sys.exit(0 if certify(*argv[1:]) else 1)
     elif len(argv) in (6, 7) and argv[0] == "predict":
         predict(*argv[1:])
+    elif len(argv) >= 3 and argv[0] == "comments":
+        sys.exit(0 if comments(argv[1], argv[2:]) else 1)
     elif len(argv) == 2 and argv[0] == "figures":
         sys.stdout.write(figures_text(argv[1]))
     elif len(argv) >= 5 and argv[0] == "selfcheck":

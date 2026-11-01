@@ -17,6 +17,7 @@ antiwedge-r-5	243	32	fill	271653	count	268974	yes
 antiwedge-r-6	729	64	fill	1108607	count	1100582	yes
 antiwedge-r-7	2187	128	fill	4548233	count	4524170	yes
 gp-grades-3-7	448	98	typed	601471	collect	560101	yes
+gp-vectors-full-6	384	64	collect	474959	typed	318239	yes
 sparse-gp-4	10	8	fill	3136	count	3020	yes
 sparse-gp-16	10	8	fill	3136	count	3020	yes
 sparse-antigp-4	8	6	fill	9137	count	9043	yes
