@@ -712,6 +712,62 @@ foreach(operation IN ITEMS add multiply)
     REQUIRE rational_failed)
 endforeach()
 
+# core.mv: the multivector type, its scalar concepts, construction,
+# equality, and the checks of its layout, over the five scalar types it must
+# serve, the test rational among them.
+galoot_add_test(MODULE core COMPONENT mv)
+target_link_libraries(core_mv_test PRIVATE galoot_test_support)
+
+# core.mv_<case>: each misuse of the type fails to compile with one error
+# that carries its literal message, and no other message of the type. The
+# layout checks are tried on sets written out by hand, which no constructor
+# of blade sets would build.
+function(mv_rejects case message)
+  galoot_add_compile_fail_test(NAME mv_${case}
+    MODULE core COMPONENT mv
+    SOURCE core/mv_${case}_fail.cpp
+    MESSAGE "${message}"
+    ${ARGN})
+endfunction()
+set(mv_beyond_n "mv: the blade set names a generator beyond e_n")
+set(mv_bad_sign "mv: the blade set holds a sign other than +1 or -1")
+set(mv_repeated
+  "mv: the blade set holds one blade twice, perhaps in both orientations")
+set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient")
+set(mv_count
+  "mv: give one value for each component, in the order the layout lists them")
+foreach(case IN ITEMS beyond_n beyond_n_31)
+  mv_rejects(${case} "${mv_beyond_n}" ONE_ERROR
+    FORBID "${mv_bad_sign}" "${mv_repeated}")
+endforeach()
+foreach(case IN ITEMS bad_sign bad_sign_second)
+  mv_rejects(${case} "${mv_bad_sign}" ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_repeated}")
+endforeach()
+foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
+    repeated_after)
+  mv_rejects(${case} "${mv_repeated}" ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_bad_sign}")
+endforeach()
+mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR)
+mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
+mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
+mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
+# An algebra that is not one fails the class template's constraint, so the
+# diagnostic is the compiler's account of metric_like.
+mv_rejects(not_metric_like "metric_like" FORBID "${mv_scalar}")
+# These record the compiler's own wording, which both compilers share in
+# part: narrowing in brace initialization ("narrowing conversion",
+# "cannot be narrowed"), and an implicit conversion that no constructor
+# allows ("conversion from"). A new compiler may change them.
+mv_rejects(narrowing_int "narrow" ONE_ERROR)
+mv_rejects(narrowing_float "narrow" ONE_ERROR)
+mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
+# A file with a second, unrelated error fails a one-error test, so the test
+# above can fail; WILL_FAIL turns that failure into a pass.
+mv_rejects(two_errors "${mv_count}" ONE_ERROR)
+set_tests_properties(core.mv_two_errors PROPERTIES WILL_FAIL ON)
+
 # reference.golden: the committed golden.hpp is byte for byte what golden.py
 # writes now, so a hand edit, or a header left stale after a change to the
 # reference scripts, fails. reference.golden_rejects shows that the check
