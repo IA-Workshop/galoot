@@ -78,8 +78,10 @@ galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 
-# core.bits: the blade-mask functions against their definitions.
+# core.bits: the blade-mask functions against their definitions and against
+# the golden values (galoot_golden, below).
 galoot_add_test(MODULE core COMPONENT bits)
+target_link_libraries(core_bits_test PRIVATE galoot_golden)
 
 # core.bits_rejects_<function>_<case>: out-of-range input aborts with the
 # precondition's message at run time. The program fixes the checking mode, as

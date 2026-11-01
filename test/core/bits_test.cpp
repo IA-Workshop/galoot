@@ -4,16 +4,22 @@
 // the header: a blade is the increasing list of its generator indices, read
 // bit by bit, and every sign is the parity of a permutation counted pair by
 // pair. Where the inputs are finite the checks are exhaustive, which makes
-// them proofs over those ranges rather than samples.
+// them proofs over those ranges rather than samples. A second route compares
+// the header with the golden values of reference/golden.hpp, which the
+// reference scripts in test/reference/ compute in Python.
 #include <algorithm>
 #include <array>
 #include <cstddef>
 #include <limits>
+#include <span>
+#include <string_view>
 #include <utility>
 
 #include <galoot/core/bits.hpp>
 
 #include <doctest/doctest.h>
+
+#include <reference/golden.hpp>
 
 namespace {
 
@@ -203,8 +209,12 @@ struct scaled_blade {
   mask_t mask;
 };
 
-constexpr scaled_blade diagonal_product(mask_t a, mask_t b,
-                                        const std::array<int, 6>& squares) {
+// The diagonal-product test uses every pair of blades of this many generators.
+constexpr std::size_t diagonal_n = 6;
+
+constexpr scaled_blade
+diagonal_product(mask_t a, mask_t b,
+                 const std::array<int, diagonal_n>& squares) {
   index_list word = concat(indices_of(a), indices_of(b));
   int coefficient = 1;
   for (bool swapped = true; swapped;) {
@@ -297,51 +307,64 @@ constexpr mask_sample sample_of(std::size_t n) {
   return s;
 }
 
-// The 16 complements of rigid(3), the algebra R(3,0,1) of four generators,
-// written with masks in increasing order rather than Lengyel's oriented names
-// (e431 = e4 ∧ e3 ∧ e1 = -e134). Each row was worked by hand from
-// u ∧ right(u) = +e1234 and left(u) ∧ u = +e1234: the right sign is the sign
-// of sorting A then C, and the left sign that of sorting C then A. For e2,
-// C = {1, 3, 4}; (2, 1, 3, 4) has one inversion, so right(e2) = -e134 = e431,
-// and (1, 3, 4, 2) has two, so left(e2) = +e134 = -e431.
-struct complement_row {
-  mask_t blade;
-  mask_t complement;
-  int right;
-  int left;
-};
+// The indices of the generators in a canonical blade name such as "e124",
+// one digit each; "1" names the scalar.
+constexpr index_list indices_named(std::string_view name) {
+  index_list list;
+  if (name == "1") {
+    return list;
+  }
+  for (const char digit : name.substr(1)) {
+    push(list, digit - '0');
+  }
+  return list;
+}
 
-constexpr std::array<complement_row, 16> rigid3_complements{
-    {
-        {.blade = 0b0000, .complement = 0b1111, .right = 1, .left = 1},   // 1
-        {.blade = 0b0001, .complement = 0b1110, .right = 1, .left = -1},  // e1
-        {.blade = 0b0010, .complement = 0b1101, .right = -1, .left = 1},  // e2
-        {.blade = 0b0100, .complement = 0b1011, .right = 1, .left = -1},  // e3
-        {.blade = 0b1000, .complement = 0b0111, .right = -1, .left = 1},  // e4
-        {.blade = 0b0011, .complement = 0b1100, .right = 1, .left = 1},   // e12
-        {.blade = 0b0101, .complement = 0b1010, .right = -1, .left = -1}, // e13
-        {.blade = 0b0110, .complement = 0b1001, .right = 1, .left = 1},   // e23
-        {.blade = 0b1001, .complement = 0b0110, .right = 1, .left = 1},   // e14
-        {.blade = 0b1010, .complement = 0b0101, .right = -1, .left = -1}, // e24
-        {.blade = 0b1100, .complement = 0b0011, .right = 1, .left = 1},   // e34
-        {.blade = 0b0111, .complement = 0b1000, .right = 1, .left = -1}, // e123
-        {.blade = 0b1011, .complement = 0b0100, .right = -1, .left = 1}, // e124
-        {.blade = 0b1101, .complement = 0b0010, .right = 1, .left = -1}, // e134
-        {.blade = 0b1110, .complement = 0b0001, .right = -1, .left = 1}, // e234
-        {.blade = 0b1111, .complement = 0b0000, .right = 1, .left = 1}, // e1234
-    },
-};
-
-constexpr bool rigid3_table_holds() {
+// Whether bits gives the complement masks and signs of `rows`, the
+// complements of every blade of n generators.
+template <std::size_t Size>
+constexpr bool
+complements_match(const std::array<golden::complement_pair, Size>& rows,
+                  std::size_t n) {
   using namespace galoot::core;
-  return std::ranges::all_of(rigid3_complements, [](complement_row row) {
-    return complement_mask(row.blade, 4) == row.complement &&
-           right_complement_sign(row.blade, 4) == row.right &&
-           left_complement_sign(row.blade, 4) == row.left;
+  return std::ranges::all_of(rows, [n](const golden::complement_pair& row) {
+    return complement_mask(row.blade, n) == row.right.blade &&
+           right_complement_sign(row.blade, n) == row.right.sign &&
+           complement_mask(row.blade, n) == row.left.blade &&
+           left_complement_sign(row.blade, n) == row.left.sign;
   });
 }
 
-static_assert(rigid3_table_holds());
+// Whether bits gives the grade signs of `rows`, the signs of every blade of n
+// generators.
+template <std::size_t Size>
+constexpr bool
+grade_signs_match(const std::array<golden::blade_signs, Size>& rows,
+                  std::size_t n) {
+  using namespace galoot::core;
+  return std::ranges::all_of(rows, [n](const golden::blade_signs& row) {
+    return reverse_sign(row.blade) == row.reverse &&
+           antireverse_sign(row.blade, n) == row.antireverse &&
+           grade_involution_sign(row.blade) == row.involution;
+  });
+}
+
+// Reference: independent value: u ^ right(u) = antiscalar and left(u) ^ u =
+//   antiscalar, by the golden complements of every blade of four generators,
+//   in a constant evaluation
+static_assert(complements_match(golden::complements::n4, 4));
+// Reference: independent value: u ^ right(u) = antiscalar and left(u) ^ u =
+//   antiscalar, by the golden complements of every blade of five generators,
+//   in a constant evaluation
+static_assert(complements_match(golden::complements::n5, 5));
+// Reference: independent value: the reverse of a grade-k blade is
+//   (-1)^(k(k-1)/2) times it, by the golden grade signs of every blade of four
+//   generators, in a constant evaluation
+static_assert(grade_signs_match(golden::grade_signs::n4, 4));
+// Reference: independent value: the reverse of a grade-k blade is
+//   (-1)^(k(k-1)/2) times it, by the golden grade signs of every blade of five
+//   generators, in a constant evaluation
+static_assert(grade_signs_match(golden::grade_signs::n5, 5));
 
 } // namespace
 
@@ -478,16 +501,79 @@ TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
   }
 }
 
-// Reference: independent value: the 16 complements of rigid(3), worked by hand
-//   from u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
-TEST_CASE("The 16 complements of rigid(3) hold at run time") {
-  // The same table is checked in a constant evaluation above.
-  for (const complement_row& row : rigid3_complements) {
-    CAPTURE(row.blade);
-    CHECK(galoot::core::complement_mask(row.blade, 4) == row.complement);
-    CHECK(galoot::core::right_complement_sign(row.blade, 4) == row.right);
-    CHECK(galoot::core::left_complement_sign(row.blade, 4) == row.left);
+// Reference: independent value: u ^ right(u) = antiscalar and left(u) ^ u =
+//   antiscalar, by the golden complements of every blade of four generators,
+//   whose algebra includes rigid(3), and of five
+TEST_CASE("The complements of every blade of four and five generators match "
+          "the golden values") {
+  const auto check = [](std::span<const golden::complement_pair> rows,
+                        std::size_t n) {
+    for (const golden::complement_pair& row : rows) {
+      CAPTURE(n);
+      CAPTURE(row.blade);
+      CHECK(galoot::core::complement_mask(row.blade, n) == row.right.blade);
+      CHECK(galoot::core::right_complement_sign(row.blade, n) ==
+            row.right.sign);
+      CHECK(galoot::core::complement_mask(row.blade, n) == row.left.blade);
+      CHECK(galoot::core::left_complement_sign(row.blade, n) == row.left.sign);
+    }
+  };
+  check(golden::complements::n4, 4);
+  check(golden::complements::n5, 5);
+}
+
+// Reference: independent value: bit i - 1 of a blade mask stands for e_i, read
+//   from the golden canonical names of every blade of four and five generators
+TEST_CASE("grade and complement_mask agree with the golden blade names, for "
+          "four and five generators") {
+  const auto check = [](std::span<const golden::named_blade> names,
+                        std::size_t n) {
+    for (const golden::named_blade& entry : names) {
+      CAPTURE(n);
+      CAPTURE(entry.blade);
+      const index_list named = indices_named(entry.name);
+      CHECK(mask_of(named) == entry.blade);
+      CHECK(galoot::core::grade(entry.blade) == named.size);
+      CHECK(galoot::core::complement_mask(entry.blade, n) ==
+            mask_of(missing_from(named, n)));
+    }
+  };
+  check(golden::blade_names::n4, 4);
+  check(golden::blade_names::n5, 5);
+}
+
+// Reference: independent value: the antiscalar is e12...n with sign +1, by the
+//   golden antiscalars of one to six generators
+TEST_CASE("The right complement of the scalar is the golden antiscalar with "
+          "sign +1, for one to six generators") {
+  for (std::size_t n = 1; n <= golden::units::antiscalars.size(); ++n) {
+    const golden::named_blade& expected = golden::units::antiscalars.at(n - 1);
+    CAPTURE(n);
+    CHECK(galoot::core::complement_mask(golden::units::scalar.blade, n) ==
+          expected.blade);
+    CHECK(galoot::core::right_complement_sign(golden::units::scalar.blade, n) ==
+          1);
+    CHECK(galoot::core::grade(expected.blade) == static_cast<int>(n));
   }
+}
+
+// Reference: independent value: the reverse of a grade-k blade is
+//   (-1)^(k(k-1)/2) times it, with the antireverse and grade involution signs,
+//   by the golden grade signs of every blade of four and five generators
+TEST_CASE("The reverse, antireverse, and grade involution signs of every "
+          "blade of four and five generators match the golden values") {
+  const auto check = [](std::span<const golden::blade_signs> rows,
+                        std::size_t n) {
+    for (const golden::blade_signs& row : rows) {
+      CAPTURE(n);
+      CAPTURE(row.blade);
+      CHECK(galoot::core::reverse_sign(row.blade) == row.reverse);
+      CHECK(galoot::core::antireverse_sign(row.blade, n) == row.antireverse);
+      CHECK(galoot::core::grade_involution_sign(row.blade) == row.involution);
+    }
+  };
+  check(golden::grade_signs::n4, 4);
+  check(golden::grade_signs::n5, 5);
 }
 
 // Reference: proof: the antiscalar is e12...n with sign +1, so the right
@@ -562,17 +648,18 @@ TEST_CASE("In a diagonal metric, e_A e_B is reorder_sign times the squares of "
           "of six generators") {
   // Euclidean, and one with every kind of square, so that a zero or negative
   // square of a common generator shows in the coefficient.
-  constexpr std::array<std::array<int, 6>, 2> metrics{
+  constexpr std::array<std::array<int, diagonal_n>, 2> metrics{
       {
           {1, 1, 1, 1, 1, 1},
           {1, -1, 0, -1, 1, 0},
       },
   };
-  constexpr mask_t count = mask_t{1} << 6U;
-  for (const std::array<int, 6>& squares : metrics) {
+  constexpr mask_t count = mask_t{1} << diagonal_n;
+  for (std::size_t metric = 0; metric < metrics.size(); ++metric) {
+    const std::array<int, diagonal_n>& squares = metrics.at(metric);
     for (mask_t a = 0; a < count; ++a) {
       for (mask_t b = 0; b < count; ++b) {
-        CAPTURE(squares.at(1));
+        CAPTURE(metric);
         CAPTURE(a);
         CAPTURE(b);
         int common_squares = 1;
