@@ -1,6 +1,6 @@
-"""A line-for-line Python copy of the product-plan generator of
-include/galoot/core/plan.hpp and blade_product.hpp, which counts how often
-each path through each loop and branch is taken.
+"""A line-for-line Python copy of the plan and map generators of
+include/galoot/core/plan.hpp, blade_product.hpp, and bits.hpp, which counts
+how often each path through each loop and branch is taken. Snippet.
 
 The count of a path is the number the compilers' counters multiply: a
 compiler spends a fixed number of steps or operations on one pass along one
@@ -10,10 +10,16 @@ on the input. cost.py fits and checks those weights.
 
 Each function returns what its C++ counterpart returns and adds to `ev`, a
 collections.Counter, one count per event. Event names are
-"<function>.<path>". Each phase of make_product_plan is one constant
-evaluation, so each gets its own counter (phases()).
+"<function>.<path>". Each phase of make_product_plan and make_unary_map is
+one constant evaluation, so each gets its own counter (phases(),
+map_phases()). A path that differs between operations is named by the
+operation, so one fit of a phase serves every operation.
 
 Generators are bits 0 to n-1 of a mask, as in the headers.
+
+Imported by cost.py and probe.py. Copies the headers of develop at 4895a40;
+a change to any function copied here makes the weights stale until the
+model is refitted (cost.py fit), and the copy must change with it.
 """
 
 import collections
@@ -123,6 +129,14 @@ def product_capacity(a, b):
     return 1 if g == 0 else 1 << (g - 1)
 
 
+BASE = {"gp": "gp", "wedge": "wedge", "antigp": "gp", "antiwedge": "wedge"}
+
+
+def complement(a, n):
+    """complement_mask(a, n): the generators of e_1 to e_n that a lacks."""
+    return ~a & ((1 << n) - 1)
+
+
 class Form:
     """A Gram matrix and which of its entries the metric's factory wrote.
 
@@ -222,26 +236,59 @@ def pair_terms(op, gram, a, b, capacity, ev):
     return out
 
 
-def plan_capacity(op, as_, bs, ev):
+def pair_capacity(op, x, y, n, ev):
+    """pair_capacity(op, a, b, n). The operation is a run-time value there,
+    so each operation takes its own path through the tests."""
+    if op == "antigp":
+        cx, cy = complement(x, n), complement(y, n)
+        ev["capacity.antigp_product" if cx | cy else
+           "capacity.antigp_scalar"] += 1
+        return product_capacity(cx, cy)
+    if op == "gp":
+        ev["capacity.product" if x | y else "capacity.scalar"] += 1
+        return product_capacity(x, y)
+    ev["capacity.one"] += 1
+    return 1
+
+
+def plan_capacity(op, as_, bs, n, ev):
     capacity = 1
     for x, _ in as_:
         ev["capacity.a"] += 1
         for y, _ in bs:
             ev["capacity.pair"] += 1
-            if op == "gp":
-                ev["capacity.product" if x | y else "capacity.scalar"] += 1
-                pair = product_capacity(x, y)
-            else:
-                pair = 1
+            pair = pair_capacity(op, x, y, n, ev)
             if pair > capacity:
                 ev["capacity.raise"] += 1
                 capacity = pair
     return capacity
 
 
+def factor_of(op, a, n, ev):
+    """factor_of<Op, N>(a): the blade a enters the base product as, with its
+    sign; for an antiproduct its right complement."""
+    if BASE[op] == op:
+        return a, 1
+    ev["factor.anti"] += 1
+    c = complement(a, n)
+    return c, reorder_sign(a, c, ev, "factor")
+
+
+def run_term(op, terms, k, n, ev):
+    """run_term<Op, Capacity, N>(terms, k): for an antiproduct the left
+    complement of the term at k counted from the last."""
+    if BASE[op] == op:
+        return terms[k]
+    ev["run.anti"] += 1
+    blade, coefficient = terms[len(terms) - 1 - k]
+    d = complement(blade, n)
+    return d, reorder_sign(d, blade, ev, "run") * coefficient
+
+
 def generate_plan(op, gram, as_, bs, capacity, write, ev):
     """The terms (a, b, out, coefficient); `write` says whether the call
     writes them (the fill) or only counts them."""
+    n = len(gram)
     ev["gen.call"] += 1
     plan = []
     for a, (ma, sa) in enumerate(as_):
@@ -250,10 +297,13 @@ def generate_plan(op, gram, as_, bs, capacity, write, ev):
             ev["gen.pair"] += 1
             # The pair's term list is copied into the loop's local.
             ev["gen.pair_slots"] += capacity
-            terms = pair_terms(op, gram, ma, mb, capacity, ev)
-            sign = sa * sb
-            for blade, coefficient in terms.terms:
+            fa, ca = factor_of(op, ma, n, ev)
+            fb, cb = factor_of(op, mb, n, ev)
+            sign = sa * sb * ca * cb
+            terms = pair_terms(BASE[op], gram, fa, fb, capacity, ev)
+            for k in range(len(terms.terms)):
                 ev["gen.term"] += 1
+                blade, coefficient = run_term(op, terms.terms, k, n, ev)
                 if write:
                     ev["gen.write"] += 1
                 plan.append((a, b, blade, sign * coefficient))
@@ -340,7 +390,7 @@ def phases(op, gram, as_, bs):
     if not hasattr(gram, "written"):
         gram = Form(gram)
     ev = {p: collections.Counter() for p in PHASES}
-    capacity = plan_capacity(op, as_, bs, ev["capacity"])
+    capacity = plan_capacity(op, as_, bs, len(gram), ev["capacity"])
     plan = generate_plan(op, gram, as_, bs, capacity, False, ev["count"])
     plan2 = generate_plan(op, gram, as_, bs, capacity, True, ev["fill"])
     assert plan == plan2
@@ -351,6 +401,99 @@ def phases(op, gram, as_, bs):
     typed = type_terms(plan, result, ev["typed"])
     typed_defects_of(result, typed, ev["typing"])
     return plan, result, typed, ev
+
+
+# The unary maps.
+
+UNARY = ("reverse", "antireverse", "grade_involution", "right_complement",
+         "left_complement")
+
+
+def unary_term(op, a, n, ev):
+    """unary_term(op, a, n): the image of e_A as (blade, sign). The operation
+    is a run-time value there, tested in the order of UNARY."""
+    ev[f"map.{op}"] += 1
+    k = grade(a)
+    if op == "reverse":
+        return a, 1 if (k * (k - 1) // 2) % 2 == 0 else -1
+    if op == "antireverse":
+        m = n - k
+        return a, 1 if (m * (m - 1) // 2) % 2 == 0 else -1
+    if op == "grade_involution":
+        return a, 1 if k % 2 == 0 else -1
+    c = complement(a, n)
+    if op == "right_complement":
+        return c, reorder_sign(a, c, ev, "map")
+    return c, reorder_sign(c, a, ev, "map")
+
+
+def generate_map(op, n, blades, ev):
+    """generate_map(op, n, set, out) with out of the set's size: the terms
+    (a, 0, out, coefficient)."""
+    terms = []
+    for a, (mask, sign) in enumerate(blades):
+        ev["map.term"] += 1
+        blade, coefficient = unary_term(op, mask, n, ev)
+        terms.append((a, 0, blade, sign * coefficient))
+    return terms
+
+
+def closed_form_right_sign(a, ev):
+    k = grade(a)
+    exponent = k * (k + 1) // 2
+    rest = a
+    while rest != 0:
+        ev["mapdef.cf_bit"] += 1
+        exponent += ctz(rest) + 1
+        rest &= rest - 1
+    return 1 if exponent % 2 == 0 else -1
+
+
+def map_defects_of(op, n, blades, result, typed, ev):
+    """map_defects_of(op, n, set, map) on a map that has no defect."""
+    for r in range(len(result)):
+        ev["mapdef.blade"] += 1
+        if r > 0:
+            canonical_less(result[r - 1], result[r], ev, "mapdef")
+    is_complement = op in ("right_complement", "left_complement")
+    # `op == right_complement || op == left_complement` evaluates its second
+    # test unless the first holds.
+    if op != "right_complement":
+        ev["mapdef.second_test"] += 1
+    for k, (_, _, at, coefficient) in enumerate(typed):
+        ev["mapdef.term"] += 1
+        mask, sign = blades[k]
+        expected = complement(mask, n) if is_complement else mask
+        assert result[at] == expected
+        if is_complement:
+            ev["mapdef.complement"] += 1
+            g = grade(mask)
+            # `op == left && g * ag % 2 != 0` tests the parity only for the
+            # left complement.
+            left = 1
+            if op == "left_complement":
+                ev["mapdef.left"] += 1
+                left = -1 if g * (n - g) % 2 else 1
+            assert coefficient == sign * closed_form_right_sign(mask, ev) * left
+
+
+MAP_PHASES = ("map_fill", "collect", "map_typed", "map_defects")
+
+
+def map_phases(op, n, blades):
+    """The map, its result set, the typed map, and one event counter per
+    phase of make_unary_map that the model covers, in the order the generator
+    evaluates them. The result set is collected by collect_result, as a
+    plan's is, so that phase has the plan's name and weights."""
+    ev = {p: collections.Counter() for p in MAP_PHASES}
+    terms = generate_map(op, n, blades, ev["map_fill"])
+    ev["map_fill"]["map.slots"] += len(blades)
+    result = collect_result(terms, ev["collect"])
+    ev["map_typed"]["map_typed.blade"] += len(result)
+    typed = type_terms(terms, result, ev["map_typed"])
+    ev["map_typed"]["map_typed.term"] += len(typed)
+    map_defects_of(op, n, blades, result, typed, ev["map_defects"])
+    return terms, result, typed, ev
 
 
 # Metrics, as Gram matrices with gram[i][j] for the generators of bits i, j.

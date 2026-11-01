@@ -1,7 +1,8 @@
 """Compile a unit under a lowered constant-evaluation limit and find the
-smallest limit under which it compiles.
+smallest limit under which it compiles. Snippet.
 
-Imported by probe.py. Every compile runs through `tools/timed measure`, so
+Imported by probe.py. Written for research note 0017; last checked at the
+revision named in the snippets index. Every compile runs through `tools/timed measure`, so
 that it has a row in runs.tsv, and holds one slot of the machine's shared
 job pool while it runs, so that parallel searches share the processors with
 other work instead of adding to it.

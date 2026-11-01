@@ -1,0 +1,103 @@
+name	compiler	result
+full-gp-r-n3	gcc	ok
+full-gp-r-n4	gcc	ok
+full-gp-r-n5	gcc	ok
+full-gp-r-n6	gcc	skipped (too large to write out)
+full-gp-r-n7	gcc	skipped (too large to write out)
+full-gp-rigid-n3	gcc	ok
+full-gp-rigid-n4	gcc	ok
+full-gp-rigid-n5	gcc	ok
+full-gp-rigid-n6	gcc	skipped (too large to write out)
+full-gp-rigid-n7	gcc	skipped (too large to write out)
+full-gp-conformal-n3	gcc	ok
+full-gp-conformal-n4	gcc	ok
+full-gp-conformal-n5	gcc	ok
+full-gp-conformal-n6	gcc	skipped (too large to write out)
+full-gp-conformal-n7	gcc	skipped (too large to write out)
+full-gp-dense-n3	gcc	ok
+full-gp-dense-n4	gcc	ok
+full-gp-dense-n5	gcc	skipped (too large to write out)
+full-gp-dense-n6	gcc	skipped (too large to write out)
+full-wedge-r-n3	gcc	ok
+full-wedge-r-n4	gcc	ok
+full-wedge-r-n5	gcc	ok
+full-wedge-r-n6	gcc	ok
+full-wedge-r-n7	gcc	skipped (too large to write out)
+full-wedge-rigid-n3	gcc	ok
+full-wedge-rigid-n4	gcc	ok
+full-wedge-rigid-n5	gcc	ok
+full-wedge-rigid-n6	gcc	ok
+full-wedge-rigid-n7	gcc	skipped (too large to write out)
+full-wedge-conformal-n3	gcc	ok
+full-wedge-conformal-n4	gcc	ok
+full-wedge-conformal-n5	gcc	ok
+full-wedge-conformal-n6	gcc	ok
+full-wedge-conformal-n7	gcc	skipped (too large to write out)
+full-wedge-dense-n3	gcc	ok
+full-wedge-dense-n4	gcc	ok
+full-wedge-dense-n5	gcc	ok
+full-wedge-dense-n6	gcc	ok
+full-wedge-dense-n7	gcc	skipped (too large to write out)
+full-antigp-r-n3	gcc	ok
+full-antigp-r-n4	gcc	ok
+full-antigp-r-n5	gcc	ok
+full-antigp-r-n6	gcc	skipped (too large to write out)
+full-antigp-r-n7	gcc	skipped (too large to write out)
+full-antigp-rigid-n3	gcc	ok
+full-antigp-rigid-n4	gcc	ok
+full-antigp-rigid-n5	gcc	ok
+full-antigp-rigid-n6	gcc	skipped (too large to write out)
+full-antigp-rigid-n7	gcc	skipped (too large to write out)
+full-antigp-conformal-n3	gcc	ok
+full-antigp-conformal-n4	gcc	ok
+full-antigp-conformal-n5	gcc	ok
+full-antigp-conformal-n6	gcc	skipped (too large to write out)
+full-antigp-conformal-n7	gcc	skipped (too large to write out)
+full-antigp-dense-n3	gcc	ok
+full-antigp-dense-n4	gcc	ok
+full-antigp-dense-n5	gcc	skipped (too large to write out)
+full-antigp-dense-n6	gcc	skipped (too large to write out)
+full-antiwedge-r-n3	gcc	ok
+full-antiwedge-r-n4	gcc	ok
+full-antiwedge-r-n5	gcc	ok
+full-antiwedge-r-n6	gcc	ok
+full-antiwedge-r-n7	gcc	skipped (too large to write out)
+full-antiwedge-rigid-n3	gcc	ok
+full-antiwedge-rigid-n4	gcc	ok
+full-antiwedge-rigid-n5	gcc	ok
+full-antiwedge-rigid-n6	gcc	ok
+full-antiwedge-rigid-n7	gcc	skipped (too large to write out)
+full-antiwedge-conformal-n3	gcc	ok
+full-antiwedge-conformal-n4	gcc	ok
+full-antiwedge-conformal-n5	gcc	ok
+full-antiwedge-conformal-n6	gcc	ok
+full-antiwedge-conformal-n7	gcc	skipped (too large to write out)
+full-antiwedge-dense-n3	gcc	ok
+full-antiwedge-dense-n4	gcc	ok
+full-antiwedge-dense-n5	gcc	ok
+full-antiwedge-dense-n6	gcc	ok
+full-antiwedge-dense-n7	gcc	skipped (too large to write out)
+random-0	gcc	ok
+random-1	gcc	skipped (too large to write out)
+random-2	gcc	ok
+random-3	gcc	ok
+random-4	gcc	ok
+random-5	gcc	ok
+random-6	gcc	ok
+random-7	gcc	skipped (too large to write out)
+random-8	gcc	skipped (too large to write out)
+random-9	gcc	ok
+random-10	gcc	ok
+random-11	gcc	skipped (too large to write out)
+random-12	gcc	ok
+random-13	gcc	ok
+random-14	gcc	ok
+random-15	gcc	ok
+random-16	gcc	ok
+random-17	gcc	skipped (too large to write out)
+random-18	gcc	ok
+random-19	gcc	skipped (too large to write out)
+random-20	gcc	ok
+random-21	gcc	ok
+random-22	gcc	ok
+random-23	gcc	ok
