@@ -28,6 +28,7 @@
 
 #include <doctest/doctest.h>
 
+#include "signatures.hpp"
 #include <reference/golden.hpp>
 
 namespace {
@@ -36,6 +37,7 @@ namespace core = galoot::core;
 using core::coefficient_type;
 using core::mask_t;
 using core::detail::term;
+using galoot_test::for_each_signature;
 
 constexpr std::size_t mask_width = std::numeric_limits<mask_t>::digits;
 
@@ -187,117 +189,6 @@ constexpr std::size_t half_the_subsets(mask_t a, mask_t b) {
     subsets *= 2;
   }
   return subsets == 1 ? 1 : subsets / 2;
-}
-
-// Every signature of the exhaustive checks: the diagonal R(p, q, r) with
-// null generators last, conformal(d), the Witt forms of one and two modes,
-// scaled so that a a† + a† a = 2, a degenerate form with a zero first pivot,
-// rigid(3) with its null generator first, and ten seeded random symmetric
-// forms with entries from -3 to 3.
-template <class Visit>
-void for_each_signature(const Visit& visit) {
-  visit("R(1,0,0)", core::R<1, 0, 0>());
-  visit("R(0,1,0)", core::R<0, 1, 0>());
-  visit("R(0,0,1)", core::R<0, 0, 1>());
-  visit("R(2,0,0)", core::R<2, 0, 0>());
-  visit("R(0,2,0)", core::R<0, 2, 0>());
-  visit("R(1,1,0)", core::R<1, 1, 0>());
-  visit("R(1,0,1)", core::R<1, 0, 1>());
-  visit("R(0,0,2)", core::R<0, 0, 2>());
-  visit("R(3,0,0)", core::R<3, 0, 0>());
-  visit("R(2,1,0)", core::R<2, 1, 0>());
-  visit("R(2,0,1)", core::R<2, 0, 1>());
-  visit("R(1,1,1)", core::R<1, 1, 1>());
-  visit("R(0,0,3)", core::R<0, 0, 3>());
-  visit("R(4,0,0)", core::R<4, 0, 0>());
-  visit("rigid(3)", core::rigid<3>());
-  visit("R(1,3,0)", core::R<1, 3, 0>());
-  visit("R(3,1,0)", core::R<3, 1, 0>());
-  visit("R(2,2,0)", core::R<2, 2, 0>());
-  visit("R(2,0,2)", core::R<2, 0, 2>());
-  visit("R(0,0,4)", core::R<0, 0, 4>());
-  visit("R(4,1,0)", core::R<4, 1, 0>());
-  visit("R(4,0,1)", core::R<4, 0, 1>());
-  visit("R(4,2,0)", core::R<4, 2, 0>());
-  visit("R(3,3,0)", core::R<3, 3, 0>());
-  visit("conformal(1)", core::conformal<1>());
-  visit("conformal(2)", core::conformal<2>());
-  visit("conformal(3)", core::conformal<3>());
-  visit("conformal(4)", core::conformal<4>());
-  visit("Witt, one mode", core::from_gram({
-                              {0, 1},
-                              {1, 0},
-                          }));
-  visit("Witt, two modes", core::from_gram({
-                               {0, 1, 0, 0},
-                               {1, 0, 0, 0},
-                               {0, 0, 0, 1},
-                               {0, 0, 1, 0},
-                           }));
-  visit("degenerate", core::from_gram({
-                          {0, 1, 0},
-                          {1, 0, 0},
-                          {0, 0, 0},
-                      }));
-  visit("rigid(3), null first", core::from_gram({
-                                    {0, 0, 0, 0},
-                                    {0, 1, 0, 0},
-                                    {0, 0, 1, 0},
-                                    {0, 0, 0, 1},
-                                }));
-  visit("random 0", core::from_gram({
-                        {-1, -2},
-                        {-2, 3},
-                    }));
-  visit("random 1", core::from_gram({
-                        {2, 0, -3},
-                        {0, 1, -3},
-                        {-3, -3, -2},
-                    }));
-  visit("random 2", core::from_gram({
-                        {-2, 0, -2, 2},
-                        {0, -2, -3, 3},
-                        {-2, -3, 1, 3},
-                        {2, 3, 3, 3},
-                    }));
-  visit("random 3", core::from_gram({
-                        {3, 1, -3, -1, -2},
-                        {1, -3, -2, 1, 0},
-                        {-3, -2, -2, 3, 0},
-                        {-1, 1, 3, 3, 2},
-                        {-2, 0, 0, 2, -1},
-                    }));
-  visit("random 4", core::from_gram({
-                        {3, 1},
-                        {1, -2},
-                    }));
-  visit("random 5", core::from_gram({
-                        {-3, -3, 0},
-                        {-3, -2, 2},
-                        {0, 2, 0},
-                    }));
-  visit("random 6", core::from_gram({
-                        {0, 1, -1, 0},
-                        {1, -1, 0, -1},
-                        {-1, 0, 2, 0},
-                        {0, -1, 0, -1},
-                    }));
-  visit("random 7", core::from_gram({
-                        {-3, 1, 2, -1, -2},
-                        {1, -3, 0, -3, -1},
-                        {2, 0, 0, 3, -3},
-                        {-1, -3, 3, 1, -2},
-                        {-2, -1, -3, -2, 2},
-                    }));
-  visit("random 8", core::from_gram({
-                        {3, -2},
-                        {-2, -2},
-                    }));
-  visit("random 9", core::from_gram({
-                        {-3, 1, -2},
-                        {1, -3, -2},
-                        {-2, -2, 1},
-                    }));
 }
 
 // The number of pairs i, j for which e_i e_j + e_j e_i is not 2 g_ij.

@@ -1,0 +1,3 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+r_make_capacity_one	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+r_make_capacity_two	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’

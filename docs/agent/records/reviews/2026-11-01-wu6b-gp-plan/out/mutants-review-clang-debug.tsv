@@ -1,0 +1,26 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+r_make_capacity_one	clang-debug	0	8	core.plan_overflow	killed	-	-	-
+r_make_capacity_two	clang-debug	0	8	core.plan_overflow	killed	-	-	-
+r_range_or	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second	killed	-	-	-
+r_range_n_plus_one	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_range_skip_last	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_31	killed	-	-	-
+r_sign_check_or	clang-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+r_guard_or	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_bad_sign	killed	-	-	-
+r_guard_range_only	clang-debug	0	8	core.plan_bad_sign	killed	-	-	-
+r_guard_signs_only	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_n_is_mask_bits	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+r_sign_second_from_first_place	clang-debug	1	-	-	killed	plan_test.cpp:292,plan_test.cpp:298,plan_test.cpp:307,plan_test.cpp:310	-	test/core/plan_test.cpp:292:15: error: static assertion failed due to requirement 'follows_diagonal_rule((anonymous namespace)::rga3::value, line, plane, gp_plan<(anonymous namespace)::rga3, line, pla
+r_sign_first_from_last_place	clang-debug	1	-	-	killed	plan_test.cpp:292,plan_test.cpp:295,plan_test.cpp:307,plan_test.cpp:310	-	test/core/plan_test.cpp:292:15: error: static assertion failed due to requirement 'follows_diagonal_rule((anonymous namespace)::rga3::value, line, plane, gp_plan<(anonymous namespace)::rga3, line, pla
+r_sign_negated	clang-debug	1	-	-	killed	plan_test.cpp:265,plan_test.cpp:292,plan_test.cpp:295,plan_test.cpp:298,plan_test.cpp:318,plan_test.cpp:320,plan_test.cpp:322	-	test/core/plan_test.cpp:265:15: error: static assertion failed due to requirement 'gp_plan<(anonymous namespace)::rga3, point, point> == std::array<galoot::core::detail::plan_term, 15>{{{.a = 0, .b = 
+r_sign_by_equality	clang-debug	0	0	-	SURVIVED	-	-	-
+r_write_at_k	clang-debug	1	-	-	killed	plan.hpp:213,plan.hpp:221,plan_test.cpp:265,plan_test.cpp:292,plan_test.cpp:295,plan_test.cpp:298	-	include/galoot/core/plan.hpp:213:19: error: static assertion failed due to requirement '!defects.zero_coefficient': gp plan: a generated term has a zero coefficient
+r_fill_one_short	clang-debug	1	-	-	killed	plan_test.cpp:291,plan_test.cpp:292,plan_test.cpp:294,plan_test.cpp:295,plan_test.cpp:297,plan_test.cpp:298,plan_test.cpp:306,plan_test.cpp:329,plan_test.cpp:332,plan_test.cpp:335,plan_test.cpp:342	-	test/core/plan_test.cpp:265:43: error: invalid operands to binary expression ('const std::array<plan_term, 14UL>' and 'std::array<plan_term, 15>')
+r_capacity_first_operand_only	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:69:32: error: unused variable 'y' [-Werror,-Wunused-variable]
+r_capacity_ge	clang-debug	0	0	-	SURVIVED	-	-	-
+r_defects_skip_first	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_defects_skip_last	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_order_numeric	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+r_order_new_a_needs_b	clang-debug	1	-	-	killed	plan.hpp:221	-	include/galoot/core/plan.hpp:221:19: error: static assertion failed due to requirement '!defects.out_of_order': gp plan: generated terms are out of order or repeated
+r_defects_sizes_swapped	clang-debug	1	-	-	killed	plan.hpp:215,plan.hpp:217	-	include/galoot/core/plan.hpp:215:19: error: static assertion failed due to requirement '!defects.beyond_first': gp plan: a generated term points past the first set
+r_defects_n_widest	clang-debug	0	0	-	SURVIVED	-	-	-
+r_count_plain	clang-debug	0	0	-	SURVIVED	-	-	-

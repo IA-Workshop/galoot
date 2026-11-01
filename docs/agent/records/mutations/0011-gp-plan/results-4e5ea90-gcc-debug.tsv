@@ -1,0 +1,50 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+sign_fold_dropped	gcc-debug	1	-	-	killed	plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:400,plan_test.cpp:472	-	test/core/plan_test.cpp:382:36: error: static assertion failed
+sign_first_only	gcc-debug	1	-	-	killed	plan_test.cpp:382,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:400	-	test/core/plan_test.cpp:382:36: error: static assertion failed
+sign_second_only	gcc-debug	1	-	-	killed	plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:397,plan_test.cpp:400,plan_test.cpp:472	-	test/core/plan_test.cpp:382:36: error: static assertion failed
+sign_first_twice	gcc-debug	1	-	-	killed	plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:400,plan_test.cpp:472	-	test/core/plan_test.cpp:382:36: error: static assertion failed
+sign_by_sum	gcc-debug	1	-	-	killed	plan.hpp:213,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:400,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:459,plan_test.cpp:472	-	test/core/plan_test.cpp:355:43: error: static assertion failed
+positions_swapped	gcc-debug	1	-	-	killed	plan.hpp:215,plan.hpp:217,plan.hpp:221,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:400,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:472	-	include/galoot/core/plan.hpp:221:28: error: static assertion failed: gp plan: generated terms are out of order or repeated
+a_off_by_one	gcc-debug	1	-	-	killed	plan.hpp:215,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:400,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:459,plan_test.cpp:472	-	include/galoot/core/plan.hpp:215:28: error: static assertion failed: gp plan: a generated term points past the first set
+b_off_by_one	gcc-debug	1	-	-	killed	plan.hpp:217,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:397,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:459,plan_test.cpp:472	-	include/galoot/core/plan.hpp:217:28: error: static assertion failed: gp plan: a generated term points past the second set
+out_shifted	gcc-debug	1	-	-	killed	plan.hpp:219,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:472	-	include/galoot/core/plan.hpp:219:28: error: static assertion failed: gp plan: a generated term has a generator beyond e_n
+out_xor	gcc-debug	1	-	-	killed	plan.hpp:221,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:472	-	include/galoot/core/plan.hpp:221:28: error: static assertion failed: gp plan: generated terms are out of order or repeated
+loops_swapped	gcc-debug	1	-	-	killed	plan.hpp:221,plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:472	-	include/galoot/core/plan.hpp:221:28: error: static assertion failed: gp plan: generated terms are out of order or repeated
+terms_reversed	gcc-debug	1	-	-	killed	plan.hpp:221,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:472	-	include/galoot/core/plan.hpp:221:28: error: static assertion failed: gp plan: generated terms are out of order or repeated
+first_blade_skipped	gcc-debug	1	-	-	killed	plan_test.cpp:381,plan_test.cpp:382,plan_test.cpp:384,plan_test.cpp:385,plan_test.cpp:387,plan_test.cpp:388,plan_test.cpp:396,plan_test.cpp:472,plan_test.cpp:481	-	test/core/plan_test.cpp:355:43: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 11>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+last_pair_skipped	gcc-debug	1	-	-	killed	plan_test.cpp:381,plan_test.cpp:382,plan_test.cpp:384,plan_test.cpp:385,plan_test.cpp:387,plan_test.cpp:388,plan_test.cpp:396,plan_test.cpp:472,plan_test.cpp:481	-	test/core/plan_test.cpp:355:43: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 12>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+repeat_skipped	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:761:42: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::detail::plan_term, 2>&>’ and ‘std::array<galoot::cor
+count_plus_one	gcc-debug	1	-	-	killed	plan.hpp:213,plan.hpp:215,plan.hpp:217,plan.hpp:221,plan_test.cpp:381,plan_test.cpp:382,plan_test.cpp:384,plan_test.cpp:385,plan_test.cpp:387,plan_test.cpp:388,plan_test.cpp:396,plan_test.cpp:472,plan_test.cpp:481	-	include/galoot/core/plan.hpp:213:28: error: static assertion failed: gp plan: a generated term has a zero coefficient
+count_only_written	gcc-debug	1	-	-	killed	plan_test.cpp:381,plan_test.cpp:382,plan_test.cpp:384,plan_test.cpp:385,plan_test.cpp:387,plan_test.cpp:388,plan_test.cpp:396,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:459,plan_test.cpp:472,plan_test.cpp:481	-	test/core/plan_test.cpp:355:43: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 0>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+write_any_nonempty	gcc-debug	0	8	core.plan	killed	-	generate_gp counts every term and writes only what fits	-
+write_bound_inclusive	gcc-debug	1	-	-	killed	-	-	/usr/include/c++/16/span:288:9: error: call to non-‘constexpr’ function ‘void std::__glibcxx_assert_fail(const char*, int, const char*, const char*)’
+capacity_start_zero	gcc-debug	0	8	core.plan	killed	-	A plan with an empty blade set is empty	-
+capacity_last_pair	gcc-debug	0	8	core.plan	killed	-	plan_capacity is the largest bound over the pairs	-
+capacity_intersection	gcc-debug	0	8	core.plan	killed	-	plan_capacity is the largest bound over the pairs	-
+capacity_halved	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+fill_negated	gcc-debug	1	-	-	killed	plan_test.cpp:355,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:419,plan_test.cpp:422,plan_test.cpp:425,plan_test.cpp:436,plan_test.cpp:439,plan_test.cpp:441,plan_test.cpp:448,plan_test.cpp:453,plan_test.cpp:459,plan_test.cpp:472	-	test/core/plan_test.cpp:355:43: error: static assertion failed
+fill_sets_swapped	gcc-debug	1	-	-	killed	plan.hpp:215,plan.hpp:217,plan_test.cpp:382,plan_test.cpp:385,plan_test.cpp:388,plan_test.cpp:408,plan_test.cpp:410,plan_test.cpp:412,plan_test.cpp:472	-	include/galoot/core/plan.hpp:217:28: error: static assertion failed: gp plan: a generated term points past the second set
+range_first_only	gcc-debug	0	8	core.plan_beyond_n_second	killed	-	-	-
+range_second_only	gcc-debug	0	8	core.plan_beyond_n	killed	-	-	-
+range_check_removed	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+range_first_blade_only	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second	killed	-	-	-
+range_rejects_empty	gcc-debug	1	-	-	killed	plan.hpp:200	-	include/galoot/core/plan.hpp:200:17: error: static assertion failed: gp plan: a blade set names a generator beyond e_n
+sign_check_first_only	gcc-debug	0	8	core.plan_bad_sign_second	killed	-	-	-
+sign_check_second_only	gcc-debug	0	8	core.plan_bad_sign	killed	-	-	-
+sign_check_removed	gcc-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+generation_unguarded	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_bad_sign	killed	-	-	-
+zero_check_removed	gcc-debug	0	0	-	SURVIVED	-	-	-
+first_check_removed	gcc-debug	0	0	-	SURVIVED	-	-	-
+second_check_removed	gcc-debug	0	0	-	SURVIVED	-	-	-
+beyond_n_check_removed	gcc-debug	0	0	-	SURVIVED	-	-	-
+order_check_removed	gcc-debug	0	0	-	SURVIVED	-	-	-
+first_bound_strict	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+second_bound_strict	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+zero_test_wrong	gcc-debug	1	-	-	killed	plan.hpp:213	-	include/galoot/core/plan.hpp:213:28: error: static assertion failed: gp plan: a generated term has a zero coefficient
+beyond_n_test_one_more	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_allows_repeat	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_b	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_a	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+locals_plain	gcc-debug	0	0	-	SURVIVED	-	-	-
+plan_term_not_trivially_copyable	gcc-debug	1	-	-	killed	plan_test.cpp:480	-	test/core/plan_test.cpp:480:20: error: static assertion failed
+plan_term_not_aggregate	gcc-debug	1	-	-	killed	plan_test.cpp:479	-	test/core/plan_test.cpp:327:3: error: could not convert ‘{{{0, 0, {anonymous}::e1, 1}, {0, 1, {anonymous}::e2, 1}, {0, 2, en, 1}, {1, 0, 0, 1}, {1, 1, {anonymous}::e12, 1}, {1, 2, ({anonymous}::e1 | e

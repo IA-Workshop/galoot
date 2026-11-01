@@ -1,0 +1,50 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+sign_fold_dropped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+sign_first_only	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | gp_plan accepts the generators of the widest algebra	-
+sign_second_only	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+sign_first_twice	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+sign_by_sum	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra | Two uses of one plan read the same plan	-
+positions_swapped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+a_off_by_one	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+b_off_by_one	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+out_shifted	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra	-
+out_xor	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term	-
+loops_swapped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | generate_gp counts every term and writes only what fits | gp_plan accepts the generators of the widest algebra	-
+terms_reversed	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded	-
+first_blade_skipped	clang-debug	1	-	-	killed	plan_test.cpp:342	-	test/core/plan_test.cpp:265:51: error: invalid operands to binary expression ('const std::array<plan_term, 11UL>' and 'std::array<plan_term, 15>')
+last_pair_skipped	clang-debug	1	-	-	killed	plan_test.cpp:342	-	test/core/plan_test.cpp:265:51: error: invalid operands to binary expression ('const std::array<plan_term, 12UL>' and 'std::array<plan_term, 15>')
+repeat_skipped	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:594:42: error: invalid operands to binary expression ('Expression_lhs<const std::array<galoot::core::detail::plan_term, 2> &>' and 'std::array<plan_term, 3>')
+count_plus_one	clang-debug	1	-	-	killed	plan_test.cpp:342	-	test/core/plan_test.cpp:265:51: error: invalid operands to binary expression ('const std::array<plan_term, 16UL>' and 'std::array<plan_term, 15>')
+count_only_written	clang-debug	1	-	-	killed	plan_test.cpp:342	-	test/core/plan_test.cpp:265:51: error: invalid operands to binary expression ('const std::array<plan_term, 0UL>' and 'std::array<plan_term, 15>')
+write_any_nonempty	clang-debug	0	8	core.plan	killed	-	generate_gp counts every term and writes only what fits	-
+write_bound_inclusive	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:206:34: error: constexpr variable 'count' must be initialized by a constant expression
+capacity_start_zero	clang-debug	0	8	core.plan	killed	-	A plan with an empty blade set is empty	-
+capacity_last_pair	clang-debug	0	8	core.plan	killed	-	plan_capacity is the largest bound over the pairs	-
+capacity_intersection	clang-debug	0	8	core.plan	killed	-	plan_capacity is the largest bound over the pairs	-
+capacity_halved	clang-debug	0	8	core.plan,core.plan_overflow	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded	-
+fill_negated	clang-debug	0	8	core.plan	killed	-	gp_plan equals generate_gp run at run time | generate_gp counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | gp_plan accepts the generators of the widest algebra | Two uses of one plan read the same plan	-
+fill_sets_swapped	clang-debug	0	8	core.plan	killed	-	No plan has a zero coefficient, a position or blade out of range, or a repeated term | A repeated blade gets the terms of each place that lists it	-
+range_first_only	clang-debug	0	8	core.plan_beyond_n_second	killed	-	-	-
+range_second_only	clang-debug	0	8	core.plan_beyond_n	killed	-	-	-
+range_check_removed	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+range_first_blade_only	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second	killed	-	-	-
+range_rejects_empty	clang-debug	1	-	-	killed	plan.hpp:200	-	include/galoot/core/plan.hpp:200:17: error: static assertion failed due to requirement 'in_range': gp plan: a blade set names a generator beyond e_n
+sign_check_first_only	clang-debug	0	8	core.plan_bad_sign_second	killed	-	-	-
+sign_check_second_only	clang-debug	0	8	core.plan_bad_sign	killed	-	-	-
+sign_check_removed	clang-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+generation_unguarded	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31	killed	-	-	-
+zero_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+second_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+beyond_n_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+order_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_bound_strict	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+second_bound_strict	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+zero_test_wrong	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+beyond_n_test_one_more	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_allows_repeat	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_b	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_a	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+locals_plain	clang-debug	0	0	-	SURVIVED	-	-	-
+plan_term_not_trivially_copyable	clang-debug	1	-	-	killed	plan_test.cpp:341	-	test/core/plan_test.cpp:341:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::plan_term>'
+plan_term_not_aggregate	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:141:23: error: initialization of non-aggregate type 'const plan_term' with a designated initializer list

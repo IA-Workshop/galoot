@@ -1,0 +1,4 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+r_make_capacity_one	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:206:34: error: constexpr variable 'count' must be initialized by a constant expression
+r_make_capacity_two	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:206:34: error: constexpr variable 'count' must be initialized by a constant expression
+r_gp_plan_unconstrained	clang-debug	0	8	core.plan_not_metric_like	killed	-	-	-

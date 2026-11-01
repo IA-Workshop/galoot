@@ -1,0 +1,66 @@
+compiler	unit	repeat	instructions	peak_kib
+gcc	blade_product	1	652935957	63916
+clang	blade_product	1	544205443	101608
+gcc	blade_product+span	1	671580977	64016
+clang	blade_product+span	1	556072243	101904
+gcc	blade_product+span-uses	1	671939205	64316
+clang	blade_product+span-uses	1	555189472	101908
+gcc	plan	1	756910335	68492
+clang	plan	1	736126789	108172
+gcc	core	1	757121801	68332
+clang	core	1	735945495	108208
+gcc	blade_product	2	652669474	64112
+clang	blade_product	2	543828799	101784
+gcc	blade_product+span	2	671543167	63908
+clang	blade_product+span	2	555346762	101928
+gcc	blade_product+span-uses	2	672193210	64312
+clang	blade_product+span-uses	2	555633952	101936
+gcc	plan	2	756702977	68608
+clang	plan	2	737057665	108248
+gcc	core	2	757192406	68228
+clang	core	2	736701752	107684
+gcc	blade_product	3	652697451	63992
+clang	blade_product	3	543872483	101648
+gcc	blade_product+span	3	671504792	63940
+clang	blade_product+span	3	555468995	101908
+gcc	blade_product+span-uses	3	671990471	64260
+clang	blade_product+span-uses	3	556367700	101852
+gcc	plan	3	756723898	68600
+clang	plan	3	737029293	108228
+gcc	core	3	756898657	68336
+clang	core	3	736322908	108244
+
+# Clang trace of plan.cpp, microseconds
+# Total ExecuteCompiler	166966
+# Total Frontend	164289
+# Total InstantiateClass	26762
+# Total InstantiateFunction	5233
+# Total ParseClass	63247
+# Total PerformPendingInstantiations	25
+# Total Source	163386
+# InstantiateClass events naming span<, summed (nested events overlap)	33028
+# InstantiateClass	7682	std::span<const galoot::core::oriented_blade>
+# InstantiateClass	7070	std::span<galoot::core::detail::plan_term>
+# InstantiateClass	5474	std::span<const galoot::core::detail::plan_term>
+# ParseClass	3579	std::__compare::_Strong_order
+# InstantiateClass	2723	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::oriented_blade *, std::span<const galoot::core::o
+# ParseClass	2573	std::pair
+# ParseClass	2264	std::ranges::__detail::__max_size_type
+# InstantiateClass	1775	std::reverse_iterator<__gnu_cxx::__normal_iterator<galoot::core::detail::plan_term *, std::span<galoot::core::detail::pl
+# ParseClass	1772	std::common_iterator
+# InstantiateClass	1685	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::detail::plan_term *, std::span<const galoot::core
+# ParseClass	1348	std::weak_ordering
+# ParseClass	1341	std::ranges::__detail::__max_diff_type
+# ParseClass	1321	std::ranges::__swap::_Swap
+# ParseClass	1306	std::strong_ordering
+# ParseClass	1300	std::partial_ordering
+# ParseClass	1112	std::counted_iterator
+# ParseClass	1110	std::basic_const_iterator
+# InstantiateClass	1109	std::common_reference<galoot::core::detail::plan_term &, galoot::core::detail::plan_term &&>
+# ParseClass	1005	std::reverse_iterator
+# ParseClass	885	std::basic_string_view
+# ParseClass	786	std::span
+# ParseClass	732	std::char_traits
+# ParseClass	706	std::ranges::__advance_fn
+# ParseClass	701	std::move_iterator
+# ParseClass	697	std::char_traits
