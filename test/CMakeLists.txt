@@ -346,6 +346,11 @@ add_test(NAME tools.test_references_golden_accepts
     "every use of golden values states its fact"
     -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp)
+add_test(NAME tools.test_references_golden_helper_header
+  COMMAND ${expect_output} 1
+    "helper_headers/helper.hpp:7: golden values of alpha are used outside a test case"
+    -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
+      ${reference_fixtures}/golden_good.cpp ${reference_fixtures}/helper_headers)
 add_test(NAME tools.test_references_trace_rejects
   COMMAND ${expect_output} 1
     "trace_bad_table.md:7: item 1.2 is implemented and no test states its fact"
@@ -353,6 +358,9 @@ add_test(NAME tools.test_references_trace_rejects
     "trace_bad_table.md:9: Implemented is 'maybe', not yes or no"
     "trace_bad_table.md:10: item 3.1 has an empty fact"
     "golden_fixture.hpp: the fact of namespace beta, 'e1 ^ e2 = -e2 ^ e1', is not in"
+    "trace_bad_table.md:11: item 1.1 is implemented and no test states its fact"
+    "trace_bad_table.md:12: row of item 2.1 is not three cells between | signs"
+    "trace_bad_table.md: item 4.1 of ${reference_fixtures}/trace_conventions.md has no row"
     -- ${test_references} trace ${reference_fixtures}/trace_bad_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
@@ -369,7 +377,7 @@ add_test(NAME tools.test_references_trace_accepts
     "1.1: ${reference_fixtures}/golden_good.cpp:12"
     "1.2: ${reference_fixtures}/golden_good.cpp:17"
     "2.1: ${reference_fixtures}/golden_good.cpp:23"
-    "items with no test: 3.1"
+    "items with no test: 3.1, 4.1"
     -- ${test_references} trace ${reference_fixtures}/trace_good_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
@@ -377,6 +385,7 @@ add_test(NAME tools.test_references_trace_accepts
 set_tests_properties(
   tools.test_references_markers_rejects tools.test_references_markers_accepts
   tools.test_references_golden_rejects tools.test_references_golden_accepts
+  tools.test_references_golden_helper_header
   tools.test_references_trace_rejects tools.test_references_trace_no_rows
   tools.test_references_trace_accepts
   PROPERTIES LABELS "tools;tools.test_references")
