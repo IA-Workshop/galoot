@@ -246,6 +246,68 @@ add_test(NAME core.metric_is_null
 set_tests_properties(core.metric_is_null PROPERTIES
   LABELS "core;core.metric")
 
+# core.blade_set: blade sets, their canonical order, and the name parser,
+# against definitions in the test and the golden values.
+galoot_add_test(MODULE core COMPONENT blade_set)
+target_link_libraries(core_blade_set_test PRIVATE galoot_golden)
+
+# core.blade_set_<case>: each misuse of a blade set constructor fails to
+# compile with its literal message, which a static_assert prints after
+# `static assertion failed`. Several misuses share a message, so a test whose
+# misuse could also trip a neighboring check forbids that check's message.
+function(blade_set_rejects case message)
+  galoot_add_compile_fail_test(NAME blade_set_${case}
+    MODULE core COMPONENT blade_set
+    SOURCE core/blade_set_${case}_fail.cpp
+    MESSAGE "${message}"
+    REQUIRE "static assertion failed" ${ARGN})
+endfunction()
+set(not_a_name "blades: a name must be 1 or start with e, as in e12")
+set(bad_index
+  "blades: after the e, a name lists generator indices, each a digit from 1 to 9")
+set(index_above_n
+  "blades: a name has an index above n, the number of generators")
+set(repeated_generator "blades: a name lists one generator twice")
+set(same_blade "blades: two names stand for the same blade")
+set(no_generators
+  "blade_set: an algebra has at least one generator, so n = 0 is rejected")
+set(grade_range "of_grade: the grade must be from 0 to n")
+blade_set_rejects(no_names "blades: the list names no blade")
+blade_set_rejects(not_a_name_letter "${not_a_name}")
+blade_set_rejects(not_a_name_digit "${not_a_name}")
+blade_set_rejects(bad_index_zero "${bad_index}")
+blade_set_rejects(bad_index_letter "${bad_index}")
+blade_set_rejects(no_index "${bad_index}")
+blade_set_rejects(index_above_n "${index_above_n}")
+blade_set_rejects(repeated_generator "${repeated_generator}"
+  FORBID "${same_blade}")
+blade_set_rejects(repeated_name "${same_blade}")
+blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
+# The names of these two are not read, so no message about them may appear.
+blade_set_rejects(names_above_9
+  "blades: names such as e123 have one digit per index, so they are read only for n up to 9"
+  FORBID "${repeated_generator}")
+blade_set_rejects(names_zero "${no_generators}" FORBID "${index_above_n}")
+blade_set_rejects(full_zero "${no_generators}")
+blade_set_rejects(full_wide
+  "blade_set: n is larger than the number of bits in a blade mask")
+blade_set_rejects(of_grade_zero "${no_generators}")
+blade_set_rejects(of_grade_above_n "${grade_range}")
+blade_set_rejects(of_grade_negative "${grade_range}")
+blade_set_rejects(merge_opposite_signs
+  "merge: the two sets hold one blade with opposite signs")
+blade_set_rejects(index_of_absent
+  "index_of: the set holds no blade with this mask")
+
+# core.blade_set_name_beyond_e9: a blade with no compact name ends the
+# constant evaluation of canonical_name, and the diagnostic shows the line
+# of its assertion.
+galoot_add_compile_fail_test(NAME blade_set_name_beyond_e9
+  MODULE core COMPONENT blade_set
+  SOURCE core/blade_set_name_beyond_e9_fail.cpp
+  MESSAGE "canonical_name: a generator beyond e9"
+  REQUIRE "assertion_failed")
+
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
 add_test(NAME tools.measure_record
