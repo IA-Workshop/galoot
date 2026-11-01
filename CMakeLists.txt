@@ -51,10 +51,11 @@ target_compile_definitions(galoot_core INTERFACE
 # which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. Every
 # preset but lint sets GALOOT_PRESET, since a compile under clang-tidy does
 # not cost what a user's compile does. The record is the build tree's own
-# compile.tsv, so a tree configured with -B beside a preset's own tree keeps
-# its rows apart, and the build never writes outside its source and build
-# trees. The launcher applies to every compile in the tree, the header-check
-# units included.
+# compile.tsv by default, so a tree configured with -B beside a preset's own
+# tree keeps its rows apart, and the build writes nothing outside its source
+# and build trees. A record elsewhere, from -D or from an older cache, gets a
+# warning at every configure. The launcher applies to every compile in the
+# tree, the header-check units included.
 set(GALOOT_PRESET "" CACHE STRING
   "Preset named in each compile cost row; empty records no compile costs")
 set(GALOOT_COMPILE_RECORD "${CMAKE_BINARY_DIR}/compile.tsv" CACHE FILEPATH
@@ -63,6 +64,14 @@ if(NOT GALOOT_PRESET STREQUAL "")
   if(GALOOT_COMPILE_RECORD STREQUAL "")
     message(FATAL_ERROR "GALOOT_PRESET is '${GALOOT_PRESET}', so each compile "
       "records its cost, but GALOOT_COMPILE_RECORD names no file for the rows.")
+  endif()
+  cmake_path(IS_PREFIX CMAKE_BINARY_DIR "${GALOOT_COMPILE_RECORD}" NORMALIZE
+    record_in_tree)
+  if(NOT record_in_tree)
+    message(WARNING "GALOOT_COMPILE_RECORD is ${GALOOT_COMPILE_RECORD}, "
+      "outside this build tree, so every compile here appends its cost row "
+      "to that file. Remove the entry from CMakeCache.txt to use the tree's "
+      "own compile.tsv.")
   endif()
   set(CMAKE_CXX_COMPILER_LAUNCHER
     ${PROJECT_SOURCE_DIR}/tools/measure tu ${GALOOT_PRESET}

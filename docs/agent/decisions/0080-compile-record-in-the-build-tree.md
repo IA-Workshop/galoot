@@ -43,3 +43,24 @@ At the commit that makes this change: `cmake --workflow --preset gcc-measure` pa
 - A measurement build no longer records anything committed until an agent copies it, so a forgotten copy loses the rows from the history (they stay in the tree until removed). The gate report says whether the step ran.
 - An existing build tree configured before this change keeps the old cache value, which for a measurement tree is the committed path. Such a tree is reconfigured with `cmake --preset <name> --fresh`, or its `GALOOT_COMPILE_RECORD` entry is removed from `CMakeCache.txt`.
 - `tools/measure` still leaves `docs/agent/records/performance/` out of its check for uncommitted changes, so copying rows does not mark a later run's revision dirty.
+
+## Amendment, 2026-10-31 (W5 review of `feature/cleanup-1`, finding N5)
+
+The copy step above does not stop when a check fails, so a failed `tools/measure read` or `cmp` still appended rows, and it did not say which trees may be copied. It is replaced by the step below. The review's other point, that a stale cache or a stray `-D` override writes into another file without notice, is handled in the build: `CMakeLists.txt` warns at every configure when `GALOOT_COMPILE_RECORD` is not under `CMAKE_BINARY_DIR`, naming the file. Shown: configuring `build/gcc-debug-other` with `-DGALOOT_COMPILE_RECORD=<scratchpad>/outside.tsv` prints the warning; with `-UGALOOT_COMPILE_RECORD` the entry returns to the tree's own `compile.tsv` and no warning appears.
+
+A gate or measurement tree whose rows are copied is a clean build: configured fresh (`cmake --preset <name> -B <tree> --fresh`, or a new directory), with no `compile.tsv` before the build, and built once at a committed revision with no uncommitted changes, so that every row comes from one build of one revision. A tree that was rebuilt, or whose rows show more than one revision or a `-dirty` one, is not copied.
+
+```bash
+set -eu
+tree=<absolute path of the build tree>
+record=docs/agent/records/performance/compile.tsv   # from the repository root
+tools/measure read "$tree/compile.tsv" > /dev/null
+cmp <(head -n 1 "$tree/compile.tsv") <(head -n 1 "$record")
+test "$(tools/measure read "$tree/compile.tsv" revision | tail -n +2 | sort -u | wc -l)" = 1
+tools/measure read "$tree/compile.tsv" revision | tail -n +2 | grep -qv -- '-dirty$'
+tail -n +2 "$tree/compile.tsv" >> "$record"
+tools/measure read "$record" > /dev/null
+rm -- "$tree/compile.tsv"
+```
+
+Run it in a subshell (`bash -c '...'` or a script), so that `set -e` ends only the step. The first failing command stops it before any row is appended.
