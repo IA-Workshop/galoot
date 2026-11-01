@@ -299,11 +299,8 @@ consteval auto make_merge() {
   constexpr auto u = unite(A, B);
   static_assert(!u.bad_sign, "merge: a set holds a sign other than +1 or -1");
   static_assert(!u.repeated_mask, "merge: a set holds one mask twice");
-  // Only when each input is valid is a mask found twice in both inputs.
-  if constexpr (!u.bad_sign && !u.repeated_mask) {
-    static_assert(!u.opposite_signs, "merge: the two sets hold one blade with "
-                                     "opposite signs");
-  }
+  static_assert(!u.opposite_signs, "merge: the two sets hold one blade with "
+                                   "opposite signs");
   blade_set<u.size> set{};
   for (std::size_t i = 0; i < u.size; ++i) {
     set.blades[i] = u.blades[i];
