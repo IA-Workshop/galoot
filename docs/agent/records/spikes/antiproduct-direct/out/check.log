@@ -1,0 +1,115 @@
+R(1,0,0): n=1 components=[1] pairs=4 terms=4 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(0,1,0): n=1 components=[1] pairs=4 terms=4 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(0,0,1): n=1 components=[1] pairs=4 terms=3 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1 pairs
+R(2,0,0): n=2 components=[1, 1] pairs=16 terms=16 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(1,1,0): n=2 components=[1, 1] pairs=16 terms=16 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(1,0,1): n=2 components=[1, 1] pairs=16 terms=12 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 6 pairs
+R(0,2,0): n=2 components=[1, 1] pairs=16 terms=16 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(0,1,1): n=2 components=[1, 1] pairs=16 terms=12 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 6 pairs
+R(0,0,2): n=2 components=[1, 1] pairs=16 terms=9 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 10 pairs
+R(3,0,0): n=3 components=[1, 1, 1] pairs=64 terms=64 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(2,1,0): n=3 components=[1, 1, 1] pairs=64 terms=64 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(2,0,1): n=3 components=[1, 1, 1] pairs=64 terms=48 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 30 pairs
+R(1,2,0): n=3 components=[1, 1, 1] pairs=64 terms=64 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(1,1,1): n=3 components=[1, 1, 1] pairs=64 terms=48 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 30 pairs
+R(1,0,2): n=3 components=[1, 1, 1] pairs=64 terms=36 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 39 pairs
+R(0,3,0): n=3 components=[1, 1, 1] pairs=64 terms=64 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(0,2,1): n=3 components=[1, 1, 1] pairs=64 terms=48 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 30 pairs
+R(0,1,2): n=3 components=[1, 1, 1] pairs=64 terms=36 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 39 pairs
+R(0,0,3): n=3 components=[1, 1, 1] pairs=64 terms=27 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 38 pairs
+R(4,0,0): n=4 components=[1, 1, 1, 1] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(3,1,0): n=4 components=[1, 1, 1, 1] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(3,0,1): n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 138 pairs
+R(2,2,0): n=4 components=[1, 1, 1, 1] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(2,1,1): n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 138 pairs
+R(2,0,2): n=4 components=[1, 1, 1, 1] pairs=256 terms=144 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 153 pairs
+R(1,3,0): n=4 components=[1, 1, 1, 1] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(1,2,1): n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 138 pairs
+R(1,1,2): n=4 components=[1, 1, 1, 1] pairs=256 terms=144 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 153 pairs
+R(1,0,3): n=4 components=[1, 1, 1, 1] pairs=256 terms=108 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 141 pairs
+R(0,4,0): n=4 components=[1, 1, 1, 1] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(0,3,1): n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 138 pairs
+R(0,2,2): n=4 components=[1, 1, 1, 1] pairs=256 terms=144 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 153 pairs
+R(0,1,3): n=4 components=[1, 1, 1, 1] pairs=256 terms=108 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 141 pairs
+R(0,0,4): n=4 components=[1, 1, 1, 1] pairs=256 terms=81 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 130 pairs
+R(5,0,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(4,1,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(4,0,1): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 606 pairs
+R(3,2,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(3,1,1): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 606 pairs
+R(3,0,2): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=576 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 603 pairs
+R(2,3,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(2,2,1): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 606 pairs
+R(2,1,2): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=576 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 603 pairs
+R(2,0,3): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=432 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 531 pairs
+R(1,4,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(1,3,1): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 606 pairs
+R(1,2,2): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=576 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 603 pairs
+R(1,1,3): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=432 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 531 pairs
+R(1,0,4): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=324 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 471 pairs
+R(0,5,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(0,4,1): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 606 pairs
+R(0,3,2): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=576 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 603 pairs
+R(0,2,3): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=432 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 531 pairs
+R(0,1,4): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=324 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 471 pairs
+R(0,0,5): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=243 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 422 pairs
+R(6,0,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(5,1,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(5,0,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(4,2,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(4,1,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(4,0,2): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2385 pairs
+R(3,3,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(3,2,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(3,1,2): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2385 pairs
+R(3,0,3): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1728 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2025 pairs
+R(2,4,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(2,3,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(2,2,2): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2385 pairs
+R(2,1,3): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1728 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2025 pairs
+R(2,0,4): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1296 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1737 pairs
+R(1,5,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs NOT repairable by per-blade signs
+R(1,4,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(1,3,2): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2385 pairs
+R(1,2,3): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1728 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2025 pairs
+R(1,1,4): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1296 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1737 pairs
+R(1,0,5): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=972 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1509 pairs
+R(0,6,0): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: supports agree, signs repairable by per-blade signs
+R(0,5,1): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2586 pairs
+R(0,4,2): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2385 pairs
+R(0,3,3): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1728 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2025 pairs
+R(0,2,4): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=1296 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1737 pairs
+R(0,1,5): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=972 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1509 pairs
+R(0,0,6): n=6 components=[1, 1, 1, 1, 1, 1] pairs=4096 terms=729 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1330 pairs
+diag(0,1,1) null first: n=3 components=[1, 1, 1] pairs=64 terms=48 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 30 pairs
+diag(0,1,1,1) null first: n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 138 pairs
+diag(2,-3,0,5): n=4 components=[1, 1, 1, 1] pairs=256 terms=192 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 202 pairs
+diag(3,1,-2,1,0): n=5 components=[1, 1, 1, 1, 1] pairs=1024 terms=768 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 768 pairs
+conformal(1): n=3 components=[1, 2] pairs=64 terms=64 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 32 pairs
+conformal(2): n=4 components=[1, 1, 2] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 128 pairs
+conformal(3): n=5 components=[1, 1, 1, 2] pairs=1024 terms=1024 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 512 pairs
+conformal(4): n=6 components=[1, 1, 1, 1, 2] pairs=4096 terms=4096 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2048 pairs
+Witt, one mode: n=2 components=[2] pairs=16 terms=16 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 8 pairs
+Witt, two modes: n=4 components=[2, 2] pairs=256 terms=256 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 160 pairs
+Witt, two modes + e+ + e0: n=6 components=[2, 2, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2514 pairs
+degenerate [[0,1,0],[1,0,0],[0,0,0]]: n=3 components=[2, 1] pairs=64 terms=48 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 42 pairs
+radical off the generators [[1,1,0],[1,0,1],[0,1,-1]]: n=3 components=[3] pairs=64 terms=108 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 56 pairs
+conformal(2) + null + negative: n=6 components=[1, 1, 2, 1, 1] pairs=4096 terms=3072 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2688 pairs
+e+ + conformal(1) + e0 + e0: n=6 components=[1, 1, 2, 1, 1] pairs=4096 terms=2304 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 2313 pairs
+dense n=2 (2 diagonal, 1 elsewhere): n=2 components=[2] pairs=16 terms=22 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 10 pairs
+dense n=3 (2 diagonal, 1 elsewhere): n=3 components=[3] pairs=64 terms=136 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 53 pairs
+dense n=4 (2 diagonal, 1 elsewhere): n=4 components=[4] pairs=256 terms=832 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 236 pairs
+dense n=5 (2 diagonal, 1 elsewhere): n=5 components=[5] pairs=1024 terms=4864 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 987 pairs
+dense n=6 (2 diagonal, 1 elsewhere): n=6 components=[6] pairs=4096 terms=27136 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 4026 pairs
+random[0] seed 20261031: n=2 components=[2] pairs=16 terms=22 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 10 pairs
+random[1] seed 20261031: n=3 components=[3] pairs=64 terms=118 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 59 pairs
+random[2] seed 20261031: n=4 components=[4] pairs=256 terms=814 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 250 pairs
+random[3] seed 20261031: n=5 components=[5] pairs=1024 terms=5326 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1017 pairs
+random[4] seed 20261031: n=2 components=[2] pairs=16 terms=22 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 10 pairs
+random[5] seed 20261031: n=3 components=[3] pairs=64 terms=100 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 56 pairs
+random[6] seed 20261031: n=4 components=[4] pairs=256 terms=562 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 243 pairs
+random[7] seed 20261031: n=5 components=[5] pairs=1024 terms=5404 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 1013 pairs
+random[8] seed 20261031: n=2 components=[2] pairs=16 terms=22 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 10 pairs
+random[9] seed 20261031: n=3 components=[3] pairs=64 terms=136 differ: full=0 reduced=0 reduced+=0 closed=0 order=0; naive: support or magnitude differs on 59 pairs
+forms=113 pairs=168764 oracle terms=150972 route differences=0 seconds=35.0
+timed: check antiproduct-routes took 35.019 s (exit 0)

@@ -1,0 +1,16 @@
+dense n=2: e1 ⟇ e2 has 2 terms (bound 1 + C(n,2) = 2); e1 ⟑ e2 has 2
+generic n=2: e1 ⟇ e2 has 2 terms (bound 1 + C(n,2) = 2); e1 ⟑ e2 has 2
+dense n=3: e1 ⟇ e2 has 4 terms (bound 1 + C(n,2) = 4); e1 ⟑ e2 has 2
+generic n=3: e1 ⟇ e2 has 4 terms (bound 1 + C(n,2) = 4); e1 ⟑ e2 has 2
+dense n=4: e1 ⟇ e2 has 6 terms (bound 1 + C(n,2) = 7); e1 ⟑ e2 has 2
+generic n=4: e1 ⟇ e2 has 7 terms (bound 1 + C(n,2) = 7); e1 ⟑ e2 has 2
+dense n=5: e1 ⟇ e2 has 8 terms (bound 1 + C(n,2) = 11); e1 ⟑ e2 has 2
+generic n=5: e1 ⟇ e2 has 10 terms (bound 1 + C(n,2) = 11); e1 ⟑ e2 has 2
+dense n=6: e1 ⟇ e2 has 10 terms (bound 1 + C(n,2) = 16); e1 ⟑ e2 has 2
+generic n=6: e1 ⟇ e2 has 15 terms (bound 1 + C(n,2) = 16); e1 ⟑ e2 has 2
+dense n=7: e1 ⟇ e2 has 12 terms (bound 1 + C(n,2) = 22); e1 ⟑ e2 has 2
+generic n=7: e1 ⟇ e2 has 11 terms (bound 1 + C(n,2) = 22); e1 ⟑ e2 has 2
+n=4: in R(n-1,0,1) e1n ⟇ e1n = {15: -1}, e1 ⟇ e1 = {}; in R(n,0,0) e1 ⟇ e1 = {15: -1}
+n=8: in R(n-1,0,1) e1n ⟇ e1n = {255: -1}, e1 ⟇ e1 = {}; in R(n,0,0) e1 ⟇ e1 = {255: -1}
+n=12: in R(n-1,0,1) e1n ⟇ e1n = {4095: -1}, e1 ⟇ e1 = {}; in R(n,0,0) e1 ⟇ e1 = {4095: -1}
+n=16: in R(n-1,0,1) e1n ⟇ e1n = {65535: -1}, e1 ⟇ e1 = {}; in R(n,0,0) e1 ⟇ e1 = {65535: -1}
