@@ -6,6 +6,7 @@ grows with the number of generators.
 Usage, from the repository root, with the job pool exported:
   measure_maps.py limits <out-dir> [cpu]
   measure_maps.py growth <before-revision> <out-dir> [repeats] [cpu]
+  measure_maps.py sparse <out-dir> [repeats] [cpu]
 
 Every compile runs as `taskset -c <cpu> tools/timed measure ...` (default
 CPU 10, a performance core), so its row in runs.tsv is in pinned mode, with
@@ -39,6 +40,12 @@ growth  Fixed uses embedded in R(n-1,0,1), e4 becoming e_n, at n = 4, 8, 12,
         every term at run time so that its table is emitted. The compiles
         are interleaved repeat by repeat. Writes <out-dir>/growth.tsv and
         <out-dir>/summary.txt.
+sparse  The sparse sets {1, e1, e_n, e1n} x {e1, e2, e_n} of R(n-1,0,1), at
+        n = 4, 8, 12, and 16, through the geometric product and through the
+        geometric antiproduct, each unit reading every term at run time,
+        with a baseline of the same algebra and sets and no plan; the
+        checkout's include/, Galoot's flags at -O0. Writes
+        <out-dir>/sparse.tsv and <out-dir>/summary.txt.
 """
 
 import io
@@ -394,6 +401,62 @@ def growth(before_revision, out, repeats, cpu):
     shutil.rmtree(out / "before")
 
 
+def sparse_growth(out, repeats, cpu):
+    if git("status", "--porcelain", "--", "include", "test"):
+        sys.exit("include/ or test/ has uncommitted changes")
+    out.mkdir(parents=True, exist_ok=True)
+    units = out / "units"
+    units.mkdir(exist_ok=True)
+    after = git("rev-parse", "--short=7", "HEAD")
+    rows = []
+    for repeat in range(1, repeats + 1):
+        for n in SIZES:
+            first, second = sparse_sets(n, False)
+            for use in ("baseline", "gp", "antigp"):
+                reads = [] if use == "baseline" else [
+                    plan_terms("after", use, "alg", first, second)]
+                body = " + ".join(
+                    f"{t}[static_cast<std::size_t>(argc) % {t}.size()]"
+                    ".coefficient" for t in reads) or "0"
+                text = (preamble() + algebra(f"core::R<{n - 1}, 0, 1>()") +
+                        "int main([[maybe_unused]] int argc, char**) {\n"
+                        f"  return static_cast<int>({body});\n}}\n")
+                source = units / f"sparse-{use}-n{n}.cpp"
+                source.write_text(text, encoding="utf-8")
+                for compiler in COMPILERS:
+                    r = compile_pinned(
+                        f"maps-sparse:{compiler}:{use}:n{n}:{repeat}",
+                        compiler, CONFIGS["galoot-O0"], source,
+                        ROOT / "include", cpu)
+                    if r["exit"] != 0:
+                        sys.exit(f"{source} failed:\n{r['stderr'][:4000]}")
+                    rows.append({"compiler": compiler, "use": use,
+                                 "tree": "after", "n": n, "repeat": repeat,
+                                 **r})
+                    print(compiler, use, n, repeat, r["inst_p_u"], flush=True)
+    write_rows(out / "sparse.tsv",
+               ["compiler", "use", "tree", "n", "repeat", *KEYS], rows)
+    lines = [f"headers of {after}; instructions retired on the pinned core, "
+             "mean of the repeats, in M; each use is the unit minus the "
+             "baseline at the same n"]
+    for compiler in COMPILERS:
+        for use in ("gp", "antigp"):
+            costs = []
+            for n in SIZES:
+                full, spread = mean_of(rows, compiler=compiler, use=use, n=n)
+                base, base_spread = mean_of(rows, compiler=compiler,
+                                            use="baseline", n=n)
+                costs.append((n, (full - base) / 1e6,
+                              max(spread, base_spread) / 1e6))
+            parts = "; ".join(f"n={n} {c:.1f} M (spread {s:.1f})"
+                              for n, c, s in costs)
+            lines.append(f"{compiler} {use}: {parts}; n=16 / n=4 = "
+                         f"{costs[-1][1] / costs[0][1]:.2f}")
+    (out / "summary.txt").write_text("\n".join(lines) + "\n",
+                                     encoding="utf-8")
+    print((out / "summary.txt").read_text(encoding="utf-8"))
+
+
 def main(argv):
     if len(argv) < 2:
         sys.exit(__doc__)
@@ -406,6 +469,10 @@ def main(argv):
         out = pathlib.Path(argv[2]).resolve()
         growth(argv[1], out, int(argv[3]) if len(argv) > 3 else 3,
                argv[4] if len(argv) > 4 else "10")
+    elif mode == "sparse":
+        out = pathlib.Path(argv[1]).resolve()
+        sparse_growth(out, int(argv[2]) if len(argv) > 2 else 3,
+                      argv[3] if len(argv) > 3 else "10")
     else:
         sys.exit(__doc__)
     shutil.rmtree(out / "units", ignore_errors=True)
