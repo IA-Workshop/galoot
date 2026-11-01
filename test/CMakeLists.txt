@@ -468,12 +468,15 @@ galoot_add_compile_fail_test(NAME plan_overflow MODULE core COMPONENT plan
   MESSAGE "${product_overflow}"
   REQUIRE "assertion_failed" "blade_product.hpp"
   FORBID "gp plan:")
-# The tag is checked by the concept on gp_plan, whose failure the compiler
-# reports in its own words; both name the concept.
+# The tag is checked by the concept on gp_plan itself, whose failure the
+# compiler reports in its own words; both name the concept. The function that
+# generates the plan carries the concept too, so the test forbids its name:
+# a diagnostic that leads with it would point the user at internal code.
 galoot_add_compile_fail_test(NAME plan_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_not_metric_like_fail.cpp
-  MESSAGE "metric_like")
+  MESSAGE "metric_like"
+  FORBID "make_gp_plan")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
