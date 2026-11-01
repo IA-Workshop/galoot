@@ -201,9 +201,117 @@ filled_reduced_plan(const core::metric<N>& g, mask_t inside,
   return plan;
 }
 
+// The data each generator brings, kept once per algebra: the mask of its
+// coupling component, and for the lowest generator of each component the
+// component's determinant (-1)^(|K|(|K|-1)/2) e_K e_K (1 elsewhere).
+template <std::size_t N>
+struct coupling_data {
+  std::array<mask_t, N> component;
+  std::array<coefficient_type, N> det;
+};
+
+template <std::size_t N>
+[[nodiscard]] constexpr std::array<mask_t, N>
+components_of(const core::metric<N>& g) noexcept {
+  std::array<mask_t, N> component{};
+  for (std::size_t i = 0; i < N; ++i) {
+    if (component[i] == 0) {
+      const mask_t k = coupled_closure(g, mask_t{1} << i);
+      for (mask_t rest = k; rest != 0; rest &= rest - 1) {
+        component[static_cast<std::size_t>(std::countr_zero(rest))] = k;
+      }
+    }
+  }
+  return component;
+}
+
+template <std::size_t N>
+[[nodiscard]] constexpr std::size_t
+largest_component_capacity(const std::array<mask_t, N>& component) noexcept {
+  std::size_t capacity = 1;
+  for (const mask_t k : component) {
+    const std::size_t c = detail::product_capacity(k, k);
+    if (c > capacity) {
+      capacity = c;
+    }
+  }
+  return capacity;
+}
+
+template <std::size_t Capacity, std::size_t N>
+[[nodiscard]] constexpr std::array<coefficient_type, N>
+component_dets(const core::metric<N>& g,
+               const std::array<mask_t, N>& component) noexcept {
+  std::array<coefficient_type, N> det{};
+  for (std::size_t i = 0; i < N; ++i) {
+    const mask_t k = component[i];
+    det[i] = 1;
+    if (static_cast<std::size_t>(std::countr_zero(k)) == i) {
+      const auto square = detail::blade_product<Capacity>(g, k, k);
+      const int size = core::grade(k);
+      det[i] = parity_sign(size * (size - 1) / 2) *
+               (square.size() == 0 ? 0 : square.terms[0].coefficient);
+    }
+  }
+  return det;
+}
+
+template <core::metric_like Alg>
+[[nodiscard]] consteval auto make_coupling() {
+  static constexpr auto component = components_of(Alg::value);
+  static constexpr std::size_t capacity = largest_component_capacity(component);
+  static constexpr auto det = component_dets<capacity>(Alg::value, component);
+  return coupling_data<Alg::value.generator_count>{component, det};
+}
+
+/// The coupling components of the algebra of Alg, computed once per algebra.
+template <core::metric_like Alg>
+inline constexpr auto coupling = make_coupling<Alg>();
+
+// C and γ for a plan whose blades use the generators `used`.
+struct plan_split {
+  mask_t inside;
+  coefficient_type spectators;
+};
+
+// From the per-algebra data: one step per used generator and one per
+// component outside C.
+template <std::size_t N>
+[[nodiscard]] constexpr plan_split split_from(const coupling_data<N>& c,
+                                              mask_t used) noexcept {
+  mask_t inside = 0;
+  for (mask_t rest = used; rest != 0; rest &= rest - 1) {
+    inside |= c.component[static_cast<std::size_t>(std::countr_zero(rest))];
+  }
+  const mask_t outside = detail::low_bits(N) & ~inside;
+  coefficient_type det = 1;
+  for (mask_t rest = outside; rest != 0 && det != 0;) {
+    const auto i = static_cast<std::size_t>(std::countr_zero(rest));
+    det = detail::multiply_checked(det, c.det[i]);
+    rest &= ~c.component[i];
+  }
+  const int q = core::grade(outside);
+  return {.inside = inside, .spectators = parity_sign(q * (q - 1) / 2) * det};
+}
+
+// Per plan (PerAlgebra false: the closure and the spectators' squares from the
+// rows of the form) or from the per-algebra data (true).
+template <bool PerAlgebra, core::metric_like Alg, mask_t Used>
+[[nodiscard]] consteval plan_split split_for() {
+  if constexpr (PerAlgebra) {
+    return split_from(coupling<Alg>, Used);
+  } else {
+    static constexpr reduction split = reduction_of(Alg::value, Used);
+    static constexpr coefficient_type spectators =
+        spectator_square<split.component_capacity>(Alg::value, split.outside);
+    return {.inside = split.inside, .spectators = spectators};
+  }
+}
+
 // As make_product_plan for the geometric antiproduct, with the same checks
 // and typing, every local static constexpr.
-template <core::metric_like Alg, core::blade_set A, core::blade_set B>
+template <bool PerAlgebra, core::metric_like Alg, core::blade_set A,
+          core::blade_set B>
 [[nodiscard]] consteval auto make_reduced_plan() {
   static constexpr std::size_t n = Alg::value.generator_count;
   static constexpr bool in_range =
@@ -215,10 +323,9 @@ template <core::metric_like Alg, core::blade_set A, core::blade_set B>
   static_assert(valid_signs, "reduced plan: a blade set holds a sign other "
                              "than +1 or -1");
   if constexpr (in_range && valid_signs) {
-    static constexpr reduction split =
-        reduction_of(Alg::value, used_generators(A) | used_generators(B));
-    static constexpr coefficient_type spectators =
-        spectator_square<split.component_capacity>(Alg::value, split.outside);
+    static constexpr plan_split split =
+        split_for<PerAlgebra, Alg, used_generators(A) | used_generators(B)>();
+    static constexpr coefficient_type spectators = split.spectators;
     static constexpr std::size_t capacity =
         reduced_capacity(A.blades, B.blades, split.inside);
     static constexpr std::size_t count = generate_reduced_plan<capacity>(
@@ -247,8 +354,13 @@ template <core::metric_like Alg, core::blade_set A, core::blade_set B>
   }
 }
 
+/// The reduced plan, with C and γ computed for the plan.
 template <core::metric_like Alg, core::blade_set A, core::blade_set B>
-inline constexpr auto reduced_plan = make_reduced_plan<Alg, A, B>();
+inline constexpr auto reduced_plan = make_reduced_plan<false, Alg, A, B>();
+
+/// The reduced plan, with C and γ from the per-algebra coupling data.
+template <core::metric_like Alg, core::blade_set A, core::blade_set B>
+inline constexpr auto cached_plan = make_reduced_plan<true, Alg, A, B>();
 
 } // namespace antiproduct_spike
 

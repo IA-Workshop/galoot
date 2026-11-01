@@ -9,9 +9,11 @@ Usage, from the repository root:
 The headers are those of <wu7b-revision> (the branch that holds the
 antiproduct plans), extracted with git archive. The use is the four typed
 rigid(3) pairs of the WU7b growth record (point x point, line x plane,
-motor x point, point x motor), e4 read as e_n, through four units: a
+motor x point, point x motor), e4 read as e_n, through six units: a
 baseline with the sets and no plan, the geometric product, the conjugated
-geometric antiproduct, and the reduced one. Every unit includes the same
+geometric antiproduct, the reduced one with C and gamma computed per plan,
+the baseline plus the per-algebra coupling data alone, and the reduced one
+with C and gamma from that data. Every unit includes the same
 headers. Each unit reads every term at run time, so that its table is
 emitted. Galoot's test flags at -O0, -c. Every compile runs as
 `taskset -c <cpu> tools/timed measure ...` (default CPU 10), so that its
@@ -78,14 +80,19 @@ def preamble(n):
 
 
 def plan(use, a, b):
-    if use == "reduced":
-        return f"antiproduct_spike::reduced_plan<alg, {a}, {b}>.terms"
+    if use in ("reduced", "cached"):
+        return f"antiproduct_spike::{use}_plan<alg, {a}, {b}>.terms"
     op = {"gp": "gp", "antigp": "antigp"}[use]
     return (f"detail::product_plan<detail::BinaryOperation::{op}, alg, "
             f"{a}, {b}>.terms")
 
 
 def unit(n, use):
+    if use == "coupling":
+        # The baseline plus the per-algebra coupling data alone.
+        return (preamble(n) + "static_assert(antiproduct_spike::coupling<alg>"
+                ".component[0] != 0);\n" + unit(n, "baseline").split(
+                    preamble(n))[1])
     reads = [] if use == "baseline" else [plan(use, a, b) for a, b in PAIRS]
     reads = [f"{t}[static_cast<std::size_t>(argc) % {t}.size()].coefficient"
              for t in reads]
@@ -102,8 +109,9 @@ def agreement_unit():
         body = preamble(n).split("namespace detail = galoot::core::detail;\n")[1]
         text += f"namespace n{n} {{\n{body}"
         for a, b in PAIRS:
-            text += (f"static_assert({plan('reduced', a, b)[:-6]} == "
-                     f"{plan('antigp', a, b)[:-6]});\n")
+            for use in ("reduced", "cached"):
+                text += (f"static_assert({plan(use, a, b)[:-6]} == "
+                         f"{plan('antigp', a, b)[:-6]});\n")
         text += "}\n"
     return text
 
@@ -165,7 +173,7 @@ def main(argv):
     for compiler in COMPILERS:
         r = compile_pinned(f"antiproduct-agree:{compiler}", compiler, source,
                            include, cpu)
-        agreement.append(f"{compiler}: reduced plan == conjugated plan for "
+        agreement.append(f"{compiler}: reduced and cached plans == conjugated plan for "
                          f"the four pairs at n = {', '.join(map(str, SIZES))}"
                          f" (compiled, {int(r['inst_p_u']) / 1e6:.0f} M)")
     (out / "agreement.txt").write_text(
@@ -173,7 +181,7 @@ def main(argv):
         encoding="utf-8")
 
     rows = []
-    uses = ("baseline", "gp", "antigp", "reduced")
+    uses = ("baseline", "gp", "antigp", "reduced", "coupling", "cached")
     for repeat in range(1, repeats + 1):
         for n in SIZES:
             for use in uses:

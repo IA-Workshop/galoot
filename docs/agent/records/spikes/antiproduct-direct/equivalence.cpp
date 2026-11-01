@@ -45,7 +45,11 @@ consteval bool rigid_pairs_agree() {
   using S = rigid_sets<N>;
   using Alg = rigid_alg<N>;
   constexpr auto anti = detail::BinaryOperation::antigp;
-  return spike::reduced_plan<Alg, S::point, S::point> ==
+  return spike::cached_plan<Alg, S::point, S::point> ==
+             detail::product_plan<anti, Alg, S::point, S::point> &&
+         spike::cached_plan<Alg, S::motor, S::point> ==
+             detail::product_plan<anti, Alg, S::motor, S::point> &&
+         spike::reduced_plan<Alg, S::point, S::point> ==
              detail::product_plan<anti, Alg, S::point, S::point> &&
          spike::reduced_plan<Alg, S::line, S::plane> ==
              detail::product_plan<anti, Alg, S::line, S::plane> &&
@@ -80,6 +84,9 @@ static_assert(spike::reduced_plan<conformal2, core::full<4>, core::full<4>> ==
 constexpr core::blade_set<3> conformal_use{{{{1, 1}, {2, -1}, {8, 1}}}};
 constexpr core::blade_set<2> conformal_other{{{{3, 1}, {9, 1}}}};
 static_assert(spike::reduction_of(conformal3::value, 11).inside == 27);
+static_assert(spike::cached_plan<conformal3, conformal_use, conformal_other> ==
+              detail::product_plan<anti, conformal3, conformal_use,
+                                   conformal_other>);
 static_assert(spike::reduced_plan<conformal3, conformal_use, conformal_other> ==
               detail::product_plan<anti, conformal3, conformal_use,
                                    conformal_other>);
@@ -90,6 +97,9 @@ constexpr std::size_t capacity = 32; // product_capacity of n = 6 generators
 template <std::size_t N>
 int compare_all_pairs(const core::metric<N>& g, const char* name) {
   int failures = 0;
+  const auto component = spike::components_of(g);
+  const spike::coupling_data<N> coupling{
+      component, spike::component_dets<capacity>(g, component)};
   std::array<detail::plan_term, capacity> reduced{};
   std::array<detail::plan_term, capacity> conjugated{};
   for (core::mask_t a = 0; a < (core::mask_t{1} << N); ++a) {
@@ -104,7 +114,9 @@ int compare_all_pairs(const core::metric<N>& g, const char* name) {
             g, split.inside, gamma, as, bs, reduced);
         const std::size_t c =
             detail::generate_plan<anti, capacity>(g, as, bs, conjugated);
-        bool same = r == c;
+        const spike::plan_split cached = spike::split_from(coupling, a | b);
+        bool same = r == c && cached.inside == split.inside &&
+                    cached.spectators == gamma;
         for (std::size_t k = 0; same && k < r; ++k) {
           same = reduced[k] == conjugated[k];
         }
