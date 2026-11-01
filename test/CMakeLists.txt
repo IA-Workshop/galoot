@@ -638,7 +638,9 @@ if(CMAKE_CXX_FLAGS MATCHES "-D_GLIBCXX_ASSERTIONS")
       gp_grades_3_7=601471
       antigp_sparse16=77513
       reverse_full7=313635
-      right_complement_full8=813090)
+      right_complement_full8=813090
+      antiwedge_full5=271653
+      gp_vectors_full6=474959)
   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
       NOT CMAKE_CXX_FLAGS MATCHES "-fsanitize")
     set(plan_cost_compiler gcc)
@@ -648,7 +650,9 @@ if(CMAKE_CXX_FLAGS MATCHES "-D_GLIBCXX_ASSERTIONS")
       gp_grades_3_7=4235775
       antigp_sparse16=443211
       reverse_full7=1577666
-      right_complement_full8=5717129)
+      right_complement_full8=5717129
+      antiwedge_full5=1393084
+      gp_vectors_full6=2415778)
   endif()
 endif()
 if(DEFINED plan_cost_compiler)
