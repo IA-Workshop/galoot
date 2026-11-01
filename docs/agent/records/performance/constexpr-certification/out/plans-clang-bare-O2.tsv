@@ -1,0 +1,15 @@
+name	compiler	config	cache	threshold	kind	where	compiles
+full-gp-r-n3	clang	bare-O2	warm	28119	limit	include/galoot/core/plan.hpp:453:27	12
+full-gp-r-n4	clang	bare-O2	warm	148815	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-r-n5	clang	bare-O2	warm	766591	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-r-n6	clang	bare-O2	warm	5659111	limit	include/galoot/core/plan.hpp:469:27	13
+full-gp-r-n7	clang	bare-O2	warm	44676263	limit	include/galoot/core/plan.hpp:469:27	13
+full-gp-rigid-n3	clang	bare-O2	warm	24423	limit	include/galoot/core/plan.hpp:453:27	12
+full-gp-rigid-n4	clang	bare-O2	warm	128223	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-rigid-n5	clang	bare-O2	warm	656767	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-rigid-n6	clang	bare-O2	warm	4636071	limit	include/galoot/core/plan.hpp:469:27	13
+full-gp-rigid-n7	clang	bare-O2	warm	36325031	limit	include/galoot/core/plan.hpp:469:27	13
+full-gp-conformal-n3	clang	bare-O2	warm	32591	limit	include/galoot/core/plan.hpp:453:27	12
+full-gp-conformal-n4	clang	bare-O2	warm	167359	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-conformal-n5	clang	bare-O2	warm	843391	limit	include/galoot/core/plan.hpp:453:27	13
+full-gp-conformal-n6	clang	bare-O2	warm	5659111	limit	include/galoot/core/plan.hpp:469:27	13

@@ -1,0 +1,14 @@
+full-gp-r-n3 28119 limit include/galoot/core/plan.hpp:453:27 12
+full-gp-r-n4 148815 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-r-n5 766591 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-r-n6 5659111 limit include/galoot/core/plan.hpp:469:27 13
+full-gp-r-n7 44676263 limit include/galoot/core/plan.hpp:469:27 13
+full-gp-rigid-n3 24423 limit include/galoot/core/plan.hpp:453:27 12
+full-gp-rigid-n4 128223 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-rigid-n5 656767 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-rigid-n6 4636071 limit include/galoot/core/plan.hpp:469:27 13
+full-gp-rigid-n7 36325031 limit include/galoot/core/plan.hpp:469:27 13
+full-gp-conformal-n3 32591 limit include/galoot/core/plan.hpp:453:27 12
+full-gp-conformal-n4 167359 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-conformal-n5 843391 limit include/galoot/core/plan.hpp:453:27 13
+full-gp-conformal-n6 5659111 limit include/galoot/core/plan.hpp:469:27 13
