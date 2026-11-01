@@ -313,10 +313,13 @@ TEST_CASE("conformal(d) and R(d+1, 1, 0) are different signatures, and the "
 
   // conformal(0) in the generators of R(1, 1, 0), written out: the origin is
   // (e2 - e1) / 2 and infinity e2 + e1.
-  constexpr std::array<std::array<fraction, 2>, 2> conformal0_in_diagonal{{
-      {{{-1, 2}, {1, 2}}},
-      {{{1, 1}, {1, 1}}},
-  }};
+  constexpr fraction half{.numerator = 1, .denominator = 2};
+  constexpr fraction minus_half{.numerator = -1, .denominator = 2};
+  constexpr fraction one{.numerator = 1, .denominator = 1};
+  using row = std::array<fraction, 2>;
+  constexpr row origin{minus_half, half};
+  constexpr row infinity{one, one};
+  constexpr std::array<row, 2> conformal0_in_diagonal{origin, infinity};
   CHECK(change_of_basis_mismatches(conformal0_in_diagonal, core::R<1, 1, 0>(),
                                    core::conformal<0>()) == 0);
   CHECK(change_of_basis_mismatches(golden::conformal::d1_in_diagonal,
