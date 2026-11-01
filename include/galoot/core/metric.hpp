@@ -295,17 +295,20 @@ inline constexpr bool is_valid_form_v = is_valid_form(Alg::value);
 /// every entry within max_form_entry in magnitude. Any N that metric<N>
 /// allows is accepted, whatever MaxN the factory was given. The concept tests
 /// the data only, and is false rather than an error for a type that has no
-/// such member or whose member cannot be read at compile time. The matrix is
-/// read once per algebra in each translation unit.
+/// such member or whose member cannot be read at compile time. The full
+/// check of the matrix runs once per algebra in each translation unit.
 template <class Alg>
 concept metric_like =
     detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>> &&
-    // Taken from the type alone, so that gram[0][0] exists below.
+    // The number of generators comes from the type, which is known even when
+    // the value cannot be read at compile time or is a non-static member.
+    // It is checked before the read below, so that gram[0][0] exists.
     (std::remove_cvref_t<decltype(Alg::value)>::generator_count >= 1) &&
     // A value that cannot be read at compile time would make the stored
     // verdict a compile error rather than false, so one entry is read here
-    // first. One is enough: an entry can be read at compile time exactly when
-    // the whole value can.
+    // first. Inside a requires-expression, a read that fails makes the
+    // requirement false, not an error. One entry is enough: an entry can be
+    // read at compile time exactly when the whole value can.
     requires {
       typename std::integral_constant<entry_type, Alg::value.gram[0][0]>;
     } && detail::is_valid_form_v<Alg>;
