@@ -118,7 +118,16 @@ struct coefficient_storage;
 
 template <class Multivector, class T, std::size_t... I>
 struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
-  std::array<T, sizeof...(I)> coefficients{};
+  // T{} in every place, written out once per position. The shorter `{}`
+  // gives the same value, but GCC 16 then reuses one shared initializer for
+  // every place, and a constant evaluation that writes into one value of the
+  // type changes what a later `{}` of the type gives at run time: with a
+  // rational scalar whose T{} is 0/1, the places from the one written on
+  // became 0/0.
+  std::array<T, sizeof...(I)> coefficients{zero_at(I)...};
+
+  // T{}, for the place `position`.
+  static constexpr T zero_at(std::size_t /*position*/) { return T{}; }
 
   constexpr coefficient_storage() = default;
 
