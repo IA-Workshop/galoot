@@ -289,6 +289,13 @@ def reader(s):
     check("exit of a read of an unknown column",
           s.measure_cmd(["read", record, "z"]).returncode, 1)
 
+    missing = os.path.join(s.top, "no-such-record.tsv")
+    result = s.measure_cmd(["read", missing])
+    check("exit of a read of a missing file", result.returncode, 1)
+    check("a read of a missing file names it without a traceback",
+          (missing in result.stderr, "Traceback" in result.stderr),
+          (True, False))
+
 
 def record_with_another_header(s):
     # Appending under a header that describes other columns would mislabel
