@@ -361,17 +361,25 @@ def evals(out, cpu):
         trace = copy.with_suffix(".clang.json")
         events = [e for e in json.loads(trace.read_text())["traceEvents"]
                   if e.get("ph") == "X"]
+        # The fill is the local `plan` of make_gp_plan, so only an
+        # evaluation of a `plan` within an instantiation of make_gp_plan
+        # counts; the test's own variables of that name do not.
         counts = collections.Counter()
+        instantiations = [
+            (e["ts"], e["ts"] + e["dur"]) for e in events
+            if e["name"] == "InstantiateFunction" and re.match(
+                r"galoot::core::detail::make_gp_plan<",
+                e.get("args", {}).get("detail", ""))]
+        counts["instantiations"] = len(instantiations)
         for e in events:
             detail = e.get("args", {}).get("detail", "")
-            if e["name"] == "InstantiateFunction" and re.match(
-                    r"galoot::core::detail::make_gp_plan<", detail):
-                counts["instantiations"] += 1
-            elif e["name"] == "EvaluateAsInitializer":
-                if detail == "galoot::core::detail::gp_plan":
-                    counts["gp_plan"] += 1
-                elif detail == "plan":
-                    counts["fill"] += 1
+            if e["name"] != "EvaluateAsInitializer":
+                continue
+            if detail == "galoot::core::detail::gp_plan":
+                counts["gp_plan"] += 1
+            elif detail == "plan" and any(start <= e["ts"] < end
+                                          for start, end in instantiations):
+                counts["fill"] += 1
         lines.append(f"{unit}\t{counts['instantiations']}\t"
                      f"{counts['gp_plan']}\t{counts['fill']}")
         print(lines[-1], flush=True)
