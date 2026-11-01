@@ -556,9 +556,9 @@ TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
 // Reference: proof: a form meets the requirement when g_ij = g_ji and
 // |g_ij| <= max_form_entry for every i and j, and over six entries with two
 // in each class (below, within, and above the range) that holds for
-// 2^(n(n + 1) / 2) of the matrices, 64 at n = 3; the six entries realize every
-// pattern of classes and mirrored equalities, so the check covers every int
-// matrix of three generators
+// 2^(n(n + 1) / 2) of the matrices, 64 at n = 3; proof: the six entries
+// realize every pattern of classes and mirrored equalities, so the check
+// covers every int matrix of three generators
 TEST_CASE("At n = 3, the single pass that metric_like stores agrees with the "
           "requirement and with is_symmetric() && entries_in_range() on "
           "every matrix over the six sample entries, and accepts 64") {
