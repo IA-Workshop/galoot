@@ -9,8 +9,9 @@ Usage:
       <golden.hpp> <path>...
 
 A <path> that is a directory is searched for files named *_test.cpp, which are
-the only files the build compiles into test programs; a <path> that is a file
-is read as given. Each command prints one line per finding, as
+the only files the build compiles into test programs, and for `golden` and
+`trace` also for headers (*.hpp, *.h), which test programs include; a <path>
+that is a file is read as given. Each command prints one line per finding, as
 <file>:<line>: <finding>, and exits 1 if there is any, else 0.
 
 The reference marker
@@ -46,19 +47,23 @@ outside any test case, which carries a marker of the same form directly above
 it. A use is `golden::<namespace>`, or a namespace alias of one, in code (not
 in comments or strings). `using` declarations and directives that name golden
 values are rejected, because they hide which test uses which values, and so is
-a use anywhere else, such as in a helper function: pass the values to the
-helper from the test case instead. A fact is matched ignoring case and runs
-of whitespace, with the wedge sign read as ^ and the minus sign as -.
+a use anywhere else, such as in a helper function or a helper header: pass
+the values to the helper from the test case instead. A fact is matched
+ignoring case and runs of whitespace, with the wedge sign read as ^ and the
+minus sign as -.
 
 Traceability
 ------------
 `trace` reads <table>, a Markdown table with the columns Item, Fact, and
 Implemented (yes or no): a specification item, a fact of it, and whether the
-library implements it. It checks that every item exists in <specification>
-(lines that start with the item number, such as `3.1 `), and that every fact
-of <golden.hpp> is in the table. A test case or marked static_assert pins an
-item when its marker states one of the item's facts. The command prints each
-item with what pins it, and fails if an implemented item has no test.
+library implements it. An item may have several rows, one per fact; a fact
+may not contain `|`. It checks that the table's items and the items of
+<specification> (lines that start with the item number, such as `3.1 `) are
+the same, that every line that starts a row has exactly three cells, and that
+every fact of <golden.hpp> is in the table. A test case or marked
+static_assert pins a row when its marker states the row's fact. The command
+prints each item with what pins any of its rows, and fails if a row marked
+implemented has no test that states its fact.
 """
 
 import os
@@ -90,7 +95,7 @@ GOLDEN_USE = re.compile(r"(?<![\w:])(?:::)?golden::(\w+)")
 ALIAS = re.compile(r"\bnamespace\s+(\w+)\s*=\s*(?:::)?golden(?:::(\w+))?\s*;")
 USING = re.compile(r"\busing\s+(?:namespace\s+)?(?:::)?golden\b")
 SPEC_ITEM = re.compile(r"^(\d+\.\d+) ")
-TABLE_ROW = re.compile(r"^\|\s*(\d+\.\d+)\s*\|([^|]*)\|([^|]*)\|\s*$")
+ITEM = re.compile(r"\d+\.\d+")
 
 
 def normalize(text):
@@ -231,13 +236,15 @@ class Source:
                      self.code[start:end])
 
 
-def read_sources(paths):
+def read_sources(paths, suffixes=("_test.cpp",)):
+    """The sources at paths: each file given, and in each directory given,
+    every file whose name ends with one of the suffixes."""
     files = []
     for path in paths:
         if os.path.isdir(path):
             for directory, _, names in os.walk(path):
                 files += [os.path.join(directory, n) for n in names
-                          if n.endswith("_test.cpp")]
+                          if n.endswith(suffixes)]
         else:
             files.append(path)
     return [Source(f) for f in sorted(files)]
@@ -299,23 +306,25 @@ def read_golden(path):
     return facts, findings
 
 
+def golden_uses(code, aliases, facts):
+    """Each golden namespace with a fact that the code uses, directly or
+    through one of the aliases, with the offset of its first use."""
+    used = {}
+    for m in GOLDEN_USE.finditer(code):
+        used.setdefault(m.group(1), m.start())
+    for alias, target in aliases.items():
+        pattern = rf"(?<![\w:]){alias}::" + ("" if target else r"(\w+)")
+        for m in re.finditer(pattern, code):
+            used.setdefault(target or m.group(1), m.start())
+    return {name: at for name, at in used.items() if name in facts}
+
+
 def golden_findings(golden_path, sources):
     facts, findings = read_golden(golden_path)
     for source in sources:
         aliases = {}
         for match in ALIAS.finditer(source.code):
             aliases[match.group(1)] = match.group(2)  # None for golden itself
-
-        def uses(code):
-            """Each golden namespace the code uses, with its first offset."""
-            used = {}
-            for m in GOLDEN_USE.finditer(code):
-                used.setdefault(m.group(1), m.start())
-            for alias, target in aliases.items():
-                pattern = rf"(?<![\w:]){alias}::" + ("" if target else r"(\w+)")
-                for m in re.finditer(pattern, code):
-                    used.setdefault(target or m.group(1), m.start())
-            return {name: at for name, at in used.items() if name in facts}
 
         for match in USING.finditer(source.code):
             findings.append(f"{source.path}:{source.line_of(match.start())}: "
@@ -324,7 +333,7 @@ def golden_findings(golden_path, sources):
                             "namespace alias")
 
         for check in source.test_cases + source.static_asserts:
-            used = uses(check.code)
+            used = golden_uses(check.code, aliases, facts)
             if not used:
                 continue
             if check.kind == "static_assert":
@@ -337,7 +346,7 @@ def golden_findings(golden_path, sources):
                                     f"'{facts[name]}'")
 
         rest = ALIAS.sub(lambda m: " " * len(m.group(0)), source.rest)
-        for name, at in sorted(uses(rest).items()):
+        for name, at in sorted(golden_uses(rest, aliases, facts).items()):
             findings.append(f"{source.path}:{source.line_of(at)}: "
                             f"golden values of {name} are used outside a test "
                             "case or a static_assert; pass them in from the "
@@ -346,21 +355,32 @@ def golden_findings(golden_path, sources):
 
 
 def read_table(path):
+    """The rows of the table, as (line, item, fact, implemented), and a
+    finding for each line that starts a row but is not one of three cells."""
+    rows, findings = [], []
     with open(path, encoding="utf-8") as f:
-        rows = []
         for number, line in enumerate(f.read().splitlines(), 1):
-            match = TABLE_ROW.match(line)
-            if match:
-                item, fact, implemented = (g.strip() for g in match.groups())
-                rows.append((number, item, fact, implemented))
-    return rows
+            text = line.strip()
+            if not text.startswith("|"):
+                continue
+            cells = [c.strip() for c in text[1:].split("|")]
+            if not ITEM.fullmatch(cells[0]):
+                continue  # the header and the separator line
+            if not text.endswith("|") or len(cells) != 4:
+                findings.append(f"{path}:{number}: row of item {cells[0]} is "
+                                "not three cells between | signs; a fact may "
+                                "not contain |")
+                continue
+            rows.append((number, *cells[:3]))
+    return rows, findings
 
 
 def trace(table, specification, golden_path, sources):
     with open(specification, encoding="utf-8") as f:
         items = [m.group(1) for line in f if (m := SPEC_ITEM.match(line))]
     facts, findings = read_golden(golden_path)
-    rows = read_table(table)
+    rows, row_findings = read_table(table)
+    findings += row_findings
     if not rows:
         findings.append(f"{table}: no rows of the form "
                         "| item | fact | implemented |")
@@ -376,23 +396,28 @@ def trace(table, specification, golden_path, sources):
             findings.append(f"{at}: Implemented is '{implemented}', not yes "
                             "or no")
         table_facts.add(normalize(fact))
+    table_items = {item for _, item, _, _ in rows}
+    for item in items:
+        if item not in table_items:
+            findings.append(f"{table}: item {item} of {specification} has no "
+                            "row")
     for name, fact in facts.items():
         if normalize(fact) not in table_facts:
             findings.append(f"{golden_path}: the fact of namespace {name}, "
                             f"'{fact}', is not in {table}")
 
+    # Each row is pinned by the checks that state its own fact, so a row
+    # marked implemented is not satisfied by a test of another row's fact.
     checks = [c for s in sources for c in s.test_cases + s.static_asserts
               if c.marker]
     pinned_by = {item: [] for item in items}
-    for _, item, fact, _ in rows:
+    for number, item, fact, implemented in rows:
         if item not in pinned_by or not fact:
             continue
-        for check in checks:
-            if (normalize(fact) in normalize(check.marker) and
-                    check.where() not in pinned_by[item]):
-                pinned_by[item].append(check.where())
-    for number, item, _, implemented in rows:
-        if implemented == "yes" and item in pinned_by and not pinned_by[item]:
+        stating = [c.where() for c in checks
+                   if normalize(fact) in normalize(c.marker)]
+        pinned_by[item] += [w for w in stating if w not in pinned_by[item]]
+        if implemented == "yes" and not stating:
             findings.append(f"{table}:{number}: item {item} is implemented "
                             "and no test states its fact")
     return findings, pinned_by
@@ -407,7 +432,9 @@ def main(argv):
                  "<golden.hpp> <path>...")
     command = argv[0]
     paths = argv[commands[command] - 1:]
-    sources = read_sources(paths)
+    suffixes = ("_test.cpp",) if command == "markers" else \
+        ("_test.cpp", ".hpp", ".h")
+    sources = read_sources(paths, suffixes)
     if not any(s.test_cases for s in sources):
         print(f"no test cases found under {' '.join(paths)}")
         return 1
