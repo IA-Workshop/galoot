@@ -60,3 +60,7 @@ Option B, built after WU7b merges, by a unit planned for it (or folded into WU10
 - The antiproduct of a fixed use costs what the product of that use costs in the algebra of its coupling closure, at any n. What still grows with n is one pass over the form, of the order of the signature data that decision 0005 admits.
 - A use whose blades touch a large coupling component (a dense form) still grows with that component: the result itself grows (note 0018 Theorem 4(c)), which P2's exception covers.
 - Decision 0116's consequence "the antimetric pair rule is the first candidate" is answered: the candidate that works is conjugation inside the closure, not a rule on the original blades with the antimetric.
+
+## Owner ruling, 2026-11-01
+
+The owner deferred this remedy (decision 0141): the conjugation stays, the growth is a recorded exception to C6 for twelve months, and this decision stays proposed until the exception ends or an issue is found in production.
