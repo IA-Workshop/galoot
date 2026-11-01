@@ -193,7 +193,7 @@ filled_gp(const metric<N>& g, std::span<const oriented_blade> as,
 // constexpr local again each time the call is evaluated, so the plan would be
 // generated twice, once for the static_asserts and once for the call.
 template <metric_like Alg, blade_set A, blade_set B>
-consteval auto make_gp_plan() {
+[[nodiscard]] consteval auto make_gp_plan() {
   static constexpr std::size_t n = Alg::value.generator_count;
   static constexpr bool in_range = all_in_algebra(A, n) && all_in_algebra(B, n);
   static constexpr bool valid_signs = signs_valid<A> && signs_valid<B>;
