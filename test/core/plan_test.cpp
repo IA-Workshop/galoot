@@ -1843,3 +1843,29 @@ TEST_CASE("The checks of a typed plan find each defect at its bound") {
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), repeated),
                  &typed_defects::out_of_order));
 }
+
+// Reference: independent value: in R(32,0,0), the widest algebra a mask
+// holds, e1 ^ e1 = e32 ^ e32 = 0 and e32 ^ e1 = -(e1 ^ e32), worked by hand
+// for e1 and -e32: e1 ^ (-e32) = -e1,32 and (-e32) ^ e1 = +e1,32, so the
+// wedge's own range check accepts the top bit
+TEST_CASE("The wedge plan accepts the generators of the widest algebra") {
+  constexpr mask_t top = mask_t{1} << (mask_width - 1);
+  constexpr core::blade_set<2> tops{
+      {
+          {
+              {.mask = e1, .sign = 1},
+              {.mask = top, .sign = -1},
+          },
+      },
+  };
+  CHECK(product_plan<wedge, widest, tops, tops> ==
+        typed_plan<1, 2>{
+            .result = {{{{.mask = e1 | top, .sign = 1}}}},
+            .terms = {{
+                {.a = 0, .b = 1, .out = 0, .coefficient = -1},
+                {.a = 1, .b = 0, .out = 0, .coefficient = 1},
+            }},
+        });
+  CHECK(generate_plan<wedge, 1>(widest::value, tops.blades, tops.blades, {}) ==
+        2);
+}
