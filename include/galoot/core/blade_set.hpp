@@ -163,7 +163,7 @@ consteval bool valid_generator_count() {
 // The number of ways to choose k of n items. After step i, count is
 // C(n, i + 1): C(n, i) (n - i) = C(n, i + 1) (i + 1), so each division is
 // exact.
-constexpr std::size_t binomial(std::size_t n, std::size_t k) {
+[[nodiscard]] constexpr std::size_t binomial(std::size_t n, std::size_t k) {
   std::size_t count = 1;
   for (std::size_t i = 0; i < k; ++i) {
     count = count * (n - i) / (i + 1);
@@ -266,8 +266,8 @@ struct union_of {
 // input is the same blade, unless both signs are +1 or -1 and they differ; a
 // sign that is neither is reported as such, not as a conflict.
 template <std::size_t KA, std::size_t KB>
-constexpr union_of<KA + KB> unite(const blade_set<KA>& a,
-                                  const blade_set<KB>& b) {
+[[nodiscard]] constexpr union_of<KA + KB> unite(const blade_set<KA>& a,
+                                                const blade_set<KB>& b) {
   union_of<KA + KB> u{};
   const auto insert = [&u](oriented_blade blade, bool second) {
     u.bad_sign = u.bad_sign || !is_sign(blade.sign);
@@ -324,7 +324,8 @@ consteval auto make_merge() {
 
 // The position of `mask` in `set`, or the size of the set when it is absent.
 template <std::size_t K>
-constexpr std::size_t position_of(const blade_set<K>& set, mask_t mask) {
+[[nodiscard]] constexpr std::size_t position_of(const blade_set<K>& set,
+                                                mask_t mask) {
   std::size_t at = 0;
   while (at < K && set.blades[at].mask != mask) {
     ++at;
@@ -359,8 +360,9 @@ template <std::size_t K>
   return true;
 }
 
-// Evaluated once for each set, however many lookups use it, so the check
-// adds almost nothing to a lookup.
+// Evaluated once for each set, however many lookups use it. Measured over a
+// lookup of every blade of a set, the check costs little on Clang and about a
+// sixth of the rest of a lookup on GCC.
 template <blade_set S>
 inline constexpr bool signs_valid = all_signs(S);
 
@@ -563,9 +565,11 @@ inline constexpr auto of_grade = detail::make_of_grade<N, K>();
 /// mask is in both sets with opposite signs, because the merged set could
 /// keep only one of the two orientations. Each is checked at compile time.
 /// Each blade is inserted into a list kept in canonical order, so the cost
-/// grows with the square of the size: at their default limits on constant
-/// evaluation, Clang 23 merges two sets of 128 blades (full<7>) but not of
-/// 256, and GCC 16 two sets of 512 blades (full<9>) but not of 1,024.
+/// grows with the square of the sizes and depends on their order. Measured at
+/// the default limits on constant evaluation: Clang 23 merges full<7> with
+/// itself and two disjoint sets of 64 blades, but not two disjoint sets of
+/// 128; GCC 16 merges full<9> with itself and two disjoint sets of 256, but
+/// not two disjoint sets of 512, nor full<9> listed in reverse with itself.
 /// Guarantees: the size is the number of distinct masks in A and B.
 template <blade_set A, blade_set B>
 inline constexpr auto merge = detail::make_merge<A, B>();
