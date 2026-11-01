@@ -95,3 +95,50 @@ Verification: performed and passed. Each defect A1 to A3 has a test that fails a
 
 - The ONLY-mode half of D1 is left for a later tooling unit, as the plan says.
 - Agent cost is not recorded here.
+
+## W5 review fixes (2026-11-01, Claude, agent, Opus 5.5)
+
+The review (`docs/agent/records/reviews/2026-11-01-blade-set-merge-fix.md`, of `e6f6601`) said merge after F1. The fixes are at `0885bf5` (header) and `28ef08e` (tests), with records in `be02b98`. `develop` at `15ca655`, which contains `caae9aa`, merged as `1d55950` with no conflict.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| F1 | The `merge` `///` comment and a dated note on decision 0090 state what was measured, by shape of input | "merges two sets of 128 blades (full<7>) but not of 256; GCC two sets of 512 (full<9>) but not of 1,024", true only for a canonical set with itself | Clang 23: `full<7>` with itself and 64 + 64 disjoint pass, 128 + 128 disjoint fail. GCC 16: `full<9>` with itself and 256 + 256 disjoint pass; 512 + 512 disjoint and `full<9>` reversed with itself fail. Repeated by the author (probes in `merge_bounds/`), matching the review |
+| F2 | `merge_repeated_in_second_only`, `merge_repeated_in_second_empty_first`, `merge_bad_sign_second_shared`, each with FORBID "opposite signs" | `second_flag_never` and `opp_blade_unchecked` survived on both compilers | both killed on gcc-debug and clang-debug (`results-28ef08e.tsv`) |
+| F3 | The `signs_valid` comment states the measured cost | "adds almost nothing to a lookup" | "costs little on Clang and about a sixth of the rest of a lookup on GCC" (38.9 G against 33.5 G at n = 10) |
+| F4 | Each random case is checked on its own with `CAPTURE(c)`; the seed prints in hex | a total count and `random_seed = 6857...` in decimal | a failure names its case; `random_seed = 0x5eedb1ade5e70001`, as written in the source |
+| F5 | 30 cases, with n cycling through 3, 4, 5, 6, 9, 12, 32 by case, so every width appears | 300 cases | `blade_set_test.cpp`: gcc-debug 21.30 → 10.30 G, 421 → 259 MiB, 1.64 → 0.86 s; clang-debug 45.05 → 22.44 G, 1.36 s. The owner may reverse it |
+| F6 | The SplitMix64 citation is dropped; the comment says it is a fixed-seed integer hash whose quality does not matter | a citation no one had read | no citation |
+| F7 | The random test reuses `mask_list`, `push`, `mismatches`, and `index_mismatches` | `random_list` and two duplicate loops | removed |
+| F8 | `[[nodiscard]]` on `position_of`, `unite`, and `binomial` | absent | present |
+
+Tests added (each passes on the header both before and after these fixes, since the code did not change):
+
+| Test | Input | Expected |
+| --- | --- | --- |
+| `core.blade_set_merge_repeated_in_second_only` | `merge<blades<2, "e1">, {+e2, +e2}>` | "merge: a set holds one mask twice"; FORBID "opposite signs" |
+| `core.blade_set_merge_repeated_in_second_empty_first` | `merge<{}, {+e2, −e2}>` | same |
+| `core.blade_set_merge_bad_sign_second_shared` | `merge<blades<2, "e1">, {e1 sign 0}>` | "merge: a set holds a sign other than +1 or -1"; FORBID "opposite signs" |
+
+Changed: the random test case now runs 30 cases, named "merge and index_of agree with the union of 30 random pairs of sets", each expected to have 0 mismatches.
+
+Mutations at `28ef08e`: 14 mutants, all killed on gcc-debug and on clang-debug, 28 of 28. The first build error of each failed build is recorded.
+
+P9 at `1d55950`:
+
+- `tools/timed workflow <p> all`, 97 of 97 tests in each preset:
+
+  | Preset | Wall time |
+  | --- | --- |
+  | gcc-debug | 18.8 s |
+  | gcc-release | 15.8 s |
+  | gcc-asan | 17.3 s |
+  | clang-debug | 16.1 s |
+  | clang-release | 16.9 s |
+  | clang-asan | 16.2 s |
+  | lint | 15.9 s |
+  | Total | 117.1 s |
+
+- Header sets build on gcc-debug and clang-debug.
+- The trace gate passes: 1.6 at `blade_set_test.cpp:602, 625, 757, 843`; 1.7 at `678, 698, 856`; 1.1 also at `660`.
+- Markers (43 test cases), golden facts, and citations pass in every preset.
+- The `core.blade_set` label takes 12.4 s on gcc-debug and 10.6 s on clang-debug, for 35 tests.
