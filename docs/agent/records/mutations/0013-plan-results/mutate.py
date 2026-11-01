@@ -126,9 +126,12 @@ MUTATIONS = [
      "pair_terms<BinaryOperation::gp, Capacity>(g, as[a].mask, bs[b].mask)"),
     # Capacities: the wedge sized for the product is a cost, which the
     # capacity's own test sees; the product sized for the wedge is wrong.
+    # The operation is still read, so that -Wunused-parameter does not
+    # kill the mutant in place of a test.
     ("wedge_capacity_gp",
      "return op == BinaryOperation::gp ? product_capacity(a, b) : 1;",
-     "return product_capacity(a, b);"),
+     "return op == BinaryOperation::gp ? product_capacity(a, b)\n"
+     "                                  : product_capacity(b, a);"),
     ("capacities_swapped", "return op == BinaryOperation::gp ?",
      "return op == BinaryOperation::wedge ?"),
     # Sign folding of the generator.
@@ -298,6 +301,16 @@ MUTATIONS = [
      "default;\n  constexpr ~typed_plan() {}\n"),
     ("typed_plan_not_aggregate", "struct typed_plan {\n",
      "struct typed_plan {\n  typed_plan() = default;\n"),
+    ("typed_plan_not_structural",
+     "  std::array<typed_term, T> terms;\n",
+     "  mutable std::array<typed_term, T> terms;\n"),
+    ("plan_term_not_trivially_copyable",
+     "  [[nodiscard]] constexpr bool operator==(const plan_term&) const = "
+     "default;\n",
+     "  [[nodiscard]] constexpr bool operator==(const plan_term&) const = "
+     "default;\n  constexpr ~plan_term() {}\n"),
+    ("plan_term_not_aggregate", "struct plan_term {\n",
+     "struct plan_term {\n  plan_term() = default;\n"),
     # The form of the locals and of the initializer. Equivalent in result;
     # the evaluation check, on Clang only, judges them.
     ("locals_plain", plain_locals, None),
