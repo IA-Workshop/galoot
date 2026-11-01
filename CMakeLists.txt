@@ -17,7 +17,8 @@ target_sources(galoot_core INTERFACE
   FILE_SET HEADERS BASE_DIRS include FILES
     include/galoot/core.hpp
     include/galoot/core/assert.hpp
-    include/galoot/core/bits.hpp)
+    include/galoot/core/bits.hpp
+    include/galoot/core/metric.hpp)
 target_compile_features(galoot_core INTERFACE cxx_std_23)
 
 if(NOT PROJECT_IS_TOP_LEVEL)

@@ -26,7 +26,7 @@ endfunction()
 
 # galoot_add_compile_fail_test(NAME <name> MODULE <module>
 #   COMPONENT <component> SOURCE <file> MESSAGE <literal>
-#   [REQUIRE <literal>...])
+#   [REQUIRE <literal>...] [FORBID <literal>...])
 #
 # Registers the test <module>.<name>, which builds <file> and passes only if
 # the build fails and its output contains <literal> and every REQUIRE literal,
@@ -39,10 +39,11 @@ endfunction()
 # cannot be told from two values, so it splits too. The object library is
 # outside `all`, and the test builds it in this build tree, so compile-fail
 # tests take a lock: two Ninja processes in one tree could corrupt .ninja_log
-# and .ninja_deps (inferred).
+# and .ninja_deps (inferred). Each FORBID literal must not appear, for a
+# misuse whose diagnostic must leave out a message that would be false.
 function(galoot_add_compile_fail_test)
   cmake_parse_arguments(PARSE_ARGV 0 arg ""
-    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE")
+    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE;FORBID")
   if(arg_MESSAGE MATCHES ";")
     message(FATAL_ERROR "galoot_add_compile_fail_test(${arg_NAME}): MESSAGE "
       "may not contain ';': ${arg_MESSAGE}")
@@ -54,9 +55,13 @@ function(galoot_add_compile_fail_test)
   # The source is meant not to compile, so there is nothing to lint.
   set_target_properties(${target} PROPERTIES SKIP_LINTING ON)
 
+  set(forbid "")
+  if(arg_FORBID)
+    set(forbid FORBID ${arg_FORBID})
+  endif()
   add_test(NAME ${arg_MODULE}.${arg_NAME}
     COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/test/expect_output.cmake
-      -- 1 ${arg_MESSAGE} ${arg_REQUIRE}
+      -- 1 ${arg_MESSAGE} ${arg_REQUIRE} ${forbid}
       -- ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${target})
   set_tests_properties(${arg_MODULE}.${arg_NAME} PROPERTIES
     LABELS "${arg_MODULE};${arg_MODULE}.${arg_COMPONENT}"

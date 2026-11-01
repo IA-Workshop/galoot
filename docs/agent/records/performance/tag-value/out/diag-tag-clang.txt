@@ -1,0 +1,7 @@
+<gen>/diag-tag.cpp:8:21: error: no matching function for call to 'same'
+    8 | int main() { return same(vec<cga3>{1}, vec<r410>{2}); }
+      |                     ^~~~
+<gen>/diag-tag.cpp:7:26: note: candidate template ignored: deduced conflicting types for parameter 'Alg' ('cga3' vs. 'r410')
+    7 | template <class Alg> int same(vec<Alg> a, vec<Alg> b) { return a.c + b.c; }
+      |                          ^
+1 error generated.

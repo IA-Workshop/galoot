@@ -168,6 +168,84 @@ add_test(NAME tools.measure_header
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
 
+# core.metric: the factories, accessors, and concept of metric.hpp, compared
+# with the golden values.
+galoot_add_test(MODULE core COMPONENT metric)
+target_link_libraries(core_metric_test PRIVATE galoot_golden)
+
+# Each check of metric.hpp rejects its misuse at compile time with a literal
+# message. A GALOOT_ASSERT message reaches the diagnostic only through the
+# echoed source line, so those tests also require `assertion_failed`; a
+# static_assert prints its message itself, after `static assertion failed`.
+galoot_add_compile_fail_test(NAME metric_asymmetric MODULE core COMPONENT metric
+  SOURCE core/metric_asymmetric_fail.cpp
+  MESSAGE "from_gram: the form must be symmetric"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_entry_range MODULE core COMPONENT metric
+  SOURCE core/metric_entry_range_fail.cpp
+  MESSAGE "from_gram: an entry is beyond max_form_entry"
+  REQUIRE "assertion_failed")
+galoot_add_compile_fail_test(NAME metric_zero MODULE core COMPONENT metric
+  SOURCE core/metric_zero_fail.cpp
+  MESSAGE "metric: an algebra has at least one generator, so n = 0 is rejected"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_bound MODULE core COMPONENT metric
+  SOURCE core/metric_bound_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_count_wrap MODULE core COMPONENT metric
+  SOURCE core/metric_count_wrap_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_count_wrap_zero
+  MODULE core COMPONENT metric
+  SOURCE core/metric_count_wrap_zero_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed"
+  FORBID "at least one generator")
+galoot_add_compile_fail_test(NAME metric_conformal_wrap
+  MODULE core COMPONENT metric
+  SOURCE core/metric_conformal_wrap_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_max_n_width MODULE core COMPONENT metric
+  SOURCE core/metric_max_n_width_fail.cpp
+  MESSAGE "metric: MaxN is larger than the number of bits in a blade mask"
+  REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
+  SOURCE core/metric_type_width_fail.cpp
+  MESSAGE "metric: n is larger than the number of bits in a blade mask"
+  REQUIRE "static assertion failed")
+
+# tools.expect_output_forbid: a forbidden literal in the output fails the
+# check, which WILL_FAIL turns into a pass; its twin passes because the
+# literal is absent.
+add_test(NAME tools.expect_output_forbid
+  COMMAND ${expect_output} 0 FORBID "forbidden text"
+    -- ${CMAKE_COMMAND} -E echo "this line has forbidden text")
+set_tests_properties(tools.expect_output_forbid PROPERTIES WILL_FAIL ON)
+add_test(NAME tools.expect_output_forbid_absent
+  COMMAND ${expect_output} 0 "allowed" FORBID "forbidden text"
+    -- ${CMAKE_COMMAND} -E echo "allowed")
+set_tests_properties(tools.expect_output_forbid
+  tools.expect_output_forbid_absent PROPERTIES
+  LABELS "tools;tools.expect_output")
+
+# core.metric_is_null: an index past the last generator aborts at run time in
+# a checking build. Like the assert programs, it fixes its own checking mode.
+add_executable(core_metric_is_null_checking core/metric_is_null_fail.cpp)
+target_include_directories(core_metric_is_null_checking PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_metric_is_null_checking PRIVATE cxx_std_23)
+target_compile_definitions(core_metric_is_null_checking PRIVATE
+  GALOOT_CHECKING=1)
+add_test(NAME core.metric_is_null
+  COMMAND ${expect_output} "Subprocess aborted"
+    "galoot: assertion failed: metric::is_null: the index must be below n ("
+    -- $<TARGET_FILE:core_metric_is_null_checking>)
+set_tests_properties(core.metric_is_null PROPERTIES
+  LABELS "core;core.metric")
+
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
 add_test(NAME tools.measure_record

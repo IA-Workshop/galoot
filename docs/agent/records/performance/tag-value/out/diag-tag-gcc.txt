@@ -1,0 +1,14 @@
+<gen>/diag-tag.cpp: In function ‘int main()’:
+<gen>/diag-tag.cpp:8:25: error: no matching function for call to ‘same(vec<cga3>, vec<r410>)’
+    8 | int main() { return same(vec<cga3>{1}, vec<r410>{2}); }
+      |                     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • there is 1 candidate
+    • candidate 1: ‘template<class Alg> int same(vec<Alg>, vec<Alg>)’
+      <gen>/diag-tag.cpp:7:26:
+          7 | template <class Alg> int same(vec<Alg> a, vec<Alg> b) { return a.c + b.c; }
+            |                          ^~~~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting types for parameter ‘Alg’ (‘cga3’ and ‘r410’)
+          <gen>/diag-tag.cpp:8:25:
+              8 | int main() { return same(vec<cga3>{1}, vec<r410>{2}); }
+                |                     ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~

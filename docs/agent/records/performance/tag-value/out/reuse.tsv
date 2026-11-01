@@ -1,0 +1,9 @@
+compiler	constrained	templates	exit	wall_s	peak_kib	instructions
+gcc	True	1	0	0.045	59760	461751878
+clang	True	1	0	0.050	104056	364434663
+gcc	False	1	0	0.044	57272	441144604
+clang	False	1	0	0.049	103724	344845036
+gcc	True	64	0	0.053	60300	571303934
+clang	True	64	0	0.052	104484	405770514
+gcc	False	64	0	0.052	60076	545675787
+clang	False	64	0	0.051	104044	381023873
