@@ -173,3 +173,7 @@ None blocks the merge.
 - `c4b2e70`: the old header for the old-against-new probes and cost.
 - `93543c4`, `30d8391`, `6cc0545`: per-commit gcc-debug, clang-debug, and lint.
 - Trial merge: `807369f` with `feature/core-plan-maps` at `25c48df`, uncommitted.
+
+## Delta review of the review-fix commits (c21a7f8, 6211734, 5fb4bf6)
+
+Reviewed by the coordinating agent (Claude Sonnet 5.5), 2026-11-01. The diff of `include/` from `807369f` to `7d57f51` has no line that is not a comment. The new comments in `metric.hpp` say why the generator count comes from the type, that a failed read inside a requires-expression gives false, and that the full check runs once per algebra in each translation unit; each matches the code and the review's findings. The added test specializes a `detail` variable template on purpose, says so, and states the expected value (false). No finding.
