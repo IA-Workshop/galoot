@@ -37,7 +37,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | no |
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
 | 3.4 | in a degenerate metric the double bulk dual is zero | no |
-| 4.1 | the wedge of two blades that share a generator is zero | no |
+| 4.1 | the wedge of two blades that share a generator is zero | yes |
 | 4.1 | e_i e_j + e_j e_i = 2 g_ij | yes |
 | 4.2 | right(a ^ b) = right(a) v right(b) | no |
 | 4.3 | a point projected onto a unitized plane has weight +1 | no |

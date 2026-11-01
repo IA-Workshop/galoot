@@ -459,7 +459,7 @@ set(plan_generated
   "product plan: a typed term points past the result set"
   "product plan: the result set holds a blade that no term uses"
   "product plan: typed terms are out of order or repeated")
-foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31)
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 wedge_beyond_n)
   galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
     SOURCE core/plan_${case}_fail.cpp
     MESSAGE "${plan_range}"
@@ -478,6 +478,19 @@ galoot_add_compile_fail_test(NAME plan_overflow MODULE core COMPONENT plan
   MESSAGE "${product_overflow}"
   REQUIRE "assertion_failed" "blade_product.hpp"
   FORBID "product plan:")
+# The wedge's own range check, reached by a direct call, which no set check
+# precedes, with the stray generator in either blade; and the room for the
+# result blades, which the plan always gives in full.
+foreach(case IN ITEMS wedge_pair_beyond_n wedge_pair_beyond_n_second)
+  galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
+    SOURCE core/plan_${case}_fail.cpp
+    MESSAGE "blade has a generator beyond e_n"
+    REQUIRE "assertion_failed" "plan.hpp")
+endforeach()
+galoot_add_compile_fail_test(NAME plan_result_room MODULE core COMPONENT plan
+  SOURCE core/plan_result_room_fail.cpp
+  MESSAGE "more result blades than places for them"
+  REQUIRE "assertion_failed" "plan.hpp")
 # The tag is checked by the concept on product_plan itself, whose failure the
 # compiler reports in its own words; both name the concept. The function that
 # generates the plan carries the concept too, so the test forbids its name:
