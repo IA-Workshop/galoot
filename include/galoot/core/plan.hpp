@@ -201,6 +201,41 @@ pair_terms(const metric<N>& g, mask_t a, mask_t b) noexcept {
   }
 }
 
+// The blade, with its sign, that a factor e_A enters the pair rule of the base
+// product of `Op` as: for an antiproduct, its right complement,
+// right(e_A) = right_complement_sign(A) e_(complement of A); otherwise e_A.
+template <BinaryOperation Op, std::size_t N>
+[[nodiscard]] constexpr term factor_of(mask_t a) noexcept {
+  if constexpr (base_operation(Op) == Op) {
+    return {.blade = a, .coefficient = 1};
+  } else {
+    return {
+        .blade = complement_mask(a, N),
+        .coefficient = right_complement_sign(a, N),
+    };
+  }
+}
+
+// The term at place k of the run of one pair under `Op`, from the terms of the
+// pair under its base product, which come in increasing canonical order: for
+// an antiproduct, the left complement of a term, left(c e_D) =
+// c left_complement_sign(D) e_(complement of D), taken from the last, because
+// the complement reverses canonical order; otherwise the term at k.
+template <BinaryOperation Op, std::size_t Capacity, std::size_t N>
+[[nodiscard]] constexpr term run_term(const term_list<Capacity>& terms,
+                                      std::size_t k) noexcept {
+  if constexpr (base_operation(Op) == Op) {
+    return terms.terms[k];
+  } else {
+    const term& base_term = terms.terms[terms.size() - 1 - k];
+    return {
+        .blade = complement_mask(base_term.blade, N),
+        .coefficient =
+            left_complement_sign(base_term.blade, N) * base_term.coefficient,
+    };
+  }
+}
+
 /// Generates the plan of `Op` over the blades of `as` and `bs` in the metric
 /// `g`: for each position a of `as`, then each position b of `bs`, the terms
 /// of the pair in canonical order of their blades, each with the coefficient
@@ -228,45 +263,27 @@ constexpr std::size_t generate_plan(const metric<N>& g,
                                     std::span<const oriented_blade> as,
                                     std::span<const oriented_blade> bs,
                                     std::span<plan_term> out) noexcept {
-  constexpr BinaryOperation base = base_operation(Op);
-  constexpr bool conjugated = base != Op;
   std::size_t count = 0;
   for (std::size_t a = 0; a < as.size(); ++a) {
     for (std::size_t b = 0; b < bs.size(); ++b) {
+      const term first = factor_of<Op, N>(as[a].mask);
+      const term second = factor_of<Op, N>(bs[b].mask);
       // A sign of +1 or -1 times a coefficient within -max to max cannot
       // overflow, so the products of signs need no guard.
-      coefficient_type sign =
-          static_cast<coefficient_type>(as[a].sign) * bs[b].sign;
-      mask_t first = as[a].mask;
-      mask_t second = bs[b].mask;
-      if constexpr (conjugated) {
-        // right(s e_A) = s right_complement_sign(A) e_(complement of A).
-        sign *=
-            right_complement_sign(first, N) * right_complement_sign(second, N);
-        first = complement_mask(first, N);
-        second = complement_mask(second, N);
-      }
+      const coefficient_type sign = static_cast<coefficient_type>(as[a].sign) *
+                                    bs[b].sign * first.coefficient *
+                                    second.coefficient;
       const term_list<Capacity> terms =
-          pair_terms<base, Capacity>(g, first, second);
-
+          pair_terms<base_operation(Op), Capacity>(g, first.blade,
+                                                   second.blade);
       for (std::size_t k = 0; k < terms.size(); ++k) {
-        mask_t blade = terms.terms[k].blade;
-        coefficient_type coefficient = terms.terms[k].coefficient;
-        if constexpr (conjugated) {
-          // left(c e_D) = c left_complement_sign(D) e_(complement of D). The
-          // complement reverses canonical order, so the terms are read from
-          // the last.
-          const term& from_last = terms.terms[terms.size() - 1 - k];
-          blade = complement_mask(from_last.blade, N);
-          coefficient =
-              left_complement_sign(from_last.blade, N) * from_last.coefficient;
-        }
+        const term t = run_term<Op, Capacity, N>(terms, k);
         if (count < out.size()) {
           out[count] = {
               .a = a,
               .b = b,
-              .out = blade,
-              .coefficient = sign * coefficient,
+              .out = t.blade,
+              .coefficient = sign * t.coefficient,
           };
         }
         ++count;
@@ -650,11 +667,15 @@ enum class UnaryOperation : std::uint8_t {
     return {.blade = a, .coefficient = grade_involution_sign(a)};
   }
   if (op == UnaryOperation::right_complement) {
-    return {.blade = complement_mask(a, n),
-            .coefficient = right_complement_sign(a, n)};
+    return {
+        .blade = complement_mask(a, n),
+        .coefficient = right_complement_sign(a, n),
+    };
   }
-  return {.blade = complement_mask(a, n),
-          .coefficient = left_complement_sign(a, n)};
+  return {
+      .blade = complement_mask(a, n),
+      .coefficient = left_complement_sign(a, n),
+  };
 }
 
 /// Writes, for each position a of `set`, the image under `op` of its blade
@@ -796,7 +817,8 @@ map_defects_of(UnaryOperation op, std::size_t n, const blade_set<K>& set,
       const int left =
           op == UnaryOperation::left_complement && g * ag % 2 != 0 ? -1 : 1;
       const coefficient_type closed_form =
-          input.sign * closed_form_right_sign(input.mask) * left;
+          static_cast<coefficient_type>(input.sign) *
+          closed_form_right_sign(input.mask) * left;
       found.complement_sign =
           found.complement_sign || t.coefficient != closed_form;
     }
