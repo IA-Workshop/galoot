@@ -35,3 +35,15 @@ Each check's condition is tested directly: `defects_of` and `typed_defects_of` o
 ## Unresolved
 
 None.
+
+## After the W5 review (2026-11-01)
+
+The review (`records/reviews/2026-11-01-wu7a-plan-results.md`) ran 17 mutants of its own at `0607515`; three survived (its F2 and F3). Each is now in `mutate.py` and was run with the tests of `d4bcb8d`, which add a wedge test case at R(32,0,0), result signs 0 and 2 in the bound test of the typed checks, and a direct test of `pair_capacity`, on gcc-debug and clang-debug in both modes (`results-d4bcb8d-<preset>[-runtime]-review.tsv`):
+
+| Mutant | Change | Result |
+| --- | --- | --- |
+| `wedge_range_shift` | the wedge's range check written as `((a \| b) >> N) == 0`, undefined at N = `mask_bits` | killed at build on both compilers in both modes, first by `-Wshift-count-overflow` at the wedge's instantiation for N = 32, which only the new test case creates. With that warning turned off (`-Wno-shift-count-overflow`, `plan_test.cpp` compiled `-fsyntax-only` against a mutated copy of the headers, selections `review-f2-shift-nowarn:*` in `runs.tsv`), both compilers still reject the new test's plan: the shift by 32 is not a constant expression (GCC `plan.hpp:134`, Clang the count at `:443`). So the test case kills it, not the warning alone |
+| `wedge_capacity_zero` | `pair_capacity` gives 0 for the wedge | killed by "pair_capacity is 1 for the wedge and product_capacity for the geometric product" on both compilers in both modes |
+| `result_sign_negative_only` | the result-sign check as `sign < 0` | killed by "The checks of a typed plan find each defect at its bound" (the signs 0 and 2) on both compilers in both modes |
+
+Unresolved: none.
