@@ -121,3 +121,68 @@ Verification: performed and passed. The blade sets, order, parser, and names are
 
 - Agent cost is not recorded here: the coordinator logs it from the harness's figures.
 - The W5 review. After `feature/cleanup-1` merges, `test/CMakeLists.txt` and the trace table need a merge; this unit's lines sit in a region the cleanup does not touch, and the cleanup's trace gate (a row for every item) must be rerun on the result.
+
+## W5 review fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The review (`docs/agent/records/reviews/2026-10-31-wu4-blade-sets.md`, of `f9441f7`) said merge after B1. The fixes are at `7595151` and `e191731` (code), and `8157c3c` (records). `develop` at `f69dd99` merged as `123f520`, with no conflict.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| B1 | Cost table and anomaly note corrected in place (Costs, above); note in decision 0090 | before rows taken from `-dirty` compiles that already had the header; performance-core counts only | true before `2976dcafb8e0`; both kinds of core added: `smoke_test.cpp` 0.651 → 0.885 G (gcc), 0.480 → 0.650 G (clang); reviewer's `core.hpp` alone +48% / +45%, mostly `<string_view>` |
+| N1 | `merge` rejects a bad sign and a mask repeated in one input; `index_of` rejects a bad sign and a repeat of the mask it looks up (decision 0092) | `merge<{{1, 0}}, {}>` kept sign 0; e12 twice with both signs in one input gave "the two sets hold one blade with opposite signs" | 4 compile-fail tests, one error each on both compilers; that input now gives "merge: a set holds one mask twice", with "opposite signs" forbidden |
+| N2 | `static_assert`s: `of_grade<32, 1>.size() == 32`, `of_grade<32, 32>.size() == 1`, and its mask is `~0` | mutant `N < mask_bits` survived | killed: the test file fails at `blade_set_test.cpp:458` |
+| N3 | `names_above_9` requires the whole message. The message is reworded without its `;`, which the compile-fail helper cannot carry: "...read only for n up to 9, and a larger algebra takes masks" | tail mutant survived | `names_above_9_tail` killed on both compilers |
+| N4 | `///` on `oriented_blade::mask`, `sign`, `operator==`; `blade_set::blades`, `operator==`; `blade_name::chars`, `length` | none | each documented |
+| N5 | Limits stated in the `///` of `full` and `of_grade`, and in the note to 0090. Repeated by the author, `-fsyntax-only`, default limits: Clang 23.1.4 builds `full<13>` and `of_grade<32, 3>`, and fails `full<14>`, `full<15>`, `of_grade<16, 8>`, and `of_grade<32, 4>` (step limit); GCC 16.2.1 builds `full<15>`, `of_grade<16, 8>`, and `of_grade<32, 4>`, and fails `full<16>` (`-fconstexpr-ops-limit`) | not stated | stated |
+| N6 | Note to decision 0090: the reviewer's compile of the planned spelling; `make_merge` and `make_index_of` have no placeholder (one error each) | | noted |
+| N7 | `mutate.py` records the first `error:` line of each failed build, and finds the worktree from git. The verification line above is corrected: the aggregate and trivially-copyable `static_assert`s were not mutated | build failures unexplained | e.g. `parse_sign`: `blade_set_test.cpp:434:20: error: static assertion failed`; `binomial`: libstdc++'s array bounds assertion |
+
+Mutations at `7595151` (`docs/agent/records/mutations/0008-blade-set/results-7595151.tsv`):
+
+- gcc-debug: 35 of 36 killed.
+- clang-debug: 10 of 11 killed: the seven new mutants and four earlier ones.
+- The survivor on both compilers was `merge_conflict_guard`, a guard that held back the opposite-signs check when an input was invalid. A mask found again in the same input never counts as opposite signs, so the guard hid only a second, true message. It was removed in `e191731` rather than kept untested (decision 0092).
+- At `e191731`, the four merge mutants are killed on both compilers (`results-e191731-merge.tsv`).
+
+Tests added, with expected values:
+
+| Test | Input | Expected |
+| --- | --- | --- |
+| `core.blade_set_merge_bad_sign` | `merge<{{e1, sign 0}}, blades<2, "e2">>` | "merge: a set holds a sign other than +1 or -1" |
+| `core.blade_set_merge_repeated_mask` | `merge<{{e12, +1}, {e12, -1}}, blades<2, "e1">>` | "merge: a set holds one mask twice"; FORBID "opposite signs" |
+| `core.blade_set_index_of_bad_sign` | `index_of<{{e1, +1}, {e2, 2}}, e1>` | "index_of: the set holds a sign other than +1 or -1" |
+| `core.blade_set_index_of_repeated_mask` | `index_of<{{e1, +1}, {e2, +1}, {e1, +1}}, e1>` | "index_of: the set holds this mask twice" |
+| `static_assert`s in `blade_set_test.cpp` | `of_grade<32, 1>`, `of_grade<32, 32>` | sizes 32 and 1; the one blade of grade 32 has mask `~0` |
+
+Changed: `core.blade_set_names_above_9` now requires the reworded whole message. The header's message changed with it, so the expected value follows the header and is not loosened. No other expected value changed.
+
+### P9 on the merged revision `123f520`
+
+- `tools/timed workflow <p> all -- cmake --workflow --preset <p>`, 88 of 88 tests in each preset:
+
+  | Preset | Wall time |
+  | --- | --- |
+  | gcc-debug | 15.3 s |
+  | gcc-release | 13.2 s |
+  | gcc-asan | 14.5 s |
+  | clang-debug | 13.5 s |
+  | clang-release | 13.3 s |
+  | clang-asan | 12.7 s |
+  | lint | 12.7 s |
+  | Total | 95.3 s |
+
+- `all_verify_interface_header_sets` builds on gcc-debug and clang-debug.
+- The trace gate passes:
+  - 1.6 at `blade_set_test.cpp:472, 495, 627, 680`
+  - 1.7 at `548, 568, 693`
+  - 1.1 also at `530`
+- The marker check passes (41 test cases), and so does the golden check.
+- The citation check, `tests.citations` in every preset and run by hand: "90 files, none citing a project document or record".
+- Nothing deferred.
+
+Costs at `123f520` (shared mode):
+
+- `smoke_test.cpp`: 0.886 G (gcc-debug) and 0.648 G (clang-debug).
+- `blade_set_test.cpp`: 0.81 s, 237 MiB, and 8.83 G on gcc-debug; 1.17 s, 176 MiB, and 19.82 G on clang-debug.
+- The `core.blade_set` label takes 9.0 s on gcc-debug, 7.8 s on clang-debug, and 4.8 s on lint, for 26 tests.
+- The 24 compile-fail tests still run one at a time under the build-tree lock. The reviewer's suggestion is to compile each fail source with a direct compiler call and the target's flags, with no lock, so the tests run in parallel from the pool. That is for the build lane and is not changed in this unit.
