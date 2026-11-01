@@ -13,6 +13,7 @@
 #include <array>
 #include <bit>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
 #include <span>
 #include <string_view>
@@ -286,6 +287,131 @@ consteval int grade_index_mismatches(std::index_sequence<K...> /*grades*/) {
 template <std::size_t N>
 consteval int grade_index_mismatches() {
   return grade_index_mismatches<N>(std::make_index_sequence<N + 1>());
+}
+
+// Random pairs of sets for merge and index_of. The seed is fixed, so every
+// build draws the same cases, and a failure names its case.
+constexpr std::uint64_t random_seed = 0x5eed'b1ad'e5e7'0001;
+constexpr std::size_t random_cases = 300;
+constexpr std::size_t most_random_blades = 8;
+
+// SplitMix64 (Steele, Lea, and Flood, "Fast splittable pseudorandom number
+// generators", OOPSLA 2014): a 64-bit value mixed so that nearby inputs give
+// unrelated outputs.
+constexpr std::uint64_t mix(std::uint64_t x) {
+  x += 0x9e37'79b9'7f4a'7c15U;
+  x = (x ^ (x >> 30U)) * 0xbf58'476d'1ce4'e5b9U;
+  x = (x ^ (x >> 27U)) * 0x94d0'49bb'1331'11ebU;
+  return x ^ (x >> 31U);
+}
+
+// The k-th random number of case c.
+constexpr std::uint64_t draw(std::size_t c, std::size_t k) {
+  return mix(random_seed + (c * 10'000) + k);
+}
+
+// The number of generators of case c, from small algebras to the widest.
+constexpr std::size_t random_n(std::size_t c) {
+  constexpr std::array<std::size_t, 7> ns{3, 4, 5, 6, 9, 12, mask_width};
+  return ns.at(draw(c, 0) % ns.size());
+}
+
+// A sign for each mask that both sets of a case share, so that no mask is in
+// both with opposite signs.
+constexpr int random_sign(mask_t mask) {
+  return (mix(mask) & 1U) == 1U ? -1 : 1;
+}
+
+struct random_list {
+  std::array<mask_t, 2 * most_random_blades> at{};
+  std::size_t size = 0;
+};
+
+// The masks of set `which` (0 or 1) of case c: 1 to most_random_blades
+// distinct masks of the case's algebra, in the order drawn.
+constexpr random_list random_masks(std::size_t c, std::size_t which) {
+  const std::size_t n = random_n(c);
+  const mask_t all = n == mask_width ? ~mask_t{0} : blade_count(n) - 1;
+  const std::size_t size = 1 + (draw(c, 1 + which) % most_random_blades);
+  random_list list;
+  for (std::size_t d = 0; list.size < size; ++d) {
+    const auto mask =
+        static_cast<mask_t>(draw(c, 100 + (which * 1000) + d)) & all;
+    bool drawn = false;
+    for (std::size_t i = 0; i < list.size; ++i) {
+      drawn = drawn || list.at.at(i) == mask;
+    }
+    if (!drawn) {
+      list.at.at(list.size) = mask;
+      ++list.size;
+    }
+  }
+  return list;
+}
+
+template <std::size_t C, std::size_t Which>
+consteval auto random_set() {
+  constexpr random_list list = random_masks(C, Which);
+  core::blade_set<list.size> set{};
+  for (std::size_t i = 0; i < list.size; ++i) {
+    const mask_t mask = list.at.at(i);
+    set.blades.at(i) = {.mask = mask, .sign = random_sign(mask)};
+  }
+  return set;
+}
+
+// The masks of both sets of case c, each once, sorted by grade and then by
+// index list.
+constexpr random_list random_union(std::size_t c) {
+  random_list all;
+  for (std::size_t which = 0; which < 2; ++which) {
+    const random_list list = random_masks(c, which);
+    for (std::size_t i = 0; i < list.size; ++i) {
+      bool listed = false;
+      for (std::size_t j = 0; j < all.size; ++j) {
+        listed = listed || all.at.at(j) == list.at.at(i);
+      }
+      if (!listed) {
+        all.at.at(all.size) = list.at.at(i);
+        ++all.size;
+      }
+    }
+  }
+  std::ranges::sort(std::span(all.at).first(all.size), by_grade_then_indices);
+  return all;
+}
+
+template <core::blade_set Set, random_list Expected, std::size_t... I>
+consteval int random_index_mismatches(std::index_sequence<I...> /*at*/) {
+  return ((core::index_of<Set, Expected.at.at(I)> == I ? 0 : 1) + ... + 0);
+}
+
+// The places where merge of the two sets of case C differs from their union
+// with the shared signs, and where index_of misses a blade of the result.
+template <std::size_t C>
+consteval int random_case_mismatches() {
+  constexpr auto a = random_set<C, 0>();
+  constexpr auto b = random_set<C, 1>();
+  constexpr auto merged = core::merge<a, b>;
+  constexpr random_list expected = random_union(C);
+  int count = merged.size() == expected.size ? 0 : 1;
+  for (std::size_t i = 0; i < std::min(merged.size(), expected.size); ++i) {
+    const mask_t mask = expected.at.at(i);
+    const core::oriented_blade blade{.mask = mask, .sign = random_sign(mask)};
+    count += merged.blades.at(i) == blade ? 0 : 1;
+  }
+  return count + random_index_mismatches<merged, expected>(
+                     std::make_index_sequence<expected.size>());
+}
+
+// Each case is its own constant evaluation, because the compilers limit the
+// steps of one.
+template <std::size_t C>
+constexpr int random_case = random_case_mismatches<C>();
+
+template <std::size_t... C>
+constexpr int random_mismatches(std::index_sequence<C...> /*cases*/) {
+  return (random_case<C> + ...);
 }
 
 // The characters of a name, held by value.
@@ -652,6 +778,33 @@ TEST_CASE("merge of the line and the plane of rigid(3) keeps the sign of "
       {.mask = 0b1100, .sign = -1},
   });
   CHECK(core::merge<line, line>.blades == line_in_canonical_order);
+}
+
+// Reference: independent value: the union of e2 with e3 e1 e2, each blade
+//   once in canonical order, is e1 e2 e3 with sign +1, written out here; the
+//   second set is out of canonical order and shares e2 with the first, so
+//   the merge must keep track of which set each listed blade came from as it
+//   reorders them
+TEST_CASE("merge of e2 with e3 e1 e2 is e1 e2 e3") {
+  constexpr auto expected = std::to_array<core::oriented_blade>({
+      {.mask = 0b001, .sign = 1},
+      {.mask = 0b010, .sign = 1},
+      {.mask = 0b100, .sign = 1},
+  });
+  CHECK(
+      core::merge<core::blades<3, "e2">, core::blades<3, "e3 e1 e2">>.blades ==
+      expected);
+}
+
+// Reference: identity: merge of two sets is their union in canonical order,
+//   each blade with its sign, and index_of finds each blade of the result at
+//   its position, for 300 random pairs of sets of 1 to 8 blades with n among
+//   3, 4, 5, 6, 9, 12, and 32, listed in the order drawn, against a union
+//   sorted by grade and index list in the test
+TEST_CASE("merge and index_of agree with the union of 300 random pairs of "
+          "sets") {
+  INFO("random_seed = " << random_seed);
+  CHECK(random_mismatches(std::make_index_sequence<random_cases>()) == 0);
 }
 
 // Reference: proof: index_of gives the position of a mask in its set, for

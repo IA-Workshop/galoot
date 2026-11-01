@@ -309,9 +309,11 @@ blade_set_rejects(of_grade_negative "${grade_range}")
 blade_set_rejects(merge_opposite_signs
   "merge: the two sets hold one blade with opposite signs")
 blade_set_rejects(index_of_absent
-  "index_of: the set holds no blade with this mask")
+  "index_of: the set holds no blade with this mask" FORBID "twice")
 # Sets written out by hand that break the rules every constructor keeps.
 blade_set_rejects(merge_bad_sign
+  "merge: a set holds a sign other than +1 or -1")
+blade_set_rejects(merge_bad_sign_second
   "merge: a set holds a sign other than +1 or -1")
 blade_set_rejects(merge_repeated_mask "merge: a set holds one mask twice"
   FORBID "opposite signs")
