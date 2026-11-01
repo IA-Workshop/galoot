@@ -345,6 +345,8 @@ static_assert(rigid3_table_holds());
 
 } // namespace
 
+// Reference: proof: bit i - 1 of a blade mask stands for e_i, so the mask
+//   0b1011 is e124, of grade 3, and its complement in four generators is e3
 TEST_CASE("Bit i - 1 of a mask stands for e_i, so e124 is the mask 0b1011") {
   // The reference reads masks this way; this case pins the reading itself.
   CHECK(mask_of(indices_of(0b1011U)) == 0b1011U);
@@ -356,6 +358,9 @@ TEST_CASE("Bit i - 1 of a mask stands for e_i, so e124 is the mask 0b1011") {
   CHECK(galoot::core::complement_mask(0b1011U, 4) == 0b0100U);
 }
 
+// Reference: independent value: worked by hand, sorting (3, 2, 1) takes three
+//   swaps, e2 ^ e1 = -e12, e1 ^ e23 = e123, and the wedge of two blades that
+//   share a generator is zero
 TEST_CASE("The reference gives hand-worked sorting signs and exterior "
           "products") {
   // Values worked by hand, so that a defect in the reference cannot pass
@@ -371,6 +376,8 @@ TEST_CASE("The reference gives hand-worked sorting signs and exterior "
   CHECK(antiscalar(4) == signed_blade{.sign = 1, .mask = 0b1111U});
 }
 
+// Reference: proof: the grade of a blade is its number of generators and its
+//   antigrade is n minus that. Exhaustive for n up to 8
 TEST_CASE("grade and antigrade count the generators in and out of a blade, "
           "for every blade with n up to 8") {
   for (std::size_t n = 1; n <= exhaustive_n; ++n) {
@@ -383,6 +390,9 @@ TEST_CASE("grade and antigrade count the generators in and out of a blade, "
   }
 }
 
+// Reference: proof: e_A e_B is (-1)^s times the blade of A then B sorted,
+//   where s counts the swaps of out-of-order neighbors. Exhaustive over
+//   every pair of masks below 2^8
 TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
           "of masks below 2^8") {
   for (mask_t a = 0; a < blade_count(exhaustive_n); ++a) {
@@ -394,6 +404,9 @@ TEST_CASE("reorder_sign is the sign of sorting A followed by B, for every pair "
   }
 }
 
+// Reference: proof: u ^ right(u) = antiscalar and left(u) ^ u = antiscalar,
+//   so both complements of a blade hold exactly the generators it lacks.
+//   Exhaustive for n up to 8
 TEST_CASE("complement_mask lists the generators a blade lacks, for every "
           "blade with n up to 8") {
   for (std::size_t n = 1; n <= exhaustive_n; ++n) {
@@ -406,6 +419,9 @@ TEST_CASE("complement_mask lists the generators a blade lacks, for every "
   }
 }
 
+// Reference: proof: u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
+//   make the right sign that of sorting A then its complement C, and the left
+//   sign that of sorting C then A. Exhaustive for n up to 8
 TEST_CASE("The complement signs match their definitions, for every blade "
           "with n up to 8") {
   for (std::size_t n = 1; n <= exhaustive_n; ++n) {
@@ -420,6 +436,9 @@ TEST_CASE("The complement signs match their definitions, for every blade "
   }
 }
 
+// Reference: identity: u ^ right(u) = antiscalar and left(u) ^ u = antiscalar,
+//   with the exterior product computed here by sorting. Exhaustive for n up
+//   to 8
 TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade "
           "with n up to 8") {
   using namespace galoot::core;
@@ -438,6 +457,8 @@ TEST_CASE("u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade 
   }
 }
 
+// Reference: identity: the left complement undoes the right complement, and
+//   left(u) = (-1)^(gr ag) right(u). Exhaustive for n up to 8
 TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
           "blade with n up to 8") {
   using namespace galoot::core;
@@ -457,6 +478,8 @@ TEST_CASE("left(right(u)) = u, and left(u) = (-1)^(gr ag) right(u), for every "
   }
 }
 
+// Reference: independent value: the 16 complements of rigid(3), worked by hand
+//   from u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
 TEST_CASE("The 16 complements of rigid(3) hold at run time") {
   // The same table is checked in a constant evaluation above.
   for (const complement_row& row : rigid3_complements) {
@@ -467,6 +490,9 @@ TEST_CASE("The 16 complements of rigid(3) hold at run time") {
   }
 }
 
+// Reference: proof: the antiscalar is e12...n with sign +1, so the right
+//   complement of the scalar is +e12...n and that of the antiscalar is +1,
+//   for every n up to the widest mask
 TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
           "antiscalar is +1, for every n up to the widest mask") {
   using namespace galoot::core;
@@ -479,6 +505,10 @@ TEST_CASE("The right complement of the scalar is +e_12...n and that of the "
   }
 }
 
+// Reference: proof: the reverse of a grade-k blade is (-1)^(k(k-1)/2) times
+//   it, the sign of writing its generators backward. The antireverse does
+//   the same with the antigrade, and the grade involution negates each
+//   generator. Exhaustive for n up to 8
 TEST_CASE("The reverse, antireverse, and grade involution signs match their "
           "definitions, for every blade with n up to 8") {
   for (std::size_t n = 1; n <= exhaustive_n; ++n) {
@@ -494,6 +524,9 @@ TEST_CASE("The reverse, antireverse, and grade involution signs match their "
   }
 }
 
+// Reference: independent value: each function's value from its definition,
+//   by the index-list reference, on a sample of blades (not every blade) at
+//   n = 12, 16, and the widest mask
 TEST_CASE("Every function matches its definition on a sample of blades at "
           "n = 12, 16, and the widest mask") {
   using namespace galoot::core;
@@ -520,6 +553,10 @@ TEST_CASE("Every function matches its definition on a sample of blades at "
   }
 }
 
+// Reference: proof: in a diagonal metric, sorting e_A e_B by neighbor swaps
+//   and replacing each e_i e_i by its square gives reorder_sign(A, B) times
+//   the squares of the common generators times e_(A xor B). Exhaustive over
+//   the pairs of six generators in two metrics
 TEST_CASE("In a diagonal metric, e_A e_B is reorder_sign times the squares of "
           "the common generators times e_(A xor B), for every pair of blades "
           "of six generators") {
