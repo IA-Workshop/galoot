@@ -286,9 +286,11 @@ MUTATIONS = [
     ("map_left_factor_dropped", PLAN,
      "op == UnaryOperation::left_complement && g * ag % 2 != 0 ? -1 : 1;",
      "op == UnaryOperation::left_complement && g * ag % 2 != 0 ? 1 : 1;"),
+    # The antigrade is still read, so that -Wunused-variable does not kill
+    # the mutant in place of a test.
     ("map_left_factor_by_grade", PLAN,
      "op == UnaryOperation::left_complement && g * ag % 2 != 0 ? -1 : 1;",
-     "op == UnaryOperation::left_complement && g % 2 != 0 ? -1 : 1;"),
+     "op == UnaryOperation::left_complement && (g + 0 * ag) % 2 != 0 ? -1 : 1;"),
     ("map_closed_form_unsigned", PLAN,
      "          static_cast<coefficient_type>(input.sign) *\n"
      "          closed_form_right_sign(input.mask) * left;",
