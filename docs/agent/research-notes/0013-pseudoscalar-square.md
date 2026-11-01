@@ -1,6 +1,6 @@
 # 0013 The square of the pseudoscalar in the wedge-monomial basis
 
-Date: 2026-11-01. Written by: Claude (agent, Opus 5.5), the implementer of WU6a (plan 0011), as the referent of test A7. Checked by: nobody else yet; the W5 reviewer of WU6a is asked to check it (plan 0011, section 9).
+Date: 2026-11-01. Written by: Claude (agent, Opus 5.5), the implementer of WU6a (plan 0011), as the referent of test A7. Checked by: the W5 reviewer of WU6a (blind-reviewer, Claude Opus 5.5), who checked the derivation step by step and found it correct for every symmetric form over a field of characteristic not 2, degenerate included (`docs/agent/records/reviews/2026-11-01-wu6a-blade-product.md`).
 
 How each claim was checked:
 
@@ -33,7 +33,7 @@ collapsing f_n f_n = d_n, then f_(n−1) f_(n−1) = d_(n−1), and so on from t
 
 I I = (−1)^(n(n−1)/2) det D / (det T)² = (−1)^(n(n−1)/2) det G. ∎
 
-Two remarks. Steps 1 to 5 use rational T and rational d_i, but both sides of the result are integer polynomials in the entries of G (the left side because every coefficient of a product of wedge monomials is one, research note 0009, B3), so the identity holds for integer forms as written. And for a degenerate g, det G = 0 and the square is zero, so I I has no term: rigid(3) and the degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]] give 0.
+One remark. For a degenerate g, det G = 0 and the square is zero, so I I has no term: rigid(3) and the degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]] give 0.
 
 ## Values the test writes out
 
@@ -50,6 +50,6 @@ Two remarks. Steps 1 to 5 use rational T and rational d_i, but both sides of the
 
 Test A7 (`The pseudoscalar squares to (-1)^(n(n-1)/2) det g`) computes det G by the Leibniz formula in the test, for every signature it lists, and compares e_(1…n) e_(1…n) from `blade_product` with the single scalar term (−1)^(n(n−1)/2) det G, or with no term when det G = 0. It also compares the test's det G of the four golden tables with the golden `*_det` values, which `golden.py` takes by elimination in `clifford_reference.det` and checks against the table's own pseudoscalar square before writing.
 
-## Open
+## Review
 
-The reviewer of WU6a checks this derivation (plan 0011, section 9). Until then it stands as the author's derivation, consistent with the exhaustive comparison.
+Checked by the W5 reviewer of WU6a, as stated at the top. The reviewer noted that an earlier remark on integrality was garbled and not needed, since the derivation holds over the rationals and so for integer forms as a special case; it was removed.
