@@ -3,19 +3,22 @@
 Usage: python3 -I docs/agent/snippets/bits_fault_injection.py <worktree>
        <preset> [--runtime-only]
 
-Written to show that the bits tests can fail. Last checked at dbd2309 with
-gcc-debug, in both modes: all 12 mutations caught.
+Written to show that the bits tests can fail.
 
 With --runtime-only, the static_assert lines of test/core/bits_test.cpp are
 removed for the run (and restored), so each mutation must be caught by a
 run-time test or by a compile-fail test rather than by a constant evaluation.
 
-Applies each mutation below to include/galoot/core/bits.hpp in <worktree>,
-builds the core.bits targets and runs ctest -L '^core\\.bits$' through
-tools/timed, records whether the mutation was caught (build failed or a test
-failed), and restores both files from the text it read first. It refuses to
-run (exit 2) on a wrong argument or if either file has uncommitted changes.
-Needs the job-slot pool in MAKEFLAGS. Exits 1 if any mutation survives.
+First builds the core.bits targets and runs ctest -L '^core\\.bits$' on the
+unmutated tree, and exits 2 if that fails, so that a broken preset or tree
+cannot pass for caught mutations. Then applies each mutation below to
+include/galoot/core/bits.hpp in <worktree>, builds and tests the same way
+through tools/timed, and reports the mutation caught when a test fails or
+the build stops on a static assertion; a build that fails for any other
+reason counts as not caught. Restores both files from the text it read first.
+It refuses to run (exit 2) on a wrong argument or if either file has
+uncommitted changes. Needs the job-slot pool in MAKEFLAGS. Exits 1 if any
+mutation is not caught.
 """
 
 import os
@@ -25,6 +28,10 @@ import sys
 MUTATIONS = [
     ("reorder_counts_equal", "for (a >>= 1U; a != 0; a >>= 1U)",
      "for (; a != 0; a >>= 1U)"),
+    # Counts the pairs with the generator of A below the one of B, as if the
+    # bits of a mask were numbered from the other end.
+    ("reorder_opposite_order", "for (a >>= 1U; a != 0; a >>= 1U)",
+     "for (b >>= 1U; b != 0; b >>= 1U)"),
     # These two keep every variable in use, so -Werror does not end the build.
     ("reorder_always_plus", "return swaps % 2 == 0 ? 1 : -1;",
      "return swaps % 2 == 0 ? 1 : 1;"),
@@ -53,9 +60,19 @@ MUTATIONS = [
 ]
 
 
-def run(worktree, args):
-    return subprocess.run(args, cwd=worktree, capture_output=True,
-                          text=True).returncode
+def build(worktree, timed, preset, selection):
+    return subprocess.run(
+        [timed, "build", preset, selection, "--", "cmake", "--build",
+         "--preset", preset, "--target", "core_bits_test",
+         "core_bits_assert_fail"],
+        cwd=worktree, capture_output=True, text=True)
+
+
+def test(worktree, timed, preset, selection):
+    return subprocess.run(
+        [timed, "test", preset, selection, "--", "ctest", "--preset", preset,
+         "-L", r"^core\.bits$"],
+        cwd=worktree, capture_output=True, text=True).returncode == 0
 
 
 USAGE = ("usage: python3 -I bits_fault_injection.py <worktree> <preset> "
@@ -70,21 +87,22 @@ def main():
     worktree, preset = os.path.abspath(sys.argv[1]), sys.argv[2]
     runtime_only = sys.argv[3:] == ["--runtime-only"]
     header = os.path.join(worktree, "include/galoot/core/bits.hpp")
-    test = os.path.join(worktree, "test/core/bits_test.cpp")
+    test_file = os.path.join(worktree, "test/core/bits_test.cpp")
     timed = os.path.join(worktree, "tools/timed")
 
     # The files are rewritten and then restored from the text read here, so
     # uncommitted edits would be at risk only if a restore failed; refusing a
     # dirty tree keeps that from losing work.
     dirty = subprocess.run(
-        ["git", "-C", worktree, "status", "--porcelain", "--", header, test],
+        ["git", "-C", worktree, "status", "--porcelain", "--", header,
+         test_file],
         capture_output=True, text=True, check=True).stdout
     if dirty:
         print(f"refused: uncommitted changes in\n{dirty}", file=sys.stderr)
         sys.exit(2)
     with open(header) as f:
         original = f.read()
-    with open(test) as f:
+    with open(test_file) as f:
         original_test = f.read()
 
     survivors = 0
@@ -94,8 +112,16 @@ def main():
             kept = [line for line in lines
                     if not line.startswith("static_assert(")]
             print(f"removed {len(lines) - len(kept)} static_assert lines")
-            with open(test, "w") as f:
+            with open(test_file, "w") as f:
                 f.writelines(kept)
+
+        baseline = build(worktree, timed, preset, "mutation:baseline")
+        if baseline.returncode != 0 or not test(worktree, timed, preset,
+                                                "mutation:baseline"):
+            print("refused: the unmutated tree does not build and pass "
+                  f"core.bits under {preset}", file=sys.stderr)
+            sys.exit(2)
+
         for name, old, new in MUTATIONS:
             if original.count(old) != 1:
                 print(f"{name}: pattern found {original.count(old)} times")
@@ -103,17 +129,18 @@ def main():
                 continue
             with open(header, "w") as f:
                 f.write(original.replace(old, new))
-            built = run(worktree, [
-                timed, "build", preset, f"mutation:{name}", "--", "cmake",
-                "--build", "--preset", preset, "--target", "core_bits_test",
-                "core_bits_assert_fail"]) == 0
-            if not built:
-                print(f"{name}: caught (build failed)")
+            built = build(worktree, timed, preset, f"mutation:{name}")
+            if built.returncode != 0:
+                if "static assertion failed" in built.stdout + built.stderr:
+                    print(f"{name}: caught (static assertion failed)")
+                else:
+                    errors = [line for line in built.stdout.splitlines()
+                              if "error" in line]
+                    print(f"{name}: NOT CAUGHT, the build failed without a "
+                          f"static assertion: {errors[:1]}")
+                    survivors += 1
                 continue
-            tested = run(worktree, [
-                timed, "test", preset, f"mutation:{name}", "--", "ctest",
-                "--preset", preset, "-L", r"^core\.bits$"]) == 0
-            if tested:
+            if test(worktree, timed, preset, f"mutation:{name}"):
                 print(f"{name}: SURVIVED")
                 survivors += 1
             else:
@@ -127,7 +154,7 @@ def main():
     finally:
         with open(header, "w") as f:
             f.write(original)
-        with open(test, "w") as f:
+        with open(test_file, "w") as f:
             f.write(original_test)
     sys.exit(1 if survivors else 0)
 
