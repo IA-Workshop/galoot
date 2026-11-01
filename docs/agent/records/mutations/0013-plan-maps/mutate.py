@@ -202,6 +202,10 @@ MUTATIONS = [
      "  GALOOT_ASSERT(in_algebra(a, n),",
      "  GALOOT_ASSERT(in_algebra(a, n),"),
     # generate_map and the typing of a map.
+    # The bound of generate_map on its output (the review's M21).
+    ("map_output_unbounded", PLAN,
+     "for (std::size_t a = 0; a < set.size() && a < out.size(); ++a) {",
+     "for (std::size_t a = 0; a < set.size(); ++a) {"),
     ("map_sign_not_folded", PLAN,
      ".coefficient = set[a].sign * image.coefficient,",
      ".coefficient = image.coefficient,"),
