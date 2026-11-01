@@ -12,6 +12,8 @@
 // Note 1: the findings of the scan are printed one per line.
 // Namespaces are left to review; this header states its conventions here.
 // The performance cores run two threads each.
+// For the action of C2, see the C3 rotation above, per the 2 by 2 case.
+// Each plan-like table counts its 16 terms; the ticket counter is a word.
 #include <doctest/doctest.h>
 
 TEST_CASE("a rotor in R(3, 0, 1) composed with its reverse is the scalar 1") {}
