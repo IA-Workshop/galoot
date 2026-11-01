@@ -10,3 +10,5 @@
 | 3.1 |  | no |
 | 1.1 | a second fact of 1.1 that no test states | yes |
 | 2.1 | a fact | with a pipe | no |
+| 1.l | a mistyped item number | yes |
+| **1.2** | an item number in bold | yes |
