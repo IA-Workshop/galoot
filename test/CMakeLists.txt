@@ -393,7 +393,8 @@ target_link_libraries(core_blade_product_test PRIVATE galoot_golden)
 # core.blade_product_<case>: each misuse of blade_product ends a constant
 # evaluation, and the diagnostic shows the line of the failed assertion.
 set(product_overflow "a product coefficient does not fit coefficient_type")
-foreach(case IN ITEMS beyond_n beyond_n_second capacity overflow sum_overflow)
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 capacity overflow
+    sum_overflow)
   if(case MATCHES "^beyond_n")
     set(message "blade has a generator beyond e_n")
   elseif(case STREQUAL "capacity")
@@ -418,8 +419,8 @@ target_include_directories(core_blade_product_assert_fail PRIVATE
 target_compile_features(core_blade_product_assert_fail PRIVATE cxx_std_23)
 target_compile_definitions(core_blade_product_assert_fail PRIVATE
   GALOOT_CHECKING=1)
-foreach(case IN ITEMS beyond_n beyond_n_second capacity overflow sum_above
-    sum_below product_above product_below product_below_second)
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 capacity overflow
+    sum_above sum_below product_above product_below product_below_second)
   if(case MATCHES "^beyond_n")
     set(message "blade has a generator beyond e_n")
   elseif(case STREQUAL "capacity")
