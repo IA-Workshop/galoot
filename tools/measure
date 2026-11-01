@@ -46,20 +46,21 @@ running time equals the command's task-clock time, which shows the command
 spent all its time on the other type, and otherwise as `unavailable`. A
 counter that perf did not run for its whole enabled time in pinned mode was
 multiplexed and is written as `unavailable` with a warning, never as a scaled
-estimate. A pinned `build`
-run takes no counters itself, because the compile rows of its launcher take
-them on the same core, and two perf sessions of eight events on one core
-multiplex each other; its counter fields are `unavailable`.
+estimate. A pinned `build` run takes no counters itself, because the compile
+rows of its launcher take them on the same core, and two perf sessions of
+eight events on one core multiplex each other; its counter fields are
+`unavailable`.
 
 Options: a compile row holds the compiler's arguments other than the source,
 the object, and the dependency-file arguments, with paths inside the checkout
 made relative to it. A run row holds CMAKE_CXX_FLAGS and the flags of
 CMAKE_BUILD_TYPE from the cache of the build tree it ran in: the directory
-after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest in
-the command, else build/<preset>. It
-holds `-` for a run with no build tree (preset `-` and no such argument), and
-`unavailable` when the tree has no readable cache. The cache is read after
-the command, so a configure step records the options it set.
+after -C of ninja or make, -B or --build of cmake, or --test-dir of ctest,
+where the program is the first of those four in the command, else
+build/<preset>. It holds `-` for a run with no build tree (preset `-` and no
+such argument), and `unavailable` when the tree has no readable cache. The
+cache is read after the command, so a configure step records the options it
+set.
 """
 
 import fcntl
@@ -364,9 +365,11 @@ def compile_options(command, top):
 
 
 def build_tree(command, preset, top):
+    # The program is the first build program named, so that a later argument
+    # such as the label in `ctest -L make` is not taken for one.
     program = None
     for arg, value in zip(command, command[1:] + [""], strict=True):
-        if os.path.basename(arg) in TREE_ARGUMENTS:
+        if program is None and os.path.basename(arg) in TREE_ARGUMENTS:
             program = os.path.basename(arg)
             continue
         for flag in TREE_ARGUMENTS.get(program, ()):
@@ -460,6 +463,8 @@ def read_record(path, wanted):
         lines = f.read().splitlines()
     if not lines:
         sys.exit(f"measure: {path} is empty")
+    if not lines[0]:
+        sys.exit(f"measure: {path}:1 is blank where the header line should be")
     header = lines[0].split("\t")
     unknown = [c for c in wanted if c not in header]
     if unknown:
