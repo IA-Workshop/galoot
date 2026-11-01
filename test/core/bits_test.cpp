@@ -36,6 +36,10 @@ static_assert(galoot::core::mask_bits == mask_width);
 struct index_list {
   std::array<int, 2 * mask_width> at{};
   int size = 0;
+
+  // Unused places stay zero, so comparing every member compares the lists.
+  friend constexpr bool operator==(const index_list&,
+                                   const index_list&) = default;
 };
 
 constexpr void push(index_list& list, int index) {
@@ -418,12 +422,12 @@ TEST_CASE("The reference gives hand-worked sorting signs and exterior "
 //   followed by its generators in increasing order, so e124 reads as
 //   (1, 2, 4), and e21, e11, 124, e, and ex are not canonical names
 TEST_CASE("The blade-name reader accepts only canonical names") {
-  CHECK(indices_named("1").value().size == 0);
-  const index_list e124 = indices_named("e124").value();
-  CHECK(e124.size == 3);
-  CHECK(get(e124, 0) == 1);
-  CHECK(get(e124, 1) == 2);
-  CHECK(get(e124, 2) == 4);
+  index_list e124;
+  push(e124, 1);
+  push(e124, 2);
+  push(e124, 4);
+  CHECK(indices_named("1") == index_list{});
+  CHECK(indices_named("e124") == e124);
   CHECK_FALSE(indices_named("e21").has_value());
   CHECK_FALSE(indices_named("e11").has_value());
   CHECK_FALSE(indices_named("124").has_value());
