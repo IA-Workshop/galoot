@@ -87,8 +87,8 @@ struct plan_term {
 /// Requires: nothing.
 /// Guarantees: a term list of this capacity never overflows while the pair's
 /// terms are generated.
-[[nodiscard]] constexpr std::size_t
-pair_capacity(BinaryOperation op, mask_t a, mask_t b) noexcept {
+[[nodiscard]] constexpr std::size_t pair_capacity(BinaryOperation op, mask_t a,
+                                                  mask_t b) noexcept {
   return op == BinaryOperation::gp ? product_capacity(a, b) : 1;
 }
 
@@ -499,6 +499,9 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// blade of which is the output of some term; each is checked when the plan
 /// is generated.
 template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
+// clang-tidy reads the operation, once substituted, as a C-style cast of its
+// value, which the source does not have.
+// NOLINTNEXTLINE(modernize-avoid-c-style-cast)
 inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
 
 } // namespace galoot::core::detail
