@@ -607,11 +607,17 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// _GLIBCXX_ASSERTIONS: every blade times every blade, full<n> with full<n>,
 /// builds for n up to 5 on Clang 23 and up to 6 on GCC 16, for the
 /// geometric product and the wedge, in R(n,0,0), R(n-1,0,1), and
-/// conformal(n-2); in a form with
-/// every entry nonzero, whose products have more terms, the geometric
-/// product builds for n up to 4 on Clang and 5 on GCC, and the wedge, which
-/// does not read the form, as in the others. Sets of a few blades cost what
-/// they use: four blades times three at n = 16 build on both.
+/// conformal(n-2); in a form with every entry nonzero, whose products have
+/// more terms, the geometric product builds for n up to 4 on Clang and 5 on
+/// GCC, and the wedge, which does not read the form, as in the others. The
+/// geometric antiproduct builds as the geometric product does, except that in
+/// conformal(n-2) on Clang n = 5 builds only with _GLIBCXX_ASSERTIONS
+/// defined; the antiwedge builds for n up to 5 on Clang and 7 on GCC in every
+/// form. Sets of a few blades cost what they use: four blades times three at
+/// n = 16 build on both, for all four operations. An antiproduct of blades of
+/// low grade multiplies their complements, whose grade is close to n, so it
+/// costs more as n grows: those four blades times three cost several times
+/// more through the geometric antiproduct at n = 16 than at n = 4.
 /// Guarantees: generated once in each translation unit for each Op, Alg, A,
 /// and B that it uses, because the generator keeps its steps in static
 /// constexpr locals (checked on Clang, where plain locals would generate it
@@ -913,7 +919,12 @@ template <UnaryOperation Op, metric_like Alg, blade_set S>
 /// Requires: Alg is metric_like. Every blade of S names only e_1 to e_n and
 /// has sign +1 or -1, each checked at compile time with a message that names
 /// it. A mask listed twice in S is not checked; each place that lists it gets
-/// its own term, and the two may land on one position of the result.
+/// its own term, and the two may land on one position of the result. The map
+/// is a constant evaluation, and typing it costs the square of the size of S,
+/// so the compiler's limits bound S in practice. Measured at the default
+/// limits, alike at -O0 and -O2: the map of every blade, full<n>, builds for n
+/// up to 9 on GCC 16; on Clang 23 for n up to 7, and for the complements up
+/// to 8 when _GLIBCXX_ASSERTIONS is defined.
 /// Guarantees: generated once in each translation unit for each Op, Alg, and
 /// S that it uses, as product_plan is. Term a is that of the blade at
 /// position a of S, on its own blade for the reverse, the antireverse, and
