@@ -67,6 +67,11 @@ static_assert(reverse_six.terms.size() == 64);
 
 } // namespace
 
+// The readers have external linkage on purpose: a function with internal
+// linkage that nothing calls is unused and need not be emitted, while these
+// must be compiled as a program that uses the plans and maps would compile
+// them.
+// NOLINTBEGIN(misc-use-internal-linkage)
 std::size_t motor_terms() {
   return product_plan<BinaryOperation::gp, rga3, motor, motor>.terms.size();
 }
@@ -131,3 +136,4 @@ core::coefficient_type reverse_six_last() {
   const auto& map = unary_map<UnaryOperation::reverse, r6, core::full<6>>;
   return map.terms.back().coefficient;
 }
+// NOLINTEND(misc-use-internal-linkage)
