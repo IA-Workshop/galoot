@@ -156,3 +156,14 @@ Cost (track-only, shared mode): `metric_test` 0.20 s, 93 MiB, 2.03 G instruction
 ### Next step
 
 Re-review of the delta `b12f07d..ed2a3e2`, then the merge into `develop` (the coordinator's). If WU2 merges first, replace the `mask_t` declaration in `metric.hpp` with an include of `bits.hpp`, and resolve the one-line conflicts in `CMakeLists.txt` and `core.hpp` by keeping both lines. Reference markers wait for the M0 scripts, as directed.
+
+## Golden values and reference markers (2026-10-31, Claude, agent, Opus 5.5)
+
+After the M0 scripts merged (`develop` at `8327147`, merged here as `911b4e8`; one conflict in `test/CMakeLists.txt`, both units' blocks kept), the metric tests were changed without touching the header, while the delta review ran:
+
+- Every test case carries a `// Reference:` marker (decisions 0071, 0072); 11 test cases in `test/` pass the marker check.
+- The comparisons use `test/reference/golden.hpp` where it reaches: `golden::diagonal_signatures` (every R(p, q, r), n = 1 to 6), `golden::rigid` (squares for d = 1 to 5), and `golden::conformal` (Gram matrices, the squares of R(d+1, 1, 0), and the change of basis, for d = 1 to 4). The golden values do not cover rigid(0), conformal(0), or the change of basis at d = 0; those stay written out from the definition, and the markers say so. The test-side `expected_*` definition sweeps and the doubled-basis literal for d = 3 are replaced by the golden values; off-diagonal zeros of diagonal signatures are still checked from the definition.
+- `docs/agent/records/convention-trace.md`: 1.2, 1.3, and 1.4 set to Implemented `yes`. 1.1 (mask bits) stays `no`: the metric does not implement masks; WU2 does.
+- Mutations (restored): the last negative generator made positive fails 3 test cases; the conformal pair made +1 on both sides fails 2.
+- At `d9de465`: the seven correctness workflows pass 30 of 30 each (gcc-debug 3.15 s, gcc-release 3.08 s, gcc-asan 3.17 s, clang-debug 2.92 s, clang-release 3.21 s, clang-asan 3.36 s, lint 2.81 s; 21.7 s in total). The gate command passes: 1.2 at `metric_test.cpp:194, 207`; 1.3 at `233, 268`; 1.4 at `255, 268, 299`.
+- Still open: replacing the `mask_t` redeclaration with `#include <galoot/core/bits.hpp>` once WU2 is on `develop`; the result of the delta review.
