@@ -155,9 +155,10 @@ MUTATIONS = [
      "  for (std::size_t b = 0; b < bs.size(); ++b) {\n"
      "    for (std::size_t a = 0; a < as.size(); ++a) {\n"
      "      const term_list<Capacity> terms ="),
-    ("terms_reversed", "for (std::size_t k = 0; k < terms.size(); ++k) {",
+    ("terms_reversed",
+     "for (std::size_t k = 0; k < terms.size(); ++k) {\n        if (count",
      "for (std::size_t r = 0, k = terms.size() - 1; r < terms.size();"
-     " ++r, --k) {"),
+     " ++r, --k) {\n        if (count"),
     ("last_pair_skipped",
      "    for (std::size_t b = 0; b < bs.size(); ++b) {\n"
      "      const term_list<Capacity> terms =",
