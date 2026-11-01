@@ -1993,9 +1993,9 @@ constexpr bool equals_map_typing(UnaryOperation op, std::size_t n,
 // from the reverse, which multiplies a blade of grade k by (-1)^(k(k-1)/2),
 // in rigid(3), for the oriented line e41 e42 e43 e23 e31 e12, that is
 // -e14, -e24, -e34, +e23, -e13, +e12: the reverse of a bivector is -1 times
-// it and its grade involution +1 times it; right(e41) = right(-e14) = -e23,
+// it and its grade involution +1 times it, right(e41) = right(-e14) = -e23,
 // because e14 ^ e23 = +e1234, and in the same way right(e42) = +e13,
-// right(e43) = -e12, right(e23) = +e14, right(e31) = +e24, right(e12) = +e34;
+// right(e43) = -e12, right(e23) = +e14, right(e31) = +e24, right(e12) = +e34,
 // a bivector has grade 2 and antigrade 2, so its left complement is its
 // right complement
 static_assert(map_is(unary_map<reverse, rga3, line>,
@@ -2034,9 +2034,9 @@ static_assert(unary_map<left_complement, rga3, line> ==
 // Reference: independent value: worked by hand from u ^ right(u) =
 // antiscalar and left(u) ^ u = antiscalar in rigid(3): right(e1) = e234,
 // right(e2) = -e134, right(e3) = e124, right(e4) = -e123, since moving e_i
-// past the generators below it takes i - 1 transpositions; a vector has
+// past the generators below it takes i - 1 transpositions, a vector has
 // antigrade 3, so its left complement is -1 times its right complement and
-// its antireverse is (-1)^(3 2 / 2) = -1 times it; and for the oriented plane
+// its antireverse is (-1)^(3 2 / 2) = -1 times it, and for the oriented plane
 // e423 e431 e412 e321, that is +e234, -e134, +e124, -e123, right(e423) = -e1,
 // right(e431) = -e2, right(e412) = -e3, right(e321) = -e4, and the left
 // complements are their negatives
@@ -2091,12 +2091,12 @@ constexpr typed_plan<1, 1> one_term(mask_t mask, coefficient_type coefficient) {
 // left(right(a) right(b)) and a v b = left(right(a) ^ right(b)) in rigid(3),
 // where e1, e2, e3 square to 1 and e4 to 0: right(e234) = -e1 and
 // (-e1)(-e1) = 1, whose left complement is the antiscalar, so
-// e234 ⟇ e234 = e1234; right(e123) = e4 and e4 e4 = 0, so e123 ⟇ e123 = 0;
-// right(e1) = e234 and e234 e234 = 0, so e1 ⟇ e1 = 0; right(e4) = -e123 and
-// e123 e123 = -1, so e4 ⟇ e4 = -e1234; right(e1234) = 1, so
-// e1234 ⟇ e1 = e1 ⟇ e1234 = e1, the antiscalar being the identity;
+// e234 ⟇ e234 = e1234, right(e123) = e4 and e4 e4 = 0, so e123 ⟇ e123 = 0,
+// right(e1) = e234 and e234 e234 = 0, so e1 ⟇ e1 = 0, right(e4) = -e123 and
+// e123 e123 = -1, so e4 ⟇ e4 = -e1234, right(e1234) = 1, so
+// e1234 ⟇ e1 = e1 ⟇ e1234 = e1, the antiscalar being the identity,
 // right(e134) = e2 and (-e1) ^ e2 = -e12, whose left complement is -e34, so
-// e234 v e134 = -e34; e234 ^ (-e1) = +e1234, so e1 v e234 = 1, while
+// e234 v e134 = -e34, e234 ^ (-e1) = +e1234, so e1 v e234 = 1, while
 // e234 v e1 = -1
 static_assert(product_plan<antigp, rga3, blade_of<e234>, blade_of<e234>> ==
               one_term(e1234, 1));
@@ -2120,7 +2120,7 @@ static_assert(product_plan<antiwedge, rga3, blade_of<e234>, blade_of<e1>> ==
 // Reference: independent value: worked by hand in conformal(3), where
 // e4 e5 = -1 + e45: right(e1235) = -e4, since e1235 ^ e4 takes one
 // transposition, and right(e1234) = e5, so right(e1235) right(e1234) =
-// -e4 e5 = 1 - e45; the left complement of 1 is e12345 and that of e45 is
+// -e4 e5 = 1 - e45, the left complement of 1 is e12345 and that of e45 is
 // e123, so e1235 ⟇ e1234 = -e123 + e12345, whose two terms come in canonical
 // order although the product of the complements lists the scalar first
 static_assert(
@@ -2150,11 +2150,11 @@ static_assert(
 // complements of the point's blades are three trivectors with e4 and -e123,
 // so a point antiproduct a point has the 7 pairs that involve e4, on the
 // three bivectors without e4 and e1234, and a point antiwedge a point has
-// none; the right complements of the plane's blades are the four vectors, so
+// none, the right complements of the plane's blades are the four vectors, so
 // a plane antiproduct a plane has 4 x 4 - 1 = 15 terms, on the bivectors and
 // e1234, and a plane antiwedge a plane has 12, on the bivectors: two planes
-// meet in a line; a line antiwedge a plane has 12, on the vectors: a line
-// meets a plane in a point; a motor antiproduct a point has 20 terms on the
+// meet in a line, a line antiwedge a plane has 12, on the vectors: a line
+// meets a plane in a point, a motor antiproduct a point has 20 terms on the
 // eight odd blades, and a motor antiproduct a motor 48 terms on the scalar,
 // the bivectors, and e1234. In conformal(3) the right complements of the
 // vectors are the quadrivectors, so the vectors antiproduct the vectors have
@@ -2754,9 +2754,9 @@ bool is_golden_antiproduct(
 // Reference: proof: for every n from 1 to 10 and every blade of n
 // generators, each map is the rule written here: the reverse of a grade-k
 // blade is (-1)^(k(k-1)/2) times it, counted as the transpositions that
-// reverse its index list; the antireverse the same with the antigrade; the
-// grade involution (-1)^k; and u ^ right(u) = antiscalar and left(u) ^ u =
-// antiscalar, by this file's own count of inversions; at its own place, with
+// reverse its index list, the antireverse the same with the antigrade, the
+// grade involution (-1)^k, and u ^ right(u) = antiscalar and left(u) ^ u =
+// antiscalar, by this file's own count of inversions, at its own place, with
 // the input's sign folded in, typed onto the distinct blades in canonical
 // order. Even and odd n are both included, because for odd n the left and
 // right complements coincide
@@ -2791,9 +2791,9 @@ TEST_CASE("Every map of every blade is its golden image") {
 
 // Reference: proof: for every n from 1 to 10, composed over every blade from
 // the maps that generate_map writes: the reverse and the grade involution are
-// their own inverses; the left complement undoes the right one and the right
-// the left; applying either complement twice gives (-1)^(gr ag) times the
-// blade, with ag = n - gr; and the antireverse is the reverse conjugated by
+// their own inverses, the left complement undoes the right one and the right
+// the left, applying either complement twice gives (-1)^(gr ag) times the
+// blade, with ag = n - gr, and the antireverse is the reverse conjugated by
 // the complements, left(reverse(right(u)))
 TEST_CASE("The maps compose as the involutions and complements do") {
   for (std::size_t n = 1; n <= largest_map_n; ++n) {
@@ -2901,7 +2901,7 @@ TEST_CASE("The complements turn each product into its antiproduct") {
 }
 
 // Reference: identity: both antiproducts are associative, checked on every
-// triple of blades; the antiscalar is the identity of the geometric antiproduct
+// triple of blades, the antiscalar is the identity of the geometric antiproduct
 // and 1 that of the geometric product, u v right(u) = 1 and left(u) v u = 1 for
 // every blade, and reverse(a b) = reverse(b) reverse(a) and antireverse(a ⟇ b)
 // = antireverse(b) ⟇ antireverse(a) for every pair of blades, each of every
@@ -3045,8 +3045,8 @@ TEST_CASE("unary_map and the antiproduct plans equal their typing run at run "
 
 // Reference: contract: the geometric antiproduct of a pair needs as many
 // terms as the geometric product of the complements of its blades, half the
-// subsets of their generators together, and the antiwedge one; the capacity
-// of a plan is the largest over its pairs; and each antiproduct names its
+// subsets of their generators together, and the antiwedge one, the capacity
+// of a plan is the largest over its pairs, and each antiproduct names its
 // base product
 TEST_CASE("The capacities of the antiproducts are those of their base "
           "products over the complements") {
