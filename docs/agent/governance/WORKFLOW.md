@@ -1,5 +1,7 @@
 # Galoot development workflow
 
+Status: ratified by the owner on 2026-11-01 (decision 0094).
+
 This document says how a change to Galoot is planned, made, checked, reviewed, and recorded. It adds detail to the [constitution](CONSTITUTION.md), cited here as C1 to C20, and [VVUQ.md](VVUQ.md) defines the evidence each step refers to.
 
 ## Units of work
@@ -10,7 +12,7 @@ Each unit of work has a goal, a definition of done, and acceptance criteria, sta
 
 ### W2 Small units
 
-A unit is one change that a reviewer can understand in one sitting. It leaves the project building, with its tests passing, at every recorded step. Larger work is split into units that each meet this rule.
+A unit is one change that a reviewer can understand in one sitting. It leaves the project building, with its tests passing, at every recorded step. One exception: a test committed before the code it judges may leave that single commit failing if the commit message says so. Larger work is split into units that each meet this rule.
 
 ### W3 Plans
 
@@ -65,7 +67,7 @@ A unit halts and is reported to the owner when the same check still fails after 
 
 ### W9 Defects and broken checks
 
-A defect found outside the current unit is reported to the owner and noted in the record of the unit that found it. It is fixed within that unit only if the fix is small and within scope. An author whose change breaks a check restores the check before the change is relied upon. A test is never weakened, skipped, or rewritten to match wrong output; a test shown to be wrong is corrected by a recorded decision that states why. A change to a test, expected value, or tolerance that judges the author's own change is committed separately and listed in the review request. A failing regression guard is a defect unless the change said beforehand that it alters the guarded result.
+A defect found outside the current unit is reported to the owner and noted in the record of the unit that found it. It is fixed within that unit only if the fix is small and within scope. An author whose change breaks a check restores the check before the change is relied upon. A test is never weakened, skipped, or rewritten to match wrong output; a test shown to be wrong is corrected by a recorded decision that states why. A change to a test, expected value, or tolerance that judges the author's own change is committed separately and listed in the review request; a change that cannot build without both may be one commit if the review request lists the tests and the expected values. A failing regression guard is a defect unless the change said beforehand that it alters the guarded result.
 
 ### W10 Resource records
 
@@ -73,7 +75,7 @@ A unit that changes the core records the build time, build memory, and test time
 
 ### W11 Phases
 
-Work follows the project's current roadmap, at present the phased roadmap of the design study. A phase closes at its gate, when the gate's evidence exists and the owner accepts it. A module waits for the gates of the modules it depends on; exploratory work in the workbench may run ahead of them.
+Work follows the project's current roadmap, at present [plan 0001](../plans/0001-core-v1-roadmap.md). A phase closes at its gate, when the gate's evidence exists and the owner accepts it. A module waits for the gates of the modules it depends on; exploratory work in the workbench may run ahead of them.
 
 ### W12 Documentation
 

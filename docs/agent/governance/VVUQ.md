@@ -1,5 +1,7 @@
 # Verification, validation, and uncertainty quantification
 
+Status: ratified by the owner on 2026-11-01 (decision 0094).
+
 This document defines what counts as evidence that Galoot is correct and how numerical uncertainty is handled. It adds detail to C7, C11, C14, and C15 of the [constitution](CONSTITUTION.md); [WORKFLOW.md](WORKFLOW.md) says when in a unit of work the evidence is produced.
 
 Verification shows that the implementation meets its specification: the conventions specification and the mathematical definitions it cites. Validation shows that the specification is the mathematics users mean, and that a model serves the uses it was built for. Uncertainty quantification states how far a computed value can be from the exact one. Passing one of the three is never evidence for another.

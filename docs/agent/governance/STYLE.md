@@ -1,5 +1,7 @@
 # C++ style
 
+Status: ratified by the owner on 2026-11-01 (decision 0094).
+
 This document sets the style of Galoot's C++ source. It adds detail to the [constitution](CONSTITUTION.md) (cited as C1 to C20), [WORKFLOW.md](WORKFLOW.md), and [VVUQ.md](VVUQ.md), and unlike them it names a language and tools, so it changes when they do. The configuration files it names live at the repository root and are part of the style: where this document and a configuration file disagree, the disagreement is a defect to fix in whichever is wrong.
 
 ## Reference and checking

@@ -401,7 +401,7 @@ The second and third rows were checked numerically for this study: on 20,000 ran
 
 ### Existing CGA Voronoi work
 
-- **Romero, Barrón-Fernández, Godoy-Calderón, "Constructing Voronoi Diagrams from Hollow Spheres Using Conformal Geometric Algebra",** AACA 27(3):1997–2017 (2017), [doi:10.1007/s00006-017-0787-x](https://link.springer.com/article/10.1007/s00006-017-0787-x). It is 2D Bowyer–Watson on empty circles ("hollow spheres"), using P·S for inside/outside. Its two open precursors show least-squares circle fits and exact `== 0` tests on doubles. The full text, read after this study (research note 0004), confirms that robustness is unaddressed: its text and its listings disagree on which sign of P·S means inside, and its Algorithm 2 compares unnormalized values across circles.
+- **Romero, Barrón-Fernández, Godoy-Calderón, "Constructing Voronoi Diagrams from Hollow Spheres Using Conformal Geometric Algebra",** AACA 27(3):1997–2017 (2017), [doi:10.1007/s00006-017-0787-x](https://link.springer.com/article/10.1007/s00006-017-0787-x). It is 2D Bowyer–Watson on empty circles ("hollow spheres"), using P·S for inside/outside. Its two open precursors show least-squares circle fits and exact `== 0` tests on doubles. The full text, read after this study, confirms that robustness is unaddressed: its text and its listings disagree on which sign of P·S means inside, and its Algorithm 2 compares unnormalized values across circles.
 - **Chomicki, Breuils, Biri, Nozick, "Pencils of CGA for Voronoi and Power Diagrams",** LNCS 2025: metadata only was reachable.
 - **Edwards, Payne, Schafer, ["Generalized Voronoi Diagrams and Lie Sphere Geometry"](https://arxiv.org/abs/2408.09279)** expresses classical, Apollonius, farthest-point, order-2 and power diagrams, and polyhedral medial skeletons, as linear inequalities on an unknown sphere. It is the clearest algebraic recipe for generalizing Galoot's Voronoi module.
 
@@ -551,6 +551,8 @@ Within each repository the default header (for example `<galoot/core.hpp>`) neve
 - **Benchmarks** on ga-benchmark's operations and models, plus Monte Carlo ray throughput and mesh-generation throughput.
 
 ### Phased roadmap
+
+The core roadmap of record is `docs/agent/plans/0001-core-v1-roadmap.md`; it supersedes phases 1 to 4 below for the core library.
 
 1. **Conventions spec.** Freeze basis order, names, dual signs, half-angle convention, operator set and precedence guidance. Gate: a written spec and a golden-value test file.
 2. **Core for diagonal metrics.** bits, metric, blade sets, plan compiler, `mv`, products, antiproducts, complements, norms. Gate: RGA2/RGA3 pass identity and golden tests on GCC 15+ and Clang 19+.
@@ -980,7 +982,7 @@ Sources opened during this study, grouped by topic. Items marked "abstract only"
 **Meshing and robust predicates**
 
 - [VoroCrust, ACM TOG 2020](https://arxiv.org/abs/1902.08767); [VoroCrust sampling conditions, SoCG 2018](https://arxiv.org/abs/1803.06078); [sandialabs/vorocrust-meshing](https://github.com/sandialabs/vorocrust-meshing)
-- [Romero et al., "Constructing Voronoi Diagrams from Hollow Spheres Using CGA", AACA 2017](https://link.springer.com/article/10.1007/s00006-017-0787-x) (read in full after the study; research note 0004)
+- [Romero et al., "Constructing Voronoi Diagrams from Hollow Spheres Using CGA", AACA 2017](https://link.springer.com/article/10.1007/s00006-017-0787-x) (read in full after the study)
 - [Edwards, Payne, Schafer, "Generalized Voronoi Diagrams and Lie Sphere Geometry"](https://arxiv.org/abs/2408.09279); [Hitzer, CGA introduction](https://arxiv.org/abs/1306.1358)
 - [Shewchuk, adaptive precision predicates](https://www.wias-berlin.de/people/si/course/files/Shewchuk96-predicates.pdf); [Bartels et al., semi-static filters](https://arxiv.org/abs/2208.00497); [Attene, indirect predicates](https://arxiv.org/abs/2105.09772); [Irving and Green, black-box perturbation](https://arxiv.org/abs/1308.1986)
 - [CGAL Filtered\_kernel](https://doc.cgal.org/4.8/Kernel_23/classCGAL_1_1Filtered__kernel.html); [CGAL Sqrt\_extension](https://doc.cgal.org/6.0/Number_types/classCGAL_1_1Sqrt__extension.html); [Geogram PCK](https://brunolevy.github.io/geogram/namespaceGEO_1_1PCK.html)

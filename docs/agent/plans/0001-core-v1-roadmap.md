@@ -184,3 +184,7 @@ Parallel lanes in separate worktrees (W7): the build lane (WU1, later WU17) with
 ## 11. Next step
 
 The decision records of WU0 are written (0001 to 0017). Remaining in M0: ratify the status lines of CONSTITUTION.md and PERFORMANCE.md (decision 0002), edit CONVENTIONS to 1.3 (0009), claim WU1 with its own plan, and start the spike lane (section 9) in the workbench. WU1 needs the shared job-slot server of P11 running.
+
+## Addendum, 2026-11-01: after the M0 and M1 gate
+
+Decision 0094 closed M0 and M1. WU5 (exact rational) moved from M1 to M5, ahead of WU12 (the change of basis). Section 11 above is stale: the next unit is the build-lane change, then M2 (WU6 `blade_product` and the plan, WU7 plans, WU8 `mv`).

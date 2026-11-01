@@ -23,3 +23,7 @@ Continuity: if doctest's support ends, Galoot keeps 2.5.3, which needs nothing b
 ## Consequences
 
 The core does not depend on doctest (C13); only `test/` does. `include/ext/` is never formatted or linted (STYLE S3, S4). Known 2.5.x limits that bind tests are in note 0001: no `SUBCASE` in loops (#1208), one declaring macro per line on Clang 22 and later.
+
+## Addendum, 2026-11-01: trimmed tree
+
+Decision 0094 trimmed the vendored tree to the three files Galoot uses. SHA-256: `doctest.h` cfd518a3ef90f67e1f3ba514df23fb3627437de1a2feeba78cf5062a40021421, `doctest.cpp` 392d4e28cfa11ce8bc534797532cbf32372ade10a4a3967db25c41747daeca0b, `LICENSE.txt` 0fe0b331fa1513dcce8604ff1fa925f32d1cea17d8aeb1c2471fad40d291adc5. The files are otherwise unchanged from 2.5.3.
