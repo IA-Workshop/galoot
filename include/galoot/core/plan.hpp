@@ -603,23 +603,45 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// place that lists it gets its own terms, which may land on one position
 /// of the result. The plan is a constant evaluation, so the compiler's
 /// limits on constant evaluation bound the size of the sets in practice.
-/// Measured at the default limits, alike at -O0 and -O2 and with or without
-/// _GLIBCXX_ASSERTIONS: every blade times every blade, full<n> with full<n>,
-/// builds for n up to 5 on Clang 23 and up to 6 on GCC 16, for the
-/// geometric product and the wedge, in R(n,0,0), R(n-1,0,1), and
-/// conformal(n-2); in a form with every entry nonzero, whose products have
-/// more terms, the geometric product builds for n up to 4 on Clang and 5 on
-/// GCC, and the wedge, which does not read the form, as in the others. The
-/// geometric antiproduct builds as the geometric product does, except that in
-/// conformal(n-2) on Clang n = 5 builds only with _GLIBCXX_ASSERTIONS
-/// defined; the antiwedge builds for n up to 5 on Clang and 7 on GCC in every
-/// form. Sets of a few blades cost what they use: four blades times three at
-/// n = 16 build on both, for all four operations. An antiproduct of blades of
-/// low grade multiplies their complements, whose grade is close to n, so it
-/// costs more as n grows: measured in the compiler's instructions at -O0,
-/// those four blades times three cost 2.5 times as much through the
-/// geometric antiproduct at n = 16 as at n = 4 on GCC 16 and 2.6 times on
-/// Clang 23, against 1.2 and 1.1 times through the geometric product.
+/// Its cost is a fixed function of the operation, the metric, and the sets.
+/// Generating the terms costs a fixed amount for each pair of blades, plus
+/// the work of the pair's product, which grows with the grades of the two
+/// blades (for an antiproduct, with the grades of their complements) and
+/// with the number of terms the metric gives the pair. Placing the T terms
+/// on the R blades of the result costs at most a fixed amount times T times
+/// R, and is the largest part for large sets. GCC also stops at a loop of
+/// 262,144 iterations, and so at a plan of that many terms.
+/// The counts below are exact for Clang 23.1, whose classic constant
+/// evaluator allows 1,048,576 steps by default, and for GCC 16.2, which
+/// allows 33,554,432 operations, each with libstdc++ 16 and
+/// _GLIBCXX_ASSERTIONS defined. GCC's counts are taken with its cache of
+/// constant calls turned off; with the cache on, as GCC builds by default,
+/// the count is never higher, so a GCC count over the limit does not mean
+/// that the plan fails to build. Without _GLIBCXX_ASSERTIONS, libstdc++
+/// checks each subscript through a function call, which costs Clang more
+/// steps, and another compiler version, evaluator, or standard library
+/// counts differently. For full<n> with full<n>, in steps on Clang and
+/// operations on GCC:
+/// - geometric product, R(n,0,0): n = 5, 655,239 and 3,611,426; n = 6,
+///   5,110,503 (over Clang's limit) and 25,853,002; n = 7, 203,069,770 on
+///   GCC (over its limit).
+/// - geometric product, the form with 2 on the diagonal and 1 elsewhere:
+///   n = 4, 681,823 and 3,645,825; n = 5, 8,319,054 and 44,407,055 (over
+///   both limits).
+/// - wedge, any metric: n = 5, 216,396 and 1,093,326; n = 6, 1,309,448
+///   (over Clang's limit) and 6,558,946; n = 7, 39,732,810 on GCC (over
+///   its limit).
+/// - geometric antiproduct, R(n,0,0): n = 5, 883,839 and 4,768,546 (in
+///   conformal(3), 947,839 steps on Clang); n = 6, 5,076,962 (over Clang's
+///   limit) and 25,775,777.
+/// - antiwedge, any metric: n = 5, 271,653 and 1,393,084; n = 6, 1,108,607
+///   (over Clang's limit) and 5,695,232; n = 7, 23,415,628 on GCC.
+/// Sets of a few blades cost what they use, except through an antiproduct,
+/// which multiplies the complements, whose grades grow with n: {1, e1, e_n,
+/// e1 e_n} with {e1, e2, e_n} in R(n-1,0,1) cost 3,136 steps and 18,252
+/// operations at every n from 4 to 16 through the geometric product, and
+/// 9,137 and 49,347 at n = 4 but 77,513 and 443,211 at n = 16 through the
+/// geometric antiproduct.
 /// Guarantees: generated once in each translation unit for each Op, Alg, A,
 /// and B that it uses, because the generator keeps its steps in static
 /// constexpr locals (checked on Clang, where plain locals would generate it
@@ -922,11 +944,16 @@ template <UnaryOperation Op, metric_like Alg, blade_set S>
 /// has sign +1 or -1, each checked at compile time with a message that names
 /// it. A mask listed twice in S is not checked; each place that lists it gets
 /// its own term, and the two may land on one position of the result. The map
-/// is a constant evaluation, and typing it costs the square of the size of S,
-/// so the compiler's limits bound S in practice. Measured at the default
-/// limits, alike at -O0 and -O2: the map of every blade, full<n>, builds for n
-/// up to 9 on GCC 16; on Clang 23 for n up to 7, and for the complements up
-/// to 8 when _GLIBCXX_ASSERTIONS is defined.
+/// is a constant evaluation, and typing it costs at most a fixed amount times
+/// the square of the size of S, so the compiler's limits bound S in
+/// practice. Counted as for product_plan, for the map of every blade,
+/// full<n>, in steps on Clang 23.1 and operations on GCC 16.2:
+/// - the reverse, the antireverse, and the grade involution: n = 7, 313,635
+///   and 1,577,666; n = 8, 1,251,192 (over Clang's limit) and 6,270,700;
+///   n = 9, 25,009,582 on GCC; n = 10, 99,912,902 on GCC (over its limit).
+/// - the right and the left complement: n = 8, 813,090 and 5,717,129;
+///   n = 9, 3,199,010 (over Clang's limit) and 22,509,577; n = 10,
+///   89,321,225 on GCC (over its limit).
 /// Guarantees: generated once in each translation unit for each Op, Alg, and
 /// S that it uses, as product_plan is. Term a is that of the blade at
 /// position a of S, on its own blade for the reverse, the antireverse, and
