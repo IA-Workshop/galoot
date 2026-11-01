@@ -218,9 +218,11 @@ struct widest_broken {
 // max_form_entry. Whether a matrix meets the requirement depends on each
 // entry only through which of those three classes it falls in and whether it
 // equals its mirrored entry. Two values in each class give every pattern of
-// classes and equalities that an int matrix can have, so a check that agrees
-// with the requirement on all matrices over these values agrees on all int
-// matrices of that size.
+// classes and equalities that an int matrix can have. So a check that, like
+// the requirement, looks at an entry only through its class and its mirror,
+// as the single pass does, and agrees with the requirement on all matrices
+// over these values, agrees on all int matrices of that size. A check that
+// treats some other value differently, such as 0, is not covered.
 constexpr core::entry_type bound = core::max_form_entry;
 constexpr std::array<core::entry_type, 6> sample_entries{
     std::numeric_limits<core::entry_type>::min(),
@@ -557,8 +559,9 @@ TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
 // |g_ij| <= max_form_entry for every i and j, and over six entries with two
 // in each class (below, within, and above the range) that holds for
 // 2^(n(n + 1) / 2) of the matrices, 64 at n = 3; proof: the six entries
-// realize every pattern of classes and mirrored equalities, so the check
-// covers every int matrix of three generators
+// realize every pattern of classes and mirrored equalities, and the single
+// pass, like the requirement, sees an entry only through its class and its
+// mirror, so the check covers every int matrix of three generators
 TEST_CASE("At n = 3, the single pass that metric_like stores agrees with the "
           "requirement and with is_symmetric() && entries_in_range() on "
           "every matrix over the six sample entries, and accepts 64") {
