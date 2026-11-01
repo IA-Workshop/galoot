@@ -73,3 +73,41 @@ Verification and validation: verified, by the tests and mutations above, that ea
 ### Final run on the closing revision
 
 At `99b84cea1ae2` (this plan's outcome; only records changed since `748751f` and `2e8567d`, a comment), `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 62 of 62; wall times (s) 4.11, 3.74, 3.83, 3.73, 3.44, 3.39, 2.41; `all_verify_interface_header_sets` on gcc-debug and clang-debug pass. From the worktree root: the trace gate exits 0 with the same items without tests, the marker check finds 28 test cases all marked, the golden check passes, and `golden.py --check` matches. The commit after it adds only these lines and the run rows. All 117 run rows of the unit (builds, tests, mutations, gates) total 146.8 s of wall time.
+
+## W5 fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The review `docs/agent/records/reviews/2026-10-31-cleanup-1.md` (on `develop`) returned "merge after named fixes". This section records the fix pass, `dd549fb` to `4d998f5` plus this record; the outcome above stands except where it changes it.
+
+### Departures and ambiguities (C20)
+
+1. N1: the comment was made truthful (FORBID stricter, REQUIRE looser, write neither with a `;`) rather than rejecting `;` in REQUIRE: `cmake_parse_arguments` has already split the value, so a `;` cannot be told from two values.
+2. N3: one part has no fixture of its own: the whitespace run `\s+` is exercised by a double space only in the findings pattern (gap recorded in decision 0081). "§3.1 of the conventions", which the review listed and the brief did not, is caught too.
+3. N5: beyond the brief, the copy step also checks that the tree's rows come from one revision that is not `-dirty`. The fail-fast step was rehearsed on scratch copies only; the committed record is unchanged.
+4. N6: the correction of the snippets review also notes that lesson 0001's field-count check no longer detects anything (that lesson is not edited).
+5. The B1 mutant had to be narrowed: a recorder that crashes whenever task-clock is missing is already caught by another case; the survivor is one that writes no row for a `<not counted>` event without task-clock.
+
+### Fixes
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| B1 | `counters_per_core_type` checks the record has index + 1 rows after each case (`dd549fb`, test only) | Mutant writing no row for a `<not counted>` event without task-clock: 1 of 1 passes | Same mutant: "rows after the case no task-clock line: got 2, expected 3" and the same for the fourth case; run `mutation:no-row-without-task-clock`, exit 0 then 8 |
+| B2 | `develop` (af48044: plan 0008, the review record, agent-cost rows) merged as `58bd179` | Three records-only commits behind | Level; records only, so P10 covers the merge; one header in `runs.tsv` and `agent-cost.tsv` |
+| N1 | `galoot_testing.cmake` comment | "errs on the strict side" for both | FORBID stricter, REQUIRE looser |
+| N2 | `read_table`: every line after a table's separator is a row; a first cell that is not an item number is a finding (`7291f4f`; tests `459b524`) | `1.l` and `**1.2**` rows skipped | `trace_bad_table.md:13: row's first cell '1.l' is not an item number`, `:14: ... '**1.2**' ...`; the old script lacks both (run `before:malformed-items-old-script`) |
+| N3 | Patterns widened (`b953b8b`); `citations_bad/parts.cpp` and a `#` split in `bad.cmake` (`4469299`) | `decision-0080`, `plan-0007`, `finding  B1`, `ticket D2`, `per S11`, `see C20`, `§3.1 of the conventions` passed; part narrowings survived | 70 expected findings (36 unchanged, 34 new); 25 of 25 line removals and 48 of 48 part narrowings fail a rejection test (runs `mutation:no-pattern-line-<n>` and `mutation:<part>`) |
+| N4 | `galoot_expected_findings` fails on an empty file (`b7ed556`) | An empty `.expected` passed on exit 1 alone | Configure fails: "<file> lists no expected finding" (run `mutation:empty-expected`, exit 1) |
+| N5 | Configure-time warning when `GALOOT_COMPILE_RECORD` is not under `CMAKE_BINARY_DIR`; copy step with `set -eu`, one-revision and not-dirty checks, and the clean-build rule (decision 0080 amendment; `d75cdd8`) | Silent | `-DGALOOT_COMPILE_RECORD=<scratchpad>/outside.tsv` warns, naming the file; the default does not; the step refuses the `gcc-debug` tree (rows of several revisions; nothing appended) and copies 8 rows from a fresh `build/gcc-measure-gate` at `d75cdd8` |
+| N6 | Snippets review sentence | "one field count (28)" | 9, 26, and 28 fields (2125, 1808, 347 rows); one header |
+| N7 | Trace editing rule, `tools/measure` dirty-check comment, `CMakeLists.txt` record comment | Stale | Row's own fact; the compile record changes only by the copy step; "writes nothing outside" only for the default |
+| N8 | Ninja-lock comment | Stated as fact | Marked inferred, not checked against Ninja's source |
+| N10 | `build_tree` looks for the program again after `cmake -E` (`fe3ca16`; tests `11509b9`) | `cmake -E env FOO=1 ctest --test-dir <tree>` and `cmake -E time ninja -C <tree>` read `build/<preset>` | Both read `<tree>`; the old recorder and the rule disabled both fail (runs `mutation:old-recorder-cmake-e`, `mutation:no-cmake-e-wrapper`) |
+| .gitignore | Two comments drop "(PERFORMANCE.md P7)" and "(WORKFLOW.md W6)" | | `git check-ignore -v` gives the same rules for the workbench, `build/`, and `__pycache__` |
+| W and P | Decision 0081 amendment: the first mathematical use narrows them to the parenthesized rule | | |
+
+Known gaps, not changed (review N9 and N11): `golden` and `trace` read `*_test.cpp`, `*.hpp`, and `*.h` under `test/`, not helper `*.cpp` or `*.hh` files; a fact is matched as a substring, so a short fact is pinned by any marker that contains it. The citation check scans the filesystem, not git, so an untracked local file can change its result.
+
+Tests changed or added, with expected values: `tools.measure_record` gains a row count per core-type case (1, 2, 3, 4) and options `-Wall -Werror -O1 -g` for `cmake -E env FOO=1 ctest --test-dir <tree>` and `cmake -E time ninja -C <tree>`; `tools.test_references_trace_rejects` gains the two malformed-row findings above; `tools.test_references_citations_rejects` requires the 70 lines of `citations_bad.expected`; `tools.test_references_citations_accepts` still requires "3 files, none citing a project document or record", now with near-misses for `see` and `ticket`. No existing expected value changed.
+
+P9 at `4d998f5`, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 62 of 62, no CMake warning; wall times (s) 2.82, 2.33, 3.28, 1.70, 2.75, 2.82, 1.24; `all_verify_interface_header_sets` on gcc-debug and clang-debug pass. From the worktree root: trace gate exit 0 (items with no test: 1.6, 1.7, 3.2 to 7.1), markers 28 of 28, golden passes, citations "63 files, none citing a project document or record", `golden.py --check` matches, `conventions_check.py` passes (seed 20261031). The commit after it adds only this section and run rows. The fix pass logged 237 run rows, 78.1 s of wall time, most of them mutation runs.
+
+Verification and validation: verified by the tests and mutations above; validation not applicable (tools, tests, comments, and records only).
