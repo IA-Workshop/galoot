@@ -38,7 +38,7 @@ Notation. Generators e_1 … e_n, Gram matrix g, any symmetric integer form. A b
 
 *Proof.* The De Morgan law is proved in decision 0115 (its "Proofs at the level of plans"; the decision is on `feature/core-plan-maps`, not yet on `develop`): right(a) ⟇ right(b) = left(right(right(a)) ⟑ right(right(b))) and the signs (−1)^(gr·ag) cancel because the product preserves grade parity. Applying right to e_i e_j + e_j e_i = 2 g_ij gives the relation, since right(1) = 𝟙. ∎
 
-This is Lengyel's statement, read above: the metric does not change, the generators do. It is also exactly WU7b's construction: the "antimetric formulation" with the Gram data on complements is the conjugation, with the same per-basis data (complement masks and complement signs). The cost follows: in the antialgebra's own generators the vector e_i is an antiwedge of n − 1 antivectors, so a generator that recurses over the generators of a factor recurses over n − |A| of them. So the formulation the brief names first is not a different route; it is the one WU7b took.
+This is Lengyel's statement, read above: the metric does not change, the generators do. It is also exactly WU7b's construction: the "antimetric formulation" with the Gram data on complements is the conjugation, with the same per-basis data (complement masks and complement signs). The cost follows: in the antialgebra's own generators the vector e_i is an antiwedge of n − 1 antivectors, so a generator that recurses over the generators of a factor recurses over n − |A| of them. So the antimetric formulation the owner named first is not a different route; it is the one WU7b took.
 
 ### 1.2 Every form: reduction to the coupling closure
 
@@ -88,7 +88,7 @@ and the factor ∏_(j ∉ A ∪ B) g_jj is the diagonal entry of the antimetric 
    Every term that appears twice cancels (1 + 1 = 0): β(A,A), β(B,B), β(A,B), β(A,1), β(1,B). What remains is β(B,A) + β(B,1) + β(1,A) + β(1,1) = β(B + 1, A + 1), the parity of τ(B̄, Ā).
 5. The antimetric: 𝔾 e_S = left(G right(e_S)) = r(S) l(S̄) G(S̄) e_S, and r(S) l(S̄) = 1 because left undoes right. In a diagonal form G(S̄) = ∏_(j ∈ S̄) g_jj. With S = A ∪ B this is the factor of step 2. ∎
 
-Compare the product's rule: e_A ⟑ e_B = τ(A, B) · G(A ∩ B) · e_(A xor B), with G(A ∩ B) = ∏_(j ∈ A ∩ B) g_jj. The antiproduct reads the antimetric diagonal 𝔾 at A ∪ B, the product reads the metric diagonal G at A ∩ B. With word operations both are a fixed number of steps: τ is the parity of popcount(p & y) for a prefix-parity word p of x, and for squares in {−1, 0, +1} the factor is 0 exactly when (null mask) & ~(A | B) is nonzero, else (−1)^popcount((negative mask) & ~(A | B)). This is the "sign and mask from the antimetric diagonal" that the brief anticipates. It is a second pair rule, valid for diagonal forms only.
+Compare the product's rule: e_A ⟑ e_B = τ(A, B) · G(A ∩ B) · e_(A xor B), with G(A ∩ B) = ∏_(j ∈ A ∩ B) g_jj. The antiproduct reads the antimetric diagonal 𝔾 at A ∪ B, the product reads the metric diagonal G at A ∩ B. With word operations both are a fixed number of steps: τ is the parity of popcount(p & y) for a prefix-parity word p of x, and for squares in {−1, 0, +1} the factor is 0 exactly when (null mask) & ~(A | B) is nonzero, else (−1)^popcount((negative mask) & ~(A | B)). This is the "sign and a mask computed from the antimetric diagonal" that the owner anticipated. It is a second pair rule, valid for diagonal forms only.
 
 ### 1.4 The other reading of "with the antimetric" is wrong
 
@@ -149,11 +149,11 @@ Independence. The oracle shares no code with the routes and multiplies by anothe
 
 (c) When C grows with n, the cost must grow. *Reason:* the output can grow: the output blades of e_1 ⟇ e_2 have grade n or n − 2, so up to 1 + C(n,2) terms, and in the form with 2 on the diagonal and 1 elsewhere e_1 ⟇ e_2 has 2(n − 1) terms for n = 2 to 7, in a second integer family 7, 10, 15 at n = 4, 5, 6, while e_1 ⟑ e_2 keeps 2. A method writes its output, so its cost grows at least as the output.
 
-So, for the use measured in WU7b (C = the four rigid(3) generators at every n): the Θ(n²) loop work per pair is an artifact of conjugating over all n generators, and the 2^(n−1) term-list capacity is an artifact of a bound taken over the complements. The inherent part is one read of the form outside C, which is of the order of the signature data that decision 0005 admits, and which `metric_like` already performs once per algebra. The brief's guess is right in its arithmetic: the grade of a result and its sign need only O(1) word operations on n-bit masks; the Θ(n) per term comes from loops over generators, not from the mathematics.
+So, for the use measured in WU7b (C = the four rigid(3) generators at every n): the Θ(n²) loop work per pair is an artifact of conjugating over all n generators, and the 2^(n−1) term-list capacity is an artifact of a bound taken over the complements. The inherent part is one read of the form outside C, which is of the order of the signature data that decision 0005 admits, and which `metric_like` already performs once per algebra. The owner's reading is right in its arithmetic: the grade of a result and its sign need only O(1) word operations on n-bit masks; the Θ(n) per term comes from loops over generators, not from the mathematics.
 
 ## 5. The prototype
 
-Because Theorem 2 makes the direct route a change of per-basis data, the brief's step 4 applies. `docs/agent/records/spikes/antiproduct-direct/reduced_antiproduct.hpp` (outside `include/`, built on the headers of `50c7c70`) adds:
+Because Theorem 2 makes the direct route a change of per-basis data, the owner's prototype step applies. `docs/agent/records/spikes/antiproduct-direct/reduced_antiproduct.hpp` (outside `include/`, built on the headers of `50c7c70`) adds:
 
 - `coupled_closure(g, used)`: the generators coupled to `used`, one row of the form per generator reached;
 - `reduction_of(g, used)`: C, Q, and the capacity a component of Q needs;
