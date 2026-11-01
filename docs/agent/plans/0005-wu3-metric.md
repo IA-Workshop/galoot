@@ -167,3 +167,19 @@ After the M0 scripts merged (`develop` at `8327147`, merged here as `911b4e8`; o
 - Mutations (restored): the last negative generator made positive fails 3 test cases; the conformal pair made +1 on both sides fails 2.
 - At `d9de465`: the seven correctness workflows pass 30 of 30 each (gcc-debug 3.15 s, gcc-release 3.08 s, gcc-asan 3.17 s, clang-debug 2.92 s, clang-release 3.21 s, clang-asan 3.36 s, lint 2.81 s; 21.7 s in total). The gate command passes: 1.2 at `metric_test.cpp:194, 207`; 1.3 at `233, 268`; 1.4 at `255, 268, 299`.
 - Still open: replacing the `mask_t` redeclaration with `#include <galoot/core/bits.hpp>` once WU2 is on `develop`; the result of the delta review.
+
+## Delta review fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The delta review (`docs/agent/records/reviews/2026-10-31-wu3-metric-delta.md`, of `b12f07d..0e2d3ef`) returned "merge after fixes". `develop` (`c7bff1e`) merged as `389630f` without conflict.
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| D1 | markers and golden values (previous section, `22983f6`, `d9de465`) | 9 unmarked test cases | 11 of 11 marked; P9 below |
+| D2 | `.clang-tidy` states the reason for both bounds exclusions | no reason (the earlier edit silently matched nothing; lesson 0061) | reason in the comment block |
+| D3 | `metric_like` guards on `entries_in_range()`, which reads every entry | declared-only, non-constexpr, and non-static `metric<1>` values: hard errors on both compilers | false on both; the old guard as a mutant breaks the build on both |
+| D4 | `core.metric_conformal_wrap` requires the literal message for `conformal<SIZE_MAX>()` | the check had no test | passes; fails when `static_assert(D <= MaxN)` is removed |
+| D5 | tests use `core::entry_type`; `from_gram`'s NOLINT has its reason on the line; the `///` says raising MaxN means writing N; generator-count checks run only when every count is within MaxN | `R<SIZE_MAX, 0, 1>()` printed "n is larger than MaxN" and "n = 0 is rejected" | only "n is larger than MaxN", on both compilers |
+
+Departures: the declared-only `metric<1>` tag sits outside the anonymous namespace, because Clang rejects a declared-only member with internal linkage, with one `misc-use-internal-linkage` suppression carrying its reason. The tests (`36f4d9f`, `64dc0ac`) and the code (`10aeff3`) are separate commits, so `36f4d9f` does not build (W9 over W2, as before). The `mask_t` redeclaration stays until WU2 is on `develop`.
+
+P9 at `10aeff3`: gcc-debug 3.51 s, gcc-release 3.57 s, gcc-asan 3.89 s, clang-debug 3.39 s, clang-release 3.42 s, clang-asan 3.60 s, lint 3.17 s; 31 of 31 in each; 24.5 s in total; header sets built on both debug presets. Marker check: 11 test cases marked; golden check passes; the trace gate passes (1.2 at `metric_test.cpp:213, 226`; 1.3 at `252, 288`; 1.4 at `275, 288, 319`).
