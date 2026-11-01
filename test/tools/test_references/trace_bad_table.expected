@@ -8,3 +8,4 @@ trace_bad_table.md:12: row of item 2.1 is not three cells between | signs
 trace_bad_table.md: item 4.1 of @reference_fixtures@/trace_conventions.md has no row
 trace_bad_table.md:13: row's first cell '1.l' is not an item number
 trace_bad_table.md:14: row's first cell '**1.2**' is not an item number
+trace_bad_table.md:17: row of item 1.2 comes before any separator line

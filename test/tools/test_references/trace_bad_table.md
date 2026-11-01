@@ -1,5 +1,5 @@
 # Fixture table for tools/test_references.py trace: each row after the
-# first has one defect, the fact of beta is missing, and one item has no row
+# first has one defect; beta's fact, one item's row, and a separator are missing
 
 | Item | Fact | Implemented |
 | --- | --- | --- |
@@ -12,3 +12,6 @@
 | 2.1 | a fact | with a pipe | no |
 | 1.l | a mistyped item number | yes |
 | **1.2** | an item number in bold | yes |
+
+| Item | Fact | Implemented |
+| 1.2 | a fact before any separator line | yes |
