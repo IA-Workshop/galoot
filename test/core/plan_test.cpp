@@ -1495,11 +1495,14 @@ int golden_wedge_mismatches(const std::array<std::array<int, N>, N>& gram,
   return mismatches + static_cast<int>(plan.size() - std::min(k, plan.size()));
 }
 
-core::metric<4> rigid_at_run_time() {
-  core::metric<4> g{};
-  for (std::size_t i = 0; i < 4; ++i) {
-    for (std::size_t j = 0; j < 4; ++j) {
-      const volatile int entry = rga3::value.gram.at(i).at(j);
+// A copy of the metric `fixed` that the compiler cannot know, read through
+// volatile.
+template <std::size_t N>
+core::metric<N> at_run_time(const core::metric<N>& fixed) {
+  core::metric<N> g{};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      const volatile int entry = fixed.gram.at(i).at(j);
       g.gram.at(i).at(j) = entry;
     }
   }
@@ -1634,10 +1637,11 @@ TEST_CASE("The result set of every blade times every blade is the golden "
 
 // Reference: contract: a typed plan built at compile time is the same
 // functions run at run time, so the typed plans of both operations over
-// every blade times every blade of rigid(3) equal a run-time call on a metric
-// that the compiler cannot know
+// every blade times every blade of rigid(3), R(4,0,0), R(1,3,0),
+// conformal(2), and a degenerate form of three generators equal a run-time
+// call on a metric that the compiler cannot know
 TEST_CASE("product_plan equals its typing run at run time") {
-  const core::metric<4> g = rigid_at_run_time();
+  const core::metric<4> g = at_run_time(rga3::value);
   CHECK(equals_typing<gp, 8>(
       g, core::full<4>, core::full<4>,
       product_plan<gp, rga3, core::full<4>, core::full<4>>));
@@ -1648,6 +1652,25 @@ TEST_CASE("product_plan equals its typing run at run time") {
                              product_plan<gp, rga3, point, line>));
   CHECK(equals_typing<wedge, 1>(g, point, line,
                                 product_plan<wedge, rga3, point, line>));
+
+  constexpr const auto& four = core::full<4>;
+  CHECK(equals_typing<gp, 8>(at_run_time(r400::value), four, four,
+                             product_plan<gp, r400, four, four>));
+  CHECK(equals_typing<wedge, 1>(at_run_time(r400::value), four, four,
+                                product_plan<wedge, r400, four, four>));
+  CHECK(equals_typing<gp, 8>(at_run_time(r130::value), four, four,
+                             product_plan<gp, r130, four, four>));
+  CHECK(equals_typing<wedge, 1>(at_run_time(r130::value), four, four,
+                                product_plan<wedge, r130, four, four>));
+  CHECK(equals_typing<gp, 8>(at_run_time(conformal2::value), four, four,
+                             product_plan<gp, conformal2, four, four>));
+  CHECK(equals_typing<wedge, 1>(at_run_time(conformal2::value), four, four,
+                                product_plan<wedge, conformal2, four, four>));
+  constexpr const auto& three = core::full<3>;
+  CHECK(equals_typing<gp, 4>(at_run_time(degenerate::value), three, three,
+                             product_plan<gp, degenerate, three, three>));
+  CHECK(equals_typing<wedge, 1>(at_run_time(degenerate::value), three, three,
+                                product_plan<wedge, degenerate, three, three>));
 }
 
 // Reference: contract: a mask listed twice in a set is not rejected, and
