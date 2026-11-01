@@ -38,3 +38,11 @@ Decision 0125 (owner ruling) asks for the cost law and certified examples in the
 ## Correction, 2026-11-01 (plan 0015 outcome)
 
 Item 6's wall times, 4.3 s and 4.7 s, were measured just before `22db6bc` was committed, on the same files (run-log revision `809a975-dirty`), not at `22db6bc`. In the serial suite runs of the final trees at `1f7cf28` the canary took 4.83 s (gcc-debug) and 5.00 s (clang-debug); none exceeded the criterion of 5 s. The text above is left as recorded.
+
+## Correction, 2026-11-01 (W5 review of plan 0015, findings F2 and F9)
+
+- Item 4, last sentence: the self-check compiles nothing, so it cannot see a change to a generator. Such a change is seen only when the phase probes are measured again, as a refit does, and the weights then fail to predict them. The self-check does now fail when a measured threshold of a committed case file is missing or marked failed.
+- Item 5: as built at `26cc06e`, the canary was also registered in the four measure presets (`clang-measure`, `clang-measure-o3`, `gcc-measure`, `gcc-measure-o3`), which build without `_GLIBCXX_ASSERTIONS` and where every unit counts more, so it failed there. Decision 0132 item 2 registers it only in builds that define `_GLIBCXX_ASSERTIONS`.
+- Items 3 and 6 are superseded by decision 0132 (eight units, one test per unit).
+
+The text above is left as recorded.

@@ -217,3 +217,44 @@ Verification: the model was checked against the compilers (fit, held-out probes,
 5. Knowledge base: `kb/constant-evaluation-canary` (worktree `knowledge-base-worktrees/constant-evaluation-canary`, from `kb/constant-evaluation-limits`), commit `3f2bcde`, adds a section on guarding published figures to `performance-engineering/constant-evaluation-cost-models.md`; `check_links.py` reports 0 problems. Not merged.
 
 Agent cost: about 230 tool calls; token counts are not visible to me.
+
+## W5 review fixes (2026-11-01, Claude, agent, Opus 5.5, performance-engineer)
+
+The W5 review (`records/reviews/2026-11-01-plan-limits-certified.md`, blind-reviewer, Opus 5.5, head `26cc06e`, merged onto the branch as `d89806d`) accepted the unit after fixes. F1 to F11 are applied below. The outcome above is left as written; this section corrects it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. `539d5d6` (the two stand-in tests for F1 and F4) was committed before the fix it judges, `b6ed70c`, and both tests fail at `539d5d6` (checked on gcc-debug), as its message says.
+2. `0aeb46b` changes comments of `include/galoot/core/plan.hpp` (F6, F7) and needs the delta review of a header comment; not done here.
+3. F5 is resolved by the split the reviewer recommended, not by the `slow` label. The GCC tests of the two largest units take 4.4 s to 4.7 s each, close to the 5 s of criterion 7, because each now compiles eleven times (F1).
+4. F2's registration rule is "`CMAKE_CXX_FLAGS` defines `_GLIBCXX_ASSERTIONS`". A build that gets the assertions only from libstdc++'s own default at -O0 is not registered; no preset is such a build.
+5. The run log is not edited (the coordinator's follow-up unit).
+
+### Corrections to the outcome
+
+- Criterion 5: at `1f7cf28` ten presets registered the canary, not six: the four measure presets did too, and it fails there by design (F2). From `a3ce039` it is registered in six (gcc-debug, gcc-release, clang-debug, clang-release, clang-asan, lint).
+- Criterion 6: true for the mutant class the plan defined; the wedge rule and `collect_result`'s shifts decided stated figures and no reference reached them (F3). Both are now pinned (decision 0132 item 3), and the reviewer's two mutants are killed (table below).
+- Criterion 7: the reviewer measured the single test over 5 s in 8 of 27 runs (F5). Resolved by the split.
+- Criterion 4's "checked by script" now has a committed script: `cost.py comments` (F10).
+
+### The fixes
+
+| Finding | Commit | What |
+| --- | --- | --- |
+| F1 | `539d5d6` (tests), `b6ed70c` | On GCC a pass needs compiles at nine limits from T + 1 to T + T/10 as well (reduced from ten in `a3ce039`); docstring corrected; `tools.plan_cost_model_evades_at_threshold` |
+| F2 | `a3ce039` | Registered only where `CMAKE_CXX_FLAGS` defines `_GLIBCXX_ASSERTIONS` (on GCC also without `-fsanitize`); dated correction in decision 0131 item 5 |
+| F3 | `b6cef4d` (figure), `9b70dc8` (tests) | `plan_cost_antiwedge_full5.cpp` (wedge rule) and `plan_cost_gp_vectors_full6.cpp` (shifts), thresholds 271,653 / 1,393,084 and 474,959 / 2,415,778; both reviewer mutants killed |
+| F4 | `539d5d6` (test), `b6ed70c` | GCC's built-in message one below is named and searched; `tools.plan_cost_model_builtin_below` |
+| F5 | `a3ce039` | One CTest per unit, `core.plan_cost_model.<unit>`; decision 0132 item 4 records the timings |
+| F6, F7 | `0aeb46b` (comment only; delta review needed) | The plan's own evaluations versus the metric's check; GCC also counts more without assertions; libstdc++'s default at -O0; GCC's sanitizers |
+| F8 | `a3ce039` | The OBJECT library `core_plan_cost_units`; lint ran clang-tidy on all eight units at `9b70dc8` (exit 0) |
+| F9 | `b6cef4d`, this commit | `selfcheck` fails on a missing or failed measurement; dated correction in decision 0131 item 4 |
+| F10 | `b6cef4d` | `cost.py comments`; passes on `plan.hpp` at `0aeb46b`, fails on a changed count (`comments-0aeb46b.tsv`) |
+| F11 | `b6cef4d` | `cost.py` and `probe.py` executable |
+
+Tests and expected values for the review (W9): `tools.plan_cost_model_evades_at_threshold` and `_builtin_below` (in `539d5d6`, outputs named there); `core.plan_cost_model.antiwedge_full5` and `.gp_vectors_full6` (in `9b70dc8`, thresholds above). No other threshold changed.
+
+Checks per commit: `539d5d6`, the tools tests on gcc-debug (the two new ones fail, as intended). `b6ed70c`: the canary and its tools tests on gcc-debug (10 of 10) and clang-debug (an unreconfigured tree, 8 of 8). `a3ce039`: `all` on gcc-debug and clang-debug, the eight canary-related tests on both, lint `all` (the object library with clang-tidy); registration counted on gcc-debug, clang-debug, lint (6 each), gcc-asan, clang-measure, gcc-measure (0 each). `9b70dc8`: `all` and the canary on both (8 of 8 each), lint `all` and `format-check`. `0aeb46b`: `all` and the header sets, the `core`, `tests`, and `reference` labels on gcc-debug (130 of 130) and clang-debug (132 of 132), lint `all`, header sets, and `format-check`, the trace gate. `b6cef4d` and this commit change no build input; both self-checks ran at `b6cef4d` (0 differences).
+
+Mutations at `0aeb46b` (`survivors.md`): the canary 24 of 29 killed on each debug preset, the reviewer's two survivors among the kills; the self-check 18 of 18; the comments check 2 of 2.
+

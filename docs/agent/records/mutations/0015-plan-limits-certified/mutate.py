@@ -71,6 +71,10 @@ HEADER_MUTANTS = {
         "  for (std::size_t k = 0; k < K; ++k) {\n    out.terms[k] = {\n",
         "  for (std::size_t k = 0; k < K; ++k) {\n    " + STEP +
         "\n    out.terms[k] = {\n"),
+    "wedge_branch_step": (PLAN, *after(
+        "    term_list<Capacity> out{};\n", 4)),
+    "collect_shift_step": (PLAN, *after(
+        "      out[j] = out[j - 1];\n", 6)),
     "defects_step": (PLAN, *after(
         "    const plan_term& t = plan[k];\n", 4)),
     "typing_step": (PLAN, *after(
@@ -185,6 +189,17 @@ def selfcheck_mutants():
         fields[4] = str(int(fields[4]) + 1)
         found[f"figure_{fields[0]}_{compiler}"] = (
             compiler, figures, row, "\t".join(fields))
+        # A measurement that goes missing, or is set to failed.
+        cache = "cold" if compiler == "gcc" else "warm"
+        plans = OUT / f"plans-{compiler}-galoot-O0-{cache}.tsv"
+        line = next(row for row in plans.read_text(
+            encoding="utf-8").splitlines() if row.startswith("full-gp-r-n6\t"))
+        fields = line.split("\t")
+        fields[4] = "fails"
+        found[f"row_deleted_{compiler}"] = (compiler, plans, f"\n{line}\n",
+                                           "\n")
+        found[f"row_fails_{compiler}"] = (compiler, plans, f"\n{line}\n",
+                                         "\n" + "\t".join(fields) + "\n")
     mirror = SNIPPET / "mirror.py"
     for event in ("type.scan", "gen.term", "collect.scan"):
         anchor = f'ev["{event}"] += 1\n'

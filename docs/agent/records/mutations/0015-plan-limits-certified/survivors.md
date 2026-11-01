@@ -22,3 +22,25 @@ The survivors are the five phases that decision 0131 item 4 lists as outside the
 ## The self-check, `cost.py selfcheck`
 
 See `selfcheck-cd7dcf2.tsv`: per compiler, one weight changed by one (`typed`/`type.scan`, `fill`/`gen.term`, `map_typed`/`map_typed.term`), one figure of `figures-<compiler>.txt` changed by one, and one event dropped from `mirror.py` (`type.scan`, `gen.term`, `collect.scan`).
+
+## After the W5 review, at `0aeb46b`
+
+The canary is now eight tests, `core.plan_cost_model.<unit>`, with two more units (`antiwedge_full5`, `gp_vectors_full6`) and, on GCC, the check above the threshold (decision 0132). The driver gains the reviewer's two surviving mutants, `wedge_branch_step` (one statement in the wedge rule of `pair_terms`) and `collect_shift_step` (one statement in `collect_result`'s shift loop). Results: `canary-0aeb46b-<preset>.tsv`.
+
+| Mutant | clang-debug | gcc-debug | The units that moved |
+| --- | --- | --- | --- |
+| `wedge_branch_step` | killed | killed | `antiwedge_full5` |
+| `collect_shift_step` | killed | killed | `gp_vectors_full6` |
+| `typed_scan_step` | killed | killed | `gp_grades_3_7`, `right_complement_full8` |
+| `collect_scan_step` | killed | killed | `reverse_full7`, `gp_vectors_full6`, and `gp_full5` on Clang |
+| `product_term_step` | killed | killed | `gp_dense4`, `antigp_sparse16`, and `gp_full5` on GCC |
+| `factor_step`, `run_term_step` | killed | killed | `antigp_sparse16`, `antiwedge_full5` |
+| `map_copy_step` | killed | killed | `right_complement_full8` |
+| 16 threshold mutants per compiler | 16 killed | 16 killed | the one changed |
+| `map_term_step`, `defects_step`, `typing_step`, `capacity_step`, `map_defects_step` | survived | survived | none, as before |
+
+24 of 29 killed on each preset, every kill by a moved count; no mutant built with a warning. The F1 case (a GCC unit that compiles at its threshold although its count rose) is now judged by the stand-in test `tools.plan_cost_model_evades_at_threshold`.
+
+The comments check (`cost.py comments`, F10), `comments-0aeb46b.tsv`: it passes on `plan.hpp` and fails when one count of the comments is changed by one (two mutants, `655,239` to `655,240` and `22,509,577` to `22,509,576`).
+
+The self-check (F9), `selfcheck-0aeb46b.tsv`: 18 of 18 killed, the 14 mutants of the first run and, per compiler, `row_deleted` (the measured row of `full-gp-r-n6` removed from `plans-<compiler>-*.tsv`) and `row_fails` (its threshold set to `fails`), which the reviewer showed surviving at `26cc06e`.
