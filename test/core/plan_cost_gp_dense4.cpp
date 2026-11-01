@@ -24,4 +24,4 @@ constexpr const auto& plan =
 
 } // namespace
 
-static_assert(plan.terms.size() > 0);
+static_assert(!plan.terms.empty());
