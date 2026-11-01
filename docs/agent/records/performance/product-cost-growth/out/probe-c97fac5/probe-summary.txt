@@ -1,0 +1,13 @@
+Headers at c97fac5; instructions on the pinned core, mean of 3 repeats; plans minus the baseline, in M
+gcc as-is 1 plan(s): n=4 44.4, n=8 44.5, n=12 44.6, n=16 44.7
+gcc as-is 4 plan(s): n=4 179.7, n=8 179.6, n=12 179.9, n=16 180.1
+gcc as-is baseline: n=4 806.9, n=8 810.7, n=12 816.8, n=16 825.2
+gcc type-only 1 plan(s): n=4 45.9, n=8 45.8, n=12 45.6, n=16 45.7
+gcc type-only 4 plan(s): n=4 181.0, n=8 181.1, n=12 181.0, n=16 180.9
+gcc type-only baseline: n=4 803.5, n=8 803.8, n=12 804.1, n=16 804.4
+clang as-is 1 plan(s): n=4 124.8, n=8 129.0, n=12 138.2, n=16 146.5
+clang as-is 4 plan(s): n=4 343.2, n=8 346.1, n=12 354.0, n=16 365.6
+clang as-is baseline: n=4 747.8, n=8 753.1, n=12 759.8, n=16 770.4
+clang type-only 1 plan(s): n=4 123.1, n=8 123.2, n=12 122.3, n=16 123.6
+clang type-only 4 plan(s): n=4 340.9, n=8 340.2, n=12 340.5, n=16 341.1
+clang type-only baseline: n=4 745.0, n=8 744.8, n=12 746.5, n=16 745.0

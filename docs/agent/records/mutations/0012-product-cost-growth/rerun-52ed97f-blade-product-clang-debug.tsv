@@ -1,0 +1,43 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_sign_side	clang-debug	1	-	-	killed	531	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+wedge_sign_dropped	clang-debug	1	-	-	killed	531	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+contraction_first_sign	clang-debug	1	-	-	killed	531,834	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+contraction_sign_constant	clang-debug	1	-	-	killed	531	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+correction_sign	clang-debug	1	-	-	killed	531,856	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+correction_sign_constant	clang-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | Every product of four forms equals the golden product tables | The pseudoscalar squares to (-1)^(n(n-1)/2) det g	-
+correction_dropped	clang-debug	1	-	-	killed	531,856	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+contraction_transposed	clang-debug	0	0	-	SURVIVED	-	-	-
+correction_transposed	clang-debug	0	0	-	SURVIVED	-	-	-
+lowest_generator_highest	clang-debug	1	-	-	killed	531,856	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+scalar_scale_dropped	clang-debug	1	-	-	killed	856	-	test/core/blade_product_test.cpp:856:17: error: static assertion failed due to requirement 'core::detail::blade_product(witt, pair, top).terms[0] == galoot::core::detail::term{.blade = top, .coefficie
+generator_scale_dropped	clang-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:199:55: error: unused parameter 'scale' [-Werror,-Wunused-parameter]
+zero_kept	clang-debug	0	8	core.blade_product	killed	-	Term lists are in canonical order, merge repeated blades, and drop zero sums	-
+zero_sum_kept	clang-debug	1	-	-	killed	508,531	-	test/core/blade_product_test.cpp:508:15: error: static assertion failed due to requirement 'added({{e23, 2}, {e14, 5}, {e1, 1}, {e14, -5}, {e12, 3}}) == written({{e1, 1}, {e12, 3}, {e23, 2}})'
+trailing_place_kept	clang-debug	1	-	-	killed	531	-	test/core/blade_product_test.cpp:531:15: error: static assertion failed due to requirement 'table_mismatches(core::conformal(), golden::wedge_basis::conformal_3_products) == 0'
+merge_dropped	clang-debug	1	-	-	killed	508,531	-	test/core/blade_product_test.cpp:508:15: error: static assertion failed due to requirement 'added({{e23, 2}, {e14, 5}, {e1, 1}, {e14, -5}, {e12, 3}}) == written({{e1, 1}, {e12, 3}, {e23, 2}})'
+append	clang-debug	1	-	-	killed	508,510,531	-	test/core/blade_product_test.cpp:508:15: error: static assertion failed due to requirement 'added({{e23, 2}, {e14, 5}, {e1, 1}, {e14, -5}, {e12, 3}}) == written({{e1, 1}, {e12, 3}, {e23, 2}})'
+numeric_order	clang-debug	1	-	-	killed	511	-	test/core/blade_product_test.cpp:511:15: error: static assertion failed due to requirement 'added({{e14, 5}, {e23, 2}}) == written({{e14, 5}, {e23, 2}})'
+capacity_check_removed	clang-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+capacity_off_by_one	clang-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+product_guard_removed	clang-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:90:30: error: unused variable 'max' [-Werror,-Wunused-variable]
+product_guard_strict	clang-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+product_magnitude_x	clang-debug	1	-	-	killed	531,856	-	test/core/blade_product_test.cpp:531:15: error: static assertion expression is not an integral constant expression
+product_magnitude_y	clang-debug	0	8	core.blade_product_rejects_product_below_second	killed	-	-	-
+sum_guard_removed	clang-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:73:30: error: unused variable 'max' [-Werror,-Wunused-variable]
+sum_guard_upper_strict	clang-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_strict	clang-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_minimum	clang-debug	0	8	core.blade_product_rejects_sum_below	killed	-	-	-
+sum_guard_branch	clang-debug	0	0	-	SURVIVED	-	-	-
+range_check_removed	clang-debug	0	8	core.blade_product_beyond_n,core.blade_product_beyond_n_second,core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n,core.blade_product_rejects_beyond_n_second,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+range_shift_off_by_one	clang-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:285:23: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+range_widest_shifted	clang-debug	1	-	-	killed	834,856	-	include/galoot/core/blade_product.hpp:285:23: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+capacity_formula	clang-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+capacity_scalar	clang-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+term_not_trivially_copyable	clang-debug	1	-	-	killed	516,518	-	test/core/blade_product_test.cpp:516:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::term>'
+term_list_not_trivially_copyable	clang-debug	1	-	-	killed	518	-	test/core/blade_product_test.cpp:518:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::term_list<4>>'
+term_not_aggregate	clang-debug	1	-	-	killed	508,510,511,515,531	-	include/galoot/core/blade_product.hpp:167:15: error: no viable overloaded '='
+term_list_not_aggregate	clang-debug	1	-	-	killed	517	-	test/core/blade_product_test.cpp:517:15: error: static assertion failed due to requirement 'std::is_aggregate_v<galoot::core::detail::term_list<4>>'
+term_list_not_structural	clang-debug	1	-	-	killed	-	-	test/core/blade_product_test.cpp:521:38: error: type 'core::detail::term_list<2>' of non-type template parameter is not a structural type
+range_second_unchecked	clang-debug	0	8	core.blade_product_beyond_n_second,core.blade_product_rejects_beyond_n_second	killed	-	-	-
+range_skip_below_top	clang-debug	0	8	core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+partial_sum_excursion	clang-debug	1	-	-	killed	834,856	-	test/core/blade_product_test.cpp:834:17: error: static assertion expression is not an integral constant expression

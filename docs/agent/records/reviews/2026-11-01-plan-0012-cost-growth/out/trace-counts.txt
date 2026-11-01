@@ -1,0 +1,20 @@
+clang++ 23.1.4, Galoot's test flags at -O0, -ftime-trace -ftime-trace-granularity=0, headers at
+58f4aa1, units of growth.py. Complete events whose detail names metric.hpp:276, :277, :278 (the
+three value conditions of metric_like): count, then total duration in microseconds.
+
+n   unit        276 277 278   durations (us)
+4   plans0-sa   4   2   1     40 36 32
+4   plans1-sa   7   4   2     77 75 60
+4   plans4-sa   7   4   2     90 82 64
+4   plans0      1   -   -     0
+4   plans4      4   2   1     39 36 32
+16  plans0-sa   4   2   1     322 596 317
+16  plans1-sa   7   4   2     619 1087 593
+16  plans4-sa   7   4   2     629 1110 594
+16  plans0      1   -   -     0
+16  plans4      4   2   1     333 547 297
+
+With the static_assert, a unit with one or four plans evaluates the conditions twice (once for
+the static_assert, once for the first constrained template); without it, once. A unit with no
+plan and no static_assert evaluates nothing (the single 0 us event at 276 is not an evaluation
+of the entries).

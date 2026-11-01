@@ -210,12 +210,12 @@ constexpr void add_generator_product(term_list<Capacity>& out,
     }
 
     // e_i ⌋ e_B: the p-th generator e_j of B, counting from 1 in increasing
-    // order, contributes (-1)^(p-1) g(e_i, e_j) e_(B without j).
+    // order, contributes (-1)^(p-1) g(e_i, e_j) e_(B without j). The loop
+    // visits only the generators of B, lowest first, so that a term costs
+    // its grade and not the number of generators of the algebra.
     coefficient_type sign = 1;
-    for (std::size_t j = 0; j < N; ++j) {
-      if (((blade >> j) & 1U) == 0U) {
-        continue;
-      }
+    for (mask_t remaining = blade; remaining != 0; remaining &= remaining - 1) {
+      const auto j = static_cast<std::size_t>(std::countr_zero(remaining));
       const coefficient_type entry = g.gram[i][j];
       if (entry != 0) {
         out.add(blade & ~(mask_t{1} << j),
@@ -247,12 +247,10 @@ constexpr void add_blade_product(term_list<Capacity>& out, const metric<N>& g,
 
   // -(e_a ⌋ e_A') e_B: the p-th generator e_j of A', counting from 1 in
   // increasing order, contributes -(-1)^(p-1) g(e_a, e_j) e_(A' without j)
-  // e_B.
+  // e_B. As above, the loop visits only the generators of A', lowest first.
   coefficient_type sign = -1;
-  for (std::size_t j = 0; j < N; ++j) {
-    if (((rest >> j) & 1U) == 0U) {
-      continue;
-    }
+  for (mask_t remaining = rest; remaining != 0; remaining &= remaining - 1) {
+    const auto j = static_cast<std::size_t>(std::countr_zero(remaining));
     const coefficient_type entry = g.gram[low][j];
     if (entry != 0) {
       add_blade_product(out, g, rest & ~(mask_t{1} << j), b,

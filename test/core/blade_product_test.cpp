@@ -837,6 +837,30 @@ TEST_CASE("blade_product accepts the generators of the widest algebra") {
   CHECK(product(widest, e1, top) == written({{e1 | top, 1}}));
 }
 
+// Reference: independent value: in the form of 32 generators whose only
+//   nonzero entries are g(e1, e32) = g(e32, e1) = 1, a Witt pair, e1 e32 =
+//   1 + e1 ^ e32, e32 (e1 ^ e32) = e32, (e1 ^ e32) e32 = -e32, and
+//   (e1 ^ e32)(e1 ^ e32) = 1, the products of e1 and e2 in the form
+//   [[0, 1], [1, 0]], each of which reads the pairing at the top bit of the
+//   mask
+TEST_CASE("blade_product reads a pairing with the top generator of the "
+          "widest algebra") {
+  static constexpr auto witt = [] {
+    core::metric<mask_width> g{};
+    g.gram.at(0).at(mask_width - 1) = 1;
+    g.gram.at(mask_width - 1).at(0) = 1;
+    return g;
+  }();
+  constexpr mask_t top = mask_t{1} << (mask_width - 1);
+  constexpr mask_t pair = e1 | top;
+  static_assert(core::detail::blade_product<1>(witt, pair, top).terms[0] ==
+                term{.blade = top, .coefficient = -1});
+  CHECK(product(witt, e1, top) == written({{0, 1}, {pair, 1}}));
+  CHECK(product(witt, top, pair) == written({{top, 1}}));
+  CHECK(product(witt, pair, top) == written({{top, -1}}));
+  CHECK(product(witt, pair, pair) == written({{0, 1}}));
+}
+
 // Reference: contract: the guards accept every sum and product within -max
 //   to max, for max the largest coefficient_type, including the bounds
 //   themselves

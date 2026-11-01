@@ -1,0 +1,1513 @@
+n	plans	repeat	event	unit	value
+4	0	1	instructions		997067002
+4	0	1	Total ExecuteCompiler	us	116054
+4	0	1	Total Frontend	us	112850
+4	0	1	Total Source	us	102964
+4	0	1	Total ParseDeclarationOrFunctionDefinition	us	49169
+4	0	1	Total ParseClass	us	37717
+4	0	1	Total ParseFunctionDefinition	us	35248
+4	0	1	Total InstantiateClass	us	26988
+4	0	1	Total CheckConstraintSatisfaction	us	25482
+4	0	1	Total InstantiateFunction	us	5803
+4	0	1	Total EvaluateAsConstantExpr	us	886
+4	0	1	Total Backend	us	885
+4	0	1	Total EvaluateAsRValue	us	826
+4	0	1	Total EvaluateAsInitializer	us	524
+4	0	1	Total CodeGenPasses	us	472
+4	0	1	Total OptModule	us	468
+4	0	1	Total OptFunction	us	400
+4	0	1	Total RunPass	us	395
+4	0	1	Total EvaluateForOverflow	us	363
+4	0	1	Total EvaluateAsBooleanCondition	us	317
+4	0	1	Total BuildCFG	us	291
+4	0	1	Total EvaluateAsInt	us	124
+4	0	1	Total CodeGen Function	us	77
+4	0	1	Total isIntegerConstantExpr	us	54
+4	0	1	Total EvaluateKnownConstInt	us	32
+4	0	1	Total PerformPendingInstantiations	us	28
+4	0	1	Total Optimizer	us	25
+4	0	1	Total ModuleToFunctionPassAdaptor	us	13
+4	0	1	Total AnnotationRemarksPass	us	5
+4	0	1	Total AlwaysInlinerPass	us	2
+4	0	1	Total CoroConditionalWrapper	us	2
+4	0	1	Total EntryExitInstrumenterPass	us	1
+4	0	1	Total ProfileSummaryAnalysis	us	0
+4	0	1	Total AllocTokenPass	us	0
+4	0	1	Total TargetLibraryAnalysis	us	0
+4	0	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	0	1	Total LowerCommentStringPass	us	0
+4	0	1	EvaluateAsRValue	count	1582
+4	0	1	EvaluateAsRValue	us	851
+4	0	1	ParseClass	count	837
+4	0	1	ParseClass	us	38213
+4	0	1	EvaluateForOverflow	count	522
+4	0	1	EvaluateForOverflow	us	353
+4	0	1	EvaluateAsConstantExpr	count	1971
+4	0	1	EvaluateAsConstantExpr	us	894
+4	0	1	InstantiateClass	count	613
+4	0	1	InstantiateClass	us	47936
+4	0	1	EvaluateAsInitializer	count	1122
+4	0	1	EvaluateAsInitializer	us	503
+4	0	1	InstantiateFunction	count	146
+4	0	1	InstantiateFunction	us	8709
+4	0	1	EvaluateAsBooleanCondition	count	323
+4	0	1	EvaluateAsBooleanCondition	us	328
+4	0	1	CodeGen Function	count	1
+4	0	1	CodeGen Function	us	78
+4	0	1	RunPass	count	68
+4	0	1	RunPass	us	390
+4	0	1	OptFunction	count	1
+4	0	1	OptFunction	us	400
+4	4	1	instructions		1393039296
+4	4	1	Total ExecuteCompiler	us	124122
+4	4	1	Total Frontend	us	121425
+4	4	1	Total Source	us	89227
+4	4	1	Total ParseDeclarationOrFunctionDefinition	us	41025
+4	4	1	Total ParseFunctionDefinition	us	32859
+4	4	1	Total ParseClass	us	32131
+4	4	1	Total CheckConstraintSatisfaction	us	30949
+4	4	1	Total InstantiateFunction	us	30053
+4	4	1	Total InstantiateClass	us	25371
+4	4	1	Total EvaluateAsInitializer	us	12972
+4	4	1	Total Backend	us	1099
+4	4	1	Total EvaluateAsConstantExpr	us	1041
+4	4	1	Total EvaluateAsRValue	us	1023
+4	4	1	Total BuildCFG	us	655
+4	4	1	Total EvaluateAsBooleanCondition	us	572
+4	4	1	Total CodeGenPasses	us	415
+4	4	1	Total OptModule	us	411
+4	4	1	Total EvaluateForOverflow	us	390
+4	4	1	Total Optimizer	us	327
+4	4	1	Total OptFunction	us	314
+4	4	1	Total AlwaysInlinerPass	us	303
+4	4	1	Total RunPass	us	296
+4	4	1	Total CodeGen Function	us	267
+4	4	1	Total TargetIRAnalysis	us	245
+4	4	1	Total EvaluateAsInt	us	144
+4	4	1	Total isIntegerConstantExpr	us	44
+4	4	1	Total PerformPendingInstantiations	us	24
+4	4	1	Total EvaluateKnownConstInt	us	21
+4	4	1	Total ModuleToFunctionPassAdaptor	us	12
+4	4	1	Total AAManager	us	12
+4	4	1	Total BasicAA	us	5
+4	4	1	Total DominatorTreeAnalysis	us	3
+4	4	1	Total CoroConditionalWrapper	us	3
+4	4	1	Total EntryExitInstrumenterPass	us	2
+4	4	1	Total AnnotationRemarksPass	us	2
+4	4	1	Total AssumptionAnalysis	us	1
+4	4	1	Total AllocTokenPass	us	1
+4	4	1	Total TargetLibraryAnalysis	us	0
+4	4	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	4	1	Total ProfileSummaryAnalysis	us	0
+4	4	1	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+4	4	1	Total ScopedNoAliasAA	us	0
+4	4	1	Total LowerCommentStringPass	us	0
+4	4	1	Total TypeBasedAA	us	0
+4	4	1	EvaluateAsRValue	count	1866
+4	4	1	EvaluateAsRValue	us	1040
+4	4	1	ParseClass	count	837
+4	4	1	ParseClass	us	32510
+4	4	1	EvaluateForOverflow	count	632
+4	4	1	EvaluateForOverflow	us	389
+4	4	1	EvaluateAsConstantExpr	count	2185
+4	4	1	EvaluateAsConstantExpr	us	1042
+4	4	1	InstantiateClass	count	642
+4	4	1	InstantiateClass	us	44803
+4	4	1	EvaluateAsInitializer	count	1245
+4	4	1	EvaluateAsInitializer	us	12985
+4	4	1	InstantiateFunction	count	211
+4	4	1	InstantiateFunction	us	42413
+4	4	1	EvaluateAsBooleanCondition	count	484
+4	4	1	EvaluateAsBooleanCondition	us	571
+4	4	1	CodeGen Function	count	5
+4	4	1	CodeGen Function	us	266
+4	4	1	RunPass	count	204
+4	4	1	RunPass	us	294
+4	4	1	OptFunction	count	3
+4	4	1	OptFunction	us	314
+8	0	1	instructions		1001279499
+8	0	1	Total ExecuteCompiler	us	98811
+8	0	1	Total Frontend	us	96406
+8	0	1	Total Source	us	89544
+8	0	1	Total ParseDeclarationOrFunctionDefinition	us	40917
+8	0	1	Total ParseFunctionDefinition	us	32458
+8	0	1	Total ParseClass	us	32406
+8	0	1	Total InstantiateClass	us	24814
+8	0	1	Total CheckConstraintSatisfaction	us	23789
+8	0	1	Total InstantiateFunction	us	5460
+8	0	1	Total EvaluateAsConstantExpr	us	1048
+8	0	1	Total Backend	us	893
+8	0	1	Total EvaluateAsRValue	us	749
+8	0	1	Total EvaluateAsInitializer	us	486
+8	0	1	Total CodeGenPasses	us	478
+8	0	1	Total OptModule	us	474
+8	0	1	Total OptFunction	us	403
+8	0	1	Total RunPass	us	398
+8	0	1	Total EvaluateForOverflow	us	330
+8	0	1	Total BuildCFG	us	290
+8	0	1	Total EvaluateAsBooleanCondition	us	283
+8	0	1	Total EvaluateAsInt	us	124
+8	0	1	Total CodeGen Function	us	76
+8	0	1	Total isIntegerConstantExpr	us	43
+8	0	1	Total PerformPendingInstantiations	us	26
+8	0	1	Total Optimizer	us	26
+8	0	1	Total EvaluateKnownConstInt	us	21
+8	0	1	Total ModuleToFunctionPassAdaptor	us	13
+8	0	1	Total AnnotationRemarksPass	us	4
+8	0	1	Total CoroConditionalWrapper	us	2
+8	0	1	Total AlwaysInlinerPass	us	2
+8	0	1	Total EntryExitInstrumenterPass	us	1
+8	0	1	Total ProfileSummaryAnalysis	us	0
+8	0	1	Total AllocTokenPass	us	0
+8	0	1	Total TargetLibraryAnalysis	us	0
+8	0	1	Total LowerCommentStringPass	us	0
+8	0	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	0	1	EvaluateAsRValue	count	1582
+8	0	1	EvaluateAsRValue	us	718
+8	0	1	ParseClass	count	837
+8	0	1	ParseClass	us	32805
+8	0	1	EvaluateForOverflow	count	522
+8	0	1	EvaluateForOverflow	us	323
+8	0	1	EvaluateAsConstantExpr	count	1971
+8	0	1	EvaluateAsConstantExpr	us	1065
+8	0	1	InstantiateClass	count	613
+8	0	1	InstantiateClass	us	44076
+8	0	1	EvaluateAsInitializer	count	1122
+8	0	1	EvaluateAsInitializer	us	495
+8	0	1	InstantiateFunction	count	146
+8	0	1	InstantiateFunction	us	8182
+8	0	1	EvaluateAsBooleanCondition	count	323
+8	0	1	EvaluateAsBooleanCondition	us	268
+8	0	1	CodeGen Function	count	1
+8	0	1	CodeGen Function	us	76
+8	0	1	RunPass	count	68
+8	0	1	RunPass	us	400
+8	0	1	OptFunction	count	1
+8	0	1	OptFunction	us	403
+8	4	1	instructions		1403544142
+8	4	1	Total ExecuteCompiler	us	154063
+8	4	1	Total Frontend	us	150572
+8	4	1	Total Source	us	113396
+8	4	1	Total ParseDeclarationOrFunctionDefinition	us	55491
+8	4	1	Total ParseClass	us	43165
+8	4	1	Total ParseFunctionDefinition	us	35277
+8	4	1	Total CheckConstraintSatisfaction	us	32500
+8	4	1	Total InstantiateFunction	us	29961
+8	4	1	Total InstantiateClass	us	26938
+8	4	1	Total EvaluateAsInitializer	us	13100
+8	4	1	Total EvaluateAsConstantExpr	us	1598
+8	4	1	Total Backend	us	1094
+8	4	1	Total EvaluateAsRValue	us	1093
+8	4	1	Total BuildCFG	us	636
+8	4	1	Total EvaluateAsBooleanCondition	us	574
+8	4	1	Total EvaluateForOverflow	us	442
+8	4	1	Total CodeGenPasses	us	417
+8	4	1	Total OptModule	us	412
+8	4	1	Total Optimizer	us	332
+8	4	1	Total OptFunction	us	314
+8	4	1	Total AlwaysInlinerPass	us	309
+8	4	1	Total RunPass	us	300
+8	4	1	Total CodeGen Function	us	268
+8	4	1	Total TargetIRAnalysis	us	252
+8	4	1	Total EvaluateAsInt	us	149
+8	4	1	Total isIntegerConstantExpr	us	58
+8	4	1	Total EvaluateKnownConstInt	us	29
+8	4	1	Total PerformPendingInstantiations	us	25
+8	4	1	Total ModuleToFunctionPassAdaptor	us	12
+8	4	1	Total AAManager	us	11
+8	4	1	Total BasicAA	us	5
+8	4	1	Total DominatorTreeAnalysis	us	3
+8	4	1	Total CoroConditionalWrapper	us	2
+8	4	1	Total EntryExitInstrumenterPass	us	2
+8	4	1	Total AnnotationRemarksPass	us	1
+8	4	1	Total AssumptionAnalysis	us	1
+8	4	1	Total AllocTokenPass	us	1
+8	4	1	Total TargetLibraryAnalysis	us	0
+8	4	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	4	1	Total ProfileSummaryAnalysis	us	0
+8	4	1	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+8	4	1	Total ScopedNoAliasAA	us	0
+8	4	1	Total LowerCommentStringPass	us	0
+8	4	1	Total TypeBasedAA	us	0
+8	4	1	EvaluateAsRValue	count	1866
+8	4	1	EvaluateAsRValue	us	1051
+8	4	1	ParseClass	count	837
+8	4	1	ParseClass	us	43789
+8	4	1	EvaluateForOverflow	count	632
+8	4	1	EvaluateForOverflow	us	460
+8	4	1	EvaluateAsConstantExpr	count	2185
+8	4	1	EvaluateAsConstantExpr	us	1612
+8	4	1	InstantiateClass	count	642
+8	4	1	InstantiateClass	us	47294
+8	4	1	EvaluateAsInitializer	count	1245
+8	4	1	EvaluateAsInitializer	us	13112
+8	4	1	InstantiateFunction	count	211
+8	4	1	InstantiateFunction	us	42262
+8	4	1	EvaluateAsBooleanCondition	count	484
+8	4	1	EvaluateAsBooleanCondition	us	557
+8	4	1	CodeGen Function	count	5
+8	4	1	CodeGen Function	us	268
+8	4	1	RunPass	count	204
+8	4	1	RunPass	us	295
+8	4	1	OptFunction	count	3
+8	4	1	OptFunction	us	315
+12	0	1	instructions		1010238705
+12	0	1	Total ExecuteCompiler	us	98888
+12	0	1	Total Frontend	us	96465
+12	0	1	Total Source	us	89308
+12	0	1	Total ParseDeclarationOrFunctionDefinition	us	40722
+12	0	1	Total ParseFunctionDefinition	us	32468
+12	0	1	Total ParseClass	us	32327
+12	0	1	Total InstantiateClass	us	24811
+12	0	1	Total CheckConstraintSatisfaction	us	24125
+12	0	1	Total InstantiateFunction	us	5533
+12	0	1	Total EvaluateAsConstantExpr	us	1436
+12	0	1	Total Backend	us	918
+12	0	1	Total EvaluateAsRValue	us	738
+12	0	1	Total CodeGenPasses	us	509
+12	0	1	Total OptModule	us	505
+12	0	1	Total EvaluateAsInitializer	us	492
+12	0	1	Total OptFunction	us	439
+12	0	1	Total RunPass	us	433
+12	0	1	Total EvaluateForOverflow	us	336
+12	0	1	Total BuildCFG	us	294
+12	0	1	Total EvaluateAsBooleanCondition	us	284
+12	0	1	Total EvaluateAsInt	us	125
+12	0	1	Total CodeGen Function	us	76
+12	0	1	Total isIntegerConstantExpr	us	42
+12	0	1	Total Optimizer	us	26
+12	0	1	Total PerformPendingInstantiations	us	25
+12	0	1	Total EvaluateKnownConstInt	us	20
+12	0	1	Total ModuleToFunctionPassAdaptor	us	13
+12	0	1	Total AnnotationRemarksPass	us	5
+12	0	1	Total AlwaysInlinerPass	us	3
+12	0	1	Total CoroConditionalWrapper	us	2
+12	0	1	Total EntryExitInstrumenterPass	us	1
+12	0	1	Total ProfileSummaryAnalysis	us	0
+12	0	1	Total TargetLibraryAnalysis	us	0
+12	0	1	Total AllocTokenPass	us	0
+12	0	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	0	1	Total LowerCommentStringPass	us	0
+12	0	1	EvaluateAsRValue	count	1582
+12	0	1	EvaluateAsRValue	us	759
+12	0	1	ParseClass	count	837
+12	0	1	ParseClass	us	32692
+12	0	1	EvaluateForOverflow	count	522
+12	0	1	EvaluateForOverflow	us	335
+12	0	1	EvaluateAsConstantExpr	count	1971
+12	0	1	EvaluateAsConstantExpr	us	1427
+12	0	1	InstantiateClass	count	613
+12	0	1	InstantiateClass	us	44198
+12	0	1	EvaluateAsInitializer	count	1122
+12	0	1	EvaluateAsInitializer	us	477
+12	0	1	InstantiateFunction	count	146
+12	0	1	InstantiateFunction	us	8255
+12	0	1	EvaluateAsBooleanCondition	count	323
+12	0	1	EvaluateAsBooleanCondition	us	284
+12	0	1	CodeGen Function	count	1
+12	0	1	CodeGen Function	us	77
+12	0	1	RunPass	count	68
+12	0	1	RunPass	us	435
+12	0	1	OptFunction	count	1
+12	0	1	OptFunction	us	439
+12	4	1	instructions		1418185169
+12	4	1	Total ExecuteCompiler	us	122344
+12	4	1	Total Frontend	us	119840
+12	4	1	Total Source	us	86968
+12	4	1	Total ParseDeclarationOrFunctionDefinition	us	39249
+12	4	1	Total ParseFunctionDefinition	us	32598
+12	4	1	Total CheckConstraintSatisfaction	us	32081
+12	4	1	Total ParseClass	us	31164
+12	4	1	Total InstantiateFunction	us	30272
+12	4	1	Total InstantiateClass	us	25281
+12	4	1	Total EvaluateAsInitializer	us	13056
+12	4	1	Total EvaluateAsConstantExpr	us	2238
+12	4	1	Total Backend	us	1098
+12	4	1	Total EvaluateAsRValue	us	1015
+12	4	1	Total BuildCFG	us	642
+12	4	1	Total EvaluateAsBooleanCondition	us	567
+12	4	1	Total CodeGenPasses	us	406
+12	4	1	Total OptModule	us	401
+12	4	1	Total EvaluateForOverflow	us	390
+12	4	1	Total Optimizer	us	335
+12	4	1	Total AlwaysInlinerPass	us	311
+12	4	1	Total OptFunction	us	302
+12	4	1	Total RunPass	us	288
+12	4	1	Total CodeGen Function	us	278
+12	4	1	Total TargetIRAnalysis	us	249
+12	4	1	Total EvaluateAsInt	us	147
+12	4	1	Total isIntegerConstantExpr	us	42
+12	4	1	Total PerformPendingInstantiations	us	27
+12	4	1	Total EvaluateKnownConstInt	us	22
+12	4	1	Total AAManager	us	13
+12	4	1	Total ModuleToFunctionPassAdaptor	us	12
+12	4	1	Total BasicAA	us	5
+12	4	1	Total DominatorTreeAnalysis	us	4
+12	4	1	Total CoroConditionalWrapper	us	3
+12	4	1	Total EntryExitInstrumenterPass	us	2
+12	4	1	Total AssumptionAnalysis	us	1
+12	4	1	Total AnnotationRemarksPass	us	1
+12	4	1	Total AllocTokenPass	us	1
+12	4	1	Total TargetLibraryAnalysis	us	1
+12	4	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	4	1	Total ProfileSummaryAnalysis	us	0
+12	4	1	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+12	4	1	Total ScopedNoAliasAA	us	0
+12	4	1	Total TypeBasedAA	us	0
+12	4	1	Total LowerCommentStringPass	us	0
+12	4	1	EvaluateAsRValue	count	1866
+12	4	1	EvaluateAsRValue	us	1005
+12	4	1	ParseClass	count	837
+12	4	1	ParseClass	us	31528
+12	4	1	EvaluateForOverflow	count	632
+12	4	1	EvaluateForOverflow	us	420
+12	4	1	EvaluateAsConstantExpr	count	2185
+12	4	1	EvaluateAsConstantExpr	us	2229
+12	4	1	InstantiateClass	count	642
+12	4	1	InstantiateClass	us	44663
+12	4	1	EvaluateAsInitializer	count	1245
+12	4	1	EvaluateAsInitializer	us	13054
+12	4	1	InstantiateFunction	count	211
+12	4	1	InstantiateFunction	us	42930
+12	4	1	EvaluateAsBooleanCondition	count	484
+12	4	1	EvaluateAsBooleanCondition	us	561
+12	4	1	CodeGen Function	count	5
+12	4	1	CodeGen Function	us	280
+12	4	1	RunPass	count	204
+12	4	1	RunPass	us	290
+12	4	1	OptFunction	count	3
+12	4	1	OptFunction	us	302
+16	0	1	instructions		1018849686
+16	0	1	Total ExecuteCompiler	us	118743
+16	0	1	Total Frontend	us	115472
+16	0	1	Total Source	us	103946
+16	0	1	Total ParseDeclarationOrFunctionDefinition	us	49834
+16	0	1	Total ParseClass	us	39000
+16	0	1	Total ParseFunctionDefinition	us	34000
+16	0	1	Total InstantiateClass	us	25551
+16	0	1	Total CheckConstraintSatisfaction	us	25180
+16	0	1	Total InstantiateFunction	us	5546
+16	0	1	Total EvaluateAsConstantExpr	us	2015
+16	0	1	Total Backend	us	906
+16	0	1	Total EvaluateAsRValue	us	793
+16	0	1	Total EvaluateAsInitializer	us	539
+16	0	1	Total CodeGenPasses	us	485
+16	0	1	Total OptModule	us	480
+16	0	1	Total OptFunction	us	411
+16	0	1	Total RunPass	us	406
+16	0	1	Total EvaluateForOverflow	us	367
+16	0	1	Total BuildCFG	us	315
+16	0	1	Total EvaluateAsBooleanCondition	us	293
+16	0	1	Total EvaluateAsInt	us	127
+16	0	1	Total CodeGen Function	us	76
+16	0	1	Total isIntegerConstantExpr	us	52
+16	0	1	Total Optimizer	us	26
+16	0	1	Total EvaluateKnownConstInt	us	26
+16	0	1	Total PerformPendingInstantiations	us	25
+16	0	1	Total ModuleToFunctionPassAdaptor	us	13
+16	0	1	Total AnnotationRemarksPass	us	5
+16	0	1	Total CoroConditionalWrapper	us	2
+16	0	1	Total AlwaysInlinerPass	us	2
+16	0	1	Total EntryExitInstrumenterPass	us	1
+16	0	1	Total ProfileSummaryAnalysis	us	0
+16	0	1	Total AllocTokenPass	us	0
+16	0	1	Total TargetLibraryAnalysis	us	0
+16	0	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	0	1	Total LowerCommentStringPass	us	0
+16	0	1	EvaluateAsRValue	count	1582
+16	0	1	EvaluateAsRValue	us	797
+16	0	1	ParseClass	count	837
+16	0	1	ParseClass	us	39533
+16	0	1	EvaluateForOverflow	count	522
+16	0	1	EvaluateForOverflow	us	365
+16	0	1	EvaluateAsConstantExpr	count	1971
+16	0	1	EvaluateAsConstantExpr	us	2027
+16	0	1	InstantiateClass	count	613
+16	0	1	InstantiateClass	us	45200
+16	0	1	EvaluateAsInitializer	count	1122
+16	0	1	EvaluateAsInitializer	us	545
+16	0	1	InstantiateFunction	count	146
+16	0	1	InstantiateFunction	us	8271
+16	0	1	EvaluateAsBooleanCondition	count	323
+16	0	1	EvaluateAsBooleanCondition	us	293
+16	0	1	CodeGen Function	count	1
+16	0	1	CodeGen Function	us	76
+16	0	1	RunPass	count	68
+16	0	1	RunPass	us	411
+16	0	1	OptFunction	count	1
+16	0	1	OptFunction	us	412
+16	4	1	instructions		1438307426
+16	4	1	Total ExecuteCompiler	us	120141
+16	4	1	Total Frontend	us	117757
+16	4	1	Total Source	us	84346
+16	4	1	Total ParseDeclarationOrFunctionDefinition	us	37498
+16	4	1	Total CheckConstraintSatisfaction	us	33408
+16	4	1	Total ParseFunctionDefinition	us	32565
+16	4	1	Total InstantiateFunction	us	30520
+16	4	1	Total ParseClass	us	29880
+16	4	1	Total InstantiateClass	us	25323
+16	4	1	Total EvaluateAsInitializer	us	13082
+16	4	1	Total EvaluateAsConstantExpr	us	3309
+16	4	1	Total Backend	us	1095
+16	4	1	Total EvaluateAsRValue	us	1032
+16	4	1	Total BuildCFG	us	653
+16	4	1	Total EvaluateAsBooleanCondition	us	581
+16	4	1	Total CodeGenPasses	us	407
+16	4	1	Total OptModule	us	403
+16	4	1	Total EvaluateForOverflow	us	378
+16	4	1	Total Optimizer	us	332
+16	4	1	Total AlwaysInlinerPass	us	309
+16	4	1	Total OptFunction	us	304
+16	4	1	Total RunPass	us	291
+16	4	1	Total CodeGen Function	us	277
+16	4	1	Total TargetIRAnalysis	us	253
+16	4	1	Total EvaluateAsInt	us	147
+16	4	1	Total isIntegerConstantExpr	us	40
+16	4	1	Total PerformPendingInstantiations	us	28
+16	4	1	Total EvaluateKnownConstInt	us	20
+16	4	1	Total ModuleToFunctionPassAdaptor	us	12
+16	4	1	Total AAManager	us	11
+16	4	1	Total BasicAA	us	5
+16	4	1	Total DominatorTreeAnalysis	us	3
+16	4	1	Total CoroConditionalWrapper	us	2
+16	4	1	Total EntryExitInstrumenterPass	us	2
+16	4	1	Total AssumptionAnalysis	us	1
+16	4	1	Total AnnotationRemarksPass	us	1
+16	4	1	Total AllocTokenPass	us	1
+16	4	1	Total TargetLibraryAnalysis	us	0
+16	4	1	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	4	1	Total ProfileSummaryAnalysis	us	0
+16	4	1	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+16	4	1	Total ScopedNoAliasAA	us	0
+16	4	1	Total LowerCommentStringPass	us	0
+16	4	1	Total TypeBasedAA	us	0
+16	4	1	EvaluateAsRValue	count	1866
+16	4	1	EvaluateAsRValue	us	1058
+16	4	1	ParseClass	count	837
+16	4	1	ParseClass	us	30208
+16	4	1	EvaluateForOverflow	count	632
+16	4	1	EvaluateForOverflow	us	381
+16	4	1	EvaluateAsConstantExpr	count	2185
+16	4	1	EvaluateAsConstantExpr	us	3283
+16	4	1	InstantiateClass	count	642
+16	4	1	InstantiateClass	us	44748
+16	4	1	EvaluateAsInitializer	count	1245
+16	4	1	EvaluateAsInitializer	us	13085
+16	4	1	InstantiateFunction	count	211
+16	4	1	InstantiateFunction	us	43107
+16	4	1	EvaluateAsBooleanCondition	count	484
+16	4	1	EvaluateAsBooleanCondition	us	589
+16	4	1	CodeGen Function	count	5
+16	4	1	CodeGen Function	us	278
+16	4	1	RunPass	count	204
+16	4	1	RunPass	us	300
+16	4	1	OptFunction	count	3
+16	4	1	OptFunction	us	304
+4	0	2	instructions		997132150
+4	0	2	Total ExecuteCompiler	us	97814
+4	0	2	Total Frontend	us	95429
+4	0	2	Total Source	us	88961
+4	0	2	Total ParseDeclarationOrFunctionDefinition	us	40624
+4	0	2	Total ParseFunctionDefinition	us	32598
+4	0	2	Total ParseClass	us	32076
+4	0	2	Total InstantiateClass	us	24940
+4	0	2	Total CheckConstraintSatisfaction	us	23637
+4	0	2	Total InstantiateFunction	us	5601
+4	0	2	Total Backend	us	879
+4	0	2	Total EvaluateAsConstantExpr	us	811
+4	0	2	Total EvaluateAsRValue	us	738
+4	0	2	Total EvaluateAsInitializer	us	493
+4	0	2	Total CodeGenPasses	us	490
+4	0	2	Total OptModule	us	485
+4	0	2	Total OptFunction	us	420
+4	0	2	Total RunPass	us	415
+4	0	2	Total EvaluateForOverflow	us	332
+4	0	2	Total BuildCFG	us	299
+4	0	2	Total EvaluateAsBooleanCondition	us	277
+4	0	2	Total EvaluateAsInt	us	129
+4	0	2	Total CodeGen Function	us	80
+4	0	2	Total isIntegerConstantExpr	us	42
+4	0	2	Total Optimizer	us	27
+4	0	2	Total PerformPendingInstantiations	us	26
+4	0	2	Total EvaluateKnownConstInt	us	20
+4	0	2	Total ModuleToFunctionPassAdaptor	us	13
+4	0	2	Total AnnotationRemarksPass	us	5
+4	0	2	Total AlwaysInlinerPass	us	3
+4	0	2	Total CoroConditionalWrapper	us	2
+4	0	2	Total EntryExitInstrumenterPass	us	1
+4	0	2	Total ProfileSummaryAnalysis	us	0
+4	0	2	Total TargetLibraryAnalysis	us	0
+4	0	2	Total AllocTokenPass	us	0
+4	0	2	Total LowerCommentStringPass	us	0
+4	0	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	0	2	EvaluateAsRValue	count	1582
+4	0	2	EvaluateAsRValue	us	732
+4	0	2	ParseClass	count	837
+4	0	2	ParseClass	us	32442
+4	0	2	EvaluateForOverflow	count	522
+4	0	2	EvaluateForOverflow	us	337
+4	0	2	EvaluateAsConstantExpr	count	1971
+4	0	2	EvaluateAsConstantExpr	us	811
+4	0	2	InstantiateClass	count	613
+4	0	2	InstantiateClass	us	44217
+4	0	2	EvaluateAsInitializer	count	1122
+4	0	2	EvaluateAsInitializer	us	505
+4	0	2	InstantiateFunction	count	146
+4	0	2	InstantiateFunction	us	8377
+4	0	2	EvaluateAsBooleanCondition	count	323
+4	0	2	EvaluateAsBooleanCondition	us	273
+4	0	2	CodeGen Function	count	1
+4	0	2	CodeGen Function	us	81
+4	0	2	RunPass	count	68
+4	0	2	RunPass	us	415
+4	0	2	OptFunction	count	1
+4	0	2	OptFunction	us	420
+4	4	2	instructions		1393654907
+4	4	2	Total ExecuteCompiler	us	129197
+4	4	2	Total Frontend	us	126324
+4	4	2	Total Source	us	93340
+4	4	2	Total ParseDeclarationOrFunctionDefinition	us	43411
+4	4	2	Total ParseClass	us	33904
+4	4	2	Total ParseFunctionDefinition	us	33367
+4	4	2	Total CheckConstraintSatisfaction	us	31234
+4	4	2	Total InstantiateFunction	us	29937
+4	4	2	Total InstantiateClass	us	25775
+4	4	2	Total EvaluateAsInitializer	us	13025
+4	4	2	Total Backend	us	1126
+4	4	2	Total EvaluateAsConstantExpr	us	1048
+4	4	2	Total EvaluateAsRValue	us	1035
+4	4	2	Total BuildCFG	us	641
+4	4	2	Total EvaluateAsBooleanCondition	us	591
+4	4	2	Total CodeGenPasses	us	427
+4	4	2	Total OptModule	us	422
+4	4	2	Total EvaluateForOverflow	us	404
+4	4	2	Total Optimizer	us	327
+4	4	2	Total OptFunction	us	319
+4	4	2	Total RunPass	us	305
+4	4	2	Total AlwaysInlinerPass	us	304
+4	4	2	Total CodeGen Function	us	271
+4	4	2	Total TargetIRAnalysis	us	244
+4	4	2	Total EvaluateAsInt	us	145
+4	4	2	Total isIntegerConstantExpr	us	46
+4	4	2	Total EvaluateKnownConstInt	us	25
+4	4	2	Total PerformPendingInstantiations	us	25
+4	4	2	Total ModuleToFunctionPassAdaptor	us	12
+4	4	2	Total AAManager	us	11
+4	4	2	Total BasicAA	us	5
+4	4	2	Total DominatorTreeAnalysis	us	3
+4	4	2	Total CoroConditionalWrapper	us	2
+4	4	2	Total EntryExitInstrumenterPass	us	2
+4	4	2	Total AssumptionAnalysis	us	1
+4	4	2	Total AnnotationRemarksPass	us	1
+4	4	2	Total AllocTokenPass	us	1
+4	4	2	Total TargetLibraryAnalysis	us	0
+4	4	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	4	2	Total ProfileSummaryAnalysis	us	0
+4	4	2	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+4	4	2	Total ScopedNoAliasAA	us	0
+4	4	2	Total LowerCommentStringPass	us	0
+4	4	2	Total TypeBasedAA	us	0
+4	4	2	EvaluateAsRValue	count	1866
+4	4	2	EvaluateAsRValue	us	1048
+4	4	2	ParseClass	count	837
+4	4	2	ParseClass	us	34306
+4	4	2	EvaluateForOverflow	count	632
+4	4	2	EvaluateForOverflow	us	418
+4	4	2	EvaluateAsConstantExpr	count	2185
+4	4	2	EvaluateAsConstantExpr	us	1036
+4	4	2	InstantiateClass	count	642
+4	4	2	InstantiateClass	us	45616
+4	4	2	EvaluateAsInitializer	count	1245
+4	4	2	EvaluateAsInitializer	us	13027
+4	4	2	InstantiateFunction	count	211
+4	4	2	InstantiateFunction	us	42197
+4	4	2	EvaluateAsBooleanCondition	count	484
+4	4	2	EvaluateAsBooleanCondition	us	591
+4	4	2	CodeGen Function	count	5
+4	4	2	CodeGen Function	us	272
+4	4	2	RunPass	count	204
+4	4	2	RunPass	us	303
+4	4	2	OptFunction	count	3
+4	4	2	OptFunction	us	320
+8	0	2	instructions		1001490161
+8	0	2	Total ExecuteCompiler	us	98474
+8	0	2	Total Frontend	us	96053
+8	0	2	Total Source	us	89417
+8	0	2	Total ParseDeclarationOrFunctionDefinition	us	40679
+8	0	2	Total ParseFunctionDefinition	us	33205
+8	0	2	Total ParseClass	us	32073
+8	0	2	Total InstantiateClass	us	25467
+8	0	2	Total CheckConstraintSatisfaction	us	24446
+8	0	2	Total InstantiateFunction	us	5639
+8	0	2	Total EvaluateAsConstantExpr	us	1052
+8	0	2	Total Backend	us	895
+8	0	2	Total EvaluateAsRValue	us	742
+8	0	2	Total EvaluateAsInitializer	us	512
+8	0	2	Total CodeGenPasses	us	501
+8	0	2	Total OptModule	us	497
+8	0	2	Total OptFunction	us	429
+8	0	2	Total RunPass	us	425
+8	0	2	Total EvaluateForOverflow	us	337
+8	0	2	Total BuildCFG	us	302
+8	0	2	Total EvaluateAsBooleanCondition	us	289
+8	0	2	Total EvaluateAsInt	us	125
+8	0	2	Total CodeGen Function	us	77
+8	0	2	Total isIntegerConstantExpr	us	43
+8	0	2	Total Optimizer	us	27
+8	0	2	Total PerformPendingInstantiations	us	25
+8	0	2	Total EvaluateKnownConstInt	us	21
+8	0	2	Total ModuleToFunctionPassAdaptor	us	14
+8	0	2	Total AnnotationRemarksPass	us	5
+8	0	2	Total CoroConditionalWrapper	us	2
+8	0	2	Total AlwaysInlinerPass	us	2
+8	0	2	Total EntryExitInstrumenterPass	us	2
+8	0	2	Total ProfileSummaryAnalysis	us	0
+8	0	2	Total AllocTokenPass	us	0
+8	0	2	Total TargetLibraryAnalysis	us	0
+8	0	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	0	2	Total LowerCommentStringPass	us	0
+8	0	2	EvaluateAsRValue	count	1582
+8	0	2	EvaluateAsRValue	us	747
+8	0	2	ParseClass	count	837
+8	0	2	ParseClass	us	32431
+8	0	2	EvaluateForOverflow	count	522
+8	0	2	EvaluateForOverflow	us	329
+8	0	2	EvaluateAsConstantExpr	count	1971
+8	0	2	EvaluateAsConstantExpr	us	1019
+8	0	2	InstantiateClass	count	613
+8	0	2	InstantiateClass	us	45124
+8	0	2	EvaluateAsInitializer	count	1122
+8	0	2	EvaluateAsInitializer	us	502
+8	0	2	InstantiateFunction	count	146
+8	0	2	InstantiateFunction	us	8419
+8	0	2	EvaluateAsBooleanCondition	count	323
+8	0	2	EvaluateAsBooleanCondition	us	286
+8	0	2	CodeGen Function	count	1
+8	0	2	CodeGen Function	us	78
+8	0	2	RunPass	count	68
+8	0	2	RunPass	us	426
+8	0	2	OptFunction	count	1
+8	0	2	OptFunction	us	430
+8	4	2	instructions		1402157163
+8	4	2	Total ExecuteCompiler	us	122762
+8	4	2	Total Frontend	us	120188
+8	4	2	Total Source	us	87933
+8	4	2	Total ParseDeclarationOrFunctionDefinition	us	40132
+8	4	2	Total ParseFunctionDefinition	us	32508
+8	4	2	Total ParseClass	us	31651
+8	4	2	Total CheckConstraintSatisfaction	us	31132
+8	4	2	Total InstantiateFunction	us	30002
+8	4	2	Total InstantiateClass	us	25223
+8	4	2	Total EvaluateAsInitializer	us	13033
+8	4	2	Total EvaluateAsConstantExpr	us	1495
+8	4	2	Total Backend	us	1088
+8	4	2	Total EvaluateAsRValue	us	1022
+8	4	2	Total BuildCFG	us	659
+8	4	2	Total EvaluateAsBooleanCondition	us	577
+8	4	2	Total CodeGenPasses	us	401
+8	4	2	Total OptModule	us	397
+8	4	2	Total EvaluateForOverflow	us	386
+8	4	2	Total Optimizer	us	335
+8	4	2	Total AlwaysInlinerPass	us	312
+8	4	2	Total OptFunction	us	301
+8	4	2	Total RunPass	us	283
+8	4	2	Total CodeGen Function	us	272
+8	4	2	Total TargetIRAnalysis	us	247
+8	4	2	Total EvaluateAsInt	us	147
+8	4	2	Total isIntegerConstantExpr	us	43
+8	4	2	Total PerformPendingInstantiations	us	27
+8	4	2	Total EvaluateKnownConstInt	us	21
+8	4	2	Total ModuleToFunctionPassAdaptor	us	12
+8	4	2	Total AAManager	us	12
+8	4	2	Total BasicAA	us	5
+8	4	2	Total ProfileSummaryAnalysis	us	4
+8	4	2	Total DominatorTreeAnalysis	us	3
+8	4	2	Total CoroConditionalWrapper	us	2
+8	4	2	Total EntryExitInstrumenterPass	us	2
+8	4	2	Total AnnotationRemarksPass	us	2
+8	4	2	Total AssumptionAnalysis	us	1
+8	4	2	Total AllocTokenPass	us	1
+8	4	2	Total TargetLibraryAnalysis	us	0
+8	4	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	4	2	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+8	4	2	Total ScopedNoAliasAA	us	0
+8	4	2	Total TypeBasedAA	us	0
+8	4	2	Total LowerCommentStringPass	us	0
+8	4	2	EvaluateAsRValue	count	1866
+8	4	2	EvaluateAsRValue	us	1054
+8	4	2	ParseClass	count	837
+8	4	2	ParseClass	us	32044
+8	4	2	EvaluateForOverflow	count	632
+8	4	2	EvaluateForOverflow	us	380
+8	4	2	EvaluateAsConstantExpr	count	2185
+8	4	2	EvaluateAsConstantExpr	us	1487
+8	4	2	InstantiateClass	count	642
+8	4	2	InstantiateClass	us	44497
+8	4	2	EvaluateAsInitializer	count	1245
+8	4	2	EvaluateAsInitializer	us	13050
+8	4	2	InstantiateFunction	count	211
+8	4	2	InstantiateFunction	us	42320
+8	4	2	EvaluateAsBooleanCondition	count	484
+8	4	2	EvaluateAsBooleanCondition	us	593
+8	4	2	CodeGen Function	count	5
+8	4	2	CodeGen Function	us	274
+8	4	2	RunPass	count	204
+8	4	2	RunPass	us	292
+8	4	2	OptFunction	count	3
+8	4	2	OptFunction	us	301
+12	0	2	instructions		1009061529
+12	0	2	Total ExecuteCompiler	us	130166
+12	0	2	Total Frontend	us	126877
+12	0	2	Total Source	us	114901
+12	0	2	Total ParseDeclarationOrFunctionDefinition	us	56122
+12	0	2	Total ParseClass	us	44197
+12	0	2	Total ParseFunctionDefinition	us	35030
+12	0	2	Total InstantiateClass	us	26445
+12	0	2	Total CheckConstraintSatisfaction	us	25429
+12	0	2	Total InstantiateFunction	us	5750
+12	0	2	Total EvaluateAsConstantExpr	us	1529
+12	0	2	Total Backend	us	911
+12	0	2	Total EvaluateAsRValue	us	829
+12	0	2	Total EvaluateAsInitializer	us	589
+12	0	2	Total CodeGenPasses	us	500
+12	0	2	Total OptModule	us	496
+12	0	2	Total OptFunction	us	427
+12	0	2	Total RunPass	us	422
+12	0	2	Total EvaluateForOverflow	us	402
+12	0	2	Total BuildCFG	us	292
+12	0	2	Total EvaluateAsBooleanCondition	us	292
+12	0	2	Total EvaluateAsInt	us	129
+12	0	2	Total CodeGen Function	us	78
+12	0	2	Total isIntegerConstantExpr	us	59
+12	0	2	Total EvaluateKnownConstInt	us	29
+12	0	2	Total PerformPendingInstantiations	us	27
+12	0	2	Total Optimizer	us	26
+12	0	2	Total ModuleToFunctionPassAdaptor	us	13
+12	0	2	Total AnnotationRemarksPass	us	4
+12	0	2	Total CoroConditionalWrapper	us	3
+12	0	2	Total AlwaysInlinerPass	us	2
+12	0	2	Total EntryExitInstrumenterPass	us	1
+12	0	2	Total ProfileSummaryAnalysis	us	0
+12	0	2	Total AllocTokenPass	us	0
+12	0	2	Total TargetLibraryAnalysis	us	0
+12	0	2	Total LowerCommentStringPass	us	0
+12	0	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	0	2	EvaluateAsRValue	count	1582
+12	0	2	EvaluateAsRValue	us	824
+12	0	2	ParseClass	count	837
+12	0	2	ParseClass	us	44796
+12	0	2	EvaluateForOverflow	count	522
+12	0	2	EvaluateForOverflow	us	400
+12	0	2	EvaluateAsConstantExpr	count	1971
+12	0	2	EvaluateAsConstantExpr	us	1529
+12	0	2	InstantiateClass	count	613
+12	0	2	InstantiateClass	us	46812
+12	0	2	EvaluateAsInitializer	count	1122
+12	0	2	EvaluateAsInitializer	us	598
+12	0	2	InstantiateFunction	count	146
+12	0	2	InstantiateFunction	us	8570
+12	0	2	EvaluateAsBooleanCondition	count	323
+12	0	2	EvaluateAsBooleanCondition	us	273
+12	0	2	CodeGen Function	count	1
+12	0	2	CodeGen Function	us	78
+12	0	2	RunPass	count	68
+12	0	2	RunPass	us	421
+12	0	2	OptFunction	count	1
+12	0	2	OptFunction	us	428
+12	4	2	instructions		1417490736
+12	4	2	Total ExecuteCompiler	us	123281
+12	4	2	Total Frontend	us	120728
+12	4	2	Total Source	us	87877
+12	4	2	Total ParseDeclarationOrFunctionDefinition	us	40202
+12	4	2	Total ParseFunctionDefinition	us	33050
+12	4	2	Total CheckConstraintSatisfaction	us	32371
+12	4	2	Total ParseClass	us	31486
+12	4	2	Total InstantiateFunction	us	29924
+12	4	2	Total InstantiateClass	us	25646
+12	4	2	Total EvaluateAsInitializer	us	12878
+12	4	2	Total EvaluateAsConstantExpr	us	2263
+12	4	2	Total Backend	us	1089
+12	4	2	Total EvaluateAsRValue	us	1016
+12	4	2	Total BuildCFG	us	645
+12	4	2	Total EvaluateAsBooleanCondition	us	566
+12	4	2	Total CodeGenPasses	us	408
+12	4	2	Total OptModule	us	404
+12	4	2	Total EvaluateForOverflow	us	384
+12	4	2	Total Optimizer	us	333
+12	4	2	Total AlwaysInlinerPass	us	310
+12	4	2	Total OptFunction	us	305
+12	4	2	Total RunPass	us	291
+12	4	2	Total CodeGen Function	us	272
+12	4	2	Total TargetIRAnalysis	us	250
+12	4	2	Total EvaluateAsInt	us	149
+12	4	2	Total isIntegerConstantExpr	us	43
+12	4	2	Total PerformPendingInstantiations	us	25
+12	4	2	Total EvaluateKnownConstInt	us	22
+12	4	2	Total ModuleToFunctionPassAdaptor	us	12
+12	4	2	Total AAManager	us	12
+12	4	2	Total BasicAA	us	5
+12	4	2	Total DominatorTreeAnalysis	us	3
+12	4	2	Total CoroConditionalWrapper	us	2
+12	4	2	Total EntryExitInstrumenterPass	us	2
+12	4	2	Total AssumptionAnalysis	us	1
+12	4	2	Total AnnotationRemarksPass	us	1
+12	4	2	Total AllocTokenPass	us	1
+12	4	2	Total TargetLibraryAnalysis	us	1
+12	4	2	Total ProfileSummaryAnalysis	us	0
+12	4	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	4	2	Total ScopedNoAliasAA	us	0
+12	4	2	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+12	4	2	Total LowerCommentStringPass	us	0
+12	4	2	Total TypeBasedAA	us	0
+12	4	2	EvaluateAsRValue	count	1866
+12	4	2	EvaluateAsRValue	us	1028
+12	4	2	ParseClass	count	837
+12	4	2	ParseClass	us	31850
+12	4	2	EvaluateForOverflow	count	632
+12	4	2	EvaluateForOverflow	us	375
+12	4	2	EvaluateAsConstantExpr	count	2185
+12	4	2	EvaluateAsConstantExpr	us	2272
+12	4	2	InstantiateClass	count	642
+12	4	2	InstantiateClass	us	45358
+12	4	2	EvaluateAsInitializer	count	1245
+12	4	2	EvaluateAsInitializer	us	12872
+12	4	2	InstantiateFunction	count	211
+12	4	2	InstantiateFunction	us	42374
+12	4	2	EvaluateAsBooleanCondition	count	484
+12	4	2	EvaluateAsBooleanCondition	us	581
+12	4	2	CodeGen Function	count	5
+12	4	2	CodeGen Function	us	272
+12	4	2	RunPass	count	204
+12	4	2	RunPass	us	291
+12	4	2	OptFunction	count	3
+12	4	2	OptFunction	us	305
+16	0	2	instructions		1019985915
+16	0	2	Total ExecuteCompiler	us	99931
+16	0	2	Total Frontend	us	97481
+16	0	2	Total Source	us	89706
+16	0	2	Total ParseDeclarationOrFunctionDefinition	us	41024
+16	0	2	Total ParseClass	us	32541
+16	0	2	Total ParseFunctionDefinition	us	32490
+16	0	2	Total InstantiateClass	us	24829
+16	0	2	Total CheckConstraintSatisfaction	us	24640
+16	0	2	Total InstantiateFunction	us	5507
+16	0	2	Total EvaluateAsConstantExpr	us	1946
+16	0	2	Total Backend	us	921
+16	0	2	Total EvaluateAsRValue	us	744
+16	0	2	Total EvaluateAsInitializer	us	499
+16	0	2	Total CodeGenPasses	us	475
+16	0	2	Total OptModule	us	471
+16	0	2	Total OptFunction	us	406
+16	0	2	Total RunPass	us	401
+16	0	2	Total EvaluateForOverflow	us	330
+16	0	2	Total BuildCFG	us	292
+16	0	2	Total EvaluateAsBooleanCondition	us	279
+16	0	2	Total EvaluateAsInt	us	129
+16	0	2	Total CodeGen Function	us	77
+16	0	2	Total isIntegerConstantExpr	us	42
+16	0	2	Total PerformPendingInstantiations	us	26
+16	0	2	Total Optimizer	us	26
+16	0	2	Total EvaluateKnownConstInt	us	21
+16	0	2	Total ModuleToFunctionPassAdaptor	us	13
+16	0	2	Total AnnotationRemarksPass	us	4
+16	0	2	Total CoroConditionalWrapper	us	3
+16	0	2	Total AlwaysInlinerPass	us	2
+16	0	2	Total EntryExitInstrumenterPass	us	1
+16	0	2	Total AllocTokenPass	us	0
+16	0	2	Total ProfileSummaryAnalysis	us	0
+16	0	2	Total TargetLibraryAnalysis	us	0
+16	0	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	0	2	Total LowerCommentStringPass	us	0
+16	0	2	EvaluateAsRValue	count	1582
+16	0	2	EvaluateAsRValue	us	765
+16	0	2	ParseClass	count	837
+16	0	2	ParseClass	us	32934
+16	0	2	EvaluateForOverflow	count	522
+16	0	2	EvaluateForOverflow	us	347
+16	0	2	EvaluateAsConstantExpr	count	1971
+16	0	2	EvaluateAsConstantExpr	us	1983
+16	0	2	InstantiateClass	count	613
+16	0	2	InstantiateClass	us	43997
+16	0	2	EvaluateAsInitializer	count	1122
+16	0	2	EvaluateAsInitializer	us	506
+16	0	2	InstantiateFunction	count	146
+16	0	2	InstantiateFunction	us	8236
+16	0	2	EvaluateAsBooleanCondition	count	323
+16	0	2	EvaluateAsBooleanCondition	us	272
+16	0	2	CodeGen Function	count	1
+16	0	2	CodeGen Function	us	77
+16	0	2	RunPass	count	68
+16	0	2	RunPass	us	398
+16	0	2	OptFunction	count	1
+16	0	2	OptFunction	us	407
+16	4	2	instructions		1440397528
+16	4	2	Total ExecuteCompiler	us	132174
+16	4	2	Total Frontend	us	129194
+16	4	2	Total Source	us	93704
+16	4	2	Total ParseDeclarationOrFunctionDefinition	us	43878
+16	4	2	Total ParseClass	us	34257
+16	4	2	Total ParseFunctionDefinition	us	33423
+16	4	2	Total CheckConstraintSatisfaction	us	33304
+16	4	2	Total InstantiateFunction	us	29972
+16	4	2	Total InstantiateClass	us	25715
+16	4	2	Total EvaluateAsInitializer	us	12997
+16	4	2	Total EvaluateAsConstantExpr	us	3314
+16	4	2	Total Backend	us	1117
+16	4	2	Total EvaluateAsRValue	us	1037
+16	4	2	Total BuildCFG	us	655
+16	4	2	Total EvaluateAsBooleanCondition	us	570
+16	4	2	Total CodeGenPasses	us	424
+16	4	2	Total OptModule	us	420
+16	4	2	Total EvaluateForOverflow	us	399
+16	4	2	Total Optimizer	us	335
+16	4	2	Total OptFunction	us	321
+16	4	2	Total AlwaysInlinerPass	us	311
+16	4	2	Total RunPass	us	302
+16	4	2	Total CodeGen Function	us	268
+16	4	2	Total TargetIRAnalysis	us	252
+16	4	2	Total EvaluateAsInt	us	147
+16	4	2	Total isIntegerConstantExpr	us	47
+16	4	2	Total PerformPendingInstantiations	us	25
+16	4	2	Total EvaluateKnownConstInt	us	23
+16	4	2	Total AAManager	us	13
+16	4	2	Total ModuleToFunctionPassAdaptor	us	13
+16	4	2	Total BasicAA	us	6
+16	4	2	Total DominatorTreeAnalysis	us	3
+16	4	2	Total CoroConditionalWrapper	us	3
+16	4	2	Total AnnotationRemarksPass	us	2
+16	4	2	Total EntryExitInstrumenterPass	us	2
+16	4	2	Total AssumptionAnalysis	us	1
+16	4	2	Total AllocTokenPass	us	1
+16	4	2	Total TargetLibraryAnalysis	us	0
+16	4	2	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	4	2	Total ProfileSummaryAnalysis	us	0
+16	4	2	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+16	4	2	Total ScopedNoAliasAA	us	0
+16	4	2	Total TypeBasedAA	us	0
+16	4	2	Total LowerCommentStringPass	us	0
+16	4	2	EvaluateAsRValue	count	1866
+16	4	2	EvaluateAsRValue	us	1056
+16	4	2	ParseClass	count	837
+16	4	2	ParseClass	us	34677
+16	4	2	EvaluateForOverflow	count	632
+16	4	2	EvaluateForOverflow	us	423
+16	4	2	EvaluateAsConstantExpr	count	2185
+16	4	2	EvaluateAsConstantExpr	us	3302
+16	4	2	InstantiateClass	count	642
+16	4	2	InstantiateClass	us	45476
+16	4	2	EvaluateAsInitializer	count	1245
+16	4	2	EvaluateAsInitializer	us	13008
+16	4	2	InstantiateFunction	count	211
+16	4	2	InstantiateFunction	us	42357
+16	4	2	EvaluateAsBooleanCondition	count	484
+16	4	2	EvaluateAsBooleanCondition	us	566
+16	4	2	CodeGen Function	count	5
+16	4	2	CodeGen Function	us	270
+16	4	2	RunPass	count	204
+16	4	2	RunPass	us	304
+16	4	2	OptFunction	count	3
+16	4	2	OptFunction	us	321
+4	0	3	instructions		996697415
+4	0	3	Total ExecuteCompiler	us	100966
+4	0	3	Total Frontend	us	98467
+4	0	3	Total Source	us	91671
+4	0	3	Total ParseDeclarationOrFunctionDefinition	us	42160
+4	0	3	Total ParseFunctionDefinition	us	33667
+4	0	3	Total ParseClass	us	33020
+4	0	3	Total InstantiateClass	us	25935
+4	0	3	Total CheckConstraintSatisfaction	us	24572
+4	0	3	Total InstantiateFunction	us	5710
+4	0	3	Total Backend	us	886
+4	0	3	Total EvaluateAsConstantExpr	us	826
+4	0	3	Total EvaluateAsRValue	us	764
+4	0	3	Total EvaluateAsInitializer	us	516
+4	0	3	Total CodeGenPasses	us	481
+4	0	3	Total OptModule	us	477
+4	0	3	Total OptFunction	us	412
+4	0	3	Total RunPass	us	406
+4	0	3	Total EvaluateForOverflow	us	339
+4	0	3	Total BuildCFG	us	291
+4	0	3	Total EvaluateAsBooleanCondition	us	283
+4	0	3	Total EvaluateAsInt	us	125
+4	0	3	Total CodeGen Function	us	79
+4	0	3	Total isIntegerConstantExpr	us	44
+4	0	3	Total PerformPendingInstantiations	us	26
+4	0	3	Total Optimizer	us	25
+4	0	3	Total EvaluateKnownConstInt	us	21
+4	0	3	Total ModuleToFunctionPassAdaptor	us	13
+4	0	3	Total AnnotationRemarksPass	us	5
+4	0	3	Total AlwaysInlinerPass	us	2
+4	0	3	Total CoroConditionalWrapper	us	2
+4	0	3	Total EntryExitInstrumenterPass	us	1
+4	0	3	Total ProfileSummaryAnalysis	us	0
+4	0	3	Total AllocTokenPass	us	0
+4	0	3	Total TargetLibraryAnalysis	us	0
+4	0	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	0	3	Total LowerCommentStringPass	us	0
+4	0	3	EvaluateAsRValue	count	1582
+4	0	3	EvaluateAsRValue	us	741
+4	0	3	ParseClass	count	837
+4	0	3	ParseClass	us	33424
+4	0	3	EvaluateForOverflow	count	522
+4	0	3	EvaluateForOverflow	us	322
+4	0	3	EvaluateAsConstantExpr	count	1971
+4	0	3	EvaluateAsConstantExpr	us	843
+4	0	3	InstantiateClass	count	613
+4	0	3	InstantiateClass	us	46136
+4	0	3	EvaluateAsInitializer	count	1122
+4	0	3	EvaluateAsInitializer	us	532
+4	0	3	InstantiateFunction	count	146
+4	0	3	InstantiateFunction	us	8571
+4	0	3	EvaluateAsBooleanCondition	count	323
+4	0	3	EvaluateAsBooleanCondition	us	273
+4	0	3	CodeGen Function	count	1
+4	0	3	CodeGen Function	us	80
+4	0	3	RunPass	count	68
+4	0	3	RunPass	us	407
+4	0	3	OptFunction	count	1
+4	0	3	OptFunction	us	412
+4	4	3	instructions		1393103247
+4	4	3	Total ExecuteCompiler	us	121938
+4	4	3	Total Frontend	us	119384
+4	4	3	Total Source	us	87721
+4	4	3	Total ParseDeclarationOrFunctionDefinition	us	39771
+4	4	3	Total ParseFunctionDefinition	us	32654
+4	4	3	Total ParseClass	us	31437
+4	4	3	Total CheckConstraintSatisfaction	us	30719
+4	4	3	Total InstantiateFunction	us	29961
+4	4	3	Total InstantiateClass	us	25242
+4	4	3	Total EvaluateAsInitializer	us	13086
+4	4	3	Total Backend	us	1076
+4	4	3	Total EvaluateAsConstantExpr	us	1033
+4	4	3	Total EvaluateAsRValue	us	1026
+4	4	3	Total BuildCFG	us	666
+4	4	3	Total EvaluateAsBooleanCondition	us	575
+4	4	3	Total CodeGenPasses	us	414
+4	4	3	Total OptModule	us	410
+4	4	3	Total EvaluateForOverflow	us	384
+4	4	3	Total Optimizer	us	314
+4	4	3	Total OptFunction	us	308
+4	4	3	Total RunPass	us	295
+4	4	3	Total AlwaysInlinerPass	us	288
+4	4	3	Total CodeGen Function	us	275
+4	4	3	Total TargetIRAnalysis	us	232
+4	4	3	Total EvaluateAsInt	us	145
+4	4	3	Total isIntegerConstantExpr	us	43
+4	4	3	Total PerformPendingInstantiations	us	26
+4	4	3	Total EvaluateKnownConstInt	us	21
+4	4	3	Total ModuleToFunctionPassAdaptor	us	15
+4	4	3	Total AAManager	us	11
+4	4	3	Total BasicAA	us	5
+4	4	3	Total DominatorTreeAnalysis	us	3
+4	4	3	Total CoroConditionalWrapper	us	2
+4	4	3	Total EntryExitInstrumenterPass	us	2
+4	4	3	Total AssumptionAnalysis	us	1
+4	4	3	Total AnnotationRemarksPass	us	1
+4	4	3	Total AllocTokenPass	us	1
+4	4	3	Total TargetLibraryAnalysis	us	0
+4	4	3	Total ProfileSummaryAnalysis	us	0
+4	4	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+4	4	3	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+4	4	3	Total LowerCommentStringPass	us	0
+4	4	3	Total ScopedNoAliasAA	us	0
+4	4	3	Total TypeBasedAA	us	0
+4	4	3	EvaluateAsRValue	count	1866
+4	4	3	EvaluateAsRValue	us	1029
+4	4	3	ParseClass	count	837
+4	4	3	ParseClass	us	31785
+4	4	3	EvaluateForOverflow	count	632
+4	4	3	EvaluateForOverflow	us	383
+4	4	3	EvaluateAsConstantExpr	count	2185
+4	4	3	EvaluateAsConstantExpr	us	1023
+4	4	3	InstantiateClass	count	642
+4	4	3	InstantiateClass	us	44553
+4	4	3	EvaluateAsInitializer	count	1245
+4	4	3	EvaluateAsInitializer	us	13101
+4	4	3	InstantiateFunction	count	211
+4	4	3	InstantiateFunction	us	42282
+4	4	3	EvaluateAsBooleanCondition	count	484
+4	4	3	EvaluateAsBooleanCondition	us	562
+4	4	3	CodeGen Function	count	5
+4	4	3	CodeGen Function	us	275
+4	4	3	RunPass	count	204
+4	4	3	RunPass	us	297
+4	4	3	OptFunction	count	3
+4	4	3	OptFunction	us	309
+8	0	3	instructions		1002716957
+8	0	3	Total ExecuteCompiler	us	120159
+8	0	3	Total Frontend	us	116920
+8	0	3	Total Source	us	105946
+8	0	3	Total ParseDeclarationOrFunctionDefinition	us	50980
+8	0	3	Total ParseClass	us	39891
+8	0	3	Total ParseFunctionDefinition	us	34474
+8	0	3	Total InstantiateClass	us	25948
+8	0	3	Total CheckConstraintSatisfaction	us	24571
+8	0	3	Total InstantiateFunction	us	5615
+8	0	3	Total EvaluateAsConstantExpr	us	1123
+8	0	3	Total Backend	us	910
+8	0	3	Total EvaluateAsRValue	us	823
+8	0	3	Total EvaluateAsInitializer	us	540
+8	0	3	Total CodeGenPasses	us	511
+8	0	3	Total OptModule	us	507
+8	0	3	Total OptFunction	us	420
+8	0	3	Total RunPass	us	415
+8	0	3	Total EvaluateForOverflow	us	381
+8	0	3	Total BuildCFG	us	291
+8	0	3	Total EvaluateAsBooleanCondition	us	285
+8	0	3	Total EvaluateAsInt	us	127
+8	0	3	Total CodeGen Function	us	82
+8	0	3	Total isIntegerConstantExpr	us	52
+8	0	3	Total EvaluateKnownConstInt	us	26
+8	0	3	Total PerformPendingInstantiations	us	26
+8	0	3	Total Optimizer	us	25
+8	0	3	Total ModuleToFunctionPassAdaptor	us	13
+8	0	3	Total AnnotationRemarksPass	us	5
+8	0	3	Total CoroConditionalWrapper	us	2
+8	0	3	Total AlwaysInlinerPass	us	2
+8	0	3	Total EntryExitInstrumenterPass	us	1
+8	0	3	Total AllocTokenPass	us	0
+8	0	3	Total ProfileSummaryAnalysis	us	0
+8	0	3	Total TargetLibraryAnalysis	us	0
+8	0	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	0	3	Total LowerCommentStringPass	us	0
+8	0	3	EvaluateAsRValue	count	1582
+8	0	3	EvaluateAsRValue	us	800
+8	0	3	ParseClass	count	837
+8	0	3	ParseClass	us	40432
+8	0	3	EvaluateForOverflow	count	522
+8	0	3	EvaluateForOverflow	us	367
+8	0	3	EvaluateAsConstantExpr	count	1971
+8	0	3	EvaluateAsConstantExpr	us	1102
+8	0	3	InstantiateClass	count	613
+8	0	3	InstantiateClass	us	46041
+8	0	3	EvaluateAsInitializer	count	1122
+8	0	3	EvaluateAsInitializer	us	569
+8	0	3	InstantiateFunction	count	146
+8	0	3	InstantiateFunction	us	8337
+8	0	3	EvaluateAsBooleanCondition	count	323
+8	0	3	EvaluateAsBooleanCondition	us	271
+8	0	3	CodeGen Function	count	1
+8	0	3	CodeGen Function	us	83
+8	0	3	RunPass	count	68
+8	0	3	RunPass	us	418
+8	0	3	OptFunction	count	1
+8	0	3	OptFunction	us	421
+8	4	3	instructions		1403321268
+8	4	3	Total ExecuteCompiler	us	122908
+8	4	3	Total Frontend	us	120279
+8	4	3	Total Source	us	88003
+8	4	3	Total ParseDeclarationOrFunctionDefinition	us	40408
+8	4	3	Total ParseFunctionDefinition	us	32624
+8	4	3	Total ParseClass	us	31750
+8	4	3	Total CheckConstraintSatisfaction	us	31141
+8	4	3	Total InstantiateFunction	us	30033
+8	4	3	Total InstantiateClass	us	25162
+8	4	3	Total EvaluateAsInitializer	us	13007
+8	4	3	Total EvaluateAsConstantExpr	us	1539
+8	4	3	Total Backend	us	1149
+8	4	3	Total EvaluateAsRValue	us	1037
+8	4	3	Total BuildCFG	us	684
+8	4	3	Total EvaluateAsBooleanCondition	us	573
+8	4	3	Total CodeGenPasses	us	415
+8	4	3	Total OptModule	us	411
+8	4	3	Total EvaluateForOverflow	us	396
+8	4	3	Total Optimizer	us	329
+8	4	3	Total OptFunction	us	310
+8	4	3	Total AlwaysInlinerPass	us	306
+8	4	3	Total RunPass	us	293
+8	4	3	Total CodeGen Function	us	275
+8	4	3	Total TargetIRAnalysis	us	244
+8	4	3	Total EvaluateAsInt	us	146
+8	4	3	Total isIntegerConstantExpr	us	44
+8	4	3	Total PerformPendingInstantiations	us	27
+8	4	3	Total EvaluateKnownConstInt	us	20
+8	4	3	Total ModuleToFunctionPassAdaptor	us	13
+8	4	3	Total AAManager	us	12
+8	4	3	Total BasicAA	us	5
+8	4	3	Total DominatorTreeAnalysis	us	3
+8	4	3	Total CoroConditionalWrapper	us	2
+8	4	3	Total EntryExitInstrumenterPass	us	2
+8	4	3	Total AnnotationRemarksPass	us	2
+8	4	3	Total AssumptionAnalysis	us	1
+8	4	3	Total AllocTokenPass	us	1
+8	4	3	Total TargetLibraryAnalysis	us	0
+8	4	3	Total ProfileSummaryAnalysis	us	0
+8	4	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+8	4	3	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+8	4	3	Total TypeBasedAA	us	0
+8	4	3	Total ScopedNoAliasAA	us	0
+8	4	3	Total LowerCommentStringPass	us	0
+8	4	3	EvaluateAsRValue	count	1866
+8	4	3	EvaluateAsRValue	us	1032
+8	4	3	ParseClass	count	837
+8	4	3	ParseClass	us	32128
+8	4	3	EvaluateForOverflow	count	632
+8	4	3	EvaluateForOverflow	us	406
+8	4	3	EvaluateAsConstantExpr	count	2185
+8	4	3	EvaluateAsConstantExpr	us	1527
+8	4	3	InstantiateClass	count	642
+8	4	3	InstantiateClass	us	44492
+8	4	3	EvaluateAsInitializer	count	1245
+8	4	3	EvaluateAsInitializer	us	13018
+8	4	3	InstantiateFunction	count	211
+8	4	3	InstantiateFunction	us	42407
+8	4	3	EvaluateAsBooleanCondition	count	484
+8	4	3	EvaluateAsBooleanCondition	us	564
+8	4	3	CodeGen Function	count	5
+8	4	3	CodeGen Function	us	273
+8	4	3	RunPass	count	204
+8	4	3	RunPass	us	292
+8	4	3	OptFunction	count	3
+8	4	3	OptFunction	us	312
+12	0	3	instructions		1009935362
+12	0	3	Total ExecuteCompiler	us	100209
+12	0	3	Total Frontend	us	97727
+12	0	3	Total Source	us	90398
+12	0	3	Total ParseDeclarationOrFunctionDefinition	us	41309
+12	0	3	Total ParseClass	us	32738
+12	0	3	Total ParseFunctionDefinition	us	32596
+12	0	3	Total InstantiateClass	us	24923
+12	0	3	Total CheckConstraintSatisfaction	us	24256
+12	0	3	Total InstantiateFunction	us	5512
+12	0	3	Total EvaluateAsConstantExpr	us	1459
+12	0	3	Total Backend	us	947
+12	0	3	Total EvaluateAsRValue	us	748
+12	0	3	Total CodeGenPasses	us	499
+12	0	3	Total EvaluateAsInitializer	us	498
+12	0	3	Total OptModule	us	494
+12	0	3	Total OptFunction	us	428
+12	0	3	Total RunPass	us	423
+12	0	3	Total EvaluateForOverflow	us	339
+12	0	3	Total BuildCFG	us	301
+12	0	3	Total EvaluateAsBooleanCondition	us	286
+12	0	3	Total EvaluateAsInt	us	124
+12	0	3	Total CodeGen Function	us	77
+12	0	3	Total isIntegerConstantExpr	us	42
+12	0	3	Total Optimizer	us	26
+12	0	3	Total PerformPendingInstantiations	us	26
+12	0	3	Total EvaluateKnownConstInt	us	21
+12	0	3	Total ModuleToFunctionPassAdaptor	us	13
+12	0	3	Total AnnotationRemarksPass	us	5
+12	0	3	Total CoroConditionalWrapper	us	3
+12	0	3	Total AlwaysInlinerPass	us	2
+12	0	3	Total EntryExitInstrumenterPass	us	1
+12	0	3	Total ProfileSummaryAnalysis	us	0
+12	0	3	Total AllocTokenPass	us	0
+12	0	3	Total TargetLibraryAnalysis	us	0
+12	0	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	0	3	Total LowerCommentStringPass	us	0
+12	0	3	EvaluateAsRValue	count	1582
+12	0	3	EvaluateAsRValue	us	740
+12	0	3	ParseClass	count	837
+12	0	3	ParseClass	us	33132
+12	0	3	EvaluateForOverflow	count	522
+12	0	3	EvaluateForOverflow	us	339
+12	0	3	EvaluateAsConstantExpr	count	1971
+12	0	3	EvaluateAsConstantExpr	us	1498
+12	0	3	InstantiateClass	count	613
+12	0	3	InstantiateClass	us	44148
+12	0	3	EvaluateAsInitializer	count	1122
+12	0	3	EvaluateAsInitializer	us	514
+12	0	3	InstantiateFunction	count	146
+12	0	3	InstantiateFunction	us	8262
+12	0	3	EvaluateAsBooleanCondition	count	323
+12	0	3	EvaluateAsBooleanCondition	us	285
+12	0	3	CodeGen Function	count	1
+12	0	3	CodeGen Function	us	77
+12	0	3	RunPass	count	68
+12	0	3	RunPass	us	420
+12	0	3	OptFunction	count	1
+12	0	3	OptFunction	us	429
+12	4	3	instructions		1417799778
+12	4	3	Total ExecuteCompiler	us	144438
+12	4	3	Total Frontend	us	140969
+12	4	3	Total Source	us	104121
+12	4	3	Total ParseDeclarationOrFunctionDefinition	us	49853
+12	4	3	Total ParseClass	us	39134
+12	4	3	Total ParseFunctionDefinition	us	34598
+12	4	3	Total CheckConstraintSatisfaction	us	32705
+12	4	3	Total InstantiateFunction	us	30099
+12	4	3	Total InstantiateClass	us	26361
+12	4	3	Total EvaluateAsInitializer	us	13032
+12	4	3	Total EvaluateAsConstantExpr	us	2318
+12	4	3	Total Backend	us	1109
+12	4	3	Total EvaluateAsRValue	us	1091
+12	4	3	Total BuildCFG	us	643
+12	4	3	Total EvaluateAsBooleanCondition	us	575
+12	4	3	Total EvaluateForOverflow	us	425
+12	4	3	Total CodeGenPasses	us	420
+12	4	3	Total OptModule	us	416
+12	4	3	Total Optimizer	us	331
+12	4	3	Total OptFunction	us	317
+12	4	3	Total AlwaysInlinerPass	us	306
+12	4	3	Total RunPass	us	299
+12	4	3	Total CodeGen Function	us	274
+12	4	3	Total TargetIRAnalysis	us	244
+12	4	3	Total EvaluateAsInt	us	154
+12	4	3	Total isIntegerConstantExpr	us	52
+12	4	3	Total EvaluateKnownConstInt	us	26
+12	4	3	Total PerformPendingInstantiations	us	25
+12	4	3	Total ModuleToFunctionPassAdaptor	us	13
+12	4	3	Total AAManager	us	12
+12	4	3	Total BasicAA	us	5
+12	4	3	Total DominatorTreeAnalysis	us	3
+12	4	3	Total CoroConditionalWrapper	us	3
+12	4	3	Total AnnotationRemarksPass	us	2
+12	4	3	Total EntryExitInstrumenterPass	us	2
+12	4	3	Total AssumptionAnalysis	us	1
+12	4	3	Total AllocTokenPass	us	1
+12	4	3	Total TargetLibraryAnalysis	us	0
+12	4	3	Total TypeBasedAA	us	0
+12	4	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+12	4	3	Total ProfileSummaryAnalysis	us	0
+12	4	3	Total LowerCommentStringPass	us	0
+12	4	3	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+12	4	3	Total ScopedNoAliasAA	us	0
+12	4	3	EvaluateAsRValue	count	1866
+12	4	3	EvaluateAsRValue	us	1103
+12	4	3	ParseClass	count	837
+12	4	3	ParseClass	us	39661
+12	4	3	EvaluateForOverflow	count	632
+12	4	3	EvaluateForOverflow	us	418
+12	4	3	EvaluateAsConstantExpr	count	2185
+12	4	3	EvaluateAsConstantExpr	us	2322
+12	4	3	InstantiateClass	count	642
+12	4	3	InstantiateClass	us	46318
+12	4	3	EvaluateAsInitializer	count	1245
+12	4	3	EvaluateAsInitializer	us	13037
+12	4	3	InstantiateFunction	count	211
+12	4	3	InstantiateFunction	us	42472
+12	4	3	EvaluateAsBooleanCondition	count	484
+12	4	3	EvaluateAsBooleanCondition	us	571
+12	4	3	CodeGen Function	count	5
+12	4	3	CodeGen Function	us	274
+12	4	3	RunPass	count	204
+12	4	3	RunPass	us	300
+12	4	3	OptFunction	count	3
+12	4	3	OptFunction	us	318
+16	0	3	instructions		1019364450
+16	0	3	Total ExecuteCompiler	us	99448
+16	0	3	Total Frontend	us	97002
+16	0	3	Total Source	us	89242
+16	0	3	Total ParseDeclarationOrFunctionDefinition	us	40770
+16	0	3	Total ParseFunctionDefinition	us	32422
+16	0	3	Total ParseClass	us	32362
+16	0	3	Total InstantiateClass	us	24843
+16	0	3	Total CheckConstraintSatisfaction	us	24639
+16	0	3	Total InstantiateFunction	us	5514
+16	0	3	Total EvaluateAsConstantExpr	us	1951
+16	0	3	Total Backend	us	897
+16	0	3	Total EvaluateAsRValue	us	737
+16	0	3	Total EvaluateAsInitializer	us	498
+16	0	3	Total CodeGenPasses	us	471
+16	0	3	Total OptModule	us	466
+16	0	3	Total OptFunction	us	400
+16	0	3	Total RunPass	us	395
+16	0	3	Total EvaluateForOverflow	us	335
+16	0	3	Total BuildCFG	us	302
+16	0	3	Total EvaluateAsBooleanCondition	us	283
+16	0	3	Total EvaluateAsInt	us	123
+16	0	3	Total CodeGen Function	us	78
+16	0	3	Total isIntegerConstantExpr	us	43
+16	0	3	Total Optimizer	us	27
+16	0	3	Total PerformPendingInstantiations	us	26
+16	0	3	Total EvaluateKnownConstInt	us	21
+16	0	3	Total ModuleToFunctionPassAdaptor	us	14
+16	0	3	Total AnnotationRemarksPass	us	5
+16	0	3	Total AlwaysInlinerPass	us	2
+16	0	3	Total CoroConditionalWrapper	us	2
+16	0	3	Total EntryExitInstrumenterPass	us	1
+16	0	3	Total ProfileSummaryAnalysis	us	0
+16	0	3	Total TargetLibraryAnalysis	us	0
+16	0	3	Total AllocTokenPass	us	0
+16	0	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	0	3	Total LowerCommentStringPass	us	0
+16	0	3	EvaluateAsRValue	count	1582
+16	0	3	EvaluateAsRValue	us	775
+16	0	3	ParseClass	count	837
+16	0	3	ParseClass	us	32756
+16	0	3	EvaluateForOverflow	count	522
+16	0	3	EvaluateForOverflow	us	332
+16	0	3	EvaluateAsConstantExpr	count	1971
+16	0	3	EvaluateAsConstantExpr	us	1982
+16	0	3	InstantiateClass	count	613
+16	0	3	InstantiateClass	us	44185
+16	0	3	EvaluateAsInitializer	count	1122
+16	0	3	EvaluateAsInitializer	us	493
+16	0	3	InstantiateFunction	count	146
+16	0	3	InstantiateFunction	us	8236
+16	0	3	EvaluateAsBooleanCondition	count	323
+16	0	3	EvaluateAsBooleanCondition	us	278
+16	0	3	CodeGen Function	count	1
+16	0	3	CodeGen Function	us	78
+16	0	3	RunPass	count	68
+16	0	3	RunPass	us	394
+16	0	3	OptFunction	count	1
+16	0	3	OptFunction	us	400
+16	4	3	instructions		1440032057
+16	4	3	Total ExecuteCompiler	us	116066
+16	4	3	Total Frontend	us	113870
+16	4	3	Total Source	us	81859
+16	4	3	Total ParseDeclarationOrFunctionDefinition	us	35815
+16	4	3	Total CheckConstraintSatisfaction	us	33053
+16	4	3	Total ParseFunctionDefinition	us	32153
+16	4	3	Total InstantiateFunction	us	29997
+16	4	3	Total ParseClass	us	28583
+16	4	3	Total InstantiateClass	us	25131
+16	4	3	Total EvaluateAsInitializer	us	12944
+16	4	3	Total EvaluateAsConstantExpr	us	3240
+16	4	3	Total Backend	us	1098
+16	4	3	Total EvaluateAsRValue	us	990
+16	4	3	Total BuildCFG	us	644
+16	4	3	Total EvaluateAsBooleanCondition	us	569
+16	4	3	Total CodeGenPasses	us	402
+16	4	3	Total OptModule	us	397
+16	4	3	Total EvaluateForOverflow	us	370
+16	4	3	Total Optimizer	us	339
+16	4	3	Total AlwaysInlinerPass	us	314
+16	4	3	Total OptFunction	us	301
+16	4	3	Total RunPass	us	283
+16	4	3	Total CodeGen Function	us	275
+16	4	3	Total TargetIRAnalysis	us	255
+16	4	3	Total EvaluateAsInt	us	148
+16	4	3	Total isIntegerConstantExpr	us	39
+16	4	3	Total PerformPendingInstantiations	us	26
+16	4	3	Total EvaluateKnownConstInt	us	20
+16	4	3	Total AAManager	us	13
+16	4	3	Total ModuleToFunctionPassAdaptor	us	13
+16	4	3	Total BasicAA	us	5
+16	4	3	Total DominatorTreeAnalysis	us	3
+16	4	3	Total CoroConditionalWrapper	us	3
+16	4	3	Total AnnotationRemarksPass	us	2
+16	4	3	Total EntryExitInstrumenterPass	us	2
+16	4	3	Total AssumptionAnalysis	us	1
+16	4	3	Total AllocTokenPass	us	1
+16	4	3	Total TargetLibraryAnalysis	us	0
+16	4	3	Total ProfileSummaryAnalysis	us	0
+16	4	3	Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0
+16	4	3	Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0
+16	4	3	Total ScopedNoAliasAA	us	0
+16	4	3	Total TypeBasedAA	us	0
+16	4	3	Total LowerCommentStringPass	us	0
+16	4	3	EvaluateAsRValue	count	1866
+16	4	3	EvaluateAsRValue	us	993
+16	4	3	ParseClass	count	837
+16	4	3	ParseClass	us	28938
+16	4	3	EvaluateForOverflow	count	632
+16	4	3	EvaluateForOverflow	us	360
+16	4	3	EvaluateAsConstantExpr	count	2185
+16	4	3	EvaluateAsConstantExpr	us	3221
+16	4	3	InstantiateClass	count	642
+16	4	3	InstantiateClass	us	44446
+16	4	3	EvaluateAsInitializer	count	1245
+16	4	3	EvaluateAsInitializer	us	12940
+16	4	3	InstantiateFunction	count	211
+16	4	3	InstantiateFunction	us	42511
+16	4	3	EvaluateAsBooleanCondition	count	484
+16	4	3	EvaluateAsBooleanCondition	us	563
+16	4	3	CodeGen Function	count	5
+16	4	3	CodeGen Function	us	277
+16	4	3	RunPass	count	204
+16	4	3	RunPass	us	287
+16	4	3	OptFunction	count	3
+16	4	3	OptFunction	us	302

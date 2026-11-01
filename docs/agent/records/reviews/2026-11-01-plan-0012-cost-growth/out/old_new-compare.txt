@@ -1,0 +1,4 @@
+g++: old (860f9c9 headers) and new (58f4aa1 headers) outputs identical, 517 lines
+clang++: old (860f9c9 headers) and new (58f4aa1 headers) outputs identical, 517 lines
+g++ and clang++ outputs identical
+clang++ -O1 ASan+UBSan+integer+implicit-conversion build (new headers): output identical; no sanitizer report in a Galoot header (3 reports, all in the harness's own hash and xorshift, intended unsigned wraparound)

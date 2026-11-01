@@ -96,13 +96,15 @@ namespace detail {
 /// exterior product is e_A ∧ e_B = reorder_sign(a, b) e_(A ∪ B). Pairs with
 /// i = j are not counted, so in a diagonal metric the geometric product is
 /// e_A e_B = reorder_sign(a, b) times the squares of the common generators
-/// times e_(A xor B).
+/// times e_(A xor B). The cost is one step per generator of A, whatever the
+/// indices of its generators.
 [[nodiscard]] constexpr int reorder_sign(mask_t a, mask_t b) noexcept {
-  // Shifting `a` right by one more step each time and intersecting with `b`
-  // counts, for each generator of A, the generators of B below it.
+  // For each generator e_i of A, lowest first, count the generators of B
+  // below it.
   int swaps = 0;
-  for (a >>= 1U; a != 0; a >>= 1U) {
-    swaps += std::popcount(a & b);
+  for (; a != 0; a &= a - 1) {
+    const auto i = static_cast<unsigned>(std::countr_zero(a));
+    swaps += std::popcount(b & ((mask_t{1} << i) - 1U));
   }
   return swaps % 2 == 0 ? 1 : -1;
 }

@@ -1,0 +1,16 @@
+mutant	preset	mode	build	test	status	failed_tests	static_asserts	first_error
+rv_any_below	gcc-debug	runtime	0	8	killed	core.bits,core.blade_product,core.plan	-	-
+rv_only_adjacent	gcc-debug	runtime	1	-	killed	-	blade_set_test.cpp:577	test/core/blade_set_test.cpp:577:15: error: static assertion failed
+rv_count_own	gcc-debug	runtime	1	-	killed	-	blade_set_test.cpp:577	include/galoot/core/bits.hpp:101:59: error: unused parameter ‘b’ [-Werror=unused-parameter]
+rv_index_mod16	gcc-debug	runtime	0	8	killed	core.bits	-	-
+rv_index_mod8	gcc-debug	runtime	0	8	killed	core.bits	-	-
+ct_flip_on_nonzero	gcc-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+ct_skip_e_N	gcc-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:812:37: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::detail::plan
+ct_skip_own_generator	gcc-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 12>’ and ‘std::array<galo
+ct_index_mod16	gcc-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:812:37: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::detail::plan
+ct_over_blade_with_i	gcc-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 24>’ and ‘std::array<galo
+cr_flip_on_nonzero	gcc-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+cr_skip_e_N	gcc-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-
+cr_over_a	gcc-debug	runtime	1	-	killed	-	-	test/core/plan_test.cpp:355:57: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 27>’ and ‘std::array<galo
+cr_index_mod16	gcc-debug	runtime	0	8	killed	core.blade_product	-	-
+cr_sign_starts_plus	gcc-debug	runtime	0	8	killed	core.blade_product,core.plan	-	-

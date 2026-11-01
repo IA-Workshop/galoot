@@ -1,0 +1,5 @@
+# GCC 16.2.1, -std=c++23 -pedantic-errors -fsyntax-only, gp_plan<conformal(6), full<8>, full<8>> with the headers at 9ff402c (code of 77ed567)
+# default limit (2^25): fails, first error at the libstdc++ subscript check, as in limits.tsv
+# -fconstexpr-ops-limit=2^26: fails at array:210, the same form of message
+# -fconstexpr-ops-limit=2^30: builds, exit 0
+# Clang 23.1.4, -std=c++23 -pedantic-errors -O2, full<13>: fails on the step limit with the headers at 0f1039a and at 9ff402c alike

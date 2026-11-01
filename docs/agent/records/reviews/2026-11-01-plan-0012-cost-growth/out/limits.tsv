@@ -1,0 +1,81 @@
+compiler	config	unit	n	exit	first_limit_or_error
+clang	galoot-O0	full	13	0	-
+clang	galoot-O2	full	13	0	-
+clang	bare	full	13	0	-
+clang	bare-O2	full	13	1	c++/16/x86_64-pc-linux-gnu/bits/c++config.h:592:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O0	full	14	1	c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	full	14	1	c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	full	14	1	c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare-O2	full	14	1	c++/16/array:210:2: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+gcc	galoot-O0	full	15	0	-
+gcc	galoot-O2	full	15	0	-
+gcc	bare	full	15	0	-
+gcc	bare-O2	full	15	0	-
+gcc	galoot-O0	full	16	1	galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full	16	1	galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	full	16	1	galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	full	16	1	c++/16/array:211:24: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	r	5	0	-
+clang	galoot-O2	r	5	0	-
+clang	bare	r	5	0	-
+clang	bare-O2	r	5	0	-
+clang	galoot-O0	r	6	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	r	6	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	r	6	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare-O2	r	6	1	galoot/core/assert.hpp:48:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+gcc	galoot-O0	r	7	0	-
+gcc	galoot-O2	r	7	0	-
+gcc	bare	r	7	0	-
+gcc	bare-O2	r	7	0	-
+gcc	galoot-O0	r	8	1	c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	r	8	1	c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	r	8	1	c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	r	8	1	c++/16/span:289:24: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	rigid	5	0	-
+clang	galoot-O2	rigid	5	0	-
+clang	bare	rigid	5	0	-
+clang	bare-O2	rigid	5	0	-
+clang	galoot-O0	rigid	6	1	galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	rigid	6	1	galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	rigid	6	1	galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare-O2	rigid	6	1	c++/16/x86_64-pc-linux-gnu/bits/c++config.h:589:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+gcc	galoot-O0	rigid	7	0	-
+gcc	galoot-O2	rigid	7	0	-
+gcc	bare	rigid	7	0	-
+gcc	bare-O2	rigid	7	0	-
+gcc	galoot-O0	rigid	8	1	galoot/core/blade_product.hpp:217:29: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	rigid	8	1	galoot/core/blade_product.hpp:217:29: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	rigid	8	1	galoot/core/blade_product.hpp:217:29: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	rigid	8	1	c++/16/span:254:42: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	conformal	5	0	-
+clang	galoot-O2	conformal	5	0	-
+clang	bare	conformal	5	0	-
+clang	bare-O2	conformal	5	0	-
+clang	galoot-O0	conformal	6	1	galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	conformal	6	1	galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	conformal	6	1	galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare-O2	conformal	6	1	galoot/core/blade_product.hpp:91:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+gcc	galoot-O0	conformal	7	0	-
+gcc	galoot-O2	conformal	7	0	-
+gcc	bare	conformal	7	0	-
+gcc	bare-O2	conformal	7	0	-
+gcc	galoot-O0	conformal	8	1	galoot/core/blade_product.hpp:219:44: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	conformal	8	1	galoot/core/blade_product.hpp:219:44: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	conformal	8	1	galoot/core/blade_product.hpp:219:44: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	conformal	8	1	c++/16/array:221:16: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	dense	4	0	-
+clang	galoot-O2	dense	4	0	-
+clang	bare	dense	4	0	-
+clang	bare-O2	dense	4	0	-
+clang	galoot-O0	dense	5	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	dense	5	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	dense	5	1	c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare-O2	dense	5	1	c++/16/limits:1214:37: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+gcc	galoot-O0	dense	5	0	-
+gcc	galoot-O2	dense	5	0	-
+gcc	bare	dense	5	0	-
+gcc	bare-O2	dense	5	0	-
+gcc	galoot-O0	dense	6	1	galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	dense	6	1	galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	dense	6	1	galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	dense	6	1	galoot/core/blade_product.hpp:146:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)

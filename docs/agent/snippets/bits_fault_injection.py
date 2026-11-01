@@ -26,12 +26,12 @@ import subprocess
 import sys
 
 MUTATIONS = [
-    ("reorder_counts_equal", "for (a >>= 1U; a != 0; a >>= 1U)",
-     "for (; a != 0; a >>= 1U)"),
+    ("reorder_counts_equal", "b & ((mask_t{1} << i) - 1U)",
+     "b & ((mask_t{2} << i) - 1U)"),
     # Counts the pairs with the generator of A below the one of B, as if the
     # bits of a mask were numbered from the other end.
-    ("reorder_opposite_order", "for (a >>= 1U; a != 0; a >>= 1U)",
-     "for (b >>= 1U; b != 0; b >>= 1U)"),
+    ("reorder_opposite_order", "b & ((mask_t{1} << i) - 1U)",
+     "b & ~((mask_t{2} << i) - 1U)"),
     # These two keep every variable in use, so -Werror does not end the build.
     ("reorder_always_plus", "return swaps % 2 == 0 ? 1 : -1;",
      "return swaps % 2 == 0 ? 1 : 1;"),

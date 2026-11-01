@@ -1,0 +1,13 @@
+math-tools/trial-wu6a/dump_tables.cpp (copied unchanged to a scratch directory), built against the
+headers at 58f4aa1 with -std=c++23 -O2 -D_GLIBCXX_ASSERTIONS -DGALOOT_CHECKING=1, run in its three
+table modes as the trial ran them (builtin; stdin on out/extra_forms.txt; stdin once per line of
+out/big_forms.txt, recording each exit status and message):
+
+g++     builtin identical, extra identical, big identical, big status identical
+clang++ builtin identical, extra identical, big identical, big status identical
+
+"identical" is cmp against out/galoot_{builtin,extra,big}_{g++,clang++}.jsonl, and diff of the
+status lines (paths stripped) against out/galoot_big_{g++,clang++}.status: the same eight forms
+abort with "a product coefficient does not fit coefficient_type". Those stored outputs were
+compared exactly, in that trial, with route_w.py (out/compare_exact.json: 100 forms, 117,184
+pairs, 0 mismatched), so the new headers agree with that independent route on every pair.

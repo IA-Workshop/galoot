@@ -1,0 +1,58 @@
+# compare.cpp against copies of the headers at 77ed567 with one mutant each, old = 0f1039a, g++ -O2 with checking.
+# correction_skip_highest: the correction loop of add_blade_product stops before the highest generator of A'.
+# Run output (exit 1):
+seed	5eed0012
+reorder_sign, every pair below 2^12, then random to n = 32	20777236 compared	0 mismatched
+complement signs, every blade to n = 12, then random	2008190 compared	0 mismatched
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	conformal	n=2	a=3	b=0
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	conformal	n=2	a=3	b=1
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	conformal	n=2	a=3	b=2
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	conformal	n=2	a=3	b=3
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	conformal	n=2	a=0	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	conformal	n=2	a=1	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	conformal	n=2	a=0	b=1
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	witt-ends	n=2	a=3	b=0
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	witt-ends	n=2	a=3	b=1
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	witt-ends	n=2	a=3	b=2
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	witt-ends	n=2	a=3	b=3
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	witt-ends	n=2	a=0	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	witt-ends	n=2	a=1	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	witt-ends	n=2	a=0	b=1
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	dense	n=2	a=3	b=0
+MISMATCH	blade_product, every pair of masks, n = 1 to 8	dense	n=2	a=3	b=1
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	dense	n=2	a=0	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	dense	n=2	a=1	b=0
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	dense	n=2	a=0	b=1
+MISMATCH	generate_gp, full sets with two sign patterns, n = 1 to 5	random	n=2	a=0	b=0
+blade_product, every pair of masks, n = 1 to 8	4203996 compared	369708 mismatched
+generate_gp, full sets with two sign patterns, n = 1 to 5	249 compared	72 mismatched
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=322	b=202
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=263	b=8
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=322	b=1
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=306	b=290
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=419	b=391
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=338	b=136
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=387	b=16
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=322	b=0
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=144	b=0
+MISMATCH	blade_product, random forms and masks, n = 9 to 32	random-sparse	n=9	a=450	b=51
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+MISMATCH	generate_gp, random forms and sets, n = 9 to 32	random-sparse	n=9	a=0	b=0
+blade_product, random forms and masks, n = 9 to 32	216000 compared	56862 mismatched
+generate_gp, random forms and sets, n = 9 to 32	2880 compared	921 mismatched
+gp_plan, typed rigid(3) pairs at n = 4, 8, 12, 16	equal in constant evaluations (static_assert)
+total mismatched	427563
+# reorder_skip_highest: reorder_sign stops before the highest generator of a.
+# Build output: the gp_plan comparisons of the typed pairs fail (exit 1, so no run):
+docs/agent/records/performance/product-cost-growth/compare.cpp:449:35: error: static assertion failed
+docs/agent/records/performance/product-cost-growth/compare.cpp:450:35: error: static assertion failed
+docs/agent/records/performance/product-cost-growth/compare.cpp:451:36: error: static assertion failed
+docs/agent/records/performance/product-cost-growth/compare.cpp:452:36: error: static assertion failed
