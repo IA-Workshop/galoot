@@ -40,6 +40,10 @@ MUTATIONS = [
     ("index_repeat_check", "static_assert(!repeats_after(S, at),", "static_assert(true || !repeats_after(S, at),"),
     ("index_repeat_from_next", "for (std::size_t j = at + 1; j < K; ++j) {",
      "for (std::size_t j = at + 2; j < K; ++j) {"),
+    # The two survivors of the review of this unit.
+    ("second_flag_never", "    u.in_second[at] = second;\n", "    u.in_second[at] = false;\n"),
+    ("opp_blade_unchecked", "if (is_sign(listed.sign) && is_sign(blade.sign) &&",
+     "if (is_sign(listed.sign) &&"),
     ("is_sign_zero", "return sign == 1 || sign == -1;", "return sign == 1 || sign == -1 || sign == 0;"),
     ("is_sign_minus", "return sign == 1 || sign == -1;", "return sign == 1;"),
 ]
