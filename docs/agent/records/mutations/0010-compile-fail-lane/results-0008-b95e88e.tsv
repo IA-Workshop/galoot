@@ -1,0 +1,66 @@
+# b95e88e, the old lane (Ninja build under the tree lock): python3 -I docs/agent/records/mutations/0008-blade-set/mutate.py <preset> <the 32 mutations whose anchor is still in blade_set.hpp>; merge_conflict, index_sign_check, and index_repeat_check no longer apply.
+mutation	preset	build_exit	test_exit	failed_tests	killed	first_build_error
+parse_sign	gcc-debug	1	0	-	killed	test/core/blade_set_test.cpp:564:20: error: static assertion failed
+parse_sign_trivectors	gcc-debug	0	8	core.blade_set	killed	-
+canonical_tie	gcc-debug	0	8	core.blade_set	killed	-
+full_grade_order	gcc-debug	1	8	core.blade_set	killed	test/core/blade_set_test.cpp:570:20: error: static assertion failed
+binomial	gcc-debug	1	8	core.blade_set	killed	/usr/include/c++/16/array:210:9: error: call to non-‘constexpr’ function ‘void std::__glibcxx_assert_fail(const char*, int, const char*, const char*)’
+merge_duplicates	gcc-debug	1	8	core.blade_set,core.blade_set_merge_opposite_signs,core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift,core.blade_set_merge_repeated_in_second_only,core.blade_set_merge_repeated_in_second_empty_first	killed	test/core/blade_set_test.cpp:784:40: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::oriented_blade, 12>&>’ and ‘const std::array<ga
+merge_numeric_order	gcc-debug	0	8	core.blade_set	killed	-
+index_check	gcc-debug	0	8	core.blade_set_index_of_absent	killed	-
+index_position	gcc-debug	0	8	core.blade_set,core.blade_set_index_of_repeated_adjacent	killed	-
+set_size	gcc-debug	1	8	core.blade_set,core.blade_set_index_of_absent	killed	test/core/blade_set_test.cpp:588:52: error: static assertion failed
+no_names	gcc-debug	0	8	core.blade_set_no_names	killed	-
+not_a_name	gcc-debug	0	8	core.blade_set_not_a_name_letter,core.blade_set_not_a_name_digit	killed	-
+digit_zero	gcc-debug	0	8	core.blade_set_bad_index_zero	killed	-
+digit_letter	gcc-debug	0	8	core.blade_set_bad_index_letter	killed	-
+no_index	gcc-debug	0	8	core.blade_set_no_index	killed	-
+index_above_n	gcc-debug	0	8	core.blade_set_index_above_n	killed	-
+repeated_generator	gcc-debug	0	8	core.blade_set_repeated_generator	killed	-
+repeated_blade	gcc-debug	0	8	core.blade_set_repeated_name,core.blade_set_same_blade	killed	-
+names_above_9_assert	gcc-debug	0	8	core.blade_set_names_above_9	killed	-
+names_above_9_guard	gcc-debug	0	8	core.blade_set_names_above_9	killed	-
+zero_assert	gcc-debug	0	8	core.blade_set_names_zero,core.blade_set_full_zero,core.blade_set_of_grade_zero	killed	-
+zero_guard	gcc-debug	0	8	core.blade_set_names_zero	killed	-
+wide_assert	gcc-debug	0	8	core.blade_set_full_wide	killed	-
+grade_above_n	gcc-debug	0	8	core.blade_set_of_grade_above_n	killed	-
+grade_negative	gcc-debug	0	8	core.blade_set_of_grade_negative	killed	-
+name_assert	gcc-debug	0	8	core.blade_set_name_beyond_e9,core.blade_set_name_assert	killed	-
+name_digit	gcc-debug	0	8	core.blade_set	killed	-
+merge_sign_check	gcc-debug	0	8	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict,core.blade_set_merge_bad_sign_second_shared	killed	-
+merge_repeat_check	gcc-debug	0	8	core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift,core.blade_set_merge_repeated_in_second_only,core.blade_set_merge_repeated_in_second_empty_first	killed	-
+widest_count	gcc-debug	1	0	-	killed	test/core/blade_set_test.cpp:588:52: error: static assertion failed
+names_above_9_tail	gcc-debug	0	8	core.blade_set_names_above_9	killed	-
+separator	gcc-debug	1	8	core.blade_set_not_a_name_letter,core.blade_set_not_a_name_digit,core.blade_set_bad_index_zero,core.blade_set_no_index,core.blade_set_index_above_n,core.blade_set_repeated_name,core.blade_set_same_blade	killed	test/core/blade_set_test.cpp:564:20: error: static assertion failed
+parse_sign	clang-debug	1	0	-	killed	test/core/blade_set_test.cpp:564:15: error: static assertion failed due to requirement 'std::is_same_v<(anonymous namespace)::stored_on<galoot::core::blade_set<2>{{{{3, -1}, {5, -1}}}}>, (anonymous na
+parse_sign_trivectors	clang-debug	0	8	core.blade_set	killed	-
+canonical_tie	clang-debug	0	8	core.blade_set	killed	-
+full_grade_order	clang-debug	1	8	core.blade_set	killed	test/core/blade_set_test.cpp:570:15: error: static assertion failed due to requirement 'std::is_same_v<(anonymous namespace)::stored_on<galoot::core::blade_set<4>{{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}}}>,
+binomial	clang-debug	1	8	core.blade_set	killed	include/galoot/core/blade_set.hpp:558:23: error: constexpr variable 'of_grade<3, 1>' must be initialized by a constant expression
+merge_duplicates	clang-debug	1	8	core.blade_set,core.blade_set_merge_opposite_signs,core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift,core.blade_set_merge_repeated_in_second_only,core.blade_set_merge_repeated_in_second_empty_first	killed	test/core/blade_set_test.cpp:784:40: error: invalid operands to binary expression ('Expression_lhs<const std::array<galoot::core::oriented_blade, 12> &>' and 'const array<remove_cv_t<galoot::core::ori
+merge_numeric_order	clang-debug	0	8	core.blade_set	killed	-
+index_check	clang-debug	0	8	core.blade_set_index_of_absent	killed	-
+index_position	clang-debug	0	8	core.blade_set,core.blade_set_index_of_repeated_adjacent	killed	-
+set_size	clang-debug	1	8	core.blade_set,core.blade_set_index_of_absent	killed	test/core/blade_set_test.cpp:588:15: error: static assertion failed due to requirement 'core::of_grade<32, 1>.size() == mask_width'
+no_names	clang-debug	0	8	core.blade_set_no_names	killed	-
+not_a_name	clang-debug	0	8	core.blade_set_not_a_name_letter,core.blade_set_not_a_name_digit	killed	-
+digit_zero	clang-debug	0	8	core.blade_set_bad_index_zero	killed	-
+digit_letter	clang-debug	0	8	core.blade_set_bad_index_letter	killed	-
+no_index	clang-debug	0	8	core.blade_set_no_index	killed	-
+index_above_n	clang-debug	0	8	core.blade_set_index_above_n	killed	-
+repeated_generator	clang-debug	0	8	core.blade_set_repeated_generator	killed	-
+repeated_blade	clang-debug	0	8	core.blade_set_repeated_name,core.blade_set_same_blade	killed	-
+names_above_9_assert	clang-debug	0	8	core.blade_set_names_above_9	killed	-
+names_above_9_guard	clang-debug	0	8	core.blade_set_names_above_9	killed	-
+zero_assert	clang-debug	0	8	core.blade_set_names_zero,core.blade_set_full_zero,core.blade_set_of_grade_zero	killed	-
+zero_guard	clang-debug	0	8	core.blade_set_names_zero	killed	-
+wide_assert	clang-debug	0	8	core.blade_set_full_wide	killed	-
+grade_above_n	clang-debug	0	8	core.blade_set_of_grade_above_n	killed	-
+grade_negative	clang-debug	0	8	core.blade_set_of_grade_negative	killed	-
+name_assert	clang-debug	0	8	core.blade_set_name_beyond_e9,core.blade_set_name_assert	killed	-
+name_digit	clang-debug	0	8	core.blade_set	killed	-
+merge_sign_check	clang-debug	0	8	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict,core.blade_set_merge_bad_sign_second_shared	killed	-
+merge_repeat_check	clang-debug	0	8	core.blade_set_merge_repeated_mask,core.blade_set_merge_repeated_in_second,core.blade_set_merge_repeated_in_second_signs,core.blade_set_merge_repeated_after_shift,core.blade_set_merge_repeated_in_second_only,core.blade_set_merge_repeated_in_second_empty_first	killed	-
+widest_count	clang-debug	1	0	-	killed	test/core/blade_set_test.cpp:588:15: error: static assertion failed due to requirement 'core::of_grade<32, 1>.size() == mask_width'
+names_above_9_tail	clang-debug	0	8	core.blade_set_names_above_9	killed	-
+separator	clang-debug	1	8	core.blade_set_not_a_name_letter,core.blade_set_not_a_name_digit,core.blade_set_bad_index_zero,core.blade_set_no_index,core.blade_set_index_above_n,core.blade_set_repeated_name,core.blade_set_same_blade	killed	test/core/blade_set_test.cpp:564:15: error: static assertion failed due to requirement 'std::is_same_v<(anonymous namespace)::stored_on<galoot::core::blade_set<1>{{{{3, 1}}}}>, (anonymous namespace)::

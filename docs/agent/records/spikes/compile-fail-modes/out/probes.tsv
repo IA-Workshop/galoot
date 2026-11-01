@@ -1,0 +1,115 @@
+probe	compiler	flags	exit_c	exit_s	diagnostics only with -c
+error_attribute	g++	debug	1	0	error: call to ‘forbidden’ declared with attribute error: error attribute reached|
+error_attribute	g++	release	1	0	error: call to ‘forbidden’ declared with attribute error: error attribute reached|
+error_attribute	g++	asan	1	0	error: call to ‘forbidden’ declared with attribute error: error attribute reached|
+error_attribute	clang++	debug	1	0	error: call to 'forbidden()' declared with 'error' attribute: error attribute reached|
+error_attribute	clang++	release	1	0	error: call to 'forbidden()' declared with 'error' attribute: error attribute reached|
+error_attribute	clang++	asan	1	0	error: call to 'forbidden()' declared with 'error' attribute: error attribute reached|
+warning_attribute	g++	debug	1	0	error: call to ‘discouraged’ declared with attribute warning: warning attribute reached [-Werror=attribute-warning]|
+warning_attribute	g++	release	1	0	error: call to ‘discouraged’ declared with attribute warning: warning attribute reached [-Werror=attribute-warning]|
+warning_attribute	g++	asan	1	0	error: call to ‘discouraged’ declared with attribute warning: warning attribute reached [-Werror=attribute-warning]|
+warning_attribute	clang++	debug	1	0	error: call to 'discouraged()' declared with 'warning' attribute: warning attribute reached [-Werror,-Wattribute-warning]|
+warning_attribute	clang++	release	1	0	error: call to 'discouraged()' declared with 'warning' attribute: warning attribute reached [-Werror,-Wattribute-warning]|
+warning_attribute	clang++	asan	1	0	error: call to 'discouraged()' declared with 'warning' attribute: warning attribute reached [-Werror,-Wattribute-warning]|
+return_type	g++	debug	1	0	error: control reaches end of non-void function [-Werror=return-type]|
+return_type	g++	release	1	0	error: control reaches end of non-void function [-Werror=return-type]|
+return_type	g++	asan	1	0	error: control reaches end of non-void function [-Werror=return-type]|
+return_type	clang++	debug	1	1	-
+return_type	clang++	release	1	1	-
+return_type	clang++	asan	1	1	-
+uninitialized	g++	debug	1	0	error: ‘x’ is used uninitialized [-Werror=uninitialized]|
+uninitialized	g++	release	1	0	error: ‘x’ is used uninitialized [-Werror=uninitialized]|
+uninitialized	g++	asan	1	0	error: ‘x’ is used uninitialized [-Werror=uninitialized]|
+uninitialized	clang++	debug	1	1	-
+uninitialized	clang++	release	1	1	-
+uninitialized	clang++	asan	1	1	-
+maybe_uninitialized	g++	debug	0	0	-
+maybe_uninitialized	g++	release	0	0	-
+maybe_uninitialized	g++	asan	0	0	-
+maybe_uninitialized	clang++	debug	0	0	-
+maybe_uninitialized	clang++	release	0	0	-
+maybe_uninitialized	clang++	asan	0	0	-
+array_bounds	g++	debug	0	0	-
+array_bounds	g++	release	1	0	error: array subscript 5 is above array bounds of ‘int [2]’ [-Werror=array-bounds=]|
+array_bounds	g++	asan	0	0	-
+array_bounds	clang++	debug	1	1	-
+array_bounds	clang++	release	1	1	-
+array_bounds	clang++	asan	1	1	-
+dynamic_bounds	g++	debug	0	0	-
+dynamic_bounds	g++	release	1	0	error: array subscript 11 is above array bounds of ‘int [4]’ [-Werror=array-bounds=]|
+dynamic_bounds	g++	asan	0	0	-
+dynamic_bounds	clang++	debug	0	0	-
+dynamic_bounds	clang++	release	0	0	-
+dynamic_bounds	clang++	asan	0	0	-
+inline_asm	g++	debug	1	0	-
+inline_asm	g++	release	1	0	-
+inline_asm	g++	asan	1	0	-
+inline_asm	clang++	debug	1	0	error: invalid instruction mnemonic 'not_an_instruction'|
+inline_asm	clang++	release	1	0	error: invalid instruction mnemonic 'not_an_instruction'|
+inline_asm	clang++	asan	1	0	error: invalid instruction mnemonic 'not_an_instruction'|
+always_inline	g++	debug	1	1	error: inlining failed in call to ‘always_inline’ ‘int g(int)’: function body not available|
+always_inline	g++	release	1	1	error: inlining failed in call to ‘always_inline’ ‘int g(int)’: function body not available|
+always_inline	g++	asan	1	1	error: inlining failed in call to ‘always_inline’ ‘int g(int)’: function body not available|
+always_inline	clang++	debug	1	1	-
+always_inline	clang++	release	1	1	-
+always_inline	clang++	asan	1	1	-
+unused_static	g++	debug	1	0	error: ‘never_read’ defined but not used [-Werror=unused-variable]|error: ‘void never_called()’ defined but not used [-Werror=unused-function]|
+unused_static	g++	release	1	0	error: ‘never_read’ defined but not used [-Werror=unused-variable]|error: ‘void never_called()’ defined but not used [-Werror=unused-function]|
+unused_static	g++	asan	1	0	error: ‘never_read’ defined but not used [-Werror=unused-variable]|error: ‘void never_called()’ defined but not used [-Werror=unused-function]|
+unused_static	clang++	debug	1	1	-
+unused_static	clang++	release	1	1	-
+unused_static	clang++	asan	1	1	-
+undefined_static	g++	debug	1	1	-
+undefined_static	g++	release	1	1	-
+undefined_static	g++	asan	1	1	-
+undefined_static	clang++	debug	1	1	-
+undefined_static	clang++	release	1	1	-
+undefined_static	clang++	asan	1	1	-
+stringop	g++	debug	1	0	error: ‘void* __builtin_memcpy(void*, const void*, long unsigned int)’ writing 6 bytes into a region of size 2 overflows the destination [-Werror=stringop-overflow=]|
+stringop	g++	release	0	0	-
+stringop	g++	asan	1	0	error: ‘void* __builtin_memcpy(void*, const void*, long unsigned int)’ forming offset [2, 5] is out of the bounds [0, 2] of object ‘b’ with type ‘char [2]’ [-Werror=array-bounds=]|
+stringop	clang++	debug	1	1	-
+stringop	clang++	release	1	1	-
+stringop	clang++	asan	1	1	-
+use_after_free	g++	debug	1	0	error: pointer ‘p’ used after ‘void free(void*)’ [-Werror=use-after-free=]|
+use_after_free	g++	release	1	0	error: pointer ‘p’ used after ‘void free(void*)’ [-Werror=use-after-free=]|
+use_after_free	g++	asan	1	0	error: pointer ‘p’ used after ‘void free(void*)’ [-Werror=use-after-free=]|
+use_after_free	clang++	debug	0	0	-
+use_after_free	clang++	release	0	0	-
+use_after_free	clang++	asan	0	0	-
+dangling	g++	debug	1	1	-
+dangling	g++	release	1	1	-
+dangling	g++	asan	1	1	-
+dangling	clang++	debug	1	1	-
+dangling	clang++	release	1	1	-
+dangling	clang++	asan	1	1	-
+free_nonheap	g++	debug	1	0	error: ‘void free(void*)’ called on unallocated object ‘x’ [-Werror=free-nonheap-object]|
+free_nonheap	g++	release	1	0	error: ‘void free(void*)’ called on unallocated object ‘x’ [-Werror=free-nonheap-object]|
+free_nonheap	g++	asan	1	0	error: ‘void free(void*)’ called on unallocated object ‘x’ [-Werror=free-nonheap-object]|
+free_nonheap	clang++	debug	1	1	-
+free_nonheap	clang++	release	1	1	-
+free_nonheap	clang++	asan	1	1	-
+null_deref	g++	debug	0	0	-
+null_deref	g++	release	0	0	-
+null_deref	g++	asan	0	0	-
+null_deref	clang++	debug	0	0	-
+null_deref	clang++	release	0	0	-
+null_deref	clang++	asan	0	0	-
+template_end	g++	debug	1	1	-
+template_end	g++	release	1	1	-
+template_end	g++	asan	1	1	-
+template_end	clang++	debug	1	1	-
+template_end	clang++	release	1	1	-
+template_end	clang++	asan	1	1	-
+fe_and_codegen	g++	debug	1	1	-
+fe_and_codegen	g++	release	1	1	-
+fe_and_codegen	g++	asan	1	1	-
+fe_and_codegen	clang++	debug	1	1	-
+fe_and_codegen	clang++	release	1	1	-
+fe_and_codegen	clang++	asan	1	1	-
+constexpr_unused	g++	debug	0	0	-
+constexpr_unused	g++	release	0	0	-
+constexpr_unused	g++	asan	0	0	-
+constexpr_unused	clang++	debug	0	0	-
+constexpr_unused	clang++	release	0	0	-
+constexpr_unused	clang++	asan	0	0	-

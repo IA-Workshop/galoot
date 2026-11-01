@@ -1,0 +1,374 @@
+[
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core.hpp.cxx.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/assert.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/assert.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/assert.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/assert.hpp.cxx.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/bits.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/bits.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/bits.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/bits.hpp.cxx.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/blade_set.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/blade_set.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/blade_set.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/blade_set.hpp.cxx.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/metric.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/metric.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/galoot_core_verify_interface_header_sets/galoot/core/metric.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/CMakeFiles/galoot_core_verify_interface_header_sets.dir/galoot_core_verify_interface_header_sets/galoot/core/metric.hpp.cxx.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -isystem /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext/doctest/doctest.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext/doctest/doctest.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=1 -DGALOOT_EXPECTED_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -isystem /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_smoke_test.dir/core/smoke_test.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/smoke_test.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/smoke_test.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_smoke_test.dir/core/smoke_test.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_assert_mode_1.dir/core/assert_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_assert_mode_1.dir/core/assert_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=0 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_assert_mode_0.dir/core/assert_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_assert_mode_0.dir/core/assert_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_assert_consteval_compile_fail.dir/core/assert_consteval_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_consteval_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_consteval_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_assert_consteval_compile_fail.dir/core/assert_consteval_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_assert_consteval_wrong_message_compile_fail.dir/core/assert_consteval_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_consteval_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/assert_consteval_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_assert_consteval_wrong_message_compile_fail.dir/core/assert_consteval_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test -isystem /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_bits_test.dir/core/bits_test.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_test.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_test.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_bits_test.dir/core/bits_test.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_bits_assert_fail.dir/core/bits_assert_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_assert_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_assert_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_bits_assert_fail.dir/core/bits_assert_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_bits_consteval_compile_fail.dir/core/bits_consteval_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_consteval_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/bits_consteval_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_bits_consteval_compile_fail.dir/core/bits_consteval_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test -isystem /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_test.dir/core/metric_test.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_test.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_test.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_test.dir/core/metric_test.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_asymmetric_compile_fail.dir/core/metric_asymmetric_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_asymmetric_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_asymmetric_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_asymmetric_compile_fail.dir/core/metric_asymmetric_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_entry_range_compile_fail.dir/core/metric_entry_range_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_entry_range_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_entry_range_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_entry_range_compile_fail.dir/core/metric_entry_range_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_zero_compile_fail.dir/core/metric_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_zero_compile_fail.dir/core/metric_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_bound_compile_fail.dir/core/metric_bound_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_bound_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_bound_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_bound_compile_fail.dir/core/metric_bound_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_count_wrap_compile_fail.dir/core/metric_count_wrap_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_count_wrap_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_count_wrap_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_count_wrap_compile_fail.dir/core/metric_count_wrap_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_count_wrap_zero_compile_fail.dir/core/metric_count_wrap_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_count_wrap_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_count_wrap_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_count_wrap_zero_compile_fail.dir/core/metric_count_wrap_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_conformal_wrap_compile_fail.dir/core/metric_conformal_wrap_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_conformal_wrap_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_conformal_wrap_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_conformal_wrap_compile_fail.dir/core/metric_conformal_wrap_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_conformal_wrap_zero_compile_fail.dir/core/metric_conformal_wrap_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_conformal_wrap_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_conformal_wrap_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_conformal_wrap_zero_compile_fail.dir/core/metric_conformal_wrap_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_max_n_width_compile_fail.dir/core/metric_max_n_width_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_max_n_width_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_max_n_width_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_max_n_width_compile_fail.dir/core/metric_max_n_width_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_type_width_compile_fail.dir/core/metric_type_width_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_type_width_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_type_width_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_type_width_compile_fail.dir/core/metric_type_width_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_metric_is_null_checking.dir/core/metric_is_null_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_is_null_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/metric_is_null_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_metric_is_null_checking.dir/core/metric_is_null_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test -isystem /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_test.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_test.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_no_names_compile_fail.dir/core/blade_set_no_names_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_no_names_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_no_names_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_no_names_compile_fail.dir/core/blade_set_no_names_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_not_a_name_letter_compile_fail.dir/core/blade_set_not_a_name_letter_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_not_a_name_letter_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_not_a_name_letter_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_not_a_name_letter_compile_fail.dir/core/blade_set_not_a_name_letter_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_not_a_name_digit_compile_fail.dir/core/blade_set_not_a_name_digit_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_not_a_name_digit_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_not_a_name_digit_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_not_a_name_digit_compile_fail.dir/core/blade_set_not_a_name_digit_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_bad_index_zero_compile_fail.dir/core/blade_set_bad_index_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_bad_index_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_bad_index_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_bad_index_zero_compile_fail.dir/core/blade_set_bad_index_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_bad_index_letter_compile_fail.dir/core/blade_set_bad_index_letter_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_bad_index_letter_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_bad_index_letter_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_bad_index_letter_compile_fail.dir/core/blade_set_bad_index_letter_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_no_index_compile_fail.dir/core/blade_set_no_index_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_no_index_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_no_index_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_no_index_compile_fail.dir/core/blade_set_no_index_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_index_above_n_compile_fail.dir/core/blade_set_index_above_n_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_above_n_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_above_n_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_index_above_n_compile_fail.dir/core/blade_set_index_above_n_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_repeated_generator_compile_fail.dir/core/blade_set_repeated_generator_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_repeated_generator_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_repeated_generator_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_repeated_generator_compile_fail.dir/core/blade_set_repeated_generator_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_repeated_name_compile_fail.dir/core/blade_set_repeated_name_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_repeated_name_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_repeated_name_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_repeated_name_compile_fail.dir/core/blade_set_repeated_name_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_same_blade_compile_fail.dir/core/blade_set_same_blade_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_same_blade_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_same_blade_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_same_blade_compile_fail.dir/core/blade_set_same_blade_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_names_above_9_compile_fail.dir/core/blade_set_names_above_9_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_names_above_9_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_names_above_9_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_names_above_9_compile_fail.dir/core/blade_set_names_above_9_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_names_zero_compile_fail.dir/core/blade_set_names_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_names_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_names_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_names_zero_compile_fail.dir/core/blade_set_names_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_full_zero_compile_fail.dir/core/blade_set_full_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_full_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_full_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_full_zero_compile_fail.dir/core/blade_set_full_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_full_wide_compile_fail.dir/core/blade_set_full_wide_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_full_wide_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_full_wide_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_full_wide_compile_fail.dir/core/blade_set_full_wide_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_of_grade_zero_compile_fail.dir/core/blade_set_of_grade_zero_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_zero_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_zero_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_of_grade_zero_compile_fail.dir/core/blade_set_of_grade_zero_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_of_grade_above_n_compile_fail.dir/core/blade_set_of_grade_above_n_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_above_n_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_above_n_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_of_grade_above_n_compile_fail.dir/core/blade_set_of_grade_above_n_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_of_grade_negative_compile_fail.dir/core/blade_set_of_grade_negative_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_negative_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_of_grade_negative_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_of_grade_negative_compile_fail.dir/core/blade_set_of_grade_negative_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_opposite_signs_compile_fail.dir/core/blade_set_merge_opposite_signs_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_opposite_signs_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_opposite_signs_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_opposite_signs_compile_fail.dir/core/blade_set_merge_opposite_signs_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_index_of_absent_compile_fail.dir/core/blade_set_index_of_absent_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_absent_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_absent_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_index_of_absent_compile_fail.dir/core/blade_set_index_of_absent_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_bad_sign_compile_fail.dir/core/blade_set_merge_bad_sign_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_bad_sign_compile_fail.dir/core/blade_set_merge_bad_sign_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_bad_sign_second_compile_fail.dir/core/blade_set_merge_bad_sign_second_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_second_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_second_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_bad_sign_second_compile_fail.dir/core/blade_set_merge_bad_sign_second_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_mask_compile_fail.dir/core/blade_set_merge_repeated_mask_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_mask_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_mask_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_mask_compile_fail.dir/core/blade_set_merge_repeated_mask_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_in_second_compile_fail.dir/core/blade_set_merge_repeated_in_second_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_in_second_compile_fail.dir/core/blade_set_merge_repeated_in_second_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_in_second_signs_compile_fail.dir/core/blade_set_merge_repeated_in_second_signs_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_signs_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_signs_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_in_second_signs_compile_fail.dir/core/blade_set_merge_repeated_in_second_signs_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_bad_sign_no_conflict_compile_fail.dir/core/blade_set_merge_bad_sign_no_conflict_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_no_conflict_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_no_conflict_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_bad_sign_no_conflict_compile_fail.dir/core/blade_set_merge_bad_sign_no_conflict_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_after_shift_compile_fail.dir/core/blade_set_merge_repeated_after_shift_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_after_shift_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_after_shift_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_after_shift_compile_fail.dir/core/blade_set_merge_repeated_after_shift_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_in_second_only_compile_fail.dir/core/blade_set_merge_repeated_in_second_only_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_only_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_only_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_in_second_only_compile_fail.dir/core/blade_set_merge_repeated_in_second_only_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_repeated_in_second_empty_first_compile_fail.dir/core/blade_set_merge_repeated_in_second_empty_first_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_empty_first_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_repeated_in_second_empty_first_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_repeated_in_second_empty_first_compile_fail.dir/core/blade_set_merge_repeated_in_second_empty_first_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_merge_bad_sign_second_shared_compile_fail.dir/core/blade_set_merge_bad_sign_second_shared_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_second_shared_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_merge_bad_sign_second_shared_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_merge_bad_sign_second_shared_compile_fail.dir/core/blade_set_merge_bad_sign_second_shared_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_index_of_bad_sign_compile_fail.dir/core/blade_set_index_of_bad_sign_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_bad_sign_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_bad_sign_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_index_of_bad_sign_compile_fail.dir/core/blade_set_index_of_bad_sign_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_index_of_repeated_mask_compile_fail.dir/core/blade_set_index_of_repeated_mask_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_repeated_mask_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_repeated_mask_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_index_of_repeated_mask_compile_fail.dir/core/blade_set_index_of_repeated_mask_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_index_of_repeated_adjacent_compile_fail.dir/core/blade_set_index_of_repeated_adjacent_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_repeated_adjacent_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_index_of_repeated_adjacent_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_index_of_repeated_adjacent_compile_fail.dir/core/blade_set_index_of_repeated_adjacent_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_name_beyond_e9_compile_fail.dir/core/blade_set_name_beyond_e9_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_name_beyond_e9_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_name_beyond_e9_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_name_beyond_e9_compile_fail.dir/core/blade_set_name_beyond_e9_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -DGALOOT_CHECKING=1 -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/include -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/core_blade_set_name_assert.dir/core/blade_set_name_assert_fail.cpp.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_name_assert_fail.cpp",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test/core/blade_set_name_assert_fail.cpp",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/core_blade_set_name_assert.dir/core/blade_set_name_assert_fail.cpp.o"
+},
+{
+  "directory": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan",
+  "command": "/usr/bin/clang++ -I/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/test -x c++ -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -O1 -g -std=c++23 -o test/CMakeFiles/galoot_golden_verify_interface_header_sets.dir/galoot_golden_verify_interface_header_sets/reference/golden.hpp.cxx.o -c /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/galoot_golden_verify_interface_header_sets/reference/golden.hpp.cxx",
+  "file": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/galoot_golden_verify_interface_header_sets/reference/golden.hpp.cxx",
+  "output": "/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/compile-fail-lane/build/clang-asan/test/CMakeFiles/galoot_golden_verify_interface_header_sets.dir/galoot_golden_verify_interface_header_sets/reference/golden.hpp.cxx.o"
+}
+]

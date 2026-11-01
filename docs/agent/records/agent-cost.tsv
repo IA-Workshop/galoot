@@ -48,3 +48,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0009	blade-set implementer (review fixes F1-F8; delta)	opus	43725	32	2200	cumulative 559446 less 515721 logged earlier; tool calls 281 less 249
 2026-11-01	plan-0011	M2 WU6 planner	fable	287260	69	892	reported by harness as subagent_tokens
 2026-11-01	plan-0010	compile-fail lane implementer	opus	255369	111	2140	reported by harness as subagent_tokens
+2026-11-01	plan-0010	blind reviewer (W5)	opus	212029	73	1361	reported by harness as subagent_tokens
