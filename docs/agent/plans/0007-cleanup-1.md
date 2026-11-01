@@ -69,3 +69,7 @@ Verification and validation: verified, by the tests and mutations above, that ea
 
 1. Item 2's design (decision 0080) is proposed by this unit and may be reversed.
 2. Whether the bare W and P rule numbers should stay rejected everywhere, as decision 0081 chose, at the cost of renaming a future variable such as P1.
+
+### Final run on the closing revision
+
+At `99b84cea1ae2` (this plan's outcome; only records changed since `748751f` and `2e8567d`, a comment), `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 62 of 62; wall times (s) 4.11, 3.74, 3.83, 3.73, 3.44, 3.39, 2.41; `all_verify_interface_header_sets` on gcc-debug and clang-debug pass. From the worktree root: the trace gate exits 0 with the same items without tests, the marker check finds 28 test cases all marked, the golden check passes, and `golden.py --check` matches. The commit after it adds only these lines and the run rows. All 117 run rows of the unit (builds, tests, mutations, gates) total 146.8 s of wall time.
