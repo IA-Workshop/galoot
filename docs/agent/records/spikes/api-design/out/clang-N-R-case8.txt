@@ -1,0 +1,10 @@
+program.cpp:75:15: error: no viable conversion from 'const mvn<[...], name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>' to 'const mvn<[...], name_list<12>{{"e1 e2 e3 e4"}}>'
+   75 |   const Point s = q;
+      |               ^   ~
+./fixture.hpp:143:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const apx::mvn<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">') to 'const mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}> &' for 1st argument
+  143 | struct mvn {
+      |        ^~~
+./fixture.hpp:143:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const apx::mvn<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">') to 'mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}> &&' for 1st argument
+  143 | struct mvn {
+      |        ^~~
+1 error generated.

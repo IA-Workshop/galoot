@@ -1,0 +1,193 @@
+compiler	spelling	form	case	status	lines	error_lines	first_error_at	user_terms	first_error
+gcc	M	R	0	0	0	0	0		
+gcc	M	R	1	0	0	0	0		
+gcc	M	R	2	1	25	1	2	alias	no matching function for call to ‘make<Point>(int, int, int)’
+gcc	M	R	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’}
+gcc	M	R	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	M	R	5	1	25	1	2	e14,alias	no matching function for call to ‘get<"e14">(Line&)’
+gcc	M	R	6	1	25	1	2	e1,alias	no matching function for call to ‘get<"e1">(Line&)’
+gcc	M	R	7	1	29	2	16	e5,alias	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	M	R	8	1	4	1	2	alias	conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}>’ to non-scalar type ‘mv<[...],galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’ requested
+gcc	M	R	9	1	28	1	2	alias,algebras	no match for ‘operator==’ (operand types are ‘Point’ {aka ‘apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’} and ‘const Vector4’ {aka ‘const apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’})
+gcc	M	R	10	1	43	4	2		template constraint failure for ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv’
+gcc	M	R	11	1	26	4	2		template constraint failure for ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv’
+gcc	M	P	0	0	0	0	0		
+gcc	M	P	1	0	0	0	0		
+gcc	M	P	2	1	9	1	6	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+gcc	M	P	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’}
+gcc	M	P	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	M	P	5	1	9	1	6	e14	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	M	P	6	1	9	1	6	e1	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	M	P	7	1	27	2	16	e5	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	M	P	8	1	9	1	6	alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	M	P	9	1	9	1	6	algebras	static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+gcc	M	P	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	M	P	11	1	9	1	6		static assertion failed: mv: a blade of the set names a generator that the algebra does not have
+gcc	M	S	0	0	0	0	0		
+gcc	M	S	1	0	0	0	0		
+gcc	M	S	2	1	9	1	6	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+gcc	M	S	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’}
+gcc	M	S	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	M	S	5	1	17	1	6	e14	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	M	S	6	1	17	1	6	e1	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	M	S	7	1	35	2	16	e5	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	M	S	8	1	9	1	6	alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	M	S	9	1	35	2	6	algebras	static assertion failed: ==: the operands belong to different algebras
+gcc	M	S	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	M	S	11	1	9	1	6		static assertion failed: mv: a blade of the set names a generator that the algebra does not have
+gcc	M	T	0	0	0	0	0		
+gcc	M	T	1	0	0	0	0		
+gcc	M	T	2	1	11	1	6	alias	invalid use of incomplete type ‘struct apx::coefficient_count_differs<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, 3>’
+gcc	M	T	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’}
+gcc	M	T	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	M	T	5	1	11	1	6	e14	invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}, apx::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}> >’
+gcc	M	T	6	1	11	1	6	e1	invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e1"}}, apx::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}> >’
+gcc	M	T	7	1	29	2	16	e5	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	M	T	8	1	11	1	6	alias	invalid use of incomplete type ‘struct apx::lossy_conversion_from_to<apx::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}>, apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}> >’
+gcc	M	T	9	1	11	1	6	algebras	invalid use of incomplete type ‘struct apx::comparison_of_different_types<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}> >’
+gcc	M	T	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	M	T	11	1	9	1	6		static assertion failed: mv: a blade of the set names a generator that the algebra does not have
+gcc	N	R	0	0	0	0	0		
+gcc	N	R	1	0	0	0	0		
+gcc	N	R	2	1	25	1	2	alias	no matching function for call to ‘make<Point>(int, int, int)’
+gcc	N	R	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’}
+gcc	N	R	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	N	R	5	1	25	1	2	e14,names,alias	no matching function for call to ‘get<"e14">(Line&)’
+gcc	N	R	6	1	25	1	2	e1,names,alias	no matching function for call to ‘get<"e1">(Line&)’
+gcc	N	R	7	1	29	2	16	e5,names,alias	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	R	8	1	4	1	2	names,alias	conversion from ‘mvn<[...],galoot::core::detail::name_list<32>{std::array<char, 32>{"1 e41 e42 e43 e23 e31 e12 e1234"}}>’ to non-scalar type ‘mvn<[...],galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’ requested
+gcc	N	R	9	1	28	1	2	alias,algebras	no match for ‘operator==’ (operand types are ‘Point’ {aka ‘apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’} and ‘const Vector4’ {aka ‘const apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’})
+gcc	N	R	10	1	43	4	2		template constraint failure for ‘template<class Alg, name_list<...auto...> Names, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) struct apx::mvn’
+gcc	N	R	11	1	22	1	19		static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	P	0	0	0	0	0		
+gcc	N	P	1	0	0	0	0		
+gcc	N	P	2	1	9	1	6	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+gcc	N	P	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’}
+gcc	N	P	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	N	P	5	1	9	1	6	e14,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	N	P	6	1	9	1	6	e1,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	N	P	7	1	27	2	16	e5,names	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	P	8	1	9	1	6	names,alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	N	P	9	1	9	1	6	algebras	static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+gcc	N	P	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	N	P	11	1	22	1	19		static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	S	0	0	0	0	0		
+gcc	N	S	1	0	0	0	0		
+gcc	N	S	2	1	9	1	6	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+gcc	N	S	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’}
+gcc	N	S	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	N	S	5	1	17	1	6	e14,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	N	S	6	1	17	1	6	e1,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+gcc	N	S	7	1	35	2	16	e5,names	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	S	8	1	9	1	6	names,alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	N	S	9	1	35	2	6	algebras	static assertion failed: ==: the operands belong to different algebras
+gcc	N	S	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	N	S	11	1	22	1	19		static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	T	0	0	0	0	0		
+gcc	N	T	1	0	0	0	0		
+gcc	N	T	2	1	11	1	6	alias	invalid use of incomplete type ‘struct apx::coefficient_count_differs<apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>, 3>’
+gcc	N	T	3	1	4	1	2	alias	too many initializers for ‘const Point’ {aka ‘const apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’}
+gcc	N	T	4	1	5	1	2	alias	narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	N	T	5	1	11	1	6	e14,names	invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+gcc	N	T	6	1	11	1	6	e1,names	invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e1"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+gcc	N	T	7	1	29	2	16	e5,names	static assertion failed: blades: a name has an index above n, the number of generators
+gcc	N	T	8	1	11	1	6	names,alias	invalid use of incomplete type ‘struct apx::lossy_conversion_from_to<apx::mvn<rga3, galoot::core::detail::name_list<32>{std::array<char, 32>{"1 e41 e42 e43 e23 e31 e12 e1234"}}>, apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}> >’
+gcc	N	T	9	1	11	1	6	algebras	invalid use of incomplete type ‘struct apx::comparison_of_different_types<apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>, apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}> >’
+gcc	N	T	10	1	34	1	6		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+gcc	N	T	11	1	22	1	19		static assertion failed: blades: a name has an index above n, the number of generators
+clang	M	R	0	0	0	0	0		
+clang	M	R	1	0	0	0	0		
+clang	M	R	2	1	13	1	1	alias	no matching function for call to 'make'
+clang	M	R	3	1	4	1	1	alias	excess elements in struct initializer
+clang	M	R	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	M	R	5	1	13	1	1	e14,alias	no matching function for call to 'get'
+clang	M	R	6	1	13	1	1	e1,alias	no matching function for call to 'get'
+clang	M	R	7	1	40	2	3	e5,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	M	R	8	1	10	1	1	names,alias	no viable conversion from 'const mv<[...], gc::blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>' to 'const mv<[...], gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>'
+clang	M	R	9	1	10	1	1	alias,algebras	invalid operands to binary expression ('Point' (aka 'apx::mv<rga3, gc::blades<4, "e1 e2 e3 e4">>') and 'const Vector4' (aka 'const apx::mv<r400, gc::blades<4, "e1 e2 e3 e4">>'))
+clang	M	R	10	1	13	2	1		constraints not satisfied for class template 'mv' [with Alg = rga3, B = gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = std::string]
+clang	M	R	11	1	10	2	1		constraints not satisfied for class template 'mv' [with Alg = rga3, B = gc::blade_set<2>{{{{1, 1}, {16, 1}}}}, T = double]
+clang	M	P	0	0	0	0	0		
+clang	M	P	1	0	0	0	0		
+clang	M	P	2	1	8	1	2	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+clang	M	P	3	1	4	1	1	alias	excess elements in struct initializer
+clang	M	P	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	M	P	5	1	8	1	2	e14	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	M	P	6	1	8	1	2	e1	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	M	P	7	1	35	2	3	e5,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	M	P	8	1	8	1	2	alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+clang	M	P	9	1	8	1	2	algebras	static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+clang	M	P	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	M	P	11	1	8	1	2		static assertion failed due to requirement 'blades_fit<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>()': mv: a blade of the set names a generator that the algebra does not have
+clang	M	S	0	0	0	0	0		
+clang	M	S	1	0	0	0	0		
+clang	M	S	2	1	11	1	2	alias	static assertion failed due to requirement 'sizeof...(A) == apx::mv<rga3, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::set.size()': make<Type>: give one coefficient for each component of the type, in the order the type lists them
+clang	M	S	3	1	4	1	1	alias	excess elements in struct initializer
+clang	M	S	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	M	S	5	1	14	1	2	e14	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	M	S	6	1	14	1	2	e1	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	M	S	7	1	41	2	3	e5,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	M	S	8	1	8	1	2	alias	static assertion failed due to requirement 'covers<gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, gc::blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>()': conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+clang	M	S	9	1	28	2	2	algebras	static assertion failed: ==: the operands belong to different algebras
+clang	M	S	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	M	S	11	1	8	1	2		static assertion failed due to requirement 'blades_fit<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>()': mv: a blade of the set names a generator that the algebra does not have
+clang	M	T	0	0	0	0	0		
+clang	M	T	1	0	0	0	0		
+clang	M	T	2	1	11	1	2	alias	implicit instantiation of undefined template 'apx::coefficient_count_differs<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, 3>'
+clang	M	T	3	1	4	1	1	alias	excess elements in struct initializer
+clang	M	T	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	M	T	5	1	11	1	2	e14	implicit instantiation of undefined template 'apx::no_component_named<name_list<4>{{"e14"}}, apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>>'
+clang	M	T	6	1	11	1	2	e1	implicit instantiation of undefined template 'apx::no_component_named<name_list<3>{{"e1"}}, apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>>'
+clang	M	T	7	1	38	2	3	e5,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	M	T	8	1	11	1	2	alias	implicit instantiation of undefined template 'apx::lossy_conversion_from_to<apx::mv<rga3, gc::blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>, apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>>'
+clang	M	T	9	1	11	1	2	algebras	implicit instantiation of undefined template 'apx::comparison_of_different_types<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, apx::mv<r400, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>>'
+clang	M	T	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	M	T	11	1	8	1	2		static assertion failed due to requirement 'blades_fit<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>()': mv: a blade of the set names a generator that the algebra does not have
+clang	N	R	0	0	0	0	0		
+clang	N	R	1	0	0	0	0		
+clang	N	R	2	1	13	1	1	alias	no matching function for call to 'make'
+clang	N	R	3	1	4	1	1	alias	excess elements in struct initializer
+clang	N	R	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	N	R	5	1	13	1	1	e14,names,alias	no matching function for call to 'get'
+clang	N	R	6	1	13	1	1	e1,names,alias	no matching function for call to 'get'
+clang	N	R	7	1	40	2	3	e5,names,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	R	8	1	10	1	1	names,alias	no viable conversion from 'const mvn<[...], name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>' to 'const mvn<[...], name_list<12>{{"e1 e2 e3 e4"}}>'
+clang	N	R	9	1	10	1	1	alias,algebras	invalid operands to binary expression ('Point' (aka 'apx::mvn<rga3, "e1 e2 e3 e4">') and 'const Vector4' (aka 'const apx::mvn<r400, "e1 e2 e3 e4">'))
+clang	N	R	10	1	13	2	1		constraints not satisfied for class template 'mvn' [with Alg = rga3, Names = name_list<12>{{"e1 e2 e3 e4"}}, T = std::string]
+clang	N	R	11	1	21	1	3		static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	P	0	0	0	0	0		
+clang	N	P	1	0	0	0	0		
+clang	N	P	2	1	8	1	2	alias	static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+clang	N	P	3	1	4	1	1	alias	excess elements in struct initializer
+clang	N	P	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	N	P	5	1	8	1	2	e14,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	N	P	6	1	8	1	2	e1,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	N	P	7	1	35	2	3	e5,names,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	P	8	1	8	1	2	names,alias	static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+clang	N	P	9	1	8	1	2	algebras	static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+clang	N	P	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	N	P	11	1	21	1	3		static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	S	0	0	0	0	0		
+clang	N	S	1	0	0	0	0		
+clang	N	S	2	1	11	1	2	alias	static assertion failed due to requirement 'sizeof...(A) == apx::mvn<rga3, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>::set.size()': make<Type>: give one coefficient for each component of the type, in the order the type lists them
+clang	N	S	3	1	4	1	1	alias	excess elements in struct initializer
+clang	N	S	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	N	S	5	1	14	1	2	e14,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	N	S	6	1	14	1	2	e1,names	static assertion failed: get<name>: the type has no component of this name with this orientation
+clang	N	S	7	1	41	2	3	e5,names,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	S	8	1	8	1	2	names,alias	static assertion failed due to requirement 'covers<names_set<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, set>()': conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+clang	N	S	9	1	28	2	2	algebras	static assertion failed: ==: the operands belong to different algebras
+clang	N	S	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	N	S	11	1	21	1	3		static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	T	0	0	0	0	0		
+clang	N	T	1	0	0	0	0		
+clang	N	T	2	1	11	1	2	alias	implicit instantiation of undefined template 'apx::coefficient_count_differs<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, 3>'
+clang	N	T	3	1	4	1	1	alias	excess elements in struct initializer
+clang	N	T	4	1	8	1	1	alias	non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	N	T	5	1	11	1	2	e14,names	implicit instantiation of undefined template 'apx::no_component_named<name_list<4>{{"e14"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}>>'
+clang	N	T	6	1	11	1	2	e1,names	implicit instantiation of undefined template 'apx::no_component_named<name_list<3>{{"e1"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}>>'
+clang	N	T	7	1	38	2	3	e5,names,alias	static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+clang	N	T	8	1	11	1	2	names,alias	implicit instantiation of undefined template 'apx::lossy_conversion_from_to<apx::mvn<rga3, name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>, apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>>'
+clang	N	T	9	1	11	1	2	algebras	implicit instantiation of undefined template 'apx::comparison_of_different_types<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>>'
+clang	N	T	10	1	14	1	2		static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+clang	N	T	11	1	21	1	3		static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators

@@ -1,0 +1,10 @@
+program.cpp:93:22: error: constraints not satisfied for class template 'mv' [with Alg = rga3, B = gc::blade_set<2>{{{{1, 1}, {16, 1}}}}, T = double]
+   93 |   using Wrong = apx::mv<rga3, gc::blades<5, "e1 e5">>;
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./fixture.hpp:91:31: note: because 'blades_fit<rga3, gc::blade_set<2>{{{{1, 1}, {16, 1}}}}>()' evaluated to false
+   91 |   requires ring_scalar<T> && (blades_fit<Alg, B>())
+      |                               ^
+program.cpp:97:9: error: unknown type name 'Wrong'
+   97 |   const Wrong x{};
+      |         ^
+2 errors generated.

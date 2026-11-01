@@ -1,0 +1,13 @@
+program.cpp:86:20: error: constraints not satisfied for class template 'mvn' [with Alg = rga3, Names = name_list<12>{{"e1 e2 e3 e4"}}, T = std::string]
+   86 |   using Bad = apx::mvn<rga3, "e1 e2 e3 e4", std::string>;
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./fixture.hpp:141:12: note: because 'std::string' (aka 'basic_string<char>') does not satisfy 'ring_scalar'
+  141 |   requires ring_scalar<T>
+      |            ^
+./fixture.hpp:41:7: note: because 'a - b' would be invalid: invalid operands to binary expression ('const std::basic_string<char>' and 'const std::basic_string<char>')
+   41 |   { a - b } -> std::convertible_to<T>;
+      |       ^
+program.cpp:88:9: error: unknown type name 'Bad'
+   88 |   const Bad b{};
+      |         ^
+2 errors generated.

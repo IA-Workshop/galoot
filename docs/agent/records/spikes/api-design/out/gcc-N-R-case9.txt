@@ -1,0 +1,28 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:80:11: error: no match for ‘operator==’ (operand types are ‘Point’ {aka ‘apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’} and ‘const Vector4’ {aka ‘const apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’})
+   80 |   r += (p == v) ? 1 : 0;
+      |         ~ ^~ ~
+      |         |    |
+      |         |    mvn<r400,[...]>
+      |         mvn<rga3,[...]>
+  • there are 2 candidates
+    program.cpp:80:11:
+       80 |   r += (p == v) ? 1 : 0;
+          |         ~~^~~~
+In file included from program.cpp:5:
+    • candidate 1: ‘constexpr bool apx::operator==(const mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&, const mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&)’
+      fixture.hpp:154:25:
+        154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+            |                         ^~~~~~~~
+      • no known conversion for argument 2 from ‘const Vector4’ {aka ‘const apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’} to ‘const apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&’
+        fixture.hpp:154:48:
+          154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+              |                                                ^~~~~~~~~~
+    • candidate 2: ‘constexpr bool apx::operator==(const mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&, const mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&)’
+      fixture.hpp:154:25:
+        154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+            |                         ^~~~~~~~
+      • no known conversion for argument 1 from ‘Point’ {aka ‘apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’} to ‘const apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>&’
+        fixture.hpp:154:36:
+          154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+              |                                    ^~~~~~~~~~

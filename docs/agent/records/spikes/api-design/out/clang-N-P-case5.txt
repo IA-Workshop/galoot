@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:235:17: error: static assertion failed: get<name>: the type has no component of this name with this orientation
+  235 |   static_assert(false, "get<name>: the type has no component of this name "
+      |                 ^~~~~
+program.cpp:66:8: note: in instantiation of function template specialization 'apx::get<name_list<4>{{"e14"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' requested here
+   66 |   r += get<"e14">(l);
+      |        ^
+1 error generated.

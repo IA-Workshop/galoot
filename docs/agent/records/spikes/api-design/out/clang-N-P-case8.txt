@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:160:19: error: static assertion failed: conversion drops components of its input: it is lossy, so request it with truncate<Type>(x)
+  160 |     static_assert(false, "conversion drops components of its input: it is "
+      |                   ^~~~~
+program.cpp:75:19: note: in instantiation of function template specialization 'apx::mvn<rga3, name_list<32>{{"1 e41 e42 e43 e23 e31 e12 e1234"}}>::operator mvn<name_list<12>{{"e1 e2 e3 e4"}}>' requested here
+   75 |   const Point s = q;
+      |                   ^
+1 error generated.

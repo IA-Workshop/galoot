@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+./fixture.hpp:295:10: error: implicit instantiation of undefined template 'apx::comparison_of_different_types<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, apx::mv<r400, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>>'
+  295 |   return comparison_of_different_types<X, Y>{};
+      |          ^
+program.cpp:80:11: note: in instantiation of function template specialization 'apx::operator==<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, apx::mv<r400, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>>' requested here
+   80 |   r += (p == v) ? 1 : 0;
+      |           ^
+./fixture.hpp:83:8: note: template is declared here
+   83 | struct comparison_of_different_types;
+      |        ^
+1 error generated.

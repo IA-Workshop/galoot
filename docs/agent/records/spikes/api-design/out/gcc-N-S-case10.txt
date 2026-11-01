@@ -1,0 +1,34 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘struct apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}, std::__cxx11::basic_string<char> >’:
+program.cpp:88:13:   required from here
+   88 |   const Bad b{};
+      |             ^
+fixture.hpp:145:17: error: static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+  145 |   static_assert(ring_scalar<T>,
+      |                 ^~~~~~~~~~~~~~
+  • constraints not satisfied
+    • required by the constraints of ‘template<class T> concept apx::ring_scalar’
+      fixture.hpp:39:9:   
+         39 | concept ring_scalar = std::regular<T> && requires(const T a, const T b) {
+            |         ^~~~~~~~~~~
+    • in requirements with ‘const T a’, ‘const T b’ [with T = std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >]
+      fixture.hpp:39:42:   
+         39 | concept ring_scalar = std::regular<T> && requires(const T a, const T b) {
+            |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         40 |   { a + b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+         41 |   { a - b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+         42 |   { a * b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+         43 | };
+            | ~                                         
+    • the required expression ‘(a - b)’ is invalid
+      fixture.hpp:41:7:
+         41 |   { a - b } -> std::convertible_to<T>;
+            |     ~~^~~
+    • the required expression ‘(a * b)’ is invalid
+      fixture.hpp:42:7:
+         42 |   { a * b } -> std::convertible_to<T>;
+            |     ~~^~~
+    • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail

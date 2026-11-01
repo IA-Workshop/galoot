@@ -1,0 +1,14 @@
+In file included from program.cpp:5:
+./fixture.hpp:145:17: error: static assertion failed: mv: the scalar type must have +, - and * and compare with ==
+  145 |   static_assert(ring_scalar<T>,
+      |                 ^~~~~~~~~~~~~~
+program.cpp:88:13: note: in instantiation of template class 'apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}, std::basic_string<char>>' requested here
+   88 |   const Bad b{};
+      |             ^
+./fixture.hpp:145:17: note: because 'std::basic_string<char>' does not satisfy 'ring_scalar'
+  145 |   static_assert(ring_scalar<T>,
+      |                 ^
+./fixture.hpp:41:7: note: because 'a - b' would be invalid: invalid operands to binary expression ('std::basic_string<char> const' and 'std::basic_string<char> const')
+   41 |   { a - b } -> std::convertible_to<T>;
+      |       ^
+1 error generated.

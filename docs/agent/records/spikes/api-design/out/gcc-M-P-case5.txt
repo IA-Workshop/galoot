@@ -1,0 +1,9 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}; X = mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}>&]’:
+program.cpp:66:18:   required from here
+   66 |   r += get<"e14">(l);
+      |        ~~~~~~~~~~^~~
+fixture.hpp:235:17: error: static assertion failed: get<name>: the type has no component of this name with this orientation
+  235 |   static_assert(false, "get<name>: the type has no component of this name "
+      |                 ^~~~~
+  • ‘false’ evaluates to false

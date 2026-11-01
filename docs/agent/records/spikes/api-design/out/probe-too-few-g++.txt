@@ -1,0 +1,4 @@
+too_few.cpp: In function ‘double use()’:
+too_few.cpp:17:31: warning: missing initializer for member ‘with_members::e4’ [-Wmissing-field-initializers]
+   17 |   const with_members m{1, 2, 3};
+      |                               ^

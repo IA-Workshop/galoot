@@ -1,0 +1,43 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:84:70: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv’
+   84 |   using Bad = apx::mv<rga3, gc::blades<4, "e1 e2 e3 e4">, std::string>;
+      |                                                                      ^
+program.cpp:84:70: note: constraints not satisfied
+In file included from program.cpp:5:
+  • fixture.hpp: In substitution of ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv [with Alg = rga3; blade_set<...auto...> B = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = std::__cxx11::basic_string<char>]’:
+  • required from here
+    program.cpp:84:70:   
+  • required for the satisfaction of ‘ring_scalar<T>’ [with T = std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >]
+    fixture.hpp:39:9:   
+       39 | concept ring_scalar = std::regular<T> && requires(const T a, const T b) {
+          |         ^~~~~~~~~~~
+  • in requirements with ‘const T a’, ‘const T b’ [with T = std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >]
+    fixture.hpp:39:42:   
+       39 | concept ring_scalar = std::regular<T> && requires(const T a, const T b) {
+          |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       40 |   { a + b } -> std::convertible_to<T>;
+          |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+       41 |   { a - b } -> std::convertible_to<T>;
+          |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+       42 |   { a * b } -> std::convertible_to<T>;
+          |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
+       43 | };
+          | ~                                         
+  • the required expression ‘(a - b)’ is invalid
+    fixture.hpp:41:7:
+       41 |   { a - b } -> std::convertible_to<T>;
+          |     ~~^~~
+  • the required expression ‘(a * b)’ is invalid
+    fixture.hpp:42:7:
+       42 |   { a * b } -> std::convertible_to<T>;
+          |     ~~^~~
+  • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail
+program.cpp:84:15: error: expected type-specifier
+   84 |   using Bad = apx::mv<rga3, gc::blades<4, "e1 e2 e3 e4">, std::string>;
+      |               ^~~
+program.cpp:88:9: error: ‘Bad’ does not name a type
+   88 |   const Bad b{};
+      |         ^~~
+program.cpp:89:28: error: ‘b’ was not declared in this scope
+   89 |   r += static_cast<double>(b.c.size());
+      |                            ^

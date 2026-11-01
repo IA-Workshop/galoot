@@ -1,0 +1,3 @@
+headers of 50c7c70
+gcc: reduced and cached plans == conjugated plan for the four pairs at n = 4, 8, 12, 16 (compiled, 4769 M)
+clang: reduced and cached plans == conjugated plan for the four pairs at n = 4, 8, 12, 16 (compiled, 12737 M)
