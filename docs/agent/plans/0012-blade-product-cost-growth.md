@@ -110,6 +110,10 @@ The W5 review (`records/reviews/2026-11-01-plan-0012-cost-growth.md`, blind-revi
 | `bea00a1` | F5: `reorder_sign`'s comment says "whatever the indices of its generators"; a public-header comment, for the delta review |
 | this commit | Decision 0107; dated notes on decisions 0104, 0105, 0106; `remainder_probe.py --without-concept-assert` and its output; this section |
 
+### Verification at the final revision
+
+All seven presets from fresh trees at `bb5120a` (code and tests of `bea00a1`; the code differs from `c97fac5` only in that comment), 13:07:32Z to 13:08:27Z: each builds `all` and passes 124 of 124, the full gcc-debug suite among them; gcc-debug, clang-debug, and lint also build the header sets and `format-check` clean; lint's clang-tidy is clean; the trace gate exits 0. Job pool: 23 of 23 free at every check in this pass (before the merge, before and after the F5 checks, 13:07:32Z, 13:08:27Z); no slot lost, the pool not stopped or started.
+
 ### Next
 
 The delta review of `bea00a1` (decision 0094 item 3), then the merge, whose message names the six commits of item 2. Owner: decision 0107 item 4, and the two defects outside the unit (outcome departure 8).
