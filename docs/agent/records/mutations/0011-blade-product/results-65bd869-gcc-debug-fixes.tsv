@@ -1,0 +1,5 @@
+# revision 65bd869, with mutate.py as committed with this file; python3 -I docs/agent/records/mutations/0011-blade-product/mutate.py gcc-debug range_second_unchecked range_skip_below_top partial_sum_excursion. CTest is skipped after a failed build (test_exit -).
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+range_second_unchecked	gcc-debug	0	8	core.blade_product_beyond_n_second,core.blade_product_rejects_beyond_n_second	killed	-	-	-
+range_skip_below_top	gcc-debug	0	8	core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+partial_sum_excursion	gcc-debug	1	-	-	killed	-	-	test/core/blade_product_test.cpp:942:75: error: non-constant condition for static assertion

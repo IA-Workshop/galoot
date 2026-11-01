@@ -5,8 +5,9 @@
 // that `#include <galoot/core.hpp>` gives the whole core. assert.hpp is
 // included by the headers that use it.
 
-#include <galoot/core/bits.hpp>      // IWYU pragma: export
-#include <galoot/core/blade_set.hpp> // IWYU pragma: export
-#include <galoot/core/metric.hpp>    // IWYU pragma: export
+#include <galoot/core/bits.hpp>          // IWYU pragma: export
+#include <galoot/core/blade_product.hpp> // IWYU pragma: export
+#include <galoot/core/blade_set.hpp>     // IWYU pragma: export
+#include <galoot/core/metric.hpp>        // IWYU pragma: export
 
 #endif // GALOOT_CORE_HPP

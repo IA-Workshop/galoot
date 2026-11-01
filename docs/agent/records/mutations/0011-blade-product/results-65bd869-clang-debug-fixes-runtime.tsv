@@ -1,0 +1,5 @@
+# revision 65bd869; the same three mutants with --runtime (the product static_asserts turned off).
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+range_second_unchecked	clang-debug	0	8	core.blade_product_beyond_n_second,core.blade_product_rejects_beyond_n_second	killed	-	-	-
+range_skip_below_top	clang-debug	0	8	core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+partial_sum_excursion	clang-debug	0	8	core.blade_product	killed	-	Every product fits a term list of exactly its capacity bound	-

@@ -45,6 +45,17 @@ import conventions_check as conv
 BLADE_TABLE_SIZES = (4, 5)
 MAX_N = 6  # largest n of the signature tables
 
+# The forms whose full product tables are written out, by the name of their
+# golden values: a diagonal degenerate form, a non-diagonal one with two null
+# generators, a degenerate non-diagonal one whose first pivot is zero, and a
+# dense one with terms of up to four blades and coefficients up to 31.
+GP_TABLE_FORMS = (
+    ("rigid_3", "rigid(3)", ref.rigid(3)),
+    ("conformal_3", "conformal(3)", ref.conformal(3)),
+    ("degenerate_3", "the degenerate form", [[0, 1, 0], [1, 0, 0], [0, 0, 0]]),
+    ("random_1", "seeded random form 1", ref.random_forms()[1]),
+)
+
 # The worked example of the result order: the bivectors of n = 4.
 ORDER_EXAMPLE = ("e12", "e13", "e14", "e23", "e24", "e34")
 
@@ -228,14 +239,49 @@ def wedge_basis_products():
     blades = (e4, e5, e4 | e5)
     products = []
     for a, b in itertools.product(blades, repeat=2):
-        terms = sorted(alg.mul(unit(a), unit(b)).items(),
-                       key=lambda kv: (ref.popcount(kv[0]),
-                                       ref.indices(kv[0])))
-        for _, c in terms:
-            agree(c.denominator, 1, "integer coefficient")
-        products.append((a, b, [(int(c), m) for m, c in terms]))
+        products.append((a, b, canonical_terms(alg.mul(unit(a), unit(b)))))
     agree(products[1][2], [(-1, 0), (1, e4 | e5)], "e4 e5 = -1 + e45")
     return products
+
+
+def canonical_terms(x):
+    """The terms of a multivector as (coefficient, mask), ordered by grade
+    and then by index list, each coefficient checked to be an integer."""
+    terms = sorted(x.items(),
+                   key=lambda kv: (ref.popcount(kv[0]), ref.indices(kv[0])))
+    for _, c in terms:
+        agree(c.denominator, 1, "integer coefficient")
+    return [(int(c), m) for m, c in terms]
+
+
+def gp_table(name, g):
+    """Every product e_A e_B of two blades in the form g, from
+    clifford_reference.py, with det g. The table is first validated by
+    clifford_reference.validate: the defining relations, associativity on
+    every triple of blades, and the wedge-monomial check. The pseudoscalar
+    square is then compared with (-1)^(n(n-1)/2) det g, with det g computed
+    by elimination, a second route to that one entry."""
+    alg = ref.Algebra(g)
+    table = alg.table()
+    agree(ref.validate(alg, table), [],
+          f"clifford_reference.validate on {name}")
+    n = alg.n
+    det = ref.det(g)
+    agree(det.denominator, 1, f"det g of {name} is an integer")
+    full = (1 << n) - 1
+    expected = {0: (-1) ** (n * (n - 1) // 2) * det} if det != 0 else {}
+    agree(table[(full, full)], expected,
+          f"pseudoscalar square of {name} against (-1)^(n(n-1)/2) det g")
+    products = [(a, b, canonical_terms(table[(a, b)]))
+                for a in range(1 << n) for b in range(1 << n)]
+    return n, int(det), products
+
+
+def product_row(a, b, terms, n, width):
+    padded = terms + [(0, 0)] * (width - len(terms))
+    body = ", ".join(f"{{{c}, {mask_literal(m, n)}}}" for c, m in padded)
+    return (f"{{{mask_literal(a, n)}, {mask_literal(b, n)}, {len(terms)}, "
+            f"{{{{{body}}}}}}}")
 
 
 def diagonal_signatures(n):
@@ -405,7 +451,7 @@ struct product {
   mask a;
   mask b;
   std::size_t size;
-  std::array<term, 2> terms;
+  std::array<term, @PRODUCT_TERMS@> terms;
 };
 
 /// An exact rational number, with a positive denominator.
@@ -440,7 +486,14 @@ struct complement_pair {
 
 
 def generate():
-    out = HEADER_START.splitlines()
+    wedge_products = wedge_basis_products()
+    gp_tables = [(name, title, g, *gp_table(title, g))
+                 for name, title, g in GP_TABLE_FORMS]
+    # The product type holds as many terms as the longest product written.
+    width = max(len(terms) for _, _, terms in wedge_products)
+    for _, _, _, _, _, products in gp_tables:
+        width = max(width, max(len(terms) for _, _, terms in products))
+    out = HEADER_START.replace("@PRODUCT_TERMS@", str(width)).splitlines()
 
     open_namespace(out, "blade_names",
                    "bit i - 1 of a blade mask stands for e_i",
@@ -458,14 +511,31 @@ def generate():
                    "In conformal(3) the blade e45 is the wedge e4 ^ e5, not "
                    "the product e4 e5, so e4 e5 = -1 + e45. Every product of "
                    "two of e4, e5, and e45.")
-    rows = []
-    for a, b, terms in wedge_basis_products():
-        padded = terms + [(0, 0)] * (2 - len(terms))
-        body = ", ".join(f"{{{c}, {mask_literal(m, 5)}}}" for c, m in padded)
-        rows.append(f"{{{mask_literal(a, 5)}, {mask_literal(b, 5)}, "
-                    f"{len(terms)}, {{{{{body}}}}}}}")
-    emit_array(out, "product", "conformal_3_products", rows)
+    emit_array(out, "product", "conformal_3_products",
+               [product_row(a, b, terms, 5, width)
+                for a, b, terms in wedge_products])
     close_namespace(out, "wedge_basis")
+
+    open_namespace(out, "gp_tables",
+                   "e_i e_j + e_j e_i = 2 g_ij",
+                   "Every product e_A e_B of two blades, in the wedge-monomial "
+                   "basis, for four forms: rigid(3); conformal(3); the "
+                   "degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]]; and "
+                   "seeded random form 1 of clifford_reference.py "
+                   f"(seed {ref.SEED}). Each table was validated before it was "
+                   "written by the defining relations e_i e_j + e_j e_i = "
+                   "2 g_ij, associativity on every triple of blades, and the "
+                   "check that each blade is the antisymmetrized product of "
+                   "its generators. Each form has its Gram matrix and det g; "
+                   "its products are listed in order of a, then b.")
+    for name, _, g, n, det, products in gp_tables:
+        emit_array(out, f"std::array<int, {n}>", f"{name}_gram",
+                   [f"{{{', '.join(map(str, row))}}}" for row in g])
+        declare(out, "int", f"{name}_det", f"{det};")
+        emit_array(out, "product", name,
+                   [product_row(a, b, terms, n, width)
+                    for a, b, terms in products])
+    close_namespace(out, "gp_tables")
 
     open_namespace(out, "diagonal_signatures",
                    "R(p, q, r) squares p generators to +1, q to -1, and r to 0",

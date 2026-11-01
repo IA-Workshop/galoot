@@ -1,0 +1,17 @@
+compiler	form	guard	level	exit	limit_diagnostic
+gcc	conformal3	guarded	-O0	0	-
+gcc	conformal3	guarded	-O2	0	-
+gcc	conformal3	unguarded	-O0	0	-
+gcc	conformal3	unguarded	-O2	0	-
+clang	conformal3	guarded	-O0	0	-
+clang	conformal3	guarded	-O2	0	-
+clang	conformal3	unguarded	-O0	0	-
+clang	conformal3	unguarded	-O2	0	-
+gcc	random3	guarded	-O0	0	-
+gcc	random3	guarded	-O2	0	-
+gcc	random3	unguarded	-O0	0	-
+gcc	random3	unguarded	-O2	0	-
+clang	random3	guarded	-O0	1	include/galoot/core/blade_product.hpp:92:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	random3	guarded	-O2	1	include/galoot/core/blade_product.hpp:92:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	random3	unguarded	-O0	1	docs/agent/records/performance/overflow-guard/out/unguarded/include/galoot/core/blade_product.hpp:134:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	random3	unguarded	-O2	1	docs/agent/records/performance/overflow-guard/out/unguarded/include/galoot/core/blade_product.hpp:134:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?

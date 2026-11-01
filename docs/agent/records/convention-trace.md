@@ -25,7 +25,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | Item | Fact | Implemented |
 | --- | --- | --- |
 | 1.1 | bit i - 1 of a blade mask stands for e_i | yes |
-| 1.1 | e45 = e4 ^ e5 in conformal(3) | no |
+| 1.1 | e45 = e4 ^ e5 in conformal(3) | yes |
 | 1.2 | R(p, q, r) squares p generators to +1, q to -1, and r to 0 | yes |
 | 1.3 | rigid(d) is R(d, 0, 1) | yes |
 | 1.4 | conformal(d) has null e(d+1) and e(d+2) with e(d+1) . e(d+2) = -1 | yes |
@@ -38,6 +38,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
 | 3.4 | in a degenerate metric the double bulk dual is zero | no |
 | 4.1 | the wedge of two blades that share a generator is zero | no |
+| 4.1 | e_i e_j + e_j e_i = 2 g_ij | yes |
 | 4.2 | right(a ^ b) = right(a) v right(b) | no |
 | 4.3 | a point projected onto a unitized plane has weight +1 | no |
 | 4.4 | transform(x, V) has the blade set of x | no |
