@@ -660,8 +660,11 @@ endif()
 # lower; it fails when the compile one below the threshold fails for another
 # reason than the limit, when it compiles one below, as GCC can when its
 # count runs out inside the argument of a built-in function, and when it
-# compiles under no limit at all. The stand-in compiler's threshold is set by
-# its first argument.
+# compiles under no limit at all. On GCC it also fails when the unit compiles
+# at its threshold but not just above it, so that a count that rose to where
+# GCC stops counting cannot pass, and it names GCC's other message for a count
+# that runs out inside a built-in function's argument. The stand-in compiler's
+# threshold is set by its first argument.
 set(plan_cost_model ${Python3_EXECUTABLE} -I
   ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model.py)
 set(fake_compiler ${Python3_EXECUTABLE} -I
@@ -692,10 +695,21 @@ add_test(NAME tools.plan_cost_model_never_compiles
   COMMAND ${expect_output} 1 "does not compile under any limit"
     -- ${plan_cost_model} gcc unit.cpp=1000
       -- ${fake_compiler} 2000000000000)
+add_test(NAME tools.plan_cost_model_evades_at_threshold
+  COMMAND ${expect_output} 1 "does not compile just above its threshold"
+    "its measured threshold is 1005"
+    -- ${plan_cost_model} gcc unit.cpp=1000
+      -- ${fake_compiler} 1005 evades=1000)
+add_test(NAME tools.plan_cost_model_builtin_below
+  COMMAND ${expect_output} 1 "inside the argument of a built-in function"
+    "its measured threshold is 1000"
+    -- ${plan_cost_model} gcc unit.cpp=1000
+      -- ${fake_compiler} 1000 builtin-below)
 set_tests_properties(tools.plan_cost_model_passes
   tools.plan_cost_model_count_higher tools.plan_cost_model_count_lower
   tools.plan_cost_model_other_error tools.plan_cost_model_passes_below
   tools.plan_cost_model_evasion_above tools.plan_cost_model_never_compiles
+  tools.plan_cost_model_evades_at_threshold tools.plan_cost_model_builtin_below
   PROPERTIES LABELS "tools;tools.plan_cost_model")
 
 # The tag is checked by the concept on product_plan itself, whose failure the
