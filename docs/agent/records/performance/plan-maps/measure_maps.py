@@ -194,10 +194,14 @@ def sparse_sets(n, complemented):
 
 
 def sparse_unit(op, n, complemented):
+    """The antiwedge of the low-grade sparse sets has no terms (every pair of
+    their complements shares a generator), so the unit asks only for the
+    plan's size, which needs the plan generated."""
     first, second = sparse_sets(n, complemented)
+    plan = plan_terms('after', op, 'alg', first, second)
     return (preamble() + algebra(f"core::R<{n - 1}, 0, 1>()") +
-            f"static_assert({plan_terms('after', op, 'alg', first, second)}"
-            ".size() > 0);\n")
+            f"static_assert(sizeof({plan}) == sizeof({plan}[0]) * "
+            f"{plan}.size() || {plan}.empty());\n")
 
 
 def vectors_unit(op):
