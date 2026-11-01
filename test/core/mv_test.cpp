@@ -229,6 +229,34 @@ TEST_CASE_TEMPLATE("mv is zero by default", T, std::int64_t, rational, float,
   CHECK(all_zero(Motor<T>{}));
 }
 
+namespace {
+
+// A constant evaluation that writes into a zero plane of rationals, place 2
+// of 4. GCC 16 can let such a write change what a later zero value of the
+// same type holds at run time, when every place shares one initializer.
+constexpr bool plane_written_at_2() {
+  Plane<rational> plane{};
+  plane.coefficients[2] = rational{7};
+  return plane.coefficients[2] == rational{7};
+}
+static_assert(plane_written_at_2());
+
+} // namespace
+
+// Reference: contract: a multivector is zero by default also after a
+//   constant evaluation in the same program wrote into a zero value of its
+//   type, here a plane over the test rational, whose zero 0/1 has a nonzero
+//   denominator
+TEST_CASE("mv stays zero by default after a constant evaluation wrote into "
+          "one") {
+  const Plane<rational> plane{};
+  CHECK(all_zero(plane));
+  CHECK(default_initialized_over_a_pattern_is_zero<Plane<rational>>());
+  for (const rational& c : plane.coefficients) {
+    CHECK(c.denominator == 1);
+  }
+}
+
 // Reference: contract: a multivector is constructed from exactly one value
 //   per component, which lands in the place of that component in the order
 //   the layout lists them, so Motor{1, ..., 8} holds 1 to 8 at positions 0
