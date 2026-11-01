@@ -19,4 +19,14 @@ In `--runtime` mode the five checks of a generated plan are off, so their remova
 
 ## Unresolved
 
-None.
+None at `163ab01`.
+
+## After the W5 review (2026-11-01)
+
+Both lists were rerun at `4e5ea90`, the code after the review fixes, on gcc-debug and clang-debug in both modes. The author's list gives `results-4e5ea90-<preset>[-runtime].tsv`, with the same counts as at `163ab01`: 43 killed and the six survivors above, or in run-time mode 43 killed, 5 skipped, and `locals_plain`. The review's list (`../../reviews/2026-11-01-wu6b-gp-plan/mutate_review.py`, run with this driver) gives `results-4e5ea90-<preset>[-runtime]-review.tsv`: 22 of 27 killed in normal mode, the same on both compilers.
+
+- Killed now, not before: `r_make_capacity_one` and `r_make_capacity_two`. They fail the build at the conformal(2), degenerate, and golden random-form plans of `plan_test.cpp`, in both modes (`results-accdb24-*-review-f1.tsv`, `results-d75d491-*-runtime-review-f1-f2.tsv`). `r_gp_plan_unconstrained` fails `core.plan_not_metric_like`, which now forbids `make_gp_plan` (`results-d75d491-*-review-f2.tsv`).
+- Equivalent, as the review found: `r_sign_by_equality` (for signs of ±1, which are checked first), `r_capacity_ge` (`>=` in a maximum), `r_defects_n_widest` (the generated-plan range check at n = `mask_bits`, which a correct generator never trips), and `r_count_plain` and `r_all_locals_plain_count` (cost only).
+- In run-time mode only, two more survive, because the checks that kill them are off: `r_guard_range_only` and `r_defects_sizes_swapped`. Both are killed in normal mode.
+
+Unresolved: none.
