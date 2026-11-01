@@ -226,6 +226,13 @@ def run_options(s):
                    "cmake", "-E", "env", "FOO=1", "ctest", "--test-dir", tree])
     s.measure_cmd(["run", "build", "q", "cmake-e-time", "--",
                    "cmake", "-E", "time", "ninja", "-C", tree])
+    # cmake -E chdir runs the program in its directory, which is then its
+    # tree, or the base of a relative tree it names.
+    s.measure_cmd(["run", "build", "q", "cmake-e-chdir", "--",
+                   "cmake", "-E", "chdir", tree, "ninja"])
+    s.measure_cmd(["run", "build", "q", "cmake-e-chdir-relative", "--",
+                   "cmake", "-E", "chdir", os.path.join(s.top, "build"),
+                   "ninja", "-C", "p"])
     options = {row["selection"]: row["options"] for row in s.rows(RUN_LOG)}
     check("options of a run that names its tree", options["named-tree"],
           "-Wall -Werror -O1 -g")
@@ -246,6 +253,10 @@ def run_options(s):
           options["cmake-e-env"], "-Wall -Werror -O1 -g")
     check("options of ninja run by cmake -E time",
           options["cmake-e-time"], "-Wall -Werror -O1 -g")
+    check("options of ninja run by cmake -E chdir",
+          options["cmake-e-chdir"], "-Wall -Werror -O1 -g")
+    check("options of ninja -C relative to cmake -E chdir's directory",
+          options["cmake-e-chdir-relative"], "-Wall -Werror -O1 -g")
 
 
 def reader(s):
