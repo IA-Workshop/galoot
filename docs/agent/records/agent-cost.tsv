@@ -25,3 +25,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-10-31	WU3	metric implementer (markers and golden; delta)	opus	42083	19	302	cumulative 379733 less 337650 logged earlier
 2026-10-31	WU2	bits implementer (markers and golden; delta)	opus	75111	40	529	cumulative 378566 less 303455 logged earlier
 2026-10-31	WU3	metric implementer (D2-D5; delta)	opus	23996	34	563	cumulative 403737 less 379733 logged earlier
+2026-10-31	recorder	recorder implementer (review fixes; delta)	opus	unavailable	unavailable	unavailable	not reported on this notification
