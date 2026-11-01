@@ -30,7 +30,7 @@ import sys
 # Table 24 (C++ library headers) and Table 25 (C++ headers for C library
 # facilities). Transcribed from the C++23 working draft N4950, not from the
 # published standard, and checked only against the headers that libstdc++ 16
-# installs (plan 0002, section 4.6). The deprecated headers of Annex D
+# installs. The deprecated headers of Annex D
 # (<codecvt>, <strstream>, and the <*.h> C headers) are left out: the core
 # does not use them.
 STANDARD_HEADERS = frozenset("""
