@@ -7,6 +7,7 @@
 - Acceptance: the same recorder checks as plan 0002 criteria 10 to 12, plus one row each for an overridden `-O` level and a pinned run showing the new fields.
 - Evidence: the recorder test output and one row of each kind, with the revision and command.
 - Agent cost: tracked for information only (decision 0019); record in `docs/agent/records/agent-cost.tsv`.
+- Estimate (note added at the W5 fixes, review finding N10): no estimate was written before the work, against W3. It is not reconstructed now, since an estimate made after the actuals are known would compare nothing. For scale only: plan 0002 estimated about 400k input tokens over about 80 tool calls for WU1.
 - Open questions: none.
 
 ## Additional scope from the WU1 review (non-blocking findings N5 to N16)
@@ -99,10 +100,59 @@ Not checked: the recorder on a machine without RAPL or with `perf_event_paranoid
 
 ### Agent cost (decision 0019)
 
-Estimate: none was written in this plan. Actual: the implementing agent's tokens are not reported to it (unavailable); about 110 tool calls over about 40 minutes by the clock. The read-only smoke-test reviewer: 80839 tokens, 17 tool calls, 150 s, as the harness reported. Both rows are in `agent-cost.tsv`.
+Estimate: none was written in this plan (see the note at the top). Actual, as the harness reported and `develop` logged (`WU1b-recorder`): 311806 tokens, 108 tool calls, 1917 s for the implementation through `721c287`; the read-only smoke-test reviewer 80839 tokens, 17 tool calls, 150 s. The branch's own row of unavailable figures was dropped at the W5 fixes (finding N9). The W5 fix pass is logged by the coordinating session.
 
 <details><summary>Scratch scripts behind the snippet and jobpool evidence</summary>
 
 The merge check created two throwaway repositories with the union driver: case 1, base `utc_start a b` with two rows; branch `padded` rewrote the rows with two `--` cells, extended the header by `c d`, and appended a row; `develop` appended two rows; `git merge --no-commit develop` from `padded` doubled the file (2 headers, 9 lines); the snippet was then run as its usage states. Case 2, a base without the file and each side adding it with one row. The jobpool check used copies of the old and new `tools/jobpool` with `unit=galoot-jobserver-check` and `fifo=/run/user/1000/galoot-jobserver-check.fifo` (a FIFO under the session's `/tmp` was not visible to the user service), `MAKEFLAGS="-j4 --jobserver-auth=fifo:<that fifo>"`, `start 3`, a one-job build (`sleep 3`) with `status` and `stop` during it, then an eight-job build (`sleep 2` each) killed with SIGKILL after 0.7 s, `status` and `stop` after its jobs ended.
 
 </details>
+
+## W5 fixes (2026-10-31, Claude, agent, build-expert, Opus 5.5)
+
+The review of `721c287` (`docs/agent/records/reviews/2026-10-31-recorder.md`) returned "merge after named fixes". The owner said "proceed as recommended", which settles decision 0042 item 5 by the reviewer's task-clock check.
+
+### Departures in this pass (C20)
+
+1. The recorder change and its test change are again one commit (`a232d65`), shown failing first: W9 asks for separate commits, and here either order would leave a failing commit (W2). Listed for the review.
+2. To check the task-clock rule on real perf, `true` was run once pinned to CPU 2 (and once to CPU 20) outside a measurement run.
+3. The message of `a232d65` says the new test fails "12 checks" on the old recorder; it is 11 failed checks and one case that raised (`FileNotFoundError` for the no-git row). The commit is not rewritten.
+4. Mutant (c) of finding N3, dropping the own-time subtraction from `pinned_other_s`, survives: a test cannot make a pinned row without pinning, which only measurement runs do. It stays untested; the reviewer checked it by hand (0.01 s alone, 1.08 s beside a competing loop).
+5. The measurement presets were neither rebuilt nor reconfigured in this pass: the merge changed only `test/CMakeLists.txt` among the build files, and P9 does not gate on them.
+
+### Fixes
+
+| Finding | Commit | Before | After |
+| --- | --- | --- | --- |
+| B1, merge of `develop` (`237fe98`) | `1c22b70` | conflicts in `docs/agent/snippets/README.md`, `test/CMakeLists.txt`, `test/core/smoke_test.cpp` | resolved as the review recommends: both blocks kept in `test/CMakeLists.txt`; this branch's two snippet rows plus `develop`'s two new rows, `develop`'s old merge-rebuild row dropped; `develop`'s two `// Reference: contract:` comments kept exactly above this branch's test names and mode check. `runs.tsv` one header (2125 rows of 9 fields, 1093 of 26, 74 of 28), read cleanly; convention trace gate, marker check, and golden check pass from the worktree root; gcc-debug 22 of 22 |
+| N1, decision 0042 item 5 | `a232d65`, decision 0043 | `<not counted>` at zero running time written 0 on inference | shared rows take `task-clock`; 0 only when the other core type's running time equals task-clock's, else `unavailable`. Real perf: unpinned and `taskset -c 20` runs of `true` gave `inst_p_u` 0 by the check; pinned rows unchanged |
+| N2, reader | `a232d65` | an older, shorter header line and a blank line read as rows (exit 0); an empty file raised a traceback | each exits 1 with a message naming the file and line |
+| N3, mutants | `a232d65` | header refusal, `--no-optional-locks`, and `-MMD` untested | a new case appends under another header and requires the file unchanged and a warning; a logging `git` on `PATH` requires `--no-optional-locks` on the one status call; `-MMD` is in the options case. Each mutant fails the test; (c) stays untested (departure 4) |
+| N4, attribution | `a232d65` | git ran in the compile's working directory: a compile outside the checkout got revision `unavailable` and branch `detached`; a git failure also gave `detached` | git runs with `-C` on the recorder's own checkout; outside the checkout the row has the checkout's revision and branch; without git both are `unavailable` |
+| N5, `-C` | `a232d65` | `ctest -C Debug` read the tree `Debug` (options `unavailable`) | `-C` counts only after ninja or make, `-B` and `--build` after cmake, `--test-dir` after ctest; `ctest -C Debug` reads `build/<preset>` |
+| N6, citation | `01595e8` | `tools/include_scan.py:33` cited plan 0002 | removed; no other citation in the files this unit rewrote |
+| N7 | | declared | no change |
+| N8, stale build-tree records | | | commands below; in the merge message |
+| N9, cost row | `d9c5059` | the branch's `unavailable` row beside `develop`'s logged row | dropped |
+| N10, estimate | this record | | note at the top |
+| N11, N12 | | observations | no change |
+
+`tools.measure_record` against the recorder at `1c22b70` (the expected values, from the stated behavior, W9): `not counted while the other type ran less than task-clock` and `not counted without task-clock` expect `unavailable` (got 0); `options of ctest -C, a configuration, not a tree` expects `-Wall -Werror -O1 -g` (got `unavailable`); `options of -C for a program that takes no tree` expects `unavailable` (got the options); `exit of a read with this defect: older, shorter header` and `: blank line` expect 1 (got 0), and those reads plus the empty file's must name the file; `revision of a compile outside the checkout` expects the scratch repository's revision (got `unavailable`) and its branch `main` (got `detached`); `revision without git` and `branch without git` expect `unavailable`. Added cases that already passed on the old recorder: the record with another header (file unchanged, a "not recorded" warning, exit 0), and `git status runs without optional locks` with exactly one status call. Changed: the per-core-type case now gives task-clock lines; `-MMD` joins the options case, whose expected options stay `-O2 -g -Iinclude`. The test now copies `tools/measure` into its scratch repository and commits it there, because the recorder writes run rows into its own checkout.
+
+### Verification (P9 on the merged tree, head `d9c5059`)
+
+Full suite, 22 tests (`core.smoke`, `core.zero_cases`, `core.assert_checking`, `core.assert_unchecked`, `core.assert_consteval`, `core.assert_consteval_wrong_message`, `core.bare_compile`, `core.include_scan`, `tools.include_scan_rejects`, `tools.measure_header`, `tools.measure_record`, `reference.golden`, `reference.golden_rejects`, `tests.reference_markers`, `tests.golden_facts`, `tools.test_references_markers_rejects`, `tools.test_references_markers_accepts`, `tools.test_references_golden_rejects`, `tools.test_references_golden_accepts`, `tools.test_references_trace_rejects`, `tools.test_references_trace_no_rows`, `tools.test_references_trace_accepts`), each preset from a clean build tree through `tools/timed workflow <p> all-clean -- cmake --workflow --preset <p>`: gcc-debug 3.93 s, gcc-release 4.27, gcc-asan 6.62, clang-debug 3.29, clang-release 3.12, clang-asan 3.77, lint 2.26 (clang-tidy, the header checks, `format-check`); 22 of 22 in each, 27.27 s in all. `all_verify_interface_header_sets` built on gcc-debug and clang-debug; each clean tree's `compile.tsv` has one row of 29 fields for each of its 9 objects. Convention trace gate, marker check, and golden check exit 0 on this head (the trace lists 29 conventions with no test yet, as on `develop`).
+
+### For the merge message (P13) and after the merge
+
+- Selection: the full suite, the 22 tests above. Configurations: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint. Outcome: 22 of 22 in each. Wall time: 27.27 s from clean trees at `d9c5059`. Gates: the convention trace gate passes. Deferred: the measurement presets (not built), TSan (no threaded test).
+- A build tree whose `compile.tsv` still has the old 27-column header records nothing, with a "not recorded" warning per compile, until the file is removed. List such files, then remove them (uncommitted routine records):
+
+```
+for f in /home/brianm/projects/utils/math-core/galoot/build/*/compile.tsv /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/*/build/*/compile.tsv; do [ -f "$f" ] && ! head -1 "$f" | grep -q pinned_other_s && echo "$f"; done
+for f in /home/brianm/projects/utils/math-core/galoot/build/*/compile.tsv /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/*/build/*/compile.tsv; do [ -f "$f" ] && ! head -1 "$f" | grep -q pinned_other_s && rm -v -- "$f"; done
+```
+
+### Open after this pass
+
+The open items above stand (smoke-test review N3 and N4, Ninja's fallback when the FIFO is missing); item 4 there, whether decision 0042 item 5 stands, is closed by decision 0043. Also open: whether shared rows whose numeric per-type counts are partial (per-type running times summing to less than task-clock's) should be marked, as the review observed.
