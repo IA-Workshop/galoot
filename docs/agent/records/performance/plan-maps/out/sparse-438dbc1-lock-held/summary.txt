@@ -1,0 +1,5 @@
+headers of 438dbc1; instructions retired on the pinned core, mean of the repeats, in M; each use is the unit minus the baseline at the same n
+gcc gp: n=4 76.3 M (spread 0.6); n=8 79.6 M (spread 0.4); n=12 86.3 M (spread 0.4); n=16 94.0 M (spread 0.8); n=16 / n=4 = 1.23
+gcc antigp: n=4 79.8 M (spread 0.6); n=8 105.5 M (spread 0.3); n=12 146.2 M (spread 0.3); n=16 201.0 M (spread 0.8); n=16 / n=4 = 2.52
+clang gp: n=4 232.8 M (spread 2.4); n=8 237.4 M (spread 2.0); n=12 245.4 M (spread 3.0); n=16 253.4 M (spread 1.5); n=16 / n=4 = 1.09
+clang antigp: n=4 263.4 M (spread 1.1); n=8 353.6 M (spread 2.5); n=12 493.0 M (spread 1.5); n=16 680.4 M (spread 1.5); n=16 / n=4 = 2.58
