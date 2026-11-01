@@ -285,7 +285,7 @@ blade_set_rejects(repeated_name "${same_blade}")
 blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
 # The names of these two are not read, so no message about them may appear.
 blade_set_rejects(names_above_9
-  "blades: names such as e123 have one digit per index, so they are read only for n up to 9"
+  "blades: names such as e123 have one digit per index, so they are read only for n up to 9, and a larger algebra takes masks"
   FORBID "${repeated_generator}")
 blade_set_rejects(names_zero "${no_generators}" FORBID "${index_above_n}")
 blade_set_rejects(full_zero "${no_generators}")
@@ -298,6 +298,15 @@ blade_set_rejects(merge_opposite_signs
   "merge: the two sets hold one blade with opposite signs")
 blade_set_rejects(index_of_absent
   "index_of: the set holds no blade with this mask")
+# Sets written out by hand that break the rules every constructor keeps.
+blade_set_rejects(merge_bad_sign
+  "merge: a set holds a sign other than +1 or -1")
+blade_set_rejects(merge_repeated_mask "merge: a set holds one mask twice"
+  FORBID "opposite signs")
+blade_set_rejects(index_of_bad_sign
+  "index_of: the set holds a sign other than +1 or -1")
+blade_set_rejects(index_of_repeated_mask
+  "index_of: the set holds this mask twice")
 
 # core.blade_set_name_beyond_e9: a blade with no compact name ends the
 # constant evaluation of canonical_name, and the diagnostic shows the line

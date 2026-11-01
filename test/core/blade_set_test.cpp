@@ -452,6 +452,16 @@ static_assert(std::is_trivially_copyable_v<core::blade_set<3>>);
 static_assert(std::is_aggregate_v<core::blade_set<3>>);
 static_assert(std::is_aggregate_v<core::oriented_blade>);
 
+// The widest algebra a blade mask can hold is accepted: its mask_bits
+// generators, and its antiscalar, the one blade of the top grade, whose mask
+// has every bit set.
+static_assert(core::of_grade<mask_width, 1>.size() == mask_width);
+static_assert(core::of_grade<mask_width, static_cast<int>(mask_width)>.size() ==
+              1);
+static_assert(
+    core::of_grade<mask_width, static_cast<int>(mask_width)>.blades[0].mask ==
+    ~mask_t{0});
+
 } // namespace
 
 // Reference: independent value: an oriented name lists generators in the
