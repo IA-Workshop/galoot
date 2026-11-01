@@ -31,3 +31,10 @@ The W5 review of WU6b (finding F8, `records/reviews/2026-11-01-wu6b-gp-plan.md`)
 
 - The cost of a product of fixed blades no longer depends on N on GCC; on Clang the part that still grows is the concept check of decision 0105, which is paid once per algebra.
 - `reorder_sign` costs the grade of its first argument, and its comment states that cost. On the path of a product the first argument is one generator; `left_complement_sign` passes a complement, of grade up to n, and costs that many steps (before, it cost the index of the highest generator, at most n as well).
+
+## Note after the W5 review (2026-11-01)
+
+Added after the W5 review (`records/reviews/2026-11-01-plan-0012-cost-growth.md`, F3, F5); the record above is unchanged.
+
+- "so every index stays below N" holds in constant evaluation and in checking builds only. In an unchecked run-time build an out-of-range `b` now reads `g.gram[i][j]` with j ≥ N; no public path reaches it. Decision 0107 item 5.
+- The cost sentence of `reorder_sign`'s comment now ends "whatever the indices of its generators" (`bea00a1`), since masks have one width.

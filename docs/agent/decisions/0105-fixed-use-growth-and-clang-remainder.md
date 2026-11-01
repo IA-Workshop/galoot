@@ -44,3 +44,10 @@ The remaining 1 to 3 M instructions of growth in the probe are within twice the 
 
 - An option for the owner, not taken: if the per-algebra check matters, `metric_like` could test a variable template that holds the result of the three conditions for each tag, so that a second evaluation reads a stored `bool`; or the two `entries_in_range()` calls could become one. Either changes a public concept and needs its own measurement and review.
 - The P2 figure of "plans minus baseline" counts one evaluation of `metric_like` on Clang whenever the baseline unit also evaluates the concept; a measurement that wants the per-use cost alone should keep that in mind.
+
+## Note after the W5 review (2026-11-01)
+
+Added after the W5 review (`records/reviews/2026-11-01-plan-0012-cost-growth.md`, F1, F6); the record above is unchanged.
+
+- F1: Decision item 1 ("the growth of a fixed use is gone on GCC"), the sentence "On GCC the plans do not grow in either copy", and the reading of the remainder as Clang's alone are superseded by decision 0107. Both units here hold `static_assert(core::metric_like<alg>)`, which GCC reuses for the constraint; without it, four plans grow by about +10% on GCC and +6 to +7% on Clang from n = 4 to 16, all of it the concept check. Item 3's question to the owner is restated for both compilers in decision 0107 item 4.
+- F6: Decision item 1 quotes the `77ed567` run (+15.4% to +0.1% on GCC, +27.1% to +6.2% on Clang); the table above gives the `c97fac5` run (+15.7% to +0.2%, +26.5% to +6.5%). Both runs are recorded (`out/growth-77ed567/`, `out/growth-c97fac5/`); the table's figures are the ones for the final code.

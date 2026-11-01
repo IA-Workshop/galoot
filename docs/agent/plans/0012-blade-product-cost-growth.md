@@ -81,3 +81,35 @@ Verification: performed by the old-against-new comparison (exhaustive over the s
 ### Next
 
 The W5 blind review of `bits.hpp`, `blade_product.hpp`, and the new test case, then the merge into `develop`, which the coordinator makes. Owner questions: decision 0105 item 3 (the P2 reading of the remainder), and departure 8 (the two defects outside the unit). Agent cost: about 160 tool calls; token counts are not visible to me.
+
+## W5 review fixes (2026-11-01, Claude, agent, Opus 5.5)
+
+The W5 review (`records/reviews/2026-11-01-plan-0012-cost-growth.md`, blind-reviewer, Opus 5.5) accepted the change after fixes: the code is correct and every old-against-new comparison matched. This section corrects the outcome above, which is left as written.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. The outcome's claim that the growth is gone on GCC and that only Clang has a remainder is wrong (F1). The +0.2% GCC figure holds only because both measured units contain `static_assert(core::metric_like<alg>)`, whose evaluation GCC reuses for the constraint. Without it, the four plans grow from n = 4 to 16 by +9.9% on GCC and +7.0% on Clang (the reviewer's run), and by +9.8% and +6.1% in my own rerun (`records/performance/product-cost-growth/out/probe-no-assert-c97fac5/`, `remainder_probe.py --without-concept-assert`, 13:04:41Z to 13:05:03Z, pinned on CPU 10). The probe with `metric_like` reduced to its type test is flat on both compilers. Decision 0107 supersedes the affected statements of decision 0105 and restates the owner's P2 question for both compilers, with the reviewer's view recorded as input.
+2. Six commits do not build under the lint preset, and their messages do not say so (F4): `77ed567`, `20dc2ea`, `52ed97f`, `9ff402c`, `a023495`, and `115b53e`, all with `77ed567`'s build inputs and its `bugprone-signed-bitwise` finding at `bits.hpp:107`. History is not rewritten; the merge message is to name them.
+3. Run outside `tools/timed`: none in this pass that I know of; the probe compiles ran through it.
+4. The reviewer's figures that I did not rerun myself: the old-header rows of the table in decision 0107 (`0f1039a`, +25.0% and +26.5% without the `static_assert`), the reviewer's trace counts without the `static_assert`, the header-unit figures of F2, and the reviewer's `oob_unchecked.cpp` (F3). They are cited as the reviewer's.
+
+### Corrections to the outcome
+
+- Criterion 3. The before-and-after figures stand as measured, but they are of units that assert the concept. The growth of a fixed use as a program writes it (no such `static_assert`) is, from n = 4 to 16: GCC +25.0% before and +9.9% after, Clang +26.5% before and +7.0% after (the reviewer's run; mine at `c97fac5`: +9.8% and +6.1%). The criterion, to measure the growth before and after on both compilers, is met; the reading that GCC's growth is gone is withdrawn.
+- The Clang remainder section. The cause stands, `metric_like` reading the n² Gram entries once per algebra and unit, but it applies to both compilers: GCC pays one evaluation per unit (about 18 M instructions more at n = 16 than at n = 4), and Clang pays one (about 20 to 24 M) plus a second when the unit also evaluates the concept outside a constraint. The inference that a program evaluating the concept only through constraints pays it once is now measured, on both compilers.
+- Departure 9 and criterion 6 (F2). The reviewer's pinned run gives `core.hpp` alone +0.6 M (+0.08%) on GCC against a spread of 0.2 M, not −0.04%; the rise is `bits.hpp`'s (+0.7 M alone). So criterion 6 is not met on GCC for `core.hpp` by a margin beyond the spread, by 0.08%. The reviewer notes that differences this small are near what the length of the include path can move (my two header trees had paths of different length), plausible and not tested.
+- Departure 10. The owner's question is decision 0107 item 4, for both compilers.
+- Decision 0104's "every index stays below N" holds in constant evaluation and checking builds only (F3, decision 0107 item 5); no public path reaches the unchecked case, so no code changed.
+- Decision 0105 item 1 and its table quote different runs (F6), and decision 0106's description of GCC's conformal n = 8 diagnostic is from the `77ed567` run (F7); both are corrected by dated notes appended to those decisions.
+
+### Done in this pass
+
+| Commit | What |
+| --- | --- |
+| `45c2153` | `develop` merged in (agent-cost rows, note 0014, a line in each specialist agent file; no build input) |
+| `bea00a1` | F5: `reorder_sign`'s comment says "whatever the indices of its generators"; a public-header comment, for the delta review |
+| this commit | Decision 0107; dated notes on decisions 0104, 0105, 0106; `remainder_probe.py --without-concept-assert` and its output; this section |
+
+### Next
+
+The delta review of `bea00a1` (decision 0094 item 3), then the merge, whose message names the six commits of item 2. Owner: decision 0107 item 4, and the two defects outside the unit (outcome departure 8).

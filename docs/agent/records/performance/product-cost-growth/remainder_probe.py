@@ -4,7 +4,7 @@ comes from the metric_like check, which reads all n^2 entries of the Gram
 matrix, and whether it grows with the number of plans.
 
 Usage, from the repository root:
-  remainder_probe.py <out-dir> [repeats] [cpu]
+  remainder_probe.py <out-dir> [repeats] [cpu] [--without-concept-assert]
 
 Two copies of the checkout's headers: "as-is", and "type-only", in which
 metric_like keeps only its first condition (that Alg::value is a metric)
@@ -13,6 +13,12 @@ measure_plan.py, in R(n-1,0,1) at n = 4, 8, 12, and 16: the baseline with
 no plan, one plan (point x point), and the four typed pairs. Each compile is
 pinned as in measure_growth.py. The type-only copy is a probe, not a
 proposal: it removes a check the interface promises.
+
+The units of measure_plan.py state static_assert(core::metric_like<alg>),
+so the baseline evaluates the concept once before any plan. With
+--without-concept-assert that line is removed from every unit, so that the
+first evaluation of the concept falls in the plans, as it does in a program
+that only uses the algebra.
 
 Writes <out-dir>/probe.tsv and <out-dir>/probe-summary.txt: for each
 compiler and copy, the cost of one plan and of four plans over the
@@ -39,6 +45,7 @@ CONCEPT = """concept metric_like =
     (Alg::value.generator_count >= 1) && Alg::value.is_symmetric() &&
     Alg::value.entries_in_range();
 """
+CONCEPT_ASSERT = "static_assert(core::metric_like<alg>);\n"
 TYPE_ONLY = """concept metric_like =
     detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>>;
 """
@@ -57,6 +64,8 @@ def type_only_copy(out):
 
 
 def main(argv):
+    without_assert = "--without-concept-assert" in argv
+    argv = [a for a in argv if a != "--without-concept-assert"]
     if not argv:
         sys.exit(__doc__)
     out = pathlib.Path(argv[0]).resolve()
@@ -76,7 +85,11 @@ def main(argv):
         for n in SIZES:
             for plans, pairs in cases.items():
                 source = units / f"n{n}-plans{plans}.cpp"
-                source.write_text(mp.plans_unit(n, pairs), encoding="utf-8")
+                text = mp.plans_unit(n, pairs)
+                if without_assert:
+                    assert text.count(CONCEPT_ASSERT) == 1
+                    text = text.replace(CONCEPT_ASSERT, "")
+                source.write_text(text, encoding="utf-8")
                 for compiler in mp.COMPILERS:
                     for tree, include in trees.items():
                         r = compile_pinned(
@@ -96,7 +109,9 @@ def main(argv):
                                if all(r[k] == v for k, v in match.items()))
 
     lines = [f"Headers at {head}; instructions on the pinned core, mean of "
-             f"{repeats} repeats; plans minus the baseline, in M"]
+             f"{repeats} repeats; plans minus the baseline, in M; units "
+             + ("without" if without_assert else "with")
+             + " static_assert(core::metric_like<alg>)"]
     for compiler in mp.COMPILERS:
         for tree in trees:
             for plans in (1, 4):

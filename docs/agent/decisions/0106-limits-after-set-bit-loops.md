@@ -26,3 +26,9 @@ Every plan boundary is where decision 0103 and the review's bare -O2 compiles pu
 ## Decision
 
 No header statement of a limit changes: the `gp_plan` comment of `plan.hpp` and the `full` comment of `blade_set.hpp` are left as they are, the second with the defect above for the owner.
+
+## Note after the W5 review (2026-11-01)
+
+Added after the W5 review (`records/reviews/2026-11-01-plan-0012-cost-growth.md`, F7); the record above is unchanged.
+
+- The first observation describes the `77ed567` run (`out/limits-77ed567/limits.tsv`). At `c97fac5` (`out/limits-c97fac5/limits.tsv`) GCC's conformal n = 8 failure is the plain message "operation count exceeds limit of 33554432", at `blade_product.hpp:219:44` in three configurations and at libstdc++'s `array:221` at bare -O2; the reviewer's run agrees. The boundary is the same in both runs, so the decision stands.
