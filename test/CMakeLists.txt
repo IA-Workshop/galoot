@@ -436,6 +436,43 @@ foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 capacity overflow
     LABELS "core;core.blade_product")
 endforeach()
 
+# core.plan: product plans over two blade sets against the products of their
+# pairs, the single-term rule of diagonal forms, and values worked by hand.
+galoot_add_test(MODULE core COMPONENT plan)
+
+# core.plan_<case>: each misuse of gp_plan fails to compile with its message.
+# The sets are checked before anything is generated, so a set's test forbids
+# the messages that generation would add: the product's own range check and
+# the checks of a generated plan.
+set(plan_range "gp plan: a blade set names a generator beyond e_n")
+set(plan_sign "gp plan: a blade set holds a sign other than +1 or -1")
+set(plan_generated "gp plan: a generated")
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31)
+  galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
+    SOURCE core/plan_${case}_fail.cpp
+    MESSAGE "${plan_range}"
+    REQUIRE "static assertion failed"
+    FORBID "${plan_sign}" "blade has a generator beyond e_n" "${plan_generated}")
+endforeach()
+foreach(case IN ITEMS bad_sign bad_sign_second)
+  galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
+    SOURCE core/plan_${case}_fail.cpp
+    MESSAGE "${plan_sign}"
+    REQUIRE "static assertion failed"
+    FORBID "${plan_range}" "${plan_generated}")
+endforeach()
+galoot_add_compile_fail_test(NAME plan_overflow MODULE core COMPONENT plan
+  SOURCE core/plan_overflow_fail.cpp
+  MESSAGE "${product_overflow}"
+  REQUIRE "assertion_failed" "blade_product.hpp"
+  FORBID "gp plan:")
+# The tag is checked by the concept on gp_plan, whose failure the compiler
+# reports in its own words; both name the concept.
+galoot_add_compile_fail_test(NAME plan_not_metric_like
+  MODULE core COMPONENT plan
+  SOURCE core/plan_not_metric_like_fail.cpp
+  MESSAGE "metric_like")
+
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
 add_test(NAME tools.measure_record
