@@ -26,7 +26,9 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <limits>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -225,6 +227,160 @@ struct mv
                   "layout lists them");
   }
 };
+
+namespace detail {
+
+// What a blade name means for a layout: the place of the blade it names, or
+// why it names none there.
+enum class NameLookup : std::uint8_t {
+  found,
+  wide_algebra,
+  not_one_name,
+  not_a_name,
+  repeated_generator,
+  index_above_n,
+  absent,
+  other_orientation,
+};
+
+struct name_lookup {
+  NameLookup result;
+  // The position in the layout when result is found; otherwise K.
+  std::size_t at;
+};
+
+// The blade that `text` names in an algebra of n generators, looked up in
+// `layout` by its mask, and compared by its sign. The parser is the one
+// blades uses, so a name means here what it means there; it reports an
+// invalid name as a value, so a lookup never fails to compile.
+template <std::size_t K>
+[[nodiscard]] constexpr name_lookup
+look_up_name(const blade_set<K>& layout, std::size_t n, std::string_view text) {
+  if (n > max_compact_generators) {
+    return {.result = NameLookup::wide_algebra, .at = K};
+  }
+  if (name_count(text) != 1) {
+    return {.result = NameLookup::not_one_name, .at = K};
+  }
+
+  std::size_t from = 0;
+  const parsed_name parsed = parse_name(next_name(text, from), n);
+  switch (parsed.error) {
+  case NameError::none:
+    break;
+  case NameError::index_above_n:
+    return {.result = NameLookup::index_above_n, .at = K};
+  case NameError::repeated_generator:
+    return {.result = NameLookup::repeated_generator, .at = K};
+  default:
+    return {.result = NameLookup::not_a_name, .at = K};
+  }
+
+  for (std::size_t at = 0; at < K; ++at) {
+    if (layout.blades[at].mask == parsed.blade.mask) {
+      const NameLookup result = layout.blades[at].sign == parsed.blade.sign
+                                    ? NameLookup::found
+                                    : NameLookup::other_orientation;
+      return {.result = result, .at = at};
+    }
+  }
+  return {.result = NameLookup::absent, .at = K};
+}
+
+// The lookup of Name in the multivector type X, evaluated once for each type
+// and name a program uses.
+template <class X, name_list Name>
+inline constexpr name_lookup name_lookup_v = look_up_name(
+    X::layout,
+    std::remove_cvref_t<decltype(X::algebra_type::value)>::generator_count,
+    Name.text());
+
+// The type of a coefficient of x, with the value category of x: a reference
+// into an lvalue, a const reference into a const one, and an rvalue
+// reference into an rvalue.
+template <class X>
+using coefficient_reference = decltype(std::forward_like<X>(
+    std::declval<std::remove_reference_t<X>&>().coefficients[0]));
+
+} // namespace detail
+
+/// Whether the multivector type X, with any cv-qualification and reference,
+/// holds the blade named Name with the orientation the name gives it.
+///
+/// Requires: nothing. False, never an error, for a type that is not a
+/// multivector, a name that is not valid in its algebra, a blade the layout
+/// lacks, and a blade the layout holds with the other orientation. A name
+/// is "1" or e followed by generator indices, one digit each, as for blades.
+template <class X, detail::name_list Name>
+concept has_blade =
+    multivector<X> &&
+    detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
+        detail::NameLookup::found;
+
+/// The coefficient of x on the blade named Name: get<"e43">(line) reads it,
+/// and get<"e43">(line) = 1.0 writes it. The name is oriented, as in the
+/// layout: a line that stores e41 = -e14 is read with "e41". The function is
+/// found by argument-dependent lookup, so the call needs no namespace.
+///
+/// Requires: has_blade<X, Name>. Any other name is rejected at compile time
+/// with one error whose message names the cause: a blade the layout lacks,
+/// one it holds with the other orientation (use the name the layout gives
+/// and negate the value), an index above n, a text that is not a name, a
+/// name with a repeated generator, more than one name, or an algebra of more
+/// than nine generators, where names are not read and coefficients are
+/// reached by position. Because the rejecting overload exists, a
+/// requires-expression that asks whether get<"e1">(line) is valid is told
+/// yes for any name; ask has_blade instead.
+/// Guarantees: a reference to the coefficient, with the value category of
+/// x: an rvalue reference for an rvalue, so the result of get on a
+/// temporary must not outlive it. The position is found at compile time,
+/// once for each type and name.
+template <detail::name_list Name, class X>
+  requires has_blade<X, Name>
+// x is forwarded by std::forward_like, which gives the coefficient the value
+// category of x; the check counts only std::forward.
+// NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
+[[nodiscard]] constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+  constexpr std::size_t at =
+      detail::name_lookup_v<std::remove_cvref_t<X>, Name>.at;
+  return std::forward_like<X>(x.coefficients[at]);
+}
+
+/// Rejects any name that has_blade refuses, with the message for its cause.
+/// Its return type is that of get, so that the message is the only error
+/// and a requires-expression gets an answer without compiling the message.
+template <detail::name_list Name, class X>
+  requires(multivector<X> && !has_blade<X, Name>)
+// NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward): as for get above.
+constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+  using enum detail::NameLookup;
+  constexpr detail::NameLookup cause =
+      detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result;
+  if constexpr (cause == wide_algebra) {
+    static_assert(false, "get: names have one digit per index, so they are "
+                         "read only for n up to 9; reach the coefficient by "
+                         "its position");
+  } else if constexpr (cause == not_one_name) {
+    static_assert(false, "get: give one blade name");
+  } else if constexpr (cause == not_a_name) {
+    static_assert(false, "get: a name is 1 or e followed by generator "
+                         "indices, as in e41");
+  } else if constexpr (cause == repeated_generator) {
+    static_assert(false, "get: the name lists one generator twice; a blade "
+                         "names each generator once");
+  } else if constexpr (cause == index_above_n) {
+    static_assert(false, "get: the name has an index above n, the number of "
+                         "generators");
+  } else if constexpr (cause == absent) {
+    static_assert(false, "get: the type has no blade of this name; its "
+                         "layout lists the names it holds");
+  } else {
+    static_assert(false, "get: the type stores this blade with the other "
+                         "orientation; use the name its layout gives it and "
+                         "negate the value");
+  }
+  return std::forward_like<X>(x.coefficients[0]);
+}
 
 } // namespace galoot::core
 
