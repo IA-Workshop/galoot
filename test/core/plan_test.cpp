@@ -645,7 +645,7 @@ TEST_CASE("Every plan of every blade times every blade is the products of "
     constexpr std::size_t n = std::remove_cvref_t<decltype(g)>::generator_count;
     constexpr auto& all = core::full<n>;
     constexpr std::size_t capacity =
-        plan_capacity(BinaryOperation::gp, all.blades, all.blades);
+        plan_capacity(BinaryOperation::gp, all.blades, all.blades, n);
     INFO(name);
     CHECK(capacity == blade_count(n) / 2);
 
@@ -777,8 +777,8 @@ TEST_CASE("A plan with an empty blade set is empty") {
   CHECK(gp_terms<rga3, none, none>.empty());
   CHECK(generate_plan<BinaryOperation::gp, 1>(rga3::value, none.blades,
                                               point.blades, {}) == 0);
-  CHECK(plan_capacity(BinaryOperation::gp, none.blades, point.blades) == 1);
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, none.blades) == 1);
+  CHECK(plan_capacity(BinaryOperation::gp, none.blades, point.blades, 4) == 1);
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, none.blades, 4) == 1);
 }
 
 // Reference: contract: a mask listed twice in a set is not rejected, and
@@ -807,15 +807,15 @@ TEST_CASE("A repeated blade gets the terms of each place that lists it") {
 // generators of A and B together, counted here, so the capacity of a plan is
 // the largest of these over its pairs, wherever that pair lies in the sets
 TEST_CASE("plan_capacity is the largest bound over the pairs") {
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades) ==
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades, 4) ==
         largest_pair_bound(point, point));
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades) == 2);
-  CHECK(plan_capacity(BinaryOperation::gp, line.blades, plane.blades) == 8);
-  CHECK(plan_capacity(BinaryOperation::gp, motor.blades, point.blades) == 8);
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades, 4) == 2);
+  CHECK(plan_capacity(BinaryOperation::gp, line.blades, plane.blades, 4) == 8);
+  CHECK(plan_capacity(BinaryOperation::gp, motor.blades, point.blades, 4) == 8);
   CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
-                      sparse_second<16>.blades) == 4);
+                      sparse_second<16>.blades, 16) == 4);
   CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
-                      sparse_second<16>.blades) ==
+                      sparse_second<16>.blades, 16) ==
         largest_pair_bound(sparse_first<16>, sparse_second<16>));
 
   // The largest pair in the middle of each set: e123 with e1 needs 4.
@@ -829,12 +829,14 @@ TEST_CASE("plan_capacity is the largest bound over the pairs") {
       },
   };
   constexpr core::blade_set<1> just_e1{{{{.mask = e1, .sign = 1}}}};
-  CHECK(plan_capacity(BinaryOperation::gp, middle.blades, just_e1.blades) == 4);
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, middle.blades) == 4);
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e1.blades) ==
+  CHECK(plan_capacity(BinaryOperation::gp, middle.blades, just_e1.blades, 3) ==
+        4);
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, middle.blades, 3) ==
+        4);
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e1.blades, 3) ==
         1);
   constexpr core::blade_set<1> just_e2{{{{.mask = e2, .sign = 1}}}};
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e2.blades) ==
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e2.blades, 3) ==
         2);
 }
 
@@ -1713,8 +1715,8 @@ TEST_CASE("Repeated blades share a result position, and empty sets give "
   CHECK(product_plan<gp, rga3, point, none> == typed_plan<0, 0>{});
   CHECK(product_plan<wedge, rga3, none, none> == typed_plan<0, 0>{});
   CHECK(product_plan<wedge, rga3, point, none> == typed_plan<0, 0>{});
-  CHECK(plan_capacity(wedge, none.blades, point.blades) == 1);
-  CHECK(plan_capacity(wedge, motor.blades, motor.blades) == 1);
+  CHECK(plan_capacity(wedge, none.blades, point.blades, 4) == 1);
+  CHECK(plan_capacity(wedge, motor.blades, motor.blades, 4) == 1);
 }
 
 // Reference: contract: collect_result writes the distinct blades of a
@@ -1905,11 +1907,11 @@ TEST_CASE("The wedge plan accepts the generators of the widest algebra") {
 TEST_CASE("pair_capacity is 1 for the wedge and product_capacity for the "
           "geometric product") {
   using core::detail::pair_capacity;
-  CHECK(pair_capacity(wedge, e1, e2) == 1);
-  CHECK(pair_capacity(wedge, e1, e1) == 1);
-  CHECK(pair_capacity(wedge, e123, e1234) == 1);
-  CHECK(pair_capacity(wedge, 0, 0) == 1);
-  CHECK(pair_capacity(gp, e1, e2) == 2);
-  CHECK(pair_capacity(gp, e123, e1234) == 8);
-  CHECK(pair_capacity(gp, 0, 0) == 1);
+  CHECK(pair_capacity(wedge, e1, e2, 4) == 1);
+  CHECK(pair_capacity(wedge, e1, e1, 4) == 1);
+  CHECK(pair_capacity(wedge, e123, e1234, 4) == 1);
+  CHECK(pair_capacity(wedge, 0, 0, 4) == 1);
+  CHECK(pair_capacity(gp, e1, e2, 4) == 2);
+  CHECK(pair_capacity(gp, e123, e1234, 4) == 8);
+  CHECK(pair_capacity(gp, 0, 0, 4) == 1);
 }

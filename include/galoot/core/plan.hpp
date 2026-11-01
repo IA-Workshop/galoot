@@ -89,31 +89,33 @@ struct plan_term {
 };
 
 /// The largest number of terms that `op` gives one pair of blades, of the
-/// masks `a` and `b`, in any metric: product_capacity(a, b) for the
-/// geometric product, and 1 for the wedge.
+/// masks `a` and `b`, in any metric of n generators: product_capacity(a, b)
+/// for the geometric product, and 1 for the wedge.
 ///
 /// Requires: nothing.
 /// Guarantees: a term list of this capacity never overflows while the pair's
 /// terms are generated.
-[[nodiscard]] constexpr std::size_t pair_capacity(BinaryOperation op, mask_t a,
-                                                  mask_t b) noexcept {
+[[nodiscard]] constexpr std::size_t
+pair_capacity(BinaryOperation op, mask_t a, mask_t b,
+              [[maybe_unused]] std::size_t n) noexcept {
   return op == BinaryOperation::gp ? product_capacity(a, b) : 1;
 }
 
 /// A term list capacity that suffices for every pair of a blade of `as` with
-/// a blade of `bs` under `op`: the largest pair_capacity over the pairs, and
-/// at least 1, so that it is a valid capacity when a set is empty.
+/// a blade of `bs` under `op` in an algebra of n generators: the largest
+/// pair_capacity over the pairs, and at least 1, so that it is a valid
+/// capacity when a set is empty.
 ///
-/// Requires: nothing.
-/// Guarantees: generate_plan<op, plan_capacity(op, as, bs)> never outgrows
-/// its term lists.
+/// Requires: what pair_capacity requires of each pair.
+/// Guarantees: generate_plan<op, plan_capacity(op, as, bs, n)> never
+/// outgrows its term lists.
 [[nodiscard]] constexpr std::size_t
 plan_capacity(BinaryOperation op, std::span<const oriented_blade> as,
-              std::span<const oriented_blade> bs) noexcept {
+              std::span<const oriented_blade> bs, std::size_t n) noexcept {
   std::size_t capacity = 1;
   for (const oriented_blade& x : as) {
     for (const oriented_blade& y : bs) {
-      const std::size_t pair = pair_capacity(op, x.mask, y.mask);
+      const std::size_t pair = pair_capacity(op, x.mask, y.mask, n);
       // NOLINTNEXTLINE(readability-use-std-min-max): avoids <algorithm> here.
       if (pair > capacity) {
         capacity = pair;
@@ -129,7 +131,7 @@ plan_capacity(BinaryOperation op, std::span<const oriented_blade> as,
 /// generator, and otherwise reorder_sign(a, b) on the blade of a | b.
 ///
 /// Requires: `a` and `b` name only e_1 to e_N, checked by GALOOT_ASSERT, and
-/// Capacity >= pair_capacity(Op, a, b); for the geometric product, what
+/// Capacity >= pair_capacity(Op, a, b, N); for the geometric product, what
 /// blade_product requires.
 /// Guarantees: the result is exact, with no zero coefficient. The wedge reads
 /// nothing of `g`.
@@ -158,7 +160,7 @@ pair_terms(const metric<N>& g, mask_t a, mask_t b) noexcept {
 ///
 /// Requires: every sign of `as` and `bs` is +1 or -1, which is not checked
 /// here; every mask names only e_1 to e_N, and Capacity suffices for every
-/// pair, as plan_capacity(Op, as, bs) does, each checked by GALOOT_ASSERT
+/// pair, as plan_capacity(Op, as, bs, N) does, each checked by GALOOT_ASSERT
 /// in pair_terms. Every coefficient fits coefficient_type, checked by
 /// GALOOT_ASSERT.
 /// Guarantees: no term has a zero coefficient, and within one pair no blade
@@ -447,7 +449,7 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 
   if constexpr (in_range && valid_signs) {
     static constexpr std::size_t capacity =
-        plan_capacity(Op, A.blades, B.blades);
+        plan_capacity(Op, A.blades, B.blades, n);
     static constexpr std::size_t count =
         generate_plan<Op, capacity>(Alg::value, A.blades, B.blades, {});
     static constexpr auto generated =
