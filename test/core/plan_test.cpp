@@ -1042,57 +1042,73 @@ equals_typing(const core::metric<N>& g, const core::blade_set<KA>& as,
 // and has 12; each term names the position of its blade
 static_assert(product_plan<gp, rga3, point, point> ==
               typed_plan<7, 15>{
-                  .result = {{{
-                      {.mask = 0, .sign = 1},
-                      {.mask = e12, .sign = 1},
-                      {.mask = e13, .sign = 1},
-                      {.mask = e14, .sign = 1},
-                      {.mask = e23, .sign = 1},
-                      {.mask = e24, .sign = 1},
-                      {.mask = e34, .sign = 1},
-                  }}},
-                  .terms = {{
-                      {.a = 0, .b = 0, .out = 0, .coefficient = 1},
-                      {.a = 0, .b = 1, .out = 1, .coefficient = 1},
-                      {.a = 0, .b = 2, .out = 2, .coefficient = 1},
-                      {.a = 0, .b = 3, .out = 3, .coefficient = 1},
-                      {.a = 1, .b = 0, .out = 1, .coefficient = -1},
-                      {.a = 1, .b = 1, .out = 0, .coefficient = 1},
-                      {.a = 1, .b = 2, .out = 4, .coefficient = 1},
-                      {.a = 1, .b = 3, .out = 5, .coefficient = 1},
-                      {.a = 2, .b = 0, .out = 2, .coefficient = -1},
-                      {.a = 2, .b = 1, .out = 4, .coefficient = -1},
-                      {.a = 2, .b = 2, .out = 0, .coefficient = 1},
-                      {.a = 2, .b = 3, .out = 6, .coefficient = 1},
-                      {.a = 3, .b = 0, .out = 3, .coefficient = -1},
-                      {.a = 3, .b = 1, .out = 5, .coefficient = -1},
-                      {.a = 3, .b = 2, .out = 6, .coefficient = -1},
-                  }},
+                  .result =
+                      {
+                          {
+                              {
+                                  {.mask = 0, .sign = 1},
+                                  {.mask = e12, .sign = 1},
+                                  {.mask = e13, .sign = 1},
+                                  {.mask = e14, .sign = 1},
+                                  {.mask = e23, .sign = 1},
+                                  {.mask = e24, .sign = 1},
+                                  {.mask = e34, .sign = 1},
+                              },
+                          },
+                      },
+                  .terms =
+                      {
+                          {
+                              {.a = 0, .b = 0, .out = 0, .coefficient = 1},
+                              {.a = 0, .b = 1, .out = 1, .coefficient = 1},
+                              {.a = 0, .b = 2, .out = 2, .coefficient = 1},
+                              {.a = 0, .b = 3, .out = 3, .coefficient = 1},
+                              {.a = 1, .b = 0, .out = 1, .coefficient = -1},
+                              {.a = 1, .b = 1, .out = 0, .coefficient = 1},
+                              {.a = 1, .b = 2, .out = 4, .coefficient = 1},
+                              {.a = 1, .b = 3, .out = 5, .coefficient = 1},
+                              {.a = 2, .b = 0, .out = 2, .coefficient = -1},
+                              {.a = 2, .b = 1, .out = 4, .coefficient = -1},
+                              {.a = 2, .b = 2, .out = 0, .coefficient = 1},
+                              {.a = 2, .b = 3, .out = 6, .coefficient = 1},
+                              {.a = 3, .b = 0, .out = 3, .coefficient = -1},
+                              {.a = 3, .b = 1, .out = 5, .coefficient = -1},
+                              {.a = 3, .b = 2, .out = 6, .coefficient = -1},
+                          },
+                      },
               });
 static_assert(product_plan<wedge, rga3, point, point> ==
               typed_plan<6, 12>{
-                  .result = {{{
-                      {.mask = e12, .sign = 1},
-                      {.mask = e13, .sign = 1},
-                      {.mask = e14, .sign = 1},
-                      {.mask = e23, .sign = 1},
-                      {.mask = e24, .sign = 1},
-                      {.mask = e34, .sign = 1},
-                  }}},
-                  .terms = {{
-                      {.a = 0, .b = 1, .out = 0, .coefficient = 1},
-                      {.a = 0, .b = 2, .out = 1, .coefficient = 1},
-                      {.a = 0, .b = 3, .out = 2, .coefficient = 1},
-                      {.a = 1, .b = 0, .out = 0, .coefficient = -1},
-                      {.a = 1, .b = 2, .out = 3, .coefficient = 1},
-                      {.a = 1, .b = 3, .out = 4, .coefficient = 1},
-                      {.a = 2, .b = 0, .out = 1, .coefficient = -1},
-                      {.a = 2, .b = 1, .out = 3, .coefficient = -1},
-                      {.a = 2, .b = 3, .out = 5, .coefficient = 1},
-                      {.a = 3, .b = 0, .out = 2, .coefficient = -1},
-                      {.a = 3, .b = 1, .out = 4, .coefficient = -1},
-                      {.a = 3, .b = 2, .out = 5, .coefficient = -1},
-                  }},
+                  .result =
+                      {
+                          {
+                              {
+                                  {.mask = e12, .sign = 1},
+                                  {.mask = e13, .sign = 1},
+                                  {.mask = e14, .sign = 1},
+                                  {.mask = e23, .sign = 1},
+                                  {.mask = e24, .sign = 1},
+                                  {.mask = e34, .sign = 1},
+                              },
+                          },
+                      },
+                  .terms =
+                      {
+                          {
+                              {.a = 0, .b = 1, .out = 0, .coefficient = 1},
+                              {.a = 0, .b = 2, .out = 1, .coefficient = 1},
+                              {.a = 0, .b = 3, .out = 2, .coefficient = 1},
+                              {.a = 1, .b = 0, .out = 0, .coefficient = -1},
+                              {.a = 1, .b = 2, .out = 3, .coefficient = 1},
+                              {.a = 1, .b = 3, .out = 4, .coefficient = 1},
+                              {.a = 2, .b = 0, .out = 1, .coefficient = -1},
+                              {.a = 2, .b = 1, .out = 3, .coefficient = -1},
+                              {.a = 2, .b = 3, .out = 5, .coefficient = 1},
+                              {.a = 3, .b = 0, .out = 2, .coefficient = -1},
+                              {.a = 3, .b = 1, .out = 4, .coefficient = -1},
+                              {.a = 3, .b = 2, .out = 5, .coefficient = -1},
+                          },
+                      },
               });
 
 // Reference: independent value: in rigid(3) a product of blades is one term
@@ -1466,7 +1482,11 @@ int golden_wedge_mismatches(const std::array<std::array<int, N>, N>& gram,
           continue;
         }
         const plan_term expected{
-            .a = a, .b = b, .out = term.blade, .coefficient = term.coefficient};
+            .a = a,
+            .b = b,
+            .out = term.blade,
+            .coefficient = term.coefficient,
+        };
         mismatches += k < plan.size() && plan.at(k) == expected ? 0 : 1;
         ++k;
       }
@@ -1532,10 +1552,12 @@ TEST_CASE("The wedge plan is the exterior product of each pair") {
         const mask_t ma = all.blades.at(a).mask;
         const mask_t mb = all.blades.at(b).mask;
         if ((ma & mb) == 0) {
-          rule.push_back({.a = a,
-                          .b = b,
-                          .out = ma | mb,
-                          .coefficient = parity_sign(inversions(ma, mb))});
+          rule.push_back({
+              .a = a,
+              .b = b,
+              .out = ma | mb,
+              .coefficient = parity_sign(inversions(ma, mb)),
+          });
         }
         for (const plan_term& t : top_grade_part(g, a, b, ma, mb)) {
           top_grade.push_back(t);
@@ -1591,7 +1613,8 @@ TEST_CASE("The wedge plan is the top grade of the golden products") {
 // lands on every blade, so its result set is that list
 TEST_CASE("The result set of every blade times every blade is the golden "
           "canonical order") {
-  constexpr auto& four = product_plan<gp, r400, core::full<4>, core::full<4>>;
+  constexpr const auto& four =
+      product_plan<gp, r400, core::full<4>, core::full<4>>;
   REQUIRE(four.result.size() == golden::result_order::n4.size());
   for (std::size_t k = 0; k < four.result.size(); ++k) {
     CHECK(four.result.blades.at(k) ==
@@ -1599,7 +1622,7 @@ TEST_CASE("The result set of every blade times every blade is the golden "
   }
 
   constexpr auto r500 = core::R<5, 0, 0>();
-  constexpr auto& five = core::full<5>;
+  constexpr const auto& five = core::full<5>;
   const typing typed =
       typed_at_run_time(plan_of<gp, 16>(r500, five.blades, five.blades));
   REQUIRE(typed.result.size() == golden::result_order::n5.size());
@@ -1677,12 +1700,14 @@ TEST_CASE("Repeated blades share a result position, and empty sets give "
 // terms as fit, each with the position of its blade, or the size of the
 // result for a blade the result lacks
 TEST_CASE("collect_result and type_terms keep to their stated bounds") {
-  const std::array<plan_term, 4> plan{{
-      {.a = 0, .b = 0, .out = e23, .coefficient = 1},
-      {.a = 0, .b = 1, .out = e14, .coefficient = -1},
-      {.a = 1, .b = 0, .out = e23, .coefficient = 2},
-      {.a = 1, .b = 1, .out = 0, .coefficient = 3},
-  }};
+  const std::array<plan_term, 4> plan{
+      {
+          {.a = 0, .b = 0, .out = e23, .coefficient = 1},
+          {.a = 0, .b = 1, .out = e14, .coefficient = -1},
+          {.a = 1, .b = 0, .out = e23, .coefficient = 2},
+          {.a = 1, .b = 1, .out = 0, .coefficient = 3},
+      },
+  };
   const oriented_blade untouched{.mask = 0b111, .sign = 7};
   std::array<oriented_blade, 5> result{};
   result.fill(untouched);
@@ -1724,26 +1749,27 @@ TEST_CASE("The checks of a typed plan find each defect at its bound") {
   const auto set = [](oriented_blade first, oriented_blade second) {
     return core::blade_set<2>{{{first, second}}};
   };
+  // Whether `found` reports the defect `which` and no other, or none when
+  // `which` is null.
   const auto none_but = [](const typed_defects& found,
                            bool typed_defects::* which) {
     const std::array<bool typed_defects::*, 5> all{
         &typed_defects::result_out_of_order, &typed_defects::result_sign,
-        &typed_defects::beyond_result, &typed_defects::result_unused,
-        &typed_defects::out_of_order};
-    // NOLINTNEXTLINE(readability-use-anyofallof): one flag per defect.
-    for (bool typed_defects::* flag : all) {
-      if (found.*flag != (flag == which)) {
-        return false;
-      }
-    }
-    return true;
+        &typed_defects::beyond_result,       &typed_defects::result_unused,
+        &typed_defects::out_of_order,
+    };
+    return std::ranges::all_of(all, [&](bool typed_defects::* flag) {
+      return found.*flag == (flag == which);
+    });
   };
   const oriented_blade plus_e1{.mask = e1, .sign = 1};
   const oriented_blade plus_e2{.mask = e2, .sign = 1};
-  const std::array<typed_term, 2> both{{
-      {.a = 0, .b = 0, .out = 0, .coefficient = 1},
-      {.a = 0, .b = 1, .out = 1, .coefficient = 1},
-  }};
+  const std::array<typed_term, 2> both{
+      {
+          {.a = 0, .b = 0, .out = 0, .coefficient = 1},
+          {.a = 0, .b = 1, .out = 1, .coefficient = 1},
+      },
+  };
 
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), both), nullptr));
   // Canonical order, not mask order: e4 before e12, e14 before e23.
@@ -1766,19 +1792,21 @@ TEST_CASE("The checks of a typed plan find each defect at its bound") {
   CHECK(none_but(typed_defects_of(set(plus_e1, {.mask = e2, .sign = -1}), both),
                  &typed_defects::result_sign));
 
-  const std::array<typed_term, 3> past{{
-      {.a = 0, .b = 0, .out = 0, .coefficient = 1},
-      {.a = 0, .b = 1, .out = 1, .coefficient = 1},
-      {.a = 0, .b = 2, .out = 2, .coefficient = 1},
-  }};
+  const std::array<typed_term, 3> past{
+      {
+          {.a = 0, .b = 0, .out = 0, .coefficient = 1},
+          {.a = 0, .b = 1, .out = 1, .coefficient = 1},
+          {.a = 0, .b = 2, .out = 2, .coefficient = 1},
+      },
+  };
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), past),
                  &typed_defects::beyond_result));
-  const std::array<typed_term, 1> only_first{
-      {{.a = 0, .b = 0, .out = 0, .coefficient = 1}}};
+  const typed_term on_0{.a = 0, .b = 0, .out = 0, .coefficient = 1};
+  const std::array<typed_term, 1> only_first{on_0};
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), only_first),
                  &typed_defects::result_unused));
-  const std::array<typed_term, 1> only_second{
-      {{.a = 0, .b = 0, .out = 1, .coefficient = 1}}};
+  const typed_term on_1{.a = 0, .b = 0, .out = 1, .coefficient = 1};
+  const std::array<typed_term, 1> only_second{on_1};
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), only_second),
                  &typed_defects::result_unused));
 
@@ -1805,11 +1833,13 @@ TEST_CASE("The checks of a typed plan find each defect at its bound") {
                    {.a = 0, .b = 0, .out = 1, .coefficient = 1}));
   CHECK(disordered({.a = 1, .b = 0, .out = 0, .coefficient = 1},
                    {.a = 0, .b = 2, .out = 1, .coefficient = 1}));
-  const std::array<typed_term, 3> repeated{{
-      {.a = 0, .b = 0, .out = 0, .coefficient = 1},
-      {.a = 0, .b = 0, .out = 0, .coefficient = 2},
-      {.a = 0, .b = 1, .out = 1, .coefficient = 1},
-  }};
+  const std::array<typed_term, 3> repeated{
+      {
+          {.a = 0, .b = 0, .out = 0, .coefficient = 1},
+          {.a = 0, .b = 0, .out = 0, .coefficient = 2},
+          {.a = 0, .b = 1, .out = 1, .coefficient = 1},
+      },
+  };
   CHECK(none_but(typed_defects_of(set(plus_e1, plus_e2), repeated),
                  &typed_defects::out_of_order));
 }
