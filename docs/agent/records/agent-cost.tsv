@@ -51,3 +51,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0010	blind reviewer (W5)	opus	212029	73	1361	reported by harness as subagent_tokens
 2026-11-01	plan-0011	WU6a implementer incl. lint fix pass	opus	459272	152	3170	reported by harness as subagent_tokens (cumulative across the first pass and the lint-fix round)
 2026-11-01	plan-0011	WU6a blind reviewer (W5)	opus	289431	77	1391	reported by harness as subagent_tokens
+2026-11-01	tools-research	oracles researcher	fable	208543	127	1101	reported by harness as subagent_tokens
