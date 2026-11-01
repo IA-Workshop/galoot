@@ -606,6 +606,98 @@ add_test(NAME tools.evaluated_once_rejects_few
 set_tests_properties(tools.evaluated_once_passes
   tools.evaluated_once_rejects_twice tools.evaluated_once_rejects_few
   PROPERTIES LABELS "tools;tools.evaluated_once")
+
+# core.plan_cost_model: the costs that plan.hpp states for its plans and maps
+# are what the compiler counts. Each core/plan_cost_*.cpp reads one plan or
+# map, and its threshold below is the smallest limit on constant evaluation
+# under which it compiles: Clang's -fconstexpr-steps, or GCC's
+# -fconstexpr-ops-limit with GCC's cache of constant calls turned off, so
+# that the count does not depend on what else the unit evaluates. The test
+# compiles each unit at its threshold and one below
+# (tools/plan_cost_model.py). The thresholds were worked out from a count of
+# the paths each generator takes and confirmed by these compiles, for Clang
+# 23.1 and GCC 16.2 with libstdc++ 16. A different compiler or standard
+# library, or a change to the generators, can change every such count, and
+# then this test fails until the thresholds and the costs stated in
+# plan.hpp are worked out again. The compiles run outside the compile-cost
+# launcher, because each unit is compiled twice. GCC's sanitizers add checks
+# that its constant evaluation counts too, 2% to 4% more for these units, so
+# on GCC the test runs only in builds without them.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(plan_cost_compiler clang)
+  set(plan_cost_cases
+    plan_cost_gp_full5.cpp=655239
+    plan_cost_gp_dense4.cpp=681823
+    plan_cost_gp_grades_3_7.cpp=601471
+    plan_cost_antigp_sparse16.cpp=77513
+    plan_cost_reverse_full7.cpp=313635
+    plan_cost_right_complement_full8.cpp=813090)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+    NOT CMAKE_CXX_FLAGS MATCHES "-fsanitize")
+  set(plan_cost_compiler gcc)
+  set(plan_cost_cases
+    plan_cost_gp_full5.cpp=3611426
+    plan_cost_gp_dense4.cpp=3645825
+    plan_cost_gp_grades_3_7.cpp=4235775
+    plan_cost_antigp_sparse16.cpp=443211
+    plan_cost_reverse_full7.cpp=1577666
+    plan_cost_right_complement_full8.cpp=5717129)
+endif()
+if(DEFINED plan_cost_compiler)
+  galoot_compile_command(compile)
+  list(TRANSFORM plan_cost_cases PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/core/)
+  add_test(NAME core.plan_cost_model
+    COMMAND ${Python3_EXECUTABLE} -I
+      ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model.py
+      ${plan_cost_compiler} ${plan_cost_cases} -- ${compile}
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(core.plan_cost_model PROPERTIES
+    LABELS "core;core.plan")
+endif()
+
+# tools.plan_cost_model_*: the check passes when a unit's count is the one
+# recorded, and fails, naming the count it finds, when the count is higher or
+# lower; it fails when the compile one below the threshold fails for another
+# reason than the limit, when it compiles one below, as GCC can when its
+# count runs out inside the argument of a built-in function, and when it
+# compiles under no limit at all. The stand-in compiler's threshold is set by
+# its first argument.
+set(plan_cost_model ${Python3_EXECUTABLE} -I
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model.py)
+set(fake_compiler ${Python3_EXECUTABLE} -I
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model/fake_compiler.py)
+add_test(NAME tools.plan_cost_model_passes
+  COMMAND ${expect_output} 0 "unit.cpp: compiles at 1000 and fails at 999"
+    -- ${plan_cost_model} clang unit.cpp=1000 -- ${fake_compiler} 1000)
+add_test(NAME tools.plan_cost_model_count_higher
+  COMMAND ${expect_output} 1 "does not compile at its threshold"
+    "its measured threshold is 1005"
+    -- ${plan_cost_model} gcc unit.cpp=1000 -- ${fake_compiler} 1005)
+add_test(NAME tools.plan_cost_model_count_lower
+  COMMAND ${expect_output} 1 "compiles one below its threshold"
+    "its measured threshold is 995"
+    -- ${plan_cost_model} clang unit.cpp=1000 -- ${fake_compiler} 995)
+add_test(NAME tools.plan_cost_model_other_error
+  COMMAND ${expect_output} 1 "for another reason than the limit"
+    -- ${plan_cost_model} gcc unit.cpp=1000
+      -- ${fake_compiler} 1000 other-below)
+add_test(NAME tools.plan_cost_model_passes_below
+  COMMAND ${expect_output} 1 "compiles one below its threshold"
+    -- ${plan_cost_model} gcc unit.cpp=1000 -- ${fake_compiler} 1000 evades=999)
+add_test(NAME tools.plan_cost_model_evasion_above
+  COMMAND ${expect_output} 1 "its measured threshold is 2000"
+    -- ${plan_cost_model} gcc unit.cpp=1000
+      -- ${fake_compiler} 2000 evades=1500)
+add_test(NAME tools.plan_cost_model_never_compiles
+  COMMAND ${expect_output} 1 "does not compile under any limit"
+    -- ${plan_cost_model} gcc unit.cpp=1000
+      -- ${fake_compiler} 2000000000000)
+set_tests_properties(tools.plan_cost_model_passes
+  tools.plan_cost_model_count_higher tools.plan_cost_model_count_lower
+  tools.plan_cost_model_other_error tools.plan_cost_model_passes_below
+  tools.plan_cost_model_evasion_above tools.plan_cost_model_never_compiles
+  PROPERTIES LABELS "tools;tools.plan_cost_model")
+
 # The tag is checked by the concept on product_plan itself, whose failure the
 # compiler reports in its own words; both name the concept. The function that
 # generates the plan carries the concept too, so the test forbids its name:
