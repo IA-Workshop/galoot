@@ -1,10 +1,10 @@
 # 0016 WU8: the multivector type, its scalars, named access, and applying plans
 
-- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, cpp-expert role, with the hci-expert and math-expert role files for the interface and the mathematics). Revised 2026-11-01 for the owner's rulings ("proceed as recommended") on this plan's questions and on research note 0019's (section 2). Not started.
+- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, cpp-expert role, with the hci-expert and math-expert role files for the interface and the mathematics). Revised 2026-11-01 for the owner's rulings ("proceed as recommended") on this plan's questions and on research note 0019's (section 2), and again on 2026-11-01 for the owner's later ruling that `blade_set` keeps its `std::array` (section 2). Not started.
 - Unit: WU8 of plan 0001 (`mv.hpp`), in two parts run one after the other: WU8a on branch `feature/core-mv-a` (worktree `.claude/worktrees/core-mv-a`), then WU8b on branch `feature/core-mv-b` (worktree `.claude/worktrees/core-mv-b`), branched from `develop` after WU8a merges. Each part has its own W5 review and merge. WU8b is claimed by a dated line in this plan when WU8a has merged, as plan 0013 did for WU7b (decision 0158).
 - Decision numbers 0150 to 0159, all assigned (section 5, "Both parts"). The owner's rulings are recorded in 0150, 0151, 0152, 0153, 0155, 0157, 0158, and 0159 (commit `daf69d8`); 0154 and 0156 are the implementers'.
-- Depends on: WU7 (plan 0013, merged: `product_plan` for the four binary operations and `unary_map` for the five unary maps, typed onto canonical result sets), Spike F (research note 0012), Spike C (note 0010) with decision 0033, and research note 0019 (API design, its spike under `docs/agent/records/spikes/api-design/`). Sequenced after plan 0015 for one commit (section 1, item R4).
-- Goal: the type a user holds. `mv<Alg, Blades, T>` stores one coefficient of a scalar type T on each oriented blade of a blade set; it is constructed from exactly one value per component and is zero by default; the scalar concepts say which T are accepted; the type rejects a blade set that is wrong for its algebra; `get<"e41">(x)` reads and writes a coefficient by its oriented name; `==` compares exactly; a plan or map is applied to stored coefficients with straight-line code whose coefficients are exact in the scalar; a conversion between blade sets is explicit, and the lossy one is `truncate<Type>(x)` or `truncate<Blades>(x)`, checked in checking mode for exact scalars. DoD-7 holds across five scalars. Blade sets print shorter in diagnostics and are spelled with the algebra, `blades<rga3, "...">`.
+- Depends on: WU7 (plan 0013, merged: `product_plan` for the four binary operations and `unary_map` for the five unary maps, typed onto canonical result sets), Spike F (research note 0012), Spike C (note 0010) with decision 0033, and research note 0019 (API design, its spike under `docs/agent/records/spikes/api-design/`). Not sequenced after plan 0015 (section 1, reading 22).
+- Goal: the type a user holds. `mv<Alg, Blades, T>` stores one coefficient of a scalar type T on each oriented blade of a blade set; it is constructed from exactly one value per component and is zero by default; the scalar concepts say which T are accepted; the type rejects a blade set that is wrong for its algebra; `get<"e41">(x)` reads and writes a coefficient by its oriented name; `==` compares exactly; a plan or map is applied to stored coefficients with straight-line code whose coefficients are exact in the scalar; a conversion between blade sets is explicit, and the lossy one is `truncate<Type>(x)` or `truncate<Blades>(x)`, checked in checking mode for exact scalars. DoD-7 holds across five scalars. Blade sets are spelled with the algebra, `blades<rga3, "...">`, and the diagnostics of the three likeliest mistakes are recorded before and after, for the owner to judge whether more is needed (section 5, "Other routes to readable diagnostics").
 
 ## 1. Departures, ambiguities, and owner questions (C20)
 
@@ -16,7 +16,7 @@ R2. **A second text the ruling does not cover (owner question O2).** PERFORMANCE
 
 R3. **A precision in the S8 amendment.** The ruling's words, "trivially copyable structural values", cannot hold for every scalar DoD-7 requires: `std::complex<double>` is trivially copyable but not structural (its members are private). The applied text says "whenever their scalar type is trivially copyable and structural" (decision 0150 item 5). Nothing else in the ruling's text was changed.
 
-R4. **The C array inside `blade_set` (ruling H2) has three costs, none a reason to refuse it.** An array of size zero is not C++, so `blade_set<0>` becomes a specialization holding `std::array<oriented_blade, 0>`. Tests that use the `std::array` interface of the member (`.at(i)`, about 30 places; `blades == expected`, 6 places) are migrated. And constant evaluation reads a C array without libstdc++'s checked subscript, so the step counts of plans may move, which plan 0015's canary (`core.plan_cost_model`, exact thresholds) is built to detect. So the C-array commit lands only after plan 0015 has merged into `develop`, and if the canary fails on it, the moved thresholds are reported with their cause and refitted by plan 0015's documented procedure in a separate, listed commit (W9), not silently.
+R4. **The C array inside `blade_set` is dropped (owner ruling, 2026-11-01).** The first revision put `blade_set`'s blades in a C array to shorten GCC's printing (ruling H2, first half). The owner then ruled that `blade_set<K>` keeps `std::array<oriented_blade, K>`: consistency is preferred over the printing gain, and diagnostics are to be improved by other routes (section 5, "Other routes to readable diagnostics"). So nothing of the C array remains: no `blade_set<0>` specialization, no migration of `.at(i)` and `blades ==`, no commit sequenced after plan 0015, and no canary run for it. Decision 0157 carries the ruling in an appended section. The fact itself stands, as research note 0019 measured it: a C array would shorten GCC's line for a two-blade set from 194 to 136 bytes (it answers note 0010's open question 4).
 
 R5. **`blades<Alg, "...">` replaces `blades<N, "...">` (ruling H2) rather than standing beside it.** A variable template cannot be overloaded on whether its first argument is a type or a number, so keeping both would need a second name, which C12 and "one name, one meaning" argue against. About 50 uses in the tests and compile-fail sources move to algebra tags with no expected value changed, plus whatever new files have landed by then (plan 0015's canary units use `full<4>` and no `blades<N>`, as read at its branch head `26cc06e`). `full<N>` and `of_grade<N, K>` keep the count: they take no names and need no algebra. `blade_set.hpp` then includes `metric.hpp` (decision 0157 supersedes decision 0090 item 4).
 
@@ -28,7 +28,7 @@ R7. **Consequences of the rulings for the design, made here.**
    - Implicit conversions, lossy or not, are rejected with the compiler's own message, because S8 keeps every single-argument constructor `explicit`. A non-explicit catch-all would give a Galoot message there, but would break S8.
    - Under ruling H4, `mv` constrains its scalar by `std::semiregular` and asserts `ring_scalar` in its body, so a bad scalar gives one error with a literal message, not GCC's four.
 
-R8. **Not ruled on, left as a proposal.** Research note 0019's reviewer checklist (its section 7) is not adopted. The hci-expert reading (section 12) may use it as a guide; the W5 reviews are not judged against it.
+R8. **The reviewer checklist, adopted after the first revision.** The first revision recorded note 0019's checklist (its section 7) as not ruled on. The owner has since adopted it (decision 0160, commit `91344d6`): it is in the `blind-reviewer` role file, and W5 says that a review of a change to a public interface applies it, each unchecked item a finding. So both W5 reviews of this unit apply it (section 12). Decision 0158 item 3, which says it was not ruled, is superseded on that point by 0160 and is not rewritten here.
 
 R9. **Planning evidence, uncommitted.** Probe 2 of this revision (section 11, item 5) appended 14 rows to the main checkout's `runs.tsv`. They are not part of the revision's commits, because that file also holds other workstreams' uncommitted rows. Probe 1's 44 rows were committed by the coordinator in `4a7898f`. Both probes' figures are planning values, not reproducible as committed (V10).
 
@@ -70,10 +70,11 @@ R9. **Planning evidence, uncommitted.** Probe 2 of this revision (section 11, it
    - a number is printed through a numeric condition (decision 0152);
    - each cause has its own message;
    - no message has a final period or quote characters.
-22. Overlap with work in flight (W7). Plan 0015 (`feature/plan-limits-certified`, closed on its branch at `26cc06e`, not yet merged) changes `plan.hpp`'s `///` comments, adds blocks to `test/CMakeLists.txt` and canary units under `test/core/`, moves scripts into `docs/agent/snippets/`, and appends to `runs.tsv`.
-   - WU8 does not edit `plan.hpp` or `docs/agent/snippets/`.
-   - WU8a edits `blade_set.hpp`, which plan 0015 does not touch, but the edit may move the canary's thresholds (R4).
-   - Both units add blocks to `test/CMakeLists.txt` and rows to `runs.tsv`; those are adjacent edits, resolved by merging `develop` in before review.
+22. Overlap with work in flight (W7), re-checked 2026-11-01 against plan 0015's branch head `d89806d` (reviewed, not yet merged). Plan 0015 changes `plan.hpp`'s `///` comments, adds blocks to `test/CMakeLists.txt` and six canary units `test/core/plan_cost_*.cpp`, adds `test/tools/plan_cost_model.py`, moves scripts into `docs/agent/snippets/`, and appends to `runs.tsv`.
+   - WU8 does not edit `plan.hpp`, `docs/agent/snippets/`, or the canary units.
+   - WU8a's one change outside its own files is `blades<Alg, ...>` in `blade_set.hpp`, which plan 0015 does not touch. It changes no constant evaluation of a plan, so it cannot move the canary's thresholds, and no canary unit uses `blades<N, ...>` (all use `full<n>` or sets by mask, read at `d89806d`). So WU8a no longer waits for plan 0015's merge.
+   - Still shared: blocks in `test/CMakeLists.txt` and rows in `runs.tsv`. These are adjacent textual edits. Whichever unit merges second merges `develop` in first, keeps both sides' blocks and rows, and runs the P9 checks on the result (W7). That is the only sequencing left.
+   - If plan 0015 merges first, WU8a's merge of `develop` brings the canary in, and the canary then runs in WU8a's P9 checks like any other test; a failure there would be a defect to trace, not an expected effect.
    - WU8 adds `mv.hpp` to `CMakeLists.txt`'s header set and to `include/galoot/core.hpp`, which plan 0015 does not touch.
 
 ## 2. Owner rulings (2026-11-01)
@@ -88,9 +89,10 @@ The owner ruled "proceed as recommended" on this plan's eleven questions and on 
 | H4: numeric catch-alls; a class template may check in its body under a weaker constraint | 0152 | STYLE S7 amended | `mv`'s scalar check; the count constructor; test E8 |
 | Question 9: opposite orientation rejected with its own message | 0153 | none | Message wordings in sections 4 and 8 |
 | Questions 3, 7 and H5: explicit lossless conversion; `truncate` checks exact scalars only; `truncate<Type>` beside `truncate<Blades>` | 0155 | CONVENTIONS 4.5 (version 1.6) | Conversion as a constructor; criteria 15, 16; tests F9, F10; R1 |
-| H2: blade sets in a C array; `blades<Alg, "...">` | 0157 | none | New WU8a commits and criteria 11a, 11b, tests E16, E17; R4, R5 |
+| H2: blade sets in a C array; `blades<Alg, "...">` | 0157 | none | `blades<Alg>`: a WU8a commit, criterion 11a, test E16; R5 |
+| Later ruling: `blade_set` keeps `std::array`; diagnostics improved by other routes | 0157, appended section | none | The C-array parts removed (R4); section 5's design task "Other routes to readable diagnostics"; criterion 11b and test E17 now the diagnostics record |
 | H3: `geometric_product`, `geometric_antiproduct` | 0159 | CONVENTIONS 7.1 (version 1.6); two trace facts | R6; deferred list |
-| Note 0019's reviewer checklist | not ruled | none | R8 |
+| Note 0019's reviewer checklist (ruled after the first revision) | 0160 | WORKFLOW W5 and the `blind-reviewer` role file | R8; section 12 |
 
 ## 3. Background for the reader
 
@@ -183,7 +185,7 @@ How each choice reads to a first-time user, judged by the hci-expert role file's
 
 | Element | What the user sees | Judgment, and what remains |
 | --- | --- | --- |
-| `mv<Alg, Blades, T>` | Three arguments, algebra first, no default scalar. Clang prints `mv<rga3, line_layout, double>` through the alias; GCC prints the set's value, after ruling H2 as `oriented_blade [6]{...}` without libstdc++'s wrapper | The algebra comes first in mixed-algebra diagnostics (note 0019, case 9). Names as written in the type are not adopted (decision 0157 item 3) |
+| `mv<Alg, Blades, T>` | Three arguments, algebra first, no default scalar. Clang prints `mv<rga3, line_layout, double>` through the alias; GCC prints the set's value through libstdc++'s wrapper (`std::__array_traits<...>::_Type{...}`) | The algebra comes first in mixed-algebra diagnostics (note 0019, case 9). GCC's rendering is the main cost the owner asked to reduce by other routes (section 5); names as written in the type are one of them, not adopted now (decision 0157 item 3) |
 | `blades<rga3, "...">` | The algebra, not a count; a name beyond the algebra's n is rejected by the parser's message | No repeated n. `full<N>` still takes a count, because it names no blades |
 | Construction | `Line{...}` with exactly six values, in layout order; integer literals accepted; a narrowing variable rejected; a wrong count is one error that prints the counts | The silent zero fill of the aggregate is gone (note 0019, section 5.2). `std::is_constructible_v<Line, double, double, double>` is true because of the catch-all (decision 0033's documented consequence) |
 | `Line l;`, `Line{}` | Zero | No indeterminate values |
@@ -199,10 +201,9 @@ New header `include/galoot/core/mv.hpp`, in `galoot::core` with its helpers and 
 
 ### WU8a
 
-Blade sets (ruling H2, decision 0157), first, each in its own commit with the migration of its uses listed and no expected value changed:
+Blade sets (ruling H2, first half as amended, decision 0157), first, in its own commit with the migration of its uses listed and no expected value changed:
 
-- `blades<Alg, Names>` in place of `blades<N, Names>`, with `Alg` constrained by `metric_like`; `blade_set.hpp` includes `metric.hpp`. The parser's messages are unchanged. One new rejection: a first argument that is not `metric_like`.
-- `blade_set<K>` holds `oriented_blade blades[K]`, with the clang-tidy suppression and its reason beside it. `blade_set<0>` is a specialization holding `std::array<oriented_blade, 0>`. The `///` comment states what the member supports: range-for, subscripts, conversion to `std::span`, and `==` of whole sets. This commit lands after plan 0015 has merged (R4); `blades<Alg>` does not wait.
+- `blades<Alg, Names>` in place of `blades<N, Names>`, with `Alg` constrained by `metric_like`; `blade_set.hpp` includes `metric.hpp`. The parser's messages are unchanged. One new rejection: a first argument that is not `metric_like`. `blade_set<K>` keeps `std::array<oriented_blade, K>` (R4).
 
 The type (decisions 0150, 0151, 0152):
 
@@ -223,6 +224,29 @@ The type (decisions 0150, 0151, 0152):
   - wide algebra: "get: names have one digit per index, so they are read only for n up to 9".
 - `test/support/rational.hpp` (decision 0151): `test_support::rational`, int64 numerator and positive denominator in lowest terms, the ring and field operations and `==`, all `constexpr`, every intermediate guarded against overflow (a non-`constexpr` call fails a constant evaluation; a message and `std::abort` at run time); `std::numeric_limits` specialized with `is_specialized` and `is_exact` true. Its tests are `test/support/rational_test.cpp`, CTest `support.rational`.
 - `test/core/bare_user.cpp` gains a Line declared with `blades<Alg, ...>`, constructed, read by `get`, and compared (DoD-6).
+
+
+Other routes to readable diagnostics (a WU8a design task; the owner's ruling of 2026-11-01 asks for diagnostics to be improved without changing storage types). Each route below is available now or later without touching `blade_set`'s or `mv`'s storage; those marked "in WU8a" are part of this unit, the others are recorded here so that the owner can choose among them after seeing the record that follows. Sources are research note 0019, sections 4 to 6, and note 0010.
+
+1. Names as written in the type, `mv<rga3, "e41 e42 e43 e23 e31 e12", double>` (ruling H2, second half; not adopted now, decision 0157 item 3). It is the largest gain measured: GCC's longest line for a bad name fell from 534 to 265 characters, for a lossy conversion from 892 to 363. Its costs are type identity by text unless the text is normalized, results computed by the library that have no written names, and a second family of types. Not in WU8a; a later unit by the owner's decision.
+2. Catch-alls with literal messages, one per cause, with a numeric condition where the help is a number (decisions 0033 and 0152). In WU8a: the count constructor ("3 == 6") and the six `get` messages.
+3. One error per mistake. A more specific check suppresses the catch-all: `has_blade` is false, without its own error, for an invalid name, so the parser's message is the only one. In WU8a.
+4. The scalar checked in the class body under a weaker constraint (decision 0152), which removes GCC's four-error cascade, and the requirements of `ring_scalar` ordered so that a short one fails first. In WU8a.
+5. One `get` overload on a forwarding reference, which shortens GCC's raw failure (25 lines against 34). In WU8a.
+6. User-facing type aliases and named layouts in every example. Clang keeps an alias in its "aka" text (`'Point' (aka 'mv<rga3, ...>')`) and printed the variable name of a named layout in the first planning probe (`mv<rga3, M, double>`), so a user who writes `using Line = ...;` and `inline constexpr auto line_layout = ...;` reads those names in Clang's messages. The examples of this plan, of the tests that serve as examples, and later of the documentation always declare both. In WU8a, for the tests; the documentation follows in WU16 (W12).
+7. The message style of reading 21: the operation as written first, the mistake in the algebra's terms, the fix after a semicolon, no masks or positions. In WU8a.
+8. Catch-alls for mixed algebras on the products (note 0019, section 6.8), where mixing algebras becomes the most likely mistake. WU9.
+9. `format` printing blades by their oriented names and the algebra by its tag name, so that output and messages share words (note 0019, section 6.10). WU15.
+10. Computed messages (C++26, form G of note 0010), which could print blade names in the message itself, once the language baseline moves (a decision under STYLE S2). Not available in C++23 under the project's flags.
+11. Not recommended: a catch-all that names an undefined template (form T), which puts the user's terms on the first line but reads as a defect of the library (note 0019, section 5.2).
+
+The record, by the WU8a implementer: for each of the three likeliest mistakes of note 0019 section 6.1, the longest diagnostic line and the line count, on GCC and on Clang, before and after WU8a, in a table under `docs/agent/records/diagnostics/wu8/` with the compile commands and the full texts:
+
+- giving the wrong number of coefficients (`Point p{1, 2, 3};`);
+- naming a component with the other orientation (`get<"e14">(line)`) or one the type does not hold (`get<"e1">(line)`);
+- assigning to a type that drops some of the source's components (`const Point s = motor;`).
+
+"Before" is note 0019's committed spike texts for the mask spelling (`docs/agent/records/spikes/api-design/out/`, spelling M, forms R and P), because no `mv` exists before WU8a; "after" is WU8a's own `mv.hpp`. For the third mistake, WU8a records what its type gives without a converting constructor (the compiler's own message), and WU8b adds a row once its conversion constructors exist. The record states, for each mistake, which of the routes above the outcome used, and it is quoted in WU8a's outcome so that the owner can see whether more is needed.
 
 ### WU8b
 
@@ -310,9 +334,9 @@ WU8a:
     - the cost of the counted constructor per type (instantiations of the storage base and of the inherited constructor);
     - W10 before and after;
     - the per-use cost of a type, a construction, and a `get` (note 0012's method).
-11. The blade-set changes:
+11. `blades<Alg, ...>` and the diagnostics record:
     - 11a. `blades<Alg, ...>`: every migrated test and compile-fail source passes with its expected values and messages unchanged; a first argument that is not `metric_like` is rejected (compile-fail, both compilers).
-    - 11b. The C array: every test of `blade_set`, `plan`, and `blade_product` passes with expected values unchanged, including empty sets (`blade_set<0>`, the empty results of `typed_plan<0, 0>`). The longest GCC line of the rejection E9's `get_opposite` is recorded before and after; note 0019 measured 534 against 265 characters with names, and the C array alone is expected to give part of that, not all. `core.plan_cost_model` is run on both compilers and its result reported (R4).
+    - 11b. The diagnostics record of section 5 ("Other routes to readable diagnostics") exists for the three likeliest mistakes on both compilers, before and after, with the commands and full texts, and is quoted in the outcome; each of the routes marked "in WU8a" is in the header, or its absence is reported with the reason.
 12. The seven presets from fresh trees at the final revision; `all_verify_interface_header_sets` on gcc-debug and clang-debug; `core.bare_compile` with the extended `bare_user.cpp`.
 
 WU8b:
@@ -394,7 +418,7 @@ Rigid(3) layouts, with `rga3` the test's tag:
 | E14 | Compile time equals run time | contract | E3, E6, and E11 also through `volatile` at run time |
 | E15 | Construction rejections | contract (decisions 0150, 0152) | Compile-fail tests:<br>- `core.mv_too_few` (three values for L; requires the count literal and "3 == 6")<br>- `core.mv_too_many` (seven; "7 == 6")<br>- `core.mv_narrowing_int` (an `int` variable for `double`; requires "narrow")<br>- `core.mv_narrowing_float` (a `double` variable for `float`; requires "narrow")<br>- `core.mv_scalar_implicit` (`mv<rga3, blades<rga3, "1">, double> s = 2.0;`; requires the compiler's conversion error, labeled as compiler behavior)<br><br>Each wrong count gives one error |
 | E16 | `blades<Alg, ...>` | contract, and the migrated tests' own references | Criterion 11a. `blades<rga3, "e41 e23 e31">` equals the set {(0b1001, −1), (0b0110, +1), (0b0101, −1)}. Compile-fail `core.blade_set_blades_not_metric_like` |
-| E17 | Blade sets in a C array | contract, and the migrated tests' own references | Criterion 11b. `blade_set<0>` and `blade_set<K>` both: range-for, subscript, `std::span` conversion, `==`, a template argument, trivially copyable |
+| E17 | Diagnostics record | measurement, not a test (V1 does not apply; it judges readability) | Criterion 11b. The three likeliest mistakes on both compilers, before (note 0019's texts) and after; the compile-fail tests E9 and E15 and `core.mv_conversion_implicit_lossy` (WU8b) carry the messages themselves |
 
 ### WU8b
 
@@ -432,7 +456,6 @@ WU8a:
 - the storage's default member initializer removed;
 - the rational without normalization, with a negative denominator kept, or with the overflow guard removed;
 - `ring_scalar` without its unary-minus requirement;
-- the `blade_set<0>` specialization holding one element;
 - `blades<Alg>` reading n from the wrong place (a fixed 4).
 
 WU8b:
@@ -460,7 +483,7 @@ Order of commits for WU8a, on `feature/core-mv-a`:
 3. `test/support/rational.hpp` and its tests (E11 to E13), with the CMake registration of `support.rational`.
 4. `mv.hpp`: the concepts, the storage, the type, the count constructor, the set and scalar checks; `core.hpp` and the header set. Tests E1 to E5, E8, E14, E15.
 5. Named access and its catch-alls; tests E6, E7, E9, E10; `bare_user.cpp`.
-6. After plan 0015 has merged and `develop` is merged in: the C array in `blade_set` and the migration of its uses, listed (E17); `core.plan_cost_model` on both compilers. If it fails, the cause is recorded, and any refit is a separate listed commit (R4).
+6. The diagnostics record (E17, criterion 11b).
 7. Mutation records; limits and per-use costs; W10 after; appended sections of decisions 0150 and 0153; decision 0156.
 8. Outcome with the V10 line; W5 review; fixes in their own commits; a delta review of any core fix (decision 0094 item 3); merge after `develop` is merged in and P9 passes.
 
@@ -473,7 +496,7 @@ WU8b, on `feature/core-mv-b`, after WU8a merges:
 5. Decision 0154, the appended section of 0155, and 0156's appended section.
 6. Outcome, review, merge. The rounding-scalar case of `truncate` waits for O1.
 
-The hci-expert reads the interface before each W5 review: the WU8a header with its rejection outputs on both compilers, and the conversion and `truncate` messages of WU8b. The reading is recorded under `docs/agent/records/reviews/` as advice. It may use note 0019's checklist as a guide (R8).
+The hci-expert reads the interface before each W5 review: the WU8a header with its rejection outputs on both compilers, and the conversion and `truncate` messages of WU8b. The reading is recorded under `docs/agent/records/reviews/` as advice. It uses the checklist the W5 reviews apply (decision 0160), so that the implementer can act on its findings before the review.
 
 Compile-time cost to every includer (decision 0113: `core.hpp` alone is about 0.91 G instructions on GCC and 0.92 G on Clang). The budget approach, with no bound (C14):
 
@@ -482,7 +505,7 @@ Compile-time cost to every includer (decision 0113: `core.hpp` alone is about 0.
 - keep `mv.hpp` from instantiating anything at namespace scope and from adding standard headers;
 - measure separately what falls on programs that use the type (criteria 10 and 23): the instantiations of the storage base and inherited constructor per type, the catch-alls, `get`, and `apply`.
 
-The C array and `blades<Alg>` change what every includer parses (`blade_set.hpp` now includes `metric.hpp`, already in `core.hpp`), and their W10 rows say so.
+`blades<Alg>` changes what every includer of `blade_set.hpp` alone parses (it now includes `metric.hpp`, which `core.hpp` already includes), and the W10 rows say so.
 
 ## 10. Evidence
 
@@ -490,10 +513,11 @@ The C array and `blades<Alg>` change what every includer parses (`blade_set.hpp`
 - Compile-fail output on both compilers for every rejection, with the line on which each message appears.
 - The trace gate output in each merge message, with the 4.5 row pinned (WU8b).
 - Mutation records for both parts.
-- Limits, per-use costs, P2, W10, and the canary result of R4, each as `tools/timed` runs in `runs.tsv` with their commands, and summaries under `docs/agent/records/performance/mv/`.
+- The diagnostics record (E17).
+- Limits, per-use costs, P2, and W10, each as `tools/timed` runs in `runs.tsv` with their commands, and summaries under `docs/agent/records/performance/mv/`.
 - The assembly read, with the commands and the hand-written comparison.
 - V10 line, to fill in the outcome:
-  - Verification: E1 to E17 and F1 to F13 (kinds 1 to 3 over the stated ranges).
+  - Verification: E1 to E16 and F1 to F13 (kinds 1 to 3 over the stated ranges). E17 is a record of readability, not verification.
   - Validation, rigid(3): the line through two points, with direction q − p and moment p × q (F3), and the oriented names against CONVENTIONS 1.6 (Checked, Confirmed).
   - Validation, conformal(3): the hand value F4.
   - Validation, scalars: the exactness of each scalar's conversions rests on IEEE 754's binary formats (background).
@@ -535,7 +559,8 @@ The WU8a reviewer also:
 - checks E6's masks and signs against CONVENTIONS 1.6 by hand;
 - reruns the repeat-scan, `get`-orientation, and count-catch-all mutants;
 - checks the rational's overflow guard at its bounds;
-- checks that the C-array and `blades<Alg>` migrations changed no expected value, line by line against the listed commits.
+- checks that the `blades<Alg>` migration changed no expected value, line by line against the listed commit;
+- checks the diagnostics record against the compile-fail outputs it quotes.
 
 The WU8b reviewer also:
 
@@ -544,7 +569,7 @@ The WU8b reviewer also:
 - reruns the first-term and exactness-bound mutants;
 - runs `truncate`'s checking-mode tests in a checking and a non-checking preset.
 
-A fix to core code after a review gets a delta review (decision 0094 item 3). The hci-expert reading (section 9) precedes each review and is advice, not the review. Note 0019's checklist is not a review criterion (R8).
+Both reviews apply the usability checklist for public interfaces (decision 0160, WORKFLOW W5), each unchecked item a finding. A fix to core code after a review gets a delta review (decision 0094 item 3). The hci-expert reading (section 9) precedes each review and is advice, not the review.
 
 ## 13. Agent cost estimate (for information only, decision 0019)
 
@@ -552,13 +577,13 @@ From `records/agent-cost.tsv`: the WU7a implementer with review fixes used 631k 
 
 | Role | Tokens | Tool calls |
 | --- | --- | --- |
-| WU8a implementer, with review fixes (blade-set migrations included) | 520k to 700k | 200 to 270 |
+| WU8a implementer, with review fixes (the `blades<Alg>` migration and the diagnostics record included) | 480k to 650k | 185 to 250 |
 | hci-expert reading of WU8a | 120k to 180k | 40 to 60 |
 | WU8a blind reviewer, plus a delta review | 330k + 150k | 100 + 50 |
 | WU8b implementer, with review fixes (assembly read and P2 included) | 500k to 650k | 190 to 250 |
 | hci-expert reading of WU8b | 80k to 120k | 30 to 40 |
 | WU8b blind reviewer, plus a delta review | 330k + 150k | 110 + 50 |
-| Total | about 2.2M to 2.8M | about 770 to 980 |
+| Total | about 2.15M to 2.75M | about 755 to 960 |
 
 No bound applies. The outcome of each part compares these with the actuals. This revision used about 45 tool calls; its token count is not visible to me.
 
@@ -567,7 +592,7 @@ No bound applies. The outcome of each part compares these with the actuals. This
 1. Common-mode error between the tests and the header, both written from CONVENTIONS by agents. Each family has a route that shares no code: golden tables, hand values, the test's own inversion count, the loop form of the kernel, and cross-multiplication for the rational.
 2. The test rational is a test oracle. It has its own identities, hand values, and mutants, and DoD-7 also compares it with `std::int64_t`.
 3. Diagnostics are compiler text. The compile-fail tests require Galoot's literals. The few that record compiler wording (narrowing, implicit conversion) are labeled and are expected to change with a compiler.
-4. The C array may move plan 0015's canary thresholds (R4). It is sequenced after plan 0015 and reported, not refitted silently.
+4. GCC keeps printing blade sets through libstdc++'s wrapper (R4). The diagnostics record shows how much the other routes recover; whether more is needed is the owner's call.
 5. The `blades<Alg>` migration touches other units' test files when they merge. The unit that merges second migrates them, in a listed commit.
 6. The counted constructor costs an instantiation of the storage base and its constructor per type, and a catch-all per call shape (criterion 10 measures it). Programs that declare many types pay more than with the aggregate.
 7. The repeated-mask check is O(K²) and may lower the largest `full<n>` an `mv` accepts on Clang; present results reach 64 blades.
@@ -593,7 +618,7 @@ No bound applies. The outcome of each part compares these with the actuals. This
 - To M3: tests with nonzero tolerances (reading 14).
 - To M5: WU5's core rational.
 - Not built, noted only (C12):
-  - names as written in the type (decision 0157 item 3);
+  - names as written in the type (decision 0157 item 3; route 1 of section 5's list);
   - conversion between scalar types;
   - structured bindings;
   - names for n ≥ 10;
@@ -606,4 +631,5 @@ No bound applies. The outcome of each part compares these with the actuals. This
 
 - O1. CONVENTIONS 4.5's clause on rounding scalars conflicts with the ruling on question 7 (R1). Ratify the proposed wording? Recommended: yes.
 - O2. PERFORMANCE P5 says "trivially copyable aggregates" (R2). Ratify "trivially copyable"? Recommended: yes.
-- Not a question, recorded: note 0019's reviewer checklist is not ruled on and stays a proposal (R8).
+- Not a question, recorded: note 0019's reviewer checklist was adopted after the first revision (decision 0160, R8).
+- For the owner after WU8a: whether the diagnostics record (criterion 11b) calls for more, such as names as written in the type.
