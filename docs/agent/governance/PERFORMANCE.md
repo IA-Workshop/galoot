@@ -1,6 +1,6 @@
 # Galoot performance
 
-Status: ratified by the owner on 2026-10-31 (decision 0002).
+Status: ratified by the owner on 2026-10-31 (decision 0002). P5 amended on 2026-11-01, ratified by the owner: proceed as recommended (decision 0161).
 
 This document says how Galoot's costs are measured and kept in proportion to their use. It adds detail to C6, C12, and C14 of the [constitution](CONSTITUTION.md) and to V15 of [VVUQ.md](VVUQ.md), and it sets the scope of the test runs that [WORKFLOW.md](WORKFLOW.md) asks for.
 
@@ -34,7 +34,7 @@ The code generated for an operation is what a careful person would write by hand
 
 ### P5 Memory layout
 
-A named type stores only the components that can be nonzero (C6), contiguously, so its size is its number of components times the size of its scalar, which a compile-time check confirms. Values are trivially copyable aggregates (STYLE S8), so arrays of them are dense and are traversed in memory order. Other layouts, for vector units or for arrays of components, are extensions chosen by measurement.
+A named type stores only the components that can be nonzero (C6), contiguously, so its size is its number of components times the size of its scalar, which a compile-time check confirms. Values are trivially copyable (STYLE S8), so arrays of them are dense and are traversed in memory order. Other layouts, for vector units or for arrays of components, are extensions chosen by measurement.
 
 ### P6 Benchmarks
 
