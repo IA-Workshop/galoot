@@ -564,6 +564,10 @@ inline constexpr auto of_grade = detail::make_of_grade<N, K>();
 /// Requires: every sign is +1 or -1, no mask appears twice in one set, and no
 /// mask is in both sets with opposite signs, because the merged set could
 /// keep only one of the two orientations. Each is checked at compile time.
+/// Each blade is inserted into a list kept in canonical order, so the cost
+/// grows with the square of the size: at their default limits on constant
+/// evaluation, Clang 23 merges two sets of 128 blades (full<7>) but not of
+/// 256, and GCC 16 two sets of 512 blades (full<9>) but not of 1,024.
 /// Guarantees: the size is the number of distinct masks in A and B.
 template <blade_set A, blade_set B>
 inline constexpr auto merge = detail::make_merge<A, B>();

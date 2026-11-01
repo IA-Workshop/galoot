@@ -40,3 +40,12 @@ Added after the W5 review (`docs/agent/records/reviews/2026-10-31-wu4-blade-sets
   - Measured by the reviewer at identical flags, both kinds of core added, from 2976dca to f9441f7: `#include <galoot/core.hpp>` alone rises from 0.488 G to 0.721 G instructions on GCC (+48%, 59 to 70 MB) and from 0.378 G to 0.548 G on Clang (+45%).
   - Most of the rise is `<string_view>`: the base plus `<string_view>` alone costs 0.665 G on GCC and 0.518 G on Clang. The blade set code itself costs about 0.03 G.
   - If that matters, `canonical_name` and the parser could work on character arrays and pointers instead of `std::string_view`. That is a follow-up for the owner to weigh, not done here.
+
+## Note, 2026-10-31 (plan 0009)
+
+`merge` has a much lower size limit than `full` and `of_grade`, because it inserts each blade into a list kept in canonical order, O(K²) for K blades (finding A6 of `docs/agent/records/reviews/2026-10-31-unreviewed-fix-passes.md`). Measured by the author on the header of `ddb7d2b`, with `-std=c++23 -fsyntax-only` at default limits, each compile logged in `runs.tsv` as `merge-bound:<compiler>:full<k>`:
+
+- Clang 23.1.4 merges `full<7>` with itself (128 blades each) and fails on its step limit for `full<8>`.
+- GCC 16.2.1 merges `full<9>` (512 each) and fails `full<10>` (1,024 each) on `-fconstexpr-ops-limit`.
+
+These agree with the reviewer's figures. The `///` comment of `merge` states them. A merge of large sets would need a sort of each input and a linear merge instead of the insertion, which no present use needs.

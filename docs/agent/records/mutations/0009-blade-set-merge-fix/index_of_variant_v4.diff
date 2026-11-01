@@ -1,0 +1,47 @@
+--- v1/include/galoot/core/blade_set.hpp	2026-10-31 23:15:52.795457514 -0400
++++ v4/include/galoot/core/blade_set.hpp	2026-10-31 23:16:48.928972495 -0400
+@@ -337,15 +337,41 @@
+   return found;
+ }
+ 
++template <std::size_t K>
++constexpr bool repeats_after(const blade_set<K>& set, std::size_t at) {
++  for (std::size_t j = at + 1; j < K; ++j) {
++    if (set.blades[j].mask == set.blades[at].mask) {
++      return true;
++    }
++  }
++  return false;
++}
++
++template <std::size_t K>
++constexpr bool all_signs(const blade_set<K>& set) {
++  for (const oriented_blade& blade : set.blades) {
++    if (!is_sign(blade.sign)) {
++      return false;
++    }
++  }
++  return true;
++}
++
++// Evaluated once for each set, however many lookups use it.
++template <blade_set S>
++inline constexpr bool signs_of_set_valid = all_signs(S);
++
+ template <blade_set S, mask_t Mask>
+ consteval std::size_t make_index_of() {
+-  constexpr auto found = look_up(S, Mask);
+-  static_assert(!found.bad_sign,
++  static_assert(signs_of_set_valid<S>,
+                 "index_of: the set holds a sign other than +1 or -1");
+-  static_assert(found.count <= 1, "index_of: the set holds this mask twice");
+   constexpr std::size_t at = position_of(S, Mask);
+   static_assert(at < S.size(), "index_of: the set holds no blade with this "
+                                "mask");
++  if constexpr (at < S.size()) {
++    static_assert(!repeats_after(S, at),
++                  "index_of: the set holds this mask twice");
++  }
+   return at;
+ }
+ 
