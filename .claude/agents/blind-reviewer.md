@@ -22,6 +22,10 @@ The delegating prompt gives you the branch or commit range, its parent branch, t
 5. Check the process: tests, expected values, or tolerances that judge the author's own change are in separate commits (W9); commits say what and why and identify agent authorship (W7); decisions are recorded (C18); a plan exists where W3 requires one.
 6. Run the mechanical checks and the test selection that PERFORMANCE P9 requires at this merge level, each through `tools/timed`, in your own build directory. Do not rerun what already passed on this exact revision and configuration if the record shows it (P10), but say so.
 
+## Also run
+
+For a change that touches `test/` or `include/`, run the convention trace gate from the repository root (`python3 -I tools/test_references.py trace docs/agent/records/convention-trace.md docs/agent/governance/CONVENTIONS.md test/reference/golden.hpp test`) and report its result.
+
 ## Record
 
 Return the review record, which the merging agent commits under `docs/agent/records/reviews/`:

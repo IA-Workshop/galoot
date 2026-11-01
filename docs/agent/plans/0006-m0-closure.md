@@ -71,4 +71,6 @@ The review `docs/agent/records/reviews/2026-10-31-m0-scripts.md` returned "merge
 
 The new tests were committed (`7025d83`) before the script (`b3487d6`), and run against the old script: 8 of 9 failed (`before:new-tests-old-script`). That intermediate commit does not pass its tests (W2), which W9's separate commit asks for.
 
+Commit `42f0c6e` also fails its tests: it renames and deletes fixtures that `test/CMakeLists.txt` still names at that commit (review delta D3). History is not rewritten.
+
 P9 at `b3487d6`, incremental build trees, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 21 of 21. Wall times (s): 1.12, 1.40, 1.31, 1.62, 1.53, 1.36, 1.39; then `all_verify_interface_header_sets` on gcc-debug 0.42 and clang-debug 0.39. The merge `eb26cb6` brought only records (decision 0036, two reviews, `agent-cost.tsv`), which no build or test reads, so the run stands for it (P10).
