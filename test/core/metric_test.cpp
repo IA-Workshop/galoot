@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 
+#include <galoot/core/bits.hpp>
 #include <galoot/core/metric.hpp>
 
 #include <doctest/doctest.h>
@@ -74,6 +75,9 @@ consteval int r_mismatches() {
   return r_table_mismatches<Table>(std::make_index_sequence<Table.size()>());
 }
 
+// The number of ways to write n = p + q + r with p, q, r >= 0.
+constexpr std::size_t splits_of(std::size_t n) { return (n + 1) * (n + 2) / 2; }
+
 // A coordinate of a change of basis, as a fraction.
 struct fraction {
   long long numerator;
@@ -112,7 +116,7 @@ constexpr int change_of_basis_mismatches(const auto& in_diagonal,
 }
 
 // The most generators a blade mask can hold.
-constexpr std::size_t mask_width = std::numeric_limits<core::mask_t>::digits;
+constexpr std::size_t mask_width = core::mask_bits;
 
 // Tags for the concept. Each names an algebra and carries its metric.
 struct rga3 {
@@ -209,10 +213,19 @@ static_assert(std::is_aggregate_v<core::metric<5>>);
 
 // Reference: independent value: R(p, q, r) squares p generators to +1, q to
 // -1, and r to 0, for every R(p, q, r) with n from 1 to 6; proof: distinct
-// generators of a diagonal signature are orthogonal
+// generators of a diagonal signature are orthogonal; proof: n generators
+// split into p + q + r = n in (n + 1)(n + 2) / 2 ways
 TEST_CASE("R(p, q, z) squares the first p generators to +1, the next q to -1, "
           "and the last z to 0, with no entry off the diagonal, for every "
           "split with n from 1 to 6") {
+  // The golden lists hold every split, so that a dropped row cannot pass.
+  static_assert(golden::diagonal_signatures::n1.size() == splits_of(1));
+  static_assert(golden::diagonal_signatures::n2.size() == splits_of(2));
+  static_assert(golden::diagonal_signatures::n3.size() == splits_of(3));
+  static_assert(golden::diagonal_signatures::n4.size() == splits_of(4));
+  static_assert(golden::diagonal_signatures::n5.size() == splits_of(5));
+  static_assert(golden::diagonal_signatures::n6.size() == splits_of(6));
+
   CHECK(r_mismatches<golden::diagonal_signatures::n1>() == 0);
   CHECK(r_mismatches<golden::diagonal_signatures::n2>() == 0);
   CHECK(r_mismatches<golden::diagonal_signatures::n3>() == 0);
@@ -247,8 +260,8 @@ TEST_CASE("R(1, 1, 1), R(2, 2, 2), and R(4, 1, 0) equal their matrices "
 }
 
 // Reference: independent value: rigid(d) is R(d, 0, 1), with the squares of
-// its generators for d from 1 to 5; proof: rigid(0) is the single null
-// generator of R(0, 0, 1), and rigid(3) is written out from the definition
+// its generators for d from 1 to 5; independent value: rigid(0), the single
+// null generator of R(0, 0, 1), and rigid(3) written out from the definition
 TEST_CASE("rigid(d) is R(d, 0, 1): e1 to ed Euclidean and the projective "
           "generator e(d+1) null, for d from 0 to 5") {
   CHECK(diagonal_mismatches(core::rigid<0>(),
@@ -270,8 +283,8 @@ TEST_CASE("rigid(d) is R(d, 0, 1): e1 to ed Euclidean and the projective "
 }
 
 // Reference: independent value: conformal(d) has null e(d+1) and e(d+2) with
-// e(d+1) . e(d+2) = -1, as Gram matrices for d from 1 to 4; proof:
-// conformal(0) is written out from the definition
+// e(d+1) . e(d+2) = -1, as Gram matrices for d from 1 to 4; independent
+// value: conformal(0) written out from the definition
 TEST_CASE("conformal(d) has e1 to ed Euclidean and e(d+1), e(d+2) null with "
           "e(d+1) . e(d+2) = -1, for d from 0 to 4") {
   constexpr auto conformal0 = written({{0, -1}, {-1, 0}});
@@ -316,10 +329,10 @@ TEST_CASE("is_diagonal and is_null at run time: rigid(3) is diagonal with e4 "
 // change of basis between them for d from 1 to 4; identity: the change of
 // basis origin = (e(d+2) - e(d+1)) / 2, infinity = e(d+2) + e(d+1) carries
 // the form of R(d+1, 1, 0) to that of conformal(d)
-TEST_CASE("conformal(d) and R(d+1, 1, 0) are different signatures, and the "
-          "change of basis origin = (1/2)(e(d+2) - e(d+1)), infinity = "
-          "e(d+2) + e(d+1) carries the form of R(d+1, 1, 0) to that of "
-          "conformal(d), for d from 0 to 4") {
+TEST_CASE("conformal(3) and R(4, 1, 0) are different signatures, and for d "
+          "from 0 to 4 the change of basis origin = (1/2)(e(d+2) - e(d+1)), "
+          "infinity = e(d+2) + e(d+1) carries the form of R(d+1, 1, 0) to "
+          "that of conformal(d)") {
   CHECK(core::conformal<3>() != core::R<4, 1, 0>());
 
   CHECK(diagonal_mismatches(core::R<2, 1, 0>(),
@@ -356,8 +369,9 @@ TEST_CASE("conformal(d) and R(d+1, 1, 0) are different signatures, and the "
                                    core::conformal<4>()) == 0);
 }
 
-// Reference: proof: an entry off the diagonal makes a form non-diagonal, and
-// a zero diagonal entry is a generator that squares to zero
+// Reference: contract: from_gram returns the metric whose Gram matrix is the
+// matrix it is given; proof: an entry off the diagonal makes a form
+// non-diagonal, and a zero diagonal entry is a generator that squares to zero
 TEST_CASE("from_gram keeps a non-diagonal degenerate form entry by entry, "
           "and its accessors read it: [[0, 1, 0], [1, 0, 0], [0, 0, 0]] is "
           "not diagonal and every generator is null") {
@@ -372,7 +386,9 @@ TEST_CASE("from_gram keeps a non-diagonal degenerate form entry by entry, "
 }
 
 // Reference: proof: max_form_entry is the largest k whose 2 x 2 Gram minor
-// 2 k^2 is at most the largest entry_type
+// 2 k^2 is at most the largest entry_type; proof: a form is symmetric when
+// g_ij = g_ji for every pair, and an entry is in range when its magnitude is
+// at most max_form_entry
 TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
           "in entry_type, and is_symmetric and entries_in_range judge "
           "hand-written metrics against it at either sign") {

@@ -197,6 +197,12 @@ galoot_add_compile_fail_test(NAME metric_count_wrap MODULE core COMPONENT metric
   SOURCE core/metric_count_wrap_fail.cpp
   MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
   REQUIRE "static assertion failed")
+galoot_add_compile_fail_test(NAME metric_count_wrap_zero
+  MODULE core COMPONENT metric
+  SOURCE core/metric_count_wrap_zero_fail.cpp
+  MESSAGE "metric: n is larger than MaxN, the largest number of generators accepted"
+  REQUIRE "static assertion failed"
+  FORBID "at least one generator")
 galoot_add_compile_fail_test(NAME metric_conformal_wrap
   MODULE core COMPONENT metric
   SOURCE core/metric_conformal_wrap_fail.cpp
@@ -210,6 +216,20 @@ galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
   SOURCE core/metric_type_width_fail.cpp
   MESSAGE "metric: n is larger than the number of bits in a blade mask"
   REQUIRE "static assertion failed")
+
+# tools.expect_output_forbid: a forbidden literal in the output fails the
+# check, which WILL_FAIL turns into a pass; its twin passes because the
+# literal is absent.
+add_test(NAME tools.expect_output_forbid
+  COMMAND ${expect_output} 0 FORBID "forbidden text"
+    -- ${CMAKE_COMMAND} -E echo "this line has forbidden text")
+set_tests_properties(tools.expect_output_forbid PROPERTIES WILL_FAIL ON)
+add_test(NAME tools.expect_output_forbid_absent
+  COMMAND ${expect_output} 0 "allowed" FORBID "forbidden text"
+    -- ${CMAKE_COMMAND} -E echo "allowed")
+set_tests_properties(tools.expect_output_forbid
+  tools.expect_output_forbid_absent PROPERTIES
+  LABELS "tools;tools.expect_output")
 
 # core.metric_is_null: an index past the last generator aborts at run time in
 # a checking build. Like the assert programs, it fixes its own checking mode.
