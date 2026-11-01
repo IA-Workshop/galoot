@@ -8,8 +8,12 @@ whatever program is on disk. Each mutation's anchor must occur exactly once.
 For a failed build the record gives the first error line and the lines of
 blade_product_test.cpp whose static_assert failed, so that a kill by a
 static_assert can be told from a kill by another error. The two programs are
-deleted before each build, so that a failed build leaves none for CTest to
-run.
+deleted before each build, so that a failed build cannot leave an old program
+behind, and CTest is not run after a failed build: the mutant is killed
+already, and CTest 4.4 run in parallel under the shared job pool can keep a
+slot it took for a test whose program is missing ("Not Run"), so that each
+such run loses one slot of the pool. After the last mutant the header is
+restored and both programs are built again.
 
 With --runtime, the static_asserts of the test file that check products are
 turned off for the run (each becomes `true || ...`), so that the doctest
@@ -177,22 +181,26 @@ def main():
                          "--", "cmake", "--build", "--preset", preset,
                          "--target", "core_blade_product_test",
                          "core_blade_product_assert_fail"])
-            test = run(["tools/timed", "test", preset, f"mutation:{name}", "--",
-                        "ctest", "--preset", preset, "-L",
-                        r"^core\.blade_product$", "--output-on-failure"])
+            if build.returncode == 0:
+                test = run(["tools/timed", "test", preset, f"mutation:{name}",
+                            "--", "ctest", "--preset", preset, "-L",
+                            r"^core\.blade_product$", "--output-on-failure"])
+                test_exit, output = test.returncode, test.stdout
+            else:
+                test_exit, output = "-", ""
             failed = [line.split(" - ")[1].split()[0]
-                      for line in test.stdout.splitlines() if " - core." in line]
-            killed = build.returncode != 0 or test.returncode != 0
+                      for line in output.splitlines() if " - core." in line]
+            killed = build.returncode != 0 or test_exit != 0
             errors = [line for line in build.stdout.splitlines()
                       if "error:" in line]
             first_error = errors[0].split(ROOT + "/")[-1] if errors else "-"
             lines = sorted({int(m.group(1)) for m in
                             STATIC_ASSERT_LINE.finditer(build.stdout)})
-            print(f"{name}\t{preset}\t{build.returncode}\t{test.returncode}\t"
+            print(f"{name}\t{preset}\t{build.returncode}\t{test_exit}\t"
                   f"{','.join(failed) or '-'}\t"
                   f"{'killed' if killed else 'SURVIVED'}\t"
                   f"{','.join(map(str, lines)) or '-'}\t"
-                  f"{' | '.join(failed_cases(test.stdout)) or '-'}\t"
+                  f"{' | '.join(failed_cases(output)) or '-'}\t"
                   f"{first_error[:200]}",
                   flush=True)
     finally:
@@ -200,6 +208,9 @@ def main():
             f.write(original)
         with open(TEST, "w", encoding="utf-8") as f:
             f.write(original_test)
+        run(["tools/timed", "build", preset, "mutation:restored", "--", "cmake",
+             "--build", "--preset", preset, "--target",
+             "core_blade_product_test", "core_blade_product_assert_fail"])
 
 
 main()
