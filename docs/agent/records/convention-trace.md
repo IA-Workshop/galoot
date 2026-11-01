@@ -46,7 +46,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.1 | a point x e1 + y e2 + z e3 + w e4 has weight w | no |
 | 5.2 | the line through unitized points p and q has direction q - p | no |
 | 5.3 | a point p lies on the plane g when p v g = 0 | no |
-| 5.4 | applying Q1 and then Q2 is one transform by Q2 antigp Q1 | no |
+| 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | no |
 | 5.5 | the translator t_x e23 + t_y e31 + t_z e12 + antiscalar moves points by 2t | no |
 | 5.6 | a reflected point keeps a positive weight | no |
 | 5.7 | rotation(l, theta) turns by theta | no |
@@ -54,4 +54,4 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 6.2 | a flat object is a rigid object wedged with e5 | no |
 | 6.3 | the round bulk has neither e4 nor e5 | no |
 | 6.4 | rounds and flats have a carrier, cocarrier, center, container, partner, attitude, and radius | no |
-| 7.1 | a * b is the geometric product gp(a, b) | no |
+| 7.1 | a * b is the geometric product geometric_product(a, b) | no |
