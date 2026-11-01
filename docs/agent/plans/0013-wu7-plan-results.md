@@ -1,6 +1,6 @@
 # 0013 WU7: typed results, the operation parameter, unary maps, and conjugated plans
 
-- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). WU7a merged into `develop` on 2026-11-01 after its W5 review (Outcome and review fixes, WU7a, below). WU7b claimed 2026-11-01 on `feature/core-plan-maps` (implementer: Claude, agent, Opus 5.5).
+- Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, math-expert role). WU7a merged into `develop` on 2026-11-01 after its W5 review (Outcome and review fixes, WU7a, below). WU7b claimed 2026-11-01 on `feature/core-plan-maps` (implementer: Claude, agent, Opus 5.5). WU7b done on its branch 2026-11-01; W5 review accepted it after fixes, applied (W5 review fixes, WU7b, below).
 - Unit: WU7 of plan 0001, in two parts run one after the other: WU7a on branch `feature/core-plan-results` (worktree `.claude/worktrees/core-plan-results`), then WU7b on branch `feature/core-plan-maps` (worktree `.claude/worktrees/core-plan-maps`), branched from `develop` after WU7a merges. Each part has its own W5 review and merge. WU7b is claimed by a dated line in this plan when WU7a has merged (as plan 0011 did for WU6b).
 - Decision numbers 0110 to 0119. Plan 0012 claimed 0104 to 0109; 0108 and 0109 were not used, and are left alone so that no number has two claimants.
 - Goal: grow `include/galoot/core/plan.hpp` from "the geometric-product terms of two blade sets" into the data that every product and every per-blade operation of the core needs: a typed result (the blade set a result is stored on, and each term's position in it), one generator with an operation parameter (geometric product and wedge), unary maps (reverse, antireverse, grade involution, right and left complement) as per-blade sign and permutation data, the antiproducts as complement-conjugated plans, and a CTest that fails when a plan is generated twice in one translation unit.
@@ -407,3 +407,136 @@ Mutation records: `results-d4bcb8d-<preset>[-runtime]-review.tsv` and the sectio
 ### Next
 
 The delta review of `0098409` (comments of `plan.hpp`) and of the three test commits; then the merge, which the coordinator makes. The agent-cost row is the coordinator's.
+
+## Outcome, WU7b (2026-11-01, Claude, agent, Opus 5.5, cpp-expert, implementer)
+
+Status: done on `feature/core-plan-maps`, awaiting the W5 blind review. Code final at `bb0fde5` (its header change is the `///` comment; the code last changed at `d56af9f`, tests at `d6cbaba`); all seven presets from new, empty build trees at `d1017ea`, whose code and tests are `bb0fde5`'s. This section is committed after it and changes records only.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. The antiproducts are conjugated pair by pair inside `generate_plan` (helpers `factor_of` and `run_term`), not at the level of sets inside `make_product_plan` as section 3 describes. The arithmetic is the plan's, term for term; the reason is that `generate_plan<antigp>` then runs at run time with the code the compile-time plan runs, so the exhaustive tests judge it (decision 0115).
+2. Not foreseen by the plan: `pair_capacity` and `plan_capacity` take n, because the geometric antiproduct's capacity is that of the product of the complements (`54b17ae`, with the migration of every test call, listed in its message; no expected value changed).
+3. Names: `UnaryOperation` (CamelCase, as `BinaryOperation`), `unary_term`, `generate_map`, `map_term`, `typed_map`, `unary_map`, `map_defects_of`, `closed_form_right_sign`, `base_operation`; `pair_terms` gained a constraint (the base products only), with a test that it rejects the antiproducts (`d6cbaba`).
+4. Beyond the plan's map checks: a check that each term is on the blade its operation gives the input. Beyond the plan's two rejections: `core.plan_antigp_beyond_n`, `core.plan_antiproduct_pair_beyond_n` and `_second`, `core.plan_map_term_beyond_n`, `core.plan_map_term_zero_n` (`unary_term`'s own checks), and `core.plan_map_not_metric_like`.
+5. The evaluation check of the maps is a second CTest, `core.plan_map_evaluated_once`, on the same unit with its own trace and object, rather than a change to the script; the script's message still says "plan" for a map.
+6. Mechanical checks that failed at a commit (each fixed in the next commit, its message saying so): clang-tidy (the lint preset) at `dee3315` (const locals, two widenings, two trailing commas; its builds and tests passed on gcc-debug and clang-debug); `tests.reference_markers` at `a913760` on both compilers (semicolons inside one marker's prose; every other test passed). From `d56af9f` and `26a019e` on, each code or test commit was checked at itself, on a clean tree, by `check_commit.sh`-style runs: the affected selection on gcc-debug and clang-debug, the six cheap gates as scripts, clang-tidy of the touched targets and `format-check` on lint. `bb0fde5` (comment only) was not checked at itself; its tree is `d1017ea`'s, which the seven presets checked. Records-only commits were not built.
+7. Not run through clang-tidy, because no build compiles them under it: the eight new compile-fail sources (they must fail to compile) and `plan_evaluated_once.cpp` (compiled by its CTest); `format-check` covers all of them. Python scripts have no lint in the repository.
+8. Steps outside `tools/timed` (P13 lapses): one clang-tidy run listing a probe's findings, four syntax-only compiles of the fixed sparse limit units, `clang-format`, and running `golden.py` to regenerate the header.
+9. Mutation: the plan's mutant "the left and right complement signs swapped" survives in the conjugation as a whole, in even n too, because it is equivalent (proved in `records/mutations/0013-plan-maps/survivors.md` and decision 0115); the swaps that are defects are killed. One mutant was first killed by `-Werror=unused-variable` and was rewritten and rerun (`10ec452`).
+10. Limits: the first limits run was stopped on a defect of its own script (sparse antiwedge units asserting a term of an empty plan; `f83aa3c`) and rerun whole. On Clang two ceilings depend on `_GLIBCXX_ASSERTIONS` (decision 0116), unlike decision 0113's "alike in all three configurations"; the comments say so.
+11. The `math-tools` timing lock (its `AGENTS.md` rule) was held by another workstream for three minutes while my mutation builds ran, and when my rerun of the product limits started (pinned, one compile at a time); I did not take the lock for my own pinned runs, because the brief makes `math-tools` read-only. My limits and growth runs found it free.
+12. Not done here, as briefed: the agent-cost row, the W5 review, any delta review, the merge. The handoff's "stop the job pool when work ends" is not followed, as the brief and the owner's standing rule say. The knowledge-base branch `kb/antiproduct-identity-proofs` is not merged.
+
+### Done
+
+| Commit | What |
+| --- | --- |
+| `ac1fe45` | W10 before rows (new gcc-debug and clang-debug trees at `7704146`, 84 and 85 rows; 131 of 131 and 132 of 132) |
+| `58b7e2d` | golden complements and grade signs for n = 3 (listed for review) |
+| `54b17ae` | the capacities take n; test calls migrated (listed) |
+| `dee3315`, `d56af9f` | antiproducts in `generate_plan`, unary maps; lint fix |
+| `a913760`, `26a019e`, `d6cbaba` | tests D1 to D10 and the rejections, 4.2 trace row `yes`; marker fix; two added cases (listed) |
+| `c6b7a4c` | evaluation check extended: motor ⟇ point in the plan check, three maps of `full<6>` in `core.plan_map_evaluated_once` (listed) |
+| `e631c11`, `10ec452`, `b3bc8cf` | mutation driver, rerun, results and `survivors.md`; decisions 0114 and 0115 |
+| `bc510e3`, `f83aa3c`, `bb0fde5`, `d1017ea` | limits and P2 script and fix; measured limits in the `///` comments; limits, P2, decision 0116 |
+| `7ee6b28` | seven presets from new trees; W10 after rows |
+
+### Tests, for the reviewer
+
+`core.plan` at `d1017ea`: 36 test cases (20 before WU7b, 16 new) and namespace-scope `static_assert`s; 19 compile-fail tests `core.plan_*` (11 before, 8 new); on Clang `core.plan_evaluated_once` and `core.plan_map_evaluated_once`. The trace gate finds 4.2's fact at `plan_test.cpp:2900`.
+
+| Case | Expected |
+| --- | --- |
+| D1 maps by definition | n = 1 to 10, all five maps of every blade, with and without input signs, equal the test's own rule (reversal inversions counted, (−1)^k, complements by the test's inversion count), typed onto their distinct blades in canonical order |
+| D1 golden | golden `grade_signs` and `complements`, n = 3, 4, 5 |
+| D2 | the oriented rigid(3) line, point, and plane under the maps of section 6, every term (`static_assert`) |
+| D3 | e234 ⟇ e234 = 𝟙, e123 ⟇ e123 = 0, e1 ⟇ e1 = 0, e4 ⟇ e4 = −𝟙, 𝟙 ⟇ e1 = e1 ⟇ 𝟙 = e1, e234 ∨ e134 = −e34, e1 ∨ e234 = 1, e234 ∨ e1 = −1; and the two-term run e1235 ⟇ e1234 = −e123 + e12345 in conformal(3), in canonical order |
+| D4 | n = 1 to 10: reverse and grade involution involutive, left∘right = right∘left = id, right∘right = left∘left = (−1)^(gr·ag), antireverse = left∘reverse∘right |
+| D5 | both antiproduct plans of every pair of the four golden forms = left(right(a) × right(b)) composed from golden values (antiwedge with the test's wedge) |
+| D6 | the four De Morgan laws for every pair of the 42 forms, n ≤ 6, as term lists |
+| D7 | counts and result sets of P ⟇ P (7), P ∨ P (none), G ⟇ G (15), G ∨ G (12, every term), L ∨ G (12), M ⟇ P (20), M ⟇ M (48), conformal(3) V ⟇ V (25), V ∨ V (none); each read back equals the golden composition |
+| D8 | ⟇ and ∨ associative on every triple of the 42 forms with n ≤ 6 (0.61 s on gcc-debug, so no `slow` label); 𝟙 and 1 identities; u ∨ right(u) = left(u) ∨ u = 1; the reversal rules, every pair, n ≤ 6 |
+| D9 | `map_defects_of` on hand-written maps, each defect alone, each bound both sides; `defects_of` flags an antiproduct run left unreversed |
+| D10 | maps of `full<4>` and `full<5>`, antiproduct plans of `full<4>` in rigid(3) and conformal(2), compile time = run time |
+| other | closed form = inversion count for every mask, n ≤ 10; `unary_term` directly (R(32,0,0) included); repeated and empty sets; capacities and `base_operation`; type properties; `pair_terms`' constraint |
+
+### Acceptance criteria (WU7b)
+
+12. Met (D1), at `d1017ea` on all seven presets.
+13. Met (D4).
+14. Met (D6).
+15. Met (D5; D7 for the typed sets).
+16. Met, at n ≤ 6 for associativity as well (D8).
+17. Met (D3, D7): the run reversal's mutant is killed by the generated-plan order check on both compilers in both modes.
+18. Met: every check of a map and the order check of a conjugated plan fire on a generator mutant; the closed-form check fires on the `reorder_sign` mutant and on the map-level and `bits.hpp` left-right swaps (`survivors.md`). The conjugation-wide swap is equivalent (departure 9).
+19. Met with reported findings: limits on both compilers in three configurations (decision 0116; typed, vector, and sparse uses build for both antiproducts and all maps; ceilings in the `///` comments; the product and wedge ceilings rechecked unchanged); the evaluation checks pass on clang-debug, clang-release, clang-asan, and lint at `d1017ea` and fail on the plain-locals mutants of each generator; P2 in `records/performance/plan-maps/out/growth-f83aa3c/`; seven presets from new trees at `d1017ea`; W10 before at `7704146` and after at `d1017ea`, both from new trees.
+
+Mutation summary: 68 mutants, four passes at `e631c11` and one rerun at `10ec452`; no unresolved survivor (`survivors.md`). Job pool: never stopped or started; 23 of 23 free before my heavy runs, shared with other workstreams' clients during the later ones.
+
+### Costs (W10; new trees, shared mode, track-only)
+
+Before at `7704146`, after at `d1017ea`; instructions of both kinds of core added; rows in `compile.tsv`.
+
+| Unit | gcc-debug before | gcc-debug after | clang-debug before | clang-debug after |
+| --- | --- | --- | --- | --- |
+| `core.hpp` alone (header set) | 0.901 G, 77 MiB | 0.912 G, 77 MiB (+1.2%) | 0.911 G, 111 MiB | 0.920 G, 112 MiB (+1.0%) |
+| `plan.hpp` alone | 0.902 G | 0.913 G | 0.910 G | 0.919 G |
+| `smoke_test.cpp` | 1.099 G | 1.111 G | 1.008 G | 1.023 G |
+| `plan_test.cpp` | 21.36 G, 331 MiB | 31.63 G, 361 MiB, 4.9 s (+48%) | 23.22 G, 288 MiB | 34.96 G, 343 MiB, 4.5 s (+51%) |
+| `plan_evaluated_once.cpp` (Clang CTests) | | | 2.02 G | 3.31 G |
+| compile-fail sources | 67, 44.69 G | 75, 51.95 G | 67, 38.92 G | 75, 46.48 G |
+| other test units | | within 0.4% | | within 0.3% |
+| all compiles | 84 rows | 92 rows | 85 rows | 94 rows |
+
+`plan_test.cpp` grows by half: the new compile-time values (maps and antiproduct plans of `full<4>` and `full<5>` compared with direct calls, the rigid(3) and conformal(3) hand values). The evaluation unit grows by the three `full<6>` maps. The header cost to every includer is about +0.01 G.
+
+### Verification and validation
+
+Verification: performed by D1 to D10 (kinds 1 to 3 over the stated finite ranges: n ≤ 10 for D1 and D4, n ≤ 6 for D6 and D8, the four golden forms for D5) and passed on all seven presets at `d1017ea`. Validation: for rigid(3), the hand values of D2 and D3, which agree with the values that `conventions_check.py` encodes from Lengyel's tables, and 𝟙 as the identity of ⟇ (D8), which Lengyel states; for non-diagonal antiproducts, not performed (departure 8 of the plan): the definition, the De Morgan proofs, and the golden composition are verification only. Reproduction, from the worktree root with the pool exported: `python3 -I docs/agent/records/mutations/0013-plan-maps/mutate.py <preset> [--runtime] [mutation...]`; `python3 -I docs/agent/records/performance/plan-maps/measure_maps.py limits <out> [cpu]` and `... growth 7704146 <out> 3 10`.
+
+### Open questions for the owner
+
+1. Carried: the GCC -O0 debug size of `static constexpr` locals (WU7b adds `make_unary_map`'s seven); and the `metric_like` P2 exception (the growth of every fixed use here is that check's). Not decided here.
+2. New: the geometric antiproduct's build cost at fixed use grows with n (+268% on GCC, +463% on Clang from n = 4 to 16 for four rigid(3) pairs in R(n−1,0,1)), because it multiplies the complements, whose grade is near n (decision 0116). P2 asks whether this is the algebra's own structure or a defect against C6; the candidate remedy, an antimetric pair rule, would need a decision under C4. Not built.
+3. New: two Clang ceilings depend on whether `_GLIBCXX_ASSERTIONS` is defined (libstdc++'s constant-evaluation subscript check costs steps); stated in the comments, no bound set.
+
+### Knowledge base
+
+Branch `kb/antiproduct-identity-proofs` (worktree `knowledge-base-worktrees/antiproduct-identity-proofs`): `geometric-algebra/antiproduct-identities-by-conjugation.md` (new, indexed in that directory's README) and `exercise-archive/geometric-algebra-de-morgan-parity.md` (new, ga-E9-2026-11-01); commits `f1ef2bd`, `34dc7cd`; `tools/check_links.py` reports 0 problems. Not merged into its `develop`.
+
+### Next
+
+The W5 blind review of WU7b, which reruns the run-reversal and left-right-swap mutants; fixes in their own commits; a delta review of any core fix; then the merge, which the coordinator makes. Agent cost: about 200 tool calls; token counts are not visible to me.
+
+## W5 review fixes, WU7b (2026-11-01, Claude, agent, Opus 5.5, cpp-expert)
+
+The W5 review (`records/reviews/2026-11-01-wu7b-plan-maps.md`, blind-reviewer, Opus 5.5, head `50c7c70`, merged onto the branch at `4436186`) accepted WU7b after fixes. F1 to F5 are applied below. The outcome above is left as written; this section corrects it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. `1ec92a0` (F3) failed `tests.reference_markers` on gcc-debug and clang-debug: its marker stood above the new `static_assert`, leaving the test case below it without one. Its other tests passed. `7e5c369` gives the test case its own marker, and its message says so. Every other code or test commit of this pass was checked at itself on a clean tree.
+2. F4's measurement (`a133375`, `out/sparse-438dbc1-lock-held/`) ran while another workstream held the `math-tools` timing lock, which was still held after a 20-minute wait. It is pinned to CPU 10, labeled in its directory name, and is a ratio of retired instructions, which load does not change. I did not take the lock.
+3. F2 also suppresses the 6 findings that WU7a's readers had: a defect found outside this unit (W9), small and in scope, so fixed here.
+4. `8cb3409` (F4) changes a comment in `include/galoot/core/plan.hpp` and needs the delta review of decision 0094 item 3, which is not done here.
+5. Steps outside `tools/timed` (P13): `clang-format` and the Python syntax checks of the scripts.
+6. The outcome above is corrected by this section rather than edited in place, as for WU7a.
+
+### Findings and what was done
+
+| Finding | Commit | Result |
+| --- | --- | --- |
+| F1 the cause and class of the antiproduct's growth | `438dbc1` (decision 0116, correction section), this commit | the capacity is not a cause (the reviewer's capacity-1 copy: about 1%); the growth follows the route (products of complements of grade n − k through `blade_product`'s recursion) in a diagonal form whose pair results stay one term, so it is a C6 defect found, reported under P2 and decision 0005; the remedy (a pair rule whose cost follows the inputs' grades, such as one from the antimetric) waits for the owner's decision under C4 and is not built; the mathematics of it is on `research/antiproduct-growth`. Open question 2 of the outcome is corrected below |
+| F2 lint of the evaluation unit | `25c48df` (test) | one `NOLINTBEGIN/NOLINTEND(misc-use-internal-linkage)` block with its reason; 14 findings, 8 from WU7b and 6 from WU7a (a defect found outside the unit, W9, small and in scope, fixed here); clang-tidy by hand on the unit: 0 findings at `25c48df` |
+| F3 `generate_map` at its output bound | `1ec92a0`, `7e5c369` (test) | outputs of 3, 4, and 5 places for the 4-blade point, in a `static_assert` and at run time; `map_output_unbounded` (the review's M21) killed on gcc-debug and clang-debug in both modes at `2ad9ae9` (`results-2ad9ae9-*-F3.tsv`) |
+| F4 the sparse cost in `product_plan`'s comment | `a133375` (record), `8cb3409` (comment only) | "several times more" becomes the measured factors: 2.5 times on GCC 16 and 2.6 times on Clang 23 from n = 4 to n = 16 through the geometric antiproduct, against 1.2 and 1.1 through the geometric product (`measure_maps.py sparse` at `438dbc1`, three repeats). Listed for a delta review |
+| F5 the debug-size question | the merge of `develop` (`b48a797`, `develop` at `c4b2e70`, no conflicts; both sides' rows of `runs.tsv` kept), this commit | closed by the owner in decision 0118 (`f556ad8`): keep the `static constexpr` locals |
+
+### Open questions, corrected
+
+1. The GCC -O0 debug size of `static constexpr` locals: closed by decision 0118 (keep them). The `metric_like` P2 exception stays the owner's; plan 0014 (`feature/metric-like-single-pass`, not merged) addresses its cost.
+2. The geometric antiproduct's growth at fixed use (+268% on GCC, +463% on Clang from n = 4 to 16 for four rigid(3) pairs in R(n−1,0,1)) is a C6 defect found, not an open question of structure (decision 0116, correction). Its remedy waits for the owner's decision under C4; it does not block a merge (decision 0005), and the owner decides whether it blocks a release.
+3. Unchanged: the two Clang ceilings that depend on `_GLIBCXX_ASSERTIONS`.
+
+### Checks
+
+Each fix was checked at its own commit (affected selection on gcc-debug and clang-debug, the six cheap gates, clang-tidy of the touched targets, `format-check`). The P9 checks for the merge into `develop` ran at this commit: they are recorded, with their revision, in the commit that follows.

@@ -468,7 +468,8 @@ set(plan_generated
   "product plan: a typed term points past the result set"
   "product plan: the result set holds a blade that no term uses"
   "product plan: typed terms are out of order or repeated")
-foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 wedge_beyond_n)
+foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31 wedge_beyond_n
+    antigp_beyond_n)
   galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
     SOURCE core/plan_${case}_fail.cpp
     MESSAGE "${plan_range}"
@@ -500,32 +501,86 @@ galoot_add_compile_fail_test(NAME plan_result_room MODULE core COMPONENT plan
   SOURCE core/plan_result_room_fail.cpp
   MESSAGE "more result blades than places for them"
   REQUIRE "assertion_failed" "plan.hpp")
+# An antiproduct generated directly with a stray generator in either blade:
+# the complement of that blade is not defined, and its own range check
+# rejects it.
+foreach(case IN ITEMS antiproduct_pair_beyond_n antiproduct_pair_beyond_n_second)
+  galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
+    SOURCE core/plan_${case}_fail.cpp
+    MESSAGE "blade has a generator beyond e_n"
+    REQUIRE "assertion_failed" "bits.hpp")
+endforeach()
 
-# core.plan_evaluated_once: a plan that one unit reads several times is
-# generated once. The unit core/plan_evaluated_once.cpp is compiled with the
-# library's flags and Clang's -ftime-trace, and tools/evaluated_once.py
-# compares the time of each plan's initializer with the instantiation of the
-# function that generates it, which holds the generation (the script states
-# the rule). The test exists only where the compiler is Clang: GCC writes no
-# such trace, and its cache of constant-evaluated calls would serve a second
-# generation of a plan from the first, so a GCC unit could not show one.
+# core.plan_map_<case>: each misuse of unary_map or of a map term fails to
+# compile with its message. The set is checked before anything is generated,
+# so a set's test forbids the messages that generation would add.
+set(map_range "unary map: the blade set names a generator beyond e_n")
+set(map_sign "unary map: the blade set holds a sign other than +1 or -1")
+set(map_generated
+  "unary map: the result set is out of canonical order or repeats a blade"
+  "unary map: the result set holds a sign other than +1"
+  "unary map: a term points past the result set"
+  "unary map: the result set holds a blade that no term uses"
+  "unary map: the terms are not one for each input blade, in order"
+  "unary map: a term is not on the blade that the operation gives its input"
+  "unary map: a complement's sign differs from its closed form")
+galoot_add_compile_fail_test(NAME plan_map_beyond_n MODULE core COMPONENT plan
+  SOURCE core/plan_map_beyond_n_fail.cpp
+  MESSAGE "${map_range}"
+  REQUIRE "static assertion failed"
+  FORBID "${map_sign}" "blade has a generator beyond e_n" "${map_generated}")
+galoot_add_compile_fail_test(NAME plan_map_bad_sign MODULE core COMPONENT plan
+  SOURCE core/plan_map_bad_sign_fail.cpp
+  MESSAGE "${map_sign}"
+  REQUIRE "static assertion failed"
+  FORBID "${map_range}" "${map_generated}")
+galoot_add_compile_fail_test(NAME plan_map_term_beyond_n
+  MODULE core COMPONENT plan
+  SOURCE core/plan_map_term_beyond_n_fail.cpp
+  MESSAGE "blade has a generator beyond e_n"
+  REQUIRE "assertion_failed" "plan.hpp")
+galoot_add_compile_fail_test(NAME plan_map_term_zero_n
+  MODULE core COMPONENT plan
+  SOURCE core/plan_map_term_zero_n_fail.cpp
+  MESSAGE "n must be from 1 to 32"
+  REQUIRE "assertion_failed" "plan.hpp")
+
+# core.plan_evaluated_once and core.plan_map_evaluated_once: a plan or a map
+# that one unit reads several times is generated once. The unit
+# core/plan_evaluated_once.cpp is compiled with the library's flags and
+# Clang's -ftime-trace, and tools/evaluated_once.py compares the time of each
+# plan's or map's initializer with the instantiation of the function that
+# generates it, which holds the generation (the script states the rule). Each
+# test compiles the unit into its own trace and object, so that the two can
+# run at once. The tests exist only where the compiler is Clang: GCC writes
+# no such trace, and its cache of constant-evaluated calls would serve a
+# second generation from the first, so a GCC unit could not show one.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   galoot_compile_command(compile)
-  set(evaluated_once_trace
-    ${CMAKE_CURRENT_BINARY_DIR}/core_plan_evaluated_once.json)
-  add_test(NAME core.plan_evaluated_once
-    COMMAND ${Python3_EXECUTABLE} -I
-      ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
-      ${evaluated_once_trace} galoot::core::detail::product_plan
-      galoot::core::detail::make_product_plan
-      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
-        -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
-        -o core_plan_evaluated_once.o
-        -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND_EXPAND_LISTS)
-  set_tests_properties(core.plan_evaluated_once PROPERTIES
-    LABELS "core;core.plan")
+  foreach(kind IN ITEMS plan map)
+    if(kind STREQUAL "plan")
+      set(test_name core.plan_evaluated_once)
+      set(variable galoot::core::detail::product_plan)
+      set(generator galoot::core::detail::make_product_plan)
+    else()
+      set(test_name core.plan_map_evaluated_once)
+      set(variable galoot::core::detail::unary_map)
+      set(generator galoot::core::detail::make_unary_map)
+    endif()
+    set(evaluated_once_trace
+      ${CMAKE_CURRENT_BINARY_DIR}/core_${kind}_evaluated_once.json)
+    add_test(NAME ${test_name}
+      COMMAND ${Python3_EXECUTABLE} -I
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
+        ${evaluated_once_trace} ${variable} ${generator}
+        -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
+          -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
+          -o core_${kind}_evaluated_once.o
+          -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND_EXPAND_LISTS)
+    set_tests_properties(${test_name} PROPERTIES LABELS "core;core.plan")
+  endforeach()
 endif()
 
 # tools.evaluated_once_*: the trace check passes on a trace of three plans
@@ -560,6 +615,11 @@ galoot_add_compile_fail_test(NAME plan_not_metric_like
   SOURCE core/plan_not_metric_like_fail.cpp
   MESSAGE "metric_like"
   FORBID "make_product_plan")
+galoot_add_compile_fail_test(NAME plan_map_not_metric_like
+  MODULE core COMPONENT plan
+  SOURCE core/plan_map_not_metric_like_fail.cpp
+  MESSAGE "metric_like"
+  FORBID "make_unary_map")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.

@@ -1,0 +1,2 @@
+mutation	file	preset	build_exit	test_exit	failed_tests	killed	kind	static_assert_lines	checks_fired	failed_cases	first_build_error
+map_output_unbounded	plan.hpp	gcc-debug	1	-	-	killed	constant	-	-	-	test/core/plan_test.cpp:3021:43: error: non-constant condition for static assertion

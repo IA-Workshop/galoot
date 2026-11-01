@@ -1893,6 +1893,16 @@ inline constexpr std::array<mask, 32> n5 = {{
 // involution multiplies by (-1)^k. Indexed by mask.
 // Fact: the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it
 namespace grade_signs {
+inline constexpr std::array<blade_signs, 8> n3 = {{
+    {0b000, 1, -1, 1},
+    {0b001, 1, -1, -1},
+    {0b010, 1, -1, -1},
+    {0b011, -1, 1, 1},
+    {0b100, 1, -1, -1},
+    {0b101, -1, 1, 1},
+    {0b110, -1, 1, 1},
+    {0b111, -1, 1, -1},
+}};
 inline constexpr std::array<blade_signs, 16> n4 = {{
     {0b0000, 1, 1, 1},
     {0b0001, 1, -1, -1},
@@ -1951,6 +1961,16 @@ inline constexpr std::array<blade_signs, 32> n5 = {{
 // complement left(u) ^ u = antiscalar. Indexed by mask.
 // Fact: u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
 namespace complements {
+inline constexpr std::array<complement_pair, 8> n3 = {{
+    {0b000, {0b111, 1}, {0b111, 1}},
+    {0b001, {0b110, 1}, {0b110, 1}},
+    {0b010, {0b101, -1}, {0b101, -1}},
+    {0b011, {0b100, 1}, {0b100, 1}},
+    {0b100, {0b011, 1}, {0b011, 1}},
+    {0b101, {0b010, -1}, {0b010, -1}},
+    {0b110, {0b001, 1}, {0b001, 1}},
+    {0b111, {0b000, 1}, {0b000, 1}},
+}};
 inline constexpr std::array<complement_pair, 16> n4 = {{
     {0b0000, {0b1111, 1}, {0b1111, 1}},
     {0b0001, {0b1110, 1}, {0b1110, -1}},

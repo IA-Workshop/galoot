@@ -1,0 +1,2 @@
+mutation	file	preset	build_exit	test_exit	failed_tests	killed	kind	static_assert_lines	checks_fired	failed_cases	first_build_error
+map_left_factor_by_grade	plan.hpp	clang-debug	0	8	core.plan	killed	test	-	-	The checks of a typed map find each defect at its bound	-

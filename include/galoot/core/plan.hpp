@@ -15,6 +15,28 @@
 // metric: e_A ∧ e_B is zero when A and B share a generator, and otherwise the
 // sign of reordering e_A e_B into increasing order times e_(A ∪ B).
 //
+// The antiproducts are these products seen through the complements. The
+// right complement right(u) and the left complement left(u) of a blade u are
+// the blades on the generators that u lacks, with the signs fixed by
+// u ∧ right(u) = e_12...n and left(u) ∧ u = e_12...n, and each undoes the
+// other. The geometric antiproduct is a ⟇ b = left(right(a) right(b)) and the
+// antiwedge is a ∨ b = left(right(a) ∧ right(b)). So the terms of an
+// antiproduct of two blades are the terms of the product of their right
+// complements, each replaced by its left complement.
+//
+// Taking the complement reverses canonical order: of two blades of different
+// grades, the complements have the grades swapped; of two of one grade, the
+// complements differ in the same generators, and the lowest of those belongs
+// to exactly one of the two blades and to the complement of the other. So the
+// terms of a product of complements, which come in increasing canonical order,
+// give the terms of the antiproduct in increasing order when read from the
+// last.
+//
+// The unary maps (the reverse, the antireverse, the grade involution, and the
+// two complements) send each blade to one blade times a sign, so a map of a
+// blade set holds one term for each of its blades, typed onto a result set as
+// a plan is.
+//
 // A blade set lists oriented blades, sign times the canonical blade of a
 // mask, and a coefficient stored on one multiplies that signed blade. So the
 // term of the blades s_a e_A and s_b e_B on e_C is s_a s_b c, for the
@@ -44,6 +66,7 @@
 // plan is generated once runs on Clang only.
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <span>
@@ -65,7 +88,28 @@ enum class BinaryOperation : std::uint8_t {
   gp,
   /// The exterior product e_A ∧ e_B, which does not depend on the metric.
   wedge,
+  /// The geometric antiproduct e_A ⟇ e_B = left(right(e_A) right(e_B)).
+  antigp,
+  /// The antiwedge e_A ∨ e_B = left(right(e_A) ∧ right(e_B)), which does not
+  /// depend on the metric.
+  antiwedge,
 };
+
+/// The product that `op` is a conjugate of: the geometric product for the
+/// geometric antiproduct, the wedge for the antiwedge, and `op` itself for
+/// the geometric product and the wedge.
+///
+/// Requires: nothing.
+[[nodiscard]] constexpr BinaryOperation
+base_operation(BinaryOperation op) noexcept {
+  if (op == BinaryOperation::antigp) {
+    return BinaryOperation::gp;
+  }
+  if (op == BinaryOperation::antiwedge) {
+    return BinaryOperation::wedge;
+  }
+  return op;
+}
 
 /// One term of a product plan: the blade at position `a` of the first set
 /// times the blade at position `b` of the second contributes coefficient
@@ -89,31 +133,38 @@ struct plan_term {
 };
 
 /// The largest number of terms that `op` gives one pair of blades, of the
-/// masks `a` and `b`, in any metric: product_capacity(a, b) for the
-/// geometric product, and 1 for the wedge.
+/// masks `a` and `b`, in any metric of n generators: product_capacity(a, b)
+/// for the geometric product, the same for the complements of `a` and `b`
+/// for the geometric antiproduct, and 1 for the wedge and the antiwedge.
 ///
-/// Requires: nothing.
+/// Requires: for the geometric antiproduct, 1 <= n <= mask_bits and `a` and
+/// `b` name only e_1 to e_n, checked by GALOOT_ASSERT; nothing otherwise.
 /// Guarantees: a term list of this capacity never overflows while the pair's
-/// terms are generated.
-[[nodiscard]] constexpr std::size_t pair_capacity(BinaryOperation op, mask_t a,
-                                                  mask_t b) noexcept {
+/// terms, or for an antiproduct those of the product of the complements, are
+/// generated.
+[[nodiscard]] constexpr std::size_t
+pair_capacity(BinaryOperation op, mask_t a, mask_t b, std::size_t n) noexcept {
+  if (op == BinaryOperation::antigp) {
+    return product_capacity(complement_mask(a, n), complement_mask(b, n));
+  }
   return op == BinaryOperation::gp ? product_capacity(a, b) : 1;
 }
 
 /// A term list capacity that suffices for every pair of a blade of `as` with
-/// a blade of `bs` under `op`: the largest pair_capacity over the pairs, and
-/// at least 1, so that it is a valid capacity when a set is empty.
+/// a blade of `bs` under `op` in an algebra of n generators: the largest
+/// pair_capacity over the pairs, and at least 1, so that it is a valid
+/// capacity when a set is empty.
 ///
-/// Requires: nothing.
-/// Guarantees: generate_plan<op, plan_capacity(op, as, bs)> never outgrows
-/// its term lists.
+/// Requires: what pair_capacity requires of each pair.
+/// Guarantees: generate_plan<op, plan_capacity(op, as, bs, n)> never
+/// outgrows its term lists.
 [[nodiscard]] constexpr std::size_t
 plan_capacity(BinaryOperation op, std::span<const oriented_blade> as,
-              std::span<const oriented_blade> bs) noexcept {
+              std::span<const oriented_blade> bs, std::size_t n) noexcept {
   std::size_t capacity = 1;
   for (const oriented_blade& x : as) {
     for (const oriented_blade& y : bs) {
-      const std::size_t pair = pair_capacity(op, x.mask, y.mask);
+      const std::size_t pair = pair_capacity(op, x.mask, y.mask, n);
       // NOLINTNEXTLINE(readability-use-std-min-max): avoids <algorithm> here.
       if (pair > capacity) {
         capacity = pair;
@@ -123,17 +174,19 @@ plan_capacity(BinaryOperation op, std::span<const oriented_blade> as,
   return capacity;
 }
 
-/// The terms that `Op` gives the blades of the masks `a` and `b` in the
-/// metric `g`, in canonical order of their blades: blade_product for the
-/// geometric product; for the wedge, nothing when the blades share a
-/// generator, and otherwise reorder_sign(a, b) on the blade of a | b.
+/// The terms that `Op`, the geometric product or the wedge, gives the blades
+/// of the masks `a` and `b` in the metric `g`, in canonical order of their
+/// blades: blade_product for the geometric product; for the wedge, nothing
+/// when the blades share a generator, and otherwise reorder_sign(a, b) on the
+/// blade of a | b. The antiproducts are built from these by generate_plan.
 ///
 /// Requires: `a` and `b` name only e_1 to e_N, checked by GALOOT_ASSERT, and
-/// Capacity >= pair_capacity(Op, a, b); for the geometric product, what
+/// Capacity >= pair_capacity(Op, a, b, N); for the geometric product, what
 /// blade_product requires.
 /// Guarantees: the result is exact, with no zero coefficient. The wedge reads
 /// nothing of `g`.
 template <BinaryOperation Op, std::size_t Capacity, std::size_t N>
+  requires(Op == BinaryOperation::gp || Op == BinaryOperation::wedge)
 [[nodiscard]] constexpr term_list<Capacity>
 pair_terms(const metric<N>& g, mask_t a, mask_t b) noexcept {
   if constexpr (Op == BinaryOperation::gp) {
@@ -148,19 +201,59 @@ pair_terms(const metric<N>& g, mask_t a, mask_t b) noexcept {
   }
 }
 
+// The blade, with its sign, that a factor e_A enters the pair rule of the base
+// product of `Op` as: for an antiproduct, its right complement,
+// right(e_A) = right_complement_sign(A) e_(complement of A); otherwise e_A.
+template <BinaryOperation Op, std::size_t N>
+[[nodiscard]] constexpr term factor_of(mask_t a) noexcept {
+  if constexpr (base_operation(Op) == Op) {
+    return {.blade = a, .coefficient = 1};
+  } else {
+    return {
+        .blade = complement_mask(a, N),
+        .coefficient = right_complement_sign(a, N),
+    };
+  }
+}
+
+// The term at place k of the run of one pair under `Op`, from the terms of the
+// pair under its base product, which come in increasing canonical order: for
+// an antiproduct, the left complement of a term, left(c e_D) =
+// c left_complement_sign(D) e_(complement of D), taken from the last, because
+// the complement reverses canonical order; otherwise the term at k.
+template <BinaryOperation Op, std::size_t Capacity, std::size_t N>
+[[nodiscard]] constexpr term run_term(const term_list<Capacity>& terms,
+                                      std::size_t k) noexcept {
+  if constexpr (base_operation(Op) == Op) {
+    return terms.terms[k];
+  } else {
+    const term& base_term = terms.terms[terms.size() - 1 - k];
+    return {
+        .blade = complement_mask(base_term.blade, N),
+        .coefficient =
+            left_complement_sign(base_term.blade, N) * base_term.coefficient,
+    };
+  }
+}
+
 /// Generates the plan of `Op` over the blades of `as` and `bs` in the metric
 /// `g`: for each position a of `as`, then each position b of `bs`, the terms
 /// of the pair in canonical order of their blades, each with the coefficient
-/// s_a s_b c for the signs s_a and s_b of the two blades. Writes the first
-/// out.size() terms to `out` and returns the number of all terms, so a call
-/// with an empty `out` only counts them, and a second call with `out` of that
-/// size writes them all.
+/// s_a s_b c for the signs s_a and s_b of the two blades. For the geometric
+/// product and the wedge, the terms are those of pair_terms; for an
+/// antiproduct, those of left(right(e_A) op right(e_B)) for its base product
+/// op: pair_terms of the complements of A and B, times their right-complement
+/// signs, with each term c e_D replaced by c left_complement_sign(D) times
+/// the blade of the complement of D. Writes the first out.size() terms to
+/// `out` and returns the number of all terms, so a call with an empty `out`
+/// only counts them, and a second call with `out` of that size writes them
+/// all.
 ///
 /// Requires: every sign of `as` and `bs` is +1 or -1, which is not checked
 /// here; every mask names only e_1 to e_N, and Capacity suffices for every
-/// pair, as plan_capacity(Op, as, bs) does, each checked by GALOOT_ASSERT
-/// in pair_terms. Every coefficient fits coefficient_type, checked by
-/// GALOOT_ASSERT.
+/// pair, as plan_capacity(Op, as, bs, N) does, each checked by GALOOT_ASSERT
+/// in pair_terms or, for an antiproduct, in complement_mask. Every
+/// coefficient fits coefficient_type, checked by GALOOT_ASSERT.
 /// Guarantees: no term has a zero coefficient, and within one pair no blade
 /// appears twice. A mask listed twice in a set is not rejected; each place
 /// that lists it gets its own terms. Places of `out` past the number of terms
@@ -173,19 +266,24 @@ constexpr std::size_t generate_plan(const metric<N>& g,
   std::size_t count = 0;
   for (std::size_t a = 0; a < as.size(); ++a) {
     for (std::size_t b = 0; b < bs.size(); ++b) {
-      const term_list<Capacity> terms =
-          pair_terms<Op, Capacity>(g, as[a].mask, bs[b].mask);
+      const term first = factor_of<Op, N>(as[a].mask);
+      const term second = factor_of<Op, N>(bs[b].mask);
       // A sign of +1 or -1 times a coefficient within -max to max cannot
-      // overflow, so the product needs no guard.
-      const coefficient_type sign =
-          static_cast<coefficient_type>(as[a].sign) * bs[b].sign;
+      // overflow, so the products of signs need no guard.
+      const coefficient_type sign = static_cast<coefficient_type>(as[a].sign) *
+                                    bs[b].sign * first.coefficient *
+                                    second.coefficient;
+      const term_list<Capacity> terms =
+          pair_terms<base_operation(Op), Capacity>(g, first.blade,
+                                                   second.blade);
       for (std::size_t k = 0; k < terms.size(); ++k) {
+        const term t = run_term<Op, Capacity, N>(terms, k);
         if (count < out.size()) {
           out[count] = {
               .a = a,
               .b = b,
-              .out = terms.terms[k].blade,
-              .coefficient = sign * terms.terms[k].coefficient,
+              .out = t.blade,
+              .coefficient = sign * t.coefficient,
           };
         }
         ++count;
@@ -429,7 +527,8 @@ typed(const std::array<plan_term, T>& plan,
 // Checks both sets once, before anything is generated, so that a misuse gives
 // its own message and no other. Then counts the terms, fills an array of that
 // size, checks what is cheap to check of it, types it onto its result set,
-// and checks the typing.
+// and checks the typing. The order check of the generated terms also checks,
+// for an antiproduct, that each pair's terms were read in reverse.
 //
 // Every local is static constexpr: its initializer is evaluated once, when
 // the function is instantiated. Clang evaluates the initializer of a plain
@@ -447,7 +546,7 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 
   if constexpr (in_range && valid_signs) {
     static constexpr std::size_t capacity =
-        plan_capacity(Op, A.blades, B.blades);
+        plan_capacity(Op, A.blades, B.blades, n);
     static constexpr std::size_t count =
         generate_plan<Op, capacity>(Alg::value, A.blades, B.blades, {});
     static constexpr auto generated =
@@ -488,11 +587,14 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
   }
 }
 
-/// The plan of the product `Op` of a multivector on the blade set A with one
-/// on the blade set B, in the algebra of the tag Alg, typed onto the blade set
-/// of its result: a typed_plan whose result set holds every blade a term
-/// lands on, once, with sign +1, in canonical order, and whose terms come in
-/// order of a, then b, then position in the result set.
+/// The plan of the product or antiproduct `Op` of a multivector on the blade
+/// set A with one on the blade set B, in the algebra of the tag Alg, typed
+/// onto the blade set of its result: a typed_plan whose result set holds
+/// every blade a term lands on, once, with sign +1, in canonical order, and
+/// whose terms come in order of a, then b, then position in the result set.
+/// The plan of an antiproduct is that of its base product over the right
+/// complements of the blades of A and B, with each output blade replaced by
+/// its left complement, so a and b still refer to positions of A and B.
 ///
 /// Requires: Alg is metric_like. Every blade of A and B names only e_1 to
 /// e_n and has sign +1 or -1, each checked at compile time with a message
@@ -503,12 +605,21 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// limits on constant evaluation bound the size of the sets in practice.
 /// Measured at the default limits, alike at -O0 and -O2 and with or without
 /// _GLIBCXX_ASSERTIONS: every blade times every blade, full<n> with full<n>,
-/// builds for n up to 5 on Clang 23 and up to 6 on GCC 16, for both
-/// operations, in R(n,0,0), R(n-1,0,1), and conformal(n-2); in a form with
-/// every entry nonzero, whose products have more terms, the geometric
-/// product builds for n up to 4 on Clang and 5 on GCC, and the wedge, which
-/// does not read the form, as in the others. Sets of a few blades cost what
-/// they use: four blades times three at n = 16 build on both.
+/// builds for n up to 5 on Clang 23 and up to 6 on GCC 16, for the
+/// geometric product and the wedge, in R(n,0,0), R(n-1,0,1), and
+/// conformal(n-2); in a form with every entry nonzero, whose products have
+/// more terms, the geometric product builds for n up to 4 on Clang and 5 on
+/// GCC, and the wedge, which does not read the form, as in the others. The
+/// geometric antiproduct builds as the geometric product does, except that in
+/// conformal(n-2) on Clang n = 5 builds only with _GLIBCXX_ASSERTIONS
+/// defined; the antiwedge builds for n up to 5 on Clang and 7 on GCC in every
+/// form. Sets of a few blades cost what they use: four blades times three at
+/// n = 16 build on both, for all four operations. An antiproduct of blades of
+/// low grade multiplies their complements, whose grade is close to n, so it
+/// costs more as n grows: measured in the compiler's instructions at -O0,
+/// those four blades times three cost 2.5 times as much through the
+/// geometric antiproduct at n = 16 as at n = 4 on GCC 16 and 2.6 times on
+/// Clang 23, against 1.2 and 1.1 times through the geometric product.
 /// Guarantees: generated once in each translation unit for each Op, Alg, A,
 /// and B that it uses, because the generator keeps its steps in static
 /// constexpr locals (checked on Clang, where plain locals would generate it
@@ -521,6 +632,314 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 // value, which the source does not have.
 // NOLINTNEXTLINE(modernize-avoid-c-style-cast)
 inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
+
+/// The operations a unary map can be generated for. Each sends a blade to one
+/// blade times a sign.
+///
+/// Guarantees: a structural type, so an operation can be a template
+/// argument.
+enum class UnaryOperation : std::uint8_t {
+  /// The reverse: (-1)^(k(k-1)/2) times a blade of grade k.
+  reverse,
+  /// The antireverse: (-1)^(m(m-1)/2) times a blade of antigrade m = n - k.
+  antireverse,
+  /// The grade involution: (-1)^k times a blade of grade k.
+  grade_involution,
+  /// The right complement, fixed by u ∧ right(u) = e_12...n.
+  right_complement,
+  /// The left complement, fixed by left(u) ∧ u = e_12...n.
+  left_complement,
+};
+
+/// The image under `op` of the canonical blade of `a` in an algebra of n
+/// generators, as a coefficient times the canonical blade of a mask: the
+/// blade of `a` itself for the reverse, the antireverse, and the grade
+/// involution, and the blade of complement_mask(a, n) for the complements,
+/// with the sign of reverse_sign, antireverse_sign, grade_involution_sign,
+/// right_complement_sign, or left_complement_sign.
+///
+/// Requires: 1 <= n <= mask_bits, and `a` names only e_1 to e_n; checked by
+/// GALOOT_ASSERT.
+/// Guarantees: the coefficient is +1 or -1.
+[[nodiscard]] constexpr term unary_term(UnaryOperation op, mask_t a,
+                                        std::size_t n) noexcept {
+  GALOOT_ASSERT(valid_count(n), "n must be from 1 to 32");
+  GALOOT_ASSERT(in_algebra(a, n), "blade has a generator beyond e_n");
+  if (op == UnaryOperation::reverse) {
+    return {.blade = a, .coefficient = reverse_sign(a)};
+  }
+  if (op == UnaryOperation::antireverse) {
+    return {.blade = a, .coefficient = antireverse_sign(a, n)};
+  }
+  if (op == UnaryOperation::grade_involution) {
+    return {.blade = a, .coefficient = grade_involution_sign(a)};
+  }
+  if (op == UnaryOperation::right_complement) {
+    return {
+        .blade = complement_mask(a, n),
+        .coefficient = right_complement_sign(a, n),
+    };
+  }
+  return {
+      .blade = complement_mask(a, n),
+      .coefficient = left_complement_sign(a, n),
+  };
+}
+
+/// Writes, for each position a of `set`, the image under `op` of its blade
+/// s_a e_A in an algebra of n generators: s_a times unary_term(op, A, n), as
+/// the plan term with first position a and second position 0, so that the
+/// functions that type a plan type a map too. Writes the first out.size()
+/// terms.
+///
+/// Requires: what unary_term requires of each mask, checked by GALOOT_ASSERT;
+/// every sign of `set` is +1 or -1, which is not checked here.
+/// Guarantees: the term at position a of `out` is that of the blade at
+/// position a of `set`, with coefficient +1 or -1. Places of `out` past
+/// set.size() are not written.
+constexpr void generate_map(UnaryOperation op, std::size_t n,
+                            std::span<const oriented_blade> set,
+                            std::span<plan_term> out) noexcept {
+  for (std::size_t a = 0; a < set.size() && a < out.size(); ++a) {
+    const term image = unary_term(op, set[a].mask, n);
+    out[a] = {
+        .a = a,
+        .b = 0,
+        .out = image.blade,
+        .coefficient = set[a].sign * image.coefficient,
+    };
+  }
+}
+
+/// One term of a typed map: the blade at position `a` of the input set
+/// contributes coefficient times the blade at position `out` of the map's
+/// result set.
+///
+/// Guarantees: an aggregate, trivially copyable; two terms are equal when
+/// every member is.
+struct map_term {
+  /// The position of the input blade in the input set.
+  std::size_t a;
+  /// The position of the output blade in the result set.
+  std::size_t out;
+  /// The exact coefficient, +1 or -1, with the sign of the input blade
+  /// folded in.
+  coefficient_type coefficient;
+
+  /// Equal when every member is equal.
+  [[nodiscard]] constexpr bool operator==(const map_term&) const = default;
+};
+
+/// A unary map of a set of K blades typed onto the blade set of its result:
+/// R result blades and one term for each input blade.
+///
+/// Guarantees: a structural, trivially copyable aggregate; two maps are equal
+/// when their result sets and their terms are.
+template <std::size_t R, std::size_t K>
+struct typed_map {
+  /// The blades of the result, each with sign +1, in canonical order.
+  blade_set<R> result;
+  /// The terms, the one at position a for the input blade at position a.
+  std::array<map_term, K> terms;
+
+  /// Equal when the result sets and the terms are equal.
+  [[nodiscard]] constexpr bool operator==(const typed_map&) const = default;
+};
+
+/// The sign of the right complement of the blade of `a`, by the closed form
+/// (-1)^(k(k+1)/2 + i_1 + ... + i_k) for its grade k and the indices i_1 <
+/// ... < i_k of its generators, counting from 1. It counts no reordering, so
+/// it is a second route to right_complement_sign: in e_A ∧ e_C, for C the
+/// generators that A lacks, the j-th generator e_(i_j) of A moves past the
+/// i_j - j generators of C below it, and the sum of j from 1 to k is
+/// k(k+1)/2.
+///
+/// Requires: nothing.
+/// Guarantees: returns -1 or +1, the same in every algebra that holds `a`.
+[[nodiscard]] constexpr int closed_form_right_sign(mask_t a) noexcept {
+  const int k = grade(a);
+  int exponent = k * (k + 1) / 2;
+  for (mask_t rest = a; rest != 0; rest &= rest - 1) {
+    exponent += std::countr_zero(rest) + 1;
+  }
+  return exponent % 2 == 0 ? 1 : -1;
+}
+
+// What is wrong with a typed map, if anything. None of these can hold for a
+// map that generate_map wrote and collect_result and type_terms typed.
+struct map_defects {
+  bool result_out_of_order;
+  bool result_sign;
+  bool beyond_result;
+  bool result_unused;
+  bool not_per_input;
+  bool wrong_blade;
+  bool complement_sign;
+};
+
+// The defects of `map` as the map `op` of `set` in an algebra of n
+// generators: the result must be in strictly increasing canonical order with
+// every sign +1, every position must lie within it, and every blade of it
+// must be the output of some term; the term at position k must be that of the
+// input blade at k, on the blade that `op` gives it, which is its own mask
+// for the reverse, the antireverse, and the grade involution, and its
+// complement mask for the complements; and a complement's coefficient must be
+// the input's sign times closed_form_right_sign, times (-1)^(k(n - k)) for
+// the left complement of a blade of grade k. Every mask of `set` must name
+// only e_1 to e_n.
+template <std::size_t R, std::size_t K>
+[[nodiscard]] constexpr map_defects
+map_defects_of(UnaryOperation op, std::size_t n, const blade_set<K>& set,
+               const typed_map<R, K>& map) noexcept {
+  map_defects found{};
+  for (std::size_t r = 0; r < R; ++r) {
+    found.result_sign = found.result_sign || map.result.blades[r].sign != 1;
+    if (r > 0) {
+      found.result_out_of_order = found.result_out_of_order ||
+                                  !canonical_less(map.result.blades[r - 1].mask,
+                                                  map.result.blades[r].mask);
+    }
+  }
+
+  const bool complement = op == UnaryOperation::right_complement ||
+                          op == UnaryOperation::left_complement;
+  std::array<bool, R> used{};
+  for (std::size_t k = 0; k < K; ++k) {
+    const map_term& t = map.terms[k];
+    found.not_per_input = found.not_per_input || t.a != k;
+    if (t.out >= R) {
+      found.beyond_result = true;
+      continue;
+    }
+    used[t.out] = true;
+
+    const oriented_blade& input = set.blades[k];
+    const mask_t expected =
+        complement ? complement_mask(input.mask, n) : input.mask;
+    found.wrong_blade =
+        found.wrong_blade || map.result.blades[t.out].mask != expected;
+    if (complement) {
+      // left(u) = (-1)^(k(n - k)) right(u) for u of grade k.
+      const int g = grade(input.mask);
+      const int ag = static_cast<int>(n) - g;
+      const int left =
+          op == UnaryOperation::left_complement && g * ag % 2 != 0 ? -1 : 1;
+      const coefficient_type closed_form =
+          static_cast<coefficient_type>(input.sign) *
+          closed_form_right_sign(input.mask) * left;
+      found.complement_sign =
+          found.complement_sign || t.coefficient != closed_form;
+    }
+  }
+  // NOLINTNEXTLINE(readability-use-anyofallof): avoids <algorithm> here.
+  for (const bool is_used : used) {
+    found.result_unused = found.result_unused || !is_used;
+  }
+  return found;
+}
+
+template <std::size_t K>
+[[nodiscard]] constexpr std::array<plan_term, K>
+filled_map(UnaryOperation op, std::size_t n,
+           std::span<const oriented_blade> set) noexcept {
+  std::array<plan_term, K> map{};
+  generate_map(op, n, set, map);
+  return map;
+}
+
+template <std::size_t R, std::size_t K>
+[[nodiscard]] constexpr typed_map<R, K>
+typed_map_of(const std::array<plan_term, K>& map,
+             const collected_result<K>& found) noexcept {
+  typed_map<R, K> out{};
+  for (std::size_t r = 0; r < R; ++r) {
+    out.result.blades[r] = found.blades[r];
+  }
+  std::array<typed_term, K> terms{};
+  type_terms(map, out.result.blades, terms);
+  for (std::size_t k = 0; k < K; ++k) {
+    out.terms[k] = {
+        .a = terms[k].a,
+        .out = terms[k].out,
+        .coefficient = terms[k].coefficient,
+    };
+  }
+  return out;
+}
+
+// Checks the set once, before anything is generated, so that a misuse gives
+// its own message and no other. Then generates the map, types it onto its
+// result set, and checks it. Every local is static constexpr, as in
+// make_product_plan and for the same reason.
+template <UnaryOperation Op, metric_like Alg, blade_set S>
+[[nodiscard]] consteval auto make_unary_map() {
+  static constexpr std::size_t n = Alg::value.generator_count;
+  static constexpr bool in_range = all_in_algebra(S, n);
+  static constexpr bool valid_signs = signs_valid<S>;
+  static_assert(in_range,
+                "unary map: the blade set names a generator beyond e_n");
+  static_assert(valid_signs,
+                "unary map: the blade set holds a sign other than +1 or -1");
+
+  if constexpr (in_range && valid_signs) {
+    static constexpr auto generated = filled_map<S.size()>(Op, n, S.blades);
+    static constexpr auto found = collected(generated);
+    static constexpr auto mapped = typed_map_of<found.size>(generated, found);
+    static constexpr map_defects defects = map_defects_of(Op, n, S, mapped);
+    static_assert(!defects.result_out_of_order,
+                  "unary map: the result set is out of canonical order or "
+                  "repeats a blade");
+    static_assert(!defects.result_sign,
+                  "unary map: the result set holds a sign other than +1");
+    static_assert(!defects.beyond_result,
+                  "unary map: a term points past the result set");
+    static_assert(!defects.result_unused,
+                  "unary map: the result set holds a blade that no term uses");
+    static_assert(!defects.not_per_input,
+                  "unary map: the terms are not one for each input blade, in "
+                  "order");
+    static_assert(!defects.wrong_blade,
+                  "unary map: a term is not on the blade that the operation "
+                  "gives its input");
+    static_assert(!defects.complement_sign,
+                  "unary map: a complement's sign differs from its closed "
+                  "form");
+    return mapped;
+  } else {
+    return typed_map<0, 0>{};
+  }
+}
+
+/// The map `Op` of a multivector on the blade set S in the algebra of the tag
+/// Alg, typed onto the blade set of its result: a typed_map with one term for
+/// each blade of S, in order, each sending the coefficient at its position a,
+/// times its coefficient of +1 or -1, to its position out of the result set,
+/// which holds every blade a term lands on, once, with sign +1, in canonical
+/// order. The algebra gives the number of generators, which the antireverse
+/// and the complements depend on; the metric is not read.
+///
+/// Requires: Alg is metric_like. Every blade of S names only e_1 to e_n and
+/// has sign +1 or -1, each checked at compile time with a message that names
+/// it. A mask listed twice in S is not checked; each place that lists it gets
+/// its own term, and the two may land on one position of the result. The map
+/// is a constant evaluation, and typing it costs the square of the size of S,
+/// so the compiler's limits bound S in practice. Measured at the default
+/// limits, alike at -O0 and -O2: the map of every blade, full<n>, builds for n
+/// up to 9 on GCC 16; on Clang 23 for n up to 7, and for the complements up
+/// to 8 when _GLIBCXX_ASSERTIONS is defined.
+/// Guarantees: generated once in each translation unit for each Op, Alg, and
+/// S that it uses, as product_plan is. Term a is that of the blade at
+/// position a of S, on its own blade for the reverse, the antireverse, and
+/// the grade involution, and on the blade of the generators it lacks for the
+/// complements; out refers to a position of the result set, every blade of
+/// which is the output of some term; a complement's sign agrees with a closed
+/// form that does not count reorderings. Each is checked when the map is
+/// generated.
+template <UnaryOperation Op, metric_like Alg, blade_set S>
+// clang-tidy reads the operation, once substituted, as a C-style cast of its
+// value, which the source does not have.
+// NOLINTNEXTLINE(modernize-avoid-c-style-cast)
+inline constexpr auto unary_map = make_unary_map<Op, Alg, S>();
 
 } // namespace galoot::core::detail
 
