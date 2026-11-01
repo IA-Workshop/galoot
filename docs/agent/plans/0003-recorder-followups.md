@@ -156,3 +156,5 @@ for f in /home/brianm/projects/utils/math-core/galoot/build/*/compile.tsv /home/
 ### Open after this pass
 
 The open items above stand (smoke-test review N3 and N4, Ninja's fallback when the FIFO is missing); item 4 there, whether decision 0042 item 5 stands, is closed by decision 0043. Also open: whether shared rows whose numeric per-type counts are partial (per-type running times summing to less than task-clock's) should be marked, as the review observed.
+
+After the P9 run, `develop` moved to `9132b01` (records only) and was merged as `0b40259`; P10 keeps the run above for it. Defect found outside this unit (W9): `develop`'s `c7bff1e` added an empty file at `docs/agent/decisions/0042-recorder-fields-of-plan-0003.md`; the merge keeps this branch's full record, so the merge into `develop` replaces the empty file.
