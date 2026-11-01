@@ -44,13 +44,15 @@ endfunction()
 # such tests also require `assertion_failed`, which only the failed assertion
 # names. MESSAGE may not contain `;`, which CMake would split into two
 # literals. A `;` in a REQUIRE or FORBID value cannot be told from two values,
-# so it splits too: "a;b" requires, or forbids, both "a" and "b", which errs
-# on the strict side.
+# so it splits too: FORBID "a;b" forbids both "a" and "b", which is stricter
+# than forbidding "a;b", but REQUIRE "a;b" requires "a" and "b" anywhere in
+# the output, which is looser than requiring "a;b". Write neither with a `;`.
 #
 # The object library is outside `all`, and the test builds it in this build
-# tree, so compile-fail tests take a lock: Ninja takes no lock on its build
-# and dependency logs (.ninja_log, .ninja_deps), so two Ninja processes in one
-# tree could corrupt them.
+# tree, so compile-fail tests take a lock: two Ninja processes in one tree
+# could corrupt its build and dependency logs (.ninja_log, .ninja_deps),
+# because Ninja is not known to lock them (inferred, not checked against
+# Ninja's source).
 function(galoot_add_compile_fail_test)
   cmake_parse_arguments(PARSE_ARGV 0 arg ""
     "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE;FORBID")

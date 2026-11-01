@@ -414,8 +414,9 @@ def git(*args):
 
 def revision_and_branch():
     revision = git("rev-parse", "--short=12", "HEAD")
-    # The run and compile logs change with every run, so they do not make a
-    # revision dirty; any other change to a tracked file does. Without
+    # The run log changes with every run, and the committed compile record
+    # when a gate's rows are copied into it, so neither makes a revision
+    # dirty; any other change to a tracked file does. Without
     # optional locks, git status does not take the index lock, so a
     # recorded compile cannot make a concurrent commit fail.
     status = git("--no-optional-locks", "status", "--porcelain",

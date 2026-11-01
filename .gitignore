@@ -78,9 +78,9 @@ vgcore.*
 core.[0-9]*
 
 # --- Records are never ignored ----------------------------------------------
-# The measurement history (PERFORMANCE.md P7) may hold files that the build
-# and profiling patterns above match. Nothing above this line hides a record;
-# the sections below still apply inside records.
+# The measurement history may hold files that the build and profiling
+# patterns above match. Nothing above this line hides a record; the sections
+# below still apply inside records.
 !/docs/agent/records/**
 
 # --- Python (test/reference) ------------------------------------------------
@@ -94,7 +94,7 @@ __pycache__/
 .venv/
 /venv/
 
-# --- Agent scratch (WORKFLOW.md W6) -----------------------------------------
+# --- Agent scratch ----------------------------------------------------------
 # Nothing relied upon lives in the workbench, and it may be cleared at any
 # time. A placeholder may be tracked so that the directory exists in clones.
 /docs/agent/workbench/*

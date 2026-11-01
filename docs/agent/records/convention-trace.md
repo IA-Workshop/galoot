@@ -19,7 +19,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 - A fact is a short phrase of mathematics that a reader of the test understands without this table. It is matched ignoring case and runs of whitespace, with ∧ read as ^ and − as -.
 - Every item of CONVENTIONS.md has at least one row, and a fact never contains `|`.
 - Each fact of `golden.hpp` appears here, as written on its `// Fact:` line. A new golden namespace needs its row in the same change.
-- Set Implemented to `yes` in the change that implements the item in `include/galoot/core/` or in a model, and to `no` otherwise. From then on the gate command fails until a test states one of the item's facts.
+- Set Implemented to `yes` in the change that implements the item in `include/galoot/core/` or in a model, and to `no` otherwise. From then on the gate command fails until a test states that row's fact; a test of another row's fact does not count.
 - Change a fact only together with every marker and `// Fact:` line that states it.
 
 | Item | Fact | Implemented |
