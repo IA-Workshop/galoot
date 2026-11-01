@@ -151,7 +151,7 @@ set_tests_properties(core.bare_compile core.include_scan PROPERTIES
 # tools.include_scan_rejects: the scan reports each fixture's defect.
 set(fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/include_scan)
 add_test(NAME tools.include_scan_rejects
-  COMMAND ${expect_output} 1
+  COMMAND ${expect_output} 1 ONLY "."
     "galoot/core/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header or a core header"
     "galoot/core/cycle_a.hpp: include cycle: galoot/core/cycle_a.hpp -> galoot/core/cycle_b.hpp -> galoot/core/cycle_a.hpp"
     "galoot/core/wrong_guard.hpp:1: include guard should be GALOOT_CORE_WRONG_GUARD_HPP"
@@ -315,7 +315,8 @@ set_tests_properties(tests.reference_markers tests.golden_facts
 
 # tools.test_references_*: each command of tools/test_references.py reports
 # every defect of its rejecting fixtures, one per test case or table row,
-# and passes its accepting fixtures.
+# and nothing else (ONLY "^/": every output line that starts with a path
+# must hold an expected finding), and passes its accepting fixtures.
 set(reference_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/test_references)
 set(test_references
   ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/test_references.py)
@@ -332,6 +333,10 @@ function(galoot_expected_findings file out)
   if(text STREQUAL "")
     message(FATAL_ERROR "${file} lists no expected finding")
   endif()
+  # A ; inside a line is passed as character 1, which expect_output.cmake
+  # reads as a ;, so that CMake does not split the line into two literals.
+  string(ASCII 1 semicolon)
+  string(REPLACE ";" "${semicolon}" text "${text}")
   string(REPLACE "\n" ";" lines "${text}")
   set(${out} ${lines} PARENT_SCOPE)
 endfunction()
@@ -348,6 +353,7 @@ add_test(NAME tests.citations
     --exclude ${reference_fixtures}/markers_bad.cpp
     --exclude ${reference_fixtures}/markers_bad.expected
     --exclude ${reference_fixtures}/trace_bad_table.expected
+    --exclude ${reference_fixtures}/trace_empty_table.expected
     --exclude ${reference_fixtures}/citations_bad
     --exclude ${reference_fixtures}/citations_bad.expected
     ${PROJECT_SOURCE_DIR}/include/galoot ${PROJECT_SOURCE_DIR}/cmake
@@ -359,7 +365,7 @@ set_tests_properties(tests.citations PROPERTIES
 galoot_expected_findings(${reference_fixtures}/citations_bad.expected
   citations_bad_findings)
 add_test(NAME tools.test_references_citations_rejects
-  COMMAND ${expect_output} 1 ${citations_bad_findings}
+  COMMAND ${expect_output} 1 ONLY "^/" ${citations_bad_findings}
     -- ${test_references} citations ${reference_fixtures}/citations_bad)
 add_test(NAME tools.test_references_citations_accepts
   COMMAND ${expect_output} 0
@@ -368,14 +374,14 @@ add_test(NAME tools.test_references_citations_accepts
 galoot_expected_findings(${reference_fixtures}/markers_bad.expected
   markers_bad_findings)
 add_test(NAME tools.test_references_markers_rejects
-  COMMAND ${expect_output} 1 ${markers_bad_findings}
+  COMMAND ${expect_output} 1 ONLY "^/" ${markers_bad_findings}
     -- ${test_references} markers ${reference_fixtures}/markers_bad.cpp)
 add_test(NAME tools.test_references_markers_accepts
   COMMAND ${expect_output} 0
     "5 test cases, each with a reference marker"
     -- ${test_references} markers ${reference_fixtures}/markers_good.cpp)
 add_test(NAME tools.test_references_golden_rejects
-  COMMAND ${expect_output} 1
+  COMMAND ${expect_output} 1 ONLY "^/"
     "golden_bad_header.hpp:24: namespace alpha is defined twice"
     "golden_bad_header.hpp:29: namespace delta states no fact"
     "golden_bad.cpp:6: 'using' hides which test uses golden values"
@@ -384,6 +390,7 @@ add_test(NAME tools.test_references_golden_rejects
     "golden_bad.cpp:20: static_assert has no reference marker"
     "golden_bad.cpp:20: uses golden values of gamma but its reference does not state 'the fact of gamma'"
     "golden_bad.cpp:8: golden values of alpha are used outside a test case or a static_assert"
+    "golden_bad.cpp:6: golden values of gamma are used outside a test case or a static_assert"
     -- ${test_references} golden ${reference_fixtures}/golden_bad_header.hpp
       ${reference_fixtures}/golden_bad.cpp)
 add_test(NAME tools.test_references_golden_accepts
@@ -392,21 +399,22 @@ add_test(NAME tools.test_references_golden_accepts
     -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp)
 add_test(NAME tools.test_references_golden_helper_header
-  COMMAND ${expect_output} 1
+  COMMAND ${expect_output} 1 ONLY "^/"
     "helper_headers/helper.hpp:7: golden values of alpha are used outside a test case"
     -- ${test_references} golden ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp ${reference_fixtures}/helper_headers)
 galoot_expected_findings(${reference_fixtures}/trace_bad_table.expected
   trace_bad_findings)
 add_test(NAME tools.test_references_trace_rejects
-  COMMAND ${expect_output} 1 ${trace_bad_findings}
+  COMMAND ${expect_output} 1 ONLY "^/" ${trace_bad_findings}
     -- ${test_references} trace ${reference_fixtures}/trace_bad_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
       ${reference_fixtures}/golden_good.cpp)
+galoot_expected_findings(${reference_fixtures}/trace_empty_table.expected
+  trace_empty_findings)
 add_test(NAME tools.test_references_trace_no_rows
-  COMMAND ${expect_output} 1
-    "trace_empty_table.md: no rows of the form | item | fact | implemented |"
+  COMMAND ${expect_output} 1 ONLY "^/" ${trace_empty_findings}
     -- ${test_references} trace ${reference_fixtures}/trace_empty_table.md
       ${reference_fixtures}/trace_conventions.md
       ${reference_fixtures}/golden_fixture.hpp
