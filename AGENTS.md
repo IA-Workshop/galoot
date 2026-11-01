@@ -29,3 +29,5 @@ Research notes in `docs/agent/research-notes/` hold the evidence behind many rul
 ## Agents
 
 The agents in `.claude/agents/` are `doctest-expert` (tests), `build-expert` (CMake, presets, lint, build cost), `blind-reviewer` (independent review before a merge, W5), and `auditor` (governance conformance of a branch or release). Brief them as W14 requires.
+
+Five specialist agents also work in any role the brief names (researcher, planner, implementer, reviewer, or auditor): `math-expert` (geometric algebra and its literature, validating mathematics with the math tools), `numerical-expert` (error, scaling, and operation-count analysis), `performance-engineer` (instruction-level and compile-time cost), `cpp-expert` (the C++ standard and Core Guidelines), and `hci-expert` (friendliness, naming, diagnostics, and readability from a human's side). Agents run at the Opus level with high effort. Fable-level work needs the owner's permission, named in the brief; small, tightly scoped work may go to Sonnet or Haiku.
