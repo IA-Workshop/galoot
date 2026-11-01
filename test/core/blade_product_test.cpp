@@ -849,8 +849,8 @@ TEST_CASE("No product has more terms than product_capacity, and the bound is "
 
 // Reference: proof: every term that the generation of e_A e_B adds to any
 //   list, and so every partial sum, lies on a subset of A with B of the
-//   parity of |A| + |B|, so a list of half the subsets never overflows; each
-//   pair of every signature listed here is generated with exactly that
+//   parity of |A| + |B|, so a list of half the subsets never overflows, and
+//   each pair of every signature listed here is generated with exactly that
 //   capacity, from 1 to 32, and compared with its product at capacity 32
 TEST_CASE("Every product fits a term list of exactly its capacity bound") {
   for_each_signature([](const char* name, const auto& g) {
