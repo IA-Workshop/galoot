@@ -1,0 +1,8 @@
+set_printing.cpp: In instantiation of ‘struct mv<blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_blade{9, -1}, oriented_blade{10, -1}}}}>’:
+set_printing.cpp:34:43:   required from here
+   34 | [[maybe_unused]] constexpr mv<line_start> wrong{};
+      |                                           ^~~~~
+set_printing.cpp:29:34: error: static assertion failed: the first blade is not the scalar
+   29 |   static_assert(B.blades[0].mask == 0, "the first blade is not the scalar");
+      |                 ~~~~~~~~~~~~~~~~~^~~~
+  • the comparison reduces to ‘(9 == 0)’
