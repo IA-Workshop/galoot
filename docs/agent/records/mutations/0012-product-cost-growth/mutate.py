@@ -14,9 +14,12 @@ After the last mutant the headers are restored and `all` is built again.
 
 With --runtime, every static_assert of the three doctest files that use the
 changed headers (bits_test.cpp, blade_product_test.cpp, plan_test.cpp)
-becomes `static_assert(true || ...)` for the run, so that their programs
+becomes `static_assert(true ? true : ...)` for the run, so that their programs
 build on a mutant those checks would reject, and the record lists the test
-cases that fail at run time. The checks inside plan.hpp stay.
+cases that fail at run time. The conditional operator binds more loosely
+than every operator a condition uses, so the condition stays one operand
+and no -Wparentheses warning ends the build, as `true || a && b` would. The
+checks inside plan.hpp stay.
 
 With --without-top-pairing, the test case "blade_product reads a pairing
 with the top generator of the widest algebra" is removed for the run, to
@@ -144,7 +147,7 @@ def main():
             count = edited_tests[path].count("static_assert(")
             assert count > 0, path
             edited_tests[path] = edited_tests[path].replace(
-                "static_assert(", "static_assert(true || ")
+                "static_assert(", "static_assert(true ? true : ")
     if without_top:
         text = edited_tests[PRODUCT_TEST]
         start = text.index(TOP_PAIRING_START)
