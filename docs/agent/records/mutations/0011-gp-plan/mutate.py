@@ -42,7 +42,10 @@ RUNTIME_TEST_EDITS = [
      "static_assert(true || follows_diagonal_rule(", 3),
     ("static_assert(folds_signs(", "static_assert(true || folds_signs(", 2),
     ("static_assert(\n    equals_generation<",
-     "static_assert(\n    true || equals_generation<", 3),
+     "static_assert(\n    true || equals_generation<", 5),
+    ("static_assert(pair_terms_are(", "static_assert(true || pair_terms_are(", 4),
+    ("static_assert(\n    pair_terms_are(",
+     "static_assert(\n    true || pair_terms_are(", 1),
 ]
 RUNTIME_HEADER_EDITS = [
     ("static_assert(!defects.", "static_assert(true || !defects.", 5),

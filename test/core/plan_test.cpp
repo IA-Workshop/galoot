@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <initializer_list>
 #include <limits>
 #include <span>
 #include <tuple>
@@ -59,6 +60,19 @@ struct r130 {
 };
 struct r300 {
   static constexpr auto value = core::R<3, 0, 0>();
+};
+// Two forms that are not diagonal, in which a product of blades can have
+// more than one term: conformal(2), with e3 . e4 = -1 for the null e3 and e4,
+// and a degenerate form with e1 . e2 = 1 and e3 null.
+struct conformal2 {
+  static constexpr auto value = core::conformal<2>();
+};
+struct degenerate {
+  static constexpr auto value = core::from_gram({
+      {0, 1, 0},
+      {1, 0, 0},
+      {0, 0, 0},
+  });
 };
 struct widest {
   static constexpr auto value = core::R<mask_width, 0, 0, mask_width>();
@@ -213,6 +227,25 @@ constexpr bool equals_generation(const core::metric<N>& g,
   return count == T && again == plan;
 }
 
+// Whether the terms of the pair (a, b) in `plan` are `expected`, in order.
+template <std::size_t T>
+constexpr bool pair_terms_are(const std::array<plan_term, T>& plan,
+                              std::size_t a, std::size_t b,
+                              std::initializer_list<plan_term> expected) {
+  const std::vector<plan_term> wanted(expected);
+  std::size_t k = 0;
+  for (const plan_term& t : plan) {
+    if (t.a != a || t.b != b) {
+      continue;
+    }
+    if (k == wanted.size() || t != wanted.at(k)) {
+      return false;
+    }
+    ++k;
+  }
+  return k == wanted.size();
+}
+
 // The ten terms of the sparse sets {1, e1, e_n, e1 ^ e_n} and {e1, e2, e_n}
 // in R(n - 1, 0, 1), worked by hand from e_i e_i = 1 for i < n, e_n e_n = 0,
 // and e_j e_i = -e_i e_j for i < j: e1 e1 = 1, e_n e1 = -e1n,
@@ -334,6 +367,45 @@ static_assert(
 static_assert(
     equals_generation<8>(r130::value, core::full<4>, core::full<4>,
                          gp_plan<r130, core::full<4>, core::full<4>>));
+
+// Reference: contract: the plans of conformal(2) and of a degenerate form,
+// whose products of blades can have two terms, so that the term lists of the
+// plan need more than one place, equal a direct call of generate_gp;
+// independent value: worked by hand from e_i e_j + e_j e_i = 2 g_ij and
+// e_i x = e_i . x + e_i ^ x, e3 e4 = -1 + e34 and e4 e3 = -1 - e34 in
+// conformal(2), and e1 e2 = 1 + e12, e12 e12 = 1, and e123 e123 = 0 in the
+// degenerate form, at their places in full<4> and full<3>
+static_assert(
+    equals_generation<8>(conformal2::value, core::full<4>, core::full<4>,
+                         gp_plan<conformal2, core::full<4>, core::full<4>>));
+static_assert(
+    equals_generation<4>(degenerate::value, core::full<3>, core::full<3>,
+                         gp_plan<degenerate, core::full<3>, core::full<3>>));
+static_assert(pair_terms_are(gp_plan<conformal2, core::full<4>, core::full<4>>,
+                             3, 4,
+                             {
+                                 {.a = 3, .b = 4, .out = 0, .coefficient = -1},
+                                 {.a = 3, .b = 4, .out = e34, .coefficient = 1},
+                             }));
+static_assert(
+    pair_terms_are(gp_plan<conformal2, core::full<4>, core::full<4>>, 4, 3,
+                   {
+                       {.a = 4, .b = 3, .out = 0, .coefficient = -1},
+                       {.a = 4, .b = 3, .out = e34, .coefficient = -1},
+                   }));
+static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+                             1, 2,
+                             {
+                                 {.a = 1, .b = 2, .out = 0, .coefficient = 1},
+                                 {.a = 1, .b = 2, .out = e12, .coefficient = 1},
+                             }));
+static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+                             4, 4,
+                             {
+                                 {.a = 4, .b = 4, .out = 0, .coefficient = 1},
+                             }));
+static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+                             7, 7, {}));
 
 // Reference: contract: a plan term is a trivially copyable aggregate, and a
 // plan is a std::array of them
@@ -513,9 +585,10 @@ TEST_CASE("No plan has a zero coefficient, a position or blade out of range, "
 }
 
 // Reference: contract: gp_plan and generate_gp are one constexpr function,
-// so the plans of every blade times every blade of rigid(3), R(4,0,0), and
-// R(1,3,0) built in a constant evaluation equal the same function run at run
-// time on a metric that the compiler cannot know
+// so the plans of every blade times every blade of rigid(3), R(4,0,0),
+// R(1,3,0), conformal(2), and a degenerate form of three generators, built in
+// a constant evaluation, equal the same function run at run time on a metric
+// that the compiler cannot know
 TEST_CASE("gp_plan equals generate_gp run at run time") {
   const auto read_at_run_time = [](const auto& fixed) {
     std::remove_cvref_t<decltype(fixed)> g{};
@@ -536,6 +609,14 @@ TEST_CASE("gp_plan equals generate_gp run at run time") {
   CHECK(same(read_at_run_time(rga3::value), gp_plan<rga3, all, all>));
   CHECK(same(read_at_run_time(r400::value), gp_plan<r400, all, all>));
   CHECK(same(read_at_run_time(r130::value), gp_plan<r130, all, all>));
+  CHECK(
+      same(read_at_run_time(conformal2::value), gp_plan<conformal2, all, all>));
+
+  constexpr const auto& three = core::full<3>;
+  const generated_plan again = generate<4>(read_at_run_time(degenerate::value),
+                                           three.blades, three.blades);
+  CHECK(again.written == gp_plan<degenerate, three, three>.size());
+  CHECK(std::ranges::equal(again.terms, gp_plan<degenerate, three, three>));
 }
 
 // Reference: contract: generate_gp writes as many terms as fit in its
