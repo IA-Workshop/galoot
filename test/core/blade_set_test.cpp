@@ -781,8 +781,8 @@ TEST_CASE("merge of the line and the plane of rigid(3) keeps the sign of "
 }
 
 // Reference: independent value: the union of e2 with e3 e1 e2, each blade
-//   once in canonical order, is e1 e2 e3 with sign +1, written out here; the
-//   second set is out of canonical order and shares e2 with the first, so
+//   once in canonical order, is e1 e2 e3 with sign +1, written out here, where
+//   the second set is out of canonical order and shares e2 with the first, so
 //   the merge must keep track of which set each listed blade came from as it
 //   reorders them
 TEST_CASE("merge of e2 with e3 e1 e2 is e1 e2 e3") {
