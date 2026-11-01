@@ -61,3 +61,6 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0012	cost-growth implementer (performance-engineer role)	opus	434103	166	3950	reported by harness as subagent_tokens
 2026-11-01	plan-0012	cost-growth blind reviewer (W5)	opus	300208	95	1592	reported by harness as subagent_tokens
 2026-11-01	plan-0012	cost-growth implementer, review-fix round	opus	475051	191	4390	reported by harness as subagent_tokens (cumulative; tool calls 166 + 25)
+2026-11-01	plan-0013	WU7 planner (math-expert role)	opus	321708	61	1103	reported by harness as subagent_tokens
+2026-11-01	plan-0013	WU7a implementer (cpp-expert role)	opus	630786	194	3426	reported by harness as subagent_tokens (cumulative across the review-fix round)
+2026-11-01	plan-0013	WU7a blind reviewer (W5)	opus	300144	79	1025	reported by harness as subagent_tokens
