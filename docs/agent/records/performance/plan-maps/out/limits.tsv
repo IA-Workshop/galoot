@@ -1,0 +1,628 @@
+compiler	config	op	unit	exit	inst_p_u	wall_s	maxrss_kib	sibling_busy_s	pinned_other_s	limit
+gcc	galoot-O0	antigp	typed	0	1263230801	0.138	86544	0.00	-0.01	-
+gcc	galoot-O0	antigp	conformal3-vectors	0	1003418768	0.113	78168	0.00	-0.00	-
+gcc	galoot-O0	antigp	sparse8	0	960330374	0.110	76028	0.00	0.00	-
+gcc	galoot-O0	antigp	sparse-complements8	0	937377534	0.110	76256	0.00	-0.01	-
+gcc	galoot-O0	antigp	sparse12	0	1001294065	0.111	75952	0.00	0.00	-
+gcc	galoot-O0	antigp	sparse-complements12	0	944106669	0.108	76216	0.00	-0.01	-
+gcc	galoot-O0	antigp	sparse16	0	1056442026	0.114	78500	0.00	0.01	-
+gcc	galoot-O0	antigp	sparse-complements16	0	953116397	0.108	75836	0.00	0.00	-
+gcc	galoot-O0	antigp	full-r-n2	0	932047055	0.106	76188	0.00	0.01	-
+gcc	galoot-O0	antigp	full-r-n3	0	1047391806	0.114	78384	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-r-n4	0	1633388396	0.145	84744	0.00	0.01	-
+gcc	galoot-O0	antigp	full-r-n5	0	4872638727	0.315	122916	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-r-n6	0	25086164610	1.408	350956	0.01	0.01	-
+gcc	galoot-O0	antigp	full-r-n7	1	82959986638	4.744	965360	0.02	0.01	/usr/include/c++/16/span:290:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	antigp	full-conformal-n3	0	1054372519	0.111	78424	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-conformal-n4	0	1662882575	0.145	84736	0.00	0.01	-
+gcc	galoot-O0	antigp	full-conformal-n5	0	5004899087	0.323	125212	0.00	0.01	-
+gcc	galoot-O0	antigp	full-conformal-n6	0	25660085509	1.423	355140	0.00	0.01	-
+gcc	galoot-O0	antigp	full-conformal-n7	1	85489150763	4.982	980024	0.69	0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antigp	full-rigid-n2	0	926899016	0.096	76192	0.00	-0.01	-
+gcc	galoot-O0	antigp	full-rigid-n3	0	1019622220	0.100	78328	0.00	0.01	-
+gcc	galoot-O0	antigp	full-rigid-n4	0	1475238756	0.123	82592	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-rigid-n5	0	3942827635	0.241	112608	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-rigid-n6	0	18845316001	0.964	279344	0.00	0.01	-
+gcc	galoot-O0	antigp	full-rigid-n7	1	78615959298	4.004	918160	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antigp	full-dense-n2	0	943415695	0.095	76228	0.00	-0.00	-
+gcc	galoot-O0	antigp	full-dense-n3	0	1203232345	0.109	80460	0.00	0.00	-
+gcc	galoot-O0	antigp	full-dense-n4	0	3548213587	0.224	108288	0.00	0.01	-
+gcc	galoot-O0	antigp	full-dense-n5	0	27631437801	1.399	400008	0.00	0.00	-
+gcc	galoot-O0	antigp	full-dense-n6	1	49543702485	2.598	669908	0.00	-0.00	include/galoot/core/blade_product.hpp:146:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	antiwedge	typed	0	1037445821	0.103	82220	0.00	0.01	-
+gcc	galoot-O0	antiwedge	conformal3-vectors	0	906920969	0.092	75912	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	sparse8	0	907030877	0.092	76012	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	sparse-complements8	0	927859210	0.095	75920	0.00	0.01	-
+gcc	galoot-O0	antiwedge	sparse12	0	912740471	0.093	75956	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	sparse-complements12	0	934270846	0.094	75932	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	sparse16	0	921559919	0.094	75924	0.00	0.01	-
+gcc	galoot-O0	antiwedge	sparse-complements16	0	943650643	0.094	75928	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-r-n2	0	916725278	0.093	76212	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-r-n3	0	963733237	0.097	76008	0.00	-0.01	-
+gcc	galoot-O0	antiwedge	full-r-n4	0	1139291066	0.104	78172	0.00	0.01	-
+gcc	galoot-O0	antiwedge	full-r-n5	0	1837832897	0.151	88596	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-r-n6	0	4844230410	0.306	124868	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-r-n7	0	18220749378	1.112	289624	0.02	0.00	-
+gcc	galoot-O0	antiwedge	full-r-n8	1	77736853619	4.137	984436	0.01	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antiwedge	full-conformal-n3	0	963452558	0.095	75980	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-conformal-n4	0	1139275035	0.105	78384	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-conformal-n5	0	1836518318	0.142	88632	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-conformal-n6	0	4832303827	0.287	125012	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-conformal-n7	0	18312115728	0.957	289524	0.00	-0.01	-
+gcc	galoot-O0	antiwedge	full-conformal-n8	1	77777104740	4.112	984328	0.00	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antiwedge	full-rigid-n2	0	916410139	0.099	76056	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-rigid-n3	0	963625537	0.100	76212	0.00	0.01	-
+gcc	galoot-O0	antiwedge	full-rigid-n4	0	1139561623	0.110	78128	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-rigid-n5	0	1836025477	0.145	88560	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-rigid-n6	0	4827667907	0.294	124832	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-rigid-n7	0	18215597997	0.962	289684	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-rigid-n8	1	77641478975	4.135	984304	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antiwedge	full-dense-n2	0	917060753	0.097	76204	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-dense-n3	0	965522898	0.100	76052	0.00	0.00	-
+gcc	galoot-O0	antiwedge	full-dense-n4	0	1142632185	0.109	78384	0.00	-0.01	-
+gcc	galoot-O0	antiwedge	full-dense-n5	0	1839884739	0.146	88616	0.00	0.01	-
+gcc	galoot-O0	antiwedge	full-dense-n6	0	4828223270	0.294	124712	0.00	-0.00	-
+gcc	galoot-O0	antiwedge	full-dense-n7	0	18222878964	0.964	289676	0.00	0.01	-
+gcc	galoot-O0	antiwedge	full-dense-n8	1	77217175897	4.082	984524	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	reverse	typed	0	1007400319	0.104	82364	0.00	-0.00	-
+gcc	galoot-O0	reverse	full-n2	0	892478356	0.093	75912	0.00	0.01	-
+gcc	galoot-O0	reverse	full-n3	0	900710121	0.092	76236	0.00	-0.00	-
+gcc	galoot-O0	reverse	full-n4	0	923260347	0.092	75908	0.00	-0.00	-
+gcc	galoot-O0	reverse	full-n5	0	990626390	0.097	76004	0.00	0.00	-
+gcc	galoot-O0	reverse	full-n6	0	1221328328	0.108	80288	0.00	0.01	-
+gcc	galoot-O0	reverse	full-n7	0	2070906300	0.149	88816	0.00	0.00	-
+gcc	galoot-O0	reverse	full-n8	0	5236414954	0.301	124676	0.00	0.01	-
+gcc	galoot-O0	reverse	full-n9	0	17921274712	0.918	263032	0.00	0.00	-
+gcc	galoot-O0	reverse	full-n10	1	48410957216	2.615	585760	0.00	0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	antireverse	typed	0	1007804572	0.106	82148	0.00	0.01	-
+gcc	galoot-O0	antireverse	full-n2	0	892546915	0.095	76136	0.00	0.01	-
+gcc	galoot-O0	antireverse	full-n3	0	900906258	0.095	76116	0.00	-0.00	-
+gcc	galoot-O0	antireverse	full-n4	0	923838899	0.094	76252	0.00	0.01	-
+gcc	galoot-O0	antireverse	full-n5	0	991375257	0.096	76036	0.00	0.00	-
+gcc	galoot-O0	antireverse	full-n6	0	1221816980	0.109	80272	0.00	0.00	-
+gcc	galoot-O0	antireverse	full-n7	0	2064109831	0.149	89028	0.00	-0.01	-
+gcc	galoot-O0	antireverse	full-n8	0	5240840973	0.332	124760	0.00	-0.00	-
+gcc	galoot-O0	antireverse	full-n9	0	17871086893	0.934	263308	0.00	-0.00	-
+gcc	galoot-O0	antireverse	full-n10	1	48650712559	2.663	585972	0.00	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	grade_involution	typed	0	1007578705	0.101	82448	0.00	-0.00	-
+gcc	galoot-O0	grade_involution	full-n2	0	892527726	0.091	75988	0.00	-0.01	-
+gcc	galoot-O0	grade_involution	full-n3	0	900758990	0.091	76008	0.00	-0.00	-
+gcc	galoot-O0	grade_involution	full-n4	0	923124452	0.092	76308	0.00	-0.01	-
+gcc	galoot-O0	grade_involution	full-n5	0	990473421	0.095	76080	0.00	0.01	-
+gcc	galoot-O0	grade_involution	full-n6	0	1220595135	0.107	80360	0.00	0.00	-
+gcc	galoot-O0	grade_involution	full-n7	0	2060527852	0.147	89004	0.00	-0.01	-
+gcc	galoot-O0	grade_involution	full-n8	0	5244908831	0.302	125064	0.00	0.01	-
+gcc	galoot-O0	grade_involution	full-n9	0	17747294420	0.904	263340	0.00	-0.00	-
+gcc	galoot-O0	grade_involution	full-n10	1	48825005233	2.653	586232	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	right_complement	typed	0	1010020688	0.106	82408	0.00	0.00	-
+gcc	galoot-O0	right_complement	full-n2	0	893594805	0.092	76036	0.00	-0.00	-
+gcc	galoot-O0	right_complement	full-n3	0	903270031	0.092	75992	0.00	-0.00	-
+gcc	galoot-O0	right_complement	full-n4	0	929979838	0.095	76220	0.00	0.01	-
+gcc	galoot-O0	right_complement	full-n5	0	1011971341	0.097	78228	0.00	0.00	-
+gcc	galoot-O0	right_complement	full-n6	0	1289198428	0.111	80216	0.00	-0.00	-
+gcc	galoot-O0	right_complement	full-n7	0	2293000136	0.166	95216	0.00	0.00	-
+gcc	galoot-O0	right_complement	full-n8	0	6189989878	0.368	146128	0.00	0.00	-
+gcc	galoot-O0	right_complement	full-n9	0	21221399677	1.201	340548	0.00	0.00	-
+gcc	galoot-O0	right_complement	full-n10	1	55876772645	3.028	860916	0.00	-0.00	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	left_complement	typed	0	1010427057	0.103	82104	0.00	0.01	-
+gcc	galoot-O0	left_complement	full-n2	0	893482125	0.092	76052	0.00	-0.00	-
+gcc	galoot-O0	left_complement	full-n3	0	903122840	0.091	76024	0.00	0.01	-
+gcc	galoot-O0	left_complement	full-n4	0	929834070	0.093	76268	0.00	-0.00	-
+gcc	galoot-O0	left_complement	full-n5	0	1011678096	0.098	78416	0.00	0.00	-
+gcc	galoot-O0	left_complement	full-n6	0	1286167823	0.112	80248	0.00	-0.00	-
+gcc	galoot-O0	left_complement	full-n7	0	2298877751	0.160	94944	0.00	0.00	-
+gcc	galoot-O0	left_complement	full-n8	0	6159946186	0.377	146216	0.00	0.00	-
+gcc	galoot-O0	left_complement	full-n9	0	21253679620	1.187	340252	0.00	0.01	-
+gcc	galoot-O0	left_complement	full-n10	1	54976994433	2.731	861228	0.00	-0.01	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	antigp	typed	0	1294970847	0.124	88332	0.00	-0.00	-
+gcc	galoot-O2	antigp	conformal3-vectors	0	1018621807	0.101	78936	0.00	0.01	-
+gcc	galoot-O2	antigp	sparse8	0	975636132	0.098	76624	0.00	0.00	-
+gcc	galoot-O2	antigp	sparse-complements8	0	952641210	0.098	76600	0.00	0.00	-
+gcc	galoot-O2	antigp	sparse12	0	1015367845	0.099	78880	0.00	0.00	-
+gcc	galoot-O2	antigp	sparse-complements12	0	959127335	0.098	76532	0.00	0.00	-
+gcc	galoot-O2	antigp	sparse16	0	1071249831	0.106	78948	0.00	0.00	-
+gcc	galoot-O2	antigp	sparse-complements16	0	967759666	0.100	76468	0.00	0.00	-
+gcc	galoot-O2	antigp	full-r-n2	0	947616852	0.096	76596	0.00	0.00	-
+gcc	galoot-O2	antigp	full-r-n3	0	1062988410	0.110	78724	0.00	0.00	-
+gcc	galoot-O2	antigp	full-r-n4	0	1647552240	0.135	85168	0.00	-0.00	-
+gcc	galoot-O2	antigp	full-r-n5	0	4905403307	0.295	123468	0.00	-0.00	-
+gcc	galoot-O2	antigp	full-r-n6	0	24968262341	1.431	351164	0.00	-0.01	-
+gcc	galoot-O2	antigp	full-r-n7	1	82017759638	4.287	965532	0.00	0.01	/usr/include/c++/16/span:290:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	antigp	full-conformal-n3	0	1068926210	0.107	78736	0.00	0.00	-
+gcc	galoot-O2	antigp	full-conformal-n4	0	1672914219	0.139	85084	0.00	-0.01	-
+gcc	galoot-O2	antigp	full-conformal-n5	0	5007075752	0.310	125744	0.00	0.00	-
+gcc	galoot-O2	antigp	full-conformal-n6	0	25423185979	1.355	355968	0.00	0.01	-
+gcc	galoot-O2	antigp	full-conformal-n7	1	84485436840	4.721	980248	0.01	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antigp	full-rigid-n2	0	942167644	0.097	76728	0.00	0.00	-
+gcc	galoot-O2	antigp	full-rigid-n3	0	1034686725	0.101	78844	0.00	0.00	-
+gcc	galoot-O2	antigp	full-rigid-n4	0	1492535441	0.125	82972	0.00	0.01	-
+gcc	galoot-O2	antigp	full-rigid-n5	0	3963635997	0.248	113036	0.00	0.00	-
+gcc	galoot-O2	antigp	full-rigid-n6	0	18774474805	0.981	282044	0.00	0.01	-
+gcc	galoot-O2	antigp	full-rigid-n7	1	77994607131	3.961	918208	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antigp	full-dense-n2	0	958479270	0.097	76624	0.00	0.00	-
+gcc	galoot-O2	antigp	full-dense-n3	0	1218836167	0.110	80800	0.00	0.00	-
+gcc	galoot-O2	antigp	full-dense-n4	0	3562810897	0.226	110696	0.00	0.01	-
+gcc	galoot-O2	antigp	full-dense-n5	0	27611522973	1.437	400568	0.00	-0.00	-
+gcc	galoot-O2	antigp	full-dense-n6	1	49314273639	2.607	671412	0.00	0.01	include/galoot/core/blade_product.hpp:146:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	antiwedge	typed	0	1059156286	0.111	83440	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	conformal3-vectors	0	922144509	0.100	76320	0.00	0.00	-
+gcc	galoot-O2	antiwedge	sparse8	0	921668189	0.099	76368	0.00	0.00	-
+gcc	galoot-O2	antiwedge	sparse-complements8	0	943081636	0.100	76632	0.00	-0.01	-
+gcc	galoot-O2	antiwedge	sparse12	0	927991738	0.101	76236	0.00	-0.01	-
+gcc	galoot-O2	antiwedge	sparse-complements12	0	949438703	0.102	76496	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	sparse16	0	936568468	0.101	76384	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	sparse-complements16	0	959035799	0.105	76460	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-r-n2	0	931548406	0.102	76500	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-r-n3	0	979026805	0.104	76616	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-r-n4	0	1156330992	0.112	80872	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-r-n5	0	1859108336	0.148	89348	0.00	0.00	-
+gcc	galoot-O2	antiwedge	full-r-n6	0	4854124764	0.306	125352	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-r-n7	0	18274353893	1.011	289836	0.00	0.00	-
+gcc	galoot-O2	antiwedge	full-r-n8	1	77280324162	4.223	984556	0.01	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antiwedge	full-conformal-n3	0	978871038	0.104	76636	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-conformal-n4	0	1156735807	0.114	80980	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-conformal-n5	0	1860088051	0.150	89020	0.00	0.00	-
+gcc	galoot-O2	antiwedge	full-conformal-n6	0	4859759483	0.308	125148	0.00	-0.01	-
+gcc	galoot-O2	antiwedge	full-conformal-n7	0	18313300631	1.016	289764	0.00	0.02	-
+gcc	galoot-O2	antiwedge	full-conformal-n8	1	77779224666	4.412	984632	0.01	0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antiwedge	full-rigid-n2	0	931198350	0.141	76696	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-rigid-n3	0	978669068	0.142	76612	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-rigid-n4	0	1155737281	0.145	80932	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-rigid-n5	0	1857728455	0.175	89184	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-rigid-n6	0	4842619358	0.350	125412	0.01	0.00	-
+gcc	galoot-O2	antiwedge	full-rigid-n7	0	18331068910	1.077	289876	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-rigid-n8	1	78438181659	4.926	984704	0.01	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antiwedge	full-dense-n2	0	932135415	0.134	76260	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-dense-n3	0	980772691	0.142	76724	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-dense-n4	0	1158472644	0.169	80660	0.00	0.00	-
+gcc	galoot-O2	antiwedge	full-dense-n5	0	1857095728	0.193	89376	0.00	0.01	-
+gcc	galoot-O2	antiwedge	full-dense-n6	0	4863909432	0.344	127384	0.00	-0.00	-
+gcc	galoot-O2	antiwedge	full-dense-n7	0	18382797595	1.183	289916	0.00	0.00	-
+gcc	galoot-O2	antiwedge	full-dense-n8	1	77536385107	5.143	984592	0.01	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	reverse	typed	0	1035892432	0.131	84140	0.00	0.00	-
+gcc	galoot-O2	reverse	full-n2	0	907024769	0.113	76488	0.00	0.01	-
+gcc	galoot-O2	reverse	full-n3	0	915708254	0.158	76408	0.12	0.00	-
+gcc	galoot-O2	reverse	full-n4	0	938223680	0.118	76488	0.00	0.00	-
+gcc	galoot-O2	reverse	full-n5	0	1006149472	0.118	76308	0.00	-0.01	-
+gcc	galoot-O2	reverse	full-n6	0	1234888717	0.130	80956	0.00	0.01	-
+gcc	galoot-O2	reverse	full-n7	0	2072037571	0.176	89544	0.00	0.01	-
+gcc	galoot-O2	reverse	full-n8	0	5255624010	0.345	125324	0.00	0.01	-
+gcc	galoot-O2	reverse	full-n9	0	17646607202	1.027	263408	0.00	0.01	-
+gcc	galoot-O2	reverse	full-n10	1	47762325228	3.252	586368	0.08	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	antireverse	typed	0	1036225100	0.120	84064	0.00	0.00	-
+gcc	galoot-O2	antireverse	full-n2	0	907355403	0.110	76608	0.00	0.01	-
+gcc	galoot-O2	antireverse	full-n3	0	915953269	0.109	76456	0.00	0.00	-
+gcc	galoot-O2	antireverse	full-n4	0	938032735	0.114	76592	0.00	-0.00	-
+gcc	galoot-O2	antireverse	full-n5	0	1006784229	0.114	76584	0.00	-0.00	-
+gcc	galoot-O2	antireverse	full-n6	0	1236720176	0.129	80608	0.00	0.00	-
+gcc	galoot-O2	antireverse	full-n7	0	2077501967	0.177	89288	0.00	-0.01	-
+gcc	galoot-O2	antireverse	full-n8	0	5279945367	0.362	125408	0.00	-0.01	-
+gcc	galoot-O2	antireverse	full-n9	0	17741875965	1.067	263644	0.03	-0.00	-
+gcc	galoot-O2	antireverse	full-n10	1	47998240964	3.133	586576	0.01	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	grade_involution	typed	0	1035462466	0.131	83768	0.00	0.00	-
+gcc	galoot-O2	grade_involution	full-n2	0	906779727	0.110	76392	0.00	0.00	-
+gcc	galoot-O2	grade_involution	full-n3	0	915329981	0.114	76252	0.00	-0.00	-
+gcc	galoot-O2	grade_involution	full-n4	0	937907175	0.116	76584	0.00	-0.00	-
+gcc	galoot-O2	grade_involution	full-n5	0	1005629480	0.167	76628	0.13	0.00	-
+gcc	galoot-O2	grade_involution	full-n6	0	1235335645	0.132	80860	0.00	0.01	-
+gcc	galoot-O2	grade_involution	full-n7	0	2063892952	0.197	89400	0.05	-0.00	-
+gcc	galoot-O2	grade_involution	full-n8	0	5289705739	0.353	125376	0.00	0.01	-
+gcc	galoot-O2	grade_involution	full-n9	0	17586341931	1.043	263556	0.01	-0.01	-
+gcc	galoot-O2	grade_involution	full-n10	1	48558749692	3.224	586200	0.12	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	right_complement	typed	0	1037970097	0.152	84116	0.04	0.01	-
+gcc	galoot-O2	right_complement	full-n2	0	907896527	0.120	76280	0.00	0.01	-
+gcc	galoot-O2	right_complement	full-n3	0	918047430	0.119	76536	0.00	0.00	-
+gcc	galoot-O2	right_complement	full-n4	0	944388838	0.119	76356	0.00	0.00	-
+gcc	galoot-O2	right_complement	full-n5	0	1026590985	0.125	78888	0.00	-0.00	-
+gcc	galoot-O2	right_complement	full-n6	0	1301693914	0.159	80884	0.04	0.00	-
+gcc	galoot-O2	right_complement	full-n7	0	2311032815	0.193	95700	0.01	-0.00	-
+gcc	galoot-O2	right_complement	full-n8	0	6154134298	0.403	146580	0.00	-0.00	-
+gcc	galoot-O2	right_complement	full-n9	0	21439838210	1.390	340944	0.00	0.01	-
+gcc	galoot-O2	right_complement	full-n10	1	54079017087	3.660	861180	0.29	0.03	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	left_complement	typed	0	1038594041	0.130	84076	0.00	0.00	-
+gcc	galoot-O2	left_complement	full-n2	0	907896944	0.156	76348	0.10	-0.00	-
+gcc	galoot-O2	left_complement	full-n3	0	917926445	0.117	76380	0.00	-0.01	-
+gcc	galoot-O2	left_complement	full-n4	0	944719652	0.115	76652	0.01	-0.00	-
+gcc	galoot-O2	left_complement	full-n5	0	1025842234	0.122	78832	0.00	-0.01	-
+gcc	galoot-O2	left_complement	full-n6	0	1301303046	0.134	80672	0.00	-0.00	-
+gcc	galoot-O2	left_complement	full-n7	0	2313506583	0.190	95712	0.00	0.00	-
+gcc	galoot-O2	left_complement	full-n8	0	6174378644	0.401	146144	0.00	0.00	-
+gcc	galoot-O2	left_complement	full-n9	0	21226477139	1.238	340544	0.01	0.01	-
+gcc	galoot-O2	left_complement	full-n10	1	54750059079	3.371	861248	0.42	0.02	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antigp	typed	0	1247360960	0.151	86936	0.00	-0.01	-
+gcc	bare-O2	antigp	conformal3-vectors	0	984023002	0.120	75540	0.00	0.00	-
+gcc	bare-O2	antigp	sparse8	0	943206221	0.178	75224	0.16	-0.01	-
+gcc	bare-O2	antigp	sparse-complements8	0	920215758	0.113	75292	0.00	-0.00	-
+gcc	bare-O2	antigp	sparse12	0	982157326	0.198	75584	0.21	0.00	-
+gcc	bare-O2	antigp	sparse-complements12	0	925743430	0.115	75252	0.00	-0.00	-
+gcc	bare-O2	antigp	sparse16	0	1039609245	0.126	77664	0.02	0.00	-
+gcc	bare-O2	antigp	sparse-complements16	0	935470034	0.160	75332	0.11	0.01	-
+gcc	bare-O2	antigp	full-r-n2	0	915142945	0.115	75368	0.01	0.01	-
+gcc	bare-O2	antigp	full-r-n3	0	1026948673	0.119	77588	0.00	0.00	-
+gcc	bare-O2	antigp	full-r-n4	0	1593240414	0.214	84020	0.15	0.01	-
+gcc	bare-O2	antigp	full-r-n5	0	4745344361	0.328	118164	0.00	0.00	-
+gcc	bare-O2	antigp	full-r-n6	0	24092700577	1.422	319960	0.02	0.00	-
+gcc	bare-O2	antigp	full-r-n7	1	80923160237	5.056	888004	0.31	0.03	/usr/include/c++/16/span:111:24: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antigp	full-conformal-n3	0	1031658141	0.122	77668	0.00	-0.00	-
+gcc	bare-O2	antigp	full-conformal-n4	0	1615739957	0.172	84064	0.04	0.01	-
+gcc	bare-O2	antigp	full-conformal-n5	0	4823469904	0.355	120272	0.03	0.02	-
+gcc	bare-O2	antigp	full-conformal-n6	0	24736467411	1.499	324392	0.08	0.01	-
+gcc	bare-O2	antigp	full-conformal-n7	1	83197850277	5.491	900608	0.85	0.03	include/galoot/core/plan.hpp:310:40: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antigp	full-rigid-n2	0	909955161	0.116	75604	0.00	-0.00	-
+gcc	bare-O2	antigp	full-rigid-n3	0	999284169	0.125	77644	0.01	0.01	-
+gcc	bare-O2	antigp	full-rigid-n4	0	1439949231	0.147	81732	0.00	-0.01	-
+gcc	bare-O2	antigp	full-rigid-n5	0	3834470769	0.278	107360	0.00	-0.01	-
+gcc	bare-O2	antigp	full-rigid-n6	0	18125058700	1.075	257268	0.00	0.02	-
+gcc	bare-O2	antigp	full-rigid-n7	1	77070245117	4.745	845580	0.09	0.02	/usr/include/c++/16/span:254:22: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antigp	full-dense-n2	0	925684034	0.116	75688	0.00	-0.00	-
+gcc	bare-O2	antigp	full-dense-n3	0	1176710416	0.129	79880	0.00	-0.01	-
+gcc	bare-O2	antigp	full-dense-n4	0	3438051168	0.256	105556	0.00	-0.00	-
+gcc	bare-O2	antigp	full-dense-n5	0	26686853187	1.546	360340	0.02	0.01	-
+gcc	bare-O2	antigp	full-dense-n6	1	48514462835	2.717	605920	0.03	0.02	/usr/include/c++/16/array:211:16: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antiwedge	typed	0	1020859132	0.122	82392	0.00	-0.00	-
+gcc	bare-O2	antiwedge	conformal3-vectors	0	890400365	0.109	75124	0.00	0.00	-
+gcc	bare-O2	antiwedge	sparse8	0	889515180	0.109	75284	0.00	0.00	-
+gcc	bare-O2	antiwedge	sparse-complements8	0	911037908	0.114	75016	0.00	-0.00	-
+gcc	bare-O2	antiwedge	sparse12	0	895777454	0.113	75148	0.00	-0.00	-
+gcc	bare-O2	antiwedge	sparse-complements12	0	917537838	0.114	74872	0.00	0.01	-
+gcc	bare-O2	antiwedge	sparse16	0	905112235	0.113	75104	0.00	-0.00	-
+gcc	bare-O2	antiwedge	sparse-complements16	0	926728493	0.121	74900	0.01	-0.00	-
+gcc	bare-O2	antiwedge	full-r-n2	0	899602275	0.183	75092	0.19	-0.00	-
+gcc	bare-O2	antiwedge	full-r-n3	0	945428327	0.117	74992	0.00	-0.01	-
+gcc	bare-O2	antiwedge	full-r-n4	0	1116572784	0.127	77512	0.00	-0.01	-
+gcc	bare-O2	antiwedge	full-r-n5	0	1790777831	0.161	85592	0.00	-0.00	-
+gcc	bare-O2	antiwedge	full-r-n6	0	4672857124	0.339	119712	0.03	0.00	-
+gcc	bare-O2	antiwedge	full-r-n7	0	17612973013	1.057	267420	0.01	0.02	-
+gcc	bare-O2	antiwedge	full-r-n8	1	75790732754	4.691	901204	0.04	0.01	/usr/include/c++/16/span:288:9: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antiwedge	full-conformal-n3	0	945608262	0.115	75112	0.00	0.01	-
+gcc	bare-O2	antiwedge	full-conformal-n4	0	1115298560	0.122	77480	0.01	-0.00	-
+gcc	bare-O2	antiwedge	full-conformal-n5	0	1789599065	0.157	85608	0.00	0.00	-
+gcc	bare-O2	antiwedge	full-conformal-n6	0	4669115889	0.323	119628	0.00	-0.00	-
+gcc	bare-O2	antiwedge	full-conformal-n7	0	17675302200	1.074	267436	0.07	0.00	-
+gcc	bare-O2	antiwedge	full-conformal-n8	1	76422809150	4.720	901124	0.07	0.03	/usr/include/c++/16/span:288:9: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antiwedge	full-rigid-n2	0	899501110	0.110	75088	0.00	0.00	-
+gcc	bare-O2	antiwedge	full-rigid-n3	0	945141209	0.111	75128	0.00	-0.01	-
+gcc	bare-O2	antiwedge	full-rigid-n4	0	1116807572	0.122	77060	0.01	0.01	-
+gcc	bare-O2	antiwedge	full-rigid-n5	0	1789849435	0.160	85676	0.00	0.00	-
+gcc	bare-O2	antiwedge	full-rigid-n6	0	4676282443	0.323	119560	0.00	0.02	-
+gcc	bare-O2	antiwedge	full-rigid-n7	0	17594761178	1.063	267460	0.02	0.01	-
+gcc	bare-O2	antiwedge	full-rigid-n8	1	76308845410	4.707	901168	0.06	0.02	/usr/include/c++/16/span:288:9: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antiwedge	full-dense-n2	0	900508338	0.113	75332	0.00	0.01	-
+gcc	bare-O2	antiwedge	full-dense-n3	0	947289650	0.113	75216	0.01	-0.01	-
+gcc	bare-O2	antiwedge	full-dense-n4	0	1117323803	0.127	77436	0.00	-0.01	-
+gcc	bare-O2	antiwedge	full-dense-n5	0	1793957692	0.163	86076	0.00	0.01	-
+gcc	bare-O2	antiwedge	full-dense-n6	0	4665819571	0.374	119724	0.12	0.02	-
+gcc	bare-O2	antiwedge	full-dense-n7	0	17633324879	1.409	267860	0.69	0.01	-
+gcc	bare-O2	antiwedge	full-dense-n8	1	76359670936	6.521	901196	3.64	0.04	/usr/include/c++/16/span:288:9: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	reverse	typed	0	995855591	0.146	82804	0.04	0.01	-
+gcc	bare-O2	reverse	full-n2	0	876978791	0.108	75124	0.01	0.00	-
+gcc	bare-O2	reverse	full-n3	0	885118968	0.107	75068	0.00	0.00	-
+gcc	bare-O2	reverse	full-n4	0	906571290	0.109	75288	0.00	0.00	-
+gcc	bare-O2	reverse	full-n5	0	972077427	0.115	75032	0.00	-0.00	-
+gcc	bare-O2	reverse	full-n6	0	1194904321	0.129	77300	0.00	0.01	-
+gcc	bare-O2	reverse	full-n7	0	1994062832	0.170	86072	0.00	0.00	-
+gcc	bare-O2	reverse	full-n8	0	5112012176	0.395	117684	0.06	0.01	-
+gcc	bare-O2	reverse	full-n9	0	16950678059	1.097	238856	0.00	-0.00	-
+gcc	bare-O2	reverse	full-n10	1	48128443531	3.090	538076	0.02	0.01	include/galoot/core/blade_set.hpp:104:1: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	antireverse	typed	0	996035353	0.123	82620	0.00	0.01	-
+gcc	bare-O2	antireverse	full-n2	0	877268034	0.107	75368	0.00	-0.01	-
+gcc	bare-O2	antireverse	full-n3	0	885003032	0.111	75272	0.01	0.00	-
+gcc	bare-O2	antireverse	full-n4	0	906694326	0.115	75328	0.00	0.01	-
+gcc	bare-O2	antireverse	full-n5	0	972166915	0.114	75188	0.00	0.01	-
+gcc	bare-O2	antireverse	full-n6	0	1196311484	0.129	77456	0.00	0.00	-
+gcc	bare-O2	antireverse	full-n7	0	1996079600	0.167	86068	0.00	-0.01	-
+gcc	bare-O2	antireverse	full-n8	0	5035497865	0.416	117444	0.15	0.01	-
+gcc	bare-O2	antireverse	full-n9	0	16996237650	1.029	239136	0.08	0.01	-
+gcc	bare-O2	antireverse	full-n10	1	48012368849	3.028	538212	0.01	0.02	include/galoot/core/blade_set.hpp:104:1: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	grade_involution	typed	0	997238538	0.122	82864	0.00	-0.00	-
+gcc	bare-O2	grade_involution	full-n2	0	876910009	0.107	75292	0.00	-0.01	-
+gcc	bare-O2	grade_involution	full-n3	0	884873344	0.111	75276	0.00	0.01	-
+gcc	bare-O2	grade_involution	full-n4	0	906311950	0.115	74992	0.00	0.01	-
+gcc	bare-O2	grade_involution	full-n5	0	971893587	0.116	74988	0.00	0.01	-
+gcc	bare-O2	grade_involution	full-n6	0	1197111479	0.128	77176	0.00	-0.01	-
+gcc	bare-O2	grade_involution	full-n7	0	1996429436	0.167	86084	0.00	-0.01	-
+gcc	bare-O2	grade_involution	full-n8	0	5102058502	0.339	117732	0.00	-0.01	-
+gcc	bare-O2	grade_involution	full-n9	0	17030620057	1.014	239212	0.02	0.01	-
+gcc	bare-O2	grade_involution	full-n10	1	48019942560	3.080	538152	0.02	0.02	include/galoot/core/blade_set.hpp:104:1: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	right_complement	typed	0	999504848	0.126	82724	0.01	0.01	-
+gcc	bare-O2	right_complement	full-n2	0	877721155	0.110	74744	0.00	0.00	-
+gcc	bare-O2	right_complement	full-n3	0	887002458	0.110	75152	0.00	0.00	-
+gcc	bare-O2	right_complement	full-n4	0	912842920	0.111	75136	0.00	-0.00	-
+gcc	bare-O2	right_complement	full-n5	0	990355008	0.114	75072	0.00	-0.00	-
+gcc	bare-O2	right_complement	full-n6	0	1253046173	0.128	79436	0.00	0.00	-
+gcc	bare-O2	right_complement	full-n7	0	2208223298	0.187	92304	0.01	0.01	-
+gcc	bare-O2	right_complement	full-n8	0	5872762577	0.588	136692	0.45	0.01	-
+gcc	bare-O2	right_complement	full-n9	0	20132028585	1.558	309828	0.80	0.02	-
+gcc	bare-O2	right_complement	full-n10	1	53537958564	4.128	810172	2.03	0.03	/usr/include/c++/16/span:254:41: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	left_complement	typed	0	999845111	0.161	82828	0.09	0.01	-
+gcc	bare-O2	left_complement	full-n2	0	877953323	0.112	75228	0.00	-0.00	-
+gcc	bare-O2	left_complement	full-n3	0	887034717	0.118	75332	0.02	0.00	-
+gcc	bare-O2	left_complement	full-n4	0	911972043	0.128	75000	0.04	-0.01	-
+gcc	bare-O2	left_complement	full-n5	0	990762836	0.179	75104	0.17	0.00	-
+gcc	bare-O2	left_complement	full-n6	0	1252105741	0.176	79492	0.12	0.01	-
+gcc	bare-O2	left_complement	full-n7	0	2212961991	0.182	92096	0.00	-0.00	-
+gcc	bare-O2	left_complement	full-n8	0	5880586769	0.383	136528	0.00	-0.00	-
+gcc	bare-O2	left_complement	full-n9	0	20005046755	1.150	309896	0.00	0.01	-
+gcc	bare-O2	left_complement	full-n10	1	53719506880	3.049	810136	0.03	0.01	/usr/include/c++/16/span:254:41: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	antigp	typed	0	1701810249	0.204	129188	0.01	0.01	-
+clang	galoot-O0	antigp	conformal3-vectors	0	1342570792	0.174	120440	0.00	-0.00	-
+clang	galoot-O0	antigp	sparse8	0	1266489562	0.168	121504	0.00	0.01	-
+clang	galoot-O0	antigp	sparse-complements8	0	1174300516	0.164	121544	0.00	0.01	-
+clang	galoot-O0	antigp	sparse12	0	1405877354	0.178	121612	0.00	0.00	-
+clang	galoot-O0	antigp	sparse-complements12	0	1193554343	0.170	121548	0.00	0.01	-
+clang	galoot-O0	antigp	sparse16	0	1595973274	0.192	121560	0.00	-0.00	-
+clang	galoot-O0	antigp	sparse-complements16	0	1215047860	0.174	121756	0.00	-0.01	-
+clang	galoot-O0	antigp	full-r-n2	0	1166653402	0.170	121544	0.00	0.01	-
+clang	galoot-O0	antigp	full-r-n3	0	1393125467	0.182	121716	0.00	-0.00	-
+clang	galoot-O0	antigp	full-r-n4	0	2588311397	0.256	122288	0.00	0.01	-
+clang	galoot-O0	antigp	full-r-n5	0	9208316652	0.656	125396	0.00	0.01	-
+clang	galoot-O0	antigp	full-r-n6	1	7685174308	0.543	111564	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antigp	full-conformal-n3	0	1413175971	0.183	121516	0.00	-0.00	-
+clang	galoot-O0	antigp	full-conformal-n4	0	2667906814	0.255	121916	0.01	0.01	-
+clang	galoot-O0	antigp	full-conformal-n5	0	9515801328	0.681	125344	0.00	0.01	-
+clang	galoot-O0	antigp	full-conformal-n6	1	7592453751	0.547	114700	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antigp	full-rigid-n2	0	1157568567	0.173	121504	0.00	-0.00	-
+clang	galoot-O0	antigp	full-rigid-n3	0	1348705516	0.170	121520	0.00	0.00	-
+clang	galoot-O0	antigp	full-rigid-n4	0	2329204842	0.226	117900	0.00	-0.00	-
+clang	galoot-O0	antigp	full-rigid-n5	0	7593863503	0.554	123500	0.00	0.01	-
+clang	galoot-O0	antigp	full-rigid-n6	1	7707459124	0.537	114596	0.00	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antigp	full-dense-n2	0	1184158280	0.161	121564	0.01	-0.01	-
+clang	galoot-O0	antigp	full-dense-n3	0	1702587098	0.200	121732	0.00	0.00	-
+clang	galoot-O0	antigp	full-dense-n4	0	6788361029	0.505	123352	0.00	-0.00	-
+clang	galoot-O0	antigp	full-dense-n5	1	6450762218	0.472	111792	0.00	0.02	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antiwedge	typed	0	1268936245	0.175	128180	0.00	-0.00	-
+clang	galoot-O0	antiwedge	conformal3-vectors	0	1137178828	0.160	121360	0.00	0.00	-
+clang	galoot-O0	antiwedge	sparse8	0	1130671735	0.159	121452	0.00	0.00	-
+clang	galoot-O0	antiwedge	sparse-complements8	0	1159450468	0.162	121512	0.00	-0.00	-
+clang	galoot-O0	antiwedge	sparse12	0	1136932292	0.157	121256	0.00	-0.01	-
+clang	galoot-O0	antiwedge	sparse-complements12	0	1177486285	0.162	121520	0.00	-0.00	-
+clang	galoot-O0	antiwedge	sparse16	0	1147463658	0.163	121272	0.00	0.01	-
+clang	galoot-O0	antiwedge	sparse-complements16	0	1200714298	0.169	121560	0.00	0.00	-
+clang	galoot-O0	antiwedge	full-r-n2	0	1139724891	0.166	121328	0.00	0.02	-
+clang	galoot-O0	antiwedge	full-r-n3	0	1228288375	0.171	121300	0.00	0.00	-
+clang	galoot-O0	antiwedge	full-r-n4	0	1587351288	0.190	117648	0.00	0.01	-
+clang	galoot-O0	antiwedge	full-r-n5	0	3102637545	0.366	122112	0.24	-0.00	-
+clang	galoot-O0	antiwedge	full-r-n6	1	6916592851	0.493	117340	0.00	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antiwedge	full-conformal-n3	0	1226803445	0.165	121216	0.00	-0.00	-
+clang	galoot-O0	antiwedge	full-conformal-n4	0	1584787299	0.227	117192	0.10	0.00	-
+clang	galoot-O0	antiwedge	full-conformal-n5	0	3090502620	0.278	122228	0.00	-0.01	-
+clang	galoot-O0	antiwedge	full-conformal-n6	1	6938242461	0.497	117384	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antiwedge	full-rigid-n2	0	1138626902	0.164	121260	0.00	-0.00	-
+clang	galoot-O0	antiwedge	full-rigid-n3	0	1229243993	0.166	121208	0.00	0.01	-
+clang	galoot-O0	antiwedge	full-rigid-n4	0	1584331192	0.186	117464	0.00	-0.00	-
+clang	galoot-O0	antiwedge	full-rigid-n5	0	3090298951	0.270	120392	0.00	-0.01	-
+clang	galoot-O0	antiwedge	full-rigid-n6	1	6917625553	0.489	117360	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	antiwedge	full-dense-n2	0	1139758802	0.176	121400	0.02	-0.01	-
+clang	galoot-O0	antiwedge	full-dense-n3	0	1230935844	0.170	116992	0.01	0.02	-
+clang	galoot-O0	antiwedge	full-dense-n4	0	1588919314	0.189	117344	0.00	0.01	-
+clang	galoot-O0	antiwedge	full-dense-n5	0	3104764353	0.274	122092	0.00	-0.00	-
+clang	galoot-O0	antiwedge	full-dense-n6	1	6928774996	0.489	117400	0.00	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	reverse	typed	0	1138566091	0.166	127380	0.00	0.01	-
+clang	galoot-O0	reverse	full-n2	0	1078009381	0.157	120032	0.00	0.02	-
+clang	galoot-O0	reverse	full-n3	0	1087228025	0.155	120124	0.00	-0.00	-
+clang	galoot-O0	reverse	full-n4	0	1109632248	0.159	120072	0.00	0.00	-
+clang	galoot-O0	reverse	full-n5	0	1185249602	0.166	120476	0.00	0.01	-
+clang	galoot-O0	reverse	full-n6	0	1452897657	0.178	120544	0.00	-0.01	-
+clang	galoot-O0	reverse	full-n7	0	2448912497	0.239	122016	0.00	0.00	-
+clang	galoot-O0	reverse	full-n8	1	6092311346	0.515	123764	0.19	-0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	antireverse	typed	0	1139281458	0.164	127420	0.00	0.02	-
+clang	galoot-O0	antireverse	full-n2	0	1080236928	0.155	120172	0.01	-0.00	-
+clang	galoot-O0	antireverse	full-n3	0	1086833345	0.251	120040	0.25	0.00	-
+clang	galoot-O0	antireverse	full-n4	0	1111557782	0.252	120164	0.24	-0.01	-
+clang	galoot-O0	antireverse	full-n5	0	1189516105	0.262	120432	0.26	0.00	-
+clang	galoot-O0	antireverse	full-n6	0	1455731220	0.295	120760	0.30	0.01	-
+clang	galoot-O0	antireverse	full-n7	0	2454845766	0.304	122456	0.18	-0.00	-
+clang	galoot-O0	antireverse	full-n8	1	6093529769	0.462	123832	0.00	0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	grade_involution	typed	0	1136500556	0.174	127500	0.01	-0.00	-
+clang	galoot-O0	grade_involution	full-n2	0	1079983323	0.158	120044	0.00	-0.01	-
+clang	galoot-O0	grade_involution	full-n3	0	1087337601	0.155	120140	0.00	0.01	-
+clang	galoot-O0	grade_involution	full-n4	0	1110523392	0.162	120384	0.00	0.02	-
+clang	galoot-O0	grade_involution	full-n5	0	1184207855	0.161	120296	0.00	-0.00	-
+clang	galoot-O0	grade_involution	full-n6	0	1451085743	0.213	120768	0.09	-0.00	-
+clang	galoot-O0	grade_involution	full-n7	0	2452366155	0.244	122092	0.00	0.01	-
+clang	galoot-O0	grade_involution	full-n8	1	6079556485	0.455	123664	0.00	-0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	right_complement	typed	0	1144881260	0.161	127376	0.01	-0.01	-
+clang	galoot-O0	right_complement	full-n2	0	1080601811	0.154	119932	0.00	-0.00	-
+clang	galoot-O0	right_complement	full-n3	0	1090750317	0.157	120160	0.00	0.00	-
+clang	galoot-O0	right_complement	full-n4	0	1113542366	0.153	120524	0.00	0.02	-
+clang	galoot-O0	right_complement	full-n5	0	1187019016	0.175	120372	0.03	0.01	-
+clang	galoot-O0	right_complement	full-n6	0	1432033898	0.180	120488	0.00	-0.01	-
+clang	galoot-O0	right_complement	full-n7	0	2303321356	0.231	122288	0.00	0.00	-
+clang	galoot-O0	right_complement	full-n8	0	5613745011	0.440	130092	0.00	0.01	-
+clang	galoot-O0	right_complement	full-n9	1	7885568065	0.576	132016	0.00	0.01	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	left_complement	typed	0	1145418667	0.164	127404	0.00	0.01	-
+clang	galoot-O0	left_complement	full-n2	0	1081779472	0.153	120180	0.00	0.01	-
+clang	galoot-O0	left_complement	full-n3	0	1089152013	0.156	120276	0.00	-0.00	-
+clang	galoot-O0	left_complement	full-n4	0	1115272974	0.158	120508	0.00	0.00	-
+clang	galoot-O0	left_complement	full-n5	0	1186135978	0.160	120348	0.00	0.00	-
+clang	galoot-O0	left_complement	full-n6	0	1432120577	0.178	120544	0.00	-0.01	-
+clang	galoot-O0	left_complement	full-n7	0	2300931917	0.233	122328	0.00	0.01	-
+clang	galoot-O0	left_complement	full-n8	0	5610875416	0.454	130192	0.00	-0.00	-
+clang	galoot-O0	left_complement	full-n9	1	7911781948	0.618	132080	0.01	0.01	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	antigp	typed	0	1719517053	0.209	136740	0.01	0.00	-
+clang	galoot-O2	antigp	conformal3-vectors	0	1349698477	0.178	120728	0.00	-0.01	-
+clang	galoot-O2	antigp	sparse8	0	1271236188	0.172	123356	0.00	-0.00	-
+clang	galoot-O2	antigp	sparse-complements8	0	1181523941	0.163	123368	0.00	-0.00	-
+clang	galoot-O2	antigp	sparse12	0	1412191957	0.184	123384	0.01	-0.00	-
+clang	galoot-O2	antigp	sparse-complements12	0	1199546672	0.173	123040	0.00	0.02	-
+clang	galoot-O2	antigp	sparse16	0	1603526530	0.189	123156	0.00	0.00	-
+clang	galoot-O2	antigp	sparse-complements16	0	1218509853	0.167	123152	0.00	0.00	-
+clang	galoot-O2	antigp	full-r-n2	0	1172659429	0.172	123240	0.00	-0.00	-
+clang	galoot-O2	antigp	full-r-n3	0	1397456889	0.216	123376	0.10	0.01	-
+clang	galoot-O2	antigp	full-r-n4	0	2600415100	0.255	123884	0.00	-0.00	-
+clang	galoot-O2	antigp	full-r-n5	0	9210037742	0.714	127244	0.19	0.01	-
+clang	galoot-O2	antigp	full-r-n6	1	7601430186	0.550	114700	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antigp	full-conformal-n3	0	1416073600	0.231	123144	0.13	0.00	-
+clang	galoot-O2	antigp	full-conformal-n4	0	2674258275	0.262	123572	0.00	0.00	-
+clang	galoot-O2	antigp	full-conformal-n5	0	9515185874	0.678	127264	0.00	0.02	-
+clang	galoot-O2	antigp	full-conformal-n6	1	7548722351	0.543	114648	0.00	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antigp	full-rigid-n2	0	1163862448	0.165	123116	0.00	0.01	-
+clang	galoot-O2	antigp	full-rigid-n3	0	1352276377	0.177	122328	0.00	0.00	-
+clang	galoot-O2	antigp	full-rigid-n4	0	2334655884	0.244	123620	0.01	-0.00	-
+clang	galoot-O2	antigp	full-rigid-n5	0	7593877463	0.577	125688	0.01	0.02	-
+clang	galoot-O2	antigp	full-rigid-n6	1	7627928951	0.562	114560	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antigp	full-dense-n2	0	1188475578	0.223	122256	0.14	-0.00	-
+clang	galoot-O2	antigp	full-dense-n3	0	1705710415	0.199	123336	0.00	-0.01	-
+clang	galoot-O2	antigp	full-dense-n4	0	6818423480	0.515	124652	0.01	-0.00	-
+clang	galoot-O2	antigp	full-dense-n5	1	6416138530	0.485	111820	0.02	0.02	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antiwedge	typed	0	1276913862	0.176	135628	0.00	-0.00	-
+clang	galoot-O2	antiwedge	conformal3-vectors	0	1143290050	0.158	123012	0.00	-0.01	-
+clang	galoot-O2	antiwedge	sparse8	0	1136587109	0.160	122212	0.00	0.01	-
+clang	galoot-O2	antiwedge	sparse-complements8	0	1165049447	0.157	123092	0.00	0.00	-
+clang	galoot-O2	antiwedge	sparse12	0	1143619262	0.156	123100	0.00	0.00	-
+clang	galoot-O2	antiwedge	sparse-complements12	0	1181902852	0.160	123360	0.01	0.00	-
+clang	galoot-O2	antiwedge	sparse16	0	1153178874	0.160	123148	0.00	0.01	-
+clang	galoot-O2	antiwedge	sparse-complements16	0	1200514042	0.159	123276	0.00	-0.01	-
+clang	galoot-O2	antiwedge	full-r-n2	0	1144373037	0.158	122256	0.00	0.00	-
+clang	galoot-O2	antiwedge	full-r-n3	0	1234820847	0.264	118928	0.26	0.01	-
+clang	galoot-O2	antiwedge	full-r-n4	0	1588943694	0.306	119216	0.31	-0.00	-
+clang	galoot-O2	antiwedge	full-r-n5	0	3095887207	0.272	121644	0.02	0.01	-
+clang	galoot-O2	antiwedge	full-r-n6	1	6411199493	0.455	117724	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antiwedge	full-conformal-n3	0	1233500543	0.169	118936	0.00	0.01	-
+clang	galoot-O2	antiwedge	full-conformal-n4	0	1591561466	0.191	119232	0.00	0.00	-
+clang	galoot-O2	antiwedge	full-conformal-n5	0	3094755731	0.277	122028	0.00	-0.01	-
+clang	galoot-O2	antiwedge	full-conformal-n6	1	6432427215	0.454	117776	0.01	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antiwedge	full-rigid-n2	0	1144927551	0.165	122260	0.00	0.01	-
+clang	galoot-O2	antiwedge	full-rigid-n3	0	1233395176	0.165	118864	0.00	-0.00	-
+clang	galoot-O2	antiwedge	full-rigid-n4	0	1591504329	0.188	119220	0.00	-0.01	-
+clang	galoot-O2	antiwedge	full-rigid-n5	0	3099593443	0.267	123916	0.00	0.00	-
+clang	galoot-O2	antiwedge	full-rigid-n6	1	6414560572	0.440	117764	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	antiwedge	full-dense-n2	0	1145747612	0.153	122144	0.00	-0.00	-
+clang	galoot-O2	antiwedge	full-dense-n3	0	1235509441	0.157	118936	0.00	0.00	-
+clang	galoot-O2	antiwedge	full-dense-n4	0	1592190824	0.175	119332	0.00	0.01	-
+clang	galoot-O2	antiwedge	full-dense-n5	0	3100717667	0.268	121648	0.00	0.00	-
+clang	galoot-O2	antiwedge	full-dense-n6	1	6428733576	0.442	117688	0.00	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	reverse	typed	0	1146380674	0.162	134932	0.00	-0.00	-
+clang	galoot-O2	reverse	full-n2	0	1085436866	0.155	121624	0.00	-0.00	-
+clang	galoot-O2	reverse	full-n3	0	1093749824	0.154	121796	0.00	-0.01	-
+clang	galoot-O2	reverse	full-n4	0	1116480967	0.149	122056	0.00	-0.01	-
+clang	galoot-O2	reverse	full-n5	0	1192020345	0.157	122060	0.00	0.01	-
+clang	galoot-O2	reverse	full-n6	0	1459423790	0.170	122432	0.00	-0.01	-
+clang	galoot-O2	reverse	full-n7	0	2455712925	0.231	124140	0.00	0.00	-
+clang	galoot-O2	reverse	full-n8	1	6085142369	0.437	123892	0.00	-0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	antireverse	typed	0	1150695820	0.156	135004	0.00	0.01	-
+clang	galoot-O2	antireverse	full-n2	0	1083667383	0.145	122008	0.00	0.01	-
+clang	galoot-O2	antireverse	full-n3	0	1093432856	0.150	121548	0.00	-0.01	-
+clang	galoot-O2	antireverse	full-n4	0	1116081809	0.149	122168	0.00	-0.01	-
+clang	galoot-O2	antireverse	full-n5	0	1192688699	0.153	122108	0.00	0.01	-
+clang	galoot-O2	antireverse	full-n6	0	1460722774	0.172	121060	0.00	-0.00	-
+clang	galoot-O2	antireverse	full-n7	0	2465105586	0.229	123852	0.00	0.02	-
+clang	galoot-O2	antireverse	full-n8	1	6136108469	0.433	123920	0.00	-0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	grade_involution	typed	0	1148335353	0.157	134884	0.00	0.00	-
+clang	galoot-O2	grade_involution	full-n2	0	1084505946	0.145	122116	0.00	-0.00	-
+clang	galoot-O2	grade_involution	full-n3	0	1091346850	0.154	121868	0.00	-0.00	-
+clang	galoot-O2	grade_involution	full-n4	0	1117259500	0.151	122060	0.00	-0.01	-
+clang	galoot-O2	grade_involution	full-n5	0	1190688395	0.158	122096	0.00	0.00	-
+clang	galoot-O2	grade_involution	full-n6	0	1457087017	0.172	122152	0.00	-0.01	-
+clang	galoot-O2	grade_involution	full-n7	0	2464744817	0.233	124132	0.00	0.01	-
+clang	galoot-O2	grade_involution	full-n8	1	6082558860	0.438	123908	0.01	0.02	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	right_complement	typed	0	1155434465	0.159	134960	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n2	0	1085783546	0.147	121572	0.00	0.01	-
+clang	galoot-O2	right_complement	full-n3	0	1100803161	0.151	121832	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n4	0	1119401178	0.151	122104	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n5	0	1192770176	0.158	121884	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n6	0	1437341250	0.175	122556	0.00	-0.00	-
+clang	galoot-O2	right_complement	full-n7	0	2310651527	0.219	124060	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n8	0	5597718287	0.421	131840	0.00	0.00	-
+clang	galoot-O2	right_complement	full-n9	1	7935296814	0.560	132052	0.00	0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	left_complement	typed	0	1155928286	0.162	134904	0.00	-0.00	-
+clang	galoot-O2	left_complement	full-n2	0	1086583999	0.154	121876	0.00	0.01	-
+clang	galoot-O2	left_complement	full-n3	0	1096477658	0.155	121952	0.00	-0.00	-
+clang	galoot-O2	left_complement	full-n4	0	1120016324	0.151	122052	0.00	0.00	-
+clang	galoot-O2	left_complement	full-n5	0	1193106126	0.156	121968	0.00	0.01	-
+clang	galoot-O2	left_complement	full-n6	0	1437029399	0.175	122032	0.00	-0.00	-
+clang	galoot-O2	left_complement	full-n7	0	2309624037	0.223	124176	0.00	-0.00	-
+clang	galoot-O2	left_complement	full-n8	0	5606416502	0.427	131612	0.01	0.00	-
+clang	galoot-O2	left_complement	full-n9	1	7904864458	0.571	131996	0.00	0.01	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	antigp	typed	0	1718944034	0.199	135568	0.00	0.01	-
+clang	bare-O2	antigp	conformal3-vectors	0	1350644697	0.168	122716	0.00	0.00	-
+clang	bare-O2	antigp	sparse8	0	1270870127	0.160	122712	0.00	0.00	-
+clang	bare-O2	antigp	sparse-complements8	0	1176296871	0.158	122384	0.00	0.00	-
+clang	bare-O2	antigp	sparse12	0	1413743362	0.173	123044	0.00	-0.00	-
+clang	bare-O2	antigp	sparse-complements12	0	1195354877	0.158	123016	0.00	0.00	-
+clang	bare-O2	antigp	sparse16	0	1612123565	0.183	123052	0.00	0.01	-
+clang	bare-O2	antigp	sparse-complements16	0	1217599679	0.157	122940	0.00	0.00	-
+clang	bare-O2	antigp	full-r-n2	0	1168364892	0.157	122552	0.00	0.00	-
+clang	bare-O2	antigp	full-r-n3	0	1399026109	0.180	122724	0.00	-0.01	-
+clang	bare-O2	antigp	full-r-n4	0	2617187470	0.251	123432	0.00	0.02	-
+clang	bare-O2	antigp	full-r-n5	0	9358590693	0.812	126640	0.37	0.00	-
+clang	bare-O2	antigp	full-r-n6	1	6706364615	0.881	114256	0.81	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antigp	full-conformal-n3	0	1416718831	0.217	122904	0.06	0.01	-
+clang	bare-O2	antigp	full-conformal-n4	0	2696754341	0.424	123372	0.38	-0.00	-
+clang	bare-O2	antigp	full-conformal-n5	1	5916293948	0.818	112488	0.75	0.02	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antigp	full-rigid-n2	0	1159537815	0.222	122488	0.13	0.01	-
+clang	bare-O2	antigp	full-rigid-n3	0	1353540166	0.277	121844	0.25	0.00	-
+clang	bare-O2	antigp	full-rigid-n4	0	2348776149	0.407	119044	0.40	-0.00	-
+clang	bare-O2	antigp	full-rigid-n5	0	7709663060	1.053	125084	0.93	0.01	-
+clang	bare-O2	antigp	full-rigid-n6	1	6723920438	0.784	114216	0.62	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antigp	full-dense-n2	0	1185549986	0.153	122732	0.00	0.01	-
+clang	bare-O2	antigp	full-dense-n3	0	1711710142	0.189	122772	0.00	0.00	-
+clang	bare-O2	antigp	full-dense-n4	0	6914708933	0.513	124260	0.05	-0.00	-
+clang	bare-O2	antigp	full-dense-n5	1	5604744398	0.401	111152	0.01	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antiwedge	typed	0	1273263666	0.169	134780	0.00	0.00	-
+clang	bare-O2	antiwedge	conformal3-vectors	0	1139775513	0.157	122504	0.00	0.00	-
+clang	bare-O2	antiwedge	sparse8	0	1132048229	0.155	122752	0.00	-0.00	-
+clang	bare-O2	antiwedge	sparse-complements8	0	1161353250	0.161	122504	0.00	-0.00	-
+clang	bare-O2	antiwedge	sparse12	0	1138753744	0.159	122892	0.00	-0.01	-
+clang	bare-O2	antiwedge	sparse-complements12	0	1177351152	0.158	122616	0.00	-0.01	-
+clang	bare-O2	antiwedge	sparse16	0	1149860553	0.160	122460	0.00	0.00	-
+clang	bare-O2	antiwedge	sparse-complements16	0	1196386760	0.161	123000	0.00	-0.01	-
+clang	bare-O2	antiwedge	full-r-n2	0	1140436294	0.156	122460	0.00	-0.00	-
+clang	bare-O2	antiwedge	full-r-n3	0	1230081351	0.161	118788	0.00	-0.01	-
+clang	bare-O2	antiwedge	full-r-n4	0	1592127845	0.184	118704	0.00	0.01	-
+clang	bare-O2	antiwedge	full-r-n5	0	3116510720	0.266	121184	0.00	0.01	-
+clang	bare-O2	antiwedge	full-r-n6	1	6122888936	0.433	117092	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antiwedge	full-conformal-n3	0	1231177681	0.163	118388	0.00	0.01	-
+clang	bare-O2	antiwedge	full-conformal-n4	0	1591859290	0.187	118796	0.00	-0.01	-
+clang	bare-O2	antiwedge	full-conformal-n5	0	3119655282	0.269	123128	0.00	0.00	-
+clang	bare-O2	antiwedge	full-conformal-n6	1	6124489713	0.419	116940	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antiwedge	full-rigid-n2	0	1140763739	0.154	122760	0.00	-0.00	-
+clang	bare-O2	antiwedge	full-rigid-n3	0	1229729296	0.160	118580	0.00	0.01	-
+clang	bare-O2	antiwedge	full-rigid-n4	0	1592203921	0.181	118724	0.00	0.00	-
+clang	bare-O2	antiwedge	full-rigid-n5	0	3120267878	0.267	121416	0.01	0.00	-
+clang	bare-O2	antiwedge	full-rigid-n6	1	6141791612	0.425	117276	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	antiwedge	full-dense-n2	0	1142836692	0.156	122756	0.00	-0.00	-
+clang	bare-O2	antiwedge	full-dense-n3	0	1231222056	0.161	118464	0.00	0.01	-
+clang	bare-O2	antiwedge	full-dense-n4	0	1595837712	0.182	118832	0.00	-0.00	-
+clang	bare-O2	antiwedge	full-dense-n5	0	3121275969	0.263	121416	0.00	0.01	-
+clang	bare-O2	antiwedge	full-dense-n6	1	6170153973	0.429	117020	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	reverse	typed	0	1142416922	0.170	134016	0.01	0.00	-
+clang	bare-O2	reverse	full-n2	0	1079046081	0.153	121192	0.00	-0.00	-
+clang	bare-O2	reverse	full-n3	0	1088094936	0.154	121160	0.00	0.01	-
+clang	bare-O2	reverse	full-n4	0	1112405738	0.158	121696	0.00	0.01	-
+clang	bare-O2	reverse	full-n5	0	1190033836	0.159	121432	0.00	0.00	-
+clang	bare-O2	reverse	full-n6	0	1466113015	0.174	121956	0.00	-0.00	-
+clang	bare-O2	reverse	full-n7	0	2489038532	0.232	123504	0.00	0.01	-
+clang	bare-O2	reverse	full-n8	1	5672524778	0.412	123304	0.00	-0.00	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	antireverse	typed	0	1143857506	0.160	134072	0.00	0.00	-
+clang	bare-O2	antireverse	full-n2	0	1079097032	0.145	121128	0.00	0.01	-
+clang	bare-O2	antireverse	full-n3	0	1089119014	0.148	121212	0.00	0.00	-
+clang	bare-O2	antireverse	full-n4	0	1118139460	0.149	121452	0.00	0.00	-
+clang	bare-O2	antireverse	full-n5	0	1193101557	0.153	121656	0.00	-0.00	-
+clang	bare-O2	antireverse	full-n6	0	1465952567	0.170	121988	0.00	0.00	-
+clang	bare-O2	antireverse	full-n7	0	2492341673	0.227	123760	0.00	0.00	-
+clang	bare-O2	antireverse	full-n8	1	5676976213	0.419	123268	0.00	0.01	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	grade_involution	typed	0	1141353687	0.157	133952	0.00	0.00	-
+clang	bare-O2	grade_involution	full-n2	0	1080687378	0.147	121240	0.00	-0.01	-
+clang	bare-O2	grade_involution	full-n3	0	1086853568	0.148	121116	0.00	0.00	-
+clang	bare-O2	grade_involution	full-n4	0	1112471390	0.148	121736	0.00	0.00	-
+clang	bare-O2	grade_involution	full-n5	0	1189305190	0.152	121696	0.00	-0.01	-
+clang	bare-O2	grade_involution	full-n6	0	1462622323	0.167	121864	0.00	0.00	-
+clang	bare-O2	grade_involution	full-n7	0	2487316286	0.225	123728	0.00	0.01	-
+clang	bare-O2	grade_involution	full-n8	1	5666524715	0.404	123132	0.00	0.01	include/galoot/core/plan.hpp:878:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	right_complement	typed	0	1150626613	0.159	134004	0.00	-0.01	-
+clang	bare-O2	right_complement	full-n2	0	1081391471	0.149	121376	0.00	0.00	-
+clang	bare-O2	right_complement	full-n3	0	1090645507	0.148	121124	0.00	-0.01	-
+clang	bare-O2	right_complement	full-n4	0	1116656279	0.150	121684	0.00	0.00	-
+clang	bare-O2	right_complement	full-n5	0	1193887860	0.152	121464	0.00	0.01	-
+clang	bare-O2	right_complement	full-n6	0	1443729999	0.166	121956	0.00	0.01	-
+clang	bare-O2	right_complement	full-n7	0	2349174881	0.218	123800	0.00	0.00	-
+clang	bare-O2	right_complement	full-n8	1	7370673758	0.510	122920	0.00	0.00	include/galoot/core/plan.hpp:879:27: error: constexpr variable 'mapped' must be initialized by a constant expression
+clang	bare-O2	left_complement	typed	0	1151123955	0.154	134288	0.00	-0.00	-
+clang	bare-O2	left_complement	full-n2	0	1081701538	0.147	121384	0.00	0.01	-
+clang	bare-O2	left_complement	full-n3	0	1093452693	0.145	121212	0.00	-0.00	-
+clang	bare-O2	left_complement	full-n4	0	1115415456	0.148	121400	0.00	0.00	-
+clang	bare-O2	left_complement	full-n5	0	1191966107	0.151	121636	0.00	-0.00	-
+clang	bare-O2	left_complement	full-n6	0	1441989487	0.166	121836	0.00	0.00	-
+clang	bare-O2	left_complement	full-n7	0	2352872051	0.209	123448	0.00	0.00	-
+clang	bare-O2	left_complement	full-n8	1	7376247954	0.513	122104	0.00	-0.00	include/galoot/core/plan.hpp:879:27: error: constexpr variable 'mapped' must be initialized by a constant expression
