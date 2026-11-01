@@ -48,13 +48,16 @@ target_compile_definitions(galoot_core INTERFACE
   $<BUILD_INTERFACE:GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>>)
 
 # Per-translation-unit cost record: each compile runs through tools/measure,
-# which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. The
-# presets that measure set both, and the lint preset neither, since a compile
-# under clang-tidy does not cost what a user's compile does. The launcher
-# applies to every compile in the tree, the header-check units included.
+# which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. Every
+# preset but lint sets GALOOT_PRESET, since a compile under clang-tidy does
+# not cost what a user's compile does. The record is the build tree's own
+# compile.tsv, so a tree configured with -B beside a preset's own tree keeps
+# its rows apart, and the build never writes outside its source and build
+# trees. The launcher applies to every compile in the tree, the header-check
+# units included.
 set(GALOOT_PRESET "" CACHE STRING
   "Preset named in each compile cost row; empty records no compile costs")
-set(GALOOT_COMPILE_RECORD "" CACHE FILEPATH
+set(GALOOT_COMPILE_RECORD "${CMAKE_BINARY_DIR}/compile.tsv" CACHE FILEPATH
   "compile.tsv that each compile appends its cost row to, with GALOOT_PRESET")
 if(NOT GALOOT_PRESET STREQUAL "")
   if(GALOOT_COMPILE_RECORD STREQUAL "")
@@ -65,9 +68,6 @@ if(NOT GALOOT_PRESET STREQUAL "")
     ${PROJECT_SOURCE_DIR}/tools/measure tu ${GALOOT_PRESET}
     ${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}
     ${GALOOT_COMPILE_RECORD} --)
-elseif(NOT GALOOT_COMPILE_RECORD STREQUAL "")
-  message(FATAL_ERROR "GALOOT_COMPILE_RECORD is set, but without "
-    "GALOOT_PRESET no compile records its cost there.")
 endif()
 
 # Each header compiles on its own, so it includes what it uses: one generated
