@@ -212,7 +212,9 @@ def check_identities(rng):
             check(wedge(a, right(bulk(b))) == expect,
                   f"a ^ bulk_dual(b) = (a . b) antiscalar, grade {k}")
             # Left duals differ by (-1)^(gr ag); in 4D that negates odd
-            # grades, which is the dual-sign disagreement of the spec.
+            # grades, so a library that uses left duals for points and
+            # planes gets the opposite sign of a ^ dual(b) there. This check
+            # tells the two choices apart.
             left_sign = (-1) ** (k * (N - k))
             check(wedge(a, left(bulk(b))) == scale(expect, left_sign),
                   f"left bulk dual sign at grade {k}")
