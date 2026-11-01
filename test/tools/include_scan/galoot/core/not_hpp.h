@@ -1,0 +1,4 @@
+#ifndef GALOOT_CORE_NOT_HPP_H
+#define GALOOT_CORE_NOT_HPP_H
+
+#endif // GALOOT_CORE_NOT_HPP_H

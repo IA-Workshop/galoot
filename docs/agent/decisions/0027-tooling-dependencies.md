@@ -1,6 +1,6 @@
 # 0027 Tooling dependencies: Python 3, perf, and taskset
 
-- Status: accepted
+- Status: accepted; the build tools LLD, Ninja, and git are added by decision 0040
 - Date: 2026-10-31
 - Recorded by: Claude (agent, build-expert, WU1), under C18; a decision record takes effect when recorded, and the owner may reverse it.
 

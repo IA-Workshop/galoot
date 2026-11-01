@@ -1,0 +1,6 @@
+#ifndef GALOOT_CORE_INCLUDE_NEXT_HPP
+#define GALOOT_CORE_INCLUDE_NEXT_HPP
+
+#include_next <vector>
+
+#endif // GALOOT_CORE_INCLUDE_NEXT_HPP

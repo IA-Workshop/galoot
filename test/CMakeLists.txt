@@ -22,6 +22,10 @@ set(expect_output
 
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
+# The mode the configuration declares, passed to the test directly rather
+# than through galoot::core, so that a mode lost on the way fails the test.
+target_compile_definitions(core_smoke_test PRIVATE
+  GALOOT_EXPECTED_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
 
 # core.zero_cases below runs the smoke program with its own copy of the rule,
 # so check here that galoot_add_test gave core.smoke the same rule (W5 review
@@ -78,6 +82,51 @@ galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 
+# core.bits: the blade-mask functions against their definitions and against
+# the golden values (galoot_golden, below).
+galoot_add_test(MODULE core COMPONENT bits)
+target_link_libraries(core_bits_test PRIVATE galoot_golden)
+
+# core.bits_rejects_<function>_<case>: out-of-range input aborts with the
+# precondition's message at run time. The program fixes the checking mode, as
+# the assert programs above do, so these run in every preset. Each function
+# that takes n is tried with n below and above the range and with e3 in an
+# algebra of two generators; core.bits_accepts_<function> gives it the widest
+# input in range, the antiscalar of mask_bits generators, and must exit 0.
+add_executable(core_bits_assert_fail core/bits_assert_fail.cpp)
+target_include_directories(core_bits_assert_fail PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_bits_assert_fail PRIVATE cxx_std_23)
+target_compile_definitions(core_bits_assert_fail PRIVATE GALOOT_CHECKING=1)
+set(bits_count_message "galoot: assertion failed: n must be from 1 to 32 (")
+set(bits_mask_message
+  "galoot: assertion failed: blade has a generator beyond e_n (")
+foreach(function IN ITEMS antigrade complement_mask right_complement_sign
+    left_complement_sign antireverse_sign)
+  set(program $<TARGET_FILE:core_bits_assert_fail> ${function})
+  add_test(NAME core.bits_rejects_${function}_n_0
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
+      bits.hpp: -- ${program} n_0)
+  add_test(NAME core.bits_rejects_${function}_n_above
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_count_message}
+      bits.hpp: -- ${program} n_above)
+  add_test(NAME core.bits_rejects_${function}_mask
+    COMMAND ${expect_output} "Subprocess aborted" ${bits_mask_message}
+      bits.hpp: -- ${program} mask)
+  add_test(NAME core.bits_accepts_${function}
+    COMMAND ${program} widest)
+  set_tests_properties(core.bits_rejects_${function}_n_0
+    core.bits_rejects_${function}_n_above core.bits_rejects_${function}_mask
+    core.bits_accepts_${function} PROPERTIES LABELS "core;core.bits")
+endforeach()
+
+# core.bits_consteval: a blade beyond the algebra ends a constant evaluation,
+# and the diagnostic shows the precondition.
+galoot_add_compile_fail_test(NAME bits_consteval MODULE core COMPONENT bits
+  SOURCE core/bits_consteval_fail.cpp
+  MESSAGE "blade has a generator beyond e_n"
+  REQUIRE assertion_failed)
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition (C13; plan 0001, DoD-6).
 add_test(NAME core.bare_compile
@@ -101,6 +150,9 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/cycle_a.hpp: include cycle: galoot/core/cycle_a.hpp -> galoot/core/cycle_b.hpp -> galoot/core/cycle_a.hpp"
     "galoot/core/wrong_guard.hpp:1: include guard should be GALOOT_CORE_WRONG_GUARD_HPP"
     "galoot/core/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
+    "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
+    "galoot/core/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
@@ -173,6 +225,16 @@ add_test(NAME core.metric_is_null
     -- $<TARGET_FILE:core_metric_is_null_checking>)
 set_tests_properties(core.metric_is_null PROPERTIES
   LABELS "core;core.metric")
+
+# tools.measure_record: the fields of a cost row, and the reader's `--` for
+# cells that rows written before a column existed lack.
+add_test(NAME tools.measure_record
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_record_test.py
+    ${PROJECT_SOURCE_DIR}/tools/measure
+    ${CMAKE_CURRENT_BINARY_DIR}/measure_record)
+set_tests_properties(tools.measure_record PROPERTIES
+  LABELS "tools;tools.measure")
 
 # The golden values that tests compare the library with. They come from the
 # reference scripts in test/reference/, never from the library, so this
