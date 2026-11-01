@@ -237,7 +237,13 @@ consteval auto make_gp_plan() {
 /// plan is generated. A mask listed twice in one set is not checked; each
 /// place that lists it gets its own terms. The plan is a constant
 /// evaluation, so the compiler's limits on constant evaluation bound the
-/// size of the sets in practice.
+/// size of the sets in practice. Measured at the default limits, alike at
+/// -O0 and -O2 and with or without _GLIBCXX_ASSERTIONS: every blade times
+/// every blade, full<n> with full<n>, builds for n up to 5 on Clang 23 and
+/// up to 7 on GCC 16 in R(n,0,0), R(n-1,0,1), and conformal(n-2), and for n
+/// up to 4 and 5 in a form with every entry nonzero, whose products have
+/// more terms. Sets of a few blades cost what they use: four blades times
+/// three at n = 16 build on both.
 /// Guarantees: evaluated once for each Alg, A, and B that a program uses. No
 /// term has a zero coefficient, a refers to a position of A and b to one of
 /// B, and out names only e_1 to e_n; each is checked when the plan is
