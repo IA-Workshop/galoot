@@ -103,7 +103,7 @@ namespace detail {
   // below it.
   int swaps = 0;
   for (; a != 0; a &= a - 1) {
-    const int i = std::countr_zero(a);
+    const auto i = static_cast<unsigned>(std::countr_zero(a));
     swaps += std::popcount(b & ((mask_t{1} << i) - 1U));
   }
   return swaps % 2 == 0 ? 1 : -1;

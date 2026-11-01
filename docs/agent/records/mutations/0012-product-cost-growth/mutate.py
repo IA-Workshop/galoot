@@ -46,7 +46,7 @@ TOP_PAIRING_START = ("// Reference: independent value: in the form of 32 "
 TOP_PAIRING_END = "  CHECK(product(witt, pair, pair) == written({{0, 1}}));\n}\n"
 
 RS_LOOP = "  for (; a != 0; a &= a - 1) {\n"
-RS_INDEX = "    const int i = std::countr_zero(a);\n"
+RS_INDEX = "    const auto i = static_cast<unsigned>(std::countr_zero(a));\n"
 RS_BELOW = "(mask_t{1} << i) - 1U"
 
 CT_LOOP = ("    for (mask_t remaining = blade; remaining != 0; "
@@ -103,7 +103,7 @@ MUTATIONS = [
      [(BITS, RS_BELOW, "((mask_t{1} << i) - 1U) >> 1U")]),
     ("rs_highest_index",
      [(BITS, RS_INDEX,
-       "    const int i = static_cast<int>(std::bit_width(a)) - 1;\n")]),
+       "    const auto i = static_cast<unsigned>(std::bit_width(a)) - 1U;\n")]),
 ] + [(name, [(PRODUCT, a, r) for a, r in edits])
      for name, edits in loop_mutants("ct", CT_LOOP, "blade")
      + loop_mutants("cr", CR_LOOP, "rest")]
