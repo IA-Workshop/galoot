@@ -633,3 +633,7 @@ No bound applies. The outcome of each part compares these with the actuals. This
 - O2. PERFORMANCE P5 says "trivially copyable aggregates" (R2). Ratify "trivially copyable"? Recommended: yes.
 - Not a question, recorded: note 0019's reviewer checklist was adopted after the first revision (decision 0160, R8).
 - For the owner after WU8a: whether the diagnostics record (criterion 11b) calls for more, such as names as written in the type.
+
+## Owner rulings on O1 and O2 (2026-11-01)
+
+The owner ratified both proposals ("proceed as recommended"; decision 0161). CONVENTIONS 4.5 (version 1.7) now says that a conversion which drops blades verifies the dropped part is zero when the scalar is exact, and that the rounding-scalar bound belongs to operations that drop part of their own result. PERFORMANCE P5 says "trivially copyable". So R1 and the conditions that WU8b's rounding-scalar behavior of `truncate` merges only when O1 is settled no longer apply: WU8b implements criterion 16 as ruled.
