@@ -38,6 +38,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
 | 3.4 | in a degenerate metric the double bulk dual is zero | no |
 | 4.1 | the wedge of two blades that share a generator is zero | no |
+| 4.1 | e_i e_j + e_j e_i = 2 g_ij | no |
 | 4.2 | right(a ^ b) = right(a) v right(b) | no |
 | 4.3 | a point projected onto a unitized plane has weight +1 | no |
 | 4.4 | transform(x, V) has the blade set of x | no |
