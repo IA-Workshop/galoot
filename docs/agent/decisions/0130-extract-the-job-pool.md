@@ -3,11 +3,11 @@
 - Status: proposed (the owner decides; nothing here is in effect)
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), build-expert role, as researcher
-- Evidence: research note [0015](../research-notes/0015-jobpool-generalization.md); prototype in [`records/spikes/jobpool-generalization/`](../records/spikes/jobpool-generalization/)
+- Evidence: research note [0016](../research-notes/0016-jobpool-generalization.md); prototype in [`records/spikes/jobpool-generalization/`](../records/spikes/jobpool-generalization/)
 
 ## Context
 
-`tools/jobpool` keeps the machine's shared pool of build job slots (PERFORMANCE P11; decision 0120 added the idle stop). It is already used outside Galoot. `math-tools` and the knowledge base call it by its absolute Galoot path, and other CMake projects of the owner (`meshing`, `compsci`, `physics`, `quantum`) would share the same pool. No existing tool has its five properties together: machine-wide, idle stop, status with lost-slot detection, per user, no root (note 0015 section 2). The script also has four weaknesses (note 0015 section 4): it finds clients by exact path only; each client's implicit slot gives 23 + k jobs; lost slots need a restart; and the idle stop can race a new client.
+`tools/jobpool` keeps the machine's shared pool of build job slots (PERFORMANCE P11; decision 0120 added the idle stop). It is already used outside Galoot. `math-tools` and the knowledge base call it by its absolute Galoot path, and other CMake projects of the owner (`meshing`, `compsci`, `physics`, `quantum`) would share the same pool. No existing tool has its five properties together: machine-wide, idle stop, status with lost-slot detection, per user, no root (note 0016 section 2). The script also has four weaknesses (note 0016 section 4): it finds clients by exact path only; each client's implicit slot gives 23 + k jobs; lost slots need a restart; and the idle stop can race a new client.
 
 ## Choices for the owner
 

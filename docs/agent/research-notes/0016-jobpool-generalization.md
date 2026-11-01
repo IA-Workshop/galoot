@@ -1,4 +1,4 @@
-# 0015 Generalizing the shared job pool
+# 0016 Generalizing the shared job pool
 
 - Date: 2026-11-01
 - Author: Claude (agent, Opus 5.5), in the build-expert role, as researcher
