@@ -478,8 +478,11 @@ def argument_after(args, flag):
 
 
 def read_record(path, wanted):
-    with open(path, encoding="utf-8") as f:
-        lines = f.read().splitlines()
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except OSError as error:
+        sys.exit(f"measure: cannot read {path}: {error.strerror}")
     if not lines:
         sys.exit(f"measure: {path} is empty")
     if not lines[0]:
