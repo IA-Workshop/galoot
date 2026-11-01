@@ -44,8 +44,10 @@ RUNTIME_TEST_EDITS = [
     ("static_assert(\n    equals_generation<",
      "static_assert(\n    true || equals_generation<", 5),
     ("static_assert(pair_terms_are(", "static_assert(true || pair_terms_are(", 4),
-    ("static_assert(random1::value.gram ==",
-     "static_assert(true || random1::value.gram ==", 1),
+    # || rather than &&, so that `true || x || y` draws no warning.
+    ("static_assert(random1::value.gram == golden::gp_tables::random_1_gram &&",
+     "static_assert(true || random1::value.gram == "
+     "golden::gp_tables::random_1_gram ||", 1),
     ("static_assert(\n    pair_terms_are(",
      "static_assert(\n    true || pair_terms_are(", 1),
 ]
