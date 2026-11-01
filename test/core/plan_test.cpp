@@ -36,10 +36,11 @@ namespace core = galoot::core;
 using core::coefficient_type;
 using core::mask_t;
 using core::oriented_blade;
-using core::detail::generate_gp;
-using core::detail::gp_plan;
+using core::detail::BinaryOperation;
+using core::detail::generate_plan;
 using core::detail::plan_capacity;
 using core::detail::plan_term;
+using core::detail::product_plan;
 using galoot_test::for_each_signature;
 
 constexpr std::size_t mask_width = std::numeric_limits<mask_t>::digits;
@@ -99,6 +100,30 @@ constexpr auto point = core::blades<4, "e1 e2 e3 e4">;
 constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
 constexpr auto plane = core::blades<4, "e423 e431 e412 e321">;
 constexpr auto motor = core::blades<4, "1 e41 e42 e43 e23 e31 e12 e1234">;
+
+// The terms of a typed plan with each output position read back as the mask
+// of the result blade at that position, so that a plan can be compared with
+// the masks the products give.
+template <std::size_t R, std::size_t T>
+constexpr std::array<plan_term, T>
+read_back(const core::detail::typed_plan<R, T>& plan) {
+  std::array<plan_term, T> terms{};
+  for (std::size_t k = 0; k < T; ++k) {
+    const core::detail::typed_term& t = plan.terms.at(k);
+    terms.at(k) = {
+        .a = t.a,
+        .b = t.b,
+        .out = plan.result.blades.at(t.out).mask,
+        .coefficient = t.coefficient,
+    };
+  }
+  return terms;
+}
+
+// The geometric-product plan of A and B in Alg, read back.
+template <core::metric_like Alg, core::blade_set A, core::blade_set B>
+constexpr auto gp_terms =
+    read_back(product_plan<BinaryOperation::gp, Alg, A, B>);
 
 constexpr mask_t e1 = 0b0001;
 constexpr mask_t e2 = 0b0010;
@@ -224,7 +249,8 @@ constexpr bool folds_signs(const std::array<plan_term, T>& signed_plan,
   return true;
 }
 
-// Whether generate_gp, called directly, writes the same plan as gp_plan.
+// Whether generate_plan, called directly, writes the same terms as the plan
+// read back.
 template <std::size_t Capacity, std::size_t N, std::size_t KA, std::size_t KB,
           std::size_t T>
 constexpr bool equals_generation(const core::metric<N>& g,
@@ -232,8 +258,8 @@ constexpr bool equals_generation(const core::metric<N>& g,
                                  const core::blade_set<KB>& bs,
                                  const std::array<plan_term, T>& plan) {
   std::array<plan_term, T> again{};
-  const std::size_t count =
-      generate_gp<Capacity>(g, as.blades, bs.blades, again);
+  const std::size_t count = generate_plan<BinaryOperation::gp, Capacity>(
+      g, as.blades, bs.blades, again);
   return count == T && again == plan;
 }
 
@@ -352,7 +378,7 @@ constexpr core::blade_set<3> sparse_second{
 // Reference: independent value: e_i e_i = 1 for i < 4 and e4 e4 = 0 in
 // rigid(3), and e_j e_i = -e_i e_j for i < j, worked by hand into the 15
 // terms of a point times a point, 12 of them bivectors
-static_assert(gp_plan<rga3, point, point> ==
+static_assert(gp_terms<rga3, point, point> ==
               std::array<plan_term, 15>{
                   {
                       {.a = 0, .b = 0, .out = 0, .coefficient = 1},
@@ -378,90 +404,91 @@ static_assert(gp_plan<rga3, point, point> ==
 // 6 x 4 - 3 x 3 = 15 terms and a motor times a point, either way round,
 // 8 x 4 - 4 = 28, each term s_a s_b times the sign of reordering times the
 // common squares, on e_(A xor B), counted here pair by pair
-static_assert(gp_plan<rga3, line, plane>.size() == 15);
+static_assert(gp_terms<rga3, line, plane>.size() == 15);
 static_assert(follows_diagonal_rule(rga3::value, line, plane,
-                                    gp_plan<rga3, line, plane>));
-static_assert(gp_plan<rga3, motor, point>.size() == 28);
+                                    gp_terms<rga3, line, plane>));
+static_assert(gp_terms<rga3, motor, point>.size() == 28);
 static_assert(follows_diagonal_rule(rga3::value, motor, point,
-                                    gp_plan<rga3, motor, point>));
-static_assert(gp_plan<rga3, point, motor>.size() == 28);
+                                    gp_terms<rga3, motor, point>));
+static_assert(gp_terms<rga3, point, motor>.size() == 28);
 static_assert(follows_diagonal_rule(rga3::value, point, motor,
-                                    gp_plan<rga3, point, motor>));
+                                    gp_terms<rga3, point, motor>));
 
 // Reference: contract: a coefficient stored on s e_A multiplies s e_A, so
 // the plan of oriented blades is the plan of their masks with each
 // coefficient times s_a s_b, and an oriented name lists generators in the
 // order of their product, so e41 = -e14 and e31 = -e13. A line times a line
 // has 6 x 6 - 3 x 3 = 27 terms, as e4 e4 = 0
-static_assert(gp_plan<rga3, line, line>.size() == 27);
+static_assert(gp_terms<rga3, line, line>.size() == 27);
 static_assert(folds_signs(
-    gp_plan<rga3, line, line>,
-    gp_plan<rga3, with_plus_signs(line), with_plus_signs(line)>, line, line));
-static_assert(folds_signs(
-    gp_plan<rga3, line, plane>,
-    gp_plan<rga3, with_plus_signs(line), with_plus_signs(plane)>, line, plane));
+    gp_terms<rga3, line, line>,
+    gp_terms<rga3, with_plus_signs(line), with_plus_signs(line)>, line, line));
+static_assert(
+    folds_signs(gp_terms<rga3, line, plane>,
+                gp_terms<rga3, with_plus_signs(line), with_plus_signs(plane)>,
+                line, plane));
 
 // Reference: independent value: the sparse sets {1, e1, e_n, e1 ^ e_n} and
 // {e1, e2, e_n} in R(n - 1, 0, 1), where e_n e_n = 0, give ten terms worked
 // by hand, at n = 8, 12, and 16, so that a plan in a large algebra costs
 // what its sets use
-static_assert(gp_plan<rigid_n<8>, sparse_first<8>, sparse_second<8>> ==
+static_assert(gp_terms<rigid_n<8>, sparse_first<8>, sparse_second<8>> ==
               sparse_terms<8>());
-static_assert(gp_plan<rigid_n<12>, sparse_first<12>, sparse_second<12>> ==
+static_assert(gp_terms<rigid_n<12>, sparse_first<12>, sparse_second<12>> ==
               sparse_terms<12>());
-static_assert(gp_plan<rigid_n<16>, sparse_first<16>, sparse_second<16>> ==
+static_assert(gp_terms<rigid_n<16>, sparse_first<16>, sparse_second<16>> ==
               sparse_terms<16>());
 
-// Reference: contract: the plan is generate_gp's output, so the memoized
+// Reference: contract: the plan is generate_plan's output, so the memoized
 // plans of every blade of rigid(3), R(4,0,0), and R(1,3,0) times every blade
-// equal a direct call of generate_gp in a constant evaluation
+// equal a direct call of generate_plan in a constant evaluation
 static_assert(
     equals_generation<8>(rga3::value, core::full<4>, core::full<4>,
-                         gp_plan<rga3, core::full<4>, core::full<4>>));
+                         gp_terms<rga3, core::full<4>, core::full<4>>));
 static_assert(
     equals_generation<8>(r400::value, core::full<4>, core::full<4>,
-                         gp_plan<r400, core::full<4>, core::full<4>>));
+                         gp_terms<r400, core::full<4>, core::full<4>>));
 static_assert(
     equals_generation<8>(r130::value, core::full<4>, core::full<4>,
-                         gp_plan<r130, core::full<4>, core::full<4>>));
+                         gp_terms<r130, core::full<4>, core::full<4>>));
 
 // Reference: contract: the plans of conformal(2) and of a degenerate form,
 // whose products of blades can have two terms, so that the term lists of the
-// plan need more than one place, equal a direct call of generate_gp;
+// plan need more than one place, equal a direct call of generate_plan;
 // independent value: worked by hand from e_i e_j + e_j e_i = 2 g_ij and
 // e_i x = e_i . x + e_i ^ x, e3 e4 = -1 + e34 and e4 e3 = -1 - e34 in
 // conformal(2), and e1 e2 = 1 + e12, e12 e12 = 1, and e123 e123 = 0 in the
 // degenerate form, at their places in full<4> and full<3>
 static_assert(
     equals_generation<8>(conformal2::value, core::full<4>, core::full<4>,
-                         gp_plan<conformal2, core::full<4>, core::full<4>>));
+                         gp_terms<conformal2, core::full<4>, core::full<4>>));
 static_assert(
     equals_generation<4>(degenerate::value, core::full<3>, core::full<3>,
-                         gp_plan<degenerate, core::full<3>, core::full<3>>));
-static_assert(pair_terms_are(gp_plan<conformal2, core::full<4>, core::full<4>>,
+                         gp_terms<degenerate, core::full<3>, core::full<3>>));
+static_assert(pair_terms_are(gp_terms<conformal2, core::full<4>, core::full<4>>,
                              3, 4,
                              {
                                  {.a = 3, .b = 4, .out = 0, .coefficient = -1},
                                  {.a = 3, .b = 4, .out = e34, .coefficient = 1},
                              }));
 static_assert(
-    pair_terms_are(gp_plan<conformal2, core::full<4>, core::full<4>>, 4, 3,
+    pair_terms_are(gp_terms<conformal2, core::full<4>, core::full<4>>, 4, 3,
                    {
                        {.a = 4, .b = 3, .out = 0, .coefficient = -1},
                        {.a = 4, .b = 3, .out = e34, .coefficient = -1},
                    }));
-static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+static_assert(pair_terms_are(gp_terms<degenerate, core::full<3>, core::full<3>>,
                              1, 2,
                              {
                                  {.a = 1, .b = 2, .out = 0, .coefficient = 1},
                                  {.a = 1, .b = 2, .out = e12, .coefficient = 1},
                              }));
-static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+static_assert(pair_terms_are(gp_terms<degenerate, core::full<3>, core::full<3>>,
                              4, 4,
                              {
                                  {.a = 4, .b = 4, .out = 0, .coefficient = 1},
                              }));
-static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
+static_assert(pair_terms_are(gp_terms<degenerate, core::full<3>, core::full<3>>,
                              7, 7, {}));
 
 // Reference: independent value: the golden product table of seeded random
@@ -469,17 +496,19 @@ static_assert(pair_terms_are(gp_plan<degenerate, core::full<3>, core::full<3>>,
 // terms in a product, so that the term lists of the plan need four places,
 // for every blade times every blade with the reverse's signs on the first set
 static_assert(random1::value.gram == golden::gp_tables::random_1_gram &&
-              matches_table(gp_plan<random1, with_reverse_signs(core::full<3>),
-                                    core::full<3>>,
+              matches_table(gp_terms<random1, with_reverse_signs(core::full<3>),
+                                     core::full<3>>,
                             with_reverse_signs(core::full<3>), core::full<3>,
                             golden::gp_tables::random_1));
 
-// Reference: contract: a plan term is a trivially copyable aggregate, and a
-// plan is a std::array of them
+// Reference: contract: a plan term is a trivially copyable aggregate, and
+// the terms of a plan are a std::array of the counted size
 static_assert(std::is_aggregate_v<plan_term>);
 static_assert(std::is_trivially_copyable_v<plan_term>);
-static_assert(std::is_same_v<decltype(gp_plan<rga3, point, point>),
-                             const std::array<plan_term, 15>>);
+static_assert(
+    std::is_same_v<
+        decltype(product_plan<BinaryOperation::gp, rga3, point, point>.terms),
+        std::array<core::detail::typed_term, 15>>);
 
 // The terms of a plan, generated at run time into storage of the counted
 // size, and the count of the counting pass.
@@ -494,9 +523,10 @@ generated_plan generate(const core::metric<N>& g,
                         std::span<const oriented_blade> as,
                         std::span<const oriented_blade> bs) {
   generated_plan plan;
-  plan.counted = generate_gp<Capacity>(g, as, bs, {});
+  plan.counted = generate_plan<BinaryOperation::gp, Capacity>(g, as, bs, {});
   plan.terms.resize(plan.counted);
-  plan.written = generate_gp<Capacity>(g, as, bs, plan.terms);
+  plan.written =
+      generate_plan<BinaryOperation::gp, Capacity>(g, as, bs, plan.terms);
   return plan;
 }
 
@@ -592,9 +622,12 @@ std::vector<oriented_blade> e1_signs(std::span<const oriented_blade> set) {
 
 // Two uses of one plan, in two functions. That they share one evaluation is
 // not something a test of values can see; the values are what is checked.
-std::size_t point_terms() { return gp_plan<rga3, point, point>.size(); }
+std::size_t point_terms() {
+  return product_plan<BinaryOperation::gp, rga3, point, point>.terms.size();
+}
 coefficient_type point_scalar() {
-  return gp_plan<rga3, point, point>.front().coefficient;
+  const auto& plan = product_plan<BinaryOperation::gp, rga3, point, point>;
+  return plan.terms.front().coefficient;
 }
 
 } // namespace
@@ -611,7 +644,8 @@ TEST_CASE("Every plan of every blade times every blade is the products of "
   for_each_signature([](const char* name, const auto& g) {
     constexpr std::size_t n = std::remove_cvref_t<decltype(g)>::generator_count;
     constexpr auto& all = core::full<n>;
-    constexpr std::size_t capacity = plan_capacity(all.blades, all.blades);
+    constexpr std::size_t capacity =
+        plan_capacity(BinaryOperation::gp, all.blades, all.blades);
     INFO(name);
     CHECK(capacity == blade_count(n) / 2);
 
@@ -643,21 +677,21 @@ TEST_CASE("No plan has a zero coefficient, a position or blade out of range, "
     check_properties(plan.terms, all.size(), all.size(), n);
   });
 
-  check_properties(gp_plan<rga3, point, point>, 4, 4, 4);
-  check_properties(gp_plan<rga3, line, line>, 6, 6, 4);
-  check_properties(gp_plan<rga3, line, plane>, 6, 4, 4);
-  check_properties(gp_plan<rga3, motor, point>, 8, 4, 4);
-  check_properties(gp_plan<rga3, point, motor>, 4, 8, 4);
-  check_properties(gp_plan<rigid_n<16>, sparse_first<16>, sparse_second<16>>, 4,
-                   3, 16);
+  check_properties(gp_terms<rga3, point, point>, 4, 4, 4);
+  check_properties(gp_terms<rga3, line, line>, 6, 6, 4);
+  check_properties(gp_terms<rga3, line, plane>, 6, 4, 4);
+  check_properties(gp_terms<rga3, motor, point>, 8, 4, 4);
+  check_properties(gp_terms<rga3, point, motor>, 4, 8, 4);
+  check_properties(gp_terms<rigid_n<16>, sparse_first<16>, sparse_second<16>>,
+                   4, 3, 16);
 }
 
-// Reference: contract: gp_plan and generate_gp are one constexpr function,
-// so the plans of every blade times every blade of rigid(3), R(4,0,0),
-// R(1,3,0), conformal(2), and a degenerate form of three generators, built in
-// a constant evaluation, equal the same function run at run time on a metric
-// that the compiler cannot know
-TEST_CASE("gp_plan equals generate_gp run at run time") {
+// Reference: contract: product_plan and generate_plan are one constexpr
+// function, so the plans of every blade times every blade of rigid(3),
+// R(4,0,0), R(1,3,0), conformal(2), and a degenerate form of three
+// generators, built in a constant evaluation, equal the same function run at
+// run time on a metric that the compiler cannot know
+TEST_CASE("product_plan equals generate_plan run at run time") {
   const auto read_at_run_time = [](const auto& fixed) {
     std::remove_cvref_t<decltype(fixed)> g{};
     for (std::size_t i = 0; i < g.gram.size(); ++i) {
@@ -674,45 +708,45 @@ TEST_CASE("gp_plan equals generate_gp run at run time") {
     return again.written == plan.size() &&
            std::ranges::equal(again.terms, plan);
   };
-  CHECK(same(read_at_run_time(rga3::value), gp_plan<rga3, all, all>));
-  CHECK(same(read_at_run_time(r400::value), gp_plan<r400, all, all>));
-  CHECK(same(read_at_run_time(r130::value), gp_plan<r130, all, all>));
-  CHECK(
-      same(read_at_run_time(conformal2::value), gp_plan<conformal2, all, all>));
+  CHECK(same(read_at_run_time(rga3::value), gp_terms<rga3, all, all>));
+  CHECK(same(read_at_run_time(r400::value), gp_terms<r400, all, all>));
+  CHECK(same(read_at_run_time(r130::value), gp_terms<r130, all, all>));
+  CHECK(same(read_at_run_time(conformal2::value),
+             gp_terms<conformal2, all, all>));
 
   constexpr const auto& three = core::full<3>;
   const generated_plan again = generate<4>(read_at_run_time(degenerate::value),
                                            three.blades, three.blades);
-  CHECK(again.written == gp_plan<degenerate, three, three>.size());
-  CHECK(std::ranges::equal(again.terms, gp_plan<degenerate, three, three>));
+  CHECK(again.written == gp_terms<degenerate, three, three>.size());
+  CHECK(std::ranges::equal(again.terms, gp_terms<degenerate, three, three>));
 }
 
 // Reference: independent value: the golden product table of seeded random
 // form 1, in which e_i e_j + e_j e_i = 2 g_ij, a dense form with up to four
-// terms in a product, compared with gp_plan and with generate_gp run at run
-// time, for every blade times every blade with the reverse's signs on the
-// first set
+// terms in a product, compared with product_plan and with generate_plan run
+// at run time, for every blade times every blade with the reverse's signs on
+// the first set
 TEST_CASE("The plan of a dense form equals its golden product table") {
   constexpr auto first = with_reverse_signs(core::full<3>);
   constexpr const auto& second = core::full<3>;
   CHECK(random1::value.gram == golden::gp_tables::random_1_gram);
-  CHECK(matches_table(gp_plan<random1, first, second>, first, second,
+  CHECK(matches_table(gp_terms<random1, first, second>, first, second,
                       golden::gp_tables::random_1));
 
   const generated_plan again =
       generate<4>(random1::value, first.blades, second.blades);
-  CHECK(again.written == gp_plan<random1, first, second>.size());
-  CHECK(std::ranges::equal(again.terms, gp_plan<random1, first, second>));
+  CHECK(again.written == gp_terms<random1, first, second>.size());
+  CHECK(std::ranges::equal(again.terms, gp_terms<random1, first, second>));
 }
 
-// Reference: contract: generate_gp writes as many terms as fit in its
+// Reference: contract: generate_plan writes as many terms as fit in its
 // output and returns the count of all, so an empty output counts and a
 // short one is filled without a write past its end
-TEST_CASE("generate_gp counts every term and writes only what fits") {
+TEST_CASE("generate_plan counts every term and writes only what fits") {
   const plan_term untouched{.a = 9, .b = 9, .out = 0, .coefficient = 9};
   std::array<plan_term, 5> storage{};
   storage.fill(untouched);
-  const std::size_t count = generate_gp<2>(
+  const std::size_t count = generate_plan<BinaryOperation::gp, 2>(
       rga3::value, point.blades, point.blades, std::span(storage).first(3));
   CHECK(count == 15);
   CHECK(storage.at(0) == plan_term{.a = 0, .b = 0, .out = 0, .coefficient = 1});
@@ -723,12 +757,14 @@ TEST_CASE("generate_gp counts every term and writes only what fits") {
   CHECK(storage.at(3) == untouched);
   CHECK(storage.at(4) == untouched);
 
-  CHECK(generate_gp<2>(rga3::value, point.blades, point.blades, {}) == 15);
+  CHECK(generate_plan<BinaryOperation::gp, 2>(rga3::value, point.blades,
+                                              point.blades, {}) == 15);
   std::array<plan_term, 16> roomy{};
   roomy.fill(untouched);
-  CHECK(generate_gp<2>(rga3::value, point.blades, point.blades, roomy) == 15);
+  CHECK(generate_plan<BinaryOperation::gp, 2>(rga3::value, point.blades,
+                                              point.blades, roomy) == 15);
   CHECK(std::ranges::equal(std::span(roomy).first(15),
-                           gp_plan<rga3, point, point>));
+                           gp_terms<rga3, point, point>));
   CHECK(roomy.at(15) == untouched);
 }
 
@@ -736,12 +772,13 @@ TEST_CASE("generate_gp counts every term and writes only what fits") {
 // plan with an empty set is empty and its capacity is the smallest, 1
 TEST_CASE("A plan with an empty blade set is empty") {
   constexpr core::blade_set<0> none{};
-  CHECK(gp_plan<rga3, none, point>.empty());
-  CHECK(gp_plan<rga3, point, none>.empty());
-  CHECK(gp_plan<rga3, none, none>.empty());
-  CHECK(generate_gp<1>(rga3::value, none.blades, point.blades, {}) == 0);
-  CHECK(plan_capacity(none.blades, point.blades) == 1);
-  CHECK(plan_capacity(point.blades, none.blades) == 1);
+  CHECK(gp_terms<rga3, none, point>.empty());
+  CHECK(gp_terms<rga3, point, none>.empty());
+  CHECK(gp_terms<rga3, none, none>.empty());
+  CHECK(generate_plan<BinaryOperation::gp, 1>(rga3::value, none.blades,
+                                              point.blades, {}) == 0);
+  CHECK(plan_capacity(BinaryOperation::gp, none.blades, point.blades) == 1);
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, none.blades) == 1);
 }
 
 // Reference: contract: a mask listed twice in a set is not rejected, and
@@ -758,7 +795,7 @@ TEST_CASE("A repeated blade gets the terms of each place that lists it") {
       },
   };
   constexpr core::blade_set<1> just_e1{{{{.mask = e1, .sign = 1}}}};
-  CHECK(gp_plan<r300, repeated, just_e1> ==
+  CHECK(gp_terms<r300, repeated, just_e1> ==
         std::array<plan_term, 3>{{
             {.a = 0, .b = 0, .out = 0, .coefficient = 1},
             {.a = 1, .b = 0, .out = e12, .coefficient = -1},
@@ -770,13 +807,15 @@ TEST_CASE("A repeated blade gets the terms of each place that lists it") {
 // generators of A and B together, counted here, so the capacity of a plan is
 // the largest of these over its pairs, wherever that pair lies in the sets
 TEST_CASE("plan_capacity is the largest bound over the pairs") {
-  CHECK(plan_capacity(point.blades, point.blades) ==
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades) ==
         largest_pair_bound(point, point));
-  CHECK(plan_capacity(point.blades, point.blades) == 2);
-  CHECK(plan_capacity(line.blades, plane.blades) == 8);
-  CHECK(plan_capacity(motor.blades, point.blades) == 8);
-  CHECK(plan_capacity(sparse_first<16>.blades, sparse_second<16>.blades) == 4);
-  CHECK(plan_capacity(sparse_first<16>.blades, sparse_second<16>.blades) ==
+  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades) == 2);
+  CHECK(plan_capacity(BinaryOperation::gp, line.blades, plane.blades) == 8);
+  CHECK(plan_capacity(BinaryOperation::gp, motor.blades, point.blades) == 8);
+  CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
+                      sparse_second<16>.blades) == 4);
+  CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
+                      sparse_second<16>.blades) ==
         largest_pair_bound(sparse_first<16>, sparse_second<16>));
 
   // The largest pair in the middle of each set: e123 with e1 needs 4.
@@ -790,16 +829,18 @@ TEST_CASE("plan_capacity is the largest bound over the pairs") {
       },
   };
   constexpr core::blade_set<1> just_e1{{{{.mask = e1, .sign = 1}}}};
-  CHECK(plan_capacity(middle.blades, just_e1.blades) == 4);
-  CHECK(plan_capacity(just_e1.blades, middle.blades) == 4);
-  CHECK(plan_capacity(just_e1.blades, just_e1.blades) == 1);
+  CHECK(plan_capacity(BinaryOperation::gp, middle.blades, just_e1.blades) == 4);
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, middle.blades) == 4);
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e1.blades) ==
+        1);
   constexpr core::blade_set<1> just_e2{{{{.mask = e2, .sign = 1}}}};
-  CHECK(plan_capacity(just_e1.blades, just_e2.blades) == 2);
+  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e2.blades) ==
+        2);
 }
 
 // Reference: independent value: in R(32,0,0), the widest algebra a mask
 // holds, e32 e32 = 1, so a blade on the top bit is within the algebra
-TEST_CASE("gp_plan accepts the generators of the widest algebra") {
+TEST_CASE("product_plan accepts the generators of the widest algebra") {
   constexpr mask_t top = mask_t{1} << (mask_width - 1);
   constexpr core::blade_set<2> tops{
       {
@@ -809,7 +850,7 @@ TEST_CASE("gp_plan accepts the generators of the widest algebra") {
           },
       },
   };
-  CHECK(gp_plan<widest, tops, tops> ==
+  CHECK(gp_terms<widest, tops, tops> ==
         std::array<plan_term, 4>{{
             {.a = 0, .b = 0, .out = 0, .coefficient = 1},
             {.a = 0, .b = 1, .out = e1 | top, .coefficient = -1},

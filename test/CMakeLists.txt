@@ -442,13 +442,23 @@ endforeach()
 galoot_add_test(MODULE core COMPONENT plan)
 target_link_libraries(core_plan_test PRIVATE galoot_golden)
 
-# core.plan_<case>: each misuse of gp_plan fails to compile with its message.
-# The sets are checked before anything is generated, so a set's test forbids
-# the messages that generation would add: the product's own range check and
-# the checks of a generated plan.
-set(plan_range "gp plan: a blade set names a generator beyond e_n")
-set(plan_sign "gp plan: a blade set holds a sign other than +1 or -1")
-set(plan_generated "gp plan: a generated")
+# core.plan_<case>: each misuse of product_plan fails to compile with its
+# message. The sets are checked before anything is generated, so a set's test
+# forbids the messages that generation would add: the product's own range
+# check and the checks of a generated plan and of its typing.
+set(plan_range "product plan: a blade set names a generator beyond e_n")
+set(plan_sign "product plan: a blade set holds a sign other than +1 or -1")
+set(plan_generated
+  "product plan: a generated term has a zero coefficient"
+  "product plan: a generated term points past the first set"
+  "product plan: a generated term points past the second set"
+  "product plan: a generated term has a generator beyond e_n"
+  "product plan: generated terms are out of order or repeated"
+  "product plan: the result set is out of canonical order or repeats a blade"
+  "product plan: the result set holds a sign other than +1"
+  "product plan: a typed term points past the result set"
+  "product plan: the result set holds a blade that no term uses"
+  "product plan: typed terms are out of order or repeated")
 foreach(case IN ITEMS beyond_n beyond_n_second beyond_n_31)
   galoot_add_compile_fail_test(NAME plan_${case} MODULE core COMPONENT plan
     SOURCE core/plan_${case}_fail.cpp
@@ -467,8 +477,8 @@ galoot_add_compile_fail_test(NAME plan_overflow MODULE core COMPONENT plan
   SOURCE core/plan_overflow_fail.cpp
   MESSAGE "${product_overflow}"
   REQUIRE "assertion_failed" "blade_product.hpp"
-  FORBID "gp plan:")
-# The tag is checked by the concept on gp_plan itself, whose failure the
+  FORBID "product plan:")
+# The tag is checked by the concept on product_plan itself, whose failure the
 # compiler reports in its own words; both name the concept. The function that
 # generates the plan carries the concept too, so the test forbids its name:
 # a diagnostic that leads with it would point the user at internal code.
@@ -476,7 +486,7 @@ galoot_add_compile_fail_test(NAME plan_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_not_metric_like_fail.cpp
   MESSAGE "metric_like"
-  FORBID "make_gp_plan")
+  FORBID "make_product_plan")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.

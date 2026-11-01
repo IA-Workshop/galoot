@@ -8,6 +8,8 @@
 namespace {
 
 namespace core = galoot::core;
+using core::detail::BinaryOperation;
+using core::detail::product_plan;
 
 struct r3 {
   static constexpr auto value = core::R<3, 0, 0>();
@@ -18,6 +20,8 @@ constexpr core::blade_set<2> doubled{{{
     {.mask = 0b0010, .sign = 2},
 }}};
 
-static_assert(core::detail::gp_plan<r3, core::full<3>, doubled>.empty());
+constexpr const auto& plan =
+    product_plan<BinaryOperation::gp, r3, core::full<3>, doubled>;
+static_assert(plan.terms.empty());
 
 } // namespace
