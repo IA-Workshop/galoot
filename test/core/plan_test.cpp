@@ -3019,6 +3019,10 @@ constexpr bool writes_only_its_places() {
 // output one place shorter than the set gets only the first three images, and
 // one place longer keeps its last place unwritten
 static_assert(writes_only_its_places<3>() && writes_only_its_places<5>());
+
+// Reference: contract: generate_map writes the first out.size() terms of a
+// map, here at run time with outputs of three, four, and five places for
+// the four blades of the rigid(3) point
 TEST_CASE("generate_map writes only the places of its output") {
   CHECK(writes_only_its_places<3>());
   CHECK(writes_only_its_places<4>());
