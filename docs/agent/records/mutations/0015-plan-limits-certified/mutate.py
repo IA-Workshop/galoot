@@ -82,22 +82,21 @@ HEADER_MUTANTS = {
         "    const map_term& t = map.terms[k];\n", 4)),
 }
 
-THRESHOLD = re.compile(r"(plan_cost_\w+\.cpp)=(\d+)")
+THRESHOLD = re.compile(r"^      (\w+)=(\d+)\)?$", re.MULTILINE)
 
 
 def threshold_mutants(text):
     """+1 and -1 for each threshold registered for the canary."""
     found = {}
     for m in THRESHOLD.finditer(text):
-        source, value = m.group(1), int(m.group(2))
+        stem, value = m.group(1), int(m.group(2))
         whole = m.group(0)
-        stem = source.removeprefix("plan_cost_").removesuffix(".cpp")
         # The two compilers' blocks register one threshold each per source.
         kind = "gcc" if text.rfind("GNU", 0, m.start()) > \
             text.rfind("Clang", 0, m.start()) else "clang"
         for delta, label in ((1, "up"), (-1, "down")):
             found[f"threshold_{label}_{stem}_{kind}"] = (
-                CMAKE, whole, f"{source}={value + delta}")
+                CMAKE, whole, whole.replace(f"={value}", f"={value + delta}"))
     return found
 
 
@@ -133,7 +132,7 @@ def canary(preset, only):
                 continue
             test = run(["tools/timed", "test", preset, f"mutation:{name}",
                         "--", "ctest", "--preset", preset, "-R",
-                        r"^core\.plan_cost_model$", "--output-on-failure"])
+                        r"^core\.plan_cost_model\.", "--output-on-failure"])
             lines = [line.strip() for line in test.stdout.splitlines()
                      if "threshold" in line and "recorded;" in line]
             moved = [line for line in lines

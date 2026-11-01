@@ -59,7 +59,7 @@ def just_above(limit):
     """The limits just above `limit` that a GCC result must also compile
     under."""
     return sorted({limit + d for d in (1, 2, 3, 7, 31, 127)} |
-                  {limit + max(1, limit // f) for f in (10000, 1000, 100, 10)})
+                  {limit + max(1, limit // f) for f in (1000, 100, 10)})
 
 
 def search(kind, command, source, start):

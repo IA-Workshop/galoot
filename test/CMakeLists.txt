@@ -607,52 +607,69 @@ set_tests_properties(tools.evaluated_once_passes
   tools.evaluated_once_rejects_twice tools.evaluated_once_rejects_few
   PROPERTIES LABELS "tools;tools.evaluated_once")
 
-# core.plan_cost_model: the costs that plan.hpp states for its plans and maps
-# are what the compiler counts. Each core/plan_cost_*.cpp reads one plan or
-# map, and its threshold below is the smallest limit on constant evaluation
-# under which it compiles: Clang's -fconstexpr-steps, or GCC's
+# core.plan_cost_model.<unit>: the costs that plan.hpp states for its plans
+# and maps are what the compiler counts. Each core/plan_cost_<unit>.cpp reads
+# one plan or map, and its threshold below is the smallest limit on constant
+# evaluation under which it compiles: Clang's -fconstexpr-steps, or GCC's
 # -fconstexpr-ops-limit with GCC's cache of constant calls turned off, so
-# that the count does not depend on what else the unit evaluates. The test
-# compiles each unit at its threshold and one below
-# (tools/plan_cost_model.py). The thresholds were worked out from a count of
-# the paths each generator takes and confirmed by these compiles, for Clang
-# 23.1 and GCC 16.2 with libstdc++ 16. A different compiler or standard
-# library, or a change to the generators, can change every such count, and
-# then this test fails until the thresholds and the costs stated in
-# plan.hpp are worked out again. The compiles run outside the compile-cost
-# launcher, because each unit is compiled twice. GCC's sanitizers add checks
-# that its constant evaluation counts too, 2% to 4% more for these units, so
-# on GCC the test runs only in builds without them.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(plan_cost_compiler clang)
-  set(plan_cost_cases
-    plan_cost_gp_full5.cpp=655239
-    plan_cost_gp_dense4.cpp=681823
-    plan_cost_gp_grades_3_7.cpp=601471
-    plan_cost_antigp_sparse16.cpp=77513
-    plan_cost_reverse_full7.cpp=313635
-    plan_cost_right_complement_full8.cpp=813090)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
-    NOT CMAKE_CXX_FLAGS MATCHES "-fsanitize")
-  set(plan_cost_compiler gcc)
-  set(plan_cost_cases
-    plan_cost_gp_full5.cpp=3611426
-    plan_cost_gp_dense4.cpp=3645825
-    plan_cost_gp_grades_3_7.cpp=4235775
-    plan_cost_antigp_sparse16.cpp=443211
-    plan_cost_reverse_full7.cpp=1577666
-    plan_cost_right_complement_full8.cpp=5717129)
+# that the count does not depend on what else the unit evaluates. Each test
+# compiles its unit at its threshold and one below, and on GCC also just
+# above (tools/plan_cost_model.py); one test per unit, so that they run in
+# parallel and a failure names its unit. Run them all with
+# ctest -R '^core\.plan_cost_model\.'. The thresholds were worked out from a
+# count of the paths each generator takes and confirmed by these compiles,
+# for Clang 23.1 and GCC 16.2 with libstdc++ 16. A different compiler or
+# standard library, or a change to the generators on a path that some unit's
+# largest evaluation takes, changes such a count, and then these tests fail
+# until the thresholds and the costs stated in plan.hpp are worked out again.
+# The counts hold only with _GLIBCXX_ASSERTIONS defined, as the stated costs
+# say, so the tests are registered only in builds that define it; and GCC's
+# sanitizers add checks that its constant evaluation counts too, 2% to 4%
+# more for these units, so on GCC only in builds without them. The units are
+# also compiled once as an ordinary library, at the default limits, so that
+# every build and the static checks see them. The tests compile them outside
+# the compile-cost launcher, because each is compiled several times.
+if(CMAKE_CXX_FLAGS MATCHES "-D_GLIBCXX_ASSERTIONS")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(plan_cost_compiler clang)
+    set(plan_cost_cases
+      gp_full5=655239
+      gp_dense4=681823
+      gp_grades_3_7=601471
+      antigp_sparse16=77513
+      reverse_full7=313635
+      right_complement_full8=813090)
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+      NOT CMAKE_CXX_FLAGS MATCHES "-fsanitize")
+    set(plan_cost_compiler gcc)
+    set(plan_cost_cases
+      gp_full5=3611426
+      gp_dense4=3645825
+      gp_grades_3_7=4235775
+      antigp_sparse16=443211
+      reverse_full7=1577666
+      right_complement_full8=5717129)
+  endif()
 endif()
 if(DEFINED plan_cost_compiler)
   galoot_compile_command(compile)
-  list(TRANSFORM plan_cost_cases PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/core/)
-  add_test(NAME core.plan_cost_model
-    COMMAND ${Python3_EXECUTABLE} -I
-      ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model.py
-      ${plan_cost_compiler} ${plan_cost_cases} -- ${compile}
-    COMMAND_EXPAND_LISTS)
-  set_tests_properties(core.plan_cost_model PROPERTIES
-    LABELS "core;core.plan")
+  set(plan_cost_sources "")
+  foreach(case IN LISTS plan_cost_cases)
+    string(REPLACE "=" ";" unit_and_threshold "${case}")
+    list(GET unit_and_threshold 0 unit)
+    list(GET unit_and_threshold 1 threshold)
+    set(source ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_cost_${unit}.cpp)
+    list(APPEND plan_cost_sources ${source})
+    add_test(NAME core.plan_cost_model.${unit}
+      COMMAND ${Python3_EXECUTABLE} -I
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/plan_cost_model.py
+        ${plan_cost_compiler} ${source}=${threshold} -- ${compile}
+      COMMAND_EXPAND_LISTS)
+    set_tests_properties(core.plan_cost_model.${unit} PROPERTIES
+      LABELS "core;core.plan")
+  endforeach()
+  add_library(core_plan_cost_units OBJECT ${plan_cost_sources})
+  target_link_libraries(core_plan_cost_units PRIVATE galoot::core)
 endif()
 
 # tools.plan_cost_model_*: the check passes when a unit's count is the one
