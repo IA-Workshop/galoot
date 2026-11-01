@@ -1,0 +1,10 @@
+program.cpp:80:11: error: invalid operands to binary expression ('Point' (aka 'apx::mvn<rga3, "e1 e2 e3 e4">') and 'const Vector4' (aka 'const apx::mvn<r400, "e1 e2 e3 e4">'))
+   80 |   r += (p == v) ? 1 : 0;
+      |         ~ ^  ~
+./fixture.hpp:154:25: note: candidate function not viable: no known conversion from 'const mvn<r400, [2 * ...]>' to 'const mvn<rga3, [2 * ...]>' for 2nd argument
+  154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+      |                         ^                      ~~~~~~~~~~
+./fixture.hpp:154:25: note: candidate function not viable: no known conversion from 'mvn<rga3, [2 * ...]>' to 'const mvn<r400, [2 * ...]>' for 1st argument
+  154 |   friend constexpr bool operator==(const mvn&, const mvn&) = default;
+      |                         ^          ~~~~~~~~~~
+1 error generated.

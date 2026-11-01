@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr bool apx::operator==(const X&, const Y&) [with X = mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>; Y = mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>]’:
+program.cpp:80:11:   required from here
+   80 |   r += (p == v) ? 1 : 0;
+      |        ~~~^~~~~
+fixture.hpp:295:46: error: invalid use of incomplete type ‘struct apx::comparison_of_different_types<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}> >’
+  295 |   return comparison_of_different_types<X, Y>{};
+      |                                              ^
+fixture.hpp:83:8: note: declaration of ‘struct apx::comparison_of_different_types<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}> >’
+   83 | struct comparison_of_different_types;
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~

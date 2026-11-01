@@ -1,0 +1,41 @@
+In file included from program.cpp:5:
+In file included from ./fixture.hpp:20:
+../../../../../include/galoot/core/blade_set.hpp:513:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:599:40: note: in instantiation of function template specialization 'galoot::core::detail::make_blades<4UL, name_list<3>{{"e5"}}>' requested here
+  599 | inline constexpr auto blades = detail::make_blades<N, Names>();
+      |                                        ^
+./fixture.hpp:193:28: note: in instantiation of variable template specialization 'galoot::core::blades' requested here
+  193 |   constexpr auto one = gc::blades<n_of<typename X::algebra>, Name>;
+      |                            ^
+./fixture.hpp:208:24: note: in instantiation of function template specialization 'apx::position_of_name<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}>, name_list<3>{{"e5"}}>' requested here
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^
+./fixture.hpp:208:24: note: while substituting template arguments into constraint expression here
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./fixture.hpp:213:12: note: while checking the satisfaction of concept 'has_component<name_list<3>{{"e5"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' requested here
+  213 |   requires has_component<std::remove_cvref_t<X>, Name>
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:72:8: note: while checking constraint satisfaction for template 'get<name_list<3>{{"e5"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' required here
+   72 |   r += get<"e5">(l);
+      |        ^~~
+program.cpp:72:8: note: while substituting deduced template arguments into function template 'get' [with Name = name_list<3>{{"e5"}}, X = Line &]
+../../../../../include/galoot/core/blade_set.hpp:513:25: note: expression evaluates to '4 != 4'
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from program.cpp:5:
+./fixture.hpp:260:17: error: static assertion failed: get<name>: the type has no component of this name with this orientation
+  260 |   static_assert(has_component<std::remove_cvref_t<X>, Name>,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:72:8: note: in instantiation of function template specialization 'apx::get<name_list<3>{{"e5"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' requested here
+   72 |   r += get<"e5">(l);
+      |        ^
+./fixture.hpp:260:17: note: because 'has_component<std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>, name_list<3>{{"e5"}}>' evaluated to false
+  260 |   static_assert(has_component<std::remove_cvref_t<X>, Name>,
+      |                 ^
+./fixture.hpp:208:24: note: because 'position_of_name<std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>, name_list<3>{{"e5"}}>() < std::remove_cvref_t<apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double> &>::set.size()' (6 < 6) evaluated to false
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^
+2 errors generated.

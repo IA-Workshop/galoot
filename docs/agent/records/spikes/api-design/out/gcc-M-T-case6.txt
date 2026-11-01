@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<3>{std::array<char, 3>{"e1"}}; X = mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}>&]’:
+program.cpp:69:17:   required from here
+   69 |   r += get<"e1">(l);
+      |        ~~~~~~~~~^~~
+fixture.hpp:289:59: error: invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e1"}}, apx::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}> >’
+  289 |   return no_component_named<Name, std::remove_cvref_t<X>>{};
+      |                                                           ^
+fixture.hpp:80:8: note: declaration of ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e1"}}, apx::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}> >’
+   80 | struct no_component_named;
+      |        ^~~~~~~~~~~~~~~~~~

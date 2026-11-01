@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr apx::mvn<Alg, Names, T>::operator apx::mvn<Alg, To, T>() const [with name_list<...auto...> To = galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}; Alg = rga3; name_list<...auto...> Names = galoot::core::detail::name_list<32>{std::array<char, 32>{"1 e41 e42 e43 e23 e31 e12 e1234"}}; T = double]’:
+program.cpp:75:19:   required from here
+   75 |   const Point s = q;
+      |                   ^
+fixture.hpp:177:59: error: invalid use of incomplete type ‘struct apx::lossy_conversion_from_to<apx::mvn<rga3, galoot::core::detail::name_list<32>{std::array<char, 32>{"1 e41 e42 e43 e23 e31 e12 e1234"}}>, apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}> >’
+  177 |     return lossy_conversion_from_to<mvn, mvn<Alg, To, T>>{};
+      |                                                           ^
+fixture.hpp:77:8: note: declaration of ‘struct apx::lossy_conversion_from_to<apx::mvn<rga3, galoot::core::detail::name_list<32>{std::array<char, 32>{"1 e41 e42 e43 e23 e31 e12 e1234"}}>, apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}> >’
+   77 | struct lossy_conversion_from_to;
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~

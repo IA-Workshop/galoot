@@ -1,0 +1,28 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:80:11: error: no match for ‘operator==’ (operand types are ‘Point’ {aka ‘apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’} and ‘const Vector4’ {aka ‘const apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’})
+   80 |   r += (p == v) ? 1 : 0;
+      |         ~ ^~ ~
+      |         |    |
+      |         |    mv<r400,[...]>
+      |         mv<rga3,[...]>
+  • there are 2 candidates
+    program.cpp:80:11:
+       80 |   r += (p == v) ? 1 : 0;
+          |         ~~^~~~
+In file included from program.cpp:5:
+    • candidate 1: ‘constexpr bool apx::operator==(const mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&, const mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&)’
+      fixture.hpp:107:25:
+        107 |   friend constexpr bool operator==(const mv&, const mv&) = default;
+            |                         ^~~~~~~~
+      • no known conversion for argument 2 from ‘const Vector4’ {aka ‘const apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’} to ‘const apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&’
+        fixture.hpp:107:47:
+          107 |   friend constexpr bool operator==(const mv&, const mv&) = default;
+              |                                               ^~~~~~~~~
+    • candidate 2: ‘constexpr bool apx::operator==(const mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&, const mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&)’
+      fixture.hpp:107:25:
+        107 |   friend constexpr bool operator==(const mv&, const mv&) = default;
+            |                         ^~~~~~~~
+      • no known conversion for argument 1 from ‘Point’ {aka ‘apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’} to ‘const apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>&’
+        fixture.hpp:107:36:
+          107 |   friend constexpr bool operator==(const mv&, const mv&) = default;
+              |                                    ^~~~~~~~~

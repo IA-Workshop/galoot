@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr X apx::make(A ...) [with X = mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>; A = {int, int, int}]’:
+program.cpp:54:35:   required from here
+   54 |   const Point s = apx::make<Point>(1, 2, 3);
+      |                   ~~~~~~~~~~~~~~~~^~~~~~~~~
+fixture.hpp:301:53: error: invalid use of incomplete type ‘struct apx::coefficient_count_differs<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, 3>’
+  301 |   return coefficient_count_differs<X, sizeof...(A)>{};
+      |                                                     ^
+fixture.hpp:86:8: note: declaration of ‘struct apx::coefficient_count_differs<apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>, 3>’
+   86 | struct coefficient_count_differs;
+      |        ^~~~~~~~~~~~~~~~~~~~~~~~~

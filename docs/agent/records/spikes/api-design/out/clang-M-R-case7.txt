@@ -1,0 +1,40 @@
+In file included from program.cpp:5:
+In file included from ./fixture.hpp:20:
+../../../../../include/galoot/core/blade_set.hpp:513:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:599:40: note: in instantiation of function template specialization 'galoot::core::detail::make_blades<4UL, name_list<3>{{"e5"}}>' requested here
+  599 | inline constexpr auto blades = detail::make_blades<N, Names>();
+      |                                        ^
+./fixture.hpp:193:28: note: in instantiation of variable template specialization 'galoot::core::blades' requested here
+  193 |   constexpr auto one = gc::blades<n_of<typename X::algebra>, Name>;
+      |                            ^
+./fixture.hpp:208:24: note: in instantiation of function template specialization 'apx::position_of_name<apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>, name_list<3>{{"e5"}}>' requested here
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^
+./fixture.hpp:208:24: note: while substituting template arguments into constraint expression here
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./fixture.hpp:213:12: note: while checking the satisfaction of concept 'has_component<name_list<3>{{"e5"}}, apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}> &>' requested here
+  213 |   requires has_component<std::remove_cvref_t<X>, Name>
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:72:8: note: while checking constraint satisfaction for template 'get<name_list<3>{{"e5"}}, apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}> &>' required here
+   72 |   r += get<"e5">(l);
+      |        ^~~
+program.cpp:72:8: note: while substituting deduced template arguments into function template 'get' [with Name = name_list<3>{{"e5"}}, X = Line &]
+../../../../../include/galoot/core/blade_set.hpp:513:25: note: expression evaluates to '4 != 4'
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:72:8: error: no matching function for call to 'get'
+   72 |   r += get<"e5">(l);
+      |        ^~~~~~~~~
+./fixture.hpp:214:26: note: candidate template ignored: constraints not satisfied [with Name = name_list<3>{{"e5"}}, X = Line &]
+  214 | constexpr decltype(auto) get(X&& x) {
+      |                          ^
+./fixture.hpp:213:12: note: because 'has_component<std::remove_cvref_t<apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>, name_list<3>{{"e5"}}>' evaluated to false
+  213 |   requires has_component<std::remove_cvref_t<X>, Name>
+      |            ^
+./fixture.hpp:208:24: note: because 'position_of_name<apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>, name_list<3>{{"e5"}}>() < apx::mv<rga3, gc::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>::set.size()' (6 < 6) evaluated to false
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ^
+2 errors generated.

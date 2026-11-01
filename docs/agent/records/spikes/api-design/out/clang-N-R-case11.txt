@@ -1,0 +1,21 @@
+In file included from program.cpp:5:
+In file included from ./fixture.hpp:20:
+../../../../../include/galoot/core/blade_set.hpp:513:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number of generators
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:599:40: note: in instantiation of function template specialization 'galoot::core::detail::make_blades<4UL, name_list<6>{{"e1 e5"}}>' requested here
+  599 | inline constexpr auto blades = detail::make_blades<N, Names>();
+      |                                        ^
+./fixture.hpp:137:39: note: in instantiation of variable template specialization 'galoot::core::blades' requested here
+  137 | inline constexpr auto names_set = gc::blades<n_of<Alg>, Names>;
+      |                                       ^
+./fixture.hpp:150:31: note: in instantiation of variable template specialization 'apx::names_set' requested here
+  150 |   static constexpr auto set = names_set<Alg, Names>;
+      |                               ^
+program.cpp:97:15: note: in instantiation of template class 'apx::mvn<rga3, name_list<6>{{"e1 e5"}}>' requested here
+   97 |   const Wrong x{};
+      |               ^
+../../../../../include/galoot/core/blade_set.hpp:513:25: note: expression evaluates to '4 != 4'
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
