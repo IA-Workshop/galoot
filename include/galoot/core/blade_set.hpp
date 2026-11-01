@@ -242,13 +242,14 @@ consteval auto make_of_grade() {
 constexpr bool is_sign(int sign) { return sign == 1 || sign == -1; }
 
 // The union of two lists of blades in canonical order, in the first `size`
-// places of `blades`, with which input each blade came from, and what was
-// wrong with the inputs: a sign other than +1 or -1, a mask listed twice in
-// one input, or a mask in both inputs with opposite signs.
+// places of `blades`, which inputs hold each listed blade, and what was wrong
+// with the inputs: a sign other than +1 or -1, a mask listed twice in one
+// input, or a mask in both inputs with opposite signs.
 template <std::size_t Capacity>
 struct union_of {
   std::array<oriented_blade, Capacity> blades;
-  std::array<bool, Capacity> from_second;
+  std::array<bool, Capacity> in_first;
+  std::array<bool, Capacity> in_second;
   std::size_t size;
   bool bad_sign;
   bool repeated_mask;
@@ -256,33 +257,43 @@ struct union_of {
 };
 
 // Inserts each blade of `a` and then of `b` into a list kept in canonical
-// order, skipping a mask already in the list. A mask found again in the same
-// input is a repeated mask; found again from the other input, it is the same
-// blade, unless the signs differ.
+// order, skipping a mask already in the list. Each listed blade records which
+// inputs hold it, so a mask found again in an input that already gave it is a
+// repeat, whichever input listed it first. A mask found again from the other
+// input is the same blade, unless both signs are +1 or -1 and they differ; a
+// sign that is neither is reported as such, not as a conflict.
 template <std::size_t KA, std::size_t KB>
 constexpr union_of<KA + KB> unite(const blade_set<KA>& a,
                                   const blade_set<KB>& b) {
   union_of<KA + KB> u{};
-  const auto insert = [&u](oriented_blade blade, bool from_second) {
+  const auto insert = [&u](oriented_blade blade, bool second) {
     u.bad_sign = u.bad_sign || !is_sign(blade.sign);
     std::size_t at = 0;
     while (at < u.size && canonical_less(u.blades[at].mask, blade.mask)) {
       ++at;
     }
     if (at < u.size && u.blades[at].mask == blade.mask) {
-      if (u.from_second[at] == from_second) {
+      const oriented_blade& listed = u.blades[at];
+      bool& seen = second ? u.in_second[at] : u.in_first[at];
+      if (seen) {
         u.repeated_mask = true;
-      } else {
-        u.opposite_signs = u.opposite_signs || u.blades[at].sign != blade.sign;
+        return;
+      }
+      seen = true;
+      if (is_sign(listed.sign) && is_sign(blade.sign) &&
+          listed.sign != blade.sign) {
+        u.opposite_signs = true;
       }
       return;
     }
     for (std::size_t j = u.size; j > at; --j) {
       u.blades[j] = u.blades[j - 1];
-      u.from_second[j] = u.from_second[j - 1];
+      u.in_first[j] = u.in_first[j - 1];
+      u.in_second[j] = u.in_second[j - 1];
     }
     u.blades[at] = blade;
-    u.from_second[at] = from_second;
+    u.in_first[at] = !second;
+    u.in_second[at] = second;
     ++u.size;
   };
   for (const oriented_blade& blade : a.blades) {

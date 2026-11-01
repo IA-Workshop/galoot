@@ -317,6 +317,12 @@ blade_set_rejects(merge_bad_sign_second
   "merge: a set holds a sign other than +1 or -1")
 blade_set_rejects(merge_repeated_mask "merge: a set holds one mask twice"
   FORBID "opposite signs")
+blade_set_rejects(merge_repeated_in_second
+  "merge: a set holds one mask twice")
+blade_set_rejects(merge_repeated_in_second_signs
+  "merge: a set holds one mask twice" FORBID "opposite signs")
+blade_set_rejects(merge_bad_sign_no_conflict
+  "merge: a set holds a sign other than +1 or -1" FORBID "opposite signs")
 blade_set_rejects(index_of_bad_sign
   "index_of: the set holds a sign other than +1 or -1")
 blade_set_rejects(index_of_repeated_mask
