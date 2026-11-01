@@ -444,6 +444,62 @@ int capacity_mismatches(const core::metric<N>& g) {
   return mismatches;
 }
 
+// Whether e_A e_B generated with a term list of capacity K has the terms it
+// has with the test's capacity.
+template <std::size_t K, std::size_t N>
+bool same_at_capacity(const core::metric<N>& g, mask_t a, mask_t b) {
+  const auto small = core::detail::blade_product<K>(g, a, b);
+  const list large = product(g, a, b);
+  if (small.size() != large.size()) {
+    return false;
+  }
+  for (std::size_t k = 0; k < small.size(); ++k) {
+    if (small.terms.at(k) != large.terms.at(k)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// The number of pairs whose product, generated with a term list of exactly
+// half the subsets of A with B, differs from the product with the test's
+// capacity. The capacity is a template argument, so each power of two from 1
+// to the test's capacity is its own instantiation.
+template <std::size_t N>
+int exact_capacity_mismatches(const core::metric<N>& g) {
+  static_assert(capacity == 32, "dispatch below covers capacities 1 to 32");
+  int mismatches = 0;
+  for (mask_t a = 0; a < blade_count(N); ++a) {
+    for (mask_t b = 0; b < blade_count(N); ++b) {
+      bool same = false;
+      switch (half_the_subsets(a, b)) {
+      case 1:
+        same = same_at_capacity<1>(g, a, b);
+        break;
+      case 2:
+        same = same_at_capacity<2>(g, a, b);
+        break;
+      case 4:
+        same = same_at_capacity<4>(g, a, b);
+        break;
+      case 8:
+        same = same_at_capacity<8>(g, a, b);
+        break;
+      case 16:
+        same = same_at_capacity<16>(g, a, b);
+        break;
+      case 32:
+        same = same_at_capacity<32>(g, a, b);
+        break;
+      default:
+        break;
+      }
+      mismatches += same ? 0 : 1;
+    }
+  }
+  return mismatches;
+}
+
 // The pseudoscalar square of an algebra of n generators:
 // (-1)^(n(n-1)/2) det g on the scalar, or no term when det g = 0.
 template <std::size_t N>
@@ -789,6 +845,18 @@ TEST_CASE("No product has more terms than product_capacity, and the bound is "
   CHECK(core::detail::product_capacity(e1, e2) == 2);
   CHECK(core::detail::blade_product<2>(witt, e1, e2).size() == 2);
   CHECK(core::detail::product_capacity(0, 0) == 1);
+}
+
+// Reference: proof: every term that the generation of e_A e_B adds to any
+//   list, and so every partial sum, lies on a subset of A with B of the
+//   parity of |A| + |B|, so a list of half the subsets never overflows; each
+//   pair of every signature listed here is generated with exactly that
+//   capacity, from 1 to 32, and compared with its product at capacity 32
+TEST_CASE("Every product fits a term list of exactly its capacity bound") {
+  for_each_signature([](const char* name, const auto& g) {
+    INFO(name);
+    CHECK(exact_capacity_mismatches(g) == 0);
+  });
 }
 
 // Reference: independent value: results are ordered by grade, then by index
