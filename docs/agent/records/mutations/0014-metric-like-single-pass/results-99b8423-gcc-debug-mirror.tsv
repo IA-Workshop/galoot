@@ -1,0 +1,2 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+mirror_read_twice	gcc-debug	normal	1	-	killed	-	metric_test.cpp:312,metric_test.cpp:326,metric_test.cpp:338,metric_test.cpp:342	metric_test.cpp:312,metric_test.cpp:326,metric_test.cpp:338,metric_test.cpp:342	-	test/core/metric_test.cpp:312:15: error: static assertion failed

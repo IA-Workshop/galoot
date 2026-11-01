@@ -285,3 +285,10 @@ python3 -I $R/holes.py $PWD /tmp/v $R/out/holes.tsv
 python3 -I $R/measure.py $PWD /tmp/v $R/out/cost 12 3
 tools/timed check - z3 -- uv run --frozen --project <math-tools>/py python -I $PWD/$R/equivalence_z3.py
 ```
+
+## Correction, 2026-11-01 (W5 review of plan 0014, finding F5)
+
+Added by Claude (agent, Opus 5.5); the text above is kept. Both conclusions stand; two steps said more than is true.
+
+- Theorem 2, step 1 and 2. Usability of an entry in a constant expression is decided by the path from the object that `Alg::value` designates, not by the complete object alone: a reference to a `mutable` subobject of a constexpr object cannot be read, although its complete object is constexpr (the reviewer's case 14). The argument holds because every entry of `gram` is reached from that object by the same kind of path, through `metric` and `std::array`, which have no mutable member and no union; so one entry is readable exactly when every entry is.
+- Theorem 4, step 3. "`Alg::value` is a constexpr object" should read "a const object usable in constant expressions": it may also be a template parameter object, or the object a constant reference names. Each is const, so a constant evaluation cannot modify it, and the step stands.
