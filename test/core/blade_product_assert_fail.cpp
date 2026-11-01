@@ -8,7 +8,9 @@
 //   sum_below      a sum just below its negative
 //   product_above  a product just above the largest coefficient
 //   product_below  a product equal to the smallest value of coefficient_type,
-//                  which lies outside the range the guards keep
+//                  which lies outside the range the guards keep, with the
+//                  negative factor first
+//   product_below_second  the same product with the negative factor second
 //
 // Each must abort with its message, which the tests core.blade_product_*
 // check. The input is chosen at run time, so no call is evaluated at compile
@@ -59,6 +61,8 @@ bool run(std::string_view input) {
     static_cast<void>(core::detail::multiply_checked((max / 2) + 1, 2));
   } else if (input == "product_below") {
     static_cast<void>(core::detail::multiply_checked(-((max / 2) + 1), 2));
+  } else if (input == "product_below_second") {
+    static_cast<void>(core::detail::multiply_checked(2, -((max / 2) + 1)));
   } else {
     return false;
   }
@@ -71,7 +75,8 @@ int main(int argc, char** argv) {
   if (argc != 2 ||
       !run(std::span<char*>(argv, static_cast<std::size_t>(argc)).back())) {
     std::fputs("usage: blade_product_assert_fail beyond_n|capacity|overflow|"
-               "sum_above|sum_below|product_above|product_below\n",
+               "sum_above|sum_below|product_above|product_below|"
+               "product_below_second\n",
                stderr);
     return 2;
   }

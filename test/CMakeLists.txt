@@ -419,7 +419,7 @@ target_compile_features(core_blade_product_assert_fail PRIVATE cxx_std_23)
 target_compile_definitions(core_blade_product_assert_fail PRIVATE
   GALOOT_CHECKING=1)
 foreach(case IN ITEMS beyond_n capacity overflow sum_above sum_below
-    product_above product_below)
+    product_above product_below product_below_second)
   if(case STREQUAL "beyond_n")
     set(message "blade has a generator beyond e_n")
   elseif(case STREQUAL "capacity")
