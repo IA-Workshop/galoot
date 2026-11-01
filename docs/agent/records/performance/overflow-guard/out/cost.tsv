@@ -1,0 +1,26 @@
+# revision b142837; rows of runs.tsv whose selection starts overflow-guard, summed over both kinds of core; python3 -I docs/agent/records/performance/overflow-guard/measure_guard.py docs/agent/records/performance/overflow-guard/out 3 6
+compiler	form	guard	repeat	wall_s	maxrss_kib	instructions_g
+gcc	conformal3	guarded	1	0.266	74696	1.6714
+gcc	conformal3	unguarded	1	0.256	74632	1.6693
+clang	conformal3	guarded	1	0.382	96572	3.9896
+clang	conformal3	unguarded	1	0.348	96540	3.6145
+gcc	random3	guarded	1	0.577	165280	9.1485
+gcc	random3	unguarded	1	0.603	165620	9.1281
+clang	random3	guarded	1	1.666	97000	31.6976
+clang	random3	unguarded	1	1.512	96760	28.5185
+gcc	conformal3	guarded	2	0.174	74696	1.6752
+gcc	conformal3	unguarded	2	0.153	74760	1.6679
+clang	conformal3	guarded	2	0.262	96516	4.0047
+clang	conformal3	unguarded	2	0.357	96532	3.6733
+gcc	random3	guarded	2	0.482	165344	9.1148
+gcc	random3	unguarded	2	0.507	165580	9.0667
+clang	random3	guarded	2	1.675	96800	32.0471
+clang	random3	unguarded	2	1.603	96788	28.5250
+gcc	conformal3	guarded	3	0.254	74756	1.6725
+gcc	conformal3	unguarded	3	0.246	74640	1.6684
+clang	conformal3	guarded	3	0.370	96512	4.0808
+clang	conformal3	unguarded	3	0.244	96492	3.5978
+gcc	random3	guarded	3	0.618	165652	9.0884
+gcc	random3	unguarded	3	0.610	165332	9.1427
+clang	random3	guarded	3	1.767	96732	31.9055
+clang	random3	unguarded	3	1.608	96832	28.4314
