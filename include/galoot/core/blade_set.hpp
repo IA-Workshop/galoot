@@ -28,7 +28,6 @@
 #include <bit>
 #include <cstddef>
 #include <cstdint>
-#include <limits>
 #include <string_view>
 #include <utility>
 
@@ -150,9 +149,9 @@ consteval bool valid_generator_count() {
   return N >= 1 && N <= mask_bits;
 }
 
-// The number of ways to choose k of n items, by the product formula
-// C(n, k) = prod over i < k of (n - i) / (i + 1), which stays exact because
-// each partial product is itself a binomial coefficient times i + 1.
+// The number of ways to choose k of n items. After step i, count is
+// C(n, i + 1): C(n, i) (n - i) = C(n, i + 1) (i + 1), so each division is
+// exact.
 constexpr std::size_t binomial(std::size_t n, std::size_t k) {
   std::size_t count = 1;
   for (std::size_t i = 0; i < k; ++i) {
@@ -183,8 +182,9 @@ constexpr void append_grade(std::array<oriented_blade, K>& out, std::size_t& at,
     out[at] = {.mask = mask, .sign = 1};
     ++at;
 
-    // Position i can rise while it stays below n - k + i, which leaves room
-    // for the k - 1 - i positions after it.
+    // The entry at position p is at its largest when it is n - k + p, which
+    // leaves room for the k - 1 - p entries after it. Find the last entry
+    // below its largest; when there is none, this was the last list.
     std::size_t i = k;
     while (i > 0 && bit[i - 1] == n - k + (i - 1)) {
       --i;
@@ -201,10 +201,7 @@ constexpr void append_grade(std::array<oriented_blade, K>& out, std::size_t& at,
 
 template <std::size_t N>
 consteval auto make_full() {
-  static_assert(N < std::numeric_limits<std::size_t>::digits,
-                "full: 2^n blades are more than std::size_t can count");
-  if constexpr (valid_generator_count<N>() &&
-                N < std::numeric_limits<std::size_t>::digits) {
+  if constexpr (valid_generator_count<N>()) {
     blade_set<std::size_t{1} << N> set{};
     std::size_t at = 0;
     for (std::size_t k = 0; k <= N; ++k) {

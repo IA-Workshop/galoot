@@ -308,6 +308,21 @@ galoot_add_compile_fail_test(NAME blade_set_name_beyond_e9
   MESSAGE "canonical_name: a generator beyond e9"
   REQUIRE "assertion_failed")
 
+# core.blade_set_name_assert: the same blade aborts at run time in a checking
+# build. Like the assert programs, it fixes its own checking mode.
+add_executable(core_blade_set_name_assert core/blade_set_name_assert_fail.cpp)
+target_include_directories(core_blade_set_name_assert PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_blade_set_name_assert PRIVATE cxx_std_23)
+target_compile_definitions(core_blade_set_name_assert PRIVATE
+  GALOOT_CHECKING=1)
+add_test(NAME core.blade_set_name_assert
+  COMMAND ${expect_output} "Subprocess aborted"
+    "galoot: assertion failed: canonical_name: a generator beyond e9 ("
+    blade_set.hpp: -- $<TARGET_FILE:core_blade_set_name_assert>)
+set_tests_properties(core.blade_set_name_assert PROPERTIES
+  LABELS "core;core.blade_set")
+
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
 # cells that rows written before a column existed lack.
 add_test(NAME tools.measure_record
