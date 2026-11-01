@@ -72,7 +72,7 @@ class Scratch:
         real_git = shutil.which("git")
         self.git = os.path.join(self.top, "bin", "git")
         self.write_script(self.git, FAKE_GIT.format(git=real_git))
-        for program in ("ninja", "ctest"):
+        for program in ("ninja", "ctest", "cmake"):
             os.symlink("/bin/true", os.path.join(self.top, "bin", program))
         git = [real_git, "-C", self.top, "-c", "user.name=test",
                "-c", "user.email=test@example.invalid"]
@@ -221,6 +221,11 @@ def run_options(s):
                    "ctest", "-L", "make", "-C", "Debug"])
     s.measure_cmd(["run", "test", "q", "regex-named-ninja", "--",
                    "ctest", "-R", "ninja", "-C", "Debug", "--test-dir", tree])
+    # cmake -E runs another program, which names the tree.
+    s.measure_cmd(["run", "test", "q", "cmake-e-env", "--",
+                   "cmake", "-E", "env", "FOO=1", "ctest", "--test-dir", tree])
+    s.measure_cmd(["run", "build", "q", "cmake-e-time", "--",
+                   "cmake", "-E", "time", "ninja", "-C", tree])
     options = {row["selection"]: row["options"] for row in s.rows(RUN_LOG)}
     check("options of a run that names its tree", options["named-tree"],
           "-Wall -Werror -O1 -g")
@@ -237,6 +242,10 @@ def run_options(s):
           options["label-named-make"], "-Wall -Werror -O1 -g")
     check("options of ctest -R ninja with --test-dir",
           options["regex-named-ninja"], "-Wall -Werror -O1 -g")
+    check("options of ctest run by cmake -E env",
+          options["cmake-e-env"], "-Wall -Werror -O1 -g")
+    check("options of ninja run by cmake -E time",
+          options["cmake-e-time"], "-Wall -Werror -O1 -g")
 
 
 def reader(s):
