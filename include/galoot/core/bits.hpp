@@ -97,7 +97,7 @@ namespace detail {
 /// i = j are not counted, so in a diagonal metric the geometric product is
 /// e_A e_B = reorder_sign(a, b) times the squares of the common generators
 /// times e_(A xor B). The cost is one step per generator of A, whatever the
-/// width of the masks.
+/// indices of its generators.
 [[nodiscard]] constexpr int reorder_sign(mask_t a, mask_t b) noexcept {
   // For each generator e_i of A, lowest first, count the generators of B
   // below it.
