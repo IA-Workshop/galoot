@@ -30,8 +30,8 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 1.3 | rigid(d) is R(d, 0, 1) | yes |
 | 1.4 | conformal(d) has null e(d+1) and e(d+2) with e(d+1) . e(d+2) = -1 | yes |
 | 1.5 | the antiscalar is e12...n with sign +1 | yes |
-| 1.6 | an oriented name lists generators in the order of their product | no |
-| 1.7 | results are ordered by grade, then by index list | no |
+| 1.6 | an oriented name lists generators in the order of their product | yes |
+| 1.7 | results are ordered by grade, then by index list | yes |
 | 2.1 | the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it | yes |
 | 3.1 | u ^ right(u) = antiscalar and left(u) ^ u = antiscalar | yes |
 | 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | no |

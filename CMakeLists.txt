@@ -20,6 +20,7 @@ target_sources(galoot_core INTERFACE
     include/galoot/core.hpp
     include/galoot/core/assert.hpp
     include/galoot/core/bits.hpp
+    include/galoot/core/blade_set.hpp
     include/galoot/core/metric.hpp)
 target_compile_features(galoot_core INTERFACE cxx_std_23)
 
