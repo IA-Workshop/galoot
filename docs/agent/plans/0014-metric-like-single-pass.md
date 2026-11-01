@@ -206,3 +206,39 @@ Verification: performed and passed at `a3cd8c5` (the exhaustive comparisons T1 a
 6. Knowledge base: the topic is covered by the unmerged branch `kb/validated-compile-time-values` (another agent's); no note was added. A possible addendum for its owner: the size test before a one-element guard is invisible in the verdict with libstdc++ (a zero-size `std::array` subscript is not a constant expression) but still needed for portability, and its mutant can be killed by testing the diagnostic.
 
 Agent cost: about 125 tool calls; token counts are not visible to me.
+
+## W5 review fixes (2026-11-01, Claude, agent, Opus 5.5, cpp-expert, implementer)
+
+The W5 review (`records/reviews/2026-11-01-metric-like-single-pass.md`, blind-reviewer, Opus 5.5, at `807369f`) accepted the change with six non-blocking findings. Its record was merged in at `bc14d7d`. This section corrects the outcome above, which is left as written.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. F1 changes a comment in the public header (`c21a7f8`). It changes no code, and is listed for the delta review.
+2. F3 adds a test that specializes a `detail` variable template, which no other test does. It is white-box by design (decision 0122, correction).
+3. The P9 checks after the final merge of `develop` run at the final head and are reported in the hand-off. `develop` had not moved since the claim, so that merge adds nothing. Their run-log rows are left uncommitted in this worktree's `runs.tsv`, because a commit of them would make a new head after the checks.
+4. Not rerun after the fixes: the P2 measurement and the W10 rows. F1 and F2 change only comments, and F3 adds one `static_assert` on a two-generator tag, so neither figure can move by more than its spread. This is inferred, not measured.
+
+### The fixes
+
+| Finding | Commit | What |
+| --- | --- | --- |
+| F1 | `c21a7f8` | The concept's comments: why the count comes from the type, that a failed read in the requires-expression gives false rather than an error, and "the full check runs once per algebra and unit". Checks at `c21a7f8`: the full suite on gcc-debug (132 of 132) and clang-debug (133 of 133), the gates, lint `all` with the header sets and `format-check`, and the trace gate. |
+| F2 (a) | `6211734` | Both coverage comments in `metric_test.cpp` say that the six values cover every int matrix only for a check that sees an entry only through its class and its mirror, as the single pass does. Checks: `core.metric` on both compilers, the gates, lint of `metric_test.cpp`, `format-check`, and the trace gate. |
+| F3 | `5fb4bf6`, `9f5f545` | Test: `stored_verdict_false`, a valid R(2, 0, 0) tag whose stored verdict is specialized to false, with `static_assert(!metric_like<stored_verdict_false>)`, expected false. Same checks as F2 (a). The driver's count-test anchor was updated after F1's comment change. At `9f5f545`, `no_cache` is killed on gcc-debug and clang-debug by that `static_assert` (`metric_test.cpp:345`), and `no_count_test` is still killed by `core.metric_like_no_generators`. `survivors.md` lists each mutant: none survives. |
+| F2 (b), F5 | this commit | Dated corrections in decision 0122 (13 correctness mutants of 14, not twelve; item 5 superseded by F3) and in research note 0015 (Theorem 2's path, and Theorem 4's "const usable object"). |
+| F2 (c), F4, F6 | this section | Below. |
+
+### Corrections to the outcome
+
+- Departure 1 (F2 c). The commits that fail a check do not say so themselves: `93543c4` and `6cc0545` were committed before the failures were known. The fix commits `30d8391` and `a3cd8c5`, and the outcome, say so. The lint failure at `93543c4` is three diagnostics from two checks (`bugprone-throwing-static-initialization` at `metric_test.cpp:189` and `:195`, `readability-trailing-comma` at `:231`).
+- Departure 5 of section 1 and decision 0122 item 5: `no_cache` is no longer an equivalent survivor that only a cost measurement can tell apart. Criterion 4 now reads: 14 mutants, all 14 killed by tests on both presets in the normal mode.
+- Open item 2 is withdrawn (F3). Open item 4 is answered for libc++ by the review: T5 kills the count-test mutant on Clang with libc++ as well.
+- Open item 3 (F4). T1 stays as it is, and is not moved to run time: a run-time test cannot reach the concept, its guard, or its stored verdict. Its n = 2 half is about 97% of the added compile cost of `metric_test.cpp` (the reviewer: +1.5 G instructions on GCC, +5.2 G on Clang, about +0.35 s and +22 to 33 MB per build of that file). If build time ever matters, the owner may shrink the n = 2 sample to the four values −M − 1, −M, M, M + 1. Values out of range reject whether or not they are equal, so four values still reach every pattern the requirement tells apart, with 256 tags, about a fifth of the cost; `INT_MIN` and `INT_MAX` stay at n = 1 and in T2.
+
+### Defect found outside the unit (W9)
+
+F6, reported to the owner and not fixed here. GCC 16.2.1 and Clang 23.1.4 disagree on a tag whose value is a constant reference bound to a lifetime-extended temporary, `static constexpr const metric<2>& value = R<2, 0, 0>();`. `metric_like` is false on GCC and true on Clang, with today's header and with the header before this unit. The reviewer's reproducer without Galoot, a namespace-scope `constexpr const P& g = make();` followed by `static_assert(g.a[0] == 1);`, fails on GCC ("'<temporary>' was not declared 'constexpr'") and passes on Clang. The reviewer recalls, without having re-read the clause, that [expr.const] makes such a temporary usable in constant expressions, so Clang's reading looks right. No Galoot test uses the form. This unit does not change the behavior. The compilers' maintainers are not contacted.
+
+### Next
+
+The delta review of `c21a7f8` (the header comments), `6211734`, and `5fb4bf6`, then the merge, which the coordinator makes. Agent cost of this pass: about 30 tool calls.

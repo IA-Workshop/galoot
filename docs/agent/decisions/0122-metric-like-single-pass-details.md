@@ -21,3 +21,11 @@ Decision 0121's ruling fixes the mechanism: one pass over the pairs j ≤ i that
 
 - The mutation record of plan 0014 lists which test kills each mutant; the twelve correctness mutants are killed by tests on gcc-debug and clang-debug (see the plan's outcome for the record and its revision).
 - A later unit that adds a second library or compiler should rerun `core.metric_like_no_generators` and the n ≥ 1 mutant there: the reason the test is needed (item 3) is about libraries other than libstdc++.
+
+## Correction, 2026-11-01 (W5 review, findings F1 to F3)
+
+Added by Claude (agent, Opus 5.5); nothing above is rewritten.
+
+- Consequences, first item: "the twelve correctness mutants" is wrong. With `mirror_read_twice`, added after this record was written, the driver has 14 mutants, of which 13 are correctness mutants; all 13 are killed by tests on gcc-debug and clang-debug.
+- Item 5 is superseded. The review showed a cheap test that kills `no_cache`: specialize `detail::is_valid_form_v` of one valid tag to false and assert that the concept is false (`stored_verdict_false` in `metric_test.cpp`, commit `5fb4bf6`). It is a white-box test of a `detail` name, accepted because it pins what the mutant removes, that the concept reads the stored verdict, at no measurable cost. It does not show that the compiler evaluates the initializer once; the P2 measurement does. `no_cache` is killed by it on both presets at `9f5f545`, so no mutant survives. The open item "a CTest that fails when one algebra's form is read twice" is withdrawn.
+- Item 2: the comments inside the concept now also say why the count comes from the type (the type is known even when the value cannot be read at compile time or is a non-static member), that a failed read inside the requires-expression makes the requirement false rather than an error, and, in the `///` comment, that the full check runs once per algebra and unit; the guard's one read happens at every evaluation (commit `c21a7f8`).
