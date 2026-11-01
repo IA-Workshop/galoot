@@ -184,7 +184,10 @@ template <std::size_t P, std::size_t Q, std::size_t Z,
   static_assert(P <= MaxN && Q <= MaxN && Z <= MaxN,
                 "metric: n is larger than MaxN, the largest number of "
                 "generators accepted (max_generators unless MaxN is given)");
-  detail::check_generator_count<P + Q + Z, MaxN>();
+  // Checking a wrapped sum would add a second, misleading message.
+  if constexpr (P <= MaxN && Q <= MaxN && Z <= MaxN) {
+    detail::check_generator_count<P + Q + Z, MaxN>();
+  }
 
   metric<P + Q + Z> m{};
   for (std::size_t i = 0; i < P + Q; ++i) {
@@ -218,7 +221,9 @@ template <std::size_t D, std::size_t MaxN = max_generators>
   static_assert(D <= MaxN,
                 "metric: n is larger than MaxN, the largest number of "
                 "generators accepted (max_generators unless MaxN is given)");
-  detail::check_generator_count<D + 2, MaxN>();
+  if constexpr (D <= MaxN) {
+    detail::check_generator_count<D + 2, MaxN>();
+  }
 
   metric<D + 2> m{};
   for (std::size_t i = 0; i < D; ++i) {
@@ -232,8 +237,8 @@ template <std::size_t D, std::size_t MaxN = max_generators>
 /// The metric whose Gram matrix is `gram`, for a form that no other factory
 /// builds, such as a non-diagonal or degenerate one:
 /// from_gram({{0, 1, 0}, {1, 0, 0}, {0, 0, 0}}). The parameter is a C array
-/// so that N is deduced from the braces; a larger MaxN is given as
-/// from_gram<N, MaxN>(...).
+/// so that N is deduced from the braces. N comes first, so raising MaxN means
+/// writing N as well: from_gram<3, 32>({...}).
 ///
 /// Requires: `gram` is square, with N rows of N entries, or the call does not
 /// match; 1 <= N <= MaxN, checked as for R; `gram` is symmetric, and every
@@ -242,7 +247,8 @@ template <std::size_t D, std::size_t MaxN = max_generators>
 /// Guarantees: the result's gram equals `gram` entry by entry.
 template <std::size_t N, std::size_t MaxN = max_generators>
 [[nodiscard]] consteval metric<N>
-from_gram(const entry_type (&gram)[N][N]) { // NOLINT(*-avoid-c-arrays)
+// NOLINTNEXTLINE(*-avoid-c-arrays): a C array lets N be deduced from braces.
+from_gram(const entry_type (&gram)[N][N]) {
   detail::check_generator_count<N, MaxN>();
   metric<N> m{};
   for (std::size_t i = 0; i < N; ++i) {
@@ -266,11 +272,12 @@ from_gram(const entry_type (&gram)[N][N]) { // NOLINT(*-avoid-c-arrays)
 /// every entry within max_form_entry in magnitude. Any N that metric<N>
 /// allows is accepted, whatever MaxN the factory was given. The concept tests
 /// the data only, and is false rather than an error for a type that has no
-/// such member.
+/// such member. The guard reads every entry, so that it fails for a value
+/// that is not usable at compile time even when n = 1.
 template <class Alg>
 concept metric_like =
     detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>> &&
-    requires { typename std::bool_constant<Alg::value.is_symmetric()>; } &&
+    requires { typename std::bool_constant<Alg::value.entries_in_range()>; } &&
     (Alg::value.generator_count >= 1) && Alg::value.is_symmetric() &&
     Alg::value.entries_in_range();
 

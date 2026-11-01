@@ -28,6 +28,12 @@ Checks: >
 # *-non-private-member-variables-in-classes: multivectors and descriptors
 #   are aggregates with public members (S8), as structural template
 #   arguments require.
+# cppcoreguidelines-pro-bounds-constant-array-index and
+#   cppcoreguidelines-pro-bounds-avoid-unchecked-container-access: Gram
+#   matrices and blade tables are indexed by generator, with each index
+#   bounded by a loop over n or checked by GALOOT_ASSERT. A constant
+#   evaluation rejects any access out of bounds, and the test builds check
+#   every std::array access at run time with _GLIBCXX_ASSERTIONS.
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(^|/)include/galoot/'
 CheckOptions:
