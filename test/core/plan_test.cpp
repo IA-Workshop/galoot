@@ -590,7 +590,8 @@ std::vector<oriented_blade> e1_signs(std::span<const oriented_blade> set) {
   return signed_set;
 }
 
-// Two uses of one plan, in two functions, which must share one evaluation.
+// Two uses of one plan, in two functions. That they share one evaluation is
+// not something a test of values can see; the values are what is checked.
 std::size_t point_terms() { return gp_plan<rga3, point, point>.size(); }
 coefficient_type point_scalar() {
   return gp_plan<rga3, point, point>.front().coefficient;
@@ -817,10 +818,10 @@ TEST_CASE("gp_plan accepts the generators of the widest algebra") {
         }});
 }
 
-// Reference: contract: a plan is generated once for each algebra and pair of
-// sets, so two functions that read the point times point plan of rigid(3)
-// read one value, its 15 terms with e1 e1 = 1 first
-TEST_CASE("Two uses of one plan read the same plan") {
+// Reference: independent value: two functions that read the point times
+// point plan of rigid(3) each read its 15 terms, worked by hand, with
+// e1 e1 = 1 first
+TEST_CASE("Two functions that use one plan read its values") {
   CHECK(point_terms() == 15);
   CHECK(point_scalar() == 1);
 }
