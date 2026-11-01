@@ -1,13 +1,12 @@
 #ifndef GALOOT_CORE_ASSERT_HPP
 #define GALOOT_CORE_ASSERT_HPP
 
-// Preconditions that the type system cannot express (STYLE S9).
+// Preconditions that the type system cannot express.
 //
-// GALOOT_CHECKING selects the checking mode (constitution C8). It is 1 for a
-// checking build and 0 for an unchecked one. When it has no value, this header
-// uses 0, so that a project that only adds Galoot's headers gets an unchecked
-// build (decision 0020). Galoot's own builds always give it a value, in each
-// preset (plan 0002, section 4.4).
+// GALOOT_CHECKING selects the checking mode. It is 1 for a checking build and
+// 0 for an unchecked one. When it has no value, this header uses 0, so that a
+// project that only adds Galoot's headers gets an unchecked build without
+// configuring anything. Galoot's own builds give it a value in every preset.
 #ifndef GALOOT_CHECKING
 // A macro, because users set the mode with -D and the preprocessor tests it.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -28,7 +27,8 @@ namespace galoot::core::detail {
 /// Requires: `message`, `file`, and `line` describe the failed assertion.
 /// Guarantees: writes `galoot: assertion failed: <message> (<file>:<line>)`
 /// to stderr and calls std::abort. It is not constexpr, so reaching it during
-/// a constant evaluation ends that evaluation without a throw (decision 0012).
+/// a constant evaluation ends that evaluation without a throw, and the core
+/// needs no exceptions.
 [[noreturn]] inline void assertion_failed(const char* message, const char* file,
                                           int line) noexcept {
   // fprintf, because <print>, <format>, or <iostream> would add a heavy
@@ -55,9 +55,9 @@ namespace galoot::core::detail {
 /// Checks a precondition: GALOOT_ASSERT(condition, message).
 ///
 /// Requires: `message` is a string literal that states the precondition in the
-/// terms of the algebra (C9), contains no quote characters, and starts on the
-/// line of `GALOOT_ASSERT(`, so that a compile-fail test can match it in the
-/// source line the compiler echoes (plan 0002, risk 8).
+/// terms of the algebra, contains no quote characters, and starts on the line
+/// of `GALOOT_ASSERT(`, because a failed constant evaluation shows the message
+/// only in the source line the compiler echoes.
 /// Guarantees: during a constant evaluation, a false `condition` ends the
 /// evaluation with a diagnostic that shows the line holding `message`. At run
 /// time with GALOOT_CHECKING 1, a false `condition` reports `message` and
