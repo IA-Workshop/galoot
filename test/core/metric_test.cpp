@@ -186,13 +186,13 @@ struct by_reference {
 // A constant reference to a metric that is not constant: the reference can
 // be named at compile time, but no entry of the metric can be read.
 // NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
-core::metric<2> runtime_plane = core::R<2, 0, 0>();
+core::metric<2> runtime_plane{written({{1, 0}, {0, 1}})};
 struct by_reference_to_runtime {
   static constexpr const core::metric<2>& value = runtime_plane;
 };
 // The same with one generator, whose only entry is a square.
 // NOLINTNEXTLINE(*-avoid-non-const-global-variables): not constant on purpose.
-core::metric<1> runtime_line = core::R<1, 0, 0>();
+core::metric<1> runtime_line{written({{1}})};
 struct by_reference_to_runtime_1 {
   static constexpr const core::metric<1>& value = runtime_line;
 };
@@ -228,7 +228,8 @@ constexpr std::array<core::entry_type, 6> sample_entries{
     -bound,
     bound,
     bound + 1,
-    std::numeric_limits<core::entry_type>::max()};
+    std::numeric_limits<core::entry_type>::max(),
+};
 
 // The number of N x N matrices over sample_entries, 6^(N * N).
 template <std::size_t N>
