@@ -105,7 +105,8 @@ def rigid_sets(n):
              f"core::R<{n - 1}, 0, 1>(); }};",
              "static_assert(core::metric_like<alg>);"]
     for name, names in RIGID_NAMES.items():
-        lines.append(f"constexpr auto {name} = {set_literal(names, n)};")
+        lines.append(f"[[maybe_unused]] constexpr auto {name} = "
+                     f"{set_literal(names, n)};")
     return "\n".join(lines) + "\n"
 
 
@@ -121,7 +122,8 @@ def plans_unit(n, pairs):
         uses.append(f"{plan}[static_cast<std::size_t>(argc) % {plan}.size()]"
                     ".coefficient")
     body = " + ".join(uses) if uses else "0"
-    text += ("int main(int argc, char**) {\n  return static_cast<int>("
+    text += ("int main([[maybe_unused]] int argc, char**) {\n"
+             "  return static_cast<int>("
              f"{body});\n}}\n")
     return text
 
@@ -324,9 +326,15 @@ def locals_form(out, repeats, cpu):
 
 TWO_USES = PREAMBLE + rigid_sets(4) + """
 std::size_t first() { return gp_plan<alg, point, point>.size(); }
-long second() { return gp_plan<alg, point, point>[3].coefficient; }
-long third() { return gp_plan<alg, line, line>[3].coefficient; }
-int main() { return static_cast<int>(first() + second() + third()); }
+core::coefficient_type second() {
+  return gp_plan<alg, point, point>[3].coefficient;
+}
+core::coefficient_type third() {
+  return gp_plan<alg, line, line>[3].coefficient;
+}
+int main() {
+  return static_cast<int>(first()) + static_cast<int>(second() + third());
+}
 """
 
 
