@@ -133,6 +133,28 @@ galoot_add_compile_fail_test(NAME bits_consteval MODULE core COMPONENT bits
   MESSAGE "blade has a generator beyond e_n"
   REQUIRE assertion_failed)
 
+# tests.compile_fail_flags: compile-fail tests compile with the compiler and
+# arguments that CMake generates for a target linking galoot::core and nothing
+# else, here the unit that checks galoot/core.hpp on its own, so that a flag
+# lost from galoot_compile_command fails a test even when every rejection
+# still appears without it. tests.compile_fail_flags_rejects shows that one
+# argument more fails the check.
+galoot_compile_command(compile_fail_command)
+set(compile_flags_check
+  ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/compile_flags_check.cmake --
+  ${CMAKE_BINARY_DIR}/compile_commands.json
+  ${CMAKE_BINARY_DIR}/galoot_core_verify_interface_header_sets/galoot/core.hpp.cxx
+  --)
+add_test(NAME tests.compile_fail_flags
+  COMMAND ${compile_flags_check} ${compile_fail_command}
+  COMMAND_EXPAND_LISTS)
+add_test(NAME tests.compile_fail_flags_rejects
+  COMMAND ${expect_output} 1 "compile_flags_check: the commands differ"
+    -- ${compile_flags_check} ${compile_fail_command} -DGALOOT_UNEXPECTED
+  COMMAND_EXPAND_LISTS)
+set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
+  PROPERTIES LABELS "tests;tests.compile_fail")
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
 add_test(NAME core.bare_compile

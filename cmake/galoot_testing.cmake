@@ -35,7 +35,8 @@ endfunction()
 # type, and the language standard, in the order CMake writes them. They are
 # read from galoot::core and the build's flag variables
 # rather than written out, so that a compile run outside the build sees what
-# the library's tests see.
+# the library's tests see. tests.compile_fail_flags compares the result with
+# the command CMake generates for galoot::core's header checks.
 function(galoot_compile_command out)
   # CMake turns a compile feature into a flag only for a target it compiles,
   # so the standard is read from galoot::core's features and spelled with
