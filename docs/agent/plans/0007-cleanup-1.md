@@ -111,3 +111,34 @@ Tests changed or added, with expected values: `tools.measure_record` gains a row
 P9 at `4d998f5`, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 62 of 62, no CMake warning; wall times (s) 2.82, 2.33, 3.28, 1.70, 2.75, 2.82, 1.24; `all_verify_interface_header_sets` on gcc-debug and clang-debug pass. From the worktree root: trace gate exit 0 (items with no test: 1.6, 1.7, 3.2 to 7.1), markers 28 of 28, golden passes, citations "63 files, none citing a project document or record", `golden.py --check` matches, `conventions_check.py` passes (seed 20261031). The commit after it adds only this section and run rows. The fix pass logged 237 run rows, 78.1 s of wall time, most of them mutation runs.
 
 Verification and validation: verified by the tests and mutations above; validation not applicable (tools, tests, comments, and records only).
+
+## Delta review fixes (2026-10-31, Claude, agent, Opus 5.5)
+
+The delta review `docs/agent/records/reviews/2026-10-31-cleanup-1-delta.md` (on `develop`) asked for D1 and D2 before the merge and D3 to D9 as non-blocking. All are done, `64cc969` to `cbd59f1`, plus this record.
+
+### Departures and ambiguities (C20)
+
+1. D7: the exact mode (`ONLY <regex>` in `test/expect_output.cmake`) applies to the six `test_references` rejecting tests (`ONLY "^/"`, since every finding starts with the fixture's path) and to `tools.include_scan_rejects` (`ONLY "."`). It immediately found a finding the golden rejection test always produced and never listed (`golden_bad.cpp:6`, the `using` directive's use of gamma outside a test case); that literal was added, a stricter expectation. `trace_no_rows` now lists all nine findings of the empty table in `trace_empty_table.expected`, which `tests.citations` skips like the other expected files, so the citation command in this plan's outcome gains `--exclude test/tools/test_references/trace_empty_table.expected`.
+2. D7 also fixed a weakness found on the way: since the expected files were added, a `;` inside an expected line (`'(C13; S6)'`) was split by CMake into two literals, each checked alone. Literals and output now hold `;`, `[`, and `]` as control characters while compared.
+3. D4: the copy step is a shell function in decision 0080's second amendment, rehearsed from that file's text on scratch copies; the committed record is unchanged. A refusal after appending (the final `tools/measure read`) cannot be undone by the function; its message says to restore the record with git.
+4. D8: `cmake -E chdir <dir> <program>` takes `<dir>` as the tree when the program names none, and a tree it names relative to `<dir>`.
+
+### Fixes
+
+| Finding | Fix | Before | After |
+| --- | --- | --- | --- |
+| D1 | `read_table`: a line before a separator whose first cell is an item number is a finding (`64cc969`; test `48c76b5`) | A second table with a header, no separator, and `| 1.2 | ... | yes |` passed | `trace_bad_table.md:17: row of item 1.2 comes before any separator line`; the script at `ed3783e` lacks it (run `before:row-before-separator-at-ed3783e`, exit 8) |
+| D2 | Decision 0082 amendment replaces "a row is a line whose first cell is an item number"; `read_table` docstring lists the three findings | | |
+| D3 | `parts.cpp`: cf. S12, cf V3, per V9, §3.1.2 and §3 of the conventions, tickets D3; `good.cpp`: "upper S2", "proper C3" (`1500c06`) | Eight narrowings survived | 8 of 8 killed; dropping `\b` before per fails the accepting test on both near-misses; 76 expected findings, the earlier 70 unchanged |
+| D4 | Copy function with a message per refusal (decision 0080, second amendment, `a38f3ff`); `tools/measure read` names an unreadable file (`08ab8ba`; test `e6a203a`) | `unavailable` revisions and rebuilt rows copied; refusals silent; a missing file gave a traceback | Clean tree: 8 rows copied. Missing record, other header, no rows, two revisions, `-dirty`, `unavailable`, and a compile written twice: each "copy refused: <reason>", exit 1, copy unchanged. Missing file: "measure: cannot read <path>: No such file or directory"; the recorder before `08ab8ba` fails the new check (run `mutation:old-recorder-missing-file`) |
+| D5 | Decision 0080's two earlier blocks marked as replaced; `.claude/agents/build-expert.md` points to the second amendment's function | Pointed to the first block | |
+| D6 | Lesson 0001 amendment: the field-count detector no longer works; the header count and `tools/measure read` detect a doubled record | | |
+| D7 | `ONLY <regex>` (`0cfbf9c`) | An extra finding passed | Appending "See decision 0099." to `parts.cpp` fails with "output has an unexpected line"; with the ONLY check disabled it passes (runs `mutation:extra-finding`, `mutation:extra-finding-no-only`) |
+| D8 | `build_tree` reads `cmake -E chdir` (`41a3635`; test `f2e64c9`) | `cmake -E chdir T ninja` read `build/<preset>` | Both new checks pass; the recorder before `41a3635` gets unavailable for both (run `mutation:old-recorder-chdir`) |
+| D9 | `develop` (`70060c5`: the delta review and cost rows) merged as `cbd59f1` | Behind by records only | Level; P10 covers the merge |
+
+Tests changed or added, with expected values: `tools.test_references_trace_rejects` adds `trace_bad_table.md:17: row of item 1.2 comes before any separator line`; `tools.test_references_citations_rejects` requires the 76 lines of `citations_bad.expected`; `tools.test_references_citations_accepts` still "3 files, none citing a project document or record"; `tools.test_references_golden_rejects` adds `golden_bad.cpp:6: golden values of gamma are used outside a test case or a static_assert`; `tools.test_references_trace_no_rows` requires the nine lines of `trace_empty_table.expected`; all six `test_references` rejecting tests and `tools.include_scan_rejects` fail on an unlisted finding; `tools.measure_record` adds options `-Wall -Werror -O1 -g` for `cmake -E chdir <tree> ninja` and `cmake -E chdir <top>/build ninja -C p`, and exit 1 naming the file without "Traceback" for a read of a missing record.
+
+P9 at `cbd59f1`, `tools/timed workflow <p> all -- cmake --workflow --preset <p>`: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint each 62 of 62, no CMake warning; wall times (s) 3.94, 3.73, 3.46, 3.50, 3.77, 3.40, 2.99; `all_verify_interface_header_sets` on gcc-debug and clang-debug pass. From the worktree root: trace gate exit 0 (items with no test: 1.6, 1.7, 3.2 to 7.1), markers 28 of 28, golden passes, citations "63 files, none citing a project document or record" (with the `trace_empty_table.expected` exclusion), `golden.py --check` matches, `conventions_check.py` passes (seed 20261031). The commit after it adds only this section and run rows. This pass logged 55 run rows, 77.6 s.
+
+Verification and validation: verified by the tests and mutations above; validation not applicable (tools, tests, and records only).
