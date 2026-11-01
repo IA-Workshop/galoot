@@ -1,10 +1,10 @@
-"""Fault injection for galoot/core/bits.hpp. Snippet candidate.
+"""Fault injection for galoot/core/bits.hpp.
 
 Usage: python3 -I docs/agent/snippets/bits_fault_injection.py <worktree>
        <preset> [--runtime-only]
 
-Written to show that the bits tests can fail. Last checked at 106069e with
-gcc-debug, in both modes: every mutation caught.
+Written to show that the bits tests can fail. Last checked at dbd2309 with
+gcc-debug, in both modes: all 12 mutations caught.
 
 With --runtime-only, the static_assert lines of test/core/bits_test.cpp are
 removed for the run (and restored), so each mutation must be caught by a
@@ -14,8 +14,8 @@ Applies each mutation below to include/galoot/core/bits.hpp in <worktree>,
 builds the core.bits targets and runs ctest -L '^core\\.bits$' through
 tools/timed, records whether the mutation was caught (build failed or a test
 failed), and restores both files from the text it read first. It refuses to
-run (exit 2) if either file has uncommitted changes. Needs the job-slot pool in
-MAKEFLAGS. Exits 1 if any mutation survives.
+run (exit 2) on a wrong argument or if either file has uncommitted changes.
+Needs the job-slot pool in MAKEFLAGS. Exits 1 if any mutation survives.
 """
 
 import os
@@ -45,6 +45,8 @@ MUTATIONS = [
     # n is unsigned, so n >= 0 would end the build on -Wtype-limits instead.
     ("count_accepts_0", "return n >= 1 && n <= mask_bits;",
      "return n <= mask_bits;"),
+    ("count_accepts_above", "return n >= 1 && n <= mask_bits;",
+     "return n >= 1 && n <= mask_bits + 1;"),
     # Still uses both parameters, so -Wunused-parameter does not end the build.
     ("mask_check_dropped", "return (a & ~low_bits(n)) == 0;",
      "return (a & ~low_bits(n)) == 0 || a != 0;"),
@@ -56,7 +58,15 @@ def run(worktree, args):
                           text=True).returncode
 
 
+USAGE = ("usage: python3 -I bits_fault_injection.py <worktree> <preset> "
+         "[--runtime-only]")
+
+
 def main():
+    if len(sys.argv) not in (3, 4) or sys.argv[3:] not in ([],
+                                                          ["--runtime-only"]):
+        print(USAGE, file=sys.stderr)
+        sys.exit(2)
     worktree, preset = os.path.abspath(sys.argv[1]), sys.argv[2]
     runtime_only = sys.argv[3:] == ["--runtime-only"]
     header = os.path.join(worktree, "include/galoot/core/bits.hpp")
