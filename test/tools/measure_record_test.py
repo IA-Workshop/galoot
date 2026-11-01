@@ -175,10 +175,14 @@ def counters_per_core_type(s):
             ([counted, "<not supported>,,cpu_atom/instructions/u,0,0.00,,",
               task_clock.format(5000)], "unavailable"),
     }
-    for name, (lines, inst_e_u) in cases.items():
+    for index, (name, (lines, inst_e_u)) in enumerate(cases.items()):
         s.measure_cmd(["tu", "p", "c", "types.tsv", "--", "/bin/true"],
                       perf_output="\n".join(lines))
-        row = s.rows("types.tsv")[-1]
+        # Each case appends one row, so a case that writes none cannot be
+        # judged by the row of the case before it.
+        rows = s.rows("types.tsv")
+        check(f"rows after the case {name}", len(rows), index + 1)
+        row = rows[-1]
         check(f"mode, {name}", row["mode"], "shared")
         check(f"instructions on the type the command ran on, {name}",
               row["inst_p_u"], "1000")
