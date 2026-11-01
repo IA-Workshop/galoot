@@ -333,9 +333,10 @@ constexpr std::size_t position_of(const blade_set<K>& set, mask_t mask) {
 }
 
 // Whether a blade listed after position `at` has the mask of the blade at
-// `at`. Scanning only after the position found keeps a lookup at one pass over
-// the set; a check that no mask at all repeats would cost O(K^2) steps, too
-// many for a large set within the compilers' limits on constant evaluation.
+// `at`; false when `at` is the size of the set, since no blade follows it.
+// Scanning only after the position found keeps a lookup at one pass over the
+// set; a check that no mask at all repeats would cost O(K^2) steps, too many
+// for a large set within the compilers' limits on constant evaluation.
 template <std::size_t K>
 [[nodiscard]] constexpr bool repeats_after(const blade_set<K>& set,
                                            std::size_t at) noexcept {
@@ -370,11 +371,8 @@ consteval std::size_t make_index_of() {
   constexpr std::size_t at = position_of(S, Mask);
   static_assert(at < S.size(), "index_of: the set holds no blade with this "
                                "mask");
-  // Only a mask that is present can repeat.
-  if constexpr (at < S.size()) {
-    static_assert(!repeats_after(S, at),
-                  "index_of: the set holds this mask twice");
-  }
+  static_assert(!repeats_after(S, at),
+                "index_of: the set holds this mask twice");
   return at;
 }
 

@@ -31,7 +31,6 @@ MUTATIONS = [
     ("merge_no_second_flag_shift", "      u.in_second[j] = u.in_second[j - 1];\n",
      ""),
     ("merge_repeat_first_only", "if (seen) {", "if (seen && !second) {"),
-    ("index_absent_says_twice", "if constexpr (at < S.size()) {", "if constexpr (true) {"),
     # The other checks of the fix.
     ("merge_opposite_any_sign", "if (is_sign(listed.sign) && is_sign(blade.sign) &&",
      "if ("),
