@@ -1,0 +1,4 @@
+single g++: matrices 40353607, accepted by the current checks 729, by the one pass 729, disagreements 0 timed: test metric-like-exhaustive-3-run:single:g++ took 0.070 s (exit 0) 
+single clang++: matrices 40353607, accepted by the current checks 729, by the one pass 729, disagreements 0 timed: test metric-like-exhaustive-3-run:single:clang++ took 0.163 s (exit 0) 
+cached-flat g++: matrices 40353607, accepted by the current checks 729, by the one pass 729, disagreements 0 timed: test metric-like-exhaustive-3-run:cached-flat:g++ took 0.250 s (exit 0) 
+cached-flat clang++: matrices 40353607, accepted by the current checks 729, by the one pass 729, disagreements 0 timed: test metric-like-exhaustive-3-run:cached-flat:clang++ took 0.083 s (exit 0) 
