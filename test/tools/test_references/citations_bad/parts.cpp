@@ -29,3 +29,9 @@
 /// 0081 says.
 /* A block comment split, as plan
  * 0007 says. */
+// Compare cf. S12.
+// Compare cf V3.
+// Applied per V9.
+// See §3.1.2 of the conventions.
+// See §3 of the conventions.
+// Raised as tickets D3.

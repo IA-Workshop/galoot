@@ -14,6 +14,7 @@
 // The performance cores run two threads each.
 // For the action of C2, see the C3 rotation above, per the 2 by 2 case.
 // Each plan-like table counts its 16 terms; the ticket counter is a word.
+// The upper S2 hemisphere is fixed by the proper C3 subgroup.
 #include <doctest/doctest.h>
 
 TEST_CASE("a rotor in R(3, 0, 1) composed with its reverse is the scalar 1") {}
