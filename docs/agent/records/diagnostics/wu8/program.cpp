@@ -27,8 +27,7 @@ using Motor =
     gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>;
 #else
 inline constexpr auto point_layout = gc::blades<rga3, "e1 e2 e3 e4">;
-inline constexpr auto line_layout =
-    gc::blades<rga3, "e41 e42 e43 e23 e31 e12">;
+inline constexpr auto line_layout = gc::blades<rga3, "e41 e42 e43 e23 e31 e12">;
 inline constexpr auto motor_layout =
     gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">;
 using Point = gc::mv<rga3, point_layout, double>;
