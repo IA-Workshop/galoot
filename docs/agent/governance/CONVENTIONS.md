@@ -1,6 +1,6 @@
 # Galoot conventions specification
 
-Status: version 1.4, ratified by the owner on 2026-10-31. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
+Status: version 1.5, ratified by the owner on 2026-11-01. A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
@@ -51,7 +51,7 @@ Component: core.
 
 Component: core.
 
-4.1 The geometric product is ⟑. The wedge a ∧ b is the exterior product, defined on blades by e_A ∧ e_B = ± e_{A∪B} when A and B share no generator and 0 otherwise, with the sign of the reordering, and extended bilinearly; it does not depend on the metric. It equals the part of a ⟑ b of grade gr(a) + gr(b), which in a diagonal metric is the terms of a ⟑ b whose blades share no generator. The dot a • b = aᵀGb is a scalar, and the antidot a ∘ b = aᵀ𝔾b multiplies 𝟙, where G and 𝔾 are the metric exomorphism and antiexomorphism. (Confirmed; the metric-independent wording is Checked, note 0009 B5)
+4.1 The geometric product is ⟑. It is the associative product fixed by the defining relation e_i ⟑ e_j + e_j ⟑ e_i = 2 g_ij on the generators, so that e_i ⟑ e_i = g_ii, where g is the metric. The wedge a ∧ b is the exterior product, defined on blades by e_A ∧ e_B = ± e_{A∪B} when A and B share no generator and 0 otherwise, with the sign of the reordering, and extended bilinearly; it does not depend on the metric. It equals the part of a ⟑ b of grade gr(a) + gr(b), which in a diagonal metric is the terms of a ⟑ b whose blades share no generator. The dot a • b = aᵀGb is a scalar, and the antidot a ∘ b = aᵀ𝔾b multiplies 𝟙, where G and 𝔾 are the metric exomorphism and antiexomorphism. (Confirmed; the metric-independent wording is Checked, note 0009 B5)
 
 4.2 The geometric antiproduct is a ⟇ b = left(right(a) ⟑ right(b)), and the antiwedge is a ∨ b = left(right(a) ∧ right(b)). Both products and both antiproducts are associative, and the De Morgan laws hold with either complement: right(a ⟑ b) = right(a) ⟇ right(b), right(a ∧ b) = right(a) ∨ right(b), and the same with left. (Checked)
 
@@ -142,3 +142,4 @@ These choices had no settled source and were ratified with this version:
 | 1.2 | 2026-10-31 | Confirmed label added from note 0005; 6.1 clarified; 6.2 split into 6.2 to 6.4; flector, dual, and partner rows updated and a conformal-duals row added; no convention changed; ratified |
 | 1.3 | 2026-10-31 | Ratified by the owner: component markers; non-diagonal blade definition in 1.1; 4.4 and 4.5 added (decision 0009) |
 | 1.4 | 2026-10-31 | 4.1 defines the wedge as the exterior product, independent of the metric (decision 0023); ratified |
+| 1.5 | 2026-11-01 | 4.1 states the defining relation of the geometric product; ratified (decision 0098) |
