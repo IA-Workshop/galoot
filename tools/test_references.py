@@ -1,18 +1,22 @@
 """Check that test cases state their references, that tests using golden
-values state the facts those values pin, and trace a specification's items to
-the tests that pin them.
+values state the facts those values pin, and that source files state reasons
+rather than cite project documents; and trace a specification's items to the
+tests that pin them.
 
 Usage:
   python3 -I tools/test_references.py markers <path>...
   python3 -I tools/test_references.py golden <golden.hpp> <path>...
   python3 -I tools/test_references.py trace <table> <specification>
       <golden.hpp> <path>...
+  python3 -I tools/test_references.py citations [--exclude <path>]...
+      <path>...
 
-A <path> that is a directory is searched for files named *_test.cpp, which are
-the only files the build compiles into test programs, and for `golden` and
-`trace` also for headers (*.hpp, *.h), which test programs include; a <path>
-that is a file is read as given. Each command prints one line per finding, as
-<file>:<line>: <finding>, and exits 1 if there is any, else 0.
+For the first three commands, a <path> that is a directory is searched for
+files named *_test.cpp, which are the only files the build compiles into test
+programs, and for `golden` and `trace` also for headers (*.hpp, *.h), which
+test programs include; a <path> that is a file is read as given. Each command
+prints one line per finding, as <file>:<line>: <finding>, and exits 1 if there
+is any, else 0.
 
 The reference marker
 --------------------
@@ -36,7 +40,8 @@ A regression guard is the only source of its marker, and a test case whose
 name contains "regression" carries one. The text cites only published
 sources, never a project document, a numbered rule of one, or a project
 record such as a decision, plan, or review: the reader is told the reason, not
-where it was written down.
+where it was written down. The forms rejected are the patterns of
+tools/citation_patterns.txt, which `citations` also uses.
 
 Golden values
 -------------
@@ -52,6 +57,21 @@ the values to the helper from the test case instead. A fact is matched
 ignoring case and runs of whitespace, with the wedge sign read as ^ and the
 minus sign as -.
 
+Citations
+---------
+`citations` reads every file under each <path>, other than the excluded
+files and directories, and reports each match of the patterns in
+tools/citation_patterns.txt, which lists them with a comment for each: the
+names of the project's governance documents and their rule numbers, numbered
+project records and the directory that holds them, units of work, review
+findings, and the names of agent models and agents. The
+patterns are matched across line breaks, with each line's indentation and
+comment leader removed, so a citation split over two comment lines is
+found. Code, comments, test names, messages, build files, and scripts are
+written for a reader who has none of those records, so each states its
+reason in place and cites only published sources. Exclude only files that
+hold such text on purpose, such as the rejecting fixtures of this command.
+
 Traceability
 ------------
 `trace` reads <table>, a Markdown table with the columns Item, Fact, and
@@ -66,6 +86,7 @@ prints each item with what pins any of its rows, and fails if a row marked
 implemented has no test that states its fact.
 """
 
+import bisect
 import os
 import re
 import sys
@@ -76,19 +97,24 @@ STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
 KINDS = ("proof", "identity", "independent value", "comparison", "contract",
          "regression guard")
 SOURCE = re.compile(rf"^({'|'.join(KINDS)}): \S")
-# A pointer to a project document, record, or rule instead of a reason. A
-# token such as C3, S2, or V4 is mathematics on its own and a rule only after
-# the name of the document that numbers it.
-DOCUMENTS = r"constitution|workflow|vvuq|performance|style|conventions"
-POINTER = re.compile(
-    rf"(?i:\b(?:{DOCUMENTS}))(?:\.md)?\b,? *(?:§ *)?(?:[CWSPV]\d+|kind \d)"
-    r"|\b(?:CONSTITUTION|WORKFLOW|VVUQ|PERFORMANCE|STYLE|CONVENTIONS)\b"
-    r"|(?i:\bconventions specification\b|\b(?:section|item) \d+\.\d+\b"
-    r"|\b(?:decisions?|plans?|research notes?|notes?|reviews?|lessons?)"
-    r" \d{4}\b|\blessons-learned\b|\bspikes? [A-F]\b|\bworkbench\b"
-    r"|docs/agent\b|\bWU\d+\b|\bDoD-\d+\b|\b(?:milestone|gate) M\d+\b"
-    r"|\bM\d+ (?:gate|milestone)\b"
-    r"|\b(?:Claude|Opus|Sonnet|Haiku|Fable)\b)")
+# Text that points to a project document, rule, or record instead of stating
+# a reason, one regular expression per line of the pattern file; earlier
+# lines win where two match at one place.
+PATTERNS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "citation_patterns.txt")
+
+
+def read_patterns(path):
+    with open(path, encoding="utf-8") as f:
+        lines = [line.strip() for line in f]
+    return re.compile("|".join(f"(?:{line})" for line in lines
+                               if line and not line.startswith("#")))
+
+
+POINTER = read_patterns(PATTERNS)
+# Indentation and a comment leader at the start of a line: //, ///, #, /*,
+# or the * that continues a block comment.
+LINE_LEADER = re.compile(r"^\s*(?:///?|#+|/\*+|\*+/?)?\s*")
 FACT_LINE = re.compile(r"^// Fact:(.*)$")
 NAMESPACE = re.compile(r"^namespace (\w+) \{")
 GOLDEN_USE = re.compile(r"(?<![\w:])(?:::)?golden::(\w+)")
@@ -281,6 +307,52 @@ def marker_findings(check):
     return findings
 
 
+def citation_files(paths, excluded):
+    """Every file at paths, directories searched recursively, except the
+    excluded files and directories and Python's __pycache__ directories."""
+    excluded = [os.path.realpath(p) for p in excluded]
+
+    def skipped(path):
+        real = os.path.realpath(path)
+        return any(real == e or real.startswith(e + os.sep) for e in excluded)
+
+    files = []
+    for path in paths:
+        if skipped(path):
+            continue
+        if not os.path.isdir(path):
+            files.append(path)
+            continue
+        for directory, subdirectories, names in os.walk(path):
+            subdirectories[:] = sorted(
+                d for d in subdirectories if d != "__pycache__"
+                and not skipped(os.path.join(directory, d)))
+            files += [os.path.join(directory, n) for n in sorted(names)
+                      if not skipped(os.path.join(directory, n))]
+    return files
+
+
+def citation_findings(path):
+    """Each citation in the file. The lines are searched with their
+    indentation and comment leaders removed and joined by spaces, so that a
+    citation broken across two comment lines is found too."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except UnicodeDecodeError:
+        return [f"{path}: not UTF-8 text, so it cannot be checked"]
+    starts, parts, offset = [], [], 0
+    for line in lines:
+        text = LINE_LEADER.sub("", line, count=1)
+        starts.append(offset)
+        parts.append(text)
+        offset += len(text) + 1
+    return [f"{path}:{bisect.bisect_right(starts, m.start())}: cites a "
+            "project document or record instead of stating the reason: "
+            f"'{' '.join(m.group(0).split())}'"
+            for m in POINTER.finditer(" ".join(parts))]
+
+
 def read_golden(path):
     """The fact of each namespace of the golden header, and the findings."""
     with open(path, encoding="utf-8") as f:
@@ -423,14 +495,38 @@ def trace(table, specification, golden_path, sources):
     return findings, pinned_by
 
 
+def citations(argv):
+    paths, excluded = [], []
+    args = iter(argv)
+    for arg in args:
+        if arg == "--exclude":
+            excluded.append(next(args, ""))
+        else:
+            paths.append(arg)
+    files = citation_files(paths, excluded)
+    if not files:
+        print(f"no files found under {' '.join(paths)}")
+        return 1
+    findings = [f for path in files for f in citation_findings(path)]
+    if not findings:
+        print(f"{len(files)} files, none citing a project document or record")
+    for finding in findings:
+        print(finding)
+    return 1 if findings else 0
+
+
 def main(argv):
-    commands = {"markers": 2, "golden": 3, "trace": 5}
+    commands = {"markers": 2, "golden": 3, "trace": 5, "citations": 2}
     if not argv or argv[0] not in commands or len(argv) < commands[argv[0]]:
         sys.exit("usage: test_references.py markers <path>...\n"
                  "       test_references.py golden <golden.hpp> <path>...\n"
                  "       test_references.py trace <table> <specification> "
-                 "<golden.hpp> <path>...")
+                 "<golden.hpp> <path>...\n"
+                 "       test_references.py citations [--exclude <path>]... "
+                 "<path>...")
     command = argv[0]
+    if command == "citations":
+        return citations(argv[1:])
     paths = argv[commands[command] - 1:]
     suffixes = ("_test.cpp",) if command == "markers" else \
         ("_test.cpp", ".hpp", ".h")
