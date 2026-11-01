@@ -76,9 +76,10 @@ def decode_set(text):
 
 
 def gram_of(case):
+    """The case's form as mirror.Form: from_gram writes every entry."""
     if case["form"].startswith("gram="):
         rows = case["form"][5:].split("/")
-        return [[int(v) for v in row.split(".")] for row in rows]
+        return mirror.Form([[int(v) for v in row.split(".")] for row in rows])
     return mirror.form(case["form"], case["n"])
 
 
@@ -91,7 +92,7 @@ def metric_expr(case):
     if f == "conformal":
         return f"core::conformal<{n - 2}>()"
     rows = ", ".join("{" + ", ".join(str(v) for v in row) + "}"
-                     for row in gram_of(case))
+                     for row in gram_of(case).values)
     return f"core::from_gram({{{rows}}})"
 
 

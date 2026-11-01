@@ -123,6 +123,34 @@ def product_capacity(a, b):
     return 1 if g == 0 else 1 << (g - 1)
 
 
+class Form:
+    """A Gram matrix and which of its entries the metric's factory wrote.
+
+    GCC holds a constant aggregate with the elements that were written, the
+    rest being implied zeros, and reading an implied element costs it more
+    than reading a written one; so the cost of a product depends on how the
+    metric was built, not only on its entries. R, rigid, and conformal write
+    only their nonzero entries; from_gram writes every entry."""
+
+    def __init__(self, values, written=None):
+        self.values = values
+        n = len(values)
+        self.written = written or [[True] * n for _ in range(n)]
+
+    def __len__(self):
+        return len(self.values)
+
+
+def entry(form, i, j, ev, site):
+    """gram[i][j], counting a read of an implied zero, or of a row with no
+    written entry at all, as its own event."""
+    if not any(form.written[i]):
+        ev[f"{site}.entry_row_implied"] += 1
+    elif not form.written[i][j]:
+        ev[f"{site}.entry_implied"] += 1
+    return form.values[i][j]
+
+
 def add_generator_product(out, gram, i, x, scale, ev):
     ev["agp.call"] += 1
     generator = 1 << i
@@ -139,11 +167,11 @@ def add_generator_product(out, gram, i, x, scale, ev):
         while remaining != 0:
             ev["agp.bit"] += 1
             j = ctz(remaining)
-            entry = gram[i][j]
-            if entry != 0:
+            value = entry(gram, i, j, ev, "agp")
+            if value != 0:
                 ev["agp.entry"] += 1
                 out.add(blade & ~(1 << j),
-                        multiply_checked(multiply_checked(sign, entry, ev), c,
+                        multiply_checked(multiply_checked(sign, value, ev), c,
                                          ev), ev)
             sign = -sign
             remaining &= remaining - 1
@@ -165,11 +193,11 @@ def add_blade_product(out, gram, a, b, scale, ev):
     while remaining != 0:
         ev["abp.bit"] += 1
         j = ctz(remaining)
-        entry = gram[low][j]
-        if entry != 0:
+        value = entry(gram, low, j, ev, "abp")
+        if value != 0:
             ev["abp.entry"] += 1
             add_blade_product(out, gram, rest & ~(1 << j), b,
-                              multiply_checked(multiply_checked(sign, entry,
+                              multiply_checked(multiply_checked(sign, value,
                                                                 ev),
                                                scale, ev), ev)
         sign = -sign
@@ -307,7 +335,10 @@ PHASES = ("capacity", "count", "fill", "defects", "collect", "typed",
 
 def phases(op, gram, as_, bs):
     """The plan, its result set, and one event counter per phase of
-    make_product_plan, in the order the generator evaluates them."""
+    make_product_plan, in the order the generator evaluates them. `gram` is
+    a Form, or a matrix taken as written in full."""
+    if not hasattr(gram, "written"):
+        gram = Form(gram)
     ev = {p: collections.Counter() for p in PHASES}
     capacity = plan_capacity(op, as_, bs, ev["capacity"])
     plan = generate_plan(op, gram, as_, bs, capacity, False, ev["count"])
@@ -330,17 +361,23 @@ def diagonal(signs):
 
 
 def form(name, n):
+    """The named form, with the entries its factory writes: R(n,0,0) and
+    R(n-1,0,1) write the diagonal of their nonnull generators, conformal(d)
+    the d ones and the two entries of the null pair, and the dense form,
+    built by from_gram, every entry."""
     if name == "r":
-        return diagonal([1] * n)
-    if name == "rigid":
-        return diagonal([1] * (n - 1) + [0])
-    if name == "conformal":
+        g = diagonal([1] * n)
+    elif name == "rigid":
+        g = diagonal([1] * (n - 1) + [0])
+    elif name == "conformal":
         g = diagonal([1] * (n - 2) + [0, 0])
         g[n - 2][n - 1] = g[n - 1][n - 2] = -1
-        return g
-    if name == "dense":
-        return [[2 if i == j else 1 for j in range(n)] for i in range(n)]
-    raise ValueError(name)
+    elif name == "dense":
+        return Form([[2 if i == j else 1 for j in range(n)]
+                     for i in range(n)])
+    else:
+        raise ValueError(name)
+    return Form(g, [[v != 0 for v in row] for row in g])
 
 
 def full(n):
