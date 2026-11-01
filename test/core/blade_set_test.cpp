@@ -22,6 +22,7 @@
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
+#include <galoot/core/metric.hpp>
 
 #include <doctest/doctest.h>
 
@@ -31,6 +32,20 @@ namespace {
 
 namespace core = galoot::core;
 using core::mask_t;
+
+// Names are read in an algebra, and the parser reads only its number of
+// generators, so R(n, 0, 0) serves every n, and rigid(3) and conformal(3)
+// serve their own objects.
+template <std::size_t N>
+struct euclidean {
+  static constexpr auto value = core::R<N, 0, 0>();
+};
+struct rga3 {
+  static constexpr auto value = core::rigid<3>();
+};
+struct conformal3 {
+  static constexpr auto value = core::conformal<3>();
+};
 
 constexpr std::size_t mask_width = std::numeric_limits<mask_t>::digits;
 
@@ -489,7 +504,7 @@ constexpr auto canonical_names = canonical_list<N>();
 // that order with sign +1.
 template <std::size_t N>
 consteval int parsed_canonical_mismatches() {
-  constexpr auto set = core::blades<N, canonical_names<N>.text>;
+  constexpr auto set = core::blades<euclidean<N>, canonical_names<N>.text>;
   int count = set.size() == blade_count(N) ? 0 : 1;
   for (std::size_t i = 0; i < std::min<std::size_t>(set.size(), blade_count(N));
        ++i) {
@@ -561,23 +576,26 @@ constexpr auto e12_e13 = std::to_array<core::oriented_blade>({
     {.mask = 0b0011, .sign = 1},
     {.mask = 0b0101, .sign = 1},
 });
-static_assert(std::is_same_v<stored_on<core::blades<4, "e12 e13">>,
+static_assert(std::is_same_v<stored_on<core::blades<euclidean<4>, "e12 e13">>,
                              stored_on<core::blade_set<2>{e12_e13}>>);
-static_assert(std::is_same_v<stored_on<core::blades<4, "e12 e13">>,
-                             stored_on<core::blades<4, "  e12   e13 ">>>);
-static_assert(std::is_same_v<stored_on<core::blades<3, "e1 e2 e3">>,
-                             stored_on<core::of_grade<3, 1>>>);
-static_assert(std::is_same_v<stored_on<core::blades<2, "1 e1 e2 e12">>,
-                             stored_on<core::full<2>>>);
 static_assert(
-    std::is_same_v<stored_on<core::merge<core::blades<4, "e23 e12">,
-                                         core::blades<4, "e31">>>,
-                   stored_on<core::merge<core::blades<4, "e31">,
-                                         core::blades<4, "e12 e23">>>>);
-static_assert(!std::is_same_v<stored_on<core::blades<4, "e13">>,
-                              stored_on<core::blades<4, "e31">>>);
-static_assert(!std::is_same_v<stored_on<core::blades<4, "e12 e13">>,
-                              stored_on<core::blades<4, "e13 e12">>>);
+    std::is_same_v<stored_on<core::blades<euclidean<4>, "e12 e13">>,
+                   stored_on<core::blades<euclidean<4>, "  e12   e13 ">>>);
+static_assert(std::is_same_v<stored_on<core::blades<euclidean<3>, "e1 e2 e3">>,
+                             stored_on<core::of_grade<3, 1>>>);
+static_assert(
+    std::is_same_v<stored_on<core::blades<euclidean<2>, "1 e1 e2 e12">>,
+                   stored_on<core::full<2>>>);
+static_assert(std::is_same_v<
+              stored_on<core::merge<core::blades<euclidean<4>, "e23 e12">,
+                                    core::blades<euclidean<4>, "e31">>>,
+              stored_on<core::merge<core::blades<euclidean<4>, "e31">,
+                                    core::blades<euclidean<4>, "e12 e23">>>>);
+static_assert(!std::is_same_v<stored_on<core::blades<euclidean<4>, "e13">>,
+                              stored_on<core::blades<euclidean<4>, "e31">>>);
+static_assert(
+    !std::is_same_v<stored_on<core::blades<euclidean<4>, "e12 e13">>,
+                    stored_on<core::blades<euclidean<4>, "e13 e12">>>);
 static_assert(std::is_trivially_copyable_v<core::blade_set<3>>);
 static_assert(std::is_aggregate_v<core::blade_set<3>>);
 static_assert(std::is_aggregate_v<core::oriented_blade>);
@@ -603,7 +621,7 @@ TEST_CASE("The oriented names of rigid(3) parse to their masks and signs") {
   constexpr std::size_t length = joined_length(golden::oriented_names::rigid_3);
   static constexpr literal<length> names =
       joined<length>(golden::oriented_names::rigid_3);
-  constexpr auto set = core::blades<4, names.text>;
+  constexpr auto set = core::blades<rga3, names.text>;
 
   REQUIRE(set.size() == golden::oriented_names::rigid_3.size());
   for (std::size_t i = 0; i < set.size(); ++i) {
@@ -624,7 +642,7 @@ TEST_CASE("The oriented names of rigid(3) parse to their masks and signs") {
 //   e43 = -e34 and moment blade e31 = -e13 carry sign -1
 TEST_CASE("The line of rigid(3) parses to -e14, -e24, -e34, +e23, -e13, "
           "+e12") {
-  constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
+  constexpr auto line = core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
   constexpr auto expected = std::to_array<core::oriented_blade>({
       {.mask = 0b1001, .sign = -1},
       {.mask = 0b1010, .sign = -1},
@@ -634,6 +652,31 @@ TEST_CASE("The line of rigid(3) parses to -e14, -e24, -e34, +e23, -e13, "
       {.mask = 0b0011, .sign = 1},
   });
   CHECK(line.blades == expected);
+}
+
+// Reference: independent value: an oriented name lists generators in the
+//   order of their product, written out by hand: e41 = -e14, e23 = +e23,
+//   e31 = -e13 in rigid(3), e45 = +e45 and e54 = -e45 in conformal(3), and e9
+//   = +e9 in R(9, 0, 0); contract: blades reads only the number of generators
+//   of the algebra, so a name may use every index up to it, whatever the
+//   metric
+TEST_CASE("blades reads names in the algebra its tag names") {
+  constexpr auto rigid_set = std::to_array<core::oriented_blade>({
+      {.mask = 0b1001, .sign = -1},
+      {.mask = 0b0110, .sign = 1},
+      {.mask = 0b0101, .sign = -1},
+  });
+  CHECK(core::blades<rga3, "e41 e23 e31">.blades == rigid_set);
+
+  constexpr auto conformal_set = std::to_array<core::oriented_blade>({
+      {.mask = 0b11000, .sign = 1},
+      {.mask = 0b11000, .sign = -1},
+  });
+  CHECK(core::blades<conformal3, "e45">.blades[0] == conformal_set[0]);
+  CHECK(core::blades<conformal3, "e54">.blades[0] == conformal_set[1]);
+
+  CHECK(core::blades<euclidean<9>, "e9">.blades[0] ==
+        core::oriented_blade{.mask = mask_t{1} << 8U, .sign = 1});
 }
 
 // Reference: proof: a canonical name lists its indices in increasing order,
@@ -756,8 +799,8 @@ TEST_CASE("merge of every pair of sets of blades of up to two generators "
 //   and +e234, -e134, +e124, -e123, written out here in canonical order
 TEST_CASE("merge of the line and the plane of rigid(3) keeps the sign of "
           "each oriented blade") {
-  constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
-  constexpr auto plane = core::blades<4, "e423 e431 e412 e321">;
+  constexpr auto line = core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
+  constexpr auto plane = core::blades<rga3, "e423 e431 e412 e321">;
   constexpr auto expected = std::to_array<core::oriented_blade>({
       {.mask = 0b0011, .sign = 1},
       {.mask = 0b0101, .sign = -1},
@@ -795,9 +838,9 @@ TEST_CASE("merge of e2 with e3 e1 e2 is e1 e2 e3") {
       {.mask = 0b010, .sign = 1},
       {.mask = 0b100, .sign = 1},
   });
-  CHECK(
-      core::merge<core::blades<3, "e2">, core::blades<3, "e3 e1 e2">>.blades ==
-      expected);
+  constexpr auto e2 = core::blades<euclidean<3>, "e2">;
+  constexpr auto e3_e1_e2 = core::blades<euclidean<3>, "e3 e1 e2">;
+  CHECK(core::merge<e2, e3_e1_e2>.blades == expected);
 }
 
 // Reference: identity: merge of two sets is their union in canonical order,
@@ -841,7 +884,7 @@ TEST_CASE("index_of finds every blade of full<N> and of_grade<N, K> at its "
 //   rigid(3) the mask of e13 is at position 4 and that of e14 at position 0,
 //   whatever their signs
 TEST_CASE("index_of finds a blade of an oriented set by its mask") {
-  constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
+  constexpr auto line = core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
   CHECK(core::index_of<line, 0b1001> == 0);
   CHECK(core::index_of<line, 0b1010> == 1);
   CHECK(core::index_of<line, 0b1100> == 2);

@@ -96,10 +96,10 @@ struct rigid_n {
 
 // The objects of rigid(3): the oriented names of the point, the line, the
 // plane, and the motor.
-constexpr auto point = core::blades<4, "e1 e2 e3 e4">;
-constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
-constexpr auto plane = core::blades<4, "e423 e431 e412 e321">;
-constexpr auto motor = core::blades<4, "1 e41 e42 e43 e23 e31 e12 e1234">;
+constexpr auto point = core::blades<rga3, "e1 e2 e3 e4">;
+constexpr auto line = core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
+constexpr auto plane = core::blades<rga3, "e423 e431 e412 e321">;
+constexpr auto motor = core::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">;
 
 // The terms of a typed plan with each output position read back as the mask
 // of the result blade at that position, so that a plan can be compared with

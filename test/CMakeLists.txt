@@ -330,7 +330,21 @@ blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
 blade_set_rejects(names_above_9
   "blades: names such as e123 have one digit per index, so they are read only for n up to 9, and a larger algebra takes masks"
   FORBID "${repeated_generator}")
-blade_set_rejects(names_zero "${no_generators}" FORBID "${index_above_n}")
+# blades takes an algebra tag, so a type that is not one, and a tag whose
+# metric has no generators, fail its metric_like constraint before a name is
+# read. The function that parses the names carries the concept's argument
+# too, so the tests forbid its name, which would point the user at internal
+# code.
+galoot_add_compile_fail_test(NAME blade_set_blades_not_metric_like
+  MODULE core COMPONENT blade_set
+  SOURCE core/blade_set_blades_not_metric_like_fail.cpp
+  MESSAGE "metric_like"
+  FORBID "make_blades")
+galoot_add_compile_fail_test(NAME blade_set_names_zero
+  MODULE core COMPONENT blade_set
+  SOURCE core/blade_set_names_zero_fail.cpp
+  MESSAGE "metric_like"
+  FORBID "make_blades" "${index_above_n}")
 blade_set_rejects(full_zero "${no_generators}")
 blade_set_rejects(full_wide
   "blade_set: n is larger than the number of bits in a blade mask")
