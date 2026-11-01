@@ -1,0 +1,160 @@
+compiler	config	unit	exit	wall_s	peak_kib	instructions	limit
+gcc	galoot-O0	typed	0	0.244	78064	1047877906	-
+gcc	galoot-O0	conformal3-vectors	0	0.158	71700	825100330	-
+gcc	galoot-O0	sparse8	0	0.239	71788	811995951	-
+gcc	galoot-O0	sparse12	0	0.219	71600	819363445	-
+gcc	galoot-O0	sparse16	0	0.222	71700	828687595	-
+gcc	galoot-O0	full-r-n2	0	0.234	71760	810672940	-
+gcc	galoot-O0	full-r-n3	0	0.225	71764	872205649	-
+gcc	galoot-O0	full-r-n4	0	0.106	76144	1147827778	-
+gcc	galoot-O0	full-r-n5	0	0.159	88952	2423199642	-
+gcc	galoot-O0	full-r-n6	0	0.440	146600	8349936765	-
+gcc	galoot-O0	full-r-n7	0	1.840	415468	37804173370	-
+gcc	galoot-O0	full-r-n8	1	2.646	534952	51594912980	include/galoot/core/blade_product.hpp:256:28: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	full-conformal-n3	0	0.252	71524	877856683	-
+gcc	galoot-O0	full-conformal-n4	0	0.243	75840	1172621412	-
+gcc	galoot-O0	full-conformal-n5	0	0.189	90864	2534450975	-
+gcc	galoot-O0	full-conformal-n6	0	0.583	150792	8783525225	-
+gcc	galoot-O0	full-conformal-n7	0	2.025	432312	39747904067	-
+gcc	galoot-O0	full-conformal-n8	1	2.568	537060	51921459400	include/galoot/core/blade_product.hpp:241:14: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	full-rigid-n2	0	0.116	71732	808867026	-
+gcc	galoot-O0	full-rigid-n3	0	0.123	71732	863204922	-
+gcc	galoot-O0	full-rigid-n4	0	0.128	73868	1106394256	-
+gcc	galoot-O0	full-rigid-n5	0	0.183	86512	2225988680	-
+gcc	galoot-O0	full-rigid-n6	0	0.429	135876	7378423036	-
+gcc	galoot-O0	full-rigid-n7	0	1.677	370200	33447546139	-
+gcc	galoot-O0	full-rigid-n8	1	2.535	532836	52205242736	include/galoot/core/blade_product.hpp:219:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	full-dense-n2	0	0.124	71532	816340688	-
+gcc	galoot-O0	full-dense-n3	0	0.121	73556	948728648	-
+gcc	galoot-O0	full-dense-n4	0	0.323	88632	2129609645	-
+gcc	galoot-O0	full-dense-n5	0	0.890	247396	14934993650	-
+gcc	galoot-O0	full-dense-n6	1	2.416	658544	47631488450	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	typed	0	0.266	81436	1074654816	-
+gcc	galoot-O2	conformal3-vectors	0	0.178	72244	837442111	-
+gcc	galoot-O2	sparse8	0	0.123	72320	825046518	-
+gcc	galoot-O2	sparse12	0	0.249	72364	831878601	-
+gcc	galoot-O2	sparse16	0	0.234	72316	841145397	-
+gcc	galoot-O2	full-r-n2	0	0.209	72340	823005268	-
+gcc	galoot-O2	full-r-n3	0	0.186	72308	883868328	-
+gcc	galoot-O2	full-r-n4	0	0.227	76636	1160720069	-
+gcc	galoot-O2	full-r-n5	0	0.270	89416	2437829105	-
+gcc	galoot-O2	full-r-n6	0	0.600	147240	8373236548	-
+gcc	galoot-O2	full-r-n7	0	2.117	415636	37683583581	-
+gcc	galoot-O2	full-r-n8	1	2.604	535184	51838791545	include/galoot/core/blade_product.hpp:256:28: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full-conformal-n3	0	0.238	72288	889513781	-
+gcc	galoot-O2	full-conformal-n4	0	0.232	76532	1186337611	-
+gcc	galoot-O2	full-conformal-n5	0	0.322	91588	2538554158	-
+gcc	galoot-O2	full-conformal-n6	0	0.597	151320	8761774113	-
+gcc	galoot-O2	full-conformal-n7	0	2.019	432496	39383901514	-
+gcc	galoot-O2	full-conformal-n8	1	2.550	537312	51987218633	include/galoot/core/blade_product.hpp:241:14: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full-rigid-n2	0	0.222	72368	821278100	-
+gcc	galoot-O2	full-rigid-n3	0	0.232	71928	875860930	-
+gcc	galoot-O2	full-rigid-n4	0	0.144	76492	1119133816	-
+gcc	galoot-O2	full-rigid-n5	0	0.293	87244	2241691556	-
+gcc	galoot-O2	full-rigid-n6	0	0.528	136000	7412103069	-
+gcc	galoot-O2	full-rigid-n7	0	1.763	370476	33305023486	-
+gcc	galoot-O2	full-rigid-n8	1	2.617	533016	51761917544	include/galoot/core/blade_product.hpp:219:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full-dense-n2	0	0.230	72372	828635158	-
+gcc	galoot-O2	full-dense-n3	0	0.123	74472	961142644	-
+gcc	galoot-O2	full-dense-n4	0	0.181	89240	2150630110	-
+gcc	galoot-O2	full-dense-n5	0	0.819	248464	15008622722	-
+gcc	galoot-O2	full-dense-n6	1	2.323	658804	48339700310	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	typed	0	0.220	77072	1022765309	-
+gcc	bare	conformal3-vectors	0	0.231	70604	803500706	-
+gcc	bare	sparse8	0	0.225	70724	791445346	-
+gcc	bare	sparse12	0	0.222	70644	798395944	-
+gcc	bare	sparse16	0	0.213	70504	807414923	-
+gcc	bare	full-r-n2	0	0.245	70576	789404383	-
+gcc	bare	full-r-n3	0	0.251	70620	850387627	-
+gcc	bare	full-r-n4	0	0.124	74936	1126710037	-
+gcc	bare	full-r-n5	0	0.186	87876	2409915638	-
+gcc	bare	full-r-n6	0	0.497	145460	8315908065	-
+gcc	bare	full-r-n7	0	1.987	414544	37669316005	-
+gcc	bare	full-r-n8	1	2.657	534044	52108905609	include/galoot/core/blade_product.hpp:256:28: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	full-conformal-n3	0	0.260	70864	856770236	-
+gcc	bare	full-conformal-n4	0	0.250	74768	1151768506	-
+gcc	bare	full-conformal-n5	0	0.193	89916	2497649708	-
+gcc	bare	full-conformal-n6	0	0.504	149576	8730290068	-
+gcc	bare	full-conformal-n7	0	1.935	431272	39479748993	-
+gcc	bare	full-conformal-n8	1	2.829	536156	52032419871	include/galoot/core/blade_product.hpp:241:14: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	full-rigid-n2	0	0.240	70668	787555698	-
+gcc	bare	full-rigid-n3	0	0.251	70664	841687793	-
+gcc	bare	full-rigid-n4	0	0.256	72712	1085193081	-
+gcc	bare	full-rigid-n5	0	0.172	85852	2200013984	-
+gcc	bare	full-rigid-n6	0	0.413	134780	7406179619	-
+gcc	bare	full-rigid-n7	0	1.661	369340	33310550988	-
+gcc	bare	full-rigid-n8	1	2.558	531912	52176125116	include/galoot/core/blade_product.hpp:219:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare	full-dense-n2	0	0.110	70604	794972669	-
+gcc	bare	full-dense-n3	0	0.114	72800	927754049	-
+gcc	bare	full-dense-n4	0	0.174	87804	2124368458	-
+gcc	bare	full-dense-n5	0	0.827	246464	15092517443	-
+gcc	bare	full-dense-n6	1	2.306	657940	48366644852	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	typed	0	0.160	119316	1190637467	-
+clang	galoot-O0	conformal3-vectors	0	0.168	111484	885935673	-
+clang	galoot-O0	sparse8	0	0.209	112292	869552242	-
+clang	galoot-O0	sparse12	0	0.232	112436	877218490	-
+clang	galoot-O0	sparse16	0	0.270	112356	890469682	-
+clang	galoot-O0	full-r-n2	0	0.272	111408	867638684	-
+clang	galoot-O0	full-r-n3	0	0.255	111644	982133442	-
+clang	galoot-O0	full-r-n4	0	0.281	111992	1579786584	-
+clang	galoot-O0	full-r-n5	0	0.417	113324	4608258429	-
+clang	galoot-O0	full-r-n6	1	0.437	108020	6997849334	include/galoot/core/blade_product.hpp:146:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O0	full-conformal-n3	0	0.155	111660	997989893	-
+clang	galoot-O0	full-conformal-n4	0	0.280	112032	1655336668	-
+clang	galoot-O0	full-conformal-n5	0	0.428	113256	4938488723	-
+clang	galoot-O0	full-conformal-n6	1	0.519	108216	6936042246	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:217:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O0	full-rigid-n2	0	0.241	111344	862937280	-
+clang	galoot-O0	full-rigid-n3	0	0.259	111632	962948662	-
+clang	galoot-O0	full-rigid-n4	0	0.310	112176	1477692236	-
+clang	galoot-O0	full-rigid-n5	0	0.434	113088	4096196590	-
+clang	galoot-O0	full-rigid-n6	1	0.533	108172	6995624289	include/galoot/core/assert.hpp:46:54: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O0	full-dense-n2	0	0.140	112368	878455581	-
+clang	galoot-O0	full-dense-n3	0	0.274	111644	1182762132	-
+clang	galoot-O0	full-dense-n4	0	0.417	113416	4472789857	-
+clang	galoot-O0	full-dense-n5	1	0.504	105840	6304944740	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:447:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	typed	0	0.280	126988	1202256525	-
+clang	galoot-O2	conformal3-vectors	0	0.215	113920	892916782	-
+clang	galoot-O2	sparse8	0	0.260	113168	876217493	-
+clang	galoot-O2	sparse12	0	0.217	113444	884291426	-
+clang	galoot-O2	sparse16	0	0.257	113164	895249666	-
+clang	galoot-O2	full-r-n2	0	0.246	113984	871810072	-
+clang	galoot-O2	full-r-n3	0	0.243	114152	987406101	-
+clang	galoot-O2	full-r-n4	0	0.263	113552	1579248496	-
+clang	galoot-O2	full-r-n5	0	0.427	114960	4613533411	-
+clang	galoot-O2	full-r-n6	1	0.559	107948	6990525338	include/galoot/core/blade_product.hpp:146:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	full-conformal-n3	0	0.187	114416	1006927435	-
+clang	galoot-O2	full-conformal-n4	0	0.319	113544	1660634311	-
+clang	galoot-O2	full-conformal-n5	0	0.467	114964	4924803018	-
+clang	galoot-O2	full-conformal-n6	1	0.454	108252	6905741509	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:217:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	full-rigid-n2	0	0.162	113900	870068311	-
+clang	galoot-O2	full-rigid-n3	0	0.236	114128	968872023	-
+clang	galoot-O2	full-rigid-n4	0	0.215	113504	1487865378	-
+clang	galoot-O2	full-rigid-n5	0	0.285	114648	4103712258	-
+clang	galoot-O2	full-rigid-n6	1	0.417	108220	6955562717	include/galoot/core/assert.hpp:46:54: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	galoot-O2	full-dense-n2	0	0.228	114176	886544848	-
+clang	galoot-O2	full-dense-n3	0	0.261	114200	1189186642	-
+clang	galoot-O2	full-dense-n4	0	0.419	115208	4484229587	-
+clang	galoot-O2	full-dense-n5	1	0.512	106160	6275704683	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:447:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	typed	0	0.250	118972	1189642343	-
+clang	bare	conformal3-vectors	0	0.271	111100	884724944	-
+clang	bare	sparse8	0	0.251	112064	866551700	-
+clang	bare	sparse12	0	0.240	112004	874579622	-
+clang	bare	sparse16	0	0.257	112040	888003888	-
+clang	bare	full-r-n2	0	0.231	111092	864205238	-
+clang	bare	full-r-n3	0	0.260	111340	978370668	-
+clang	bare	full-r-n4	0	0.165	111528	1574642589	-
+clang	bare	full-r-n5	0	0.406	113024	4618456120	-
+clang	bare	full-r-n6	1	0.530	107712	6964675630	include/galoot/core/blade_product.hpp:146:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	full-conformal-n3	0	0.149	111164	997100276	-
+clang	bare	full-conformal-n4	0	0.311	111576	1653921862	-
+clang	bare	full-conformal-n5	0	0.470	113148	4916511793	-
+clang	bare	full-conformal-n6	1	0.523	107576	6906464584	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:217:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	full-rigid-n2	0	0.256	111108	861809330	-
+clang	bare	full-rigid-n3	0	0.261	111188	961743256	-
+clang	bare	full-rigid-n4	0	0.263	111524	1474295248	-
+clang	bare	full-rigid-n5	0	0.278	112840	4077008028	-
+clang	bare	full-rigid-n6	1	0.503	107580	6975544791	include/galoot/core/assert.hpp:46:54: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang	bare	full-dense-n2	0	0.242	111092	878050042	-
+clang	bare	full-dense-n3	0	0.245	111440	1179672029	-
+clang	bare	full-dense-n4	0	0.316	112804	4484524515	-
+clang	bare	full-dense-n5	1	0.534	105676	6282466598	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:447:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
