@@ -60,3 +60,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	tools-trial	WU6a oracle cross-check (math-expert role)	opus	304677	110	2798	reported by harness as subagent_tokens
 2026-11-01	plan-0012	cost-growth implementer (performance-engineer role)	opus	434103	166	3950	reported by harness as subagent_tokens
 2026-11-01	plan-0012	cost-growth blind reviewer (W5)	opus	300208	95	1592	reported by harness as subagent_tokens
+2026-11-01	plan-0012	cost-growth implementer, review-fix round	opus	475051	191	4390	reported by harness as subagent_tokens (cumulative; tool calls 166 + 25)
