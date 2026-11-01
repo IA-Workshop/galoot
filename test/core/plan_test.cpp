@@ -1791,6 +1791,11 @@ TEST_CASE("The checks of a typed plan find each defect at its bound") {
                  &typed_defects::result_out_of_order));
   CHECK(none_but(typed_defects_of(set(plus_e1, {.mask = e2, .sign = -1}), both),
                  &typed_defects::result_sign));
+  // Every sign but +1 is wrong for a result blade, on either side of it.
+  CHECK(none_but(typed_defects_of(set(plus_e1, {.mask = e2, .sign = 0}), both),
+                 &typed_defects::result_sign));
+  CHECK(none_but(typed_defects_of(set(plus_e1, {.mask = e2, .sign = 2}), both),
+                 &typed_defects::result_sign));
 
   const std::array<typed_term, 3> past{
       {
@@ -1868,4 +1873,20 @@ TEST_CASE("The wedge plan accepts the generators of the widest algebra") {
         });
   CHECK(generate_plan<wedge, 1>(widest::value, tops.blades, tops.blades, {}) ==
         2);
+}
+
+// Reference: contract: a pair of blades has at most one wedge term, whether
+// or not the blades share a generator, and at most product_capacity(a, b)
+// terms of the geometric product, half the subsets of the generators of A
+// and B together
+TEST_CASE("pair_capacity is 1 for the wedge and product_capacity for the "
+          "geometric product") {
+  using core::detail::pair_capacity;
+  CHECK(pair_capacity(wedge, e1, e2) == 1);
+  CHECK(pair_capacity(wedge, e1, e1) == 1);
+  CHECK(pair_capacity(wedge, e123, e1234) == 1);
+  CHECK(pair_capacity(wedge, 0, 0) == 1);
+  CHECK(pair_capacity(gp, e1, e2) == 2);
+  CHECK(pair_capacity(gp, e123, e1234) == 8);
+  CHECK(pair_capacity(gp, 0, 0) == 1);
 }
