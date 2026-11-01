@@ -54,3 +54,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	tools-research	oracles researcher	fable	208543	127	1101	reported by harness as subagent_tokens
 2026-11-01	tools-research	robustness-performance researcher	fable	219649	157	1151	reported by harness as subagent_tokens
 2026-11-01	plan-0011	WU6a implementer incl. review fixes	opus	523993	198	3830	reported by harness as subagent_tokens (cumulative across three rounds; tool calls 152 + 46)
+2026-11-01	plan-0011	WU6b implementer	opus	445960	139	2174	reported by harness as subagent_tokens (interim reading at the first stop; final count not yet received)
