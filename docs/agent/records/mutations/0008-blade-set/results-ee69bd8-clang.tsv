@@ -1,0 +1,21 @@
+# revision ee69bd8, rejection mutants and the trivector mutant on clang-debug
+mutation	preset	build_exit	test_exit	failed_tests	killed
+parse_sign_trivectors	clang-debug	0	8	core.blade_set	killed
+merge_conflict	clang-debug	0	8	core.blade_set_merge_opposite_signs	killed
+index_check	clang-debug	0	8	core.blade_set_index_of_absent	killed
+no_names	clang-debug	0	8	core.blade_set_no_names	killed
+not_a_name	clang-debug	0	8	core.blade_set_not_a_name_letter,core.blade_set_not_a_name_digit	killed
+digit_zero	clang-debug	0	8	core.blade_set_bad_index_zero	killed
+digit_letter	clang-debug	0	8	core.blade_set_bad_index_letter	killed
+no_index	clang-debug	0	8	core.blade_set_no_index	killed
+index_above_n	clang-debug	0	8	core.blade_set_index_above_n	killed
+repeated_generator	clang-debug	0	8	core.blade_set_repeated_generator	killed
+repeated_blade	clang-debug	0	8	core.blade_set_repeated_name,core.blade_set_same_blade	killed
+names_above_9_assert	clang-debug	0	8	core.blade_set_names_above_9	killed
+names_above_9_guard	clang-debug	0	8	core.blade_set_names_above_9	killed
+zero_assert	clang-debug	0	8	core.blade_set_names_zero,core.blade_set_full_zero,core.blade_set_of_grade_zero	killed
+zero_guard	clang-debug	0	8	core.blade_set_names_zero	killed
+wide_assert	clang-debug	0	8	core.blade_set_full_wide	killed
+grade_above_n	clang-debug	0	8	core.blade_set_of_grade_above_n	killed
+grade_negative	clang-debug	0	8	core.blade_set_of_grade_negative	killed
+name_assert	clang-debug	0	8	core.blade_set_name_beyond_e9	killed
