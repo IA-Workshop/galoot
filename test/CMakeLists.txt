@@ -763,6 +763,47 @@ mv_rejects(not_metric_like "metric_like" FORBID "${mv_scalar}")
 mv_rejects(narrowing_int "narrow" ONE_ERROR)
 mv_rejects(narrowing_float "narrow" ONE_ERROR)
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
+# core.mv_get_<case>: get rejects each kind of name it cannot read with
+# that kind's message alone: never another kind's, nor the name parser's of
+# blades. A message's ; would split it into two list items, so it is held as
+# character 1, which expect_output.cmake reads as a ;.
+string(ASCII 1 semicolon)
+set(mv_get_messages
+  "get: names have one digit per index, so they are read only for n up to 9${semicolon} reach the coefficient by its position"
+  "get: give one blade name"
+  "get: a name is 1 or e followed by generator indices, as in e41"
+  "get: the name lists one generator twice${semicolon} a blade names each generator once"
+  "get: the name has an index above n, the number of generators"
+  "get: the type has no blade of this name${semicolon} its layout lists the names it holds"
+  "get: the type stores this blade with the other orientation${semicolon} use the name its layout gives it and negate the value")
+function(mv_get_rejects case message)
+  set(others ${mv_get_messages})
+  list(REMOVE_ITEM others "${message}")
+  list(LENGTH mv_get_messages all)
+  list(LENGTH others rest)
+  math(EXPR removed "${all} - ${rest}")
+  if(NOT removed EQUAL 1)
+    message(FATAL_ERROR "mv_get_rejects(${case}): '${message}' is not one "
+      "of the messages of get")
+  endif()
+  mv_rejects(get_${case} "${message}" ONE_ERROR FORBID ${others} "blades:")
+endfunction()
+list(GET mv_get_messages 0 mv_get_wide)
+list(GET mv_get_messages 1 mv_get_one_name)
+list(GET mv_get_messages 2 mv_get_not_a_name)
+list(GET mv_get_messages 3 mv_get_repeated)
+list(GET mv_get_messages 4 mv_get_above_n)
+list(GET mv_get_messages 5 mv_get_absent)
+list(GET mv_get_messages 6 mv_get_opposite)
+mv_get_rejects(wide_algebra "${mv_get_wide}")
+mv_get_rejects(two_names "${mv_get_one_name}")
+mv_get_rejects(not_a_name "${mv_get_not_a_name}")
+mv_get_rejects(index_zero "${mv_get_not_a_name}")
+mv_get_rejects(repeated_generator "${mv_get_repeated}")
+mv_get_rejects(above_n "${mv_get_above_n}")
+mv_get_rejects(absent "${mv_get_absent}")
+mv_get_rejects(opposite "${mv_get_opposite}")
+
 # A file with a second, unrelated error fails a one-error test, so the test
 # above can fail; WILL_FAIL turns that failure into a pass.
 mv_rejects(two_errors "${mv_count}" ONE_ERROR)

@@ -16,6 +16,8 @@
 #include <limits>
 #include <new> // IWYU pragma: keep
 #include <string>
+#include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -558,4 +560,157 @@ TEST_CASE("mv accepts every set the blade-set constructors build") {
   static_assert(accepted<r15_0_1, sparse_layout>);
   static_assert(accepted<rga3, empty_layout>);
   CHECK(accepted<rga3, line_layout>);
+}
+
+namespace {
+
+// A layout of conformal(3) with e45, the blade of the origin and infinity.
+inline constexpr auto conformal_layout =
+    core::blades<cga3, "e1 e45 e321 e12345">;
+template <class T>
+using ConformalBlades = core::mv<cga3, conformal_layout, T>;
+
+// The oriented blade that a name stands for, read here apart from the
+// header: the mask holds the indices the name lists, and the sign is that of
+// the permutation that sorts them, the parity of the pairs out of order.
+constexpr core::oriented_blade blade_of(std::string_view name) {
+  if (name == "1") {
+    return {.mask = 0, .sign = 1};
+  }
+  core::mask_t mask = 0;
+  int inversions = 0;
+  for (std::size_t p = 1; p < name.size(); ++p) {
+    mask |= core::mask_t{1} << static_cast<unsigned>(name[p] - '1');
+    for (std::size_t q = p + 1; q < name.size(); ++q) {
+      inversions += name[p] > name[q] ? 1 : 0;
+    }
+  }
+  return {.mask = mask, .sign = inversions % 2 == 0 ? 1 : -1};
+}
+
+// Whether get<Name> reads and writes exactly position `at` of Type, through
+// an lvalue, a const lvalue, and an rvalue, whose result is an rvalue.
+template <class Type, core::detail::name_list Name>
+constexpr bool get_reaches(std::size_t at) {
+  using T = decltype(Type{}.coefficients)::value_type;
+  static_assert(std::is_same_v<decltype(get<Name>(std::declval<Type&>())), T&>);
+  static_assert(std::is_same_v<decltype(get<Name>(std::declval<const Type&>())),
+                               const T&>);
+  static_assert(std::is_same_v<decltype(get<Name>(std::declval<Type>())), T&&>);
+
+  Type x{};
+  get<Name>(x) = T(7);
+  bool only_there = true;
+  for (std::size_t i = 0; i < Type::component_count; ++i) {
+    only_there = only_there && x.coefficients.at(i) == (i == at ? T(7) : T{});
+  }
+  const Type& read_only = x;
+  const T moved = get<Name>(Type{x});
+  return only_there && get<Name>(read_only) == T(7) && moved == T(7);
+}
+
+// Whether Name stands for the blade (mask, sign), by the reading above, and
+// is at position `at` of Type's layout, where has_blade finds it and get
+// reaches it.
+template <class Type, core::detail::name_list Name>
+constexpr bool named_at(std::size_t at, core::mask_t mask, int sign) {
+  const core::oriented_blade expected{.mask = mask, .sign = sign};
+  return blade_of(Name.text()) == expected &&
+         Type::layout.blades.at(at) == expected &&
+         core::has_blade<Type, Name> && get_reaches<Type, Name>(at);
+}
+
+} // namespace
+
+// Reference: independent value: an oriented name lists generators in the
+//   order of their product, read here by the parity of its inversions: in
+//   rigid(3) e41 = -e14, e42 = -e24, e43 = -e34, e23 = +e23, e31 = -e13,
+//   e12 = +e12, e423 = +e234, e431 = -e134, e412 = +e124, e321 = -e123, and
+//   e1234 = +e1234, as the conventions' table of rigid(3) gives them, and in
+//   conformal(3) e45 = +e45 and e321 = -e123; contract: get reads and writes
+//   the place of the name in the layout, with the value category of its
+//   argument
+TEST_CASE_TEMPLATE("get reaches the coefficient of each oriented name", T,
+                   std::int64_t, rational, float, double,
+                   std::complex<double>) {
+  static_assert(named_at<Line<T>, "e41">(0, 0b1001, -1));
+  static_assert(named_at<Line<T>, "e42">(1, 0b1010, -1));
+  static_assert(named_at<Line<T>, "e43">(2, 0b1100, -1));
+  static_assert(named_at<Line<T>, "e23">(3, 0b0110, 1));
+  static_assert(named_at<Line<T>, "e31">(4, 0b0101, -1));
+  static_assert(named_at<Line<T>, "e12">(5, 0b0011, 1));
+  static_assert(named_at<Plane<T>, "e423">(0, 0b1110, 1));
+  static_assert(named_at<Plane<T>, "e431">(1, 0b1101, -1));
+  static_assert(named_at<Plane<T>, "e412">(2, 0b1011, 1));
+  static_assert(named_at<Plane<T>, "e321">(3, 0b0111, -1));
+  static_assert(named_at<Motor<T>, "1">(0, 0, 1));
+  static_assert(named_at<Motor<T>, "e41">(1, 0b1001, -1));
+  static_assert(named_at<Motor<T>, "e12">(6, 0b0011, 1));
+  static_assert(named_at<Motor<T>, "e1234">(7, 0b1111, 1));
+  static_assert(named_at<Point<T>, "e1">(0, 0b0001, 1));
+  static_assert(named_at<Point<T>, "e4">(3, 0b1000, 1));
+  static_assert(named_at<ConformalBlades<T>, "e1">(0, 0b00001, 1));
+  static_assert(named_at<ConformalBlades<T>, "e45">(1, 0b11000, 1));
+  static_assert(named_at<ConformalBlades<T>, "e321">(2, 0b00111, -1));
+  static_assert(named_at<ConformalBlades<T>, "e12345">(3, 0b11111, 1));
+
+  // The same at run time, with positions the compiler cannot know.
+  const volatile std::size_t zero = 0;
+  CHECK(named_at<Line<T>, "e41">(zero + 0, 0b1001, -1));
+  CHECK(named_at<Line<T>, "e31">(zero + 4, 0b0101, -1));
+  CHECK(named_at<Plane<T>, "e321">(zero + 3, 0b0111, -1));
+  CHECK(named_at<Motor<T>, "e1234">(zero + 7, 0b1111, 1));
+  CHECK(named_at<ConformalBlades<T>, "e45">(zero + 1, 0b11000, 1));
+}
+
+// Reference: contract: get reads and writes a coefficient of a value at run
+//   time, called without a namespace, also beside std::get and with a scalar
+//   from namespace std
+TEST_CASE("get reads and writes a line at run time") {
+  const volatile double two = 2.0;
+  Line<double> axis{0, 0, 1, 0, 0, 0};
+  get<"e23">(axis) = two;
+  CHECK(axis == Line<double>{0, 0, 1, 2, 0, 0});
+  CHECK(get<"e43">(axis) == 1.0);
+  CHECK(get<"e23">(std::as_const(axis)) == 2.0);
+
+  Line<std::complex<double>> complex_axis{};
+  get<"e43">(complex_axis) = std::complex<double>{0.0, two};
+  CHECK(complex_axis.coefficients[2] == std::complex<double>{0.0, 2.0});
+  const std::tuple<int, double> pair{1, 2.0};
+  CHECK(std::get<1>(pair) == 2.0);
+}
+
+// Reference: contract: has_blade is true only for a name the layout holds
+//   with that orientation, and false, never an error, for the other
+//   orientation, a blade the layout lacks, a name with an index above n, a
+//   text that is not a name, two names, and a type that is not a
+//   multivector
+TEST_CASE("has_blade answers for every name without an error") {
+  static_assert(!core::has_blade<Line<double>, "e14">);
+  static_assert(!core::has_blade<Line<double>, "e24">);
+  static_assert(!core::has_blade<Line<double>, "e34">);
+  static_assert(!core::has_blade<Line<double>, "e13">);
+  static_assert(!core::has_blade<Line<double>, "e1">);
+  static_assert(!core::has_blade<Line<double>, "e5">);
+  static_assert(!core::has_blade<Line<double>, "x1">);
+  static_assert(!core::has_blade<Line<double>, "e0">);
+  static_assert(!core::has_blade<Line<double>, "e11">);
+  static_assert(!core::has_blade<Line<double>, "e1 e2">);
+  static_assert(!core::has_blade<Line<double>, "">);
+  static_assert(!core::has_blade<Empty<double>, "1">);
+  static_assert(!core::has_blade<std::array<double, 6>, "e41">);
+  static_assert(core::has_blade<const Line<double>&, "e41">);
+  static_assert(core::has_blade<Motor<float>, "1">);
+  CHECK(core::has_blade<Line<double>, "e12">);
+}
+
+// Reference: contract: the rejecting overload of get and the constructor for
+//   a wrong count make generic code that probes a call or a construction
+//   told yes, while has_blade answers no, as their comments say
+TEST_CASE("Probes of get and of construction answer yes for a misuse") {
+  static_assert(requires(Line<double>& line) { get<"e1">(line); });
+  static_assert(!core::has_blade<Line<double>, "e1">);
+  static_assert(std::is_constructible_v<Line<double>, double, double, double>);
+  CHECK(requires(Line<double>& line) { get<"e41">(line); });
 }
