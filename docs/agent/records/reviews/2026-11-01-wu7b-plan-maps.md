@@ -202,3 +202,7 @@ V10 for this review. Verification was performed and passed: hand derivations, an
 - The four W5 checks, the oracle dump, the limits, and P2: `50c7c70`.
 - Per-commit runs: `58b7e2d`, `54b17ae`, `dee3315` (and `format-check` alone there), `d56af9f`, `a913760`, `26a019e`, `d6cbaba`, `c6b7a4c`, `bb0fde5`.
 - The clang-tidy comparison for F2: `plan_evaluated_once.cpp` at `50c7c70` and at `7704146`, both against the head's headers.
+
+## Delta review of 8cb3409 (comment-only header change after the review)
+
+Reviewed by the coordinating agent (Claude Sonnet 5.5), 2026-11-01. The diff of `include/` from `438dbc1` to the merge result contains only the reworded comment in `plan.hpp` about the sparse sets. It now states the measured factors (2.5 times on GCC 16 and 2.6 times on Clang 23 through the antiproduct, against 1.2 and 1.1 through the product, n = 4 to 16), which match the measurement rows of `records/performance/plan-maps/out/sparse-438dbc1-lock-held/`. No finding.
