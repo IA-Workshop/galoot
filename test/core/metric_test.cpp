@@ -553,6 +553,38 @@ TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
   CHECK_FALSE(below.entries_in_range());
 }
 
+// Reference: proof: a form meets the requirement when g_ij = g_ji and
+// |g_ij| <= max_form_entry for every i and j, and over six entries with two
+// in each class (below, within, and above the range) that holds for
+// 2^(n(n + 1) / 2) of the matrices, 64 at n = 3; the six entries realize every
+// pattern of classes and mirrored equalities, so the check covers every int
+// matrix of three generators
+TEST_CASE("At n = 3, the single pass that metric_like stores agrees with the "
+          "requirement and with is_symmetric() && entries_in_range() on "
+          "every matrix over the six sample entries, and accepts 64") {
+  constexpr std::size_t count = sample_count<3>();
+  static_assert(count == 10'077'696);
+
+  std::size_t disagreements = 0;
+  std::size_t accepted_by_pass = 0;
+  std::size_t accepted_by_members = 0;
+  std::size_t meeting_requirement = 0;
+  for (std::size_t k = 0; k < count; ++k) {
+    const auto m = sample_metric<3>(k);
+    const bool pass = core::detail::is_valid_form(m);
+    const bool members = m.is_symmetric() && m.entries_in_range();
+    const bool required = meets_requirement(m);
+    disagreements += pass == required && members == required ? 0 : 1;
+    accepted_by_pass += pass ? 1 : 0;
+    accepted_by_members += members ? 1 : 0;
+    meeting_requirement += required ? 1 : 0;
+  }
+  CHECK(disagreements == 0);
+  CHECK(meeting_requirement == 64);
+  CHECK(accepted_by_pass == 64);
+  CHECK(accepted_by_members == 64);
+}
+
 // Reference: contract: the factories accept n up to max_generators unless
 // MaxN is raised, and never more generators than a blade mask has bits
 TEST_CASE("The factories accept n up to max_generators by default, and up to "
