@@ -80,7 +80,8 @@ library implements it. An item may have several rows, one per fact; a fact
 may not contain `|`. It checks that the table's items and the items of
 <specification> (lines that start with the item number, such as `3.1 `) are
 the same, that every line after a table's separator line is a row whose
-first cell is an item number and that has exactly three cells, and that
+first cell is an item number and that has exactly three cells, that no line
+before a separator line starts with an item number, and that
 every fact of <golden.hpp> is in the table. A test case or marked
 static_assert pins a row when its marker states the row's fact. The command
 prints each item with what pins any of its rows, and fails if a row marked
@@ -429,8 +430,11 @@ def golden_findings(golden_path, sources):
 
 
 def read_table(path):
-    """The rows of the table, as (line, item, fact, implemented), and a
-    finding for each line that starts a row but is not one of three cells."""
+    """The rows of the table, as (line, item, fact, implemented), and the
+    findings: a line before a table's separator line whose first cell is an
+    item number, which would otherwise be read as a header and skipped; a
+    line after the separator whose first cell is not an item number; and a
+    row that is not three cells between | signs."""
     rows, findings = [], []
     in_body = False  # past a table's separator line, before its end
     with open(path, encoding="utf-8") as f:
@@ -442,6 +446,10 @@ def read_table(path):
             cells = [c.strip() for c in text[1:].split("|")]
             if not in_body:
                 in_body = all(SEPARATOR_CELL.fullmatch(c) for c in cells if c)
+                if ITEM.fullmatch(cells[0]):
+                    findings.append(f"{path}:{number}: row of item "
+                                    f"{cells[0]} comes before any separator "
+                                    "line, so it is not read as a row")
                 continue  # the header and the separator line
             if not ITEM.fullmatch(cells[0]):
                 findings.append(f"{path}:{number}: row's first cell "

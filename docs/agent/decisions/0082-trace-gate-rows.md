@@ -27,3 +27,12 @@ Fixtures: `trace_conventions.md` gains item 4.1, which `trace_bad_table.md` leav
 ## Consequences
 
 The trace table must gain a row in the same change as any new CONVENTIONS item. Facts written now for unimplemented items are a first wording; the unit that implements an item may change its fact together with the markers that state it.
+
+## Amendment, 2026-10-31 (W5 reviews of `feature/cleanup-1`, findings N2 and, in the delta review, D1 and D2)
+
+The option chosen above, "a line is a row when its first cell is an item number", is replaced. A line that starts with `|` is read by its place in a table:
+
+- Before a table's separator line (a line of cells of three or more `-`, optionally with `:`), it is the header. If its first cell is an item number, it is a finding ("row of item X comes before any separator line"), because a table that has lost its separator would otherwise have all its rows skipped, and a row marked `yes` in it could pass unnoticed. The delta review showed this with a second table holding `| 1.6 | ... | yes |` under a header and no separator, which the fix pass's script accepted.
+- After the separator, until the next line that does not start with `|`, every line is a row. A first cell that is not an item number (`1.l`, `**1.2**`) is a finding, and so is a row that is not three cells between `|` signs.
+
+The `read_table` docstring lists the three findings. Fixtures: `trace_bad_table.md` rows `1.l` and `**1.2**` after the separator, and a second table whose `1.2` row has no separator above it.
