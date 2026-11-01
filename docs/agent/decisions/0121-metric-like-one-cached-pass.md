@@ -1,6 +1,6 @@
-# 0121 metric_like checks the form in one cached pass (proposed)
+# 0121 metric_like checks the form in one cached pass
 
-- Status: proposed; awaits the owner's ruling on the questions at the end. Nothing in `include/` has changed.
+- Status: accepted (owner ruling: A′), 2026-11-01. The ruling is the last section; the proposal above it is kept as written. Proposed 2026-11-01 as option A; the owner chose A′ instead.
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), cpp-expert in the researcher role, from research note 0015 (branch `research/metric-like-proof`).
 - Bears on: decision 0060 item 5 and its consequence ("the concept could trust the factories and check only the type"), decision 0061 item 4 (the guard), decision 0105's option for the owner, decision 0107 item 4 (the P2 question).
@@ -88,3 +88,14 @@ This is the `cached-flat` tree of `docs/agent/records/performance/metric-like-ch
 - A unit of work (plan, W5 review) changes `metric.hpp` and the header's comment, adds the cost of one evaluation at three sizes to the P2 record, and keeps `metric_test.cpp`'s `static_assert`s unchanged; a test that the concept rejects a forged `std::bit_cast` metric and a mutated copy (now only probes in the records) can be added there.
 - The per-plan figures of decisions 0105 and 0107 change: their units would show about 2 to 5 M of growth instead of 18 to 43 M.
 - Option B stays recorded as rejected, with its proof of what sealing would take, should a later need (for example a module build) change the balance.
+
+## Owner ruling (2026-11-01)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert, when claiming the implementing unit (plan 0014). This section supersedes the Proposal and "Consequences if adopted" where they differ; neither is rewritten.
+
+1. Option A′ is adopted, not A: `metric_like` makes one pass over the Gram entries (the pairs j ≤ i, symmetry and range checked together), and the verdict is held per algebra in an `inline constexpr bool` variable template, reached only after a guard that reads `gram[0][0]`. There is no flat copy and no `std::bit_cast` (question 2 answered no).
+2. Why A′. The owner prefers clean, user-friendly code with no hacks or confusing constructs. The copy of option A is correct (Theorem 3), but a reader must follow a layout argument and a `static_assert` on `sizeof` to trust it, and it exists only to make each read cheaper; STYLE S16 asks for the plain construction, and the owner accepts what the plain one costs (about 14.5 / 16.4 M instructions for one check at n = 16 on GCC / Clang, against 5.2 / 6.2 M with the copy). Every line of the change whose reason is not evident carries a short plain comment, in particular why the guard reads one entry.
+3. Question 3, and decision 0107 item 4 with it, is ruled: the growth that remains with A′, about 11 M instructions from n = 4 to 16 on each compiler (note 0015, `cached` row), is accepted as PERFORMANCE P2's exception for growth that follows from the signature data. It is one pass over the form's own entries, once per algebra and translation unit.
+4. Question 4 is deferred: the user documentation gets no statement yet about programs that specialize Galoot's templates. The implementing unit reports it as an open item.
+
+Consequences, in place of those above: the implementing unit (plan 0014, branch `feature/metric-like-single-pass`) changes `metric.hpp` as option (a) + (d) of note 0015 (variant `cached`), keeps `is_symmetric()`, `entries_in_range()`, and `from_gram`'s two checks, adds the tests and mutants its plan lists, and measures the P2 growth before and after. Option B stays rejected, as above.
