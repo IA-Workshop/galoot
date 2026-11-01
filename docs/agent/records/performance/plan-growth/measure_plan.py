@@ -386,6 +386,7 @@ def evals(out, cpu):
         trace.unlink()
         copy.with_suffix(".clang.o").unlink()
     (out / "evals.tsv").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    shutil.rmtree(trace_dir)
 
 
 def main(argv):
