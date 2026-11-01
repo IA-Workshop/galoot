@@ -536,31 +536,42 @@ galoot_add_compile_fail_test(NAME plan_map_term_zero_n
   MESSAGE "n must be from 1 to 32"
   REQUIRE "assertion_failed" "plan.hpp")
 
-# core.plan_evaluated_once: a plan that one unit reads several times is
-# generated once. The unit core/plan_evaluated_once.cpp is compiled with the
-# library's flags and Clang's -ftime-trace, and tools/evaluated_once.py
-# compares the time of each plan's initializer with the instantiation of the
-# function that generates it, which holds the generation (the script states
-# the rule). The test exists only where the compiler is Clang: GCC writes no
-# such trace, and its cache of constant-evaluated calls would serve a second
-# generation of a plan from the first, so a GCC unit could not show one.
+# core.plan_evaluated_once and core.plan_map_evaluated_once: a plan or a map
+# that one unit reads several times is generated once. The unit
+# core/plan_evaluated_once.cpp is compiled with the library's flags and
+# Clang's -ftime-trace, and tools/evaluated_once.py compares the time of each
+# plan's or map's initializer with the instantiation of the function that
+# generates it, which holds the generation (the script states the rule). Each
+# test compiles the unit into its own trace and object, so that the two can
+# run at once. The tests exist only where the compiler is Clang: GCC writes
+# no such trace, and its cache of constant-evaluated calls would serve a
+# second generation from the first, so a GCC unit could not show one.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   galoot_compile_command(compile)
-  set(evaluated_once_trace
-    ${CMAKE_CURRENT_BINARY_DIR}/core_plan_evaluated_once.json)
-  add_test(NAME core.plan_evaluated_once
-    COMMAND ${Python3_EXECUTABLE} -I
-      ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
-      ${evaluated_once_trace} galoot::core::detail::product_plan
-      galoot::core::detail::make_product_plan
-      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
-        -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
-        -o core_plan_evaluated_once.o
-        -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND_EXPAND_LISTS)
-  set_tests_properties(core.plan_evaluated_once PROPERTIES
-    LABELS "core;core.plan")
+  foreach(kind IN ITEMS plan map)
+    if(kind STREQUAL "plan")
+      set(test_name core.plan_evaluated_once)
+      set(variable galoot::core::detail::product_plan)
+      set(generator galoot::core::detail::make_product_plan)
+    else()
+      set(test_name core.plan_map_evaluated_once)
+      set(variable galoot::core::detail::unary_map)
+      set(generator galoot::core::detail::make_unary_map)
+    endif()
+    set(evaluated_once_trace
+      ${CMAKE_CURRENT_BINARY_DIR}/core_${kind}_evaluated_once.json)
+    add_test(NAME ${test_name}
+      COMMAND ${Python3_EXECUTABLE} -I
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/evaluated_once.py
+        ${evaluated_once_trace} ${variable} ${generator}
+        -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
+          -ftime-trace=${evaluated_once_trace} -ftime-trace-granularity=0
+          -o core_${kind}_evaluated_once.o
+          -c ${CMAKE_CURRENT_SOURCE_DIR}/core/plan_evaluated_once.cpp
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND_EXPAND_LISTS)
+    set_tests_properties(${test_name} PROPERTIES LABELS "core;core.plan")
+  endforeach()
 endif()
 
 # tools.evaluated_once_*: the trace check passes on a trace of three plans

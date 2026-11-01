@@ -1,9 +1,12 @@
-// Three plans of rigid(3), each read in a static_assert and in two
-// functions, so that a time trace of this unit shows whether a plan read
-// three times is generated once (core.plan_evaluated_once). The unit is
+// Four plans of rigid(3) and three maps of every blade of six generators,
+// each read in a static_assert and in two functions, so that a time trace of
+// this unit shows whether a plan or a map read three times is generated once
+// (core.plan_evaluated_once and core.plan_map_evaluated_once). The unit is
 // compiled and not run. The counts in the static_asserts are worked by hand:
 // a product of two blades is one term unless both hold e4, whose square is
-// 0, and a wedge is one term unless the blades share a generator.
+// 0, a wedge is one term unless the blades share a generator, an
+// antiproduct is the product of the complements, and a map has one term for
+// each blade.
 #include <cstddef>
 
 #include <galoot/core/blade_product.hpp>
@@ -14,11 +17,17 @@
 namespace core = galoot::core;
 using core::detail::BinaryOperation;
 using core::detail::product_plan;
+using core::detail::unary_map;
+using core::detail::UnaryOperation;
 
 namespace {
 
 struct rga3 {
   static constexpr auto value = core::rigid<3>();
+};
+
+struct r6 {
+  static constexpr auto value = core::R<6, 0, 0>();
 };
 
 constexpr auto point = core::blades<4, "e1 e2 e3 e4">;
@@ -38,6 +47,23 @@ static_assert(line_plane.terms.size() == 15);
 constexpr const auto& point_line =
     product_plan<BinaryOperation::wedge, rga3, point, line>;
 static_assert(point_line.terms.size() == 12);
+// The complements of the motor's blades are 1, the six bivectors, and e1234,
+// and those of the point's are trivectors: the 8 x 4 pairs less the 3 x 3 of
+// a bivector holding e4 with a trivector holding it, and less the 3 of e1234
+// with a trivector holding e4.
+constexpr const auto& motor_point =
+    product_plan<BinaryOperation::antigp, rga3, motor, point>;
+static_assert(motor_point.terms.size() == 20);
+
+constexpr const auto& right_six =
+    unary_map<UnaryOperation::right_complement, r6, core::full<6>>;
+static_assert(right_six.terms.size() == 64);
+constexpr const auto& left_six =
+    unary_map<UnaryOperation::left_complement, r6, core::full<6>>;
+static_assert(left_six.terms.size() == 64);
+constexpr const auto& reverse_six =
+    unary_map<UnaryOperation::reverse, r6, core::full<6>>;
+static_assert(reverse_six.terms.size() == 64);
 
 } // namespace
 
@@ -66,4 +92,42 @@ std::size_t point_line_terms() {
 core::coefficient_type point_line_first() {
   const auto& plan = product_plan<BinaryOperation::wedge, rga3, point, line>;
   return plan.terms.front().coefficient;
+}
+
+std::size_t motor_point_terms() {
+  return product_plan<BinaryOperation::antigp, rga3, motor, point>.terms.size();
+}
+
+core::coefficient_type motor_point_first() {
+  const auto& plan = product_plan<BinaryOperation::antigp, rga3, motor, point>;
+  return plan.terms.front().coefficient;
+}
+
+std::size_t right_six_terms() {
+  return unary_map<UnaryOperation::right_complement, r6, core::full<6>>.terms.size();
+}
+
+core::coefficient_type right_six_last() {
+  const auto& map =
+      unary_map<UnaryOperation::right_complement, r6, core::full<6>>;
+  return map.terms.back().coefficient;
+}
+
+std::size_t left_six_terms() {
+  return unary_map<UnaryOperation::left_complement, r6, core::full<6>>.terms.size();
+}
+
+core::coefficient_type left_six_last() {
+  const auto& map =
+      unary_map<UnaryOperation::left_complement, r6, core::full<6>>;
+  return map.terms.back().coefficient;
+}
+
+std::size_t reverse_six_terms() {
+  return unary_map<UnaryOperation::reverse, r6, core::full<6>>.terms.size();
+}
+
+core::coefficient_type reverse_six_last() {
+  const auto& map = unary_map<UnaryOperation::reverse, r6, core::full<6>>;
+  return map.terms.back().coefficient;
 }
