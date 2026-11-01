@@ -1,0 +1,2 @@
+gcc-debug: 46 of 46 tests give the same output alone and in the parallel run of the whole suite (21441cd)
+clang-debug: 46 of 46 tests give the same output alone and in the parallel run of the whole suite (21441cd)
