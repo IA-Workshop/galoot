@@ -26,6 +26,48 @@ The delegating prompt gives you the branch or commit range, its parent branch, t
 
 For a change that touches `test/` or `include/`, run the convention trace gate from the repository root (`python3 -I tools/test_references.py trace docs/agent/records/convention-trace.md docs/agent/governance/CONVENTIONS.md test/reference/golden.hpp test`) and report its result.
 
+## Usability of public interfaces
+
+When the change adds or alters a public header, apply this checklist as well, and give each unchecked item as a finding with the usual severity. The owner adopted it on 2026-11-01 (decision 0160). It is in addition to the criteria of the delegating prompt.
+
+**Task first.** Before reading the header, write the three tasks the interface exists for, as a user would, from the examples only. Note each place you had to read the implementation.
+
+**Names**
+
+- [ ] Each name is the field's term, spelled as the literature spells it (CONVENTIONS), or a full English word; an abbreviation is one the field uses everywhere.
+- [ ] A name means one thing across the whole library, and nothing the standard library means differently (`apply`, `get`, `truncate`).
+- [ ] Similar things look alike: the same argument order, the same prefix or suffix for the same idea (`anti`, `left_`, `right_`).
+
+**Construction and conversion**
+
+- [ ] The shortest way to make a value is a correct way. A value cannot be made with too few or too many coefficients, or with a narrowing conversion, without a compile error.
+- [ ] A default-constructed value is defined (zero), not indeterminate.
+- [ ] Every conversion that can lose information has its own name and is never implicit; the lossless ones are explicit.
+- [ ] No hidden default changes a result: scalar type, orientation, dual side, checking mode.
+
+**Misuse and diagnostics**
+
+- [ ] Each likely misuse in the unit's catalogue has a compile-fail test on both compilers that requires the literal message.
+- [ ] Each misuse gives one error, and the message is on the first error line after the inclusion context.
+- [ ] The message starts with the operation as written, states the mistake in the algebra's terms, and gives the fix after a semicolon. No masks, positions, or internal names.
+- [ ] The context lines show the user's own terms (algebra tag, names), not only masks.
+- [ ] Distinct causes give distinct messages.
+- [ ] Concepts that generic code may probe test data, never call expressions (decision 0033), and the documentation says which probes give a wrong answer.
+
+**Semantics and cost**
+
+- [ ] Every operation that discards components, changes representation, or assumes a property (unit norm, parity) says so in its name or its `///` comment.
+- [ ] `auto r = f(a, b);` is always safe: no proxy, no reference into a temporary.
+- [ ] Exact comparisons are `==`; tolerance comparisons are named and take a named tolerance.
+- [ ] The `///` comment states the cost a user can predict (which blades the result holds; what runs at compile time).
+
+**Examples and readability**
+
+- [ ] Every example compiles and is the idiom you want copied; operators mixed with `^` or `&` are fully parenthesized.
+- [ ] A maintainer can find where each behavior lives from its name, and a change to one rule touches one place.
+
+**Before release.** List every interface change the review suggests that would break users later; Hyrum's law says each one costs more after release.
+
 ## Record
 
 Return the review record, which the merging agent commits under `docs/agent/records/reviews/`:
