@@ -1,10 +1,10 @@
 // Tests of the signature as data: the factories R, rigid, conformal, and
 // from_gram, the accessors of metric, and the concept metric_like.
 //
-// Each expected matrix is either written out entry by entry or computed by
-// an expected_* function below, which restates the definition of the
-// signature and shares no code with the header. Generators are counted from
-// e1, and index i of a matrix belongs to e_(i+1).
+// Expected matrices come from the golden values of test/reference/golden.hpp,
+// computed apart from the library, or are written out entry by entry from the
+// definition where the golden values do not reach. Generators are counted
+// from e1, and index i of a matrix belongs to e_(i+1).
 #include <array>
 #include <cstddef>
 #include <limits>
@@ -14,6 +14,8 @@
 #include <galoot/core/metric.hpp>
 
 #include <doctest/doctest.h>
+
+#include <reference/golden.hpp>
 
 namespace {
 
@@ -35,131 +37,68 @@ constexpr matrix<N> written(const int (&rows)[N][N]) noexcept {
   return m;
 }
 
-// The square of generator e_(i+1) in R(p, q, z): p squares of +1, then q of
-// -1, then z of 0, so that null generators come last.
-constexpr int expected_r_square(std::size_t i, std::size_t p, std::size_t q) {
-  if (i < p) {
-    return 1;
-  }
-  if (i < p + q) {
-    return -1;
-  }
-  return 0;
-}
-
-// The number of entries in which R<P, Q, Z>() differs from its definition.
-// Distinct generators of R(p, q, z) are orthogonal, so every entry off the
-// diagonal is expected to be 0.
-template <std::size_t P, std::size_t Q, std::size_t Z>
-consteval int r_mismatches_of() {
-  constexpr std::size_t n = P + Q + Z;
-  const auto m = core::R<P, Q, Z>();
+// The number of entries of m that differ from the diagonal form with the
+// given squares. Every entry off the diagonal is expected to be 0, because
+// distinct generators of a diagonal signature are orthogonal.
+template <std::size_t N>
+constexpr int diagonal_mismatches(const core::metric<N>& m,
+                                  const std::array<int, N>& squares) {
   int mismatches = 0;
-  for (std::size_t i = 0; i < n; ++i) {
-    for (std::size_t j = 0; j < n; ++j) {
-      const int expected = i == j ? expected_r_square(i, P, Q) : 0;
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      const int expected = i == j ? squares[i] : 0;
       mismatches += m.gram[i][j] == expected ? 0 : 1;
     }
   }
   return mismatches;
 }
 
-template <std::size_t N, std::size_t P, std::size_t... Q>
-consteval int r_mismatches_with_p(std::index_sequence<Q...> /*counts*/) {
-  return (r_mismatches_of<P, Q, N - P - Q>() + ... + 0);
-}
-
-template <std::size_t N, std::size_t... P>
-consteval int r_mismatches_over(std::index_sequence<P...> /*counts*/) {
-  return (r_mismatches_with_p<N, P>(std::make_index_sequence<N - P + 1>()) +
+template <auto Table, std::size_t... I>
+consteval int r_table_mismatches(std::index_sequence<I...> /*rows*/) {
+  return (diagonal_mismatches(core::R<Table[I].p, Table[I].q, Table[I].r>(),
+                              Table[I].squares) +
           ... + 0);
 }
 
-// The mismatches summed over every split p + q + z = N.
-template <std::size_t N>
+// The mismatches of R(p, q, r) against every signature of Table, a list of
+// (p, q, r) with the squares of its generators.
+template <auto Table>
 consteval int r_mismatches() {
-  return r_mismatches_over<N>(std::make_index_sequence<N + 1>());
+  return r_table_mismatches<Table>(std::make_index_sequence<Table.size()>());
 }
 
-// The entry (i, j) of rigid(d) = R(d, 0, 1): e1 to ed square to 1, the
-// projective generator e(d+1) to 0, and distinct generators are orthogonal.
-constexpr int expected_rigid(std::size_t d, std::size_t i, std::size_t j) {
-  return i == j && i < d ? 1 : 0;
-}
+// A coordinate of a change of basis, as a fraction.
+struct fraction {
+  long long numerator;
+  long long denominator;
+};
 
-// The entry (i, j) of conformal(d): e1 to ed square to 1, the origin e(d+1)
-// and infinity e(d+2) to 0, e(d+1) . e(d+2) = -1, and every other pair is
-// orthogonal.
-constexpr int expected_conformal(std::size_t d, std::size_t i, std::size_t j) {
-  if (i == j) {
-    return i < d ? 1 : 0;
-  }
-  const bool origin_infinity_pair =
-      (i == d && j == d + 1) || (i == d + 1 && j == d);
-  return origin_infinity_pair ? -1 : 0;
-}
-
-template <std::size_t D>
-consteval int rigid_mismatches() {
-  const auto m = core::rigid<D>();
+// The number of entries where the form of `diagonal`, carried to the basis
+// whose row i holds generator i of `g` in the generators of `diagonal`,
+// differs from the Gram matrix of `g`. Each coordinate is doubled, so that
+// the halves of the origin become integers, and the doubled form is compared
+// with 4 G; a coordinate whose double is not an integer is a mismatch.
+template <std::size_t N>
+constexpr int change_of_basis_mismatches(const auto& in_diagonal,
+                                         const core::metric<N>& diagonal,
+                                         const core::metric<N>& g) {
   int mismatches = 0;
-  for (std::size_t i = 0; i < D + 1; ++i) {
-    for (std::size_t j = 0; j < D + 1; ++j) {
-      mismatches += m.gram[i][j] == expected_rigid(D, i, j) ? 0 : 1;
+  std::array<std::array<long long, N>, N> doubled{};
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t k = 0; k < N; ++k) {
+      const long long twice = 2 * in_diagonal[i][k].numerator;
+      const long long denominator = in_diagonal[i][k].denominator;
+      mismatches += twice % denominator == 0 ? 0 : 1;
+      doubled[i][k] = twice / denominator;
     }
   }
-  return mismatches;
-}
-
-template <std::size_t D>
-consteval int conformal_mismatches() {
-  const auto m = core::conformal<D>();
-  int mismatches = 0;
-  for (std::size_t i = 0; i < D + 2; ++i) {
-    for (std::size_t j = 0; j < D + 2; ++j) {
-      mismatches += m.gram[i][j] == expected_conformal(D, i, j) ? 0 : 1;
-    }
-  }
-  return mismatches;
-}
-
-// The exact change of basis from R(d+1, 1, 0) to conformal(d), as data. In
-// R(d+1, 1, 0), e(d+1) squares to +1 and e(d+2) to -1. Column k holds twice
-// the coordinates of conformal generator k in the basis of R(d+1, 1, 0), so
-// that every entry is an integer: ek is ek for k <= d, the origin e(d+1) is
-// (1/2)(e(d+2) - e(d+1)), and infinity e(d+2) is e(d+2) + e(d+1). The
-// diagonal basis is indexed from 0, so its e(d+1) is index d.
-template <std::size_t D>
-constexpr matrix<D + 2> doubled_conformal_basis() {
-  matrix<D + 2> b{};
-  for (std::size_t k = 0; k < D; ++k) {
-    b[k][k] = 2;
-  }
-  b[D][D] = -1;
-  b[D + 1][D] = 1;
-  b[D][D + 1] = 2;
-  b[D + 1][D + 1] = 2;
-  return b;
-}
-
-// The number of entries where 4 G differs from (2B)^T diag (2B), with G the
-// Gram matrix of conformal(d), diag that of R(d+1, 1, 0), and 2B the doubled
-// basis above. Zero means the change of basis carries the diagonal form to
-// the conformal one exactly.
-template <std::size_t D>
-consteval int change_of_basis_mismatches() {
-  constexpr std::size_t n = D + 2;
-  const auto g = core::conformal<D>().gram;
-  const auto diag = core::R<D + 1, 1, 0>().gram;
-  const auto b = doubled_conformal_basis<D>();
-  int mismatches = 0;
-  for (std::size_t i = 0; i < n; ++i) {
-    for (std::size_t j = 0; j < n; ++j) {
-      int product = 0;
-      for (std::size_t k = 0; k < n; ++k) {
-        product += b[k][i] * diag[k][k] * b[k][j];
+  for (std::size_t i = 0; i < N; ++i) {
+    for (std::size_t j = 0; j < N; ++j) {
+      long long product = 0;
+      for (std::size_t k = 0; k < N; ++k) {
+        product += doubled[i][k] * diagonal.gram[k][k] * doubled[j][k];
       }
-      mismatches += product == 4 * g[i][j] ? 0 : 1;
+      mismatches += product == 4LL * g.gram[i][j] ? 0 : 1;
     }
   }
   return mismatches;
@@ -249,17 +188,22 @@ static_assert(std::is_aggregate_v<core::metric<5>>);
 
 } // namespace
 
+// Reference: independent value: R(p, q, r) squares p generators to +1, q to
+// -1, and r to 0, for every R(p, q, r) with n from 1 to 6; proof: distinct
+// generators of a diagonal signature are orthogonal
 TEST_CASE("R(p, q, z) squares the first p generators to +1, the next q to -1, "
           "and the last z to 0, with no entry off the diagonal, for every "
           "split with n from 1 to 6") {
-  CHECK(r_mismatches<1>() == 0);
-  CHECK(r_mismatches<2>() == 0);
-  CHECK(r_mismatches<3>() == 0);
-  CHECK(r_mismatches<4>() == 0);
-  CHECK(r_mismatches<5>() == 0);
-  CHECK(r_mismatches<6>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n1>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n2>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n3>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n4>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n5>() == 0);
+  CHECK(r_mismatches<golden::diagonal_signatures::n6>() == 0);
 }
 
+// Reference: independent value: R(p, q, r) squares p generators to +1, q to
+// -1, and r to 0, written out for R(1, 1, 1), R(2, 2, 2), and R(4, 1, 0)
 TEST_CASE("R(1, 1, 1), R(2, 2, 2), and R(4, 1, 0) equal their matrices "
           "written out from the definition of R(p, q, z)") {
   constexpr auto r111 = written({{1, 0, 0}, {0, -1, 0}, {0, 0, 0}});
@@ -283,14 +227,17 @@ TEST_CASE("R(1, 1, 1), R(2, 2, 2), and R(4, 1, 0) equal their matrices "
   CHECK(core::R<4, 1, 0>().gram == r410);
 }
 
+// Reference: independent value: rigid(d) is R(d, 0, 1), with the squares of
+// its generators for d from 1 to 5; proof: rigid(0) is the single null
+// generator of R(0, 0, 1), and rigid(3) is written out from the definition
 TEST_CASE("rigid(d) is R(d, 0, 1): e1 to ed Euclidean and the projective "
           "generator e(d+1) null, for d from 0 to 5") {
-  CHECK(rigid_mismatches<0>() == 0);
-  CHECK(rigid_mismatches<1>() == 0);
-  CHECK(rigid_mismatches<2>() == 0);
-  CHECK(rigid_mismatches<3>() == 0);
-  CHECK(rigid_mismatches<4>() == 0);
-  CHECK(rigid_mismatches<5>() == 0);
+  CHECK(diagonal_mismatches(core::rigid<0>(), std::array<int, 1>{0}) == 0);
+  CHECK(diagonal_mismatches(core::rigid<1>(), golden::rigid::d1_squares) == 0);
+  CHECK(diagonal_mismatches(core::rigid<2>(), golden::rigid::d2_squares) == 0);
+  CHECK(diagonal_mismatches(core::rigid<3>(), golden::rigid::d3_squares) == 0);
+  CHECK(diagonal_mismatches(core::rigid<4>(), golden::rigid::d4_squares) == 0);
+  CHECK(diagonal_mismatches(core::rigid<5>(), golden::rigid::d5_squares) == 0);
 
   constexpr auto rigid3 = written({
       {1, 0, 0, 0},
@@ -302,24 +249,22 @@ TEST_CASE("rigid(d) is R(d, 0, 1): e1 to ed Euclidean and the projective "
   CHECK(core::rigid<3>() == core::R<3, 0, 1>());
 }
 
+// Reference: independent value: conformal(d) has null e(d+1) and e(d+2) with
+// e(d+1) . e(d+2) = -1, as Gram matrices for d from 1 to 4; proof:
+// conformal(0) is written out from the definition
 TEST_CASE("conformal(d) has e1 to ed Euclidean and e(d+1), e(d+2) null with "
           "e(d+1) . e(d+2) = -1, for d from 0 to 4") {
-  CHECK(conformal_mismatches<0>() == 0);
-  CHECK(conformal_mismatches<1>() == 0);
-  CHECK(conformal_mismatches<2>() == 0);
-  CHECK(conformal_mismatches<3>() == 0);
-  CHECK(conformal_mismatches<4>() == 0);
-
-  constexpr auto conformal3 = written({
-      {1, 0, 0, 0, 0},
-      {0, 1, 0, 0, 0},
-      {0, 0, 1, 0, 0},
-      {0, 0, 0, 0, -1},
-      {0, 0, 0, -1, 0},
-  });
-  CHECK(core::conformal<3>().gram == conformal3);
+  constexpr auto conformal0 = written({{0, -1}, {-1, 0}});
+  CHECK(core::conformal<0>().gram == conformal0);
+  CHECK(core::conformal<1>().gram == golden::conformal::d1_gram);
+  CHECK(core::conformal<2>().gram == golden::conformal::d2_gram);
+  CHECK(core::conformal<3>().gram == golden::conformal::d3_gram);
+  CHECK(core::conformal<4>().gram == golden::conformal::d4_gram);
 }
 
+// Reference: proof: rigid(d) is R(d, 0, 1), so rigid(3) is diagonal and only
+// e4 squares to 0; proof: conformal(d) has null e(d+1) and e(d+2) with
+// e(d+1) . e(d+2) = -1, so conformal(3) is not diagonal and e4, e5 are null
 TEST_CASE("is_diagonal and is_null at run time: rigid(3) is diagonal with e4 "
           "its only null generator; conformal(3) is not diagonal and has e4 "
           "and e5 null") {
@@ -346,30 +291,50 @@ TEST_CASE("is_diagonal and is_null at run time: rigid(3) is diagonal with e4 "
   static_assert(core::conformal<3>().is_null(4));
 }
 
-TEST_CASE("conformal(3) and R(4, 1, 0) are different signatures, and the "
-          "change of basis origin = (1/2)(e5 - e4), infinity = e5 + e4 "
-          "carries the form of R(4, 1, 0) to that of conformal(3)") {
+// Reference: independent value: conformal(d) has null e(d+1) and e(d+2) with
+// e(d+1) . e(d+2) = -1, with its diagonal counterpart R(d+1, 1, 0) and the
+// change of basis between them for d from 1 to 4; identity: the change of
+// basis origin = (e(d+2) - e(d+1)) / 2, infinity = e(d+2) + e(d+1) carries
+// the form of R(d+1, 1, 0) to that of conformal(d)
+TEST_CASE("conformal(d) and R(d+1, 1, 0) are different signatures, and the "
+          "change of basis origin = (1/2)(e(d+2) - e(d+1)), infinity = "
+          "e(d+2) + e(d+1) carries the form of R(d+1, 1, 0) to that of "
+          "conformal(d), for d from 0 to 4") {
   CHECK(core::conformal<3>() != core::R<4, 1, 0>());
-  CHECK(core::R<4, 1, 0>().is_diagonal());
 
-  // The basis for d = 3, written out: column k is twice conformal generator
-  // k in the coordinates of R(4, 1, 0).
-  constexpr auto doubled_basis3 = written({
-      {2, 0, 0, 0, 0},
-      {0, 2, 0, 0, 0},
-      {0, 0, 2, 0, 0},
-      {0, 0, 0, -1, 2},
-      {0, 0, 0, 1, 2},
-  });
-  CHECK(doubled_conformal_basis<3>() == doubled_basis3);
+  CHECK(diagonal_mismatches(core::R<2, 1, 0>(),
+                            golden::conformal::d1_diagonal_squares) == 0);
+  CHECK(diagonal_mismatches(core::R<3, 1, 0>(),
+                            golden::conformal::d2_diagonal_squares) == 0);
+  CHECK(diagonal_mismatches(core::R<4, 1, 0>(),
+                            golden::conformal::d3_diagonal_squares) == 0);
+  CHECK(diagonal_mismatches(core::R<5, 1, 0>(),
+                            golden::conformal::d4_diagonal_squares) == 0);
 
-  CHECK(change_of_basis_mismatches<0>() == 0);
-  CHECK(change_of_basis_mismatches<1>() == 0);
-  CHECK(change_of_basis_mismatches<2>() == 0);
-  CHECK(change_of_basis_mismatches<3>() == 0);
-  CHECK(change_of_basis_mismatches<4>() == 0);
+  // conformal(0) in the generators of R(1, 1, 0), written out: the origin is
+  // (e2 - e1) / 2 and infinity e2 + e1.
+  constexpr std::array<std::array<fraction, 2>, 2> conformal0_in_diagonal{{
+      {{{-1, 2}, {1, 2}}},
+      {{{1, 1}, {1, 1}}},
+  }};
+  CHECK(change_of_basis_mismatches(conformal0_in_diagonal, core::R<1, 1, 0>(),
+                                   core::conformal<0>()) == 0);
+  CHECK(change_of_basis_mismatches(golden::conformal::d1_in_diagonal,
+                                   core::R<2, 1, 0>(),
+                                   core::conformal<1>()) == 0);
+  CHECK(change_of_basis_mismatches(golden::conformal::d2_in_diagonal,
+                                   core::R<3, 1, 0>(),
+                                   core::conformal<2>()) == 0);
+  CHECK(change_of_basis_mismatches(golden::conformal::d3_in_diagonal,
+                                   core::R<4, 1, 0>(),
+                                   core::conformal<3>()) == 0);
+  CHECK(change_of_basis_mismatches(golden::conformal::d4_in_diagonal,
+                                   core::R<5, 1, 0>(),
+                                   core::conformal<4>()) == 0);
 }
 
+// Reference: proof: an entry off the diagonal makes a form non-diagonal, and
+// a zero diagonal entry is a generator that squares to zero
 TEST_CASE("from_gram keeps a non-diagonal degenerate form entry by entry, "
           "and its accessors read it: [[0, 1, 0], [1, 0, 0], [0, 0, 0]] is "
           "not diagonal and every generator is null") {
@@ -383,6 +348,8 @@ TEST_CASE("from_gram keeps a non-diagonal degenerate form entry by entry, "
   CHECK(m.is_null(2));
 }
 
+// Reference: proof: max_form_entry is the largest k whose 2 x 2 Gram minor
+// 2 k^2 is at most the largest int
 TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
           "in an int, and is_symmetric and entries_in_range judge "
           "hand-written metrics against it at either sign") {
@@ -407,6 +374,8 @@ TEST_CASE("max_form_entry is the largest k whose 2 x 2 Gram minor 2 k^2 fits "
   CHECK_FALSE(below.entries_in_range());
 }
 
+// Reference: contract: the factories accept n up to max_generators unless
+// MaxN is raised, and never more generators than a blade mask has bits
 TEST_CASE("The factories accept n up to max_generators by default, and up to "
           "the width of a blade mask when MaxN is raised") {
   CHECK(core::R<core::max_generators, 0, 0>().generator_count ==

@@ -116,8 +116,10 @@ add_test(NAME tools.measure_header
 set_tests_properties(tools.measure_header PROPERTIES
   LABELS "tools;tools.measure")
 
-# core.metric: the factories, accessors, and concept of metric.hpp.
+# core.metric: the factories, accessors, and concept of metric.hpp, compared
+# with the golden values.
 galoot_add_test(MODULE core COMPONENT metric)
+target_link_libraries(core_metric_test PRIVATE galoot_golden)
 
 # Each check of metric.hpp rejects its misuse at compile time with a literal
 # message. A GALOOT_ASSERT message reaches the diagnostic only through the
