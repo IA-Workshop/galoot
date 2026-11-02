@@ -530,8 +530,8 @@ TEST_CASE("the antiwedge of a point and a plane is the plane at the point") {
 }
 
 // Reference: identity: a % b is the geometric antiproduct
-//   geometric_antiproduct(a, b) and a & b is the antiwedge, each with the
-//   type and the value of the named function
+//   geometric_antiproduct(a, b) and a & b is the antiwedge antiwedge(a, b),
+//   each with the type and the value of the named function
 TEST_CASE("the antiproduct operators are the named functions") {
   using X = core::mv<rga3, core::full<4>, double>;
   using L = core::mv<rga3, core::of_grade<4, 2>, double>;

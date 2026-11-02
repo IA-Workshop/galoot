@@ -1306,6 +1306,12 @@ set_tests_properties(
   tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
 
+# core.unary: the reverse, the antireverse, the grade involution, and the
+# complements, as functions and as the operators ~ and !, against the
+# reference signs and complements.
+galoot_add_test(MODULE core COMPONENT unary)
+target_link_libraries(core_unary_test PRIVATE galoot_golden)
+
 # core.product: the geometric product, the wedge, and their antiproducts, as
 # functions and as the operators * ^ % &, against the reference tables.
 galoot_add_test(MODULE core COMPONENT product)
