@@ -1,0 +1,30 @@
+# 0154 The kernel that applies a plan or a map, and the check of its coefficients
+
+- Status: accepted (recorded by the author; the owner may reverse it)
+- Date: 2026-11-01
+- Decided by: Claude (agent, Opus 5.5), cpp-expert role, implementing WU8b of plan 0016, which assigns this record to its implementers (section 5, "Both parts").
+
+## Context
+
+Plan 0016 asks for `detail::apply`: a product plan or a unary map applied to the stored coefficients of multivectors by straight-line code (PERFORMANCE P4), with every coefficient of the plan exact in the scalar (decision 0151), onto the plan's own result set or onto a given layout that holds it (reading 17). Its section 5 and readings 18 and 21 fix the outline: an index pack expanded over the terms, the first term of each output assigned, the direct loop as the tests' reference, a variable template per plan and scalar for the coefficient check, and a measured limit. Planning probe 1 (section 11) compared a loop with an expansion at -O2.
+
+## Options weighed
+
+1. The expansion. (a) A loop over the plan's terms at run time: three or four multiplications kept, a conversion of the integer coefficient, and a branch (planning probe 1). (b) One fold expression over the terms, each term a call of a small function template whose coefficient and first-term flag are template arguments and whose positions are constant subscripts. Chosen. (c) A recursive template per term, or a generated function per plan: more instantiations for the same code (STYLE S7).
+2. The first term of each output. (a) Every term adds to a zero result: under IEEE 754, 0.0 + v is not v when v is -0.0, so the compiler keeps the addition (28 additions against 20 for motor ⟑ point in probe 1). (b) The first term is assigned. Chosen. Its flags are computed once per kernel by one pass over the terms with an array of R flags ("seen"); a pass comparing each term with every earlier one failed the compilers' limits at 1,024 and 4,096 terms (planning probe 2).
+3. Where the result is built. (a) Written through a reference to the result's coefficients. (b) A local array in the expanded function, returned by value. Chosen after the first assembly read: with (a), Clang 23 kept the motor ⟑ point kernel out of line and stored its output after every term, since a write through the reference might change an input; with (b) both compilers inline it and match a hand-written function (`docs/agent/records/performance/mv/assembly/`).
+4. The coefficient check (decision 0151 item 3). For an integer type, |c| at most `max()`; for a binary floating type, |c| at most 2^digits. Read through two concepts over `std::numeric_limits<T>` whose members, if a program's specialization lacks them, make the answer "not described" rather than an error: the test rational's specialization sets only `is_specialized` and `is_exact`. A scalar its limits describe as neither, such as `std::complex<double>` or the rational, is not checked, as decision 0151 says.
+
+## Decision
+
+1. `detail::kernel_term {a, b, out, coefficient, first}`; `detail::product_kernel<Op, Alg, A, B, Target>` and `detail::map_kernel<Op, Alg, S, Target>`, variable templates computed once per argument list from `product_plan` and `unary_map`, with each output moved to its place in Target and multiplied by its sign there (c e_C = (c s)(s e_C)), and the first-term flags set by `mark_first_terms`. `detail::identity_kernel<From, To>` is the same for a conversion or a truncation: one term for each blade of From that To holds, with the coefficient s_from s_to.
+2. `detail::run_product` and `detail::run_map`: one fold over the kernel's terms, returning a local `std::array<T, R>`, zero where no term lands. A term is `accumulate<C, First>(out[o], value)` with `value` = T(x_a y_b) (for a map, x_a): +1 and -1 are an addition and a subtraction (an assignment and a negated assignment for a first term), and any other coefficient multiplies the product, c (x_a y_b), in the order of the plan's terms. Each result is converted to T, so that a scalar narrower than `int` computes as it would by hand.
+3. `detail::apply<Op>(x, y)` and `apply<Op>(x)` on the plan's or map's result set; `apply<Op, Target>(...)` onto a given layout. A Target that lacks a blade of the result, and a plan with a coefficient the scalar cannot hold, are each a `static_assert` with its message, and the kernel is not instantiated after either.
+4. `detail::coefficients_exact<Op, Alg, A, B, T>`, a variable template per plan and scalar, through `integer_limits` and `binary_floating_limits`. The message: "the scalar type cannot hold one of this product's exact coefficients; use a scalar type that holds larger integers exactly". It names no operation, because `apply` serves every product and the public names come with WU9.
+5. Limits: Clang 23 stops a fold at 2,048 arguments ("instantiating fold expression with 2049 arguments exceeded expression nesting limit of 2048", probe `wu8b-probe:fold:*`); GCC 16 took 4,096 in the same probe. No plan that Clang 23 builds at its default limits has more than 1,024 terms (`full<5>` times itself; conformal(3) is 1,024 too, and the dense form's `full<4>` 832), so the expansion is not chunked (plan 0016 criterion 21). The measured limits of `apply` are in decision 0156's WU8b section and in `apply`'s comment.
+
+## Consequences
+
+- The tests compare `apply` with the loop over the plan's terms (plan 0016 F1) and pin the stated order: an assigned first term keeps -0.0, and c (x y) does not overflow where (c x) y would (F2). So the mutants "first term added to zero" and "(c x) y", which the plan expected to be equivalent on its inputs, are killed by tests.
+- The by-value result costs one copy of the coefficients into the result `mv` in a constant evaluation and at -O0; at -O2 both compilers remove it in the three products read.
+- A plan of more than 2,048 terms that Clang builds, should a later Clang raise its step limit, would hit the fold limit; chunking the expansion would then be the remedy, by a new decision.

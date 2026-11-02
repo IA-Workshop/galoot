@@ -45,3 +45,11 @@ Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8a of plan
 | The other orientation | get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value | `core.mv_get_opposite` |
 
 The wide-algebra message gained its fix after a semicolon ("reach the coefficient by its position"), following the message style of plan 0016 reading 21; the others are the plan's wording.
+
+## WU8b, 2026-11-01: the absent message for a layout in canonical order
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8b of plan 0016, for HCI reading F7 of WU8a: "its layout lists the names it holds" points at nothing when the layout was computed by `full`, `of_grade`, `merge`, or a product, as WU8b's `apply` results are.
+
+1. A layout whose blades all have sign +1 and come in canonical order, as every computed layout does, gets its own absent message: "get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order". Other layouts keep "get: the type has no blade of this name; its layout lists the names it holds". A hand-written layout in canonical order, such as a point's e1 e2 e3 e4, gets the first, which is true of it too.
+2. Not built: a function returning a layout's names as text, which the message could name. It would be a new public interface with no other caller; printing by oriented names is `format`'s (WU15), and the message can name it then.
+3. Tested by `core.mv_get_absent_ordered` (one error, forbidding the other seven messages of get and the parser's) and `core.mv_get_absent`, unchanged.
