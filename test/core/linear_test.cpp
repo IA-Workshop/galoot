@@ -18,7 +18,6 @@
 #include <cstdint>
 #include <random>
 #include <string>
-#include <type_traits>
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -215,15 +214,15 @@ concept has_sum_layout =
 //   the blades of both, which sum_layout names
 TEST_CASE("A sum of two layouts holds the blades of both in canonical order") {
   using L = Line<std::int64_t>;
-  using I = Antiscalar<std::int64_t>;
+  using AS = Antiscalar<std::int64_t>;
   using LI = LineAndAntiscalar<std::int64_t>;
   using P = Point<std::int64_t>;
   using G = Plane<std::int64_t>;
   using PG = PointAndPlane<std::int64_t>;
-  static_assert(std::same_as<decltype(L{} + I{}), LI>);
-  static_assert(std::same_as<decltype(I{} + L{}), LI>);
-  static_assert(std::same_as<decltype(L{} - I{}), LI>);
-  static_assert(std::same_as<decltype(I{} - L{}), LI>);
+  static_assert(std::same_as<decltype(L{} + AS{}), LI>);
+  static_assert(std::same_as<decltype(AS{} + L{}), LI>);
+  static_assert(std::same_as<decltype(L{} - AS{}), LI>);
+  static_assert(std::same_as<decltype(AS{} - L{}), LI>);
   static_assert(std::same_as<decltype(P{} + G{}), PG>);
   static_assert(std::same_as<decltype(G{} - P{}), PG>);
   static_assert(core::sum_layout<rga3, line_layout, antiscalar_layout> ==
@@ -234,11 +233,11 @@ TEST_CASE("A sum of two layouts holds the blades of both in canonical order") {
   static_assert(!has_sum_layout<int>);
 
   // vx, vy, vz, mx, my, mz = 1 to 6, and a = 7.
-  static_assert((L{1, 2, 3, 4, 5, 6} + I{7}) == LI{6, -5, -1, 4, -2, -3, 7});
+  static_assert((L{1, 2, 3, 4, 5, 6} + AS{7}) == LI{6, -5, -1, 4, -2, -3, 7});
 
   const volatile std::int64_t one = 1;
   const L l{one, 2, 3, 4, 5, 6};
-  const I i{7 * one};
+  const AS i{7 * one};
   CHECK((l + i) == LI{6, -5, -1, 4, -2, -3, 7});
   CHECK((i + l) == LI{6, -5, -1, 4, -2, -3, 7});
   CHECK((l - i) == LI{6, -5, -1, 4, -2, -3, -7});
