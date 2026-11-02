@@ -1,0 +1,549 @@
+#!/usr/bin/env -S python3 -I
+"""Distill a run log into the performance history, and compact the log.
+
+Usage, from anywhere inside the checkout:
+  tools/runlog summary <log>
+      Prints the history rows that every row of <log> would make, with `-`
+      as the era and the log.
+  tools/runlog compact <revision> [--log <path>]
+      Makes the rows of the log at <revision> a new era of the history and
+      removes them from the working log, except the rows that stay.
+  tools/runlog check [--log <path>]
+      Recomputes each era from git and compares it with the history, byte
+      for byte, and checks that the log holds each row an era kept, once,
+      and no row an era removed. Exits 1 on any difference.
+  tools/runlog prune [--log <path>]
+      Removes from the log each row an era removed, which a merge can bring
+      back, and each extra copy of a row an era kept.
+
+<path> is relative to the checkout's root. `compact` defaults to the run log,
+docs/agent/records/performance/runs.tsv; `check` and `prune` default to every
+log the history has an era of. The history is in
+docs/agent/records/performance/history/: eras.tsv (one row per era),
+groups.tsv (one row per era and kind of run), and toolchain.tsv (the
+toolchain in force from a given time, written by hand).
+
+An era is every row of the log at its revision that no earlier era of the
+same log kept. Its rows are grouped by step, preset, selection family (the
+selection up to its first `:`), mode, and outcome (`pass` for exit 0, else
+`fail`). For wall time, peak memory, and retired instructions, each group
+records how many rows have the quantity, the first and latest value (by
+start time, ties in log order), the least, the low median (the lower middle
+value, so always a measured one), and the range (largest minus least).
+Instructions are inst_p_u + inst_e_u, or inst_p_u alone in a pinned row,
+which cannot have run on an efficiency core. Arithmetic is decimal, so the
+history comes out the same on every run.
+
+A row stays in the log when its revision is committed (no `-dirty`) and it
+is a configure, build, test, or workflow run of a named preset, a gate step,
+or a check or trace step of one of the cheap gates. Some other rows stay as
+anchors: the last row at the era's revision, and for each local branch not
+merged into it, the last row of the log at the branch's merge base and the
+row after that one. The log is merged with git's union driver, which keeps
+both sides' lines where both changed the same place; a branch appends its
+rows after its base's last row, so the compaction must leave that row, and
+the place after it, untouched, or the merge would bring the removed rows
+back.
+
+The raw rows of an era are read back with
+  git show <era>:<log>
+"""
+
+import collections
+import decimal
+import os
+import re
+import subprocess
+import sys
+
+RUN_LOG = "docs/agent/records/performance/runs.tsv"
+HISTORY = "docs/agent/records/performance/history"
+ERAS = f"{HISTORY}/eras.tsv"
+GROUPS = f"{HISTORY}/groups.tsv"
+TOOLCHAIN = f"{HISTORY}/toolchain.tsv"
+
+QUANTITIES = ("wall_s", "maxrss_kib", "inst_u")
+STATISTICS = ("n", "first", "latest", "min", "median", "range")
+GROUP_KEY = ("step", "preset", "family", "mode", "outcome")
+ERA_COLUMNS = ("era log rows kept anchors first_utc latest_utc").split()
+GROUP_COLUMNS = (["era", "log", *GROUP_KEY, "rows", "dirty", "revisions",
+                  "first_utc", "latest_utc", "first_revision",
+                  "latest_revision", "hosts", "toolchains"]
+                 + [f"{q}_{s}" for q in QUANTITIES for s in STATISTICS])
+TOOLCHAIN_COLUMNS = ("since_utc host gcc libstdcxx clang cmake ninja python "
+                     "perf kernel source").split()
+
+RUN_STEPS = {"configure", "build", "test", "workflow"}
+CHEAP_GATES = {"trace", "trace-gate", "convention-trace", "markers", "golden",
+               "citations"}
+COMMITTED = re.compile(r"[0-9a-f]{12}")
+NUMBER = re.compile(r"\d+(\.\d+)?")
+MISSING = "--"
+UNAVAILABLE = "unavailable"
+NO_TREE = "-"
+
+
+class Refused(Exception):
+    """A command that cannot go ahead; nothing has been written."""
+
+
+def git(top, *args):
+    result = subprocess.run(["git", "-C", top, *args], capture_output=True,
+                            check=False)
+    if result.returncode != 0:
+        raise Refused(f"git {' '.join(args)}: "
+                      f"{result.stderr.decode(errors='replace').strip()}")
+    return result.stdout.decode()
+
+
+def checkout_root():
+    result = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                            capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise Refused("not inside a git checkout")
+    return result.stdout.strip()
+
+
+def split_log(text, name):
+    """Returns (columns, row lines) of a tab-separated log, refusing a log
+    that is not one header line followed by rows."""
+    if not text:
+        raise Refused(f"{name} is empty")
+    if not text.endswith("\n"):
+        raise Refused(f"{name} does not end with a newline")
+    lines = text[:-1].split("\n")
+    columns = lines[0].split("\t")
+    for number, line in enumerate(lines[1:], 2):
+        cells = line.split("\t")
+        if not line:
+            raise Refused(f"{name}:{number} is blank")
+        if cells[0] == columns[0]:
+            raise Refused(f"{name}:{number} is a second header line")
+        if len(cells) > len(columns):
+            raise Refused(f"{name}:{number} has {len(cells)} cells for "
+                          f"{len(columns)} columns")
+    return columns, lines[1:]
+
+
+def read_table(path, columns):
+    """Rows of a history file as lists of cells; [] if it does not exist."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        return []
+    header, lines = split_log(text, path)
+    if header != list(columns):
+        raise Refused(f"{path} does not have this tool's columns")
+    return [line.split("\t") for line in lines]
+
+
+def fields(columns, line):
+    cells = line.split("\t")
+    cells += [MISSING] * (len(columns) - len(cells))
+    row = dict(zip(columns, cells))
+    if not row.get("mode"):
+        row["mode"] = MISSING
+    return row
+
+
+def family(selection):
+    return selection.split(":", 1)[0]
+
+
+def stays(row):
+    """Whether a row is a build or test run of a committed revision, which
+    every compaction leaves in the log."""
+    if not COMMITTED.fullmatch(row.get("revision", "")):
+        return False
+    step = row.get("step")
+    if step in RUN_STEPS:
+        return row.get("preset", NO_TREE) != NO_TREE
+    if step == "gate":
+        return True
+    if step in ("check", "trace"):
+        return family(row.get("selection", "")) in CHEAP_GATES
+    return False
+
+
+def number(text):
+    return decimal.Decimal(text) if NUMBER.fullmatch(text or "") else None
+
+
+def quantity(name, row):
+    if name != "inst_u":
+        return number(row.get(name))
+    p_core, e_core = number(row.get("inst_p_u")), number(row.get("inst_e_u"))
+    if p_core is not None and e_core is not None:
+        return p_core + e_core
+    if p_core is not None and row["mode"] == "pinned":
+        return p_core
+    return None
+
+
+def statistics(values):
+    """The STATISTICS of values given in time order."""
+    if not values:
+        return ["0"] + [UNAVAILABLE] * (len(STATISTICS) - 1)
+    ordered = sorted(values)
+    median = ordered[(len(ordered) - 1) // 2]
+    picks = [values[0], values[-1], ordered[0], median,
+             ordered[-1] - ordered[0]]
+    return [str(len(values))] + [format(v, "f") for v in picks]
+
+
+def read_toolchain(top):
+    states = collections.defaultdict(list)
+    for cells in read_table(os.path.join(top, TOOLCHAIN), TOOLCHAIN_COLUMNS):
+        states[cells[1]].append(cells[0])
+    return {host: sorted(times) for host, times in states.items()}
+
+
+def toolchains(states, hosts, first, latest):
+    """The start times of the toolchain states in force on the hosts between
+    first and latest, and `unrecorded` for any part with no state."""
+    found = set()
+    for host in hosts:
+        times = states.get(host, [])
+        if not times or first < times[0]:
+            found.add("unrecorded")
+        for i, since in enumerate(times):
+            ends = times[i + 1] if i + 1 < len(times) else None
+            if since <= latest and (ends is None or ends > first):
+                found.add(since)
+    return ",".join(sorted(found))
+
+
+def summarize(columns, lines, era, log, states):
+    """The history rows of a list of row lines, sorted by group."""
+    groups = collections.defaultdict(list)
+    for index, line in enumerate(lines):
+        row = fields(columns, line)
+        outcome = "pass" if row["exit"] == "0" else "fail"
+        key = (row["step"], row["preset"], family(row["selection"]),
+               row["mode"], outcome)
+        groups[key].append((row["utc_start"], index, row))
+    out = []
+    for key in sorted(groups):
+        rows = [row for _, _, row in sorted(groups[key],
+                                            key=lambda m: (m[0], m[1]))]
+        revisions = {row["revision"].removesuffix("-dirty") for row in rows}
+        hosts = sorted({row["host"] for row in rows})
+        first, latest = rows[0]["utc_start"], rows[-1]["utc_start"]
+        cells = [era, log, *key, str(len(rows)),
+                 str(sum(row["revision"].endswith("-dirty") for row in rows)),
+                 str(len(revisions)), first, latest, rows[0]["revision"],
+                 rows[-1]["revision"], ",".join(hosts),
+                 toolchains(states, hosts, first, latest)]
+        for name in QUANTITIES:
+            values = [v for v in (quantity(name, row) for row in rows)
+                      if v is not None]
+            cells += statistics(values)
+        out.append("\t".join(cells))
+    return out
+
+
+def log_at(top, revision, log):
+    return split_log(git(top, "show", f"{revision}:{log}"),
+                     f"{log} at {revision}")
+
+
+def era_lines(lines, kept_before):
+    """(line number, line) of each row that no earlier era kept."""
+    left = collections.Counter(kept_before)
+    rows = []
+    for number, line in enumerate(lines, 2):
+        if left[line] > 0:
+            left[line] -= 1
+        else:
+            rows.append((number, line))
+    if +left:
+        raise Refused("the log lacks a row an earlier era kept: "
+                      f"{next(iter(+left))[:80]}")
+    return rows
+
+
+def split_era(columns, rows, anchors):
+    kept, removed = collections.Counter(), collections.Counter()
+    for number, line in rows:
+        if number in anchors or stays(fields(columns, line)):
+            kept[line] += 1
+        else:
+            removed[line] += 1
+    return kept, removed
+
+
+def era_record(revision, log, rows, kept, anchors):
+    times = [line.split("\t", 1)[0] for _, line in rows]
+    return [revision, log, str(len(rows)), str(sum(kept.values())),
+            ",".join(map(str, sorted(anchors))) or "-",
+            min(times, default="-"), max(times, default="-")]
+
+
+def replay(top, log, eras, states):
+    """Recomputes each recorded era of a log from git, in order. Yields
+    (era row, history rows, kept, removed) for each."""
+    kept_before = collections.Counter()
+    for era in eras:
+        if era[1] != log:
+            continue
+        columns, lines = log_at(top, era[0], log)
+        rows = era_lines(lines, kept_before)
+        anchors = set() if era[4] == "-" else set(map(int, era[4].split(",")))
+        kept, removed = split_era(columns, rows, anchors)
+        kept_before += kept
+        yield (era_record(era[0], log, rows, kept, anchors),
+               summarize(columns, [line for _, line in rows], era[0], log,
+                         states), kept, removed)
+
+
+def anchors_for(top, revision, log, lines):
+    """Line numbers, in the log at revision, of the rows that later union
+    merges need unchanged."""
+    if not lines:
+        return set()
+    anchors = {len(lines) + 1}
+    position = {}
+    for number, line in enumerate(lines, 2):
+        position.setdefault(line, number)
+    branches = git(top, "for-each-ref", "--format=%(refname)",
+                   f"--no-merged={revision}", "refs/heads").split()
+    for branch in branches:
+        base = git(top, "merge-base", branch, revision).strip()
+        try:
+            _, base_lines = log_at(top, base, log)
+        except Refused:
+            continue  # the log did not exist at the base
+        if not base_lines:
+            continue
+        number = position.get(base_lines[-1])
+        if number is None:
+            raise Refused(f"the last row of {log} at the merge base of "
+                          f"{branch} is not in the log at {revision}")
+        anchors.add(number)
+        if number + 1 <= len(lines) + 1:
+            anchors.add(number + 1)
+    return anchors
+
+
+def read_text(path):
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
+def write_replacing(path, text):
+    temporary = f"{path}.runlog-new"
+    with open(temporary, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.replace(temporary, path)
+
+
+def append_rows(path, columns, rows):
+    new = not os.path.exists(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        if new:
+            f.write("\t".join(columns) + "\n")
+        f.writelines(row + "\n" for row in rows)
+
+
+def without(lines, removed):
+    """lines less one occurrence of each row in removed, order kept."""
+    left = collections.Counter(removed)
+    out = []
+    for line in lines:
+        if left[line] > 0:
+            left[line] -= 1
+        else:
+            out.append(line)
+    return out
+
+
+def compact(top, revision, log):
+    revision = git(top, "rev-parse", "--verify", "--short=12",
+                   f"{revision}^{{commit}}").strip()
+    eras = read_table(os.path.join(top, ERAS), ERA_COLUMNS)
+    read_table(os.path.join(top, GROUPS), GROUP_COLUMNS)
+    if any(era[0] == revision and era[1] == log for era in eras):
+        raise Refused(f"{log} already has an era at {revision}")
+    states = read_toolchain(top)
+    kept_before = collections.Counter()
+    for _, _, kept, _ in replay(top, log, eras, states):
+        kept_before += kept
+
+    columns, lines = log_at(top, revision, log)
+    path = os.path.join(top, log)
+    working_columns, working = split_log(read_text(path), log)
+    if working_columns != columns:
+        raise Refused(f"the header of {log} is not the one at {revision}")
+    rows = era_lines(lines, kept_before)
+    missing = +(collections.Counter(line for _, line in rows)
+                - collections.Counter(working))
+    if missing:
+        raise Refused(f"{log} lacks {sum(missing.values())} rows of the log "
+                      f"at {revision}, such as: {next(iter(missing))[:80]}")
+    anchors = {n for n in anchors_for(top, revision, log, lines)
+               if n in {number for number, _ in rows}}
+    kept, removed = split_era(columns, rows, anchors)
+    record = era_record(revision, log, rows, kept, anchors)
+    history = summarize(columns, [line for _, line in rows], revision, log,
+                        states)
+
+    remaining = without(working, removed)
+    append_rows(os.path.join(top, GROUPS), GROUP_COLUMNS, history)
+    append_rows(os.path.join(top, ERAS), ERA_COLUMNS, ["\t".join(record)])
+    write_replacing(path, "\n".join(["\t".join(columns), *remaining]) + "\n")
+    print(f"runlog: era {revision} of {log}: {len(rows)} rows in "
+          f"{len(history)} groups; {sum(kept.values())} kept, "
+          f"{len(anchors)} of them anchors; the log went from "
+          f"{len(working)} to {len(remaining)} rows")
+    return 0
+
+
+def logs_to_visit(eras, log):
+    if log is not None:
+        return [log]
+    return list(dict.fromkeys(era[1] for era in eras))
+
+
+def check(top, log):
+    eras = read_table(os.path.join(top, ERAS), ERA_COLUMNS)
+    groups = read_table(os.path.join(top, GROUPS), GROUP_COLUMNS)
+    states = read_toolchain(top)
+    problems = []
+    known = {(era[0], era[1]) for era in eras}
+    for cells in groups:
+        if (cells[0], cells[1]) not in known:
+            problems.append(f"{GROUPS} has a row of era {cells[0]} of "
+                            f"{cells[1]}, which {ERAS} does not record")
+    visited = logs_to_visit(eras, log)
+    if not visited:
+        print(f"runlog: {ERAS} records no era")
+    for name in visited:
+        found = len(problems)
+        recorded = [era for era in eras if era[1] == name]
+        kept_all, removed_all = collections.Counter(), collections.Counter()
+        for era, (record, history, kept, removed) in zip(
+                recorded, replay(top, name, eras, states)):
+            kept_all += kept
+            removed_all += removed
+            if era != record:
+                problems.append(f"{ERAS}: era {era[0]} of {name} is\n  "
+                                + "\t".join(era) + "\nbut recomputes as\n  "
+                                + "\t".join(record))
+            committed = ["\t".join(cells) for cells in groups
+                         if cells[0] == era[0] and cells[1] == name]
+            if committed != history:
+                problems.append(group_difference(era[0], name, committed,
+                                                 history))
+        try:
+            _, working = split_log(read_text(os.path.join(top, name)), name)
+        except FileNotFoundError:
+            working = []
+        problems += log_problems(name, working, kept_all, removed_all)
+        if len(problems) == found:
+            print(f"runlog: {name}: {len(recorded)} eras match the history; "
+                  f"{sum(kept_all.values())} kept rows present once; no "
+                  "removed row present")
+    for problem in problems:
+        print(f"runlog: {problem}", file=sys.stderr)
+    return 1 if problems else 0
+
+
+def group_difference(era, log, committed, history):
+    for i, (found, expected) in enumerate(zip(committed, history)):
+        if found != expected:
+            return (f"{GROUPS}: era {era} of {log}, group row {i + 1} is\n  "
+                    f"{found}\nbut recomputes as\n  {expected}")
+    return (f"{GROUPS}: era {era} of {log} has {len(committed)} group rows, "
+            f"but recomputes to {len(history)}")
+
+
+def log_problems(name, working, kept, removed):
+    """Each row of an era that the log holds a different number of times
+    than the era kept it."""
+    places = collections.defaultdict(list)
+    for number, line in enumerate(working, 2):
+        if line in kept or line in removed:
+            places[line].append(number)
+    problems = []
+    for line in dict.fromkeys([*kept, *removed]):
+        expected, found = kept[line], len(places[line])
+        if found == expected:
+            continue
+        if expected == 0:
+            what = "a row an era removed is back"
+        else:
+            what = f"a row an era kept is there {found} times, not {expected}"
+        where = ", ".join(f"line {n}" for n in places[line]) or "not found"
+        problems.append(f"{name}: {what} ({where}): {line[:100]}")
+    return problems
+
+
+def prune(top, log):
+    eras = read_table(os.path.join(top, ERAS), ERA_COLUMNS)
+    states = read_toolchain(top)
+    for name in logs_to_visit(eras, log):
+        kept_all, removed_all = collections.Counter(), collections.Counter()
+        for _, _, kept, removed in replay(top, name, eras, states):
+            kept_all += kept
+            removed_all += removed
+        path = os.path.join(top, name)
+        columns, working = split_log(read_text(path), name)
+        allowed = collections.Counter(kept_all)
+        remaining = []
+        for line in working:
+            if line not in kept_all and line not in removed_all:
+                remaining.append(line)
+            elif allowed[line] > 0:
+                allowed[line] -= 1
+                remaining.append(line)
+        if len(remaining) != len(working):
+            write_replacing(path, "\n".join(["\t".join(columns), *remaining])
+                            + "\n")
+        print(f"runlog: {name}: removed {len(working) - len(remaining)} rows")
+    return 0
+
+
+def summary(path):
+    top = checkout_root()
+    columns, lines = split_log(read_text(path), path)
+    rows = summarize(columns, lines, "-", "-", read_toolchain(top))
+    print("\n".join(["\t".join(GROUP_COLUMNS), *rows]))
+    return 0
+
+
+def main(argv):
+    usage = __doc__.split("\n\n")[1]
+    if len(argv) == 2 and argv[0] == "summary":
+        return summary(argv[1])
+    command, args = (argv[0], argv[1:]) if argv else (None, [])
+    log = None
+    if len(args) >= 2 and args[-2] == "--log":
+        log, args = args[-1], args[:-2]
+    if command == "compact" and len(args) == 1:
+        top = checkout_root()
+        return compact(top, args[0], relative(top, log or RUN_LOG))
+    if command in ("check", "prune") and not args:
+        top = checkout_root()
+        name = relative(top, log) if log else None
+        return (check if command == "check" else prune)(top, name)
+    print(usage, file=sys.stderr)
+    return 2
+
+
+def relative(top, log):
+    if os.path.isabs(log):
+        return os.path.relpath(log, top)
+    return os.path.normpath(log)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Refused as error:
+        print(f"runlog: refused: {error}", file=sys.stderr)
+        sys.exit(2)
+    except OSError as error:
+        print(f"runlog: {error}", file=sys.stderr)
+        sys.exit(2)

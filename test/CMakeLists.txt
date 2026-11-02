@@ -758,6 +758,16 @@ add_test(NAME tools.measure_record
 set_tests_properties(tools.measure_record PROPERTIES
   LABELS "tools;tools.measure")
 
+# tools.runlog: the history the run-log tool distills, the rows a compaction
+# keeps, and union merges across a compaction, in scratch repositories.
+add_test(NAME tools.runlog
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/runlog_test.py
+    ${PROJECT_SOURCE_DIR}/tools/runlog
+    ${CMAKE_CURRENT_BINARY_DIR}/runlog)
+set_tests_properties(tools.runlog PROPERTIES
+  LABELS "tools;tools.runlog")
+
 # The golden values that tests compare the library with. They come from the
 # reference scripts in test/reference/, never from the library, so this
 # target does not link galoot::core. A test that needs them links it and
