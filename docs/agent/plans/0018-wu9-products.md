@@ -71,8 +71,14 @@ One implementer (cpp-expert role, Opus, high), one doctest-expert for the tests,
 
 ## 10. Outcome
 
-Departures from section 4 (C20): commits 2 to 4 were made as one commit (functions, operators, catch-alls and tests together), then a second commit for lint fixes; the lossy-conversion rewording is commit 5 of the branch as planned, and a final commit fixes the reference markers of the new tests after the first full run failed two reference checks; no sub-agents were used, so there is no agent cost row and no independent test author. The new code is `include/galoot/core/product.hpp` (included by `core.hpp`); tests are `test/core/product_test.cpp` and eight compile-fail sources.
+Review: the blind review (Opus 5.5, `records/reviews/2026-11-02-wu9-products.md`) blocked on one fix, F1: a mixed product written as `auto r = a * b;` gave two errors, and the catch-alls returned `void`. F1 to F3 were fixed together in `product.hpp`: the catch-alls return the first operand's type, each condition compares the two algebras or scalar types themselves so the compilers print both, and the messages begin `a * b:` and `a ^ b:` for the operators. The compile-fail tests now write the product into a variable.
 
-Evidence: all seven presets passed from new empty trees at the final revision of the build inputs (gcc-debug, gcc-release 248; gcc-asan 240; clang-debug, clang-release, clang-asan, lint 250). An earlier full run failed `tests.reference_markers` and `tests.golden_facts` on the new test file; the markers were rewritten and every preset rerun. The trace gate exits 0 with row 7.1 `yes`; six mutants were killed on gcc-debug and clang-debug (records/mutations/0018-products).
+Also fixed: the ring-operations message of `mv` now gives a fix after a semicolon (F11); the product enumerators have underlying type `int`, so Clang prints their values and not a raw byte in result types (F12); the header comment states the result layout, the requires-expression answer, derived operands and the cost, and its example compiles (F6, F7); the tests no longer carry two checks that could not fail, take the expected result type from the layout and not from the implementation, and pin the concepts directly (F8, F9); decision 0164 records the header choice (F10).
 
-Not yet done: the W5 blind review and the merge by the coordinator.
+Not done, with the reason: F5 (a narrow scalar through a public product still begins `apply:`): the fix belongs with the other product messages in WU10, which adds the antiproducts that share it; F13's wording changes beyond the prefix; the P2 growth of the new includer beyond the smoke-test figure; the derived-class catch-all (WU16).
+
+Mutants: the planned sixth (a shared-generator sign flip) was not run by the author. The reviewer ran it on gcc-debug and killed it at run time, with two operand-swap mutants; the author's six were killed on gcc-debug and clang-debug for the four function and operator mutants, and the two constraint mutants only by the compile-fail tests on gcc-debug (the README states this).
+
+Departures: commits 2 to 4 were one commit; no sub-agent implemented or tested the unit, so no cost row; tests and code are in one commit (W9, the review lists the tests and expected values as the exception requires).
+
+Evidence: see the merge message for the final presets.

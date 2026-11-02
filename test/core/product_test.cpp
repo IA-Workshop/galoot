@@ -7,8 +7,6 @@
 // table on the union of their generators, and any other wedge is zero. The
 // algebraic identities are checked on integer coefficients small enough that
 // every sum is exact.
-#include <bitset>
-#include <complex>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
@@ -194,12 +192,7 @@ TEST_CASE("the result has the layout the plan gives") {
   using V = core::mv<rga3, core::of_grade<4, 1>, std::int64_t>;
   static_assert(
       std::same_as<decltype(core::wedge(V{}, V{})),
-                   core::mv<rga3,
-                            core::detail::product_plan<
-                                core::detail::BinaryOperation::wedge, rga3,
-                                core::of_grade<4, 1>, core::of_grade<4, 1>>
-                                .result,
-                            std::int64_t>>);
+                   core::mv<rga3, core::of_grade<4, 2>, std::int64_t>>);
   static_assert(std::same_as<decltype(L{} * V{}),
                              decltype(core::geometric_product(L{}, V{}))>);
 }
@@ -247,11 +240,16 @@ TEST_CASE("the overloads take the right operands") {
   static_assert(!can_multiply<R, double>);
   static_assert(!can_multiply<double, R>);
   static_assert(!can_wedge<R, int>);
-  static_assert(
-      std::same_as<decltype(std::complex<double>{} * std::complex<double>{}),
-                   std::complex<double>>);
-  static_assert(std::same_as<decltype(std::bitset<4>{} ^ std::bitset<4>{}),
-                             std::bitset<4>>);
-  CHECK(((std::bitset<4>{0b0101} ^ std::bitset<4>{0b0011}) ==
-         std::bitset<4>{0b0110}));
+  static_assert(core::detail::product_operands<R, R>);
+  static_assert(!core::detail::product_operands<R, F>);
+  static_assert(!core::detail::product_operands<R, C>);
+  static_assert(!core::detail::product_operands<R, double>);
+  static_assert(core::detail::mismatched_operands<R, F>);
+  static_assert(core::detail::mismatched_operands<R, C>);
+  static_assert(!core::detail::mismatched_operands<R, R>);
+  static_assert(!core::detail::mismatched_operands<R, double>);
+  static_assert(core::detail::same_algebra_v<R, F>);
+  static_assert(!core::detail::same_algebra_v<R, C>);
+  static_assert(core::detail::same_scalar_v<R, C>);
+  static_assert(!core::detail::same_scalar_v<R, F>);
 }

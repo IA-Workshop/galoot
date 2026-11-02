@@ -8,8 +8,8 @@ Revision: the head of `feature/core-products` when this note was written. Mutant
 | `wedge` calls the geometric-product plan | killed | killed | a `static_assert` of the test file (the result type differs from the plan's) and the table check |
 | `operator^` calls `geometric_product` | killed | killed | the same-type `static_assert` of the operators test |
 | `operator*` calls `wedge` | killed | killed | the same-type `static_assert` of the operators test |
-| algebra constraint dropped from the catch-all | killed | not run separately | the four `product_mixed_algebras_*` compile-fail tests and `can_wedge<R, C>` |
-| scalar constraint dropped from the catch-all | killed | not run separately | the four `product_mixed_scalars_*` compile-fail tests and `can_multiply<R, F>` |
+| algebra constraint dropped from the catch-all | killed | not run | the four `product_mixed_algebras_*` compile-fail tests and `can_wedge<R, C>` |
+| scalar constraint dropped from the catch-all | killed | not run | the four `product_mixed_scalars_*` compile-fail tests and `can_multiply<R, F>` |
 
 The plan also listed "flip one table sign for a shared-generator pair". That sits in the blade-product rule, not in this unit's code; the unit's table check covers every blade pair of rigid(3) and conformal(3) against the reference and would fail on it, but this mutant was not run here. Where a mutant shows "killed" for a compile error of the test file, the kill is the test's own `static_assert`, never a warning.
 
@@ -32,3 +32,5 @@ The rejecting overloads make a requires-expression that asks whether a mixed cal
 ## Cost
 
 `core.hpp` now includes `product.hpp`. The smoke test, which includes only `core.hpp`, compiled in 0.261 s before and 0.247 s after on gcc-debug; its instruction count is not usable (the first row's counter reads 101,752, which is a failed measurement, not a figure). No larger includer was measured separately.
+
+The independent review ran the sixth mutant (a shared-generator sign flip in the blade product) and two operand swaps on gcc-debug; the table checks and the associativity checks killed all of them at run time.

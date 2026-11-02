@@ -23,7 +23,7 @@ using Other = core::mv<rga3, core::full<4>, float>;
 [[maybe_unused]] void use(const Line& a, const Other& b) {
   using core::geometric_product;
   using core::wedge;
-  (void)(geometric_product(a, b));
+  [[maybe_unused]] const auto r = geometric_product(a, b);
 }
 
 } // namespace

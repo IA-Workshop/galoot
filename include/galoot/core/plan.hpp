@@ -83,7 +83,7 @@ namespace galoot::core::detail {
 ///
 /// Guarantees: a structural type, so an operation can be a template
 /// argument.
-enum class BinaryOperation : std::uint8_t {
+enum class BinaryOperation : int {
   /// The geometric product e_A e_B, from the metric.
   geometric_product,
   /// The exterior product e_A ∧ e_B, which does not depend on the metric.
@@ -667,7 +667,7 @@ inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
 ///
 /// Guarantees: a structural type, so an operation can be a template
 /// argument.
-enum class UnaryOperation : std::uint8_t {
+enum class UnaryOperation : int {
   /// The reverse: (-1)^(k(k-1)/2) times a blade of grade k.
   reverse,
   /// The antireverse: (-1)^(m(m-1)/2) times a blade of antigrade m = n - k.

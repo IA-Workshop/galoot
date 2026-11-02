@@ -473,7 +473,8 @@ private:
                 "lacks");
   static_assert(scalar_has_ring_operations,
                 "mv: the scalar type must support +, -, *, unary - and "
-                "construction from an integer coefficient");
+                "construction from an integer coefficient; use a number type "
+                "such as double or an integer type");
 
   static constexpr bool layout_names_only_generators_of_the_algebra =
       detail::blades_in_algebra<
