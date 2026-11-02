@@ -1,0 +1,10 @@
+first_user.cpp:300:8: error: no matching function for call to 'get'
+  300 |   r += get<0>(l);
+      |        ^~~~~~
+../../../../../include/galoot/core/mv.hpp:345:58: note: candidate template ignored: no viable constructor or deduction guide for deduction of template arguments of 'detail::name_list' for template parameter 'Name'
+  345 | [[nodiscard]] constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+      |                                                          ^
+../../../../../include/galoot/core/mv.hpp:357:44: note: candidate template ignored: no viable constructor or deduction guide for deduction of template arguments of 'detail::name_list' for template parameter 'Name'
+  357 | constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+      |                                            ^
+1 error generated.

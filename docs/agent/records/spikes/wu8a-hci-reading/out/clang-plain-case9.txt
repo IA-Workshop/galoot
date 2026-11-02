@@ -1,0 +1,9 @@
+In file included from first_user.cpp:13:
+In file included from ../../../../../include/galoot/core.hpp:12:
+../../../../../include/galoot/core/mv.hpp:368:19: error: static assertion failed: get: a name is 1 or e followed by generator indices, as in e41
+  368 |     static_assert(false, "get: a name is 1 or e followed by generator "
+      |                   ^~~~~
+first_user.cpp:109:8: note: in instantiation of function template specialization 'galoot::core::get<detail::name_list<4>{{"e4l"}}, galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>' requested here
+  109 |   r += get<"e4l">(l);
+      |        ^
+1 error generated.

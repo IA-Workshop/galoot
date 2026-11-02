@@ -1,0 +1,4 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:192:32: error: cannot bind non-const lvalue reference of type ‘double&’ to an rvalue of type ‘double’
+  192 |   double& dangling = get<"e43">(make_line());
+      |                      ~~~~~~~~~~^~~~~~~~~~~~~

@@ -1,0 +1,28 @@
+first_user.cpp:247:11: error: invalid operands to binary expression ('const LaneLine' (aka 'const gc::mv<rga3, line_layout, lanes>') and 'const LaneLine')
+  247 |   r += (a == b) ? 1.0 : 0.0;
+      |         ~ ^  ~
+../../../../../include/galoot/core/mv.hpp:150:3: note: candidate function not viable: constraints not satisfied
+  150 |   operator==(const coefficient_storage& other) const
+      |   ^
+../../../../../include/galoot/core/mv.hpp:151:14: note: because 'lanes' does not satisfy 'equality_comparable'
+  151 |     requires std::equality_comparable<T>
+      |              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:335:35: note: because '__detail::__weakly_eq_cmp_with<lanes, lanes>' evaluated to false
+  335 |     concept equality_comparable = __detail::__weakly_eq_cmp_with<_Tp, _Tp>;
+      |                                   ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:327:10: note: because '__t == __u' would be invalid: invalid operands to binary expression ('const remove_reference_t<lanes>' (aka 'const lanes') and 'const remove_reference_t<lanes>' (aka 'const lanes'))
+  327 |           { __t == __u } -> __boolean_testable;
+      |                 ^
+../../../../../include/galoot/core/mv.hpp:150:3: note: candidate function (with reversed parameter order) not viable: constraints not satisfied
+  150 |   operator==(const coefficient_storage& other) const
+      |   ^
+../../../../../include/galoot/core/mv.hpp:151:14: note: because 'lanes' does not satisfy 'equality_comparable'
+  151 |     requires std::equality_comparable<T>
+      |              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:335:35: note: because '__detail::__weakly_eq_cmp_with<lanes, lanes>' evaluated to false
+  335 |     concept equality_comparable = __detail::__weakly_eq_cmp_with<_Tp, _Tp>;
+      |                                   ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:327:10: note: because '__t == __u' would be invalid: invalid operands to binary expression ('const remove_reference_t<lanes>' (aka 'const lanes') and 'const remove_reference_t<lanes>' (aka 'const lanes'))
+  327 |           { __t == __u } -> __boolean_testable;
+      |                 ^
+1 error generated.

@@ -1,0 +1,8 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:188:17: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+  188 |   const double& dangling = get<"e43">(make_line());
+      |                 ^~~~~~~~
+first_user.cpp:188:48: note: ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’} temporary created here
+  188 |   const double& dangling = get<"e43">(make_line());
+      |                                       ~~~~~~~~~^~
+cc1plus: all warnings being treated as errors

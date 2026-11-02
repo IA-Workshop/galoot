@@ -1,0 +1,10 @@
+first_user.cpp:131:28: error: constraints not satisfied for variable template 'blades' [with Alg = bad_tag, Names = detail::name_list<6>{{"e1 e2"}}]
+  131 |   constexpr auto set = gc::blades<bad_tag, "e1 e2">;
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:603:11: note: because 'bad_tag' does not satisfy 'metric_like'
+  603 | template <metric_like Alg, detail::name_list Names>
+      |           ^
+../../../../../include/galoot/core/metric.hpp:302:59: note: because substituted constraint expression is ill-formed: no member named 'value' in 'bad_tag'
+  302 |     detail::is_metric_v<std::remove_cvref_t<decltype(Alg::value)>> &&
+      |                                                           ^
+1 error generated.

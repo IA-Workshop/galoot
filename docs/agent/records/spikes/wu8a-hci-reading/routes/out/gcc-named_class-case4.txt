@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+mv_routes.hpp: In instantiation of ‘constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&) [with name_list<...auto...> Name = detail::name_list<3>{std::array<char, 3>{"e1"}}; X = Line&; detail::coefficient_reference<X> = double&]’:
+program.cpp:92:17:   required from here
+   92 |   r += get<"e1">(l);
+      |        ~~~~~~~~~^~~
+mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+  523 |     static_assert(false, "get: the type has no blade of this name; its "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

@@ -1,0 +1,10 @@
+first_user.cpp:287:26: error: template argument for template type parameter must be a type
+  287 |   using Swapped = gc::mv<line_layout, rga3, double>;
+      |                          ^~~~~~~~~~~
+../../../../../include/galoot/core/mv.hpp:183:23: note: template parameter is declared here
+  183 | template <metric_like Alg, blade_set Blades, std::semiregular T>
+      |                       ^
+first_user.cpp:288:9: error: unknown type name 'Swapped'
+  288 |   const Swapped s{};
+      |         ^
+2 errors generated.

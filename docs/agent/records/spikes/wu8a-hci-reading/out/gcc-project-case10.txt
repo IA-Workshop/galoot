@@ -1,0 +1,16 @@
+In file included from ../../../../../include/galoot/core/blade_product.hpp:43,
+                 from ../../../../../include/galoot/core.hpp:9,
+                 from first_user.cpp:13:
+../../../../../include/galoot/core/blade_set.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_blades() [with long unsigned int N = 4; name_list<...auto...> Names = name_list<29>{std::array<char, 29>{"e41, e42, e43, e23, e31, e12"}}]’:
+../../../../../include/galoot/core/blade_set.hpp:605:71:   required from ‘constexpr const auto galoot::core::blades<rga3, galoot::core::detail::name_list<29>{std::array<char, 29>{"e41, e42, e43, e23, e31, e12"}}>’
+  604 | inline constexpr auto blades = detail::make_blades<
+      |                                ~~~~~~~~~~~~~~~~~~~~                    
+  605 |     std::remove_cvref_t<decltype(Alg::value)>::generator_count, Names>();
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+first_user.cpp:112:31:   required from here
+  112 |   constexpr auto commas = gc::blades<rga3, "e41, e42, e43, e23, e31, e12">;
+      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:512:25: error: static assertion failed: blades: after the e, a name lists generator indices, each a digit from 1 to 9
+  512 |     static_assert(error != NameError::bad_index,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+  • ‘(((galoot::core::detail::NameError)error) != galoot::core::detail::NameError::bad_index)’ evaluates to false

@@ -1,0 +1,177 @@
+In file included from first_user.cpp:8:
+/usr/include/c++/16/format: In instantiation of ‘class std::__format::_Checking_scanner<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double> >’:
+/usr/include/c++/16/format:5435:4:   required from ‘consteval std::basic_format_string<_CharT, _Args>::basic_format_string(const _Tp&) [with _Tp = char [3]; _CharT = char; _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&}]’
+ 5435 |           __scanner(_M_str);
+      |           ^~~~~~~~~
+first_user.cpp:185:40:   required from here
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                                        ^~~~
+/usr/include/c++/16/format:5208:10: error: static assertion failed: std::formatter must be specialized for each type being formatted
+ 5208 |         (is_default_constructible_v<formatter<_Args, _CharT>> && ...),
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, char>’ is not default constructible, because
+  • error: use of deleted function ‘std::formatter<_Tp, _CharT>::formatter() [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _CharT = char]’
+  • declared here
+    /usr/include/c++/16/format:218:7:
+      218 |       formatter() = delete; // No std::formatter specialization for this type.
+          |       ^~~~~~~~~
+  • use ‘-fdiagnostics-all-candidates’ to display considered candidates
+    /usr/include/c++/16/format:5208:10:
+     5208 |         (is_default_constructible_v<formatter<_Args, _CharT>> && ...),
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/16/format: In instantiation of ‘constexpr void std::__format::_Checking_scanner<_CharT, _Args>::_M_parse_format_spec(std::size_t) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _OtherArgs = {}; _CharT = char; _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}; std::size_t = long unsigned int]’:
+/usr/include/c++/16/format:5229:33:   required from here
+ 5229 |                 _M_parse_format_spec<_Args...>(__id);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+first_user.cpp:185:40:   in ‘constexpr’ expansion of ‘std::basic_format_string<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&>("{}")’
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                                        ^~~~
+/usr/include/c++/16/format:5436:19:   in ‘constexpr’ expansion of ‘__scanner.std::__format::_Checking_scanner<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double> >::std::__format::_Scanner<char>.std::__format::_Scanner<char>::_M_scan()’
+ 5436 |         __scanner._M_scan();
+      |         ~~~~~~~~~~~~~~~~~^~
+/usr/include/c++/16/format:5051:19:   in ‘constexpr’ expansion of ‘((std::__format::_Scanner<char>*)this)->std::__format::_Scanner<char>::_M_format_arg(((std::__format::_Scanner<char>*)this)->std::__format::_Scanner<char>::_M_pc.std::__format::_Scanner<char>::_Parse_context::std::basic_format_parse_context<char>.std::basic_format_parse_context<char>::next_arg_id())’
+ 5051 |             _M_format_arg(_M_pc.next_arg_id());
+      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/16/format:5242:38: error: use of deleted function ‘std::formatter<_Tp, _CharT>::formatter() [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _CharT = char]’
+ 5242 |               formatter<_Tp, _CharT> __f;
+      |                                      ^~~
+/usr/include/c++/16/format:218:7: note: declared here
+  218 |       formatter() = delete; // No std::formatter specialization for this type.
+      |       ^~~~~~~~~
+/usr/include/c++/16/format:5242:38: note: use ‘-fdiagnostics-all-candidates’ to display considered candidates
+ 5242 |               formatter<_Tp, _CharT> __f;
+      |                                      ^~~
+/usr/include/c++/16/format:5243:42: error: ‘struct std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, char>’ has no member named ‘parse’
+ 5243 |               this->_M_pc.advance_to(__f.parse(this->_M_pc));
+      |                                      ~~~~^~~~~
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:185:40: error: call to consteval function ‘std::basic_format_string<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&>("{}")’ is not a constant expression
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                                        ^~~~
+/usr/include/c++/16/format: In instantiation of ‘static std::__format::_Arg_store<_Context, _Args>::_Element_t std::__format::_Arg_store<_Context, _Args>::_S_make_elt(_Tp&) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}; _Element_t = std::__format::_Arg_store<std::basic_format_context<std::__format::_Sink_iter<char>, char>, std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle>::_Element_t]’:
+/usr/include/c++/16/format:4851:23:   required from ‘std::__format::_Arg_store<_Context, _Args>::_Arg_store(_Tp& ...) [with _Tp = {galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}]’
+ 4851 |         : _M_args{_S_make_elt(__a)...}
+      |                   ~~~~~~~~~~~^~~~~
+/usr/include/c++/16/format:4901:14:   required from ‘auto std::make_format_args(_Args& ...) [with _Context = basic_format_context<__format::_Sink_iter<char>, char>; _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}]’
+ 4901 |       return _Store(__fmt_args...);
+      |              ^~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/16/format:5519:61:   required from ‘std::string std::format(format_string<_Args ...>, _Args&& ...) [with _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&}; string = __cxx11::basic_string<char>; format_string<_Args ...> = basic_format_string<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&>]’
+ 5519 |     { return std::vformat(__fmt.get(), std::make_format_args(__args...)); }
+      |                                        ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+first_user.cpp:185:39:   required from here
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                            ~~~~~~~~~~~^~~~~~~~~
+/usr/include/c++/16/format:4829:25: error: static assertion failed: std::formatter must be specialized for the type of each format arg
+ 4829 |           static_assert(is_default_constructible_v<formatter<_Tq, _CharT>>,
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, char>’ is not default constructible, because
+  • error: use of deleted function ‘std::formatter<_Tp, _CharT>::formatter() [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _CharT = char]’
+  • declared here
+    /usr/include/c++/16/format:218:7:
+      218 |       formatter() = delete; // No std::formatter specialization for this type.
+          |       ^~~~~~~~~
+  • use ‘-fdiagnostics-all-candidates’ to display considered candidates
+    /usr/include/c++/16/format:4829:25:
+     4829 |           static_assert(is_default_constructible_v<formatter<_Tq, _CharT>>,
+          |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/16/format:4840:38: error: no matching function for call to ‘std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::basic_format_arg(galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&)’
+ 4840 |           basic_format_arg<_Context> __arg(__v);
+      |                                      ^~~~~
+  • there are 4 candidates
+    • candidate 1: ‘template<class _Tp>  requires  __formattable_with<_Tp, _Context, typename _Context::formatter_type<typename std::remove_const<_Tq>::type>, std::basic_format_parse_context<typename _Context::char_type> > std::basic_format_arg<_Context>::basic_format_arg(_Tp&) [with _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>]’
+      /usr/include/c++/16/format:4522:9:
+       4522 |         basic_format_arg(_Tp& __v) noexcept
+            |         ^~~~~~~~~~~~~~~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from first_user.cpp:6:
+          • /usr/include/c++/16/concepts: In substitution of ‘template<class _Tp>  requires  __formattable_with<_Tp, _Context, typename _Context::formatter_type<typename std::remove_const<_Tq>::type>, std::basic_format_parse_context<typename _Context::char_type> > std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::basic_format_arg(_Tp&) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>]’:
+          • required from ‘static std::__format::_Arg_store<_Context, _Args>::_Element_t std::__format::_Arg_store<_Context, _Args>::_S_make_elt(_Tp&) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}; _Element_t = std::__format::_Arg_store<std::basic_format_context<std::__format::_Sink_iter<char>, char>, std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle>::_Element_t]’
+            /usr/include/c++/16/format:4840:31:   
+             4840 |           basic_format_arg<_Context> __arg(__v);
+                  |                                      ^~~~~
+          • required from ‘std::__format::_Arg_store<_Context, _Args>::_Arg_store(_Tp& ...) [with _Tp = {galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}]’
+            /usr/include/c++/16/format:4851:23:   
+             4851 |         : _M_args{_S_make_elt(__a)...}
+                  |                   ~~~~~~~~~~~^~~~~
+          • required from ‘auto std::make_format_args(_Args& ...) [with _Context = basic_format_context<__format::_Sink_iter<char>, char>; _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}]’
+            /usr/include/c++/16/format:4901:14:   
+             4901 |       return _Store(__fmt_args...);
+                  |              ^~~~~~~~~~~~~~~~~~~~~
+          • required from ‘std::string std::format(format_string<_Args ...>, _Args&& ...) [with _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&}; string = __cxx11::basic_string<char>; format_string<_Args ...> = basic_format_string<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&>]’
+            /usr/include/c++/16/format:5519:61:   
+             5519 |     { return std::vformat(__fmt.get(), std::make_format_args(__args...)); }
+                  |                                        ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+          • required from here
+            first_user.cpp:185:39:   
+              185 |   r += static_cast<double>(std::format("{}", l).size());
+                  |                            ~~~~~~~~~~~^~~~~~~~~
+          • required for the satisfaction of ‘constructible_from<_Tp, _Tp>’ [with _Tp = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>]
+            /usr/include/c++/16/concepts:161:13:   
+              161 |     concept constructible_from
+                  |             ^~~~~~~~~~~~~~~~~~
+          • required for the satisfaction of ‘move_constructible<_Tp>’ [with _Tp = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>]
+            /usr/include/c++/16/concepts:175:13:   
+              175 |     concept move_constructible
+                  |             ^~~~~~~~~~~~~~~~~~
+          • required for the satisfaction of ‘copy_constructible<_Tp>’ [with _Tp = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>]
+            /usr/include/c++/16/concepts:180:13:   
+              180 |     concept copy_constructible
+                  |             ^~~~~~~~~~~~~~~~~~
+          • required for the satisfaction of ‘copyable<_Tp>’ [with _Tp = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>]
+            /usr/include/c++/16/concepts:277:13:   
+              277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+                  |             ^~~~~~~~
+          • required for the satisfaction of ‘semiregular<_Formatter>’ [with _Formatter = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>]
+            /usr/include/c++/16/concepts:282:13:   
+              282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+                  |             ^~~~~~~~~~~
+          • required for the satisfaction of ‘__formattable_with<_Tp, _Context, typename _Context::formatter_type<typename std::remove_const<_Tq>::type>, std::basic_format_parse_context<typename _Context::char_type> >’ [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>]
+            /usr/include/c++/16/bits/formatfwd.h:101:13:   
+              101 |     concept __formattable_with
+                  |             ^~~~~~~~~~~~~~~~~~
+          • the expression ‘is_constructible_v<_Tp, _Args ...> [with _Tp = std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>; _Args = {std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>}]’ evaluated to ‘false’
+            /usr/include/c++/16/concepts:162:30:
+              162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+                  |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          • ‘std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, char>’ is not constructible from ‘std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, char>’, because
+          • error: use of deleted function ‘std::formatter<_Tp, _CharT>::formatter(const std::formatter<_Tp, _CharT>&) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _CharT = char]’
+          • declared here
+            /usr/include/c++/16/format:219:7:
+              219 |       formatter(const formatter&) = delete;
+                  |       ^~~~~~~~~
+          • use ‘-fdiagnostics-all-candidates’ to display considered candidates
+            /usr/include/c++/16/concepts:162:30:
+              162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+                  |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    • /usr/include/c++/16/format: In instantiation of ‘static std::__format::_Arg_store<_Context, _Args>::_Element_t std::__format::_Arg_store<_Context, _Args>::_S_make_elt(_Tp&) [with _Tp = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}; _Element_t = std::__format::_Arg_store<std::basic_format_context<std::__format::_Sink_iter<char>, char>, std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle>::_Element_t]’:
+    • required from ‘std::__format::_Arg_store<_Context, _Args>::_Arg_store(_Tp& ...) [with _Tp = {galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}; _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>; _Args = {std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::handle}]’
+      /usr/include/c++/16/format:4851:23:   
+       4851 |         : _M_args{_S_make_elt(__a)...}
+            |                   ~~~~~~~~~~~^~~~~
+    • required from ‘auto std::make_format_args(_Args& ...) [with _Context = basic_format_context<__format::_Sink_iter<char>, char>; _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>}]’
+      /usr/include/c++/16/format:4901:14:   
+       4901 |       return _Store(__fmt_args...);
+            |              ^~~~~~~~~~~~~~~~~~~~~
+    • required from ‘std::string std::format(format_string<_Args ...>, _Args&& ...) [with _Args = {galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&}; string = __cxx11::basic_string<char>; format_string<_Args ...> = basic_format_string<char, galoot::core::mv<rga3, galoot::core::blade_set<6>{array<galoot::core::oriented_blade, 6>{__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&>]’
+      /usr/include/c++/16/format:5519:61:   
+       5519 |     { return std::vformat(__fmt.get(), std::make_format_args(__args...)); }
+            |                                        ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+    • required from here
+      first_user.cpp:185:39:   
+        185 |   r += static_cast<double>(std::format("{}", l).size());
+            |                            ~~~~~~~~~~~^~~~~~~~~
+    • candidate 2: ‘std::basic_format_arg<_Context>::basic_format_arg() [with _Context = std::basic_format_context<std::__format::_Sink_iter<char>, char>]’
+      /usr/include/c++/16/format:4322:7:
+       4322 |       basic_format_arg() noexcept : _M_type(__format::_Arg_none) { }
+            |       ^~~~~~~~~~~~~~~~
+      • candidate expects 0 arguments, 1 provided
+    • candidate 3: ‘constexpr std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::basic_format_arg(const std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >&)’
+      /usr/include/c++/16/format:4314:11:
+       4314 |     class basic_format_arg
+            |           ^~~~~~~~~~~~~~~~
+      • no known conversion for argument 1 from ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’ to ‘const std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >&’
+    • candidate 4: ‘constexpr std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >::basic_format_arg(std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >&&)’
+      • no known conversion for argument 1 from ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’ to ‘std::basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char> >&&’

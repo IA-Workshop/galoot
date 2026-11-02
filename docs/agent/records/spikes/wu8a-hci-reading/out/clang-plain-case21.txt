@@ -1,0 +1,7 @@
+first_user.cpp:158:11: error: invalid operands to binary expression ('const Scalar' (aka 'const gc::mv<rga3, scalar_layout, double>') and 'double')
+  158 |   r += (s == 2.0) ? 1.0 : 0.0;
+      |         ~ ^  ~~~
+../../../../../include/galoot/core/mv.hpp:150:3: note: candidate function not viable: no known conversion from 'double' to 'const coefficient_storage<galoot::core::mv<rga3, blade_set<1>{{{{0, 1}}}}, double>, double, std::integer_sequence<unsigned long, 0>>' for 1st argument
+  150 |   operator==(const coefficient_storage& other) const
+      |   ^          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

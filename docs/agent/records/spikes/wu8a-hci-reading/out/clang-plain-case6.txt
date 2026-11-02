@@ -1,0 +1,26 @@
+first_user.cpp:96:15: error: no matching constructor for initialization of 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
+   96 |   const Point s{{1, 2, 3, 1}};
+      |               ^~~~~~~~~~~~~~~
+../../../../../include/galoot/core/mv.hpp:184:8: note: candidate constructor (the implicit copy constructor) not viable: cannot convert initializer list argument to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>'
+  184 | struct mv
+      |        ^~
+../../../../../include/galoot/core/mv.hpp:184:8: note: candidate constructor (the implicit move constructor) not viable: cannot convert initializer list argument to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>'
+  184 | struct mv
+      |        ^~
+../../../../../include/galoot/core/mv.hpp:226:46: note: candidate template ignored: substitution failure: deduced incomplete pack <(no value)> for template parameter 'Values'
+  223 |   template <class... Values>
+      |                      ~~~~~~
+  224 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+  225 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
+  226 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+../../../../../include/galoot/core/mv.hpp:208:13: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+  208 |   constexpr mv() = default;
+      |             ^
+../../../../../include/galoot/core/mv.hpp:140:7: note: candidate inherited constructor not viable: requires 4 arguments, but 1 was provided
+  140 |       coefficient_storage(component<T, I>... values)
+      |       ^                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/mv.hpp:217:56: note: constructor from base class 'coefficient_storage<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, double, std::integer_sequence<unsigned long, 0, 1, 2, 3>>' inherited here
+  217 |       mv, T, std::make_index_sequence<Blades.size()>>::coefficient_storage;
+      |                                                        ^
+1 error generated.

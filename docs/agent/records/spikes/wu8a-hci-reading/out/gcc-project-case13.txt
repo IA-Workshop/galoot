@@ -1,0 +1,29 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:122:63: error: class template argument deduction failed:
+  122 |   using Named = gc::mv<rga3, "e41 e42 e43 e23 e31 e12", double>;
+      |                                                               ^
+first_user.cpp:122:63: error: no matching function for call to ‘blade_set(const char [24])’
+  • there are 2 candidates
+In file included from ../../../../../include/galoot/core/blade_product.hpp:43,
+                 from ../../../../../include/galoot/core.hpp:9,
+                 from first_user.cpp:13:
+    • candidate 1: ‘template<long unsigned int K> blade_set() -> galoot::core::blade_set<K>’
+      ../../../../../include/galoot/core/blade_set.hpp:69:8:
+         69 | struct blade_set {
+            |        ^~~~~~~~~
+      • candidate expects 0 arguments, 1 provided
+    • candidate 2: ‘template<long unsigned int K> blade_set(galoot::core::blade_set<K>) -> galoot::core::blade_set<K>’
+      • template argument deduction/substitution failed:
+        •   mismatched types ‘galoot::core::blade_set<K>’ and ‘const char*’
+          first_user.cpp:122:63:
+            122 |   using Named = gc::mv<rga3, "e41 e42 e43 e23 e31 e12", double>;
+                |                                                               ^
+first_user.cpp:122:17: error: expected type-specifier
+  122 |   using Named = gc::mv<rga3, "e41 e42 e43 e23 e31 e12", double>;
+      |                 ^~
+first_user.cpp:123:9: error: ‘Named’ does not name a type
+  123 |   const Named s{};
+      |         ^~~~~
+first_user.cpp:124:8: error: ‘s’ was not declared in this scope
+  124 |   r += s.coefficients[0];
+      |        ^

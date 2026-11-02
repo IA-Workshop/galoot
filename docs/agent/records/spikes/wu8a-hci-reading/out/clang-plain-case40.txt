@@ -1,0 +1,16 @@
+first_user.cpp:269:24: error: too few template arguments for class template 'mv'
+  269 |   using NoScalar = gc::mv<rga3, line_layout>;
+      |                        ^
+../../../../../include/galoot/core/mv.hpp:184:8: note: template is declared here
+  183 | template <metric_like Alg, blade_set Blades, std::semiregular T>
+      | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  184 | struct mv
+      |        ^
+first_user.cpp:270:9: error: unknown type name 'NoScalar'; did you mean 'Scalar'?
+  270 |   const NoScalar s{};
+      |         ^~~~~~~~
+      |         Scalar
+first_user.cpp:40:7: note: 'Scalar' declared here
+   40 | using Scalar = gc::mv<rga3, scalar_layout, double>;
+      |       ^
+2 errors generated.

@@ -1,0 +1,11 @@
+In file included from program.cpp:10:
+./mv_routes.hpp:144:19: error: static assertion failed due to requirement 'sizeof...(Values) == 4UL': mv: give one value for each component, in the order the layout lists them
+  144 |     static_assert(sizeof...(Values) == K,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~
+program.cpp:81:15: note: in instantiation of function template specialization 'galoot::core::detail::component_count_check<4>::component_count_check<int, int, int>' requested here
+   81 |   const Point s{1, 2, 3};
+      |               ^
+./mv_routes.hpp:144:37: note: expression evaluates to '3 == 4'
+  144 |     static_assert(sizeof...(Values) == K,
+      |                   ~~~~~~~~~~~~~~~~~~^~~~
+1 error generated.

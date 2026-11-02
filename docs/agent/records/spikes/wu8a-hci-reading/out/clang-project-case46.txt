@@ -1,0 +1,4 @@
+first_user.cpp:292:15: error: initialization of non-aggregate type 'const Point' (aka 'const gc::mv<rga3, point_layout, double>') with a designated initializer list
+  292 |   const Point s{.coefficients = {1, 2, 3, 1}};
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
