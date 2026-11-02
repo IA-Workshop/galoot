@@ -690,7 +690,10 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// std::complex<float>, must hold the coefficients exactly without a check.
 /// The code is one fold expression over the terms, and Clang 23 stops a
 /// fold at 2,048 terms; no plan that Clang 23 builds at its default limits
-/// has more than 1,024 terms, and GCC 16 has no such limit.
+/// has more than 1,024 terms. Measured at the default limits, at -O0 and
+/// -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
+/// plan builds, up to full<5> times full<5> on Clang 23 and full<6> times
+/// full<6> (4,096 terms) on GCC 16, as product_plan's comment states them.
 /// Guarantees: the coefficient of each blade of Target is the sum over the
 /// terms on it, multiplied by the blade's sign in Target, evaluated in the
 /// order stated; with an exact scalar the result is exact. A constant
@@ -734,7 +737,9 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 /// assignment of the coefficient or of its negation.
 ///
 /// Requires: Target holds every blade of the map's result, checked at
-/// compile time with its message.
+/// compile time with its message. Measured as for a product: apply builds
+/// wherever the map builds, up to full<8> for the complements and full<7>
+/// for the other maps on Clang 23, and full<9> on GCC 16.
 /// Guarantees: as for a product.
 template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
           ring_scalar T>
