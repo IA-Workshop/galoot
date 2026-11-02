@@ -16,6 +16,7 @@
 #include <span>
 #include <type_traits>
 
+#include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -50,40 +51,56 @@ std::int64_t value_on(const Type& r, core::mask_t mask) {
   return 0;
 }
 
-// The number of pairs of basis blades of the algebra for which the
-// geometric product or the wedge differs from the table, or whose result
-// holds a blade the table does not list.
+// The coefficient of the table's product on the blade with this mask.
+inline std::int64_t table_value(const golden::product& entry,
+                                core::mask_t mask) {
+  std::int64_t sum = 0;
+  for (std::size_t k = 0; k < entry.size; ++k) {
+    if (entry.terms.at(k).blade == mask) {
+      sum += entry.terms.at(k).coefficient;
+    }
+  }
+  return sum;
+}
+
+// The number of blades, among all of them, on which the product or the wedge
+// of the basis blades at positions i and j differs from the table. The wedge
+// keeps the term on the union of two blades with no generator in common.
+template <class X>
+int pair_mismatches(const golden::product& entry, std::size_t i,
+                    std::size_t j) {
+  X x{};
+  X y{};
+  x.coefficients.at(i) = 1;
+  y.coefficients.at(j) = 1;
+  const auto gp = core::geometric_product(x, y);
+  const auto w = core::wedge(x, y);
+  int mismatches = 0;
+  for (core::mask_t m = 0; m < X::component_count; ++m) {
+    const std::int64_t expected_gp = table_value(entry, m);
+    const bool disjoint = (entry.a & entry.b) == 0;
+    const std::int64_t expected_wedge =
+        disjoint && m == (entry.a | entry.b) ? expected_gp : 0;
+    mismatches += value_on(gp, m) == expected_gp ? 0 : 1;
+    mismatches += value_on(w, m) == expected_wedge ? 0 : 1;
+  }
+  return mismatches;
+}
+
+// The number of pairs of basis blades of the algebra, over all pairs, for
+// which the product or the wedge differs from the table; a table entry out
+// of its place counts as one.
 template <class Alg, std::size_t N>
 int table_mismatches(std::span<const golden::product> table) {
   using X = core::mv<Alg, core::full<N>, std::int64_t>;
   int mismatches = 0;
   for (std::size_t i = 0; i < X::component_count; ++i) {
     for (std::size_t j = 0; j < X::component_count; ++j) {
-      X x{};
-      X y{};
-      x.coefficients.at(i) = 1;
-      y.coefficients.at(j) = 1;
       const core::mask_t a = X::layout.blades.at(i).mask;
       const core::mask_t b = X::layout.blades.at(j).mask;
       const golden::product& entry = table[(a * X::component_count) + b];
-      if (entry.a != a || entry.b != b) {
-        return -1;
-      }
-      const auto gp = core::geometric_product(x, y);
-      const auto w = core::wedge(x, y);
-      for (core::mask_t m = 0; m < X::component_count; ++m) {
-        std::int64_t expected_gp = 0;
-        for (std::size_t k = 0; k < entry.size; ++k) {
-          if (entry.terms.at(k).blade == m) {
-            expected_gp += entry.terms.at(k).coefficient;
-          }
-        }
-        // The wedge keeps the term on the union of two disjoint blades.
-        const std::int64_t expected_wedge =
-            (a & b) == 0 && m == (a | b) ? expected_gp : 0;
-        mismatches += value_on(gp, m) == expected_gp ? 0 : 1;
-        mismatches += value_on(w, m) == expected_wedge ? 0 : 1;
-      }
+      mismatches +=
+          entry.a == a && entry.b == b ? pair_mismatches<X>(entry, i, j) : 1;
     }
   }
   return mismatches;
@@ -136,7 +153,9 @@ TEST_CASE("products of two vectors") {
 TEST_CASE("the operators are the named functions") {
   using X = core::mv<rga3, core::full<4>, double>;
   using L = core::mv<rga3, core::of_grade<4, 2>, double>;
-  std::mt19937_64 source(1);
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
   std::uniform_real_distribution<double> any(-2.0, 2.0);
   const auto random_value = [&]<class Type>(std::type_identity<Type>) {
     Type x{};
@@ -181,7 +200,9 @@ TEST_CASE("the result has the layout the plan gives") {
 //   on random integer multivectors of rigid(3) and conformal(3), whose
 //   sums are exact; the wedge of a vector with itself is zero.
 TEST_CASE("the products are associative and a vector wedges to zero") {
-  std::mt19937_64 source(2);
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
   using R = core::mv<rga3, core::full<4>, std::int64_t>;
   using C = core::mv<cga3, core::full<5>, std::int64_t>;
   using RV = core::mv<rga3, core::of_grade<4, 1>, std::int64_t>;

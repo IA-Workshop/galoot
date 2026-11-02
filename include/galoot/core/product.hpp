@@ -119,7 +119,8 @@ template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 /// one scalar type, with one error that names the cause.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
-constexpr void geometric_product(const X&, const Y&) {
+constexpr void geometric_product([[maybe_unused]] const X& x,
+                                 [[maybe_unused]] const Y& y) {
   detail::reject_product<detail::ProductSpelling::geometric_product_function, X,
                          Y>();
 }
@@ -138,7 +139,7 @@ template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 /// type, as for geometric_product.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
-constexpr void wedge(const X&, const Y&) {
+constexpr void wedge([[maybe_unused]] const X& x, [[maybe_unused]] const Y& y) {
   detail::reject_product<detail::ProductSpelling::wedge_function, X, Y>();
 }
 
@@ -153,7 +154,8 @@ template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 /// type.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
-constexpr void operator*(const X&, const Y&) {
+constexpr void operator*([[maybe_unused]] const X& x,
+                         [[maybe_unused]] const Y& y) {
   detail::reject_product<detail::ProductSpelling::times_operator, X, Y>();
 }
 
@@ -168,7 +170,8 @@ template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 /// type.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
-constexpr void operator^(const X&, const Y&) {
+constexpr void operator^([[maybe_unused]] const X& x,
+                         [[maybe_unused]] const Y& y) {
   detail::reject_product<detail::ProductSpelling::caret_operator, X, Y>();
 }
 
