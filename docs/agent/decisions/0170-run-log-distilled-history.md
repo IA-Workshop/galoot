@@ -68,6 +68,8 @@ P13, the sentence added after the energy sentence:
 
 > When a log grows too large to work with, the owner may approve its compaction at a recorded boundary revision: its rows up to the boundary are distilled into the performance history (P7) and removed from the log, except the workflow runs of named presets, the build, test, style, and gate steps of committed revisions, and the few rows that later merges of other branches need, which stay in the log unchanged. Any other row, a gate run recorded under another name or on an uncommitted tree among them, is counted in the history and is retrieved from version control by the command the history names.
 
+*Pointer added 2026-11-01, the text above kept as written:* the phrase "gate steps" over-reaches; the last addendum below gives the exact wording.
+
 DoD-25 of plan 0001:
 
 > DoD-25 (P7, P13). The performance history baseline is committed. `runs.tsv` keeps, through every compaction, the rows P13 says a compaction keeps, and every other gate run is counted in the history and retrievable from version control.
@@ -91,3 +93,14 @@ A union merge can bring removed rows back with no conflict. For example, a branc
 - P9, after the table: "A merge that changes a log under `docs/agent/records/performance/` runs `tools/runlog check` on the merged tree before the merge is committed, at every level, and `tools/runlog prune` when the check reports removed rows."
 
 Open for the owner: `tools.runlog_check` reads agent records. That sits against the principle of decision 0080, that clearing or moving agent records should not change what a build does for a human contributor. The test is skipped outside a git checkout and in a clone without the eras' commits. A contributor who deletes `docs/agent/records/performance/` would see it fail. If that is unwanted, the test can be skipped when that directory is absent, or kept out of the default test set by its label.
+
+## Addendum, 2026-11-01: the exact wording (W5 delta review, findings D3 and D4)
+
+- Status: proposed. This replaces the P13 sentence of the first addendum, which is kept above as written. The DoD-25 wording of the first addendum stands.
+- Recorded by: Claude (agent, Opus 5.5), performance-engineer role, implementer of plan 0017.
+
+The first addendum's phrase "the build, test, style, and gate steps of committed revisions" can be read as every `check` step an agent calls a gate, such as `jobserver_check` or `measure_record-before`. The rule keeps only the `gate` step and the `check` and `trace` steps of ten named cheap gates. Proposed P13 sentence, after the energy sentence:
+
+> When a log grows too large to work with, the owner may approve its compaction at a recorded boundary revision: its rows up to the boundary are distilled into the performance history (P7) and removed from the log, except these, which stay in the log unchanged: the workflow runs of named presets at any revision; and, at committed revisions, the configure, build, and test runs of named presets, the `lint` and `gate` steps, and the `check` and `trace` steps of the cheap gates `tools/runlog` names (`trace`, `trace-gate`, `convention-trace`, `markers`, `golden`, `citations`, `golden-facts`, `reference-markers`, `golden-check`, `conventions_check`); and the few rows that later merges of other branches need. Any other row, a gate run under another name or on an uncommitted tree among them, is counted in the history and is retrieved from version control by the command the history names.
+
+On `tools.runlog_check` (D4): the test now has its own label, `runlog`, besides `tools` and `tools.runlog_check`. It still runs in every preset. The owner may decide to run it once per merge instead, for example as a step of P9's merge checks selected by `-L '^runlog$'`, and to leave it out of the presets' full suites. It costs 2.7 to 3.4 s and about 0.7 GiB per run, and gives the same answer in every preset. This is the choice the first addendum leaves open, now with a label to make either form one command.
