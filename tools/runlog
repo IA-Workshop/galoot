@@ -34,9 +34,10 @@ Instructions are inst_p_u + inst_e_u, or inst_p_u alone in a pinned row,
 which cannot have run on an efficiency core. Arithmetic is decimal, so the
 history comes out the same on every run.
 
-A row stays in the log when its revision is committed (no `-dirty`) and it
-is a configure, build, test, or workflow run of a named preset, a gate step,
-or a check or trace step of one of the cheap gates. Some other rows stay as
+A row stays in the log when it is a workflow run of a named preset, at any
+revision, or when its revision is committed (no `-dirty`) and it is a
+configure, build, or test run of a named preset, a gate or lint step, or a
+check or trace step of one of the cheap gates. Some other rows stay as
 anchors. The log is merged with git's union driver, which keeps both sides'
 lines where both changed the same place, so a removed row next to a place
 where another branch added rows would come back in the merge. A branch adds
@@ -80,7 +81,8 @@ TOOLCHAIN_COLUMNS = ("since_utc host gcc libstdcxx clang cmake ninja python "
 
 RUN_STEPS = {"configure", "build", "test", "workflow"}
 CHEAP_GATES = {"trace", "trace-gate", "convention-trace", "markers", "golden",
-               "citations"}
+               "citations", "golden-facts", "reference-markers",
+               "golden-check", "conventions_check"}
 COMMITTED = re.compile(r"[0-9a-f]{12}")
 NUMBER = re.compile(r"\d+(\.\d+)?")
 MISSING = "--"
@@ -157,14 +159,16 @@ def family(selection):
 
 
 def stays(row):
-    """Whether a row is a build or test run of a committed revision, which
-    every compaction leaves in the log."""
+    """Whether a compaction leaves a row in the log: a build, test, or style
+    run, or a gate."""
+    step = row.get("step")
+    if step == "workflow" and row.get("preset", NO_TREE) != NO_TREE:
+        return True  # at any revision: a merge's checks may run uncommitted
     if not COMMITTED.fullmatch(row.get("revision", "")):
         return False
-    step = row.get("step")
     if step in RUN_STEPS:
         return row.get("preset", NO_TREE) != NO_TREE
-    if step == "gate":
+    if step in ("gate", "lint"):
         return True
     if step in ("check", "trace"):
         return family(row.get("selection", "")) in CHEAP_GATES
