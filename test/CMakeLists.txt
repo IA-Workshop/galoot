@@ -843,7 +843,7 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/rational.hpp)
+    FILES support/rational.hpp support/scalar_faults.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -928,7 +928,16 @@ else()
   set(mv_sign_rule "")
   set(mv_repeat_rule "")
 endif()
-set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient${semicolon} use a number type such as double or an integer type")
+# The five requirements of a ring scalar after semiregular, each with its
+# own message, in the order the multivector checks them.
+set(mv_no_addition "mv: the scalar type has no addition${semicolon} give it a + b, or use a number type such as double")
+set(mv_no_subtraction "mv: the scalar type has no subtraction${semicolon} give it a - b, or use a number type such as double")
+set(mv_no_multiplication "mv: the scalar type has no multiplication${semicolon} give it a * b, or use a number type such as double")
+set(mv_no_unary_minus "mv: the scalar type has no unary minus${semicolon} give it -a, which the products use for a term of coefficient -1")
+set(mv_no_integer_construction "mv: the scalar type cannot be made from an integer coefficient${semicolon} give it a constructor from std::int64_t, or use a number type such as double")
+set(mv_ring_messages "${mv_no_addition}" "${mv_no_subtraction}"
+  "${mv_no_multiplication}" "${mv_no_unary_minus}"
+  "${mv_no_integer_construction}")
 set(mv_scalar_qualified "mv: the scalar type is a reference or is const or volatile${semicolon} give the type itself, as in double for const double")
 set(mv_scalar_bool "mv: bool cannot be the scalar type, since true + true is true${semicolon} use an integer type such as int")
 set(mv_scalar_semiregular "mv: the scalar type must be default constructible, copyable, and assignable${semicolon} give it a default constructor that makes its zero")
@@ -948,23 +957,52 @@ foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
   mv_rejects(${case} "${mv_repeated}" REQUIRE ${mv_repeat_rule} ONE_ERROR
     FORBID "${mv_beyond_n}" "${mv_bad_sign}" "blade set")
 endforeach()
-mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR
-  FORBID "${mv_scalar_semiregular}")
-mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR
-  FORBID "${mv_scalar_semiregular}")
+# core.mv_<case> for a scalar without a requirement of a ring scalar: the
+# message of the requirement that fails, and none of the other four. Each
+# scalar_lacks case lacks one requirement alone; each other case lacks
+# several and must be told the first, in the order addition, subtraction,
+# multiplication, unary minus, construction from an integer: a colour code
+# has no arithmetic, std::string has + but not - or *, a length has + and -
+# but not *, and the last two lack * and -a, and -a and the constructor.
+function(mv_ring_rejects case message)
+  set(others ${mv_ring_messages})
+  list(REMOVE_ITEM others "${message}")
+  list(LENGTH mv_ring_messages all)
+  list(LENGTH others rest)
+  math(EXPR removed "${all} - ${rest}")
+  if(NOT removed EQUAL 1)
+    message(FATAL_ERROR "mv_ring_rejects(${case}): '${message}' is not one "
+      "of the messages of a ring scalar's requirements")
+  endif()
+  mv_rejects(${case} "${message}" ONE_ERROR
+    FORBID ${others} "${mv_scalar_semiregular}")
+endfunction()
+mv_ring_rejects(scalar_lacks_addition "${mv_no_addition}")
+mv_ring_rejects(scalar_lacks_subtraction "${mv_no_subtraction}")
+mv_ring_rejects(scalar_lacks_multiplication "${mv_no_multiplication}")
+mv_ring_rejects(scalar_lacks_unary_minus "${mv_no_unary_minus}")
+mv_ring_rejects(scalar_lacks_integer_construction
+  "${mv_no_integer_construction}")
+mv_ring_rejects(not_ring_scalar "${mv_no_subtraction}")
+mv_ring_rejects(scalar_without_multiplication "${mv_no_multiplication}")
+mv_ring_rejects(scalar_without_arithmetic "${mv_no_addition}")
+mv_ring_rejects(scalar_without_multiplication_or_negation
+  "${mv_no_multiplication}")
+mv_ring_rejects(scalar_without_negation_or_construction "${mv_no_unary_minus}")
 # A scalar with several faults gives the message of the first alone: a
 # const or reference scalar is not semiregular either, and bool has the
 # operations of the last check.
 foreach(case IN ITEMS scalar_reference scalar_const)
   mv_rejects(${case} "${mv_scalar_qualified}" ONE_ERROR
-    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+    FORBID "${mv_scalar_semiregular}" ${mv_ring_messages})
 endforeach()
-mv_rejects(scalar_bool "${mv_scalar_bool}" ONE_ERROR FORBID "${mv_scalar}")
+mv_rejects(scalar_bool "${mv_scalar_bool}" ONE_ERROR
+  FORBID ${mv_ring_messages})
 # A scalar that has a default constructor and cannot be copied or assigned
 # is told so, not to give it a default constructor.
 foreach(case IN ITEMS scalar_move_only scalar_const_member)
   mv_rejects(${case} "${mv_scalar_copyable}" ONE_ERROR
-    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+    FORBID "${mv_scalar_semiregular}" ${mv_ring_messages})
 endforeach()
 mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
 mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
@@ -972,7 +1010,7 @@ mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
 mv_rejects(one_value "${mv_count}" REQUIRE "1 == 6" ONE_ERROR)
 # An algebra that is not one fails the class template's constraint, so the
 # diagnostic is the compiler's account of metric_like.
-mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
+mv_rejects(not_metric_like "${not_metric_like}" FORBID ${mv_ring_messages})
 # These record the compiler's own wording: narrowing in brace initialization,
 # and an implicit conversion that no constructor allows ("conversion from").
 # A new compiler may change them.
@@ -1005,7 +1043,7 @@ mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
 # A scalar without a default constructor is not semiregular; its value of
 # the type is made, too, and raises no second error.
 mv_rejects(scalar_without_default "${mv_scalar_semiregular}" ONE_ERROR
-  FORBID "${mv_scalar}" "${mv_scalar_copyable}")
+  FORBID ${mv_ring_messages} "${mv_scalar_copyable}")
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
 # blades. A message's ; is held as character 1, as for the layout messages.
@@ -1141,6 +1179,35 @@ foreach(scalar IN ITEMS int64 int64_antiscalar rational rational_antiscalar
     COMMAND core_mv_truncate_mode_0 ${scalar})
   set_tests_properties(core.mv_truncate_nonzero_${scalar}
     core.mv_truncate_unchecked_${scalar} PROPERTIES LABELS "core;core.mv")
+endforeach()
+
+# core.mv_part_<case>: a target that is not a multivector type of the
+# input's algebra and scalar type gives part's message, and not truncate's.
+set(mv_part_target "part: the target must be an mv type of the same algebra and scalar type, not a class derived from one${semicolon} part changes only which blades are held")
+foreach(case IN ITEMS other_algebra not_a_type other_scalar derived
+    result_used)
+  mv_rejects(part_${case} "${mv_part_target}" ONE_ERROR FORBID "truncate:")
+endforeach()
+# A requires-expression that probes part with such a target does not answer:
+# the probe compiles the rejection, as the comment of part says.
+mv_rejects(part_probe "${mv_part_target}" ONE_ERROR FORBID "truncate:")
+
+# core.mv_part_never_checks_<case>: one program, built with checking on
+# whatever the preset, takes the part on a line of a motor whose scalar or
+# antiscalar is not zero, which truncate would reject, over each exact
+# scalar; it must keep the line and, over a scalar whose == counts its
+# calls, compare nothing.
+add_executable(core_mv_part_checking core/mv_part_checking.cpp)
+target_include_directories(core_mv_part_checking PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(core_mv_part_checking PRIVATE galoot_test_support)
+target_compile_features(core_mv_part_checking PRIVATE cxx_std_23)
+target_compile_definitions(core_mv_part_checking PRIVATE GALOOT_CHECKING=1)
+foreach(case IN ITEMS int64 int64_antiscalar rational counted)
+  add_test(NAME core.mv_part_never_checks_${case}
+    COMMAND core_mv_part_checking ${case})
+  set_tests_properties(core.mv_part_never_checks_${case} PROPERTIES
+    LABELS "core;core.mv")
 endforeach()
 
 # A file with a second, unrelated error fails a one-error test, so the test
@@ -1400,3 +1467,120 @@ foreach(spelling IN ITEMS geometric_antiproduct percent)
     MESSAGE "${written}: ${antiproduct_narrow}"
     ONE_ERROR FORBID "apply:")
 endforeach()
+
+# core.linear: sums, differences, scaling by a scalar, and negation, with
+# values written out from the definitions and the laws of a vector space.
+galoot_add_test(MODULE core COMPONENT linear)
+target_link_libraries(core_linear_test PRIVATE galoot_test_support)
+
+# core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
+# from two algebras or with two scalar types fails to compile with one
+# error, the message of the operation as written.
+foreach(spelling IN ITEMS plus minus)
+  if(spelling STREQUAL "plus")
+    set(written "a + b")
+  else()
+    set(written "a - b")
+  endif()
+  galoot_add_compile_fail_test(NAME linear_mixed_algebras_${spelling}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_mixed_algebras_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_algebras}"
+    ONE_ERROR FORBID "different scalar types")
+  galoot_add_compile_fail_test(NAME linear_mixed_scalars_${spelling}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_mixed_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_scalars}"
+    ONE_ERROR FORBID "different algebras")
+endforeach()
+
+# core.linear_<spelling>_<case>: a scalar of a type other than the
+# multivector's scalar type fails to compile with one error, the message of
+# the operation as written. The condition compares the two types, so that
+# the compilers print them, the scalar's first.
+set(linear_scalar_type "the scalar is not of the multivector's scalar type, the second of the two types shown${semicolon} convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(linear_int_for_double "‘int’ is not the same as ‘double’")
+else()
+  set(linear_int_for_double "due to requirement 'std::is_same_v<int, double>'")
+endif()
+galoot_add_compile_fail_test(NAME linear_scale_left_int
+  MODULE core COMPONENT linear SOURCE core/linear_scale_left_int_fail.cpp
+  MESSAGE "s * a: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+galoot_add_compile_fail_test(NAME linear_scale_right_int
+  MODULE core COMPONENT linear SOURCE core/linear_scale_right_int_fail.cpp
+  MESSAGE "a * s: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+galoot_add_compile_fail_test(NAME linear_divide_int
+  MODULE core COMPONENT linear SOURCE core/linear_divide_int_fail.cpp
+  MESSAGE "a / s: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+# 2.5 times an integer multivector, which a conversion to the scalar type
+# would truncate.
+galoot_add_compile_fail_test(NAME linear_scale_left_fraction
+  MODULE core COMPONENT linear SOURCE core/linear_scale_left_fraction_fail.cpp
+  MESSAGE "s * a: ${linear_scalar_type}" ONE_ERROR)
+# With every core header, a number of another type is rejected by the
+# scaling's overload, not the products', and two multivectors of two scalar
+# types by the products', not the scaling's.
+galoot_add_compile_fail_test(NAME linear_scale_with_products
+  MODULE core COMPONENT linear SOURCE core/linear_scale_with_products_fail.cpp
+  MESSAGE "a * s: ${linear_scalar_type}" ONE_ERROR FORBID "a * b:")
+galoot_add_compile_fail_test(NAME linear_product_with_scaling
+  MODULE core COMPONENT linear SOURCE core/linear_product_with_scaling_fail.cpp
+  MESSAGE "a * b: ${product_scalars}" ONE_ERROR FORBID "s * a:" "a * s:")
+
+# core.linear_divide_consteval_zero: an integer division by zero in a
+# constant evaluation ends it with the message of the check.
+set(linear_zero_divisor "a / s: an integer scalar cannot divide by zero")
+galoot_add_compile_fail_test(NAME linear_divide_consteval_zero
+  MODULE core COMPONENT linear
+  SOURCE core/linear_divide_consteval_zero_fail.cpp
+  MESSAGE "${linear_zero_divisor}" REQUIRE assertion_failed)
+# The same over unsigned and short. A division by zero is never a constant
+# expression, so requiring assertion_failed is what shows that the check,
+# and not the language alone, stops each of them.
+foreach(type IN ITEMS unsigned short)
+  galoot_add_compile_fail_test(NAME linear_divide_consteval_zero_${type}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_divide_consteval_zero_${type}_fail.cpp
+    MESSAGE "${linear_zero_divisor}" REQUIRE assertion_failed)
+endforeach()
+
+# core.linear_divide_rejects_zero, core.linear_divide_accepts_<case>: one
+# program, built with checking on whatever the preset, divides at run time.
+# An integer division by zero aborts with the message; division by 2, and a
+# floating division by 0.0, which IEEE 754 defines, exit 0. Division by zero
+# with checking off is undefined for an integer type, so it is not run.
+add_executable(core_linear_divide_assert_fail
+  core/linear_divide_assert_fail.cpp)
+target_include_directories(core_linear_divide_assert_fail PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_linear_divide_assert_fail PRIVATE cxx_std_23)
+target_compile_definitions(core_linear_divide_assert_fail PRIVATE
+  GALOOT_CHECKING=1)
+add_test(NAME core.linear_divide_rejects_zero
+  COMMAND ${expect_output} "Subprocess aborted"
+    "galoot: assertion failed: ${linear_zero_divisor} (" linear.hpp:
+    -- $<TARGET_FILE:core_linear_divide_assert_fail> int64_zero)
+# The check covers every integer type, and only a zero divisor: unsigned
+# and short divisors of zero abort too, and a negative divisor does not.
+foreach(type IN ITEMS unsigned short)
+  add_test(NAME core.linear_divide_rejects_${type}_zero
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${linear_zero_divisor} (" linear.hpp:
+      -- $<TARGET_FILE:core_linear_divide_assert_fail> ${type}_zero)
+endforeach()
+add_test(NAME core.linear_divide_accepts_nonzero
+  COMMAND core_linear_divide_assert_fail int64)
+add_test(NAME core.linear_divide_accepts_negative
+  COMMAND core_linear_divide_assert_fail int64_negative)
+add_test(NAME core.linear_divide_accepts_floating_zero
+  COMMAND core_linear_divide_assert_fail double_zero)
+set_tests_properties(core.linear_divide_rejects_zero
+  core.linear_divide_rejects_unsigned_zero
+  core.linear_divide_rejects_short_zero
+  core.linear_divide_accepts_nonzero core.linear_divide_accepts_negative
+  core.linear_divide_accepts_floating_zero
+  PROPERTIES LABELS "core;core.linear")

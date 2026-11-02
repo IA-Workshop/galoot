@@ -39,6 +39,7 @@
 
 #include <reference/golden.hpp>
 #include <support/rational.hpp>
+#include <support/scalar_faults.hpp>
 #include <unistd.h> // IWYU pragma: keep
 
 namespace {
@@ -544,6 +545,80 @@ TEST_CASE("The scalar concepts accept the types that meet their "
   CHECK_FALSE(core::exact_scalar<double>);
 }
 
+namespace {
+
+// The five requirements of ring_scalar after semiregular and not bool, each
+// written out from its statement, so that a test scalar can be shown to
+// fail exactly one of them.
+template <class T>
+concept adds = requires(const T& a, const T& b) {
+  { a + b } -> std::convertible_to<T>;
+};
+template <class T>
+concept subtracts = requires(const T& a, const T& b) {
+  { a - b } -> std::convertible_to<T>;
+};
+template <class T>
+concept multiplies = requires(const T& a, const T& b) {
+  { a * b } -> std::convertible_to<T>;
+};
+template <class T>
+concept negates = requires(const T& a) {
+  { -a } -> std::convertible_to<T>;
+};
+template <class T>
+concept made_from_coefficients = std::constructible_from<T, std::int64_t>;
+
+// How many of the five requirements T meets.
+template <class T>
+inline constexpr int requirements_met =
+    (adds<T> ? 1 : 0) + (subtracts<T> ? 1 : 0) + (multiplies<T> ? 1 : 0) +
+    (negates<T> ? 1 : 0) + (made_from_coefficients<T> ? 1 : 0);
+
+} // namespace
+
+// Reference: contract: ring_scalar is one concept whose requirements after
+//   semiregular and not bool are a + b, a - b, a * b, -a, and construction
+//   from the integer coefficient type, so a semiregular scalar that lacks any
+//   one of them is rejected, and each scalar the multivector's messages are
+//   tested on lacks the one its name gives and meets the other four
+TEST_CASE("Each fault scalar lacks exactly one requirement of ring_scalar") {
+  using namespace test_support;
+  static_assert(std::same_as<core::coefficient_type, std::int64_t>);
+
+  static_assert(std::semiregular<lacks_addition>);
+  static_assert(!adds<lacks_addition>);
+  static_assert(requirements_met<lacks_addition> == 4);
+  static_assert(!core::ring_scalar<lacks_addition>);
+
+  static_assert(std::semiregular<lacks_subtraction>);
+  static_assert(!subtracts<lacks_subtraction>);
+  static_assert(requirements_met<lacks_subtraction> == 4);
+  static_assert(!core::ring_scalar<lacks_subtraction>);
+
+  static_assert(std::semiregular<lacks_multiplication>);
+  static_assert(!multiplies<lacks_multiplication>);
+  static_assert(requirements_met<lacks_multiplication> == 4);
+  static_assert(!core::ring_scalar<lacks_multiplication>);
+
+  static_assert(std::semiregular<lacks_unary_minus>);
+  static_assert(!negates<lacks_unary_minus>);
+  static_assert(requirements_met<lacks_unary_minus> == 4);
+  static_assert(!core::ring_scalar<lacks_unary_minus>);
+
+  static_assert(std::semiregular<lacks_integer_construction>);
+  static_assert(!made_from_coefficients<lacks_integer_construction>);
+  static_assert(requirements_met<lacks_integer_construction> == 4);
+  static_assert(!core::ring_scalar<lacks_integer_construction>);
+
+  // A scalar that meets all five is a ring scalar, so the five are all that
+  // the fault scalars miss.
+  static_assert(requirements_met<std::int64_t> == 5);
+  static_assert(requirements_met<rational> == 5);
+  CHECK(requirements_met<lacks_addition> == 4);
+  CHECK_FALSE(core::ring_scalar<lacks_integer_construction>);
+}
+
 // Reference: contract: multivector holds for a specialization of mv with any
 //   cv-qualification and reference, and for nothing else
 TEST_CASE("multivector names exactly the specializations of mv") {
@@ -668,14 +743,14 @@ constexpr bool get_reaches(std::size_t at) {
 }
 
 // Whether Name stands for the blade (mask, sign), by the reading above, and
-// is at position `at` of Type's layout, where has_blade finds it and get
+// is at position `at` of Type's layout, where has_name finds it and get
 // reaches it.
 template <class Type, core::detail::name_list Name>
 constexpr bool named_at(std::size_t at, core::mask_t mask, int sign) {
   const core::oriented_blade expected{.mask = mask, .sign = sign};
   return blade_of(Name.text()) == expected &&
-         Type::layout.blades.at(at) == expected &&
-         core::has_blade<Type, Name> && get_reaches<Type, Name>(at);
+         Type::layout.blades.at(at) == expected && core::has_name<Type, Name> &&
+         get_reaches<Type, Name>(at);
 }
 
 } // namespace
@@ -739,36 +814,84 @@ TEST_CASE("get reads and writes a line at run time") {
   CHECK(std::get<1>(pair) == 2.0);
 }
 
-// Reference: contract: has_blade is true only for a name the layout holds
+// Reference: contract: has_name is true only for a name the layout holds
 //   with that orientation, and false, never an error, for the other
 //   orientation, a blade the layout lacks, a name with an index above n, a
 //   text that is not a name, two names, and a type that is not a
 //   multivector
-TEST_CASE("has_blade answers for every name without an error") {
-  static_assert(!core::has_blade<Line<double>, "e14">);
-  static_assert(!core::has_blade<Line<double>, "e24">);
-  static_assert(!core::has_blade<Line<double>, "e34">);
-  static_assert(!core::has_blade<Line<double>, "e13">);
-  static_assert(!core::has_blade<Line<double>, "e1">);
-  static_assert(!core::has_blade<Line<double>, "e5">);
-  static_assert(!core::has_blade<Line<double>, "x1">);
-  static_assert(!core::has_blade<Line<double>, "e0">);
-  static_assert(!core::has_blade<Line<double>, "e11">);
-  static_assert(!core::has_blade<Line<double>, "e1 e2">);
-  static_assert(!core::has_blade<Line<double>, "">);
-  static_assert(!core::has_blade<Empty<double>, "1">);
-  static_assert(!core::has_blade<std::array<double, 6>, "e41">);
-  static_assert(core::has_blade<const Line<double>&, "e41">);
-  static_assert(core::has_blade<Motor<float>, "1">);
-  CHECK(core::has_blade<Line<double>, "e12">);
+TEST_CASE("has_name answers for every name without an error") {
+  static_assert(!core::has_name<Line<double>, "e14">);
+  static_assert(!core::has_name<Line<double>, "e24">);
+  static_assert(!core::has_name<Line<double>, "e34">);
+  static_assert(!core::has_name<Line<double>, "e13">);
+  static_assert(!core::has_name<Line<double>, "e1">);
+  static_assert(!core::has_name<Line<double>, "e5">);
+  static_assert(!core::has_name<Line<double>, "x1">);
+  static_assert(!core::has_name<Line<double>, "e0">);
+  static_assert(!core::has_name<Line<double>, "e11">);
+  static_assert(!core::has_name<Line<double>, "e1 e2">);
+  static_assert(!core::has_name<Line<double>, "">);
+  static_assert(!core::has_name<Empty<double>, "1">);
+  static_assert(!core::has_name<std::array<double, 6>, "e41">);
+  static_assert(core::has_name<const Line<double>&, "e41">);
+  static_assert(core::has_name<Motor<float>, "1">);
+  CHECK(core::has_name<Line<double>, "e12">);
+}
+
+// Reference: independent value: an oriented name stands for the canonical
+//   blade of its indices times the parity of their inversions, so in rigid(3)
+//   e234 is e423 and e4321 is e1234, while e14 = -e41, e32 = -e23,
+//   e324 = -e423, e21 = -e12, and e2134 = -e1234; contract: has_name is true
+//   exactly for a name that get reads, a name that stands for a blade of the
+//   layout with the orientation the layout gives it however the name is
+//   spelled, and false, never an error, for a blade that the layout holds
+//   with the other orientation and for a blade that it lacks
+TEST_CASE("has_name is true for the oriented names that get reads") {
+  using Bivectors = core::mv<rga3, core::of_grade<4, 2>, std::int64_t>;
+  static_assert(core::has_name<Line<std::int64_t>, "e41">);
+  static_assert(core::has_name<Plane<std::int64_t>, "e423">);
+  static_assert(core::has_name<Bivectors, "e12">);
+  static_assert(core::has_name<const Motor<std::int64_t>&, "e1234">);
+
+  // Another spelling of a blade with the layout's orientation.
+  static_assert(core::has_name<Plane<std::int64_t>, "e234">);
+  static_assert(core::has_name<Motor<std::int64_t>, "e4321">);
+
+  // A blade that the layout holds, named with the other orientation.
+  static_assert(!core::has_name<Line<std::int64_t>, "e14">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e32">);
+  static_assert(!core::has_name<Plane<std::int64_t>, "e324">);
+  static_assert(!core::has_name<Bivectors, "e21">);
+  static_assert(!core::has_name<Motor<std::int64_t>, "e2134">);
+
+  // A blade that the layout lacks, a text that is not a name, and a type
+  // that is not a multivector.
+  static_assert(!core::has_name<Line<std::int64_t>, "e1">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e1234">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e5">);
+  static_assert(!core::has_name<Line<std::int64_t>, "x1">);
+  static_assert(!core::has_name<std::int64_t, "1">);
+
+  // get reads the place of each accepted name: the plane's e423 is its
+  // first place, the motor's e1234 its last.
+  constexpr Plane<std::int64_t> plane{1, 2, 3, 4};
+  constexpr Motor<std::int64_t> motor{1, 2, 3, 4, 5, 6, 7, 8};
+  static_assert(get<"e234">(plane) == 1);
+  static_assert(get<"e4321">(motor) == 8);
+
+  const volatile std::int64_t one = 1;
+  const Plane<std::int64_t> at_run_time{one, 2, 3, 4};
+  CHECK(get<"e234">(at_run_time) == 1);
+  CHECK(core::has_name<Plane<std::int64_t>, "e234">);
+  CHECK_FALSE(core::has_name<Plane<std::int64_t>, "e324">);
 }
 
 // Reference: contract: the rejecting overload of get and the constructor for
 //   a wrong count make generic code that probes a call or a construction
-//   told yes, while has_blade answers no, as their comments say
+//   told yes, while has_name answers no, as their comments say
 TEST_CASE("Probes of get and of construction answer yes for a misuse") {
   static_assert(requires(Line<double>& line) { get<"e1">(line); });
-  static_assert(!core::has_blade<Line<double>, "e1">);
+  static_assert(!core::has_name<Line<double>, "e1">);
   static_assert(std::is_constructible_v<Line<double>, double, double, double>);
   CHECK(requires(Line<double>& line) { get<"e41">(line); });
 }
@@ -878,12 +1001,12 @@ TEST_CASE("get reads names in an algebra of nine generators") {
   static_assert(named_at<Nine, "e19">(0, 0b100000001, 1));
   static_assert(named_at<Nine, "e9">(1, 0b100000000, 1));
   static_assert(named_at<Nine, "e123456789">(2, 0b111111111, 1));
-  static_assert(!core::has_blade<Nine, "e91">); // the other orientation
+  static_assert(!core::has_name<Nine, "e91">); // the other orientation
   Nine x{1, 2, 3};
   get<"e9">(x) = 5.0;
   CHECK(get<"e19">(x) == 1.0);
   CHECK(get<"e9">(x) == 5.0);
-  CHECK(core::has_blade<Nine, "e123456789">);
+  CHECK(core::has_name<Nine, "e123456789">);
 }
 
 // Applying plans and maps, converting between layouts, and truncating.
@@ -2064,6 +2187,91 @@ TEST_CASE("truncate is found beside the names it shares") {
         std::complex<double>{});
   const std::tuple<int> one{1};
   CHECK(std::get<0>(one) == 1);
+}
+
+// Reference: contract: part keeps each blade of the target that the input
+//   holds, with the sign of the conversion, gives zero for a blade of the
+//   target that the input lacks, takes the target by its type or by its
+//   layout, and drops the rest whatever it holds, so where the dropped part
+//   is zero it equals truncate in type and value, and where it is not zero,
+//   a motor's scalar 7 and antiscalar 9, it gives the line all the same,
+//   over every scalar, at compile time and at run time
+TEST_CASE_TEMPLATE("part keeps the blades of its target", T, std::int64_t,
+                   rational, float, double, std::complex<double>) {
+  static_assert(std::same_as<decltype(core::part<Line<T>>(Motor<T>{})),
+                             decltype(core::truncate<Line<T>>(Motor<T>{}))>);
+  static_assert(
+      std::same_as<decltype(core::part<line_layout>(Motor<T>{})), Line<T>>);
+  static_assert(
+      std::same_as<decltype(core::part<const Line<T>&>(Motor<T>{})), Line<T>>);
+  static_assert(core::part<Line<T>>(motor_of_line<T>(0, 0)) ==
+                core::truncate<Line<T>>(motor_of_line<T>(0, 0)));
+  static_assert(core::part<line_layout>(motor_of_line<T>(0, 0)) ==
+                counting_line<T>());
+  static_assert(core::part<OtherLine<T>>(motor_of_line<T>(0, 0)) ==
+                OtherLine<T>{counting_line<T>()});
+  static_assert(core::part<Motor<T>>(counting_line<T>()) ==
+                Motor<T>{counting_line<T>()});
+  constexpr auto k = [](int i) { return scalar_of<T>(i); };
+  static_assert(core::part<Flector<T>>(Point<T>{k(1), k(2), k(3), k(4)}) ==
+                Flector<T>{Point<T>{k(1), k(2), k(3), k(4)}});
+
+  // A dropped part that is not zero.
+  static_assert(core::part<Line<T>>(motor_of_line<T>(7, 9)) ==
+                counting_line<T>());
+  static_assert(core::part<line_layout>(motor_of_line<T>(7, 9)) ==
+                counting_line<T>());
+
+  const volatile int one = 1;
+  const Motor<T> zero_rest = motor_of_line<T>(0 * one, 0);
+  CHECK(core::part<Line<T>>(zero_rest) == core::truncate<Line<T>>(zero_rest));
+  CHECK(core::part<line_layout>(zero_rest) ==
+        core::truncate<line_layout>(zero_rest));
+  const Motor<T> nonzero = motor_of_line<T>(7 * one, 9);
+  CHECK(core::part<Line<T>>(nonzero) == counting_line<T>());
+  CHECK(core::part<line_layout>(nonzero) == counting_line<T>());
+}
+
+namespace {
+
+// Whether taking the part on a line of the motor with the given scalar and
+// antiscalar is a constant expression, as truncates_in_a_constant_evaluation
+// asks of truncate.
+template <class T, int Scalar, int Antiscalar = 0>
+concept parts_in_a_constant_evaluation = requires {
+  typename std::integral_constant<
+      bool, core::part<line_layout>(motor_of_line<T>(Scalar, Antiscalar)) ==
+                counting_line<T>()>;
+};
+
+} // namespace
+
+// Reference: contract: part never checks what it drops, so over an exact
+//   scalar, std::int64_t or the test rational, the part on a line of a motor
+//   whose scalar or antiscalar is 7 is a constant expression, while truncate
+//   of the same motor fails its check and is not one
+TEST_CASE("part never checks what it drops, where truncate does") {
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 0>);
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 7>);
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 0, 7>);
+  static_assert(parts_in_a_constant_evaluation<rational, 7>);
+  static_assert(parts_in_a_constant_evaluation<rational, 0, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 0, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<rational, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<rational, 0, 7>);
+  CHECK(parts_in_a_constant_evaluation<std::int64_t, 7>);
+  CHECK_FALSE(truncates_in_a_constant_evaluation<std::int64_t, 7>);
+}
+
+// Reference: contract: part is called without a namespace, as
+//   argument-dependent lookup finds it, for a scalar from namespace std
+TEST_CASE("part is found by argument-dependent lookup") {
+  const Motor<std::complex<double>> motor{};
+  const Line<std::complex<double>> line = part<line_layout>(motor);
+  CHECK(line == Line<std::complex<double>>{});
+  CHECK(get<"e41">(part<Line<std::complex<double>>>(motor)) ==
+        std::complex<double>{});
 }
 
 namespace {

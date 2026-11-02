@@ -31,6 +31,13 @@
 //   Line back = galoot::core::truncate<Line>(m);  // drops 1 and e1234
 //   // Motor wrong = axis;  does not compile: conversions are explicit
 //
+// truncate checks, for an exact scalar, that what it drops is zero; part
+// takes the same components and never checks, for coefficients that are
+// meant to be dropped:
+//
+//   Motor turn{1, 0, 0, 1, 0, 0, 0, 0};
+//   Line l = galoot::core::part<Line>(turn);  // e43 alone; 1 is dropped
+//
 // Since e41 = -e14, the coefficient written on e41 multiplies -e14, and no
 // sign is hidden from the formula. Naming the layout and the type, as above,
 // also lets Clang name them in some of its own errors, such as the
@@ -55,6 +62,31 @@
 
 namespace galoot::core {
 
+namespace detail {
+
+// The requirements of ring_scalar after semiregular, each named, so that a
+// multivector can report the first one a scalar fails with its own message.
+template <class T>
+concept ring_addition = requires(const T& a, const T& b) {
+  { a + b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_subtraction = requires(const T& a, const T& b) {
+  { a - b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_multiplication = requires(const T& a, const T& b) {
+  { a * b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_unary_minus = requires(const T& a) {
+  { -a } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_from_coefficient = std::constructible_from<T, coefficient_type>;
+
+} // namespace detail
+
 /// A scalar type a multivector can hold.
 ///
 /// Requires of T: std::semiregular (default construction, copies, and
@@ -68,13 +100,11 @@ namespace galoot::core {
 /// T, and +, -, * obey the ring laws. Equality is not required, so that a
 /// scalar holding several lanes at once is accepted.
 template <class T>
-concept ring_scalar = !std::same_as<std::remove_cv_t<T>, bool> &&
-                      std::semiregular<T> && requires(const T& a, const T& b) {
-                        { a + b } -> std::convertible_to<T>;
-                        { a - b } -> std::convertible_to<T>;
-                        { a * b } -> std::convertible_to<T>;
-                        { -a } -> std::convertible_to<T>;
-                      } && std::constructible_from<T, coefficient_type>;
+concept ring_scalar =
+    !std::same_as<std::remove_cv_t<T>, bool> && std::semiregular<T> &&
+    detail::ring_addition<T> && detail::ring_subtraction<T> &&
+    detail::ring_multiplication<T> && detail::ring_unary_minus<T> &&
+    detail::ring_from_coefficient<T>;
 
 /// A ring scalar whose arithmetic is exact, as std::numeric_limits says:
 /// the integer types, and a type of the user's whose numeric_limits
@@ -135,7 +165,11 @@ enum class ScalarFault : std::uint8_t {
   boolean,
   not_default_initializable,
   not_copyable,
-  no_ring_operations,
+  no_addition,
+  no_subtraction,
+  no_multiplication,
+  no_unary_minus,
+  not_from_coefficient,
 };
 
 template <class T>
@@ -148,8 +182,16 @@ template <class T>
     return ScalarFault::not_default_initializable;
   } else if constexpr (!std::copyable<T>) {
     return ScalarFault::not_copyable;
-  } else if constexpr (!ring_scalar<T>) {
-    return ScalarFault::no_ring_operations;
+  } else if constexpr (!ring_addition<T>) {
+    return ScalarFault::no_addition;
+  } else if constexpr (!ring_subtraction<T>) {
+    return ScalarFault::no_subtraction;
+  } else if constexpr (!ring_multiplication<T>) {
+    return ScalarFault::no_multiplication;
+  } else if constexpr (!ring_unary_minus<T>) {
+    return ScalarFault::no_unary_minus;
+  } else if constexpr (!ring_from_coefficient<T>) {
+    return ScalarFault::not_from_coefficient;
   } else {
     return ScalarFault::none;
   }
@@ -414,20 +456,22 @@ concept holds_several_values =
 /// of Blades.blades[i].mask.
 ///
 /// Requires: Alg is metric_like and T is std::destructible, or the type does
-/// not match. Checked when the type is used, each with its own message, in
-/// this order, so that a scalar with several faults gives one error: T is
-/// not a reference and not const or volatile; T is not bool; T is default
-/// constructible; T is copyable and assignable; T is a ring_scalar. Then, also
-/// each with its own message: every blade of the layout names only e1 to en;
-/// every sign is +1 or -1; and no mask appears twice, in either orientation. A
-/// layout is a list of oriented blades and does not keep the algebra named in
-/// blades<Alg, ...>: any algebra with enough generators accepts it. Generic
-/// code that only names mv<A, B, std::string> is told that it is a type; it
-/// fails when used. The repeated-mask check compares every pair of blades,
-/// so the compiler's limits on constant evaluation bound the size of a
-/// layout. Measured at the default limits, alike at -O0 and -O2 and with or
-/// without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double> builds for n
-/// up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on GCC 16.
+/// not match. Checked when the type is used, each with its own message, in this
+/// order, so that a scalar with several faults gives one error: T is not a
+/// reference and not const or volatile; T is not bool; T is default
+/// constructible; T is copyable and assignable; and then the requirements of
+/// ring_scalar in its order: a + b, a - b, a * b, -a, and construction from
+/// coefficient_type. Then, also each with its own message: every blade of the
+/// layout names only e1 to en; every sign is +1 or -1; and no mask appears
+/// twice, in either orientation. A layout is a list of oriented blades and does
+/// not keep the algebra named in blades<Alg, ...>: any algebra with enough
+/// generators accepts it. Generic code that only names mv<A, B, std::string> is
+/// told that it is a type; it fails when used. The repeated-mask check compares
+/// every pair of blades, so the compiler's limits on constant evaluation bound
+/// the size of a layout. Measured at the default limits, alike at -O0 and -O2
+/// and with or without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double>
+/// builds for n up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on
+/// GCC 16.
 /// Guarantees: not an aggregate; trivially copyable and standard-layout when
 /// T is, with sizeof equal to the number of blades times sizeof(T) for a
 /// nonempty layout; usable as a template argument when T is a structural
@@ -454,8 +498,16 @@ private:
       scalar_fault != detail::ScalarFault::not_default_initializable;
   static constexpr bool scalar_is_copyable =
       scalar_fault != detail::ScalarFault::not_copyable;
-  static constexpr bool scalar_has_ring_operations =
-      scalar_fault != detail::ScalarFault::no_ring_operations;
+  static constexpr bool scalar_has_addition =
+      scalar_fault != detail::ScalarFault::no_addition;
+  static constexpr bool scalar_has_subtraction =
+      scalar_fault != detail::ScalarFault::no_subtraction;
+  static constexpr bool scalar_has_multiplication =
+      scalar_fault != detail::ScalarFault::no_multiplication;
+  static constexpr bool scalar_has_unary_minus =
+      scalar_fault != detail::ScalarFault::no_unary_minus;
+  static constexpr bool scalar_is_made_from_an_integer_coefficient =
+      scalar_fault != detail::ScalarFault::not_from_coefficient;
   static_assert(scalar_is_not_a_reference_or_qualified,
                 "mv: the scalar type is a reference or is const or volatile; "
                 "give the type itself, as in double for const double");
@@ -471,10 +523,22 @@ private:
                 "number is; give it copy construction and copy assignment, "
                 "which a move-only type or a class with a const member "
                 "lacks");
-  static_assert(scalar_has_ring_operations,
-                "mv: the scalar type must support +, -, *, unary - and "
-                "construction from an integer coefficient; use a number type "
-                "such as double or an integer type");
+  static_assert(scalar_has_addition,
+                "mv: the scalar type has no addition; give it a + b, or use a "
+                "number type such as double");
+  static_assert(scalar_has_subtraction,
+                "mv: the scalar type has no subtraction; give it a - b, or "
+                "use a number type such as double");
+  static_assert(scalar_has_multiplication,
+                "mv: the scalar type has no multiplication; give it a * b, or "
+                "use a number type such as double");
+  static_assert(scalar_has_unary_minus,
+                "mv: the scalar type has no unary minus; give it -a, which "
+                "the products use for a term of coefficient -1");
+  static_assert(scalar_is_made_from_an_integer_coefficient,
+                "mv: the scalar type cannot be made from an integer "
+                "coefficient; give it a constructor from std::int64_t, or use "
+                "a number type such as double");
 
   static constexpr bool layout_names_only_generators_of_the_algebra =
       detail::blades_in_algebra<
@@ -881,6 +945,33 @@ concept multivector_of =
     std::same_as<typename std::remove_cvref_t<Target>::algebra_type, Alg> &&
     std::same_as<typename std::remove_cvref_t<Target>::scalar_type, T>;
 
+// Whether two multivector types X and Y, without cv-qualification or
+// reference, have the same algebra, and the same scalar type.
+template <class X, class Y>
+inline constexpr bool same_algebra_v = false;
+
+template <class Alg, blade_set A, blade_set B, class T, class U>
+inline constexpr bool same_algebra_v<mv<Alg, A, T>, mv<Alg, B, U>> = true;
+
+template <class X, class Y>
+inline constexpr bool same_scalar_v = false;
+
+template <class Alg, class Beta, blade_set A, blade_set B, class T>
+inline constexpr bool same_scalar_v<mv<Alg, A, T>, mv<Beta, B, T>> = true;
+
+/// Two multivectors that a product or a sum accepts: one algebra, one scalar
+/// type.
+template <class X, class Y>
+concept product_operands =
+    multivector<X> && multivector<Y> &&
+    same_algebra_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>> &&
+    same_scalar_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>>;
+
+/// Two multivectors that a product or a sum rejects.
+template <class X, class Y>
+concept mismatched_operands =
+    multivector<X> && multivector<Y> && !product_operands<X, Y>;
+
 } // namespace detail
 
 /// x on the layout To: each blade of To that x holds, in either
@@ -901,7 +992,9 @@ concept multivector_of =
 /// unchecked at run time. For a rounding scalar nothing is checked: a
 /// coefficient that should be zero may be a rounding error away from it,
 /// and truncate has no error bound to test it against; the operations that
-/// drop part of their own result check it against their own bound.
+/// drop part of their own result check it against their own bound. To drop
+/// coefficients that are not zero on purpose, use part, which takes the
+/// same components and never checks.
 /// Guarantees: the result is exact, for any scalar.
 template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
@@ -929,12 +1022,73 @@ truncate(const mv<Alg, From, T>& x) {
 /// such as double, an mv of another algebra or scalar, or a class derived
 /// from an mv, with one error. It returns a default value of the target,
 /// where it has one, so that a use of the result raises no second error.
+/// Its return type is deduced from its body, so a requires-expression that
+/// asks whether truncate<double>(x) is valid does not answer: deducing the
+/// type compiles the message, and the program fails to compile there. Ask
+/// whether the target is an mv type of x's algebra and scalar instead.
 template <class Target, metric_like Alg, blade_set From, ring_scalar T>
   requires(!detail::multivector_of<Target, Alg, T>)
 constexpr auto truncate(const mv<Alg, From, T>& x) {
   static_assert(false, "truncate: the target must be an mv type of the same "
                        "algebra and scalar type, not a class derived from "
                        "one; truncate changes only which blades are held");
+  if constexpr (std::default_initializable<std::remove_cvref_t<Target>>) {
+    return std::remove_cvref_t<Target>{};
+  } else {
+    return x;
+  }
+}
+
+/// The part of x on the layout To: the components truncate<To>(x) takes,
+/// with the same result type and value, and never a check. Each blade of To
+/// that x holds, in either orientation, takes x's coefficient, negated where
+/// the two layouts give the blade opposite orientations; every other blade
+/// of To is zero; and the blades of x that To lacks are dropped, whatever
+/// they hold, as the grade-2 part of a multivector drops its other grades.
+/// part<Line>(motor) names the target by its type and
+/// part<line_layout>(motor) by its layout; the type must be an mv type
+/// itself, as for truncate. Found by argument-dependent lookup, so the call
+/// needs no namespace, unless a variable or a type named part is in scope:
+/// then part<Line>(motor) is not read as a call of this function and fails
+/// to compile; write galoot::core::part<Line>(motor). A function named part
+/// in scope does not stop it.
+///
+/// Requires: nothing of the dropped coefficients. Nothing is checked, for
+/// any scalar, in a constant evaluation or at run time, whatever
+/// GALOOT_CHECKING is.
+/// Guarantees: the result is exact, for any scalar.
+template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, To, T> part(const mv<Alg, From, T>& x) {
+  mv<Alg, To, T> kept;
+  kept.coefficients =
+      detail::run_map<detail::identity_kernel<From, To>, To.size()>(
+          x.coefficients,
+          std::make_index_sequence<detail::identity_kernel<From, To>.size()>{});
+  return kept;
+}
+
+/// part<Target::layout>(x) for a multivector type Target of x's algebra and
+/// scalar type, with any cv-qualification and reference.
+template <class Target, metric_like Alg, blade_set From, ring_scalar T>
+  requires detail::multivector_of<Target, Alg, T>
+[[nodiscard]] constexpr std::remove_cvref_t<Target>
+part(const mv<Alg, From, T>& x) {
+  return part<std::remove_cvref_t<Target>::layout>(x);
+}
+
+/// Rejects a target that is not an mv type of x's algebra and scalar type,
+/// such as double, an mv of another algebra or scalar, or a class derived
+/// from an mv, with one error, as for truncate. It returns a default value
+/// of the target, where it has one, so that a use of the result raises no
+/// second error. As for truncate, its return type is deduced from its body,
+/// so a requires-expression that asks whether part<double>(x) is valid does
+/// not answer: the program fails to compile there, with this message.
+template <class Target, metric_like Alg, blade_set From, ring_scalar T>
+  requires(!detail::multivector_of<Target, Alg, T>)
+constexpr auto part(const mv<Alg, From, T>& x) {
+  static_assert(false, "part: the target must be an mv type of the same "
+                       "algebra and scalar type, not a class derived from "
+                       "one; part changes only which blades are held");
   if constexpr (std::default_initializable<std::remove_cvref_t<Target>>) {
     return std::remove_cvref_t<Target>{};
   } else {
@@ -1043,25 +1197,29 @@ using coefficient_reference = decltype(std::forward_like<X>(
 
 } // namespace detail
 
-/// Whether the multivector type X, with any cv-qualification and reference,
-/// holds the blade named Name with the orientation the name gives it.
+/// Whether Name is a name that get reads in the multivector type X, with any
+/// cv-qualification and reference: a name of a blade of X's layout, with the
+/// orientation the layout gives it, however its indices are ordered. In a
+/// line that stores e41 = -e14, has_name<Line, "e41"> is true and
+/// has_name<Line, "e14"> is false, though the line holds that blade.
 ///
 /// Requires: nothing. False, never an error, for a type that is not a
 /// multivector, a name that is not valid in its algebra, a blade the layout
 /// lacks, and a blade the layout holds with the other orientation. A name
 /// is "1" or e followed by generator indices, one digit each, as for blades.
+/// Whether a layout holds a blade in either orientation is not asked by a
+/// concept of its own.
 template <class X, detail::name_list Name>
-concept has_blade =
-    multivector<X> &&
-    detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
-        detail::NameLookup::found;
+concept has_name = multivector<X> &&
+                   detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
+                       detail::NameLookup::found;
 
 /// The coefficient of x on the blade named Name: get<"e43">(line) reads it,
 /// and get<"e43">(line) = 1.0 writes it. The name is oriented, as in the
 /// layout: a line that stores e41 = -e14 is read with "e41". The function is
 /// found by argument-dependent lookup, so the call needs no namespace.
 ///
-/// Requires: has_blade<X, Name>. Any other name is rejected at compile time
+/// Requires: has_name<X, Name>. Any other name is rejected at compile time
 /// with one error whose message names the cause: a blade the layout lacks
 /// in either orientation; one it holds with the other orientation (use the
 /// name the layout gives and negate the value; for a layout in canonical
@@ -1072,13 +1230,13 @@ concept has_blade =
 /// generators, where names are not read and coefficients are reached by
 /// position. Because the rejecting overload exists, a
 /// requires-expression that asks whether get<"e1">(line) is valid is told
-/// yes for any name; ask has_blade instead.
+/// yes for any name; ask has_name instead.
 /// Guarantees: a reference to the coefficient, with the value category of
 /// x: an rvalue reference for an rvalue, so the result of get on a
 /// temporary must not outlive it. The position is found at compile time,
 /// once for each type and name.
 template <detail::name_list Name, class X>
-  requires has_blade<X, Name>
+  requires has_name<X, Name>
 // x is forwarded by std::forward_like, which gives the coefficient the value
 // category of x; the check counts only std::forward.
 // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
@@ -1088,11 +1246,11 @@ template <detail::name_list Name, class X>
   return std::forward_like<X>(x.coefficients[at]);
 }
 
-/// Rejects any name that has_blade refuses, with the message for its cause.
+/// Rejects any name that has_name refuses, with the message for its cause.
 /// Its return type is that of get, so that the message is the only error
 /// and a requires-expression gets an answer without compiling the message.
 template <detail::name_list Name, class X>
-  requires(multivector<X> && !has_blade<X, Name>)
+  requires(multivector<X> && !has_name<X, Name>)
 // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward): as for get above.
 constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
   using enum detail::NameLookup;

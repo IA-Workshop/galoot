@@ -46,6 +46,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.3 | a point projected onto a unitized plane has weight +1 | no |
 | 4.4 | transform(x, V) has the blade set of x | no |
 | 4.5 | truncate checks that the part it drops is zero | yes |
+| 4.5 | part never checks what it drops | yes |
 | 5.1 | a point x e1 + y e2 + z e3 + w e4 has weight w | no |
 | 5.2 | the line through unitized points p and q has direction q - p | no |
 | 5.3 | a point p lies on the plane g when p v g = 0 | no |
@@ -63,3 +64,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 7.1 | a & b is the antiwedge antiwedge(a, b) | yes |
 | 7.1 | ~a is the reverse reverse(a) | yes |
 | 7.1 | !a is the right complement right_complement(a) | yes |
+| 7.1 | the sum and the difference of two values of one type add and subtract their coefficients place by place | yes |
+| 7.1 | a scalar s times a multivector, on either side, multiplies each coefficient by s | yes |
+| 7.1 | a / s divides each coefficient by s | yes |
+| 7.1 | the negation of a multivector negates each coefficient | yes |

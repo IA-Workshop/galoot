@@ -1,0 +1,27 @@
+after: e2be608017bd; before: a2468eb; 3 repeats pinned to CPU 4; instructions retired on that core, mean and spread in M; wall time mean in s; peak memory max in KiB
+gcc core_only/before: 938.0 M (spread 0.1), 0.141 s, 82120 KiB
+gcc core_only/after: 944.9 M (spread 0.4), 0.124 s, 82200 KiB; change +6.9 M (+0.73%)
+gcc smoke/before: 1135.8 M (spread 0.1), 0.136 s, 90540 KiB
+gcc smoke/after: 1142.6 M (spread 0.1), 0.140 s, 92572 KiB; change +6.7 M (+0.59%)
+gcc mv/before: 64989.2 M (spread 10.2), 4.621 s, 691632 KiB
+gcc mv/after: 65534.5 M (spread 38.2), 4.664 s, 708560 KiB; change +545.2 M (+0.84%)
+gcc product/before: 48076.5 M (spread 60.1), 2.905 s, 439268 KiB
+gcc product/after: 48012.3 M (spread 57.1), 2.900 s, 439148 KiB; change -64.1 M (-0.13%)
+gcc unary/before: 15062.2 M (spread 31.2), 1.176 s, 344848 KiB
+gcc unary/after: 15088.0 M (spread 9.3), 1.174 s, 344644 KiB; change +25.8 M (+0.17%)
+gcc identities/before: 294989.6 M (spread 206.5), 17.343 s, 1413304 KiB
+gcc identities/after: 295611.2 M (spread 595.1), 17.401 s, 1417772 KiB; change +621.6 M (+0.21%)
+gcc linear/after: 34060.9 M (spread 26.0), 2.434 s, 412848 KiB
+clang core_only/before: 949.1 M (spread 2.6), 0.136 s, 115820 KiB
+clang core_only/after: 957.0 M (spread 3.9), 0.136 s, 116084 KiB; change +7.9 M (+0.84%)
+clang smoke/before: 1046.5 M (spread 1.4), 0.149 s, 130176 KiB
+clang smoke/after: 1056.7 M (spread 1.0), 0.149 s, 130600 KiB; change +10.2 M (+0.97%)
+clang mv/before: 57581.4 M (spread 125.8), 3.993 s, 449172 KiB
+clang mv/after: 58197.5 M (spread 136.7), 4.033 s, 453088 KiB; change +616.1 M (+1.07%)
+clang product/before: 47939.4 M (spread 58.1), 2.839 s, 284768 KiB
+clang product/after: 47973.2 M (spread 27.3), 2.843 s, 285052 KiB; change +33.8 M (+0.07%)
+clang unary/before: 11607.6 M (spread 14.9), 0.961 s, 243236 KiB
+clang unary/after: 11642.8 M (spread 17.9), 0.968 s, 243656 KiB; change +35.2 M (+0.30%)
+clang identities/before: 299141.5 M (spread 365.1), 17.094 s, 714160 KiB
+clang identities/after: 300157.1 M (spread 592.7), 17.141 s, 717844 KiB; change +1015.6 M (+0.34%)
+clang linear/after: 29930.0 M (spread 130.3), 2.156 s, 334996 KiB

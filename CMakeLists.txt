@@ -22,6 +22,7 @@ target_sources(galoot_core INTERFACE
     include/galoot/core/bits.hpp
     include/galoot/core/blade_product.hpp
     include/galoot/core/blade_set.hpp
+    include/galoot/core/linear.hpp
     include/galoot/core/metric.hpp
     include/galoot/core/mv.hpp
     include/galoot/core/plan.hpp

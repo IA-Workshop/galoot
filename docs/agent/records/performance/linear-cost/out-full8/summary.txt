@@ -1,0 +1,7 @@
+at cd146a4d00af; 3 repeats pinned to CPU 4; instructions retired on that core, mean and spread in M; wall time mean in s; peak memory max in KiB
+gcc whole: 42151.0 M (spread 25.7), 3.073 s, 442552 KiB
+gcc types: 35751.0 M (spread 23.8), 2.656 s, 416776 KiB
+gcc no_full8: 34101.1 M (spread 3.5), 2.567 s, 411220 KiB
+clang whole: 37797.2 M (spread 22.1), 2.703 s, 347188 KiB
+clang types: 31615.5 M (spread 193.2), 2.403 s, 337072 KiB
+clang no_full8: 30023.2 M (spread 50.0), 2.309 s, 336148 KiB

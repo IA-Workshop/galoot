@@ -78,30 +78,6 @@ enum class ProductSpelling {
   ampersand_operator,
 };
 
-template <class X, class Y>
-inline constexpr bool same_algebra_v = false;
-
-template <class Alg, blade_set A, blade_set B, class T, class U>
-inline constexpr bool same_algebra_v<mv<Alg, A, T>, mv<Alg, B, U>> = true;
-
-template <class X, class Y>
-inline constexpr bool same_scalar_v = false;
-
-template <class Alg, class Beta, blade_set A, blade_set B, class T>
-inline constexpr bool same_scalar_v<mv<Alg, A, T>, mv<Beta, B, T>> = true;
-
-/// Two multivectors that a product accepts: one algebra, one scalar type.
-template <class X, class Y>
-concept product_operands =
-    multivector<X> && multivector<Y> &&
-    same_algebra_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>> &&
-    same_scalar_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>>;
-
-/// Two multivectors that a product rejects.
-template <class X, class Y>
-concept mismatched_operands =
-    multivector<X> && multivector<Y> && !product_operands<X, Y>;
-
 /// The only error of a mismatched product: the message names the product as
 /// written and the cause. Each condition compares the two algebras or the two
 /// scalar types themselves, so that the compiler prints them. Instantiated
