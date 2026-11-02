@@ -1590,6 +1590,45 @@ constexpr bool e1234_exact = core::detail::coefficients_exact<
     core::blades<diagonal4<G1, G2, G3, G4>, "e1234">,
     core::blades<diagonal4<G1, G2, G3, G4>, "e1234">, T>;
 
+// A scalar whose std::numeric_limits describe a binary floating type of 11
+// digits and an exponent range up to 2^16, the half precision of IEEE 754,
+// so that the check's exponent bound can be seen; it computes in float, and
+// the check reads only its limits.
+struct half_like {
+  float value = 0;
+  half_like() = default;
+  explicit half_like(std::int64_t v) : value(static_cast<float>(v)) {}
+  [[maybe_unused]] friend half_like operator+(half_like a, half_like b) {
+    return half_like{a.value + b.value};
+  }
+  [[maybe_unused]] friend half_like operator-(half_like a, half_like b) {
+    return half_like{a.value - b.value};
+  }
+  [[maybe_unused]] friend half_like operator*(half_like a, half_like b) {
+    return half_like{a.value * b.value};
+  }
+  [[maybe_unused]] friend half_like operator-(half_like a) {
+    return half_like{-a.value};
+  }
+
+private:
+  explicit half_like(float v) : value(v) {}
+};
+
+} // namespace
+
+/// half_like reads as the half precision of IEEE 754.
+template <>
+struct std::numeric_limits<half_like> {
+  static constexpr bool is_specialized = true;
+  static constexpr bool is_exact = false;
+  static constexpr int radix = 2;
+  static constexpr int digits = 11;
+  static constexpr int max_exponent = 16;
+};
+
+namespace {
+
 // The scalar of e1234 e1234 in diag(G1, G2, G3, G4), computed by apply over
 // T.
 template <int G1, int G2, int G3, int G4, class T>
@@ -1618,7 +1657,9 @@ constexpr T e12_squared() {
 //   digits) holds 2^24 - 1, 2^24, and 2^25 and not 2^24 + 1, double (53)
 //   holds 2^53 and not 32767^4, and long double (64 digits on x86-64) every
 //   one of them, and short holds -32768 = -(128 * 256) to 32767 = 7 * 31 *
-//   151 = 217 * 151 and not -32769 = -(9 * 3641) or 32768; contract: a
+//   151 = 217 * 151 and not -32769 = -(9 * 3641) or 32768, and a half
+//   precision float (11 digits, values below 2^16) holds 2047 and 2^15 and
+//   not 2049 or 2^16; contract: a
 //   product whose plan has a coefficient that the scalar type cannot hold
 //   exactly is rejected
 TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
@@ -1648,6 +1689,13 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   static_assert(e1234_exact<32767, 32767, 32767, 32767, rational>);
   static_assert(e1234_exact<32767, 32767, 32767, 32767, long double>);
   static_assert(e12_exact<24929, 673, long double>);
+  // Half precision: 2047 = 23 * 89 has 11 bits and 2049 = 3 * 683 twelve;
+  // 2^15 = 128 * 256 is below 2^16 and 2^16 = 256 * 256 is not.
+  static_assert(23 * 89 == 2047 && 3 * 683 == 2049);
+  static_assert(e12_exact<23, 89, half_like>);
+  static_assert(!e12_exact<3, 683, half_like>);
+  static_assert(e12_exact<128, 256, half_like>);
+  static_assert(!e12_exact<256, 256, half_like>);
   static_assert(!e12_exact<4096, 4096, short>);
   static_assert(e12_exact<217, 151, short>);
   static_assert(e12_exact<128, 256, short>);
@@ -1685,6 +1733,9 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   CHECK(e12_exact<8192, 4096, float>);
   CHECK(e1234_exact<32767, 32767, 32767, 32767, long double>);
   CHECK(e12_squared<24929, 673, long double>() == -16777217.0L);
+  CHECK(e12_exact<128, 256, half_like>);
+  CHECK_FALSE(e12_exact<256, 256, half_like>);
+  CHECK_FALSE(e12_exact<3, 683, half_like>);
 }
 
 namespace {
