@@ -150,6 +150,9 @@ TEST_CASE("products of two vectors") {
   CHECK(value_on(core::wedge(e1, e1), 0b0011) == 0);
 }
 
+// Reference: definition: a * b is the geometric product geometric_product(a,
+//   b), and a ^ b is the wedge of a and b, each with the type and the value
+//   of the named function
 TEST_CASE("the operators are the named functions") {
   using X = core::mv<rga3, core::full<4>, double>;
   using L = core::mv<rga3, core::of_grade<4, 2>, double>;

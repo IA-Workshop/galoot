@@ -1,6 +1,6 @@
 # 0018 WU9: geometric product, wedge, and their operators
 
-- Status: claimed 2026-11-02 (planner: Claude, agent, Sonnet 5.5; implementer and reviewers to be named by the coordinator at branching). Not started.
+- Status: implemented on `feature/core-products` 2026-11-02 by the coordinating agent (Claude, Sonnet 5.5), without sub-agents; awaiting the W5 review and the final seven-preset run.
 - Branch `feature/core-products`, worktree `.claude/worktrees/core-products`, from `develop` at the claim commit. Decision numbers 0162 to 0169 (0170 belongs to the run log, 0130 to the job pool).
 - Source of scope: plan 0001 (WU9, size S), plan 0016 section 15 "Deferred" and its R6, decision 0159, the 2026-11-02 handoff.
 - Goal: public `geometric_product(x, y)` and `wedge(x, y)` on multivectors of one algebra, with the operators `*` and `^` (CONVENTIONS 7.1), each a one-line caller of `detail::apply`; the enumerator rename of decision 0159; a mixed-algebra catch-all with a message in the user's terms.
@@ -71,4 +71,8 @@ One implementer (cpp-expert role, Opus, high), one doctest-expert for the tests,
 
 ## 10. Outcome
 
-Not started.
+Departures from section 4 (C20): commits 2 to 4 were made as one commit (functions, operators, catch-alls and tests together), then a second commit for lint fixes; the lossy-conversion rewording (section 4, commit 5) is not yet done; no sub-agents were used, so there is no agent cost row and no independent test author. The new code is `include/galoot/core/product.hpp` (included by `core.hpp`); tests are `test/core/product_test.cpp` and eight compile-fail sources.
+
+Evidence so far: gcc-debug full suite after the rename (239 of 239); `core.product*` on gcc-debug and clang-debug; the lint preset builds; the trace gate exits 0 with row 7.1 now `yes`; six mutants killed on both compilers (records/mutations/0018-products).
+
+Not yet done: all seven presets from empty trees at the final revision; the lossy-conversion message rewording; the W5 blind review.
