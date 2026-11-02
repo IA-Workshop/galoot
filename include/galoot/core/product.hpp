@@ -1,22 +1,28 @@
 #ifndef GALOOT_CORE_PRODUCT_HPP
 #define GALOOT_CORE_PRODUCT_HPP
 
-// The geometric product and the wedge of two multivectors of one algebra, as
-// functions and as the operators * and ^.
+// The geometric product, the wedge, and their antiproducts of two
+// multivectors of one algebra, as functions and as the operators * ^ % &.
 //
 //   using Point = galoot::core::mv<rga3, point_layout, double>;  // e1 e2 e3 e4
+//   using Plane = galoot::core::mv<rga3, plane_layout, double>;
 //   Point p{1, 0, 0, 1};
 //   Point q{0, 1, 0, 1};
+//   Plane g{0, 0, 1, 0};  // e412, the plane z = 0
 //   auto line = galoot::core::wedge(p, q);  // or p ^ q
 //   auto m = galoot::core::geometric_product(p, q);  // or p * q
+//   auto s = galoot::core::antiwedge(p, g);  // or p & g: zero, p is on g
+//   auto n = galoot::core::geometric_antiproduct(p, g);  // or p % g
 //
 // The result holds exactly the blades the product can reach, each in the
 // canonical order of its grade with orientation +1, so its type follows from
 // the operands' types and is not a layout the user named: the wedge of two
-// vectors is an mv on the bivector blades in canonical order. Convert to a
-// named layout (Line{p ^ q}) to read the blades under the orientations that
-// layout gives; comparing two values with == needs them to have one layout.
-// The operator ^ binds below ==, so parenthesize it: (p ^ q) == line.
+// vectors is an mv on the bivector blades in canonical order, and its type
+// is mv<Alg, wedge_layout<Alg, A, B>, T>. Convert to a named layout
+// (Line{p ^ q}) to read the blades under the orientations that layout gives;
+// comparing two values with == needs them to have one layout. The operators
+// ^ and & bind below ==, so parenthesize them: (p ^ q) == line. The
+// operator % binds as * does.
 //
 // Both operands must be mv types of the same algebra and the same scalar
 // type; two mv types that differ in either are rejected at compile time with
@@ -46,6 +52,10 @@ enum class ProductSpelling {
   wedge_function,
   times_operator,
   caret_operator,
+  geometric_antiproduct_function,
+  antiwedge_function,
+  percent_operator,
+  ampersand_operator,
 };
 
 template <class X, class Y>
@@ -99,10 +109,30 @@ constexpr std::remove_cvref_t<X> reject_product() {
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "a * b: the operands are in different algebras; give both types the "
           "same algebra tag");
-    } else {
+    } else if constexpr (Spelling == caret_operator) {
       static_assert(
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "a ^ b: the operands are in different algebras; give both types the "
+          "same algebra tag");
+    } else if constexpr (Spelling == geometric_antiproduct_function) {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "geometric_antiproduct: the operands are in different algebras; give "
+          "both types the same algebra tag");
+    } else if constexpr (Spelling == antiwedge_function) {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "antiwedge: the operands are in different algebras; give both types "
+          "the same algebra tag");
+    } else if constexpr (Spelling == percent_operator) {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "a % b: the operands are in different algebras; give both types the "
+          "same algebra tag");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "a & b: the operands are in different algebras; give both types the "
           "same algebra tag");
     }
   } else {
@@ -121,10 +151,30 @@ constexpr std::remove_cvref_t<X> reject_product() {
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "a * b: the operands have different scalar types; give both types "
           "the same scalar type");
-    } else {
+    } else if constexpr (Spelling == caret_operator) {
       static_assert(
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "a ^ b: the operands have different scalar types; give both types "
+          "the same scalar type");
+    } else if constexpr (Spelling == geometric_antiproduct_function) {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "geometric_antiproduct: the operands have different scalar types; "
+          "give both types the same scalar type");
+    } else if constexpr (Spelling == antiwedge_function) {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "antiwedge: the operands have different scalar types; give both "
+          "types the same scalar type");
+    } else if constexpr (Spelling == percent_operator) {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "a % b: the operands have different scalar types; give both types "
+          "the same scalar type");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "a & b: the operands have different scalar types; give both types "
           "the same scalar type");
     }
   }
@@ -149,6 +199,13 @@ inline constexpr auto geometric_product_layout =
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto wedge_layout =
     detail::product_plan<detail::BinaryOperation::wedge, Alg, A, B>.result;
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto geometric_antiproduct_layout =
+    detail::product_plan<detail::BinaryOperation::geometric_antiproduct, Alg,
+                         A, B>.result;
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto antiwedge_layout =
+    detail::product_plan<detail::BinaryOperation::antiwedge, Alg, A, B>.result;
 // NOLINTEND(modernize-avoid-c-style-cast)
 
 /// The geometric product x y of two multivectors of one algebra, on the
@@ -254,6 +311,121 @@ template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator^(const X& /*x*/, const Y& /*y*/) {
   return detail::reject_product<detail::ProductSpelling::caret_operator, X,
+                                Y>();
+}
+
+/// The geometric antiproduct x ⟇ y of two multivectors of one algebra:
+/// left(right(x) ⟑ right(y)), with right and left the complements fixed by
+/// u ∧ right(u) = 𝟙 and left(u) ∧ u = 𝟙 for every basis blade u, on the
+/// blades the antiproduct can reach. Its identity is the antiscalar 𝟙 =
+/// e12...n, as 1 is the geometric product's.
+///
+/// Requires: as for geometric_product, with the message naming
+/// geometric_antiproduct.
+///
+/// Cost: one plan for each pair of operand layouts, as for the geometric
+/// product. The plan is built through the complements in all n generators,
+/// so its compile cost grows with n even when x and y use few generators:
+/// four pairs of rigid(3) types embedded in 16 generators cost about four
+/// times what they cost in 4 generators, while the geometric product's cost
+/// barely changes.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  constexpr bool scalar_holds_every_coefficient_of_the_antiproduct =
+      detail::coefficients_exact<detail::BinaryOperation::geometric_antiproduct,
+                                 Alg, A, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_antiproduct,
+                "geometric_antiproduct: the scalar type cannot hold one of the "
+                "antiproduct's exact coefficients; use a scalar type that "
+                "holds larger integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_antiproduct) {
+    return detail::apply<detail::BinaryOperation::geometric_antiproduct,
+                         geometric_antiproduct_layout<Alg, A, B>>(x, y);
+  } else {
+    return {};
+  }
+}
+
+/// Rejects a geometric_antiproduct whose operands are not in one algebra
+/// with one scalar type, as for geometric_product.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> geometric_antiproduct(const X& /*x*/,
+                                                       const Y& /*y*/) {
+  return detail::reject_product<
+      detail::ProductSpelling::geometric_antiproduct_function, X, Y>();
+}
+
+/// The antiwedge x ∨ y of two multivectors of one algebra:
+/// left(right(x) ∧ right(y)), with the complements as for
+/// geometric_antiproduct, on the blades the antiwedge can reach. It does not
+/// depend on the metric. In rigid(3) it is the meet: a point and a plane
+/// meet in a scalar that is zero when the point lies on the plane.
+///
+/// Requires: as for wedge. Every coefficient of the antiwedge of two blades
+/// is +1, -1, or 0, so every scalar type holds them.
+///
+/// Cost: as for geometric_antiproduct.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+antiwedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  return detail::apply<detail::BinaryOperation::antiwedge,
+                       antiwedge_layout<Alg, A, B>>(x, y);
+}
+
+/// Rejects an antiwedge whose operands are not in one algebra with one
+/// scalar type, as for geometric_product.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> antiwedge(const X& /*x*/, const Y& /*y*/) {
+  return detail::reject_product<detail::ProductSpelling::antiwedge_function, X,
+                                Y>();
+}
+
+/// x % y is geometric_antiproduct(x, y). It binds as * does, left to right.
+/// A scalar that cannot hold one of the antiproduct's coefficients is
+/// rejected with a message that names x % y.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  constexpr bool scalar_holds_every_coefficient_of_the_antiproduct =
+      detail::coefficients_exact<detail::BinaryOperation::geometric_antiproduct,
+                                 Alg, A, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_antiproduct,
+                "a % b: the scalar type cannot hold one of the antiproduct's "
+                "exact coefficients; use a scalar type that holds larger "
+                "integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_antiproduct) {
+    return geometric_antiproduct(x, y);
+  } else {
+    return {};
+  }
+}
+
+/// Rejects x % y for operands that are not in one algebra with one scalar
+/// type.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> operator%(const X& /*x*/, const Y& /*y*/) {
+  return detail::reject_product<detail::ProductSpelling::percent_operator, X,
+                                Y>();
+}
+
+/// x & y is antiwedge(x, y). Like ^, it binds below ==, so parenthesize it:
+/// (p & g) == s.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+operator&(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  return antiwedge(x, y);
+}
+
+/// Rejects x & y for operands that are not in one algebra with one scalar
+/// type.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> operator&(const X& /*x*/, const Y& /*y*/) {
+  return detail::reject_product<detail::ProductSpelling::ampersand_operator, X,
                                 Y>();
 }
 
