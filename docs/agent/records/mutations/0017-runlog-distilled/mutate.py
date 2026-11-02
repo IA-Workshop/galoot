@@ -53,12 +53,27 @@ MUTANTS = {
     "cheap_gates_dropped": (
         RUNLOG, 'return family(row.get("selection", "")) in CHEAP_GATES',
         "return False", RUNLOG_TEST),
-    "no_base_anchor": (
-        RUNLOG, "        anchors.add(number)\n", "", RUNLOG_TEST),
-    "no_fence_row": (
+    "base_end_only": (
+        RUNLOG, "in insertions(base_lines, tip_lines, branch):",
+        "in [(len(base_lines) - 1, None)]:", RUNLOG_TEST),
+    "no_before_anchor": (
+        RUNLOG,
+        "                anchors.add(number)\n                if number < last:",
+        "                if number < last:", RUNLOG_TEST),
+    "no_successor_anchor": (
         RUNLOG, "anchors.add(number + 1)", "pass", RUNLOG_TEST),
+    "no_after_anchor": (
+        RUNLOG,
+        "                anchors.add(number)\n                if number > 2:",
+        "                if number > 2:", RUNLOG_TEST),
+    "no_predecessor_anchor": (
+        RUNLOG, "anchors.add(number - 1)", "pass", RUNLOG_TEST),
+    "era_holders_not_skipped": (
+        RUNLOG, "        if holds_era(top, branch, revision, log):\n"
+        "            continue", "        if False:\n            continue",
+        RUNLOG_TEST),
     "no_boundary_anchor": (
-        RUNLOG, "anchors = {len(lines) + 1}", "anchors = set()", RUNLOG_TEST),
+        RUNLOG, "anchors = {last}", "anchors = set()", RUNLOG_TEST),
     "no_containment_check": (
         RUNLOG, "    if missing:\n", "    if False:\n", RUNLOG_TEST),
     "no_repeat_check": (

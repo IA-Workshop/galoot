@@ -37,13 +37,17 @@ history comes out the same on every run.
 A row stays in the log when its revision is committed (no `-dirty`) and it
 is a configure, build, test, or workflow run of a named preset, a gate step,
 or a check or trace step of one of the cheap gates. Some other rows stay as
-anchors: the last row at the era's revision, and for each local branch not
-merged into it, the last row of the log at the branch's merge base and the
-row after that one. The log is merged with git's union driver, which keeps
-both sides' lines where both changed the same place; a branch appends its
-rows after its base's last row, so the compaction must leave that row, and
-the place after it, untouched, or the merge would bring the removed rows
-back.
+anchors. The log is merged with git's union driver, which keeps both sides'
+lines where both changed the same place, so a removed row next to a place
+where another branch added rows would come back in the merge. A branch adds
+its rows at the end of its base's log, and when it merges a newer revision,
+the union puts them before that revision's later rows, inside the log. So
+the anchors are the last row at the era's revision and, for each local
+branch not merged into it (and not already holding the era), the rows on
+both sides of each place where the
+branch's log has rows its merge base's log lacks: the nearest rows of the
+base, and the rows next to those in the log at the era's revision, which a
+merge in the other order puts beside the branch's rows.
 
 The raw rows of an era are read back with
   git show <era>:<log>
@@ -298,33 +302,75 @@ def replay(top, log, eras, states):
                          states), kept, removed)
 
 
+def insertions(base, tip, branch):
+    """(before, after) for each run of rows of tip that base lacks: the
+    indices in base of the rows on either side, or None at an end."""
+    points, j, in_run = [], 0, False
+    for line in tip:
+        if j < len(base) and line == base[j]:
+            if in_run:
+                points.append((j - 1 if j else None, j))
+                in_run = False
+            j += 1
+        else:
+            in_run = True
+    if in_run:
+        points.append((j - 1 if j else None, None))
+    if j != len(base):
+        raise Refused(f"the log of {branch} lacks rows of its merge base's "
+                      "log, or has them in another order")
+    return points
+
+
 def anchors_for(top, revision, log, lines):
     """Line numbers, in the log at revision, of the rows that later union
     merges need unchanged."""
     if not lines:
         return set()
-    anchors = {len(lines) + 1}
+    last = len(lines) + 1
+    anchors = {last}
     position = {}
     for number, line in enumerate(lines, 2):
         position.setdefault(line, number)
     branches = git(top, "for-each-ref", "--format=%(refname)",
                    f"--no-merged={revision}", "refs/heads").split()
     for branch in branches:
+        if holds_era(top, branch, revision, log):
+            continue  # the branch descends from this compaction
         base = git(top, "merge-base", branch, revision).strip()
         try:
             _, base_lines = log_at(top, base, log)
+            _, tip_lines = log_at(top, branch, log)
         except Refused:
-            continue  # the log did not exist at the base
-        if not base_lines:
-            continue
-        number = position.get(base_lines[-1])
-        if number is None:
-            raise Refused(f"the last row of {log} at the merge base of "
-                          f"{branch} is not in the log at {revision}")
-        anchors.add(number)
-        if number + 1 <= len(lines) + 1:
-            anchors.add(number + 1)
+            continue  # the log does not exist at the base or the tip
+        for before, after in insertions(base_lines, tip_lines, branch):
+            if before is not None:
+                number = line_number(position, base_lines[before], branch)
+                anchors.add(number)
+                if number < last:
+                    anchors.add(number + 1)
+            if after is not None:
+                number = line_number(position, base_lines[after], branch)
+                anchors.add(number)
+                if number > 2:
+                    anchors.add(number - 1)
     return anchors
+
+
+def holds_era(top, branch, revision, log):
+    try:
+        eras = git(top, "show", f"{branch}:{ERAS}")
+    except Refused:
+        return False
+    return any(line.split("\t")[:2] == [revision, log]
+               for line in eras.splitlines())
+
+
+def line_number(position, line, branch):
+    if line not in position:
+        raise Refused(f"a row beside the rows {branch} added is not in the "
+                      f"log at the era's revision: {line[:80]}")
+    return position[line]
 
 
 def read_text(path):

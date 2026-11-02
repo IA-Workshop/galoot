@@ -426,11 +426,104 @@ def second_era(tool, directory):
            probe_row(61)])
 
 
+def merged_boundary_first(tool, directory):
+    """Case 9: a branch that merged the boundary before the compaction has
+    its rows inside the boundary's log, before the boundary's later rows."""
+    repo = Repo(tool, directory)
+    a = [probe_row(1), kept_row(2), probe_row(3), probe_row(4), probe_row(5)]
+    repo.write_log(a)
+    repo.commit("A")
+    repo.git("checkout", "-q", "-b", "old")
+    old_rows = [kept_row(30), probe_row(31)]
+    repo.write_log(a + old_rows)
+    repo.commit("old rows")
+    repo.git("checkout", "-q", "dev")
+    b = [probe_row(6), probe_row(7), kept_row(8), probe_row(9),
+         probe_row(10), probe_row(11)]
+    repo.write_log(a + b)
+    boundary = repo.commit("B")
+    repo.git("checkout", "-q", "old")
+    repo.git("merge", "-q", "--no-edit", "dev")
+    check("old's rows inside the boundary's log", repo.log_rows(),
+          a + old_rows + b)
+    repo.git("checkout", "-q", "-b", "compacting", "dev")
+    result = repo.run("compact", boundary)
+    check("compact exit, merged first", result.returncode, 0)
+    eras = repo.read(f"{HISTORY}/eras.tsv").splitlines()
+    check("anchors beside old's rows", eras[-1].split("\t")[4], "6,7,12")
+    repo.commit("compact")
+    for name, into, other in (("into-old", "old", "compacting"),
+                              ("old-in", "compacting", "old")):
+        repo.git("checkout", "-q", "-b", name, into)
+        repo.git("merge", "-q", "--no-edit", other)
+        check(f"check after {name}", repo.run("check").returncode, 0)
+        check(f"old's rows once after {name}", has_once(repo, old_rows),
+              True)
+
+    # The same compaction repeated from the boundary on another branch,
+    # while the branches that hold the era are open, makes the same era.
+    era, groups = (repo.read(f"{HISTORY}/{name}")
+                   for name in ("eras.tsv", "groups.tsv"))
+    repo.git("checkout", "-q", "-b", "redo", "dev")
+    result = repo.run("compact", boundary)
+    check("compact exit, repeated", result.returncode, 0)
+    check("repeated era", repo.read(f"{HISTORY}/eras.tsv"), era)
+    check("repeated groups", repo.read(f"{HISTORY}/groups.tsv"), groups)
+
+
+def inserted_mid_log(tool, directory):
+    """Case 10: a branch based before the boundary added rows between two
+    rows of its base, and the boundary has rows of its own there."""
+    repo = Repo(tool, directory)
+    r = [probe_row(n) for n in range(1, 8)]
+    repo.write_log(r[:2])
+    repo.commit("A0")
+    repo.git("branch", "p")
+    repo.git("branch", "s")
+    repo.write_log(r[:3])
+    repo.commit("A")
+    t1 = kept_row(70)
+    repo.git("checkout", "-q", "p")
+    repo.write_log(r[:2] + [t1])
+    repo.commit("p rows")
+    repo.git("merge", "-q", "--no-edit", "dev")
+    s_rows = [probe_row(80), probe_row(81)]
+    repo.git("checkout", "-q", "s")
+    repo.write_log(r[:2] + s_rows)
+    repo.commit("s rows")
+    repo.git("merge", "-q", "--no-edit", "dev")
+    repo.git("checkout", "-q", "dev")
+    repo.git("merge", "-q", "--no-edit", "s")
+    repo.write_log(r[:2] + s_rows + r[2:])
+    boundary = repo.commit("B")
+    repo.git("checkout", "-q", "-b", "compacting")
+    result = repo.run("compact", boundary)
+    check("compact exit, mid-log", result.returncode, 0)
+    # p's row sits between r[1] (line 3) and r[2] (line 6) of p's base;
+    # s's two rows lie between them at the boundary.
+    eras = repo.read(f"{HISTORY}/eras.tsv").splitlines()
+    check("anchors of a mid-log insertion", eras[-1].split("\t")[4],
+          "3,4,5,6,10")
+    repo.commit("compact")
+    # dev takes p first, so p's row follows s's rows; or p takes dev first
+    # and dev takes that, so p's row precedes them.
+    repo.git("checkout", "-q", "-b", "dev-then-p", "dev")
+    repo.git("merge", "-q", "--no-edit", "p")
+    repo.git("checkout", "-q", "-b", "p-then-dev", "p")
+    repo.git("merge", "-q", "--no-edit", "dev")
+    for name in ("dev-then-p", "p-then-dev"):
+        repo.git("checkout", "-q", "-b", f"compacting-{name}", "compacting")
+        repo.git("merge", "-q", "--no-edit", name)
+        check(f"check after merging {name}", repo.run("check").returncode, 0)
+        check(f"p's row once after {name}", has_once(repo, [t1]), True)
+
+
 def main(tool, directory):
     tool = os.path.realpath(tool)
     directory = os.path.realpath(directory)
     cases = [summary_values, kept_by_rule, compaction, checks, refusals,
-             pruning, merges, second_era]
+             pruning, merges, second_era, merged_boundary_first,
+             inserted_mid_log]
     for case in cases:
         try:
             case(tool, os.path.join(directory, case.__name__))
