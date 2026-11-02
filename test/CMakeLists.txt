@@ -1315,10 +1315,13 @@ target_link_libraries(core_unary_test PRIVATE galoot_golden)
 # core.identities: the De Morgan laws, the associativity of the
 # antiproducts, and the product rules of the involutions, through the public
 # functions and operators over many signatures. It tests product.hpp and
-# unary.hpp together, so it also carries their labels.
+# unary.hpp together, so it also carries their labels. It is labeled slow:
+# its one source takes about 20 s and 1.4 GB to compile, several times any
+# other test, so it would set the pace of every build after a change to a
+# core header it does not test.
 galoot_add_test(MODULE core COMPONENT identities)
 set_property(TEST core.identities APPEND PROPERTY LABELS core.product
-  core.unary)
+  core.unary slow)
 
 # core.product: the geometric product, the wedge, and their antiproducts, as
 # functions and as the operators * ^ % &, against the reference tables.

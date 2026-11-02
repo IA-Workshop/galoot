@@ -326,9 +326,11 @@ constexpr std::remove_cvref_t<X> operator^(const X& /*x*/, const Y& /*y*/) {
 /// Cost: one plan for each pair of operand layouts, as for the geometric
 /// product. The plan is built through the complements in all n generators,
 /// so its compile cost grows with n even when x and y use few generators:
-/// four pairs of rigid(3) types embedded in 16 generators cost about four
-/// times what they cost in 4 generators, while the geometric product's cost
-/// barely changes.
+/// four products of rigid(3) types (point and point, line and plane, motor
+/// and point, point and motor) embedded in 16 generators cost GCC 16 about
+/// twice, and Clang 23 about four and a half times, what they cost in 4
+/// generators, while the same four geometric products cost the same at both
+/// sizes.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
 geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
