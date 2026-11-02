@@ -1,0 +1,42 @@
+mutant	file	test	verdict	first_failure
+median_high	tools/runlog	test/tools/runlog_test.py	killed	summary row 1: got '-\t-\tbuild\tclang-debug\tall\tpinned\tpass\t2\t0\t2\t2026-01-01T00:01:00Z\t2026-01-01T00:01:00Z\teeeeeeeeeeee\tffffffffffff\th1,h2\t2026-01
+range_from_first	tools/runlog	test/tools/runlog_test.py	killed	summary row 4: got '-\t-\tmeasure\t-\tceiling-cert\tshared\tpass\t2\t0\t1\t2026-01-01T00:02:00Z\t2026-01-01T00:02:01Z\t111111111111\t111111111111\th1\t2026-01-0
+ties_reversed	tools/runlog	test/tools/runlog_test.py	killed	summary row 1: got '-\t-\tbuild\tclang-debug\tall\tpinned\tpass\t2\t0\t2\t2026-01-01T00:01:00Z\t2026-01-01T00:01:00Z\tffffffffffff\teeeeeeeeeeee\th1,h2\t2026-01
+pinned_inst_dropped	tools/runlog	test/tools/runlog_test.py	killed	summary row 1: got '-\t-\tbuild\tclang-debug\tall\tpinned\tpass\t2\t0\t2\t2026-01-01T00:01:00Z\t2026-01-01T00:01:00Z\teeeeeeeeeeee\tffffffffffff\th1,h2\t2026-01
+outcome_not_in_key	tools/runlog	test/tools/runlog_test.py	killed	summary row count: got 7, expected 8
+dirty_kept	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+unnamed_preset_kept	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+cheap_gates_dropped	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+base_end_only	tools/runlog	test/tools/runlog_test.py	killed	anchors beside old's rows: got '12', expected '6,7,12'
+no_before_anchor	tools/runlog	test/tools/runlog_test.py	killed	compacted log: got ['2026-01-01T00:10:02Z\t000000000002\tdev\tbuild\tgcc-debug\tall\t1.000\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailable\tuna
+no_successor_anchor	tools/runlog	test/tools/runlog_test.py	killed	compacted log: got ['2026-01-01T00:10:02Z\t000000000002\tdev\tbuild\tgcc-debug\tall\t1.000\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailable\tuna
+no_after_anchor	tools/runlog	test/tools/runlog_test.py	killed	anchors of a mid-log insertion: got '3,4,5,10', expected '3,4,5,6,10'
+no_predecessor_anchor	tools/runlog	test/tools/runlog_test.py	killed	anchors of a mid-log insertion: got '3,4,6,10', expected '3,4,5,6,10'
+era_holders_not_skipped	tools/runlog	test/tools/runlog_test.py	killed	compact exit, repeated: got 2, expected 0
+no_boundary_anchor	tools/runlog	test/tools/runlog_test.py	killed	compacted log: got ['2026-01-01T00:10:02Z\t000000000002\tdev\tbuild\tgcc-debug\tall\t1.000\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailable\tuna
+no_containment_check	tools/runlog	test/tools/runlog_test.py	killed	refusal exit, missing row: got 0, expected 2
+no_repeat_check	tools/runlog	test/tools/runlog_test.py	killed	refusal stderr, already has an era: 'runlog: refused: docs/agent/records/performance/runs.tsv lacks 6 rows of the log at d9c772df5627, such as: 2026-01-01T00:20
+no_header_check	tools/runlog	test/tools/runlog_test.py	killed	refusal exit, other header: got 0, expected 2
+no_resurrection_check	tools/runlog	test/tools/runlog_test.py	killed	check exit, a row an era removed is back (line 10): got 0, expected 1
+groups_not_compared	tools/runlog	test/tools/runlog_test.py	killed	check exit, group row 2 is: got 0, expected 1
+eras_not_compared	tools/runlog	test/tools/runlog_test.py	killed	check exit, era 1b65766bdf4e of docs/agent/records/performance/runs.tsv is: got 0, expected 1
+earlier_era_resummarized	tools/runlog	test/tools/runlog_test.py	killed	check after two eras: got 1, expected 0
+prune_keeps_removed	tools/runlog	test/tools/runlog_test.py	killed	prune report: got 'runlog: docs/agent/records/performance/runs.tsv: removed 0 rows', expected 'runlog: docs/agent/records/performance/runs.tsv: removed 2 rows'
+toolchain_end_inclusive	tools/runlog	test/tools/runlog_test.py	killed	summary row 3: got '-\t-\tcompile\t-\tx\tshared\tpass\t1\t0\t1\t2026-01-01T00:05:00Z\t2026-01-01T00:05:00Z\t444444444444\t444444444444\th1\t2026-01-01T00:00:00Z
+toolchain_start_exclusive	tools/runlog	test/tools/runlog_test.py	killed	summary row 3: got '-\t-\tcompile\t-\tx\tshared\tpass\t1\t0\t1\t2026-01-01T00:05:00Z\t2026-01-01T00:05:00Z\t444444444444\t444444444444\th1\t\t1\t1.000\t1.000\t1
+mode_default_shared	tools/runlog	test/tools/runlog_test.py	killed	summary of a nine-column log: got ['-\t-\tbuild\tgcc-debug\tall\tshared\tpass\t1\t0\t1\t2025-12-31T23:00:00Z\t2025-12-31T23:00:00Z\tgggggggggggg\tgggggggggggg\t
+earlier_kept_not_required	tools/runlog	test/tools/runlog_test.py	killed	refusal exit, kept row gone: got 0, expected 2
+unknown_era_groups_ok	tools/runlog	test/tools/runlog_test.py	killed	check exit, has a row of era ffffffffffff of docs/agent/records/performance/runs.tsv, which: got 0, expected 1
+no_second_header_check	tools/runlog	test/tools/runlog_test.py	killed	summary of a log with two headers: got 0, expected 2
+check_ignores_log_option	tools/runlog	test/tools/runlog_test.py	killed	check --log of the campaign log: got 1, expected 0
+citations_not_cheap	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+golden_check_not_cheap	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+workflow_needs_commit	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+lint_dropped	tools/runlog	test/tools/runlog_test.py	killed	rows kept by the rule: got ['2026-01-01T00:01:00Z\taaaaaaaaaaaa\tdev\tbuild\tgcc-debug\tall\t1.0\t0\th1\tshared\t0-31\tunavailable\tunavailable\t100\tunavailabl
+no_order_check	tools/runlog	test/tools/runlog_test.py	killed	check exit, out of their order: got 0, expected 1
+missing_history_ok	tools/runlog	test/tools/runlog_test.py	killed	check exit, history gone: got 0, expected 1
+clone_check_dropped	tools/runlog	test/tools/runlog_test.py	killed	check stderr, era not in the clone: "runlog: refused: git show 000000000000:docs/agent/records/performance/runs.tsv: fatal: invalid object name '000000000000'.\
+relative_env_allowed	tools/timed	test/tools/measure_record_test.py	killed	exit with a relative TIMED_LOG: got 0, expected 2
+log_ignored	tools/measure	test/tools/measure_record_test.py	killed	log_option: FileNotFoundError: [Errno 2] No such file or directory: '<scratch>
+env_ignored	tools/timed	test/tools/measure_record_test.py	killed	log_option: FileNotFoundError: [Errno 2] No such file or directory: '<scratch>
+option_beats_env_reversed	tools/timed	test/tools/measure_record_test.py	killed	rows of TIMED_LOG: got ['env', 'both'], expected ['env']

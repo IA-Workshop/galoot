@@ -63,6 +63,9 @@ class Scratch:
         os.makedirs(os.path.join(self.top, "tools"))
         self.measure = os.path.join(self.top, "tools", "measure")
         shutil.copy(measure, self.measure)
+        self.timed = os.path.join(self.top, "tools", "timed")
+        shutil.copy(os.path.join(os.path.dirname(measure), "timed"),
+                    self.timed)
         self.git_log = os.path.join(self.top, "git.log")
         self.perf_events = os.path.join(self.top, "perf-events.txt")
 
@@ -74,11 +77,15 @@ class Scratch:
         self.write_script(self.git, FAKE_GIT.format(git=real_git))
         for program in ("ninja", "ctest", "cmake"):
             os.symlink("/bin/true", os.path.join(self.top, "bin", program))
+        # tools/timed runs under bash and starts the recorder with python3.
+        os.symlink(shutil.which("bash"), os.path.join(self.top, "bin", "bash"))
+        os.symlink(sys.executable, os.path.join(self.top, "bin", "python3"))
         git = [real_git, "-C", self.top, "-c", "user.name=test",
                "-c", "user.email=test@example.invalid"]
         subprocess.run([real_git, "init", "-q", "-b", "main", self.top],
                        check=True)
-        subprocess.run([*git, "add", "tools/measure"], check=True)
+        subprocess.run([*git, "add", "tools/measure", "tools/timed"],
+                       check=True)
         subprocess.run([*git, "commit", "-q", "-m", "recorder"], check=True)
         self.revision = subprocess.run(
             [*git, "rev-parse", "--short=12", "HEAD"], check=True,
@@ -105,6 +112,21 @@ class Scratch:
         return subprocess.run([sys.executable, "-I", self.measure, *args],
                               cwd=cwd or self.top, env=env,
                               capture_output=True, text=True, check=False)
+
+    def timed_cmd(self, args, cwd=None, timed_log=None):
+        env = {"PATH": os.path.join(self.top, "bin"), "GIT_LOG": self.git_log}
+        if timed_log is not None:
+            env["TIMED_LOG"] = timed_log
+        return subprocess.run([self.timed, *args], cwd=cwd or self.top,
+                              env=env, capture_output=True, text=True,
+                              check=False)
+
+    def run_log(self):
+        try:
+            with open(os.path.join(self.top, RUN_LOG), encoding="utf-8") as f:
+                return f.read()
+        except FileNotFoundError:
+            return ""
 
     def rows(self, record):
         """Returns the record's rows as dicts keyed by its header."""
@@ -359,11 +381,79 @@ def git_attribution(s):
     check("branch when only git status fails", row["branch"], "main")
 
 
+def log_option(s):
+    # A campaign names its own log; the run log is left as it was.
+    s.use_fake_perf(False)
+    before = s.run_log()
+    campaign = os.path.join(s.top, "campaign", "c.tsv")
+    result = s.measure_cmd(["run", "--log", campaign, "other", "-", "sel",
+                            "--", "/bin/true"])
+    check("exit with --log", result.returncode, 0)
+    rows = s.rows(campaign)
+    check("rows in the named log", [r["selection"] for r in rows], ["sel"])
+    check("run log after --log", s.run_log(), before)
+    check("stderr names the log", f"row in {campaign}" in result.stderr, True)
+
+    # tools/timed: a relative --log is taken from the current directory.
+    os.makedirs(os.path.join(s.top, "sub"), exist_ok=True)
+    result = s.timed_cmd(["--log", "c2.tsv", "other", "-", "rel", "--",
+                          "/bin/true"], cwd=os.path.join(s.top, "sub"))
+    check("exit of timed --log", result.returncode, 0)
+    check("rows of a relative --log",
+          [r["selection"] for r in s.rows(os.path.join("sub", "c2.tsv"))],
+          ["rel"])
+
+    env_log = os.path.join(s.top, "env.tsv")
+    s.timed_cmd(["other", "-", "env", "--", "/bin/true"], timed_log=env_log)
+    s.timed_cmd(["--log", campaign, "other", "-", "both", "--", "/bin/true"],
+                timed_log=env_log)
+    check("rows of TIMED_LOG", [r["selection"] for r in s.rows(env_log)],
+          ["env"])
+    check("--log wins over TIMED_LOG",
+          [r["selection"] for r in s.rows(campaign)], ["sel", "both"])
+    check("run log after TIMED_LOG", s.run_log(), before)
+
+    s.timed_cmd(["other", "-", "default", "--", "/bin/true"], timed_log="")
+    check("an empty TIMED_LOG means the run log",
+          [r["selection"] for r in s.rows(RUN_LOG)][-1], "default")
+
+    # A log with another recorder's header is refused, and the command's
+    # status still passes through.
+    other = os.path.join(s.top, "other.tsv")
+    with open(other, "w", encoding="utf-8") as f:
+        f.write("utc_start\trevision\n")
+    result = s.timed_cmd(["--log", other, "other", "-", "x", "--", "/bin/sh",
+                          "-c", "exit 3"])
+    check("exit through a refused log", result.returncode, 3)
+    with open(other, encoding="utf-8") as f:
+        check("log with another header", f.read(), "utc_start\trevision\n")
+    check("warning names the refused log",
+          "not recorded" in result.stderr and other in result.stderr, True)
+
+    # A relative TIMED_LOG would name a different file from each directory
+    # a script runs in, so it is refused and the command is not run.
+    marker = os.path.join(s.top, "ran-relative.txt")
+    result = s.timed_cmd(["other", "-", "rel-env", "--", "/bin/sh", "-c",
+                          f"echo ran > {marker}"], timed_log="rel.tsv")
+    check("exit with a relative TIMED_LOG", result.returncode, 2)
+    check("command not run with a relative TIMED_LOG",
+          os.path.exists(marker), False)
+    check("message for a relative TIMED_LOG",
+          "TIMED_LOG must be an absolute path" in result.stderr, True)
+    check("no log from a relative TIMED_LOG",
+          os.path.exists(os.path.join(s.top, "rel.tsv")), False)
+
+    result = s.timed_cmd(["--log"])
+    check("exit of --log without a file", result.returncode, 2)
+    check("usage for --log without a file",
+          result.stderr.startswith("usage: tools/timed [--log <file>]"), True)
+
+
 def main(measure, directory):
     s = Scratch(measure, directory)
     for case in (perf_ran_but_named_no_event, command_cannot_start,
                  compile_options, counters_per_core_type, run_options, reader,
-                 record_with_another_header, git_attribution):
+                 record_with_another_header, git_attribution, log_option):
         try:
             case(s)
         except (OSError, KeyError, IndexError, ValueError) as error:

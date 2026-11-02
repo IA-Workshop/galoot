@@ -35,3 +35,5 @@
 // See §3.1.2 of the conventions.
 // See §3 of the conventions.
 // Raised as tickets D3.
+// Notes are in docs/agent/records/performance/history/notes.md.
+// Kept in docs/agent/records/performance/historybook.
