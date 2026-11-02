@@ -51,4 +51,25 @@ The construction rows include the cost of the function that holds each construct
 
 ## W10
 
-The before rows are `0782a8e` (fresh gcc-debug and clang-debug trees at `965059e`); the after rows are taken from fresh trees at the final revision and named in plan 0016's outcome.
+Compile rows of fresh gcc-debug and clang-debug trees, each built once with the header sets, copied into `compile.tsv` by decision 0080's step: before at `965059e` (committed in `0782a8e`), after at `c3d4e45` (135 and 137 rows). These builds ran in shared mode on the shared machine, not pinned, so instructions are the sum over both kinds of core and the wall times are not comparable between the two sets (the machine's load differed); the instruction counts and peak memory are. Selected units:
+
+| Unit | Preset | Before (965059e): wall s, G instructions, MiB | After (c3d4e45): wall s, G instructions, MiB |
+| --- | --- | --- | --- |
+| `galoot/core.hpp.cxx` | gcc-debug | 0.11, 0.91, 77 | 0.13, 0.92, 77 |
+| `galoot/core.hpp.cxx` | clang-debug | 0.17, 0.92, 112 | 0.20, 0.93, 112 |
+| `galoot/core/blade_set.hpp.cxx` | gcc-debug | 0.08, 0.68, 66 | 0.15, 0.69, 66 |
+| `galoot/core/blade_set.hpp.cxx` | clang-debug | 0.09, 0.55, 100 | 0.15, 0.55, 100 |
+| `galoot/core/mv.hpp.cxx` | gcc-debug | absent | 0.13, 0.92, 77 |
+| `galoot/core/mv.hpp.cxx` | clang-debug | absent | 0.20, 0.93, 112 |
+| `test/core/smoke_test.cpp` | gcc-debug | 0.16, 1.11, 87 | 0.27, 1.12, 87 |
+| `test/core/smoke_test.cpp` | clang-debug | 0.14, 1.02, 122 | 0.26, 1.03, 124 |
+| `test/core/blade_set_test.cpp` | gcc-debug | 0.84, 10.59, 265 | 0.95, 10.83, 269 |
+| `test/core/blade_set_test.cpp` | clang-debug | 1.41, 23.14, 182 | 1.64, 23.30, 179 |
+| `test/core/plan_test.cpp` | gcc-debug | 2.74, 31.68, 360 | 3.08, 31.69, 360 |
+| `test/core/plan_test.cpp` | clang-debug | 2.73, 34.83, 345 | 2.87, 34.77, 345 |
+| `test/core/mv_test.cpp` | gcc-debug | absent | 1.41, 11.76, 335 |
+| `test/core/mv_test.cpp` | clang-debug | absent | 1.33, 10.82, 271 |
+| `test/support/rational_test.cpp` | gcc-debug | absent | 1.10, 7.14, 252 |
+| `test/support/rational_test.cpp` | clang-debug | absent | 0.94, 5.51, 223 |
+
+The header units and the tests that existed before move by under 2.5 % in instructions; `blade_set_test.cpp` rises 2.3 % on GCC and 0.7 % on Clang, from its new test case and the algebra tags. The new costs are `mv_test.cpp` and `rational_test.cpp`.
