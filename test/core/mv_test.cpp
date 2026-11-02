@@ -1941,6 +1941,41 @@ TEST_CASE("A class derived from a multivector copies and converts") {
   CHECK(Line<double>(derived) == copied);
 }
 
+// Reference: contract: the helpers of conversion and of the coefficient
+//   check answer as their comments state: a class derived from an mv is
+//   taken as a multivector, and an array is no coefficient, std::numeric_limits
+//   describes int and short as integer types and float and double as binary
+//   floating types, and neither for the test rational or std::complex, and a
+//   motor truncated to a line drops the scalar and the antiscalar, its
+//   places 0 and 7
+TEST_CASE("The helpers of conversion and exactness answer as stated") {
+  namespace detail = core::detail;
+  static_assert(detail::multivector_or_derived<const DerivedLine&>);
+  static_assert(detail::multivector_or_derived<Line<double>>);
+  static_assert(!detail::multivector_or_derived<std::array<double, 6>>);
+  static_assert(detail::not_a_coefficient<std::array<double, 6>, double>);
+  static_assert(!detail::not_a_coefficient<int, double>);
+  static_assert(!detail::not_a_coefficient<Motor<double>, double>);
+  static_assert(detail::integer_limits<int> && detail::integer_limits<short>);
+  static_assert(!detail::integer_limits<double> &&
+                !detail::integer_limits<rational>);
+  static_assert(detail::binary_floating_limits<float> &&
+                detail::binary_floating_limits<double>);
+  static_assert(!detail::binary_floating_limits<int> &&
+                !detail::binary_floating_limits<rational> &&
+                !detail::binary_floating_limits<std::complex<double>>);
+  static_assert(detail::multivector_of<const Line<double>&, rga3, double>);
+  static_assert(!detail::multivector_of<Line<double>, cga3, double>);
+  static_assert(!detail::multivector_of<Line<float>, rga3, double>);
+  static_assert(!detail::multivector_of<double, rga3, double>);
+  static_assert(detail::dropped_positions<motor_layout, line_layout> ==
+                std::array<std::size_t, 2>{0, 7});
+  static_assert(detail::dropped_positions<line_layout, motor_layout>.empty());
+  static_assert(detail::holds_every_mask(motor_layout, line_layout));
+  static_assert(!detail::holds_every_mask(line_layout, motor_layout));
+  CHECK(detail::holds_every_mask(motor_layout, other_line_layout));
+}
+
 // Reference: contract: generic code that probes a construction is told yes
 //   for each misuse that a constructor rejects with a message, a lossy
 //   conversion, a whole array of coefficients, and a wrong count, and no
