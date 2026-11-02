@@ -330,6 +330,11 @@ struct coefficient_storage {
 
   // Not declared for an empty layout, where it would be the default
   // constructor.
+  // TODO: a one-blade value built from a source that converts only
+  // explicitly gets the compiler's own error, 114 lines on GCC. A catch-all
+  // with a short message would fix that, but it changes three
+  // std::is_constructible answers that the tests pin, so it waits until the
+  // long message becomes a problem for a user.
   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
     requires(sizeof...(Ts) > 0)
       : coefficients{values...} {}
@@ -610,6 +615,10 @@ namespace detail {
 // or a floating type of radix 2 with its digits and exponent range. A
 // program's own specialization may define fewer members; a member it lacks
 // makes the answer no, not an error.
+// TODO: a specialization that defines only some members is no longer
+// checked beyond this test. A conforming specialization defines every
+// member, so this matters only for non-conforming code; revisit if a user
+// reports it.
 template <class T>
 concept integer_limits = requires {
   requires std::numeric_limits<T>::is_specialized;

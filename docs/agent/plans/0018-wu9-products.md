@@ -13,8 +13,8 @@ No departure from the roadmap is planned. Readings this plan follows:
 2. `operator*` is constrained to two multivectors. A scalar operand is not accepted until WU10 adds scaling, so `2.0 * x` is a compile-time error with the compiler's message in WU9. The WU10 plan must make the two `operator*` families unambiguous.
 3. Operands share an algebra and a scalar type. Two scalar types are a mixed-scalar mistake, covered by the same catch-all as mixed algebras (section 4). No scalar conversion is added; that is the owner's open item 2 of the handoff.
 4. The result layout is `product_plan<Op, Alg, A, B>.result`, as `apply` already chooses. WU9 adds no new result-set policy.
-5. Handoff carry-in D2 and D3 (plan 0016, delta review 2) are minor and open. This plan takes them only if the fix needs no change to the answers of `is_constructible` that the tests pin; otherwise it reports them back to the owner unchanged (section 8).
-6. Open owner items that touch WU9 and stay open: the `truncate` split (item 1), the two owner-ruled messages (item 4), and decision 0141's antiproduct growth exception, which WU9 does not affect (the wedge and geometric product plans are unchanged).
+5. Handoff carry-in D2 and D3 (plan 0016, delta review 2): deferred by the owner (decision 0162 item 1). TODO comments mark both sites in `mv.hpp`; WU9 does not touch them, and commit 5 of section 4 is dropped.
+6. Owner rulings of 2026-11-02 (decision 0162): the mixed-scalar message says to convert explicitly and adds no conversion (item 2); the lossy-conversion message of decision 0155 is reworded on this branch as the reviews propose (item 8); the `truncate` split is fixed in the WU10 plan (item 6). Decision 0141's antiproduct growth exception, which WU9 does not affect (the wedge and geometric product plans are unchanged).
 
 ## 2. Definition of done
 
@@ -43,7 +43,7 @@ No departure from the roadmap is planned. Readings this plan follows:
 3. Commit 2, the catch-all and the functions: add the functions beside `apply`, constrained to `mv<Alg, A, T>` and `mv<Alg, B, T>` with one template-parameter pack for the algebra and the scalar. Add the catch-all overloads for the other combinations with `static_assert(false-dependent, "...")` messages, one per cause (mixed algebras, mixed scalars), following plan 0016 section 5 route 2. Check that the catch-all does not capture valid calls and does not make `std::is_invocable` answer yes for a wrong call (a probe test, as decision 0152 did).
 4. Commit 3, the operators, defined in `galoot::core` so that argument-dependent lookup finds them, with the same constraints. Probe that they do not hijack operators of other types (`std::complex`, `std::bitset`).
 5. Commit 4, the tests of section 2 and the registration of new tests with CTest; the compile-fail tests with their expected-output files.
-6. Commit 5, carry-in D2 and D3 if section 1 item 5 allows it.
+6. Commit 5, the rewording of the lossy-conversion message (decision 0162 item 8), with its test expectations.
 7. Commit 6, the records: diagnostics table, mutant table, W10 and P2 rows, decisions, the outcome.
 
 ## 5. Evidence
@@ -63,7 +63,7 @@ Planned, each to be run on gcc-debug and clang-debug: swap the two operands of t
 
 ## 8. Open questions for the owner
 
-None block the start. D2 and D3 are reported unchanged if their fix would alter pinned `is_constructible` answers.
+None. The open items of the handoff are ruled in decision 0162. Still with the owner: the M2 gate (item 10).
 
 ## 9. Agent cost estimate
 

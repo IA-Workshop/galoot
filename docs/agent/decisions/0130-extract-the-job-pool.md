@@ -1,6 +1,6 @@
 # 0130 Extract the job pool into a tool of its own
 
-- Status: proposed (the owner decides; nothing here is in effect)
+- Status: accepted by the owner, 2026-11-02 with the recommended options, the repository at `math-core/jobpool` (decision 0162 item 4); a side lane after WU9, not started
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), build-expert role, as researcher
 - Evidence: research note [0016](../research-notes/0016-jobpool-generalization.md); prototype in [`records/spikes/jobpool-generalization/`](../records/spikes/jobpool-generalization/)

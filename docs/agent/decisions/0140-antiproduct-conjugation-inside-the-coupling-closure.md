@@ -1,6 +1,6 @@
 # 0140 The geometric antiproduct is conjugated inside the coupling closure of its use
 
-- Status: proposed, 2026-11-01. Takes effect only if the owner accepts it; nothing is implemented.
+- Status: proposed, 2026-11-01; the owner kept it proposed on 2026-11-02 (decision 0162 item 5), to be raised again in the WU10 plan. Takes effect only if the owner accepts it; nothing is implemented.
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), math-expert in the researcher role, from research note 0018 (branch `research/antiproduct-growth`).
 - Bears on: decision 0115 (the antiproducts as conjugated plans), decision 0116 item 2 and its consequences (the growth at fixed use, "the antimetric pair rule is the first candidate, with its own decision under C4"), decision 0005 (the reading of P2), constitution C4 and C6.

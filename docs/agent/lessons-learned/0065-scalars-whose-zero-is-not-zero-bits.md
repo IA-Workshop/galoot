@@ -29,3 +29,7 @@ The description above is broader than what was observed. As measured by the blin
 - That GCC shares one initializer among the places is a guess at the mechanism, not something observed.
 
 The regression test now writes into every place of the plane, so it does not depend on which places trigger the defect.
+
+## Addendum, 2026-11-02
+
+The defect is recorded in the knowledge base's `upstream-awareness.md` and is not reported upstream (decision 0162, item 11). Lesson 0066 records the second GCC defect found in WU8.
