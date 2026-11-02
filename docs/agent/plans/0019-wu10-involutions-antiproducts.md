@@ -414,4 +414,4 @@ After the delta review (Claude, agent, Opus 5.5, blind-reviewer role as delta re
 - D4 (where GCC prints the two types of the scalar-type message): information only, left for the release review of diagnostics.
 - D5: the W2 wording above is corrected: `linear_test.cpp` does not exist in the first two commits.
 
-Final runs after the delta review: recorded in the commit after the records.
+Final runs after the delta review, the merge-level set: gcc-debug, clang-asan, and lint from new empty build trees at `6fb7827`, whose build inputs are those of `48175d1` and `cd146a4`, with a clean tree (the run rows say `6fb7827e111c` without `-dirty`). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug 301 tests, clang-asan and lint 303, all passing; the lint build includes the header checks and `format-check`. The trace gate, `tools/runlog check`, and the format check exit 0. The other four presets last ran at `97e94f8` (section above); the changes since are two compile-fail tests and comments.
