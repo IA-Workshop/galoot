@@ -214,6 +214,8 @@ private:
 public:
   /// The algebra tag.
   using algebra_type = Alg;
+  /// The scalar type of the coefficients.
+  using scalar_type = T;
   /// The layout: the oriented blades the coefficients are stored on.
   static constexpr auto layout = Blades;
   /// The number of coefficients, one per blade of the layout.
