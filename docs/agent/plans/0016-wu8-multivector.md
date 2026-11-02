@@ -963,3 +963,18 @@ Diagnostics after the fixes (`docs/agent/records/diagnostics/wu8/wu8b/`, at `ef5
 Mutation after the fixes: 24 changed or new mutants on gcc-debug and clang-debug in both modes, all killed by tests (`docs/agent/records/mutations/0016-mv-b/survivors.md`, review section).
 
 Checks at `812398d` (the build inputs of `13b53ee`; recorded in the commit after it): the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 240 of 240, gcc-release 240 of 240, gcc-asan 232 of 232 (plan 0015's canary is not registered there), clang-debug 242 of 242, clang-release 242 of 242, clang-asan 242 of 242, lint 242 of 242 (clang-tidy as errors over every built unit). `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; each exit status was read directly after its command. The trace gate and the marker, golden, citation, regeneration, include-scan, and format gates exited 0, and `tools/runlog check` exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `ef579e2` is pending.
+
+### Delta-review fixes, WU8b (2026-11-02)
+
+The delta review (`docs/agent/records/reviews/2026-11-02-wu8b-delta.md`, blind-reviewer, Opus 5.5, at `00235b8`: block on D1; every other first-review fix confirmed) was merged into this branch at `9c9770b` (`tools/runlog check` exit 0) and fixed, test before code.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| D1 (blocks): the non-explicit braced-list catch-all made every C array convert implicitly | `explicit` restored, its two lint suppressions removed, its comment states its probe answers; the copy-list test removed and a test that a C array converts to no multivector and reaches a span overload added. This withdraws hci C1 and departure 2 of the review fixes above: `Point p = {{...}};` is the compiler's error again | `dbdc122` (test), `0c7daa9` |
+| D2: a one-blade value from a value T accepts only explicitly is 114 lines on GCC | Open, for the owner or WU9 (a catch-all would change three `is_constructible` answers) | |
+| D3: a partial `numeric_limits` specialization is no longer checked | Open, for the owner or WU9 (a conforming specialization has every member) | |
+| D4: apply's Requires paragraph stated the bound in part | The exponent bound and the unsigned rule added | `0c7daa9` |
+
+Changes to code or comments after the delta review, for its delta review: `0c7daa9` (`mv.hpp`: the catch-all's `explicit`, its comment and suppressions, and apply's Requires paragraph). Test: `dbdc122`. Records: `9c9770b` (the review's merge), `6f74b92` (diagnostics, decision 0150, mutants), and this section.
+
+Checks at the final revision: in the commit after this section.
