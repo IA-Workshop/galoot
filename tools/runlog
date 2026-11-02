@@ -34,10 +34,11 @@ Instructions are inst_p_u + inst_e_u, or inst_p_u alone in a pinned row,
 which cannot have run on an efficiency core. Arithmetic is decimal, so the
 history comes out the same on every run.
 
-A row stays in the log when it is a workflow run of a named preset, at any
-revision, or when its revision is committed (no `-dirty`) and it is a
-configure, build, or test run of a named preset, a gate or lint step, or a
-check or trace step of one of the cheap gates. Some other rows stay as
+A row stays in the log when its selection starts with `gate:`, at any step and
+revision, or it is a workflow run of a named preset, at any revision, or its
+revision is committed (no `-dirty`) and it is a configure, build, or test run
+of a named preset, a gate or lint step, or a check or trace step of one of the
+cheap gates. Some other rows stay as
 anchors. The log is merged with git's union driver, which keeps both sides'
 lines where both changed the same place, so a removed row next to a place
 where another branch added rows would come back in the merge. A branch adds
@@ -171,6 +172,8 @@ def stays(row):
     """Whether a compaction leaves a row in the log: a build, test, or style
     run, or a gate."""
     step = row.get("step")
+    if row.get("selection", "").startswith("gate:"):
+        return True  # a merge's or milestone's checks, at any step and revision
     if step == "workflow" and row.get("preset", NO_TREE) != NO_TREE:
         return True  # at any revision: a merge's checks may run uncommitted
     if not COMMITTED.fullmatch(row.get("revision", "")):

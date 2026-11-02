@@ -72,7 +72,7 @@ Numbered criteria from the gates plan, merged. Each is checkable. "Ref script" i
 - DoD-22 (P1). Per-translation-unit wall time and peak memory on both compilers for the release revision, and before and after for each core unit (W10).
 - DoD-23 (P2). A growth benchmark: fixed use against n ∈ {4, 8, 16}, and fixed n against 1, 4, 16 distinct operations, with compiler instruction counts beside wall time. Growth at fixed use is interpreted under D5.
 - DoD-24 (P4, P6, V15). For rga3 point∧point, point∧point∧point, line∨plane, transform(point, motor), transform(line, motor): a counting scalar shows operation counts equal the ref script's collected-term counts; a recorded read of the `-O2` assembly shows no blade branches, calls, or allocation; a pinned benchmark against an in-repo straight-line form derived from the mathematics.
-- DoD-25 (P7, P13). The performance history baseline is committed; `runs.tsv` covers every gate run.
+- DoD-25 (P7, P13). The performance history baseline is committed. `runs.tsv` keeps, through every compaction, the rows P13 says a compaction keeps, including every run named `gate:<selection>`, and every other gate run is counted in the history and retrievable from version control.
 
 **Style, documentation, records, release**
 - DoD-26 (S3 to S5). clang-format and clang-tidy clean; the S4 warnings pass on GCC 16 and Clang 23; the suite passes under ASan+UBSan; TSan recorded as not applicable.
