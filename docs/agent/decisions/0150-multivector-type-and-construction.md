@@ -33,3 +33,19 @@ For the constructor itself (plan 0016, planning probe 2):
 - Conversions between blade sets become constructors of the target (decision 0155), so `Motor{line}`, `Motor(line)`, and `static_cast<Motor>(line)` all work; with the aggregate only the last two did.
 - PERFORMANCE P5 still says "Values are trivially copyable aggregates (STYLE S8)". That text is not covered by this ruling and is not edited; plan 0016 asks the owner to ratify "trivially copyable" in its place.
 - Plan 0016's tests E1 to E3 change accordingly.
+
+## Implementation, 2026-11-01 (WU8a)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8a of plan 0016.
+
+1. The checks of the layout, in `mv`'s body, each a `static_assert` with a literal message, each reading a variable template evaluated once for each set (and, for the range, each number of generators) that a program uses:
+   - every blade names only e1 to en (`detail::blades_in_algebra<n, Blades>`, through `plan.hpp`'s `all_in_algebra`): "mv: the blade set names a generator beyond e_n";
+   - every sign is +1 or -1 (`detail::signs_valid<Blades>`, the variable `index_of` already reads): "mv: the blade set holds a sign other than +1 or -1";
+   - no mask appears twice, in either orientation, by the direct comparison of every pair (`detail::distinct_masks<Blades>`, O(K²) steps): "mv: the blade set holds one blade twice, perhaps in both orientations".
+
+   The canonical-order fast path stays unbuilt (plan 0016 reading 16); the measured limit is in decision 0156.
+2. The storage base is `detail::coefficient_storage<Multivector, T, std::index_sequence<I...>>`, whose first parameter is the multivector type itself. Two multivector types with the same scalar and number of blades would otherwise share the base, and its `==` would compare a Line with any other six-blade type of any algebra. With the type in the base, values of different layouts, algebras, or scalars do not compare, as plan 0016 reading 13 requires.
+3. `==` is written out (`coefficients == other.coefficients`) and constrained by `std::equality_comparable<T>`, rather than defaulted. With a defaulted body, GCC 16.2.1 failed to compile `std::equality_comparable<mv<..., T>>` for a scalar without `==` (inside `std::array`'s `==`), where the plan wants a multivector of such a scalar to exist without `==`.
+4. The zero initializer is written once per place, `coefficients{zero_at(I)...}`, not `coefficients{}`: GCC 16.2.1 miscompiles the latter after a constant evaluation in the same translation unit writes into a zero value of the type (lesson 0065; the reproducer, which needs no Galoot code, is under `docs/agent/records/spikes/gcc-shared-array-initializer/`).
+5. Members: `algebra_type`, `layout`, and `component_count` (the last named so that Clang prints "3 == 6" and not the layout). `scalar_type` has no caller in WU8a and is left for the part that needs it (STYLE S16).
+6. The count catch-all is constrained to any number of values other than none, the component count, and a single multivector, so that copies and, in WU8b, conversions are not caught.
