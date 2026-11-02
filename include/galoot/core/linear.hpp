@@ -53,6 +53,14 @@
 // Each result coefficient is computed by the scalar's own operations, one
 // per blade (at most one + or - for a sum, one * for a multiple, one / for a
 // quotient), so these operations round only as the scalar does.
+//
+// Compile cost: a sum or a difference of two layouts merges them once for
+// each pair of layouts, a constant evaluation whose cost grows with the
+// square of their sizes, so the compilers' limits bound it below the size
+// of a multivector: on Clang 23, full<8> plus the bivectors of eight
+// generators does not build. sum_layout's comment gives the measured sizes
+// and the workaround. A sum of one type, a scaling, and a negation cost no
+// constant evaluation beyond the multivector's own.
 
 #include <array>
 #include <concepts>
@@ -91,8 +99,17 @@ with_plus_signs(const blade_set<K>& set) noexcept {
 ///
 /// Requires: Alg is metric_like, and neither layout holds a mask twice. The
 /// blades are merged by insertion, so the compile cost grows with the square
-/// of the two sizes; the limits that merge states for its constant
-/// evaluation apply.
+/// of the two sizes, and the compilers' limits on constant evaluation bound
+/// a sum of two layouts below the size of a multivector. Measured at the
+/// default limits, at -O0 and -O2, with and without _GLIBCXX_ASSERTIONS, in
+/// R(n,0,0): full<n> plus the bivectors of n generators, and full<n-1> plus
+/// the blades that hold e_n, build for n up to 7 on Clang 23 and up to 9 on
+/// GCC 16, while mv builds full<8> and full<10>. A larger sum fails inside
+/// merge (Clang: "constexpr variable 'u' must be initialized by a constant
+/// expression"; GCC: "constexpr evaluation operation count exceeds limit").
+/// Where one layout holds every blade of the other, convert the smaller
+/// operand to the larger one's type first, as in x + X{y} for x of type X:
+/// a sum of one type merges nothing.
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto sum_layout =
     merge<detail::with_plus_signs(A), detail::with_plus_signs(B)>;
