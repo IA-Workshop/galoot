@@ -1438,3 +1438,28 @@ foreach(spelling IN ITEMS geometric_antiproduct percent)
     MESSAGE "${written}: ${antiproduct_narrow}"
     ONE_ERROR FORBID "apply:")
 endforeach()
+
+# core.linear: sums, differences, scaling by a scalar, and negation, with
+# values written out from the definitions and the laws of a vector space.
+galoot_add_test(MODULE core COMPONENT linear)
+
+# core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
+# from two algebras or with two scalar types fails to compile with one
+# error, the message of the operation as written.
+foreach(spelling IN ITEMS plus minus)
+  if(spelling STREQUAL "plus")
+    set(written "a + b")
+  else()
+    set(written "a - b")
+  endif()
+  galoot_add_compile_fail_test(NAME linear_mixed_algebras_${spelling}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_mixed_algebras_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_algebras}"
+    ONE_ERROR FORBID "different scalar types")
+  galoot_add_compile_fail_test(NAME linear_mixed_scalars_${spelling}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_mixed_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_scalars}"
+    ONE_ERROR FORBID "different algebras")
+endforeach()
