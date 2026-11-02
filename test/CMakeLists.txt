@@ -886,25 +886,39 @@ function(mv_rejects case message)
     MESSAGE "${message}"
     ${ARGN})
 endfunction()
-set(mv_beyond_n "mv: the blade set names a generator beyond e_n")
-set(mv_bad_sign "mv: the blade set holds a sign other than +1 or -1")
-set(mv_repeated
-  "mv: the blade set holds one blade twice, perhaps in both orientations")
+# A message's ; would split it into two list items, so it is held as
+# character 1, which expect_output.cmake reads as a ;.
+string(ASCII 1 semicolon)
+set(mv_beyond_n "mv: the layout names a generator that the algebra does not have${semicolon} a layout written for a larger algebra cannot be used here")
+set(mv_bad_sign "mv: the layout holds a sign other than +1 or -1${semicolon} give each blade of a layout written out by hand the sign +1 or -1")
+set(mv_repeated "mv: the layout holds one blade twice, perhaps in both orientations${semicolon} list each blade once")
+# Clang prints the condition of a failed static_assert before its message;
+# each layout check reads a member named for its rule, so that the condition
+# Clang prints is the rule and not the layout's masks.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(mv_range_rule "due to requirement 'layout_names_only_generators_of_the_algebra'")
+  set(mv_sign_rule "due to requirement 'layout_signs_are_plus_or_minus_one'")
+  set(mv_repeat_rule "due to requirement 'layout_holds_each_blade_once'")
+else()
+  set(mv_range_rule "")
+  set(mv_sign_rule "")
+  set(mv_repeat_rule "")
+endif()
 set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient")
 set(mv_count
   "mv: give one value for each component, in the order the layout lists them")
 foreach(case IN ITEMS beyond_n beyond_n_31)
-  mv_rejects(${case} "${mv_beyond_n}" ONE_ERROR
-    FORBID "${mv_bad_sign}" "${mv_repeated}")
+  mv_rejects(${case} "${mv_beyond_n}" REQUIRE ${mv_range_rule} ONE_ERROR
+    FORBID "${mv_bad_sign}" "${mv_repeated}" "blade set")
 endforeach()
 foreach(case IN ITEMS bad_sign bad_sign_second)
-  mv_rejects(${case} "${mv_bad_sign}" ONE_ERROR
-    FORBID "${mv_beyond_n}" "${mv_repeated}")
+  mv_rejects(${case} "${mv_bad_sign}" REQUIRE ${mv_sign_rule} ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_repeated}" "blade set")
 endforeach()
 foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
     repeated_after)
-  mv_rejects(${case} "${mv_repeated}" ONE_ERROR
-    FORBID "${mv_beyond_n}" "${mv_bad_sign}")
+  mv_rejects(${case} "${mv_repeated}" REQUIRE ${mv_repeat_rule} ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_bad_sign}" "blade set")
 endforeach()
 mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR)
 mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
@@ -954,9 +968,7 @@ endif()
 mv_rejects(scalar_without_default "${not_semiregular}")
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
-# blades. A message's ; would split it into two list items, so it is held as
-# character 1, which expect_output.cmake reads as a ;.
-string(ASCII 1 semicolon)
+# blades. A message's ; is held as character 1, as for the layout messages.
 set(mv_get_messages
   "get: names have one digit per index, so they are read only for n up to 9${semicolon} reach the coefficient by its position"
   "get: give one blade name"
