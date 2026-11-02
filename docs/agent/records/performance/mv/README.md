@@ -142,4 +142,19 @@ The kernel's cost on GCC at -O0 (83 M for 16 terms) exceeds its plan's; it inclu
 
 ## W10 (criterion 23)
 
-Before: fresh gcc-debug and clang-debug trees at `11d1ec9`, rows copied into `compile.tsv` in `bc4b767` (137 and 139 rows). After: the fresh trees of the final check, in the commit that records it (plan 0016, Outcome WU8b).
+Compile rows of fresh gcc-debug and clang-debug trees, each built once with `all` and the header sets and copied into `compile.tsv` by decision 0080's step: before at `11d1ec9` (in `bc4b767`, 137 and 139 rows), after at `6b40bed` (the trees of the final check, 160 and 162 rows). Shared mode, not pinned, so instructions are summed over both kinds of core and wall times are not compared. Selected units, G instructions and peak MiB:
+
+| Unit | Preset | Before (`11d1ec9`) | After (`6b40bed`) |
+| --- | --- | --- | --- |
+| `galoot/core.hpp.cxx` (header set) | gcc-debug | 0.92, 77 | 0.93, 77 |
+| `galoot/core.hpp.cxx` | clang-debug | 0.93, 112 | 0.94, 112 |
+| `galoot/core/mv.hpp.cxx` | gcc-debug | 0.92, 78 | 0.93, 78 |
+| `galoot/core/mv.hpp.cxx` | clang-debug | 0.93, 112 | 0.94, 112 |
+| `test/core/smoke_test.cpp` | gcc-debug | 1.12, 87 | 1.13, 88 |
+| `test/core/smoke_test.cpp` | clang-debug | 1.03, 125 | 1.04, 125 |
+| `test/core/mv_test.cpp` | gcc-debug | 13.22, 329 | 64.47, 679 |
+| `test/core/mv_test.cpp` | clang-debug | 11.06, 273 | 57.01, 430 |
+| `test/core/plan_test.cpp` | gcc-debug | 31.67, 360 | 31.68, 360 |
+| `test/core/plan_test.cpp` | clang-debug | 34.83, 344 | 34.81, 345 |
+
+The units that existed before and do not test the new code move by under 1.5 %. `mv_test.cpp` grows about five times, by its new tests: the exhaustive comparison of F1 (six forms, nine operations, kernels of up to several hundred terms), the golden composition over `full<5>` of conformal(3) (a plan of 1,024 terms), and the five-scalar tests; it is the largest test unit now, 5.2 s and 0.68 GiB on gcc-debug in this build. Test time of the whole suite (CTest's total, shared machine, not comparable precisely): gcc-debug 6.2 s before and 6.3 s after, clang-debug 3.7 s and 4.1 s.
