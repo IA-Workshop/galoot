@@ -1,4 +1,4 @@
-"""Mutation runs for WU8a (plan 0016): mv.hpp, the blades<Alg, ...> change
+"""Mutation runs for WU8a (plan 0016) and its review fixes: mv.hpp, the blades<Alg, ...> change
 in blade_set.hpp, the test rational, and the one-error option of the
 compile-fail helper. Apply one mutation, build `all` on each preset given,
 run the whole suite there, and restore the file. Each mutation's anchor must
@@ -40,23 +40,12 @@ TESTS = [f"{ROOT}/test/core/mv_test.cpp",
          f"{ROOT}/test/core/blade_set_test.cpp"]
 
 RANGE_CHECK = (
-    "  static_assert(\n"
-    "      detail::blades_in_algebra<\n"
-    "          std::remove_cvref_t<decltype(Alg::value)>::generator_count, "
-    "Blades>,\n"
-    "      \"mv: the blade set names a generator beyond e_n\");\n")
-SIGN_CHECK = (
-    "  static_assert(detail::signs_valid<Blades>,\n"
-    "                \"mv: the blade set holds a sign other than +1 or -1\");\n")
-REPEAT_CHECK = (
-    "  static_assert(detail::distinct_masks<Blades>,\n"
-    "                \"mv: the blade set holds one blade twice, perhaps in "
-    "both \"\n"
-    "                \"orientations\");\n")
-SCALAR_CHECK = (
-    "  static_assert(ring_scalar<T>,\n"
-    "                \"mv: the scalar type must support +, -, *, unary - and \"\n"
-    "                \"construction from an integer coefficient\");\n")
+    "  static_assert(layout_names_only_generators_of_the_algebra,\n"
+    "                \"mv: the layout names a generator that the algebra does "
+    "not \"\n")
+SIGN_CHECK = "  static_assert(layout_signs_are_plus_or_minus_one,\n"
+REPEAT_CHECK = "  static_assert(layout_holds_each_blade_once,\n"
+SCALAR_CHECK = "  static_assert(ring_scalar<T>,\n"
 ORIENTATION = (
     "      const NameLookup result = layout.blades[at].sign == "
     "parsed.blade.sign\n"
@@ -64,7 +53,7 @@ ORIENTATION = (
     "                                    : NameLookup::other_orientation;\n")
 EQUALITY = "    return coefficients == other.coefficients;\n"
 EQUALITY_BUT_LAST = (
-    "    for (std::size_t i = 0; i + 1 < sizeof...(I); ++i) {\n"
+    "    for (std::size_t i = 0; i + 1 < sizeof...(Ts); ++i) {\n"
     "      if (!(coefficients[i] == other.coefficients[i])) {\n"
     "        return false;\n"
     "      }\n"
@@ -73,14 +62,21 @@ EQUALITY_BUT_LAST = (
 INVALID_NAME = (
     "  default:\n"
     "    return {.result = NameLookup::not_a_name, .at = K};\n")
-INITIALIZER = "  std::array<T, sizeof...(I)> coefficients{zero_at(I)...};\n"
+INITIALIZER = "  std::array<T, sizeof...(Ts)> coefficients{Ts{}...};\n"
+MV_HEAD = "template <metric_like Alg, blade_set Blades, std::semiregular T>\n"
 
-# (name, file, anchor, replacement)
+# A check made always true by turning its static_assert's condition into
+# `true ||`, so that the message and layout of the source are kept.
+def disabled(anchor):
+    return anchor.replace("static_assert(", "static_assert(true || ", 1)
+
+# (name, file, anchor, replacement[, count]): count is how many times the
+# anchor occurs and is replaced, 1 unless given.
 MUTATIONS = [
-    ("no_range_check", MV, RANGE_CHECK, ""),
-    ("no_sign_check", MV, SIGN_CHECK, ""),
-    ("no_repeat_check", MV, REPEAT_CHECK, ""),
-    ("no_scalar_check", MV, SCALAR_CHECK, ""),
+    ("no_range_check", MV, RANGE_CHECK, disabled(RANGE_CHECK)),
+    ("no_sign_check", MV, SIGN_CHECK, disabled(SIGN_CHECK)),
+    ("no_repeat_check", MV, REPEAT_CHECK, disabled(REPEAT_CHECK)),
+    ("no_scalar_check", MV, SCALAR_CHECK, disabled(SCALAR_CHECK)),
     ("range_ignores_algebra", MV,
      "inline constexpr bool blades_in_algebra = all_in_algebra(S, N);\n",
      "inline constexpr bool blades_in_algebra = all_in_algebra(S, mask_bits);\n"),
@@ -92,6 +88,10 @@ MUTATIONS = [
      "      if (set.blades[i] == set.blades[j]) {\n"),
     ("ring_scalar_no_unary_minus", MV,
      "  { -a } -> std::convertible_to<T>;\n", ""),
+    ("ring_requires_equality", MV,
+     "  { -a } -> std::convertible_to<T>;\n",
+     "  { -a } -> std::convertible_to<T>;\n"
+     "  { a == b } -> std::convertible_to<bool>;\n"),
     ("exact_scalar_ignores_limits", MV,
      "concept exact_scalar = ring_scalar<T> && "
      "std::numeric_limits<T>::is_exact;\n",
@@ -99,18 +99,30 @@ MUTATIONS = [
     ("multivector_keeps_reference", MV,
      "concept multivector = detail::is_multivector_v<std::remove_cvref_t<X>>;\n",
      "concept multivector = detail::is_multivector_v<X>;\n"),
+    ("mv_alg_unconstrained", MV, MV_HEAD,
+     "template <class Alg, blade_set Blades, std::semiregular T>\n", 3),
     ("no_default_initializer", MV, INITIALIZER,
-     "  std::array<T, sizeof...(I)> coefficients;\n"),
+     "  std::array<T, sizeof...(Ts)> coefficients;\n"),
     ("shared_zero_initializer", MV, INITIALIZER,
-     "  std::array<T, sizeof...(I)> coefficients{};\n"),
+     "  std::array<T, sizeof...(Ts)> coefficients{};\n"),
     ("one_value_implicit", MV,
-     "  constexpr explicit(sizeof...(I) == 1)\n      coefficient_storage(",
-     "  constexpr explicit(false)\n      coefficient_storage("),
+     "  constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)",
+     "  constexpr explicit(false) coefficient_storage(Ts... values)"),
     ("equality_skips_last", MV, EQUALITY, EQUALITY_BUT_LAST),
+    ("equality_requires_removed", MV,
+     "    requires std::equality_comparable<T>\n", ""),
     ("count_accepts_one_short", MV,
      "    static_assert(sizeof...(Values) == component_count,\n",
      "    static_assert(sizeof...(Values) == component_count ||\n"
      "                      sizeof...(Values) + 1 == component_count,\n"),
+    ("catchall_k1_not_explicit", MV,
+     "  constexpr explicit(sizeof...(Values) == 1) mv(",
+     "  constexpr explicit(false) mv("),
+    ("catchall_counts_ignored_for_one", MV,
+     "    requires(sizeof...(Values) > 0 && sizeof...(Values) != "
+     "component_count &&\n",
+     "    requires(sizeof...(Values) > 1 && sizeof...(Values) != "
+     "component_count &&\n"),
     ("get_ignores_sign", MV, ORIENTATION,
      "      const NameLookup result = NameLookup::found;\n"),
     ("get_orientation_as_absent", MV,
@@ -131,6 +143,9 @@ MUTATIONS = [
      "    std::remove_cvref_t<decltype(Alg::value)>::generator_count, "
      "Names>();\n",
      "    4, Names>();\n"),
+    ("blades_unconstrained", BLADE_SET,
+     "template <metric_like Alg, detail::name_list Names>\n",
+     "template <class Alg, detail::name_list Names>\n"),
     ("sign_zero_accepted", BLADE_SET,
      "  return sign == 1 || sign == -1;\n",
      "  return sign == 1 || sign == -1 || sign == 0;\n"),
@@ -146,11 +161,19 @@ MUTATIONS = [
     ("rational_no_product_guard", RATIONAL,
      "  const bool fits = a == 0 || magnitude(b) <= max / magnitude(a);\n",
      "  const bool fits = true;\n"),
+    ("rational_product_no_cancel", RATIONAL,
+     "  const std::int64_t g = detail::gcd(a.numerator, b.denominator);\n"
+     "  const std::int64_t h = detail::gcd(b.numerator, a.denominator);\n",
+     "  const std::int64_t g = 1;\n"
+     "  const std::int64_t h = 1;\n"),
     ("rational_min_accepted", RATIONAL,
      "    if (n < -detail::max || d < -detail::max) {\n",
      "    if (d < -detail::max) {\n"),
     ("one_error_inert", TESTING,
      "    set(only ONLY \"error:\")\n", "    set(only \"\")\n"),
+    ("literal_in_path_check_inert", TESTING,
+     "    if(NOT at EQUAL -1)\n      message(FATAL_ERROR \"${name}: the required",
+     "    if(FALSE)\n      message(FATAL_ERROR \"${name}: the required"),
 ]
 
 STATIC_ASSERT = re.compile(
@@ -199,11 +222,12 @@ def main():
                 assert text.count("static_assert(") > 0, path
                 write(path, text.replace("static_assert(",
                                          "static_assert(true ? true : "))
-        for name, path, anchor, replacement in MUTATIONS:
+        for name, path, anchor, replacement, *count in MUTATIONS:
             if only and name not in only:
                 continue
             source = originals[path]
-            assert source.count(anchor) == 1, (name, anchor)
+            expected = count[0] if count else 1
+            assert source.count(anchor) == expected, (name, anchor)
             write(path, source.replace(anchor, replacement))
             for preset in presets:
                 build = run(["tools/timed", "build", preset,
