@@ -253,6 +253,57 @@ TEST_CASE("A sum of two layouts holds the blades of both in canonical order") {
   CHECK((p - g) == PG{1, 2, 3, 4, 8, -7, 6, -5});
 }
 
+namespace {
+
+// Eight Euclidean generators: a full multivector of 256 blades, the largest
+// that Clang 23 builds at its default limits.
+struct r8 {
+  static constexpr auto value = core::R<8, 0, 0>();
+};
+
+} // namespace
+
+// Reference: independent value: by hand, the sum and the difference of two
+//   full multivectors of R(8, 0, 0) with k and 2k on place k hold 3k and -k;
+//   contract: sum_layout names the layout of x + y for every pair of
+//   layouts, so for two values of one layout it is that layout, and a sum
+//   of one type merges nothing, so it builds at the size of a full
+//   multivector of eight generators, which a sum of two layouts that large
+//   does not
+TEST_CASE("sum_layout of one layout is that layout, and its sum merges "
+          "nothing") {
+  static_assert(core::sum_layout<rga3, line_layout, line_layout> ==
+                line_layout);
+  static_assert(core::sum_layout<rga3, motor_layout, motor_layout> ==
+                motor_layout);
+  static_assert(
+      core::sum_layout<cga3, conformal_wide_layout, conformal_wide_layout> ==
+      conformal_wide_layout);
+  using L = Line<std::int64_t>;
+  static_assert(std::same_as<
+                decltype(L{} + L{}),
+                core::mv<rga3, core::sum_layout<rga3, line_layout, line_layout>,
+                         std::int64_t>>);
+
+  using F8 = core::mv<r8, core::full<8>, std::int64_t>;
+  static_assert(std::same_as<decltype(F8{} + F8{}), F8>);
+  static_assert(std::same_as<decltype(F8{} - F8{}), F8>);
+  const volatile std::int64_t one = 1;
+  F8 a{};
+  F8 b{};
+  for (std::size_t k = 0; k < F8::component_count; ++k) {
+    a.coefficients.at(k) = static_cast<std::int64_t>(k) * one;
+    b.coefficients.at(k) = 2 * static_cast<std::int64_t>(k);
+  }
+  const F8 s = a + b;
+  const F8 d = a - b;
+  for (std::size_t k = 0; k < F8::component_count; ++k) {
+    CAPTURE(k);
+    CHECK(s.coefficients.at(k) == 3 * static_cast<std::int64_t>(k));
+    CHECK(d.coefficients.at(k) == -static_cast<std::int64_t>(k));
+  }
+}
+
 // Reference: independent value: by hand, a blade that both layouts hold
 //   takes the sum of the two coefficients, each times its orientation: a
 //   rigid(3) line with 1 to 6 on e41 e42 e43 e23 e31 e12 plus the bivectors
