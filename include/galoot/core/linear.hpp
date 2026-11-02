@@ -2,7 +2,8 @@
 #define GALOOT_CORE_LINEAR_HPP
 
 // The operations of the vector space of multivectors: the sum and the
-// difference of two multivectors of one algebra, as the operators + and -.
+// difference of two multivectors of one algebra, as the operators + and -,
+// and the product and quotient of a multivector by a scalar, as * and /.
 //
 //   struct rga3 {
 //     static constexpr auto value = galoot::core::rigid<3>();
@@ -18,31 +19,46 @@
 //   Line c = a + b;  // a Line: 1 on e41 and 1 on e43
 //   auto m = a + Antiscalar{1};  // e12 e13 e14 e23 e24 e34 e1234
 //   double on_e34 = galoot::core::get<"e34">(m);  // -1, since e43 = -e34
+//   Line d = 2.0 * a;  // or a * 2.0: a Line, 2 on e43
+//   Line e = a / 4.0;  // 0.25 on e43
 //
 // Result layouts: a sum or a difference of two values of one type is that
-// type, so a + b above is a Line, with the line's orientations. Of two
-// different layouts, it is the canonical set of the blades either holds,
-// each once with orientation +1, in order of grade and then of index list,
-// as for a product: its type is mv<Alg, sum_layout<Alg, A, B>, T>. Convert
-// it to a named type that holds those blades, Type{m}, to read it under
-// that type's orientations.
+// type, so a + b above is a Line, with the line's orientations, and so is a
+// multiple or a quotient of a by a scalar. A sum or a difference of two
+// different layouts is the canonical set of the blades either holds, each
+// once with orientation +1, in order of grade and then of index list, as
+// for a product: its type is mv<Alg, sum_layout<Alg, A, B>, T>. Convert it
+// to a named type that holds those blades, Type{m}, to read it under that
+// type's orientations.
 //
 // Both operands must be mv types of the same algebra and the same scalar
 // type; two mv types that differ in either are rejected at compile time with
 // a message that names the mistake. The rejection is an overload of its own,
 // so a requires-expression that asks whether such a sum or difference is
 // valid is told yes; ask the operand types instead. A multivector and a
-// number have no sum. A class derived from mv is accepted as its mv base,
-// and the result is the mv type, not the derived class.
+// number have no sum.
 //
-// Each result coefficient is computed by the scalar's own + and -, at most
-// one of them per blade, so these operations round only as the scalar does.
+// The scalar of s * a, a * s, and a / s must have the multivector's scalar
+// type exactly: 2 * a for a multivector over double is rejected with a
+// message that says to write 2.0, and 2.5 * a for one over std::int64_t is
+// rejected rather than truncated. The rejection is again an overload of its
+// own, for any ring scalar of another type, so a requires-expression that
+// asks whether 2 * a is valid is told yes.
+//
+// A class derived from mv is accepted as its mv base, and the result is the
+// mv type, not the derived class.
+//
+// Each result coefficient is computed by the scalar's own operations, one
+// per blade (at most one + or - for a sum, one * for a multiple, one / for a
+// quotient), so these operations round only as the scalar does.
 
 #include <array>
+#include <concepts>
 #include <cstddef>
 #include <type_traits>
 #include <utility>
 
+#include <galoot/core/assert.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -257,6 +273,121 @@ template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator-(const X& /*x*/, const Y& /*y*/) {
   return detail::reject_sum<detail::SumSpelling::minus_operator, X, Y>();
+}
+
+namespace detail {
+
+// Whether S, a scalar that is not a multivector or derived from one, is a
+// ring scalar of another type than the scalar type of the multivector type
+// X: what the rejecting overloads of the scalings take.
+template <class S, class X>
+concept scalar_of_another_type =
+    multivector<X> && !multivector_or_derived<S> && ring_scalar<S> &&
+    !std::same_as<S, typename std::remove_cvref_t<X>::scalar_type>;
+
+// Whether a / b is a T for two values of T.
+template <class T>
+concept scalar_has_division = requires(const T& a, const T& b) {
+  { a / b } -> std::convertible_to<T>;
+};
+
+} // namespace detail
+
+/// s * x: each coefficient of x multiplied by s on the left, s x_i, so that
+/// a scalar whose product does not commute, such as a matrix, keeps its
+/// order. The result has x's type.
+///
+/// Requires: s has x's scalar type T exactly; a scalar of another type is
+/// rejected, by the overload below.
+template <metric_like Alg, blade_set A, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, A, T> operator*(const T& s,
+                                                const mv<Alg, A, T>& x) {
+  mv<Alg, A, T> out;
+  for (std::size_t i = 0; i < A.size(); ++i) {
+    out.coefficients[i] = static_cast<T>(s * x.coefficients[i]);
+  }
+  return out;
+}
+
+/// x * s: each coefficient of x multiplied by s on the right, x_i s. The
+/// result has x's type.
+///
+/// Requires: s has x's scalar type T exactly, as for s * x.
+template <metric_like Alg, blade_set A, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, A, T> operator*(const mv<Alg, A, T>& x,
+                                                const T& s) {
+  mv<Alg, A, T> out;
+  for (std::size_t i = 0; i < A.size(); ++i) {
+    out.coefficients[i] = static_cast<T>(x.coefficients[i] * s);
+  }
+  return out;
+}
+
+/// x / s: each coefficient of x divided by s with T's own division, x_i / s,
+/// never multiplied by a reciprocal of s, which would round twice: exact for
+/// an exact rational type, correctly rounded per coefficient for double, and
+/// truncated toward zero for a built-in integer type, so 7 / 2 is 3 and -7 /
+/// 2 is -3. The result has x's type.
+///
+/// Requires: s has x's scalar type T exactly, as for s * x, and T has a /
+/// whose result converts to T; a T without one has no x / s, and the call is
+/// the compiler's own error. For an integer T, as std::numeric_limits<T>
+/// tells (is_integer), s is not zero: checked by GALOOT_ASSERT in every
+/// constant evaluation, which then fails, and at run time when
+/// GALOOT_CHECKING is 1, which then aborts with the message; with
+/// GALOOT_CHECKING 0 the division by zero is undefined behavior. A floating
+/// T is not checked: IEEE 754 defines its division by zero.
+template <metric_like Alg, blade_set A, ring_scalar T>
+  requires detail::scalar_has_division<T>
+[[nodiscard]] constexpr mv<Alg, A, T> operator/(const mv<Alg, A, T>& x,
+                                                const T& s) {
+  if constexpr (detail::integer_limits<T> && std::equality_comparable<T>) {
+    GALOOT_ASSERT(s != T{}, "a / s: an integer scalar cannot divide by zero");
+  }
+  mv<Alg, A, T> out;
+  for (std::size_t i = 0; i < A.size(); ++i) {
+    out.coefficients[i] = static_cast<T>(x.coefficients[i] / s);
+  }
+  return out;
+}
+
+/// Rejects s * x for a ring scalar s of another type than x's scalar type,
+/// such as 2 for a multivector over double, with one error. Because it
+/// exists, a requires-expression that asks whether s * x is valid is told
+/// yes for any ring scalar; ask whether the two types are the same instead.
+/// A volatile scalar is of another type, volatile T; copy it to a T first.
+template <class S, class X>
+  requires detail::scalar_of_another_type<S, X>
+constexpr X operator*(const S& /*s*/, const X& x) {
+  static_assert(std::is_same_v<S, typename X::scalar_type>,
+                "s * a: the scalar is not of the multivector's scalar type; "
+                "write it in that type, as 2.0 for 2 when the scalar type is "
+                "double");
+  return x;
+}
+
+/// Rejects x * s for a ring scalar s of another type than x's scalar type,
+/// as for s * x: a requires-expression is told yes.
+template <class X, class S>
+  requires detail::scalar_of_another_type<S, X>
+constexpr X operator*(const X& x, const S& /*s*/) {
+  static_assert(std::is_same_v<S, typename X::scalar_type>,
+                "a * s: the scalar is not of the multivector's scalar type; "
+                "write it in that type, as 2.0 for 2 when the scalar type is "
+                "double");
+  return x;
+}
+
+/// Rejects x / s for a ring scalar s of another type than x's scalar type,
+/// as for s * x: a requires-expression is told yes.
+template <class X, class S>
+  requires detail::scalar_of_another_type<S, X>
+constexpr X operator/(const X& x, const S& /*s*/) {
+  static_assert(std::is_same_v<S, typename X::scalar_type>,
+                "a / s: the scalar is not of the multivector's scalar type; "
+                "write it in that type, as 2.0 for 2 when the scalar type is "
+                "double");
+  return x;
 }
 
 } // namespace galoot::core
