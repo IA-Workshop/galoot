@@ -1,6 +1,6 @@
 # 0018 WU9: geometric product, wedge, and their operators
 
-- Status: implemented on `feature/core-products` 2026-11-02 by the coordinating agent (Claude, Sonnet 5.5), without sub-agents; all seven presets passed; awaiting the W5 review.
+- Status: implemented, reviewed (blind review blocked once, fixed), merged to `develop` 2026-11-02.
 - Branch `feature/core-products`, worktree `.claude/worktrees/core-products`, from `develop` at the claim commit. Decision numbers 0162 to 0169 (0170 belongs to the run log, 0130 to the job pool).
 - Source of scope: plan 0001 (WU9, size S), plan 0016 section 15 "Deferred" and its R6, decision 0159, the 2026-11-02 handoff.
 - Goal: public `geometric_product(x, y)` and `wedge(x, y)` on multivectors of one algebra, with the operators `*` and `^` (CONVENTIONS 7.1), each a one-line caller of `detail::apply`; the enumerator rename of decision 0159; a mixed-algebra catch-all with a message in the user's terms.
@@ -81,4 +81,4 @@ Mutants: the planned sixth (a shared-generator sign flip) was not run by the aut
 
 Departures: commits 2 to 4 were one commit; no sub-agent implemented or tested the unit, so no cost row; tests and code are in one commit (W9, the review lists the tests and expected values as the exception requires).
 
-Evidence: see the merge message for the final presets.
+Evidence: all seven presets passed from new empty trees at the final revision of the build inputs (gcc-debug and gcc-release 247, gcc-asan 239, clang-debug, clang-release, clang-asan and lint 249), after three earlier runs that failed on defects now fixed (reference markers; unused locals and the enum-size lint of the first fix pass; the suppression comment placement). The trace gate and `tools/runlog check` exit 0.
