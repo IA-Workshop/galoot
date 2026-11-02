@@ -141,6 +141,12 @@ MUTANTS = {
     "relative_keeps_abs": (
         RUNLOG, "        return os.path.relpath(log, top)",
         "        return log", RUNLOG_TEST),
+    "checkout_message_reworded": (
+        RUNLOG, 'raise Refused("not inside a git checkout")',
+        'raise Refused("not in a git checkout")', RUNLOG_TEST),
+    "clone_message_reworded": (
+        RUNLOG, "is not in this clone's history, so",
+        "is missing from this clone, so", RUNLOG_TEST),
     "log_ignored": (
         MEASURE, "log = log_path or os.path.join(",
         "log = os.path.join(", MEASURE_TEST),

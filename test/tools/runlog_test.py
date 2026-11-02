@@ -10,6 +10,7 @@ Prints one line per failed check and exits 1 if there is any.
 """
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -645,12 +646,49 @@ def inserted_mid_log(tool, directory):
         check(f"p's row once after {name}", has_once(repo, [t1]), True)
 
 
+def skip_messages(tool, directory):
+    """Case 13: the skip expressions CMake gives tools.runlog_check match
+    the messages the tool prints outside a git checkout and in a clone that
+    lacks an era's commit, so that rewording either cannot turn a skip into
+    a failure. The expressions are plain text, which CMake's regular
+    expressions and Python's read alike."""
+    cmake = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                         "CMakeLists.txt")
+    with open(cmake, encoding="utf-8") as f:
+        text = f.read()
+    block = text[text.index("set_tests_properties(tools.runlog_check"):]
+    found = re.search(r'SKIP_REGULAR_EXPRESSION "([^"]*)"', block)
+    expressions = found.group(1).split(";") if found else []
+    check("skip expressions of tools.runlog_check", len(expressions), 2)
+
+    outside = os.path.join(directory, "outside")
+    shutil.rmtree(outside, ignore_errors=True)
+    os.makedirs(outside)
+    env = dict(os.environ, GIT_CEILING_DIRECTORIES=directory)
+    result = subprocess.run([sys.executable, "-I", tool, "check"],
+                            cwd=outside, env=env, capture_output=True,
+                            text=True, check=False)
+    messages = [("outside a git checkout", result)]
+
+    repo, boundary, _, _, _ = compaction(tool, os.path.join(directory, "repo"))
+    repo.commit("compact")
+    eras = repo.read(f"{HISTORY}/eras.tsv")
+    repo.write(f"{HISTORY}/eras.tsv", eras.replace(boundary, "0" * 12))
+    messages.append(("an era not in the clone", repo.run("check")))
+
+    for name, result in messages:
+        check(f"exit {name}", result.returncode, 2)
+        check(f"a skip expression matches the message {name}",
+              any(re.search(e, result.stderr) for e in expressions), True)
+
+
 def main(tool, directory):
     tool = os.path.realpath(tool)
     directory = os.path.realpath(directory)
     cases = [summary_values, kept_by_rule, compaction, checks, refusals,
              pruning, merges, second_era, merged_boundary_first,
-             inserted_mid_log, later_era_refusal, campaign_log]
+             inserted_mid_log, later_era_refusal, campaign_log,
+             skip_messages]
     for case in cases:
         try:
             case(tool, os.path.join(directory, case.__name__))
