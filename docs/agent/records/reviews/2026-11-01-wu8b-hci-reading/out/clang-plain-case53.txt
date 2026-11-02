@@ -1,0 +1,10 @@
+user.cpp:243:19: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = later]
+  243 |   r += sizeof(gc::mv<rga3, point_layout, later>*);
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:409:46: note: because 'later' does not satisfy 'destructible'
+  409 | template <metric_like Alg, blade_set Blades, std::destructible T>
+      |                                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:157:28: note: because '__detail::__destructible<later>' evaluated to false
+  157 |     concept destructible = __detail::__destructible<_Tp>;
+      |                            ^
+1 error generated.

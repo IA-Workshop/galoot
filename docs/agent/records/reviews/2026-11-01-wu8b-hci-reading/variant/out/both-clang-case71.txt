@@ -1,0 +1,10 @@
+variant.cpp:96:3: error: call to 'g' is ambiguous
+   96 |   g(l);  // a line to a motor (lossless) or a point (lossy)
+      |   ^
+variant.cpp:30:6: note: candidate function
+   30 | void g(const Motor&) {}
+      |      ^
+variant.cpp:31:6: note: candidate function
+   31 | void g(const Point&) {}
+      |      ^
+1 error generated.

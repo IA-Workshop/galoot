@@ -1,0 +1,9 @@
+user.cpp: In function ‘double use()’:
+user.cpp:195:20: error: conversion from ‘double’ to non-scalar type ‘const Scalar’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>’} requested
+  195 |   const Scalar s = 2.0;  // a number into a one-blade type, implicitly
+      |                    ^~~
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp:477:45: note: explicit conversion function was not considered
+  477 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+      |                                             ^~~~~~~~~~

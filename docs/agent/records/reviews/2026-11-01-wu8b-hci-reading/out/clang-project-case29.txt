@@ -1,0 +1,27 @@
+user.cpp:178:30: error: no viable conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const std::optional<Point>' (aka 'const std::optional<gc::mv<rga3, point_layout, double>>')
+  178 |   const std::optional<Point> s = q;  // generic wrapper, lossy
+      |                              ^   ~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:812:11: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const optional<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>> &' for 1st argument
+  812 |     class optional
+      |           ^~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:812:11: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'optional<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>> &&' for 1st argument
+  812 |     class optional
+      |           ^~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:900:17: note: candidate constructor not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'nullopt_t' for 1st argument
+  900 |       constexpr optional(nullopt_t) noexcept { }
+      |                 ^        ~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:919:2: note: candidate template ignored: could not match 'optional' against 'gc::mv'
+  919 |         optional(const optional<_Up>& __t)
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:931:2: note: candidate template ignored: could not match 'optional' against 'gc::mv'
+  931 |         optional(optional<_Up>&& __t)
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:910:2: note: explicit constructor is not a candidate (explicit specifier evaluates to true)
+  909 |         constexpr explicit(!is_convertible_v<_Up, _Tp>)
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  910 |         optional(_Up&& __t)
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/optional:941:2: note: explicit constructor is not a candidate
+  941 |         optional(in_place_t, _Args&&... __args)
+      |         ^
+1 error generated.

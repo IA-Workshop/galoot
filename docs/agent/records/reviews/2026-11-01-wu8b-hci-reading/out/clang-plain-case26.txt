@@ -1,0 +1,12 @@
+In file included from user.cpp:14:
+In file included from include/galoot/core.hpp:12:
+include/galoot/core/mv.hpp:523:19: error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the order the layout lists them
+  523 |     static_assert(sizeof...(Values) == component_count,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+user.cpp:168:15: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<int>' requested here
+  168 |   const Point s{1};  // one value for four places
+      |               ^
+include/galoot/core/mv.hpp:523:37: note: expression evaluates to '1 == 4'
+  523 |     static_assert(sizeof...(Values) == component_count,
+      |                   ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 error generated.

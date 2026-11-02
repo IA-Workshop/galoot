@@ -1,0 +1,7 @@
+user.cpp: In function ‘double use()’:
+user.cpp:102:14: error: invalid initialization of reference of type ‘const Point&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&’} from expression of type ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>’}
+  102 |   take_point(q);  // implicit, lossy, as an argument
+      |              ^
+user.cpp:69:17: note: in passing argument 1 of ‘void take_point(const Point&)’
+   69 | void take_point(const Point&) {}
+      |                 ^~~~~~~~~~~~

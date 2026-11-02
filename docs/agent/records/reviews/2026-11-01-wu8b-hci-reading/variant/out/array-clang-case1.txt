@@ -1,0 +1,28 @@
+variant.cpp:81:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
+   81 |   const Point s = q;
+      |               ^   ~
+include/galoot/core/mv.hpp:419:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
+  419 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:419:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
+  419 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:544:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  544 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+include/galoot/core/mv.hpp:540:14: note: because '!(sizeof...(Values) == 1 && detail::multivector_or_derived<const galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double> &>)' evaluated to false
+  540 |              !(sizeof...(Values) == 1 &&
+      |              ^
+include/galoot/core/mv.hpp:567:36: note: candidate template ignored: could not match 'const std::remove_cvref_t<double>[N]' (aka 'const double[N]') against 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>')
+  567 |   constexpr VARIANT_ARRAY_EXPLICIT mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                                    ^
+include/galoot/core/mv.hpp:499:22: note: explicit constructor is not a candidate
+  499 |   constexpr explicit mv(const mv<Alg, From, T>& source) {
+      |                      ^
+include/galoot/core/mv.hpp:514:36: note: explicit constructor is not a candidate
+  514 |   constexpr VARIANT_LOSSY_EXPLICIT mv(const mv<Alg, From, T>& /*source*/) {
+      |                                    ^
+include/galoot/core/mv.hpp:557:22: note: explicit constructor is not a candidate
+  557 |   constexpr explicit mv(Value&& /*values*/) {
+      |                      ^
+1 error generated.

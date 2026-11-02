@@ -1,0 +1,10 @@
+variant.cpp:96:3: error: no matching function for call to 'g'
+   96 |   g(l);  // a line to a motor (lossless) or a point (lossy)
+      |   ^
+variant.cpp:30:6: note: candidate function not viable: no known conversion from 'mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' for 1st argument
+   30 | void g(const Motor&) {}
+      |      ^ ~~~~~~~~~~~~
+variant.cpp:31:6: note: candidate function not viable: no known conversion from 'mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>' for 1st argument
+   31 | void g(const Point&) {}
+      |      ^ ~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,31 @@
+user.cpp:195:16: error: no viable conversion from 'double' to 'const Scalar' (aka 'const gc::mv<rga3, gc::blades<rga3, "1">, double>')
+  195 |   const Scalar s = 2.0;  // a number into a one-blade type, implicitly
+      |                ^   ~~~
+include/galoot/core/mv.hpp:410:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'double' to 'const mv<rga3, blade_set<1>{{{{0, 1}}}}, double> &' for 1st argument
+  410 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:410:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'double' to 'mv<rga3, blade_set<1>{{{{0, 1}}}}, double> &&' for 1st argument
+  410 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:522:46: note: candidate template ignored: constraints not satisfied [with Values = <double>]
+  522 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+include/galoot/core/mv.hpp:517:39: note: because 'sizeof...(Values) != component_count' (1 != 1) evaluated to false
+  517 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+      |                                       ^
+include/galoot/core/mv.hpp:317:42: note: explicit constructor is not a candidate (explicit specifier evaluates to true)
+  317 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+      |                      ~~~~~~~~~~~~~~~~~~  ^
+include/galoot/core/mv.hpp:490:22: note: explicit constructor is not a candidate
+  490 |   constexpr explicit mv(const mv<Alg, From, T>& source) {
+      |                      ^
+include/galoot/core/mv.hpp:505:22: note: explicit constructor is not a candidate
+  505 |   constexpr explicit mv(const mv<Alg, From, T>& /*source*/) {
+      |                      ^
+include/galoot/core/mv.hpp:535:22: note: explicit constructor is not a candidate
+  535 |   constexpr explicit mv(Value&& /*values*/) {
+      |                      ^
+include/galoot/core/mv.hpp:545:22: note: explicit constructor is not a candidate
+  545 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                      ^
+1 error generated.

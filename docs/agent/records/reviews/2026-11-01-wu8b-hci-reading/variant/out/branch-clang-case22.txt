@@ -1,0 +1,7 @@
+variant.cpp:91:15: error: chosen constructor is explicit in copy-initialization
+   91 |   const Point s = {{1, 2, 3, 1}};
+      |               ^   ~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:567:36: note: explicit constructor declared here
+  567 |   constexpr VARIANT_ARRAY_EXPLICIT mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                                    ^
+1 error generated.

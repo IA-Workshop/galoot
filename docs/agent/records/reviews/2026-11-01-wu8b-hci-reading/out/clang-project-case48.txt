@@ -1,0 +1,9 @@
+In file included from user.cpp:14:
+In file included from include/galoot/core.hpp:12:
+include/galoot/core/mv.hpp:430:17: error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+  430 |   static_assert(scalar_is_semiregular,
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+user.cpp:226:49: note: in instantiation of template class 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, constmember>' requested here
+  226 |   const gc::mv<rga3, point_layout, constmember> s{};
+      |                                                 ^
+1 error generated.

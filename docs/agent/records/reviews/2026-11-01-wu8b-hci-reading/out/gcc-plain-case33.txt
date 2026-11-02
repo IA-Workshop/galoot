@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(Value&&) [with Value = std::complex<double>; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = double]’:
+user.cpp:191:44:   required from here
+  191 |   const Scalar s{std::complex<double>{1, 0}};  // one value that does not convert
+      |                                            ^
+include/galoot/core/mv.hpp:536:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+  536 |     static_assert(false, "mv: give the coefficients one by one, not as one "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

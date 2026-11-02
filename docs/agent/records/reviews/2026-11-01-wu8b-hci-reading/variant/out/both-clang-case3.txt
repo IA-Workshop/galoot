@@ -1,0 +1,9 @@
+In file included from variant.cpp:8:
+In file included from include/galoot/core.hpp:12:
+include/galoot/core/mv.hpp:527:19: error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}
+  527 |     static_assert(false, "mv: a conversion between layouts is explicit, "
+      |                   ^~~~~
+variant.cpp:84:19: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double>::mv<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' requested here
+   84 |   const Motor s = l;
+      |                   ^
+1 error generated.

@@ -1,0 +1,12 @@
+In file included from test/core/mv_apply_inexact_float_fail.cpp:5:
+include/galoot/core/mv.hpp:711:17: error: static assertion failed due to requirement 'exact': the scalar type cannot hold one of this product's exact coefficients; use a scalar type that holds larger integers exactly
+  711 |   static_assert(exact, "the scalar type cannot hold one of this product's "
+      |                 ^~~~~
+include/galoot/core/mv.hpp:732:10: note: in instantiation of function template specialization 'galoot::core::detail::apply<galoot::core::detail::BinaryOperation::gp, blade_set<1>{{{{0, 1}}}}, (anonymous namespace)::diagonal, blade_set<1>{{{{3, 1}}}}, blade_set<1>{{{{3, 1}}}}, float>' requested here
+  732 |   return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
+      |          ^
+test/core/mv_apply_inexact_float_fail.cpp:22:32: note: in instantiation of function template specialization 'galoot::core::detail::apply<galoot::core::detail::BinaryOperation::gp, (anonymous namespace)::diagonal, blade_set<1>{{{{3, 1}}}}, blade_set<1>{{{{3, 1}}}}, float>' requested here
+   22 |   return galoot::core::detail::apply<BinaryOperation::gp>(x, x).coefficients[0];
+      |                                ^
+1 error generated.
+timed: spike hci-wu8b:inexact:float:clang++ took 0.149 s (exit 1)
