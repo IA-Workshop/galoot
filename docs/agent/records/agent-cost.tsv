@@ -82,3 +82,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0016	WU8a implementer (cpp-expert role), incl. review-fix round	opus	806505	~400	0	reported by harness as subagent_tokens (cumulative over two resumptions; wall time not summed)
 2026-11-01	plan-0016	WU8a blind reviewer (W5)	opus	370021	112	1414	reported by harness as subagent_tokens
 2026-11-01	plan-0016	WU8a hci-expert reading	opus	333420	86	1592	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b implementer (cpp-expert role), incl. review-fix and delta-fix rounds	opus	865146	~358	8069	reported by harness as subagent_tokens (cumulative over three resumptions; tool calls and wall time summed)
+2026-11-02	plan-0016	WU8b blind reviewer (W5)	opus	282661	69	815	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b hci-expert reading	opus	221979	57	1211	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b delta reviewer	opus	266514	63	1060	reported by harness as subagent_tokens
