@@ -4,14 +4,22 @@
 // The geometric product, the wedge, and their antiproducts of two
 // multivectors of one algebra, as functions and as the operators * ^ % &.
 //
-//   using Point = galoot::core::mv<rga3, point_layout, double>;  // e1 e2 e3 e4
+//   struct rga3 {
+//     static constexpr auto value = galoot::core::rigid<3>();
+//   };
+//   constexpr auto point_layout = galoot::core::blades<rga3, "e1 e2 e3 e4">;
+//   constexpr auto plane_layout =
+//       galoot::core::blades<rga3, "e423 e431 e412 e321">;
+//
+//   using Point = galoot::core::mv<rga3, point_layout, double>;
 //   using Plane = galoot::core::mv<rga3, plane_layout, double>;
 //   Point p{1, 0, 0, 1};
 //   Point q{0, 1, 0, 1};
 //   Plane g{0, 0, 1, 0};  // e412, the plane z = 0
 //   auto line = galoot::core::wedge(p, q);  // or p ^ q
 //   auto m = galoot::core::geometric_product(p, q);  // or p * q
-//   auto s = galoot::core::antiwedge(p, g);  // or p & g: zero, p is on g
+//   auto s = galoot::core::antiwedge(p, g);  // or p & g
+//   double at_p = galoot::core::get<"1">(s);  // 0: p lies on g
 //   auto n = galoot::core::geometric_antiproduct(p, g);  // or p % g
 //
 // The result holds exactly the blades the product can reach, each in the
@@ -26,7 +34,10 @@
 //
 // Both operands must be mv types of the same algebra and the same scalar
 // type; two mv types that differ in either are rejected at compile time with
-// a message that names the mistake. A scalar operand is not accepted here.
+// a message that names the mistake. The rejection is an overload of its own,
+// so a requires-expression that asks whether such a call or operator is
+// valid is told yes; ask the operand types instead. A scalar operand is not
+// accepted here.
 // A class derived from mv is accepted when the product is valid, and gets
 // the compiler's own error when it is not.
 //
@@ -284,7 +295,7 @@ wedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects a wedge whose operands are not in one algebra with one scalar
-/// type, as for geometric_product.
+/// type, as for geometric_product: a requires-expression is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> wedge(const X& /*x*/, const Y& /*y*/) {
@@ -312,7 +323,8 @@ operator*(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects x * y for operands that are not in one algebra with one scalar
-/// type.
+/// type, with one error that names the cause; a requires-expression that asks
+/// whether x * y is valid for them is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator*(const X& /*x*/, const Y& /*y*/) {
@@ -328,7 +340,8 @@ operator^(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects x ^ y for operands that are not in one algebra with one scalar
-/// type.
+/// type, with one error that names the cause; a requires-expression that asks
+/// whether x ^ y is valid for them is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator^(const X& /*x*/, const Y& /*y*/) {
@@ -388,7 +401,8 @@ geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects a geometric_antiproduct whose operands are not in one algebra
-/// with one scalar type, as for geometric_product.
+/// with one scalar type, as for geometric_product: a requires-expression is
+/// told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> geometric_antiproduct(const X& /*x*/,
@@ -415,7 +429,7 @@ antiwedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects an antiwedge whose operands are not in one algebra with one
-/// scalar type, as for geometric_product.
+/// scalar type, as for geometric_product: a requires-expression is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> antiwedge(const X& /*x*/, const Y& /*y*/) {
@@ -445,7 +459,8 @@ operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects x % y for operands that are not in one algebra with one scalar
-/// type.
+/// type, with one error that names the cause; a requires-expression that asks
+/// whether x % y is valid for them is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator%(const X& /*x*/, const Y& /*y*/) {
@@ -462,7 +477,8 @@ operator&(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 }
 
 /// Rejects x & y for operands that are not in one algebra with one scalar
-/// type.
+/// type, with one error that names the cause; a requires-expression that asks
+/// whether x & y is valid for them is told yes.
 template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator&(const X& /*x*/, const Y& /*y*/) {

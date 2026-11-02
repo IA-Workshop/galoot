@@ -4,8 +4,14 @@
 // The involutions and the complements of a multivector, as functions and as
 // the operators ~ (the reverse) and ! (the right complement).
 //
+//   struct rga3 {
+//     static constexpr auto value = galoot::core::rigid<3>();
+//   };
+//   constexpr auto line_layout =
+//       galoot::core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
+//
 //   using Line = galoot::core::mv<rga3, line_layout, double>;
-//   Line l{0, 0, 1, 0, 0, 0};
+//   Line l{0, 0, 1, 0, 0, 0};  // e43
 //   Line r = galoot::core::reverse(l);  // or ~l: a Line, -l
 //   auto c = galoot::core::right_complement(l);  // or !l
 //
@@ -15,7 +21,9 @@
 // blade to another blade, so their result is the canonical set of the blades
 // they reach, each with orientation +1, in order of grade and then of index
 // list, as for a product: convert it to a named layout (Plane{!point}) to
-// read it under that layout's orientations.
+// read it under that layout's orientations. A class derived from mv is
+// accepted, and the result is the mv type, not the derived class: ~d is the
+// mv of d's layout.
 //
 // Each operation reads only the number of generators of the algebra, never
 // its metric. Compile cost: one map for each layout an operation is applied
@@ -53,9 +61,10 @@ inline constexpr auto left_complement_layout =
 /// The reverse of x: each blade of grade k times (-1)^(k(k-1)/2), which
 /// reverses the order of its generators. On the input's layout.
 ///
-/// Under `using namespace std::ranges`, an unqualified reverse(x) finds the
-/// function object std::ranges::reverse, which turns off argument-dependent
-/// lookup, so it does not compile; write galoot::core::reverse(x) or ~x.
+/// Under `using namespace std::ranges` or `using namespace std::views`, an
+/// unqualified reverse(x) finds the function object std::ranges::reverse or
+/// std::views::reverse, which turns off argument-dependent lookup, so it does
+/// not compile; write galoot::core::reverse(x) or ~x.
 /// Under `using namespace std`, reverse(x) finds this function, since
 /// std::reverse takes two iterators.
 template <metric_like Alg, blade_set S, ring_scalar T>
@@ -109,7 +118,9 @@ template <metric_like Alg, blade_set S, ring_scalar T>
 }
 
 /// !x is right_complement(x), a multivector, not a bool: if (!x) does not
-/// compile. !!x is x with each blade times (-1)^(gr ag), not x.
+/// compile. !!x is x with each blade times (-1)^(gr ag), not x. Write a
+/// comparison as (!x) == y: !x == y means the same, but GCC's -Wall warns
+/// that it may mean !(x == y).
 template <metric_like Alg, blade_set S, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, right_complement_layout<Alg, S>, T>
 operator!(const mv<Alg, S, T>& x) {
