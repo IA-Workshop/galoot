@@ -209,3 +209,93 @@ About 450,000 tokens and 250 tool calls for planning and implementation, and 2 t
 - Aggregating CPU time, cycles, cache events, and energy in the history.
 - Compacting `compile.tsv` (not needed at 1.3 MB).
 - Updating `.claude/agents/build-expert.md` and the harness docstring once the owner rules on decision 0170.
+
+## Outcome (2026-11-01, Claude, agent, Opus 5.5, performance-engineer, planner and implementer)
+
+Done on `feature/runlog-distilled`, not merged; for a W5 blind review. Head at the end of this section's writing: see the last commit of the branch, which adds only this outcome and run rows after `a3f0a60`.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+O1. **The first compaction (`544ba01`) missed two anchors; the anchor rule of section 4.3 was wrong, and was replaced (`1a10aeb`).** The rule kept, per open branch, only the last row at its merge base. By the time of the compaction `feature/core-mv-a` had merged `develop` at the boundary (`b89b9ba`), so its merge base was the boundary itself; but that union had put its own rows inside the boundary's log, after line 235,538 (the last row at its earlier base `49cf28f`) and before line 235,539. The trial merge of section 2 item 5 brought back 455 removed rows, and `tools/runlog check` named every one. The new rule compares each open branch's log with its merge base's log and anchors, for each run of rows the branch added, the base's rows on either side and the rows next to those in the boundary's log. The compaction was then run again from the log before it (`6a02ad1`'s log plus the rows written since) with the fixed tool; it kept the two rows at their places (`a3f0a60`, 2 lines added, and the era row's `kept` and `anchors` changed), and produced `groups.tsv` byte-identical to the first run. So there are two compaction commits, `544ba01` and its correction `a3f0a60`, instead of one, and `eras.tsv`'s one row was edited in place once, on this branch, before anything merged it.
+
+O2. **`d7aa523` fails `tests.citations`.** The citation check accepts the run log and its directory as the recorder's interface and no other path under the agent records; `tools/runlog` and its test named `docs/agent/records/performance/history` in full. Fixed in the next commit (`c16e6cc`) by naming the history relative to the run log's directory; history was not rewritten. The patterns file was not widened: that would be a change to a check that judges this change (W9). A reviewer may prefer an explicit exception for the history directory in `tools/citation_patterns.txt`; the tool's string `f"{RECORDS}/history"` passes the check by its form, which the reviewer should judge.
+
+O3. **Anchors: 3 rows, as projected, but not for the projected reason.** The plan projected the boundary's last row and two rows for `core-mv-a`'s base `49cf28f`; the final anchors are lines 235,538, 235,539, and 235,591 of the boundary's log, the first two because of O1.
+
+O4. **Section 4.6, last sentences, changed:** a campaign log distilled by `compact --log` keeps its kept rows and is not deleted (`history/README.md`), because deleting it would lose those rows from the working tree.
+
+O5. **Criterion 10, formatting:** the project's Python is not formatted by `ruff format` (`tools/measure` and its tests would be reformatted), and the default `ruff check` rule set reports `SIM905` on `tools/measure` too. The new and changed Python passes `ruff check --isolated --select E,F,W` (pyflakes and pycodestyle), as `tools/measure` does; `ruff format --check` was not applied.
+
+O6. **Row counts differ from criterion 1 by the rows written after the boundary.** Kept from the boundary: 1,669 (1,666 by the rule, 3 anchors). The log holds 1,689 rows at `a3f0a60` (20 written since the boundary, all by this branch), and more after the final checks.
+
+O7. **The self-check kills the anchor mutants first by its expected values,** not by the merges; a separate run showed that every anchor mutant also fails at least one merge check of cases 7, 9, or 10 (listed below).
+
+O8. **Not edited:** governance, `.claude/agents/build-expert.md`, the harness docstring (D10), `compile.tsv`. The agent cost record (`agent-cost.tsv`) is left to the coordinator: this agent cannot see its own token count.
+
+### What was done
+
+| Commit | What |
+| --- | --- |
+| `ebdd06d` (develop) | The claim: this plan and decision 0170 (proposed). The boundary of the first era. |
+| `b085cb5` | `tools/timed [--log <file>]`, `TIMED_LOG`, `tools/measure run --log`; `tools.measure_record` case `log_option`. |
+| `d7aa523` | `tools/runlog` (`summary`, `compact`, `check`, `prune`), `test/tools/runlog_test.py`, CTest `tools.runlog`. Fails `tests.citations` (O2). |
+| `c16e6cc` | The fix of O2. |
+| `c1e32a6` | `records/performance/README.md`, `history/README.md`, `history/toolchain.tsv`, the mutation driver. |
+| `6a02ad1` | Run rows only. |
+| `544ba01` | The compaction (only `runs.tsv`, `eras.tsv`, `groups.tsv`; `runs.tsv` 233,923 lines removed, 0 added). |
+| `1a10aeb` | The anchor rule of O1, cases 9 and 10, the repeated compaction, and the new mutants. |
+| `0af48a7` | Run rows only. |
+| `a3f0a60` | The correction of the compaction (O1): `runs.tsv` 2 lines added, `eras.tsv` 1 line changed. |
+
+### Row counts
+
+| | Before (`ebdd06d`) | After (`a3f0a60`) |
+| --- | --- | --- |
+| `runs.tsv` rows | 235,590 (76,111,132 bytes) | 1,689 (622 KB): 1,666 kept by the rule, 3 anchors, 20 written after the boundary |
+| Rows removed from the working tree | | 233,921, retrievable with `git show ebdd06d:docs/agent/records/performance/runs.tsv` (235,591 lines with the header) |
+| `history/groups.tsv` | | 1,206 groups of the 235,590 rows (385 KB) |
+| `history/eras.tsv` | | 1 era: `ebdd06d09289`, 235,590 rows, 1,669 kept, anchors 235538, 235539, 235591 |
+| `compile.tsv` | 2,521 rows | unchanged |
+
+What the history shows, for example: the passing `workflow ... all-clean` runs (configure, build, and the whole suite from an empty tree) on gcc-debug went from 2.226 s (first, 2026-10-31T21:54:18Z) to 17.007 s (latest, 2026-11-01T04:27:09Z), 23 runs, low median 2.618 s; on gcc-asan from 5.130 s to 21.403 s, 12 runs. The 210,848 `ceiling-cert` probe compiles are two groups (pass and fail): 148,430 passing compiles with a low median of 0.163 s and 8.85 × 10⁸ instructions, and 62,418 failing ones with 0.165 s and 8.90 × 10⁸.
+
+### Acceptance criteria
+
+1. Met at `a3f0a60` with O6: the kept rows, the 3 anchors, and the 20 later rows, each byte-identical and in order (`git diff --numstat ebdd06d a3f0a60 -- docs/agent/records/performance/runs.tsv` shows 20 added lines, the rows written after the boundary, and 233,921 removed; `tools/runlog check` confirms each kept row once).
+2. Met: `tools/runlog check` exits 0 at `544ba01` (before the correction, against its own era row), at `a3f0a60`, and at the head; it recomputes the era from `git show ebdd06d:...` byte for byte.
+3. Met: the command prints 235,591 lines, the 233,921 removed rows among them.
+4. Met: case 4 of `tools.runlog`, at `1a10aeb` and after.
+5. Met: case 5.
+6. Met: case 6.
+7. Met: cases 7, 9, and 10, and in the real repository the trial merges below.
+8. Met: case `log_option` of `tools.measure_record`, at `b085cb5` and after.
+9. Met: 26 of 26 mutants killed at `1a10aeb` (`docs/agent/records/mutations/0017-runlog-distilled/mutants-1a10aeb.tsv`; driver `mutate.py` beside it). The anchor mutants and the merge checks each one fails: `base_end_only` (the old rule): cases 9 and 10; `no_before_anchor`: cases 7 and 10; `no_successor_anchor`: cases 7 and 10; `no_after_anchor`, `no_predecessor_anchor`: case 10; `no_boundary_anchor`: case 7.
+10. Met with O2 and O5: `tests.citations` passes from `c16e6cc` on.
+11. See "Verification" below.
+
+### Trial merges with `feature/core-mv-a`
+
+- Before the fix, at `544ba01` into `c3d4e45` (throwaway worktree, uncommitted): no conflict, but 455 removed rows back; `check` exit 1 (O1).
+- After the fix, `a3f0a60` with `core-mv-a` at `1a5af96`, each in a throwaway worktree, uncommitted, then aborted and removed: `core-mv-a` merging this branch, and this branch merging `core-mv-a`. Both: no conflict, `check` exit 0, 2,673 rows, every one of `core-mv-a`'s 984 rows that are not in the boundary's log present once, and every row of this branch present once. Each merge took under 0.5 s.
+- In a scratch clone (deleted afterwards), with commits: `core-mv-a` into `develop`, then `develop` into this branch, then this branch into `develop`; and this branch into `develop`, then `develop` into `core-mv-a`, then `core-mv-a` into `develop`. `check` exit 0 after every step; both orders end with 2,673 rows.
+- Open branches at the compaction: `feature/core-mv-a` (`1a5af96`), `review/wu8a` and `review/hci-wu8a` (both at `1a5af96`), and this branch. Detached review worktrees with uncommitted rows (`review-metric-like*`, `review-plan-limits*`, `review-wu7a`, `review-wu7b*`) are not branches and were not anchored; their rows, if wanted, are to be appended to `develop`'s log by copying, as before.
+
+### Verification
+
+V10: verification (the self-checks, the mutation runs, the trial merges, the regeneration check) was performed and passed at the revisions named; validation is not applicable beyond the owner's judgment that the history shows how performance is tracking, which is open to the owner.
+
+- At each code commit, on a tree with no tracked change outside the records: `tools.runlog` (from `d7aa523`), `tools.measure_record`, `tools.measure_header`, and the cheap gates (`tests.reference_markers`, `tests.golden_facts`, `tests.citations`, `reference.golden`, `reference.golden_rejects`, `core.include_scan`) on gcc-debug, and the trace gate command of W5. `b085cb5`: 8 of 8 passed, in a throwaway worktree at that commit with its rows written here through `--log`; `d7aa523`: 8 of 9, `tests.citations` failed (O2); `c16e6cc` and `1a10aeb`: 9 of 9. Trace gate exit 0 at each.
+- `tools/runlog check`: exit 0 at `544ba01`, `a3f0a60`, and the head.
+- The seven presets by `cmake --workflow --preset <p>` from empty build directories, at `a3f0a60`: gcc-debug 158 of 158, clang-debug 160 of 160, gcc-release 158 of 158, clang-release 160 of 160, gcc-asan 150 of 150, clang-asan 160 of 160, lint 160 of 160, all passing (10.3, 7.8, 15.3, 8.8, 16.7, 14.0, 25.8 s). The clang-asan and lint rows are marked `-dirty` because this outcome was being written into this plan while they ran; the build inputs were those of `a3f0a60`. They were run again, all seven, from empty trees at the commit that adds this outcome; that run's results are in the message of the next commit, which adds only run rows.
+- Lint of the Python: `ruff check --isolated --select E,F,W` on `tools/runlog`, `tools/measure`, the two tests, and the mutation driver: passed (O5).
+
+### Open
+
+- The owner's ruling on decision 0170 (the wording of P7, P13, and DoD-25).
+- Whether `tools/citation_patterns.txt` should name the history directory as part of the recorder's interface (O2).
+- The coordinator records this unit's agent cost, and updates the build-expert role file and the harness docstring after the ruling (D10).
+- After the merge into `develop`, `tools/runlog check` there; if `feature/core-mv-a` merges `develop` afterwards, the same in its worktree, and `tools/runlog prune` if it reports removed rows.
+
+### Agent cost (decision 0019)
+
+Planner and implementer in one run: about 120 tool calls; token counts are not visible to this agent (the estimate was 450,000 tokens and 250 calls). Machine time of the checks: each `tools/runlog check` 2.4 to 2.7 s, each compaction 3.7 to 4.2 s, the self-check about 5 s, the 26 mutants about 2 minutes, the seven fresh workflows about 99 s per round.
