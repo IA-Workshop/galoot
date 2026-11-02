@@ -1,0 +1,14 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, fixed>’:
+user.cpp:211:43:   required from here
+  211 |   const gc::mv<rga3, point_layout, fixed> s{};
+      |                                           ^
+include/galoot/core/mv.hpp:430:17: error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+  430 |   static_assert(scalar_is_semiregular,
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+  • ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, fixed>::scalar_is_semiregular’ evaluates to false
+user.cpp: In function ‘double use()’:
+user.cpp:212:46: error: request for member ‘sixteenths’ in ‘s.galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, fixed>::galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char>.galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, unsigned char, unsigned char, unsigned char, unsigned char, unsigned char>::coefficients.std::array<unsigned char, 4>::operator[](0)’, which is of non-class type ‘const std::array<unsigned char, 4>::value_type’ {aka ‘const unsigned char’}
+  212 |   r += static_cast<double>(s.coefficients[0].sixteenths);
+      |                                              ^~~~~~~~~~

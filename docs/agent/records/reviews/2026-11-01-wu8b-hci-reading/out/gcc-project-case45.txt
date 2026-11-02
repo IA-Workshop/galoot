@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, addonly>’:
+user.cpp:217:45:   required from here
+  217 |   const gc::mv<rga3, point_layout, addonly> s{};
+      |                                             ^
+include/galoot/core/mv.hpp:434:17: error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+  434 |   static_assert(scalar_has_ring_operations,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, addonly>::scalar_has_ring_operations’ evaluates to false

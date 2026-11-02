@@ -1,0 +1,13 @@
+user.cpp:132:18: error: no matching function for call to 'truncate'
+  132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:808:40: note: candidate template ignored: no viable constructor or deduction guide for deduction of template arguments of 'blade_set' for template parameter 'To'
+  808 | [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
+      |                                        ^
+include/galoot/core/mv.hpp:825:1: note: candidate template ignored: template argument for template type parameter must be a type for template parameter 'Target'
+  825 | truncate(const mv<Alg, From, T>& x) {
+      | ^
+include/galoot/core/mv.hpp:833:16: note: candidate template ignored: template argument for template type parameter must be a type for template parameter 'Target'
+  833 | constexpr auto truncate(const mv<Alg, From, T>& x) {
+      |                ^
+1 error generated.

@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&) [with name_list<...auto...> Name = detail::name_list<4>{std::array<char, 4>{"e12"}}; X = const mv<rga3, blade_set<4>{std::array<oriented_blade, 4>{std::__array_traits<oriented_blade, 4>::_Type{oriented_blade{1, 1}, oriented_blade{2, 1}, oriented_blade{4, 1}, oriented_blade{8, 1}}}}, double>&; detail::coefficient_reference<X> = const double&]’:
+user.cpp:249:18:   required from here
+  249 |   r += get<"e12">(p);  // hand-written layout in canonical order, absent
+      |        ~~~~~~~~~~^~~
+include/galoot/core/mv.hpp:1009:19: error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+ 1009 |     static_assert(false, "get: the type has no blade of this name; its "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

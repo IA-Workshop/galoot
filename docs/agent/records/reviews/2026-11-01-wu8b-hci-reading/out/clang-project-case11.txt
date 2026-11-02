@@ -1,0 +1,43 @@
+user.cpp:120:18: error: no matching constructor for initialization of 'const R3Vector' (aka 'const gc::mv<r3, gc::blades<r3, "e1 e2 e3">, double>')
+  120 |   const R3Vector v{p};  // another algebra
+      |                  ^~~~
+include/galoot/core/mv.hpp:410:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>' to 'const mv<r3, blade_set<3>{{{{1, 1}, {2, 1}, {4, 1}}}}, [...]>' for 1st argument
+  410 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:410:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>' to 'mv<r3, blade_set<3>{{{{1, 1}, {2, 1}, {4, 1}}}}, [...]>' for 1st argument
+  410 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:490:22: note: candidate template ignored: could not match 'r3' against 'rga3'
+  490 |   constexpr explicit mv(const mv<Alg, From, T>& source) {
+      |                      ^
+include/galoot/core/mv.hpp:505:22: note: candidate template ignored: could not match 'r3' against 'rga3'
+  505 |   constexpr explicit mv(const mv<Alg, From, T>& /*source*/) {
+      |                      ^
+include/galoot/core/mv.hpp:522:46: note: candidate template ignored: constraints not satisfied [with Values = <const Point &>]
+  522 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+include/galoot/core/mv.hpp:518:14: note: because '!(sizeof...(Values) == 1 && detail::multivector_or_derived<const galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &>)' evaluated to false
+  518 |              !(sizeof...(Values) == 1 &&
+      |              ^
+include/galoot/core/mv.hpp:535:22: note: candidate template ignored: constraints not satisfied [with Value = const Point &]
+  535 |   constexpr explicit mv(Value&& /*values*/) {
+      |                      ^
+include/galoot/core/mv.hpp:534:14: note: because 'detail::not_a_coefficient<const galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &, double>' evaluated to false
+  534 |     requires detail::not_a_coefficient<Value, T>
+      |              ^
+include/galoot/core/mv.hpp:374:5: note: because '!multivector_or_derived<const galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &>' evaluated to false
+  374 |     !multivector_or_derived<Value> && !std::convertible_to<Value, T>;
+      |     ^
+include/galoot/core/mv.hpp:545:22: note: candidate template ignored: could not match 'const std::remove_cvref_t<double>[N]' (aka 'const double[N]') against 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
+  545 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                      ^
+include/galoot/core/mv.hpp:466:13: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+  466 |   constexpr mv() = default;
+      |             ^
+include/galoot/core/mv.hpp:317:42: note: candidate inherited constructor not viable: requires 3 arguments, but 1 was provided
+  317 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+      |                                          ^                   ~~~~~~~~~~~~
+include/galoot/core/mv.hpp:477:45: note: constructor from base class 'coefficient_storage<r3, blade_set<3>{{{{1, 1}, {2, 1}, {4, 1}}}}, double, double, double, double>' inherited here
+  477 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+      |                                             ^
+1 error generated.

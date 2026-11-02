@@ -1,0 +1,13 @@
+user.cpp: In function ‘double use()’:
+user.cpp:178:34: error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>’} to non-scalar type ‘const std::optional<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double> >’ requested
+  178 |   const std::optional<Point> s = q;  // generic wrapper, lossy
+      |                                  ^
+In file included from /usr/include/c++/16/format:51,
+                 from /usr/include/c++/16/ostream:45,
+                 from /usr/include/c++/16/istream:43,
+                 from /usr/include/c++/16/sstream:42,
+                 from /usr/include/c++/16/complex:50,
+                 from user.cpp:4:
+/usr/include/c++/16/optional:910:9: note: explicit conversion function was not considered
+  910 |         optional(_Up&& __t)
+      |         ^~~~~~~~

@@ -1,0 +1,13 @@
+variant.cpp: In function ‘int main()’:
+variant.cpp:96:4: error: call of overloaded ‘g(Line&)’ is ambiguous
+   96 |   g(l);  // a line to a motor (lossless) or a point (lossy)
+      |   ~^~~
+  • there are 2 candidates
+    • candidate 1: ‘void g(const Motor&)’
+      variant.cpp:30:6:
+         30 | void g(const Motor&) {}
+            |      ^
+    • candidate 2: ‘void g(const Point&)’
+      variant.cpp:31:6:
+         31 | void g(const Point&) {}
+            |      ^
