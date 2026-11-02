@@ -114,10 +114,10 @@ inline constexpr bool blades_in_algebra = all_in_algebra(S, N);
 // The coefficients of a multivector, and its constructor from one value per
 // component. Ts is T once for each component, so that each parameter of the
 // constructor is T itself and a compiler's message about a value names T.
-// The first parameter is the multivector type itself, so that no two
-// multivector types share this base and none can be compared with another
-// through it.
-template <class Multivector, class T, class... Ts>
+// Its parameters name the multivector's algebra, layout, and scalar, so that
+// no two multivector types share this base and none can be compared with
+// another through it.
+template <class Alg, blade_set Blades, class T, class... Ts>
 struct coefficient_storage {
   // T{} in every place, one initializer per place. GCC 16.2.1 was seen to
   // compile the shorter `coefficients{}` wrongly: after a constant evaluation
@@ -148,20 +148,20 @@ struct coefficient_storage {
   }
 };
 
-// coefficient_storage with T once for each of K components.
-template <class Multivector, class T, class Positions>
+// coefficient_storage with T once for each blade of the layout.
+template <class Alg, blade_set Blades, class T, class Positions>
 struct storage_for;
 
-template <class Multivector, class T, std::size_t... I>
-struct storage_for<Multivector, T, std::index_sequence<I...>> {
+template <class Alg, blade_set Blades, class T, std::size_t... I>
+struct storage_for<Alg, Blades, T, std::index_sequence<I...>> {
   template <std::size_t>
   using same = T;
-  using type = coefficient_storage<Multivector, T, same<I>...>;
+  using type = coefficient_storage<Alg, Blades, T, same<I>...>;
 };
 
-template <class Multivector, class T, std::size_t K>
+template <class Alg, blade_set Blades, class T>
 using storage_of =
-    storage_for<Multivector, T, std::make_index_sequence<K>>::type;
+    storage_for<Alg, Blades, T, std::make_index_sequence<Blades.size()>>::type;
 
 } // namespace detail
 
@@ -194,7 +194,7 @@ using storage_of =
 /// type has no output operator or formatter; std::format("{}",
 /// x.coefficients) prints its coefficients.
 template <metric_like Alg, blade_set Blades, std::semiregular T>
-struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
+struct mv : detail::storage_of<Alg, Blades, T> {
   static_assert(ring_scalar<T>,
                 "mv: the scalar type must support +, -, *, unary - and "
                 "construction from an integer coefficient");
@@ -242,7 +242,7 @@ public:
   /// constructor and may narrow without a diagnostic. Explicit when the
   /// layout holds one blade, so that a scalar never converts silently into
   /// a multivector.
-  using detail::storage_of<mv, T, Blades.size()>::storage_of;
+  using detail::storage_of<Alg, Blades, T>::storage_of;
 
   /// Rejects any other number of values, other than none and a single
   /// multivector, with one error that prints the number given and the
