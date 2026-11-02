@@ -1074,6 +1074,13 @@ set(mv_inexact "the scalar type cannot hold one of this product's exact coeffici
 foreach(case IN ITEMS float double short)
   mv_rejects(apply_inexact_${case} "${mv_inexact}" ONE_ERROR)
 endforeach()
+# core.mv_apply_target_lacks_blade, core.mv_apply_map_target_lacks_blade: a
+# product or a map written onto a layout that lacks a blade of its result.
+mv_rejects(apply_target_lacks_blade
+  "apply: the target layout does not hold every blade of the product"
+  ONE_ERROR)
+mv_rejects(apply_map_target_lacks_blade
+  "apply: the target layout does not hold every blade of the map" ONE_ERROR)
 
 # core.mv_truncate_<case>: a target that is not a multivector type of the
 # input's algebra and scalar type gives truncate's message; and a nonzero
