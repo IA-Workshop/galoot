@@ -919,21 +919,29 @@ mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
 # and an implicit conversion that no constructor allows ("conversion from").
 # A new compiler may change them.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  set(narrowing_from_int "narrowing conversion of ‘w’ from ‘int’")
-  set(narrowing_from_double "narrowing conversion of ‘w’ from ‘double’")
-  set(float_conversion "may change value [-Werror=float-conversion]")
+  set(narrowing_from_int
+    "narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]")
+  set(narrowing_from_double
+    "narrowing conversion of ‘w’ from ‘double’ to ‘float’ [-Werror=narrowing]")
+  set(float_conversion
+    "conversion from ‘double’ to ‘float’ may change value [-Werror=float-conversion]")
 else()
-  set(narrowing_from_int "cannot be narrowed from type 'int'")
-  set(narrowing_from_double "cannot be narrowed from type 'double'")
-  set(float_conversion "loses floating-point precision")
+  set(narrowing_from_int
+    "cannot be narrowed from type 'int' to 'double' in initializer list")
+  set(narrowing_from_double
+    "cannot be narrowed from type 'double' to 'float' in initializer list")
+  set(float_conversion
+    "loses floating-point precision: 'double' to 'float' [-Werror,-Wimplicit-float-conversion]")
 endif()
-mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR)
+# The constructor's parameters are the scalar type itself, so the messages
+# name it and no helper of the library.
+mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR FORBID "component<")
 # A double variable into a float place is also a -Wconversion error on both
 # compilers under the project's flags, on the same line: the language's
 # narrowing error is the one the type promises, the second is the compiler's
 # warning made an error. ONE_ERROR allows exactly those two.
 mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
-  "${float_conversion}" ONE_ERROR)
+  "${float_conversion}" ONE_ERROR FORBID "component<")
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
 # A scalar that is not semiregular fails mv's template head, so the message
 # is the compiler's account of the concept (and, on Clang, a second error
