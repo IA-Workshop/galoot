@@ -8,7 +8,6 @@
 // every operation is exact, so both sides must be equal. The two sides of an
 // identity may hold their blades in different layouts, so they are compared
 // blade by blade, on the canonical blade of each mask.
-#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <random>
@@ -158,18 +157,28 @@ inline constexpr std::size_t generators =
 // Sparse sets of an algebra of N generators, by mask, where bit i - 1 stands
 // for e_i: {1, e1, e_N, e1 e_N} and {e1, e2, e_N}.
 template <std::size_t N>
-inline constexpr core::blade_set<4> sparse_a{{{
-    {.mask = 0, .sign = 1},
-    {.mask = 0x1, .sign = 1},
-    {.mask = core::mask_t{1} << (N - 1), .sign = 1},
-    {.mask = 0x1 | (core::mask_t{1} << (N - 1)), .sign = 1},
-}}};
+inline constexpr core::mask_t last_generator = core::mask_t{1} << (N - 1);
 template <std::size_t N>
-inline constexpr core::blade_set<3> sparse_b{{{
-    {.mask = 0x1, .sign = 1},
-    {.mask = 0x2, .sign = 1},
-    {.mask = core::mask_t{1} << (N - 1), .sign = 1},
-}}};
+inline constexpr core::blade_set<4> sparse_a{
+    {
+        {
+            {.mask = 0, .sign = 1},
+            {.mask = 0x1, .sign = 1},
+            {.mask = last_generator<N>, .sign = 1},
+            {.mask = core::mask_t{0x1} | last_generator<N>, .sign = 1},
+        },
+    },
+};
+template <std::size_t N>
+inline constexpr core::blade_set<3> sparse_b{
+    {
+        {
+            {.mask = 0x1, .sign = 1},
+            {.mask = 0x2, .sign = 1},
+            {.mask = last_generator<N>, .sign = 1},
+        },
+    },
+};
 
 // The Gram matrix of the algebra as text, which names the form in a failure.
 template <class Alg>
@@ -181,7 +190,7 @@ std::string gram_text() {
       text +=
           (j == 0 ? "" : ", ") + std::to_string(Alg::value.gram.at(i).at(j));
     }
-    text += "]";
+    text += ']';
   }
   return text + "]";
 }
@@ -251,8 +260,9 @@ X random_integers(std::mt19937_64& source) {
 // layout that holds it alone.
 template <class X>
 auto antiscalar() {
-  using Alg = typename X::algebra_type;
-  constexpr core::mask_t all = (core::mask_t{1} << generators<Alg>)-1;
+  using Alg = X::algebra_type;
+  constexpr std::size_t n = generators<Alg>;
+  constexpr core::mask_t all = (core::mask_t{1} << n) - 1;
   constexpr core::blade_set<1> layout{{{{.mask = all, .sign = 1}}}};
   core::mv<Alg, layout, std::int64_t> one{};
   one.coefficients.at(0) = 1;
@@ -271,17 +281,17 @@ void check_de_morgan(std::mt19937_64& source) {
   for (int k = 0; k < samples; ++k) {
     const A a = random_integers<A>(source);
     const B b = random_integers<B>(source);
-    CHECK(difference(right_complement(a * b),
+    CHECK(difference(right_complement(core::geometric_product(a, b)),
                      right_complement(a) % right_complement(b)) == "");
-    CHECK(difference(right_complement(a ^ b),
+    CHECK(difference(right_complement(core::wedge(a, b)),
                      right_complement(a) & right_complement(b)) == "");
     CHECK(difference(left_complement(a * b),
                      left_complement(a) % left_complement(b)) == "");
     CHECK(difference(left_complement(a ^ b),
                      left_complement(a) & left_complement(b)) == "");
-    CHECK(difference(right_complement(a % b),
+    CHECK(difference(right_complement(core::geometric_antiproduct(a, b)),
                      right_complement(a) * right_complement(b)) == "");
-    CHECK(difference(right_complement(a & b),
+    CHECK(difference(right_complement(core::antiwedge(a, b)),
                      right_complement(a) ^ right_complement(b)) == "");
     CHECK(difference(left_complement(a % b),
                      left_complement(a) * left_complement(b)) == "");

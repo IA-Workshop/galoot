@@ -84,18 +84,28 @@ using FlatPoint = core::mv<cga3, flat_point_layout, std::int64_t>;
 // Sparse sets of a large algebra, given by their masks: bit i - 1 stands for
 // e_i. {1, e1, e_n, e1 e_n} and {e1, e2, e_n}.
 template <std::size_t N>
-inline constexpr core::blade_set<4> sparse_a{{{
-    {.mask = 0, .sign = 1},
-    {.mask = 0x1, .sign = 1},
-    {.mask = core::mask_t{1} << (N - 1), .sign = 1},
-    {.mask = 0x1 | (core::mask_t{1} << (N - 1)), .sign = 1},
-}}};
+inline constexpr core::mask_t last_generator = core::mask_t{1} << (N - 1);
 template <std::size_t N>
-inline constexpr core::blade_set<3> sparse_b{{{
-    {.mask = 0x1, .sign = 1},
-    {.mask = 0x2, .sign = 1},
-    {.mask = core::mask_t{1} << (N - 1), .sign = 1},
-}}};
+inline constexpr core::blade_set<4> sparse_a{
+    {
+        {
+            {.mask = 0, .sign = 1},
+            {.mask = 0x1, .sign = 1},
+            {.mask = last_generator<N>, .sign = 1},
+            {.mask = core::mask_t{0x1} | last_generator<N>, .sign = 1},
+        },
+    },
+};
+template <std::size_t N>
+inline constexpr core::blade_set<3> sparse_b{
+    {
+        {
+            {.mask = 0x1, .sign = 1},
+            {.mask = 0x2, .sign = 1},
+            {.mask = last_generator<N>, .sign = 1},
+        },
+    },
+};
 
 // The number of generators of the algebra of a multivector type.
 template <class X>
@@ -162,6 +172,15 @@ std::string difference(const X& x, const Y& y) {
   return "";
 }
 
+// 1, with a failure that shows `what`, when `wrong`; otherwise 0.
+int failure_if(bool wrong, const std::string& what) {
+  if (wrong) {
+    FAIL_CHECK(what);
+    return 1;
+  }
+  return 0;
+}
+
 template <class X>
 X random_integers(std::mt19937_64& source) {
   std::uniform_int_distribution<std::int64_t> digit(-9, 9);
@@ -185,8 +204,8 @@ int sign_mismatches(std::span<const golden::blade_signs> signs) {
     const core::oriented_blade blade = X::layout.blades.at(i);
     const golden::blade_signs& row = signs[blade.mask];
     if (row.blade != blade.mask) {
-      FAIL_CHECK("no sign entry for " << blade_name(blade.mask));
-      ++mismatches;
+      mismatches +=
+          failure_if(true, "no sign entry for " + blade_name(blade.mask));
       continue;
     }
     X x{};
@@ -197,26 +216,20 @@ int sign_mismatches(std::span<const golden::blade_signs> signs) {
     const X tilde = ~x;
     for (std::size_t k = 0; k < X::component_count; ++k) {
       const auto want = [&](int sign) { return k == i ? sign : 0; };
-      const std::string at = " of " + blade_name(blade.mask, blade.sign) +
-                             " at place " + std::to_string(k);
-      if (reversed.coefficients.at(k) != want(row.reverse)) {
-        FAIL_CHECK("reverse" << at << " is " << reversed.coefficients.at(k));
-        ++mismatches;
-      }
-      if (antireversed.coefficients.at(k) != want(row.antireverse)) {
-        FAIL_CHECK("antireverse" << at << " is "
-                                 << antireversed.coefficients.at(k));
-        ++mismatches;
-      }
-      if (involuted.coefficients.at(k) != want(row.involution)) {
-        FAIL_CHECK("grade_involution" << at << " is "
-                                      << involuted.coefficients.at(k));
-        ++mismatches;
-      }
-      if (tilde.coefficients.at(k) != want(row.reverse)) {
-        FAIL_CHECK("~x" << at << " is " << tilde.coefficients.at(k));
-        ++mismatches;
-      }
+      const auto at = [&](const char* op, std::int64_t got) {
+        return std::string(op) + " of " + blade_name(blade.mask, blade.sign) +
+               " at place " + std::to_string(k) + " is " + std::to_string(got);
+      };
+      mismatches += failure_if(reversed.coefficients.at(k) != want(row.reverse),
+                               at("reverse", reversed.coefficients.at(k)));
+      mismatches +=
+          failure_if(antireversed.coefficients.at(k) != want(row.antireverse),
+                     at("antireverse", antireversed.coefficients.at(k)));
+      mismatches +=
+          failure_if(involuted.coefficients.at(k) != want(row.involution),
+                     at("grade_involution", involuted.coefficients.at(k)));
+      mismatches += failure_if(tilde.coefficients.at(k) != want(row.reverse),
+                               at("~x", tilde.coefficients.at(k)));
     }
   }
   return mismatches;
@@ -234,8 +247,8 @@ int complement_mismatches(
     const core::oriented_blade blade = X::layout.blades.at(i);
     const golden::complement_pair& row = complements[blade.mask];
     if (row.blade != blade.mask) {
-      FAIL_CHECK("no complement entry for " << blade_name(blade.mask));
-      ++mismatches;
+      mismatches +=
+          failure_if(true, "no complement entry for " + blade_name(blade.mask));
       continue;
     }
     X x{};
@@ -245,23 +258,19 @@ int complement_mismatches(
     const auto bang = !x;
     static_assert(std::same_as<decltype(bang), decltype(right)>);
     for (core::mask_t m = 0; m < complements.size(); ++m) {
-      const std::string of =
-          "(" + blade_name(blade.mask, blade.sign) + ") on " + blade_name(m);
       const auto want = [&](const golden::signed_blade& c) {
         return m == c.blade ? std::int64_t{blade.sign} * c.sign : 0;
       };
-      if (value_on(right, m) != want(row.right)) {
-        FAIL_CHECK("right_complement" << of << " is " << value_on(right, m));
-        ++mismatches;
-      }
-      if (value_on(left, m) != want(row.left)) {
-        FAIL_CHECK("left_complement" << of << " is " << value_on(left, m));
-        ++mismatches;
-      }
-      if (value_on(bang, m) != want(row.right)) {
-        FAIL_CHECK("!x" << of << " is " << value_on(bang, m));
-        ++mismatches;
-      }
+      const auto of = [&](const char* op, std::int64_t got) {
+        return std::string(op) + "(" + blade_name(blade.mask, blade.sign) +
+               ") on " + blade_name(m) + " is " + std::to_string(got);
+      };
+      mismatches += failure_if(value_on(right, m) != want(row.right),
+                               of("right_complement", value_on(right, m)));
+      mismatches += failure_if(value_on(left, m) != want(row.left),
+                               of("left_complement", value_on(left, m)));
+      mismatches += failure_if(value_on(bang, m) != want(row.right),
+                               of("!x", value_on(bang, m)));
     }
   }
   return mismatches;
@@ -489,6 +498,7 @@ TEST_CASE("the involutions and complements satisfy their relations") {
 TEST_CASE("an unqualified reverse finds the multivector reverse") {
   using namespace std;
   array<int, 3> digits{1, 2, 3};
+  // NOLINTNEXTLINE(modernize-use-ranges): the iterator form is under test.
   reverse(digits.begin(), digits.end());
   CHECK(digits == array<int, 3>{3, 2, 1});
 
@@ -522,6 +532,7 @@ TEST_CASE("std::ranges::reverse hides an unqualified reverse") {
 // A scope that sees galoot::core's operators by a using-directive, as a
 // user's code may, with types of its own: one without operators and one
 // with its own ~ and !. The library's operators must leave both alone.
+namespace {
 namespace user_code {
 
 using namespace galoot::core;
@@ -553,3 +564,4 @@ TEST_CASE("the unary operators leave other types alone") {
 }
 
 } // namespace user_code
+} // namespace

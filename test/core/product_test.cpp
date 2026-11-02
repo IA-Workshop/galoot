@@ -188,9 +188,11 @@ composition compose(std::span<const golden::product> table,
                     std::span<const golden::complement_pair> complements,
                     core::mask_t a, core::mask_t b) {
   const std::size_t size = complements.size();
-  composition out{.antiproduct_on = std::vector<std::int64_t>(size),
-                  .antiwedge_on = std::vector<std::int64_t>(size),
-                  .found = true};
+  composition out{
+      .antiproduct_on = std::vector<std::int64_t>(size),
+      .antiwedge_on = std::vector<std::int64_t>(size),
+      .found = true,
+  };
   const golden::signed_blade ra = complements[a].right;
   const golden::signed_blade rb = complements[b].right;
   const golden::product& entry = table[(ra.blade * size) + rb.blade];
@@ -216,6 +218,15 @@ composition compose(std::span<const golden::product> table,
   return out;
 }
 
+// 1, with a failure that shows `what`, when `wrong`; otherwise 0.
+int failure_if(bool wrong, const std::string& what) {
+  if (wrong) {
+    FAIL_CHECK(what);
+    return 1;
+  }
+  return 0;
+}
+
 // The number of coefficients, over every pair of basis blades of the layout
 // of X and every blade of the algebra, on which geometric_antiproduct or
 // antiwedge differs from the composition of the tables. Each basis blade is
@@ -236,10 +247,10 @@ int antiproduct_mismatches(
       x.coefficients.at(i) = 1;
       y.coefficients.at(j) = 1;
       const composition expected = compose(table, complements, a.mask, b.mask);
+      const std::string pair = "(" + blade_name(a.mask, a.sign) + ", " +
+                               blade_name(b.mask, b.sign) + ")";
       if (!expected.found) {
-        FAIL_CHECK("no table entry for " << blade_name(a.mask) << " and "
-                                         << blade_name(b.mask));
-        ++mismatches;
+        mismatches += failure_if(true, "no table entry for " + pair);
         continue;
       }
 
@@ -247,22 +258,18 @@ int antiproduct_mismatches(
       const auto aw = core::antiwedge(x, y);
       const std::int64_t sign = std::int64_t{a.sign} * b.sign;
       for (core::mask_t m = 0; m < complements.size(); ++m) {
+        const auto on = [&](const char* op, std::int64_t got,
+                            std::int64_t want) {
+          return op + pair + " on " + blade_name(m) + " is " +
+                 std::to_string(got) + ", not " + std::to_string(want);
+        };
         const std::int64_t want_ap = sign * expected.antiproduct_on.at(m);
         const std::int64_t want_aw = sign * expected.antiwedge_on.at(m);
-        if (value_on(ap, m) != want_ap) {
-          FAIL_CHECK("geometric_antiproduct("
-                     << blade_name(a.mask, a.sign) << ", "
-                     << blade_name(b.mask, b.sign) << ") on " << blade_name(m)
-                     << " is " << value_on(ap, m) << ", not " << want_ap);
-          ++mismatches;
-        }
-        if (value_on(aw, m) != want_aw) {
-          FAIL_CHECK("antiwedge(" << blade_name(a.mask, a.sign) << ", "
-                                  << blade_name(b.mask, b.sign) << ") on "
-                                  << blade_name(m) << " is " << value_on(aw, m)
-                                  << ", not " << want_aw);
-          ++mismatches;
-        }
+        mismatches +=
+            failure_if(value_on(ap, m) != want_ap,
+                       on("geometric_antiproduct", value_on(ap, m), want_ap));
+        mismatches += failure_if(value_on(aw, m) != want_aw,
+                                 on("antiwedge", value_on(aw, m), want_aw));
       }
     }
   }
@@ -274,6 +281,7 @@ int antiproduct_mismatches(
 // A scope that sees galoot::core's operators by a using-directive, as a
 // user's code may, with types of its own: one without operators and one
 // with its own % and &. The library's operators must leave both alone.
+namespace {
 namespace user_code {
 
 using namespace galoot::core;
@@ -297,6 +305,7 @@ template <class X, class Y>
 concept has_caret = requires(X x, Y y) { x ^ y; };
 
 } // namespace user_code
+} // namespace
 
 // Reference: comparison: every pair of basis blades of rigid(3) and
 // conformal(3)
@@ -666,7 +675,7 @@ TEST_CASE("the antiscalar is the identity of the geometric antiproduct") {
   for (int k = 0; k < 8; ++k) {
     const R x = random_integers<R>(source);
     const C y = random_integers<C>(source);
-    const Motor m = random_integers<Motor>(source);
+    const auto m = random_integers<Motor>(source);
     CHECK((ri % x) == x);
     CHECK((x % ri) == x);
     CHECK((ci % y) == y);
@@ -701,6 +710,7 @@ TEST_CASE("the antiproduct overloads take the right operands") {
   static_assert(!can_call_antiwedge<double, R>);
 }
 
+namespace {
 namespace user_code {
 
 // Reference: contract: with galoot::core's operators in scope by a
@@ -730,3 +740,4 @@ TEST_CASE("the product operators leave other types alone") {
 }
 
 } // namespace user_code
+} // namespace
