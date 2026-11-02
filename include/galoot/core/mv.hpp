@@ -31,6 +31,13 @@
 //   Line back = galoot::core::truncate<Line>(m);  // drops 1 and e1234
 //   // Motor wrong = axis;  does not compile: conversions are explicit
 //
+// truncate checks, for an exact scalar, that what it drops is zero; part
+// takes the same components and never checks, for coefficients that are
+// meant to be dropped:
+//
+//   Motor turn{1, 0, 0, 1, 0, 0, 0, 0};
+//   Line l = galoot::core::part<Line>(turn);  // e43 alone; 1 is dropped
+//
 // Since e41 = -e14, the coefficient written on e41 multiplies -e14, and no
 // sign is hidden from the formula. Naming the layout and the type, as above,
 // also lets Clang name them in some of its own errors, such as the
@@ -985,7 +992,9 @@ concept mismatched_operands =
 /// unchecked at run time. For a rounding scalar nothing is checked: a
 /// coefficient that should be zero may be a rounding error away from it,
 /// and truncate has no error bound to test it against; the operations that
-/// drop part of their own result check it against their own bound.
+/// drop part of their own result check it against their own bound. To drop
+/// coefficients that are not zero on purpose, use part, which takes the
+/// same components and never checks.
 /// Guarantees: the result is exact, for any scalar.
 template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
@@ -1019,6 +1028,58 @@ constexpr auto truncate(const mv<Alg, From, T>& x) {
   static_assert(false, "truncate: the target must be an mv type of the same "
                        "algebra and scalar type, not a class derived from "
                        "one; truncate changes only which blades are held");
+  if constexpr (std::default_initializable<std::remove_cvref_t<Target>>) {
+    return std::remove_cvref_t<Target>{};
+  } else {
+    return x;
+  }
+}
+
+/// The part of x on the layout To: the components truncate<To>(x) takes,
+/// with the same result type and value, and never a check. Each blade of To
+/// that x holds, in either orientation, takes x's coefficient, negated where
+/// the two layouts give the blade opposite orientations; every other blade
+/// of To is zero; and the blades of x that To lacks are dropped, whatever
+/// they hold, as the grade-2 part of a multivector drops its other grades.
+/// part<Line>(motor) names the target by its type and
+/// part<line_layout>(motor) by its layout; the type must be an mv type
+/// itself, as for truncate. Found by argument-dependent lookup, so the call
+/// needs no namespace.
+///
+/// Requires: nothing of the dropped coefficients. Nothing is checked, for
+/// any scalar, in a constant evaluation or at run time, whatever
+/// GALOOT_CHECKING is.
+/// Guarantees: the result is exact, for any scalar.
+template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, To, T> part(const mv<Alg, From, T>& x) {
+  mv<Alg, To, T> kept;
+  kept.coefficients =
+      detail::run_map<detail::identity_kernel<From, To>, To.size()>(
+          x.coefficients,
+          std::make_index_sequence<detail::identity_kernel<From, To>.size()>{});
+  return kept;
+}
+
+/// part<Target::layout>(x) for a multivector type Target of x's algebra and
+/// scalar type, with any cv-qualification and reference.
+template <class Target, metric_like Alg, blade_set From, ring_scalar T>
+  requires detail::multivector_of<Target, Alg, T>
+[[nodiscard]] constexpr std::remove_cvref_t<Target>
+part(const mv<Alg, From, T>& x) {
+  return part<std::remove_cvref_t<Target>::layout>(x);
+}
+
+/// Rejects a target that is not an mv type of x's algebra and scalar type,
+/// such as double, an mv of another algebra or scalar, or a class derived
+/// from an mv, with one error, as for truncate. It returns a default value
+/// of the target, where it has one, so that a use of the result raises no
+/// second error.
+template <class Target, metric_like Alg, blade_set From, ring_scalar T>
+  requires(!detail::multivector_of<Target, Alg, T>)
+constexpr auto part(const mv<Alg, From, T>& x) {
+  static_assert(false, "part: the target must be an mv type of the same "
+                       "algebra and scalar type, not a class derived from "
+                       "one; part changes only which blades are held");
   if constexpr (std::default_initializable<std::remove_cvref_t<Target>>) {
     return std::remove_cvref_t<Target>{};
   } else {

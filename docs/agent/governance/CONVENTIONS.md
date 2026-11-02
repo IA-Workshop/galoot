@@ -1,6 +1,6 @@
 # Galoot conventions specification
 
-Status: version 1.7, ratified by the owner on 2026-11-01 (version 1.7: "proceed as recommended", decision 0161; version 1.6: "proceed as recommended", decisions 0155 and 0159). A convention here changes only by a change to this document that the owner ratifies (constitution C10).
+Status: version 1.8, ratified by the owner on 2026-11-02 (version 1.8: "agreed", decisions 0167 and 0168; version 1.7: "proceed as recommended", decision 0161; version 1.6: "proceed as recommended", decisions 0155 and 0159). A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
@@ -59,7 +59,7 @@ Component: core.
 
 4.4 `transform(x, V)` applies a versor V to x by the parity of V's blades: an even V gives V ⟇ x ⟇ Ṽ, as in 5.4, and an odd V gives −V ⟇ x̂ ⟇ Ṽ, as in 5.6. A V with blades of both parities is rejected at compile time. The result has the blade set of x, and in checking mode every discarded part is verified to be zero (C8). `compose(Q2, Q1)` is Q2 ⟇ Q1 and applies Q1 first. (Proposed)
 
-4.5 A conversion to a blade set that omits blades of the input is lossy, is named `truncate<Blades>(x)`, or `truncate<Type>(x)` when the target is named by its type, and in checking mode verifies that what it drops is zero when the scalar is exact. An operation that drops part of its own result, such as `transform`, verifies on a rounding scalar that the dropped part is within that operation's forward error bound (decision 0010). It is never implicit. (Proposed)
+4.5 A conversion to a blade set that omits blades of the input is lossy, is named `truncate<Blades>(x)`, or `truncate<Type>(x)` when the target is named by its type, and in checking mode verifies that what it drops is zero when the scalar is exact. An operation that drops part of its own result, such as `transform`, verifies on a rounding scalar that the dropped part is within that operation's forward error bound (decision 0010). It is never implicit. `part<Blades>(x)` and `part<Type>(x)` keep the same components and never check: what they drop is meant to be nonzero, as in a grade part. (Proposed)
 
 ## 5 Rigid objects in rigid(3)
 
@@ -104,6 +104,7 @@ Component: model (cga3).
 | `~a` | Reverse | `reverse` |
 | `!a` | Right complement | `right_complement` |
 | `a + b`, `a - b` | Sum and difference | |
+| `-a` | Negation | |
 | `s * a`, `a * s`, `a / s` | Scaling by a scalar s | |
 
 The antireverse, left complement, duals, dot, antidot, and transforms have no operator. `compose(Q2, Q1)` is Q2 ⟇ Q1, and `transform(x, V)` applies 5.4 or 5.6. Because `^` and `&` bind more loosely than `==`, `+`, and `*`, expressions that mix them with other operators are fully parenthesized. (Study, with `compose` and `transform` Checked)
@@ -145,3 +146,4 @@ These choices had no settled source and were ratified with this version:
 | 1.5 | 2026-11-01 | 4.1 states the defining relation of the geometric product; ratified (decision 0098) |
 | 1.6 | 2026-11-01 | 4.5 also accepts the target's type, `truncate<Type>(x)` (decision 0155); 7.1 names the geometric product and antiproduct `geometric_product` and `geometric_antiproduct` (decision 0159); ratified by the owner: proceed as recommended |
 | 1.7 | 2026-11-01 | 4.5: a conversion that drops blades verifies the dropped part is zero when the scalar is exact; the rounding-scalar check belongs to operations that drop part of their own result (decision 0161); ratified by the owner: proceed as recommended |
+| 1.8 | 2026-11-02 | 4.5 names `part<Blades>(x)` and `part<Type>(x)`, which keep the same components as `truncate` and never check (decision 0168); 7.1 adds negation `-a` (decision 0167); ratified by the owner: agreed |
