@@ -33,6 +33,20 @@ if(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
+# Every header under include/galoot belongs to the header set above, which
+# the header checks compile one by one and the format check reads, so a
+# header left out of it is never checked on its own. Stop configuring if one
+# is missing; CONFIGURE_DEPENDS reconfigures when a header is added.
+file(GLOB_RECURSE galoot_headers_on_disk CONFIGURE_DEPENDS
+  RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/include/galoot/*.hpp)
+get_target_property(galoot_header_set galoot_core HEADER_SET)
+foreach(header IN LISTS galoot_headers_on_disk)
+  if(NOT ${PROJECT_SOURCE_DIR}/${header} IN_LIST galoot_header_set)
+    message(FATAL_ERROR "${header} is not in galoot_core's header set; add "
+      "it to the FILES of target_sources(galoot_core ...)")
+  endif()
+endforeach()
+
 # The checking mode changes what the tests check, so it is never a default:
 # every preset declares it.
 if(NOT DEFINED GALOOT_CHECKING)
