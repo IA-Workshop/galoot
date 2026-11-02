@@ -1390,4 +1390,13 @@ foreach(spelling IN ITEMS geometric_antiproduct percent)
     SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
     MESSAGE "${written}: ${antiproduct_narrow}"
     ONE_ERROR FORBID "apply:")
+  # On full<2> the product and the antiproduct have the same coefficients
+  # up to sign, so these also take two scalars, whose product is 1 and whose
+  # antiproduct is -10000 e12: a check of the product's coefficients in place
+  # of the antiproduct's lets them through.
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_on_scalars_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_on_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${antiproduct_narrow}"
+    ONE_ERROR FORBID "apply:")
 endforeach()

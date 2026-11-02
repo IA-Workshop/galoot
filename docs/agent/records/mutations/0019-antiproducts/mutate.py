@@ -117,6 +117,16 @@ MUTANTS = {
     "check_dropped_geometric_antiproduct": ("product.hpp", [
         (AP_CHECK, AP_DROPPED, [0])]),
     "check_dropped_percent": ("product.hpp", [(AP_CHECK, AP_DROPPED, [1])]),
+    # The antiproduct's spellings check the geometric product's
+    # coefficients, which differ from the antiproduct's on most layouts.
+    "geometric_antiproduct_checks_product_coefficients": ("product.hpp", [
+        (AP_CHECK, AP_CHECK.replace(
+            "BinaryOperation::geometric_antiproduct,",
+            "BinaryOperation::geometric_product,"), [0])]),
+    "percent_checks_product_coefficients": ("product.hpp", [
+        (AP_CHECK, AP_CHECK.replace(
+            "BinaryOperation::geometric_antiproduct,",
+            "BinaryOperation::geometric_product,"), [1])]),
     # The catch-alls in order: geometric_product, wedge, *, ^,
     # geometric_antiproduct, antiwedge, %, &.
     "new_catch_alls_without_algebra": ("product.hpp", [
