@@ -2,10 +2,10 @@ program.cpp:59:15: error: no viable conversion from 'const mv<[...], blade_set<8
    59 |   const Point s = q;
       |               ^   ~
 ../../../../../include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
-  197 | struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
       |        ^~
 ../../../../../include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
-  197 | struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
       |        ^~
 ../../../../../include/galoot/core/mv.hpp:255:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
   255 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {

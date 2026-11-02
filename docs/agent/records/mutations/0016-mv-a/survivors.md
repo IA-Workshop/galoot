@@ -55,3 +55,7 @@ Beyond the plan's list: `no_scalar_check`, `range_ignores_algebra`, `exact_scala
 | `catchall_counts_ignored_for_one` | `core.mv_one_value` ("1 == 6") |
 | `rational_product_no_cancel` | support.rational's (2^62 / 3)(3 / 2^62) == 1 |
 | `literal_in_path_check_inert` | `tools.compile_fail_literal_in_path_rejects` |
+
+## After the storage base took the algebra, layout, and scalar (`af447ae`)
+
+`results-af447ae-storage-normal.tsv`: the mutants of the storage base and the class head (`mv_alg_unconstrained`, `no_default_initializer`, `shared_zero_initializer`, `one_value_implicit`, `equality_skips_last`, `equality_requires_removed`), normal mode, gcc-debug and clang-debug: all killed by tests, except `shared_zero_initializer` on clang-debug, equivalent there.
