@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Runs one build or test command and records it in the run log,
-# docs/agent/records/performance/runs.tsv: wall time, revision, branch,
-# preset, selection, and exit status, then what tools/measure takes (peak
-# memory, user-space counters, package energy, and the processors used). The
-# figures are tracked and noted, never asserted on, and the command's exit
-# status is passed through unchanged.
+# docs/agent/records/performance/runs.tsv, or in a log named as below: wall
+# time, revision, branch, preset, selection, and exit status, then what
+# tools/measure takes (peak memory, user-space counters, package energy, and
+# the processors used). The figures are tracked and noted, never asserted
+# on, and the command's exit status is passed through unchanged.
 #
 # Build and CTest steps need the machine's shared job-slot pool, because Ninja
 # without it runs as many jobs as there are processors, and several
@@ -15,14 +15,30 @@
 # is refused whatever the command, so that a wrapper such as taskset, env, or
 # nice in front of ctest cannot hide it. Other commands run unchanged.
 #
-# Usage: tools/timed <step> <preset> <selection> -- <command> [args...]
+# A measurement campaign keeps its rows out of the run log by naming its own
+# log, with --log or, for every run of a shell or script, the environment
+# variable TIMED_LOG; --log wins when both are given. The file gets the same
+# columns, and a header when it is new.
+#
+# Usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]
+#   file       the log to append to, from the current directory
 #   step       build or test (or another word for other commands)
 #   preset     the CMake preset, or - for none
 #   selection  what ran: a target, a label regex, or "all"
 set -u
 
+usage="usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]"
+log=${TIMED_LOG:-}
+if [[ ${1:-} == --log ]]; then
+  if [[ $# -lt 2 ]]; then
+    echo "$usage" >&2
+    exit 2
+  fi
+  log=$2
+  shift 2
+fi
 if [[ $# -lt 5 || $4 != "--" ]]; then
-  echo "usage: tools/timed <step> <preset> <selection> -- <command> [args...]" >&2
+  echo "$usage" >&2
   exit 2
 fi
 step=$1
@@ -47,4 +63,6 @@ if $uses_pool; then
 fi
 
 root=$(git rev-parse --show-toplevel) || exit 2
-exec "$root/tools/measure" run "$@"
+log_option=()
+[[ -n $log ]] && log_option=(--log "$log")
+exec "$root/tools/measure" run "${log_option[@]}" "$@"
