@@ -86,33 +86,49 @@ constexpr std::remove_cvref_t<X> reject_product() {
       std::is_same_v<typename R::scalar_type, typename S::scalar_type>;
   if constexpr (!one_algebra) {
     if constexpr (Spelling == geometric_product_function) {
-      static_assert(one_algebra, "geometric_product: the operands are in "
-                                 "different algebras; both must be in the "
-                                 "same one");
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "geometric_product: the operands are in "
+          "different algebras; both must be in the "
+          "same one");
     } else if constexpr (Spelling == wedge_function) {
-      static_assert(one_algebra, "wedge: the operands are in different "
-                                 "algebras; both must be in the same one");
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "wedge: the operands are in different "
+          "algebras; both must be in the same one");
     } else if constexpr (Spelling == times_operator) {
-      static_assert(one_algebra, "a * b: the operands are in different "
-                                 "algebras; both must be in the same one");
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "a * b: the operands are in different "
+          "algebras; both must be in the same one");
     } else {
-      static_assert(one_algebra, "a ^ b: the operands are in different "
-                                 "algebras; both must be in the same one");
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "a ^ b: the operands are in different "
+          "algebras; both must be in the same one");
     }
   } else {
     if constexpr (Spelling == geometric_product_function) {
-      static_assert(one_scalar, "geometric_product: the operands have "
-                                "different scalar types; convert one "
-                                "explicitly first");
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "geometric_product: the operands have "
+          "different scalar types; convert one "
+          "explicitly first");
     } else if constexpr (Spelling == wedge_function) {
-      static_assert(one_scalar, "wedge: the operands have different scalar "
-                                "types; convert one explicitly first");
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "wedge: the operands have different scalar "
+          "types; convert one explicitly first");
     } else if constexpr (Spelling == times_operator) {
-      static_assert(one_scalar, "a * b: the operands have different scalar "
-                                "types; convert one explicitly first");
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "a * b: the operands have different scalar "
+          "types; convert one explicitly first");
     } else {
-      static_assert(one_scalar, "a ^ b: the operands have different scalar "
-                                "types; convert one explicitly first");
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "a ^ b: the operands have different scalar "
+          "types; convert one explicitly first");
     }
   }
   return R{};
