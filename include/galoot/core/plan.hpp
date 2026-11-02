@@ -83,6 +83,8 @@ namespace galoot::core::detail {
 ///
 /// Guarantees: a structural type, so an operation can be a template
 /// argument.
+// NOLINTNEXTLINE(performance-enum-size): an int, so that a compiler prints
+// its values and not a byte.
 enum class BinaryOperation : int {
   /// The geometric product e_A e_B, from the metric.
   geometric_product,
@@ -667,6 +669,8 @@ inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
 ///
 /// Guarantees: a structural type, so an operation can be a template
 /// argument.
+// NOLINTNEXTLINE(performance-enum-size): an int, so that a compiler prints
+// its values and not a byte.
 enum class UnaryOperation : int {
   /// The reverse: (-1)^(k(k-1)/2) times a blade of grade k.
   reverse,

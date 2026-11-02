@@ -39,6 +39,8 @@ namespace detail {
 
 /// The ways a product is written, so that a message names the operation as
 /// the user wrote it.
+// NOLINTNEXTLINE(performance-enum-size): an int, so that a compiler prints
+// its values and not a byte.
 enum class ProductSpelling {
   geometric_product_function,
   wedge_function,
@@ -80,11 +82,8 @@ constexpr std::remove_cvref_t<X> reject_product() {
   using R = std::remove_cvref_t<X>;
   using S = std::remove_cvref_t<Y>;
   using enum ProductSpelling;
-  constexpr bool one_algebra =
-      std::is_same_v<typename R::algebra_type, typename S::algebra_type>;
-  constexpr bool one_scalar =
-      std::is_same_v<typename R::scalar_type, typename S::scalar_type>;
-  if constexpr (!one_algebra) {
+  if constexpr (!std::is_same_v<typename R::algebra_type,
+                                typename S::algebra_type>) {
     if constexpr (Spelling == geometric_product_function) {
       static_assert(
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,

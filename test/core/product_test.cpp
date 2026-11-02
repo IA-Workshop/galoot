@@ -18,7 +18,6 @@
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
-#include <galoot/core/plan.hpp>
 #include <galoot/core/product.hpp>
 
 #include <doctest/doctest.h>
