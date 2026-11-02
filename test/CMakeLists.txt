@@ -155,6 +155,25 @@ add_test(NAME tests.compile_fail_flags_rejects
 set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
   PROPERTIES LABELS "tests;tests.compile_fail")
 
+# tools.compile_fail_literal_in_path_*: a compile-fail test whose required
+# literal occurs in its own source path stops configuring, since any compile
+# error would show the literal; one outside the path passes.
+set(literal_in_path_check
+  ${CMAKE_COMMAND} -DLITERAL=narrow -DSOURCE=/src/core/mv_narrowing_fail.cpp
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/literal_in_path_check.cmake)
+add_test(NAME tools.compile_fail_literal_in_path_rejects
+  COMMAND ${expect_output} 1
+    "fixture: the required literal 'narrow' occurs in the source path"
+    -- ${literal_in_path_check})
+add_test(NAME tools.compile_fail_literal_in_path_accepts
+  COMMAND ${expect_output} 0 "the literal is outside the path"
+    -- ${CMAKE_COMMAND} -DLITERAL=narrow
+      -DSOURCE=/src/core/mv_int_variable_fail.cpp
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/literal_in_path_check.cmake)
+set_tests_properties(tools.compile_fail_literal_in_path_rejects
+  tools.compile_fail_literal_in_path_accepts PROPERTIES
+  LABELS "tools;tools.compile_fail")
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
 add_test(NAME core.bare_compile
@@ -251,6 +270,14 @@ galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
   MESSAGE "metric: n is larger than the number of bits in a blade mask"
   REQUIRE "static assertion failed")
 
+# How each compiler says that a type does not meet metric_like. The concept's
+# name alone would not do: it occurs in the paths of the files that test it.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(not_metric_like "required for the satisfaction of ‘metric_like<Alg>’")
+else()
+  set(not_metric_like "does not satisfy 'metric_like'")
+endif()
+
 # core.metric_like_no_generators: a tag whose metric has no generators fails
 # metric_like, and the diagnostic names the generator count, not a later
 # requirement that would also fail.
@@ -258,7 +285,7 @@ galoot_add_compile_fail_test(NAME metric_like_no_generators
   MODULE core COMPONENT metric
   SOURCE core/metric_like_no_generators_fail.cpp
   MESSAGE "generator_count"
-  REQUIRE "metric_like")
+  REQUIRE "${not_metric_like}")
 
 # tools.expect_output_forbid: a forbidden literal in the output fails the
 # check, which WILL_FAIL turns into a pass; its twin passes because the
@@ -338,12 +365,12 @@ blade_set_rejects(names_above_9
 galoot_add_compile_fail_test(NAME blade_set_blades_not_metric_like
   MODULE core COMPONENT blade_set
   SOURCE core/blade_set_blades_not_metric_like_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_blades")
 galoot_add_compile_fail_test(NAME blade_set_names_zero
   MODULE core COMPONENT blade_set
   SOURCE core/blade_set_names_zero_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_blades" "${index_above_n}")
 blade_set_rejects(full_zero "${no_generators}")
 blade_set_rejects(full_wide
@@ -754,12 +781,12 @@ set_tests_properties(tools.plan_cost_model_passes
 galoot_add_compile_fail_test(NAME plan_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_not_metric_like_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_product_plan")
 galoot_add_compile_fail_test(NAME plan_map_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_map_not_metric_like_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_unary_map")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
@@ -886,13 +913,26 @@ mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
 mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
 # An algebra that is not one fails the class template's constraint, so the
 # diagnostic is the compiler's account of metric_like.
-mv_rejects(not_metric_like "metric_like" FORBID "${mv_scalar}")
-# These record the compiler's own wording, which both compilers share in
-# part: narrowing in brace initialization ("narrowing conversion",
-# "cannot be narrowed"), and an implicit conversion that no constructor
-# allows ("conversion from"). A new compiler may change them.
-mv_rejects(narrowing_int "narrow" ONE_ERROR)
-mv_rejects(narrowing_float "narrow" ONE_ERROR)
+mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
+# These record the compiler's own wording: narrowing in brace initialization,
+# and an implicit conversion that no constructor allows ("conversion from").
+# A new compiler may change them.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(narrowing_from_int "narrowing conversion of ‘w’ from ‘int’")
+  set(narrowing_from_double "narrowing conversion of ‘w’ from ‘double’")
+  set(float_conversion "may change value [-Werror=float-conversion]")
+else()
+  set(narrowing_from_int "cannot be narrowed from type 'int'")
+  set(narrowing_from_double "cannot be narrowed from type 'double'")
+  set(float_conversion "loses floating-point precision")
+endif()
+mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR)
+# A double variable into a float place is also a -Wconversion error on both
+# compilers under the project's flags, on the same line: the language's
+# narrowing error is the one the type promises, the second is the compiler's
+# warning made an error. ONE_ERROR allows exactly those two.
+mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
+  "${float_conversion}" ONE_ERROR)
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
