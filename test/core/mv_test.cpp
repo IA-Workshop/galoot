@@ -239,17 +239,21 @@ TEST_CASE_TEMPLATE("mv is zero by default", T, std::int64_t, rational, float,
 
 namespace {
 
-// A constant evaluation that writes into a zero plane of rationals, place 2
-// of 4. GCC 16 can let such a write change what a later zero value of the
-// same type holds at run time, when every place shares one initializer.
-constexpr bool plane_written_at_2() {
+// Constant evaluations that each write into one place of a zero plane of
+// rationals. GCC 16.2.1 was seen to let such a write change what a later zero
+// value of the same type holds at run time, when every place shares one
+// initializer: writes at places 2 and 3 did, from that place on, and writes
+// at places 0 and 1 did not. Every place is written, so the test does not
+// depend on which places trigger it. Each is a constexpr variable rather than
+// a static_assert, so that the evaluation takes place whatever becomes of
+// the assertions.
+constexpr bool plane_written_at(std::size_t place) {
   Plane<rational> plane{};
-  plane.coefficients[2] = rational{7};
-  return plane.coefficients[2] == rational{7};
+  plane.coefficients.at(place) = rational{7};
+  return plane.coefficients.at(place) == rational{7};
 }
-// A constexpr variable rather than a static_assert, so that the constant
-// evaluation takes place whatever becomes of the assertions.
-constexpr bool plane_written = plane_written_at_2();
+constexpr bool plane_written = plane_written_at(0) && plane_written_at(1) &&
+                               plane_written_at(2) && plane_written_at(3);
 
 } // namespace
 
