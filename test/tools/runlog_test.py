@@ -354,6 +354,23 @@ def checks(tool, directory):
     unknown = "\t".join(["f" * 12, LOG] + ["x"] * 32) + "\n"
     damaged(f"{HISTORY}/groups.tsv", lambda t: t + unknown,
             f"has a row of era {'f' * 12} of {LOG}, which")
+    # Two kept rows in each other's places: the counts agree, the order
+    # does not.
+    damaged(LOG, lambda t: t.replace(a[1] + "\n" + a[4] + "\n",
+                                     a[4] + "\n" + a[1] + "\n"),
+            "out of their order")
+
+    # Both history files gone: check fails rather than finding no era.
+    eras, groups = (repo.read(f"{HISTORY}/{n}")
+                    for n in ("eras.tsv", "groups.tsv"))
+    for name in ("eras.tsv", "groups.tsv"):
+        os.unlink(repo.path(f"{HISTORY}/{name}"))
+    result = repo.run("check")
+    check("check exit, history gone", result.returncode, 1)
+    if f"{HISTORY}/eras.tsv is missing" not in result.stderr:
+        failures.append(f"check stderr, history gone: {result.stderr!r}")
+    repo.write(f"{HISTORY}/eras.tsv", eras)
+    repo.write(f"{HISTORY}/groups.tsv", groups)
     check("files restored", repo.history_files(), good)
     return repo, boundary, a, b, later
 

@@ -430,6 +430,19 @@ def log_option(s):
     check("warning names the refused log",
           "not recorded" in result.stderr and other in result.stderr, True)
 
+    # A relative TIMED_LOG would name a different file from each directory
+    # a script runs in, so it is refused and the command is not run.
+    marker = os.path.join(s.top, "ran-relative.txt")
+    result = s.timed_cmd(["other", "-", "rel-env", "--", "/bin/sh", "-c",
+                          f"echo ran > {marker}"], timed_log="rel.tsv")
+    check("exit with a relative TIMED_LOG", result.returncode, 2)
+    check("command not run with a relative TIMED_LOG",
+          os.path.exists(marker), False)
+    check("message for a relative TIMED_LOG",
+          "TIMED_LOG must be an absolute path" in result.stderr, True)
+    check("no log from a relative TIMED_LOG",
+          os.path.exists(os.path.join(s.top, "rel.tsv")), False)
+
     result = s.timed_cmd(["--log"])
     check("exit of --log without a file", result.returncode, 2)
     check("usage for --log without a file",
