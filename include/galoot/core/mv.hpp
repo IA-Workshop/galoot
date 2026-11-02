@@ -106,39 +106,28 @@ inline constexpr bool distinct_masks = masks_distinct(S);
 template <std::size_t N, blade_set S>
 inline constexpr bool blades_in_algebra = all_in_algebra(S, N);
 
-template <class T, std::size_t I>
-using component = T;
-
 // The coefficients of a multivector, and its constructor from one value per
-// component. They are a base class because the constructor's parameter list,
-// one T for each position 0 to K - 1, is a pack expansion over the
-// positions, which needs a template that has them as parameters. The first
-// parameter is the multivector type itself, so that no two multivector types
-// share this base and none can be compared with another through it.
-template <class Multivector, class T, class Positions>
-struct coefficient_storage;
-
-template <class Multivector, class T, std::size_t... I>
-struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
-  // T{} in every place, written out once per position. The shorter `{}`
-  // gives the same value, but GCC 16 then reuses one shared initializer for
-  // every place, and a constant evaluation that writes into one value of the
-  // type changes what a later `{}` of the type gives at run time: with a
-  // rational scalar whose T{} is 0/1, the places from the one written on
-  // became 0/0.
-  std::array<T, sizeof...(I)> coefficients{zero_at(I)...};
-
-  // T{}, for the place `position`.
-  static constexpr T zero_at(std::size_t /*position*/) { return T{}; }
+// component. Ts is T once for each component, so that each parameter of the
+// constructor is T itself and a compiler's message about a value names T.
+// The first parameter is the multivector type itself, so that no two
+// multivector types share this base and none can be compared with another
+// through it.
+template <class Multivector, class T, class... Ts>
+struct coefficient_storage {
+  // T{} in every place, one initializer per place. GCC 16.2.1 was seen to
+  // compile the shorter `coefficients{}` wrongly: after a constant evaluation
+  // wrote into place 2 or a later place of one value of the type, a zero of
+  // the type made later at run time held zero bits from that place on. For a
+  // scalar whose T{} is not all zero bits, such as a rational's 0/1, that is
+  // a wrong value. One initializer per place was compiled correctly.
+  std::array<T, sizeof...(Ts)> coefficients{Ts{}...};
 
   constexpr coefficient_storage() = default;
 
   // Not declared for an empty layout, where it would be the default
-  // constructor. Brace initialization applies the language's rule for
-  // narrowing to each value, as for an aggregate.
-  constexpr explicit(sizeof...(I) == 1)
-      coefficient_storage(component<T, I>... values)
-    requires(sizeof...(I) > 0)
+  // constructor.
+  constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+    requires(sizeof...(Ts) > 0)
       : coefficients{values...} {}
 
   // Declared only for a scalar with ==, so that a scalar without one, such
@@ -153,6 +142,21 @@ struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
     return coefficients == other.coefficients;
   }
 };
+
+// coefficient_storage with T once for each of K components.
+template <class Multivector, class T, class Positions>
+struct storage_for;
+
+template <class Multivector, class T, std::size_t... I>
+struct storage_for<Multivector, T, std::index_sequence<I...>> {
+  template <std::size_t>
+  using same = T;
+  using type = coefficient_storage<Multivector, T, same<I>...>;
+};
+
+template <class Multivector, class T, std::size_t K>
+using storage_of =
+    storage_for<Multivector, T, std::make_index_sequence<K>>::type;
 
 } // namespace detail
 
@@ -181,9 +185,7 @@ struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
 /// -0.0 equals +0.0 and a coefficient that is a NaN makes them unequal.
 /// Values of different layouts, algebras, or scalars do not compare.
 template <metric_like Alg, blade_set Blades, std::semiregular T>
-struct mv
-    : detail::coefficient_storage<mv<Alg, Blades, T>, T,
-                                  std::make_index_sequence<Blades.size()>> {
+struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
   static_assert(ring_scalar<T>,
                 "mv: the scalar type must support +, -, *, unary - and "
                 "construction from an integer coefficient");
@@ -213,8 +215,7 @@ struct mv
   /// scalar and a variable that would narrow is an error. Explicit when the
   /// layout holds one blade, so that a scalar never converts silently into
   /// a multivector.
-  using detail::coefficient_storage<
-      mv, T, std::make_index_sequence<Blades.size()>>::coefficient_storage;
+  using detail::storage_of<mv, T, Blades.size()>::storage_of;
 
   /// Rejects any other number of values, other than none and a single
   /// multivector, with one error that prints the number given and the
