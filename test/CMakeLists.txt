@@ -1552,10 +1552,23 @@ add_test(NAME core.linear_divide_rejects_zero
   COMMAND ${expect_output} "Subprocess aborted"
     "galoot: assertion failed: ${linear_zero_divisor} (" linear.hpp:
     -- $<TARGET_FILE:core_linear_divide_assert_fail> int64_zero)
+# The check covers every integer type, and only a zero divisor: unsigned
+# and short divisors of zero abort too, and a negative divisor does not.
+foreach(type IN ITEMS unsigned short)
+  add_test(NAME core.linear_divide_rejects_${type}_zero
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${linear_zero_divisor} (" linear.hpp:
+      -- $<TARGET_FILE:core_linear_divide_assert_fail> ${type}_zero)
+endforeach()
 add_test(NAME core.linear_divide_accepts_nonzero
   COMMAND core_linear_divide_assert_fail int64)
+add_test(NAME core.linear_divide_accepts_negative
+  COMMAND core_linear_divide_assert_fail int64_negative)
 add_test(NAME core.linear_divide_accepts_floating_zero
   COMMAND core_linear_divide_assert_fail double_zero)
 set_tests_properties(core.linear_divide_rejects_zero
-  core.linear_divide_accepts_nonzero core.linear_divide_accepts_floating_zero
+  core.linear_divide_rejects_unsigned_zero
+  core.linear_divide_rejects_short_zero
+  core.linear_divide_accepts_nonzero core.linear_divide_accepts_negative
+  core.linear_divide_accepts_floating_zero
   PROPERTIES LABELS "core;core.linear")

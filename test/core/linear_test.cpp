@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <random>
 #include <string>
+#include <type_traits>
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -648,6 +649,66 @@ TEST_CASE("Division divides each coefficient with the scalar's division") {
                           2.0 / 10.0});
 }
 
+namespace {
+
+// The first coefficient of a line with 7 to 2 on its places divided by
+// Divisor, in a constant evaluation when the concept below asks for it.
+template <class T>
+constexpr T first_quotient(T divisor) {
+  const Line<T> x{T{7}, T{6}, T{5}, T{4}, T{3}, T{2}};
+  return (x / divisor).coefficients[0];
+}
+
+// Whether that division is a constant expression: false when it divides an
+// integer by zero, whose check then fails the evaluation.
+template <class T, T Divisor>
+concept divides_in_a_constant_evaluation = requires {
+  typename std::integral_constant<T, first_quotient<T>(Divisor)>;
+};
+
+} // namespace
+
+// Reference: independent value: by hand, integer division truncates toward
+//   zero for every sign and integer type, so over std::int64_t 7, -7, 8,
+//   -8, 1, and 0 divided by -2 give -3, 3, -4, 4, 0, and 0, over unsigned
+//   7, 8, 9, 0, 1, and 2 divided by 2 give 3, 4, 4, 0, 0, and 1, and over
+//   short 7, -7, 8, -8, 1, and 0 divided by 2 give 3, -3, 4, -4, 0, and 0;
+//   contract: the check that an integer divisor is not zero accepts a
+//   negative divisor and checks every integer type, so a division by zero
+//   over std::int64_t, unsigned, or short is not a constant expression
+TEST_CASE("Integer division checks for a zero divisor of every integer type") {
+  using L = Line<std::int64_t>;
+  static_assert((L{7, -7, 8, -8, 1, 0} / std::int64_t{-2}) ==
+                L{-3, 3, -4, 4, 0, 0});
+  static_assert((Line<unsigned>{7U, 8U, 9U, 0U, 1U, 2U} / 2U) ==
+                Line<unsigned>{3U, 4U, 4U, 0U, 0U, 1U});
+  static_assert((Line<short>{7, -7, 8, -8, 1, 0} / short{2}) ==
+                Line<short>{3, -3, 4, -4, 0, 0});
+
+  static_assert(divides_in_a_constant_evaluation<std::int64_t, -2>);
+  static_assert(divides_in_a_constant_evaluation<unsigned, 2U>);
+  static_assert(divides_in_a_constant_evaluation<short, short{-2}>);
+  static_assert(!divides_in_a_constant_evaluation<std::int64_t, 0>);
+  static_assert(!divides_in_a_constant_evaluation<unsigned, 0U>);
+  static_assert(!divides_in_a_constant_evaluation<short, short{0}>);
+
+  const volatile std::int64_t one = 1;
+  CHECK((L{7 * one, -7, 8, -8, 1, 0} / (-2 * one)) == L{-3, 3, -4, 4, 0, 0});
+  CHECK(divides_in_a_constant_evaluation<std::int64_t, -2>);
+  CHECK_FALSE(divides_in_a_constant_evaluation<unsigned, 0U>);
+}
+
+// Reference: contract: a / s needs a / of the scalar type, so a
+//   requires-expression that asks whether a multivector over a scalar
+//   without division, a 2 by 2 integer matrix, can be divided by one
+//   answers no
+TEST_CASE("Division needs the scalar type's own division") {
+  static_assert(!can_divide<Line<mat2>, mat2>);
+  static_assert(can_scale_left<mat2, Line<mat2>>);
+  static_assert(can_divide<Line<std::int64_t>, std::int64_t>);
+  CHECK_FALSE(can_divide<Line<mat2>, mat2>);
+}
+
 // Reference: independent value: by hand with 2 by 2 integer matrices, the
 //   units satisfy E12 E21 = E11 and E21 E12 = E22, so E12 times a line whose
 //   coefficients are E21 holds E11 in each place when E12 is on the left and
@@ -834,6 +895,24 @@ TEST_CASE("The scaling operators leave other types alone") {
   CHECK((gadget{} / 2) == 5);
   static_assert(has_scale_left<double, R>);
   static_assert(has_divide<R, double>);
+}
+
+// A type of the user's that names a member scalar_type, as numeric code
+// often does, without being a multivector.
+struct grid {
+  using scalar_type = double;
+};
+
+// Reference: contract: the rejecting overloads of the scalings take only a
+//   multivector, so a number and a type of the user's that declares a
+//   member scalar_type have no product or quotient, even with
+//   galoot::core's operators in scope by a using-directive
+TEST_CASE("The scaling catch-alls take only multivectors") {
+  static_assert(!has_scale_left<int, grid>);
+  static_assert(!has_scale_right<grid, int>);
+  static_assert(!has_divide<grid, int>);
+  static_assert(!has_scale_left<double, grid>);
+  CHECK_FALSE(has_scale_left<int, grid>);
 }
 
 } // namespace scaling_user_code
