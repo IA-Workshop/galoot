@@ -911,7 +911,7 @@ Departures of this round (C20):
 3. F4's mutant (`>= 64` to `> 64`) no longer applies: F1's fix removes the shift by `digits` and the guard with it.
 4. Mutants whose first forms were diagnosed by the compiler themselves were rewritten and rerun, not counted (`survivors.md`, review section).
 5. Skipped, small items the coordinator left optional: hci C5 (truncate's constant-evaluation diagnostic and run-time location, which follow from `GALOOT_ASSERT`) and hci C8 / blind F10 (misuses outside the catalogue, such as `truncate<"e41 ...">`), listed for WU9 and WU15.
-6. `fdd72ae`'s wording "lossless" for diagnostics case 17 was wrong (a point into a motor is lossy); the record is corrected in `71d040a` and the case is now a line into a motor.
+6. The first diagnostics record (`e85aa2b`) called its case 17 lossless, wrongly (a point into a motor is lossy); the record is corrected in `71d040a` and the case is now a line into a motor.
 
 | Finding | Resolution | Commits |
 | --- | --- | --- |
