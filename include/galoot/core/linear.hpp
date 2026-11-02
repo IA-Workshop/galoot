@@ -90,12 +90,13 @@ with_plus_signs(const blade_set<K>& set) noexcept {
 
 } // namespace detail
 
-/// The layout of x + y and x - y for x on the layout A and y on a different
-/// layout B in the algebra Alg: every blade that A or B holds, each once with
-/// orientation +1, in order of grade and, within a grade, of index list
-/// (e12, e13, e14, e23, ...). A rigid(3) line and the antiscalar give e12,
-/// e13, e14, e23, e24, e34, and e1234. A sum of two values of one layout
-/// keeps that layout instead, which this set holds in canonical order.
+/// The layout of x + y and x - y for x on the layout A and y on the layout B
+/// in the algebra Alg. For two different layouts: every blade that A or B
+/// holds, each once with orientation +1, in order of grade and, within a
+/// grade, of index list (e12, e13, e14, e23, ...); a rigid(3) line and the
+/// antiscalar give e12, e13, e14, e23, e24, e34, and e1234. For one layout,
+/// A itself, with its order and orientations, so a sum of two lines is a
+/// line, and nothing is merged.
 ///
 /// Requires: Alg is metric_like, and neither layout holds a mask twice. The
 /// blades are merged by insertion, so the compile cost grows with the square
@@ -113,6 +114,10 @@ with_plus_signs(const blade_set<K>& set) noexcept {
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto sum_layout =
     merge<detail::with_plus_signs(A), detail::with_plus_signs(B)>;
+
+/// sum_layout of one layout: that layout.
+template <metric_like Alg, blade_set A>
+inline constexpr auto sum_layout<Alg, A, A> = A;
 
 namespace detail {
 
@@ -180,13 +185,6 @@ template <coefficient_type Sign, blade_set Target, metric_like Alg, blade_set A,
   return out;
 }
 
-// Whether two layouts are the same template argument.
-template <blade_set A, blade_set B>
-inline constexpr bool same_layout_v = false;
-
-template <blade_set A>
-inline constexpr bool same_layout_v<A, A> = true;
-
 /// The ways a sum is written, so that a message names the operation as the
 /// user wrote it.
 // An int, so that a compiler prints its values and not a byte.
@@ -237,21 +235,14 @@ constexpr std::remove_cvref_t<X> reject_sum() {
 
 } // namespace detail
 
-/// x + y for two values of one type: the coefficient of each blade is the
-/// sum of the two. The result has the operands' type.
-template <metric_like Alg, blade_set A, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, A, T> operator+(const mv<Alg, A, T>& x,
-                                                const mv<Alg, A, T>& y) {
-  return detail::sum<1, A>(x, y);
-}
-
-/// x + y for two layouts of one algebra and scalar type: on each blade of
-/// sum_layout<Alg, A, B>, the coefficients the two operands hold there, each
-/// times its orientation, added, and a blade that one operand alone holds
-/// takes its coefficient alone. A rigid(3) line plus the antiscalar holds
-/// the line's -vx on e14, since e41 = -e14, and the antiscalar's on e1234.
+/// x + y for two multivectors of one algebra and scalar type, on
+/// sum_layout<Alg, A, B>: on each of its blades, the coefficients the two
+/// operands hold there, each times its orientation, added, and a blade that
+/// one operand alone holds takes its coefficient alone. Two values of one
+/// type give that type, place by place. A rigid(3) line plus the antiscalar
+/// holds the line's -vx on e14, since e41 = -e14, and the antiscalar's on
+/// e1234.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-  requires(!detail::same_layout_v<A, B>)
 [[nodiscard]] constexpr mv<Alg, sum_layout<Alg, A, B>, T>
 operator+(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return detail::sum<1, sum_layout<Alg, A, B>>(x, y);
@@ -267,20 +258,12 @@ constexpr std::remove_cvref_t<X> operator+(const X& /*x*/, const Y& /*y*/) {
   return detail::reject_sum<detail::SumSpelling::plus_operator, X, Y>();
 }
 
-/// x - y for two values of one type: the coefficient of each blade is x's
-/// minus y's. The result has the operands' type.
-template <metric_like Alg, blade_set A, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, A, T> operator-(const mv<Alg, A, T>& x,
-                                                const mv<Alg, A, T>& y) {
-  return detail::sum<-1, A>(x, y);
-}
-
-/// x - y for two layouts of one algebra and scalar type, on
+/// x - y for two multivectors of one algebra and scalar type, on
 /// sum_layout<Alg, A, B> as for x + y: a blade that both hold takes x's
 /// coefficient minus y's, each times its orientation, a blade that x alone
 /// holds takes x's, and one that y alone holds takes the negation of y's.
+/// Two values of one type give that type, place by place.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-  requires(!detail::same_layout_v<A, B>)
 [[nodiscard]] constexpr mv<Alg, sum_layout<Alg, A, B>, T>
 operator-(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return detail::sum<-1, sum_layout<Alg, A, B>>(x, y);
