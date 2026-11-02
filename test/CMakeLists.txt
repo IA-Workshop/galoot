@@ -1305,3 +1305,34 @@ set_tests_properties(
   tools.test_references_trace_accepts
   tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
+
+# core.product: the geometric product and the wedge, as functions and as the
+# operators * and ^, against the reference tables.
+galoot_add_test(MODULE core COMPONENT product)
+target_link_libraries(core_product_test PRIVATE galoot_test_support
+  galoot_golden)
+
+# core.product_mixed_<cause>_<spelling>: a product of operands from two
+# algebras or with two scalar types fails to compile with one error, the
+# message of the product as written.
+set(product_algebras "the operands are in different algebras${semicolon} both must be in the same one")
+set(product_scalars "the operands have different scalar types${semicolon} convert one explicitly first")
+foreach(spelling IN ITEMS geometric_product wedge times caret)
+  if(spelling STREQUAL "times")
+    set(written "operator*")
+  elseif(spelling STREQUAL "caret")
+    set(written "operator^")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_mixed_algebras_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_mixed_algebras_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_algebras}"
+    ONE_ERROR FORBID "different scalar types")
+  galoot_add_compile_fail_test(NAME product_mixed_scalars_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_mixed_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_scalars}"
+    ONE_ERROR FORBID "different algebras")
+endforeach()
