@@ -311,6 +311,10 @@ Recorded in `docs/agent/records/agent-cost.tsv` as each agent finishes. Figures 
 
 Size M overall, as plan 0001 has it: about 2.2M to 3.2M tokens in all. The mechanical commits (WU10b 1 and 2) are small enough for Sonnet if the coordinator prefers.
 
+## WU10b claim
+
+WU10b is claimed on 2026-11-02, after the merge of WU10a (`81ffedf`), on `feature/core-linear`. The owner's rulings on O1 and O2 are in force, so commits 6 and 7 are included and CONVENTIONS version 1.8 is added in the commit that builds `part`.
+
 ## 10. Outcome
 
 ### WU10a
