@@ -95,6 +95,46 @@ MUTANTS = {
     "prune_keeps_removed": (
         RUNLOG, "            elif allowed[line] > 0:",
         "            elif True:", RUNLOG_TEST),
+    "toolchain_end_inclusive": (
+        RUNLOG, "(ends is None or ends > first)",
+        "(ends is None or ends >= first)", RUNLOG_TEST),
+    "toolchain_start_exclusive": (
+        RUNLOG, "if since <= latest and", "if since < latest and",
+        RUNLOG_TEST),
+    "mode_default_shared": (
+        RUNLOG, 'row.setdefault("mode", MISSING)',
+        'row.setdefault("mode", "shared")', RUNLOG_TEST),
+    "earlier_kept_not_required": (
+        RUNLOG, "    if +left:\n", "    if False:\n", RUNLOG_TEST),
+    "unknown_era_groups_ok": (
+        RUNLOG, "if (cells[0], cells[1]) not in known:", "if False:",
+        RUNLOG_TEST),
+    "no_second_header_check": (
+        RUNLOG, "if cells[0] == columns[0]:", "if False:", RUNLOG_TEST),
+    "check_ignores_log_option": (
+        RUNLOG, "    if log is not None:\n        return [log]",
+        "    if False:\n        return [log]", RUNLOG_TEST),
+    "citations_not_cheap": (
+        RUNLOG, '"citations", "golden-facts"', '"golden-facts"', RUNLOG_TEST),
+    "golden_check_not_cheap": (
+        RUNLOG, '"golden-check", "conventions_check"}', '"conventions_check"}',
+        RUNLOG_TEST),
+    "workflow_needs_commit": (
+        RUNLOG, ('if step == "workflow" and row.get("preset", NO_TREE) != '
+                 'NO_TREE:'), "if False:", RUNLOG_TEST),
+    "lint_dropped": (
+        RUNLOG, 'if step in ("gate", "lint"):', 'if step == "gate":',
+        RUNLOG_TEST),
+    "no_order_check": (
+        RUNLOG, "problems += order_problems(name, working, orders)", "pass",
+        RUNLOG_TEST),
+    "missing_history_ok": (
+        RUNLOG, "        if had:\n", "        if False:\n", RUNLOG_TEST),
+    "clone_check_dropped": (
+        RUNLOG, "if not has_commit(top, era[0]):", "if False:", RUNLOG_TEST),
+    "relative_env_allowed": (
+        TIMED, "if [[ -n $log && $log != /* && ${1:-} != --log ]]; then",
+        "if false; then", MEASURE_TEST),
     "log_ignored": (
         MEASURE, "log = log_path or os.path.join(",
         "log = os.path.join(", MEASURE_TEST),
