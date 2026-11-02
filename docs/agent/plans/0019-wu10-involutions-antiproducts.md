@@ -342,7 +342,7 @@ Evidence:
 - Diagnostics: every rejection gives one error with the message on its first error line on both compilers; no public spelling shows `apply:`; Clang's first line for `(p ^ q) == line` names `wedge_layout<rga3, ...>`, with no `product_plan`, `detail::`, or enum cast. Sizes beside the WU9 table in `records/mutations/0018-products/README.md`.
 - W10 and P2 (pinned, three repeats): `product_test.cpp` 21.6 G to 43.0 G instructions on GCC and 19.2 G to 42.7 G on Clang; a unit that includes only `core.hpp` +5.2 M (+0.6%) on GCC and +6.7 M (+0.7%) on Clang.
 - Question 3, through the public `%`, the four rigid(3) pairs from n = 4 to 16: +106.8% on GCC (747 M to 1,545 M) and +356.5% on Clang (914 M to 4,174 M), against +0.1% and −0.3% through `*`. The absolute growth matches decision 0141's plan-level figures within a few percent; the percentages are lower because the public path adds n-independent kernel code. 0141's triggers are unchanged and none fired.
-- Final runs: see "After the review" below.
+- Final runs: all seven presets from new empty build trees at `03b9443`, the final revision of the build inputs, with a clean tree (the run rows say `03b9443276d1` without `-dirty`; the run log itself does not count toward a dirty tree, and every other file was committed before the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 263 tests, gcc-asan 255, clang-debug, clang-release, clang-asan, and lint 265, all passing. The trace gate, `clang-format --dry-run --Werror`, and `tools/runlog check` exit 0. The commit after it records these results and the run rows, and changes nothing else.
 
 After the review (findings of the blind review, each fixed in its own commit):
 
