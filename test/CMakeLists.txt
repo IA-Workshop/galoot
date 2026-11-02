@@ -889,7 +889,7 @@ endfunction()
 # A message's ; would split it into two list items, so it is held as
 # character 1, which expect_output.cmake reads as a ;.
 string(ASCII 1 semicolon)
-set(mv_beyond_n "mv: the layout names a generator that the algebra does not have${semicolon} a layout written for a larger algebra cannot be used here")
+set(mv_beyond_n "mv: the layout names a generator that the algebra does not have${semicolon} use a layout whose blades are all in this algebra")
 set(mv_bad_sign "mv: the layout holds a sign other than +1 or -1${semicolon} give each blade of a layout written out by hand the sign +1 or -1")
 set(mv_repeated "mv: the layout holds one blade twice, perhaps in both orientations${semicolon} list each blade once")
 # Clang prints the condition of a failed static_assert before its message;
@@ -953,7 +953,8 @@ mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR FORBID "component<")
 # A double variable into a float place is also a -Wconversion error on both
 # compilers under the project's flags, on the same line: the language's
 # narrowing error is the one the type promises, the second is the compiler's
-# warning made an error. ONE_ERROR allows exactly those two.
+# warning made an error. ONE_ERROR allows only error lines that hold one of
+# those two texts; it does not count the lines.
 mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
   "${float_conversion}" ONE_ERROR FORBID "component<")
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
