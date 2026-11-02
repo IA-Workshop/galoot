@@ -78,6 +78,8 @@ Measured by `../../performance/linear-cost/measure.py a2468eb <scratch> 3 4`: ev
 
 `mv_test.cpp` grows by 0.8% on GCC and 1.1% on Clang, from the tests of `part`, `has_name`, and the fault scalars; the test author's estimate was 0.8% on GCC. The other suites change by less than 0.4%, with tests unchanged: the headers' parse cost, and on GCC a fall of 0.13% for `product_test.cpp`, within twice the spread. `linear_test.cpp` costs about half of `mv_test.cpp`. In the final gcc-debug run the test programs took 0.00 s (`core.linear`), 0.02 s (`core.mv`, `core.unary`), 0.01 s (`core.identities`), and 0.16 s (`core.product`).
 
+After the reviews, at `cd146a4`, `linear_test.cpp` costs 42,151 M (spread 26) on GCC and 37,797 M (spread 22) on Clang, +23.8% and +26.3% against the figures above: almost all of it the test that sums two `full<8>` multivectors, of which 6.4 G and 6.2 G are its run-time sum, difference, and loops, kept because no other test builds a same-type sum's body at 256 blades (`../../performance/linear-cost/measure_full8.py`, `out-full8/summary.txt`; the plan's Outcome gives the breakdown).
+
 ### P2: the includer of `core.hpp`
 
 `core.hpp` now includes `linear.hpp`, and `mv.hpp` grew by `part` and the five fault checks. A unit that includes only `core.hpp`:
