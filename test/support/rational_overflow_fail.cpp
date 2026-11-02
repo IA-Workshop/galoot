@@ -2,6 +2,7 @@
 // argument names the case:
 //
 //   add_above         max + 1
+//   add_far_above     max + max, whose wrapped sum would be -2
 //   subtract_below    -max - 1
 //   multiply_above    3037000500^2, the smallest square above max
 //   numerator_min     the minimum of std::int64_t, which is below -max
@@ -34,6 +35,8 @@ bool run(std::string_view name, std::int64_t one) {
   rational result;
   if (name == "add_above") {
     result = rational{max * one} + rational{one};
+  } else if (name == "add_far_above") {
+    result = rational{max * one} + rational{max * one};
   } else if (name == "subtract_below") {
     result = rational{-max * one} - rational{one};
   } else if (name == "multiply_above") {

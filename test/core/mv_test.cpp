@@ -241,7 +241,9 @@ constexpr bool plane_written_at_2() {
   plane.coefficients[2] = rational{7};
   return plane.coefficients[2] == rational{7};
 }
-static_assert(plane_written_at_2());
+// A constexpr variable rather than a static_assert, so that the constant
+// evaluation takes place whatever becomes of the assertions.
+constexpr bool plane_written = plane_written_at_2();
 
 } // namespace
 
@@ -251,6 +253,7 @@ static_assert(plane_written_at_2());
 //   denominator
 TEST_CASE("mv stays zero by default after a constant evaluation wrote into "
           "one") {
+  CHECK(plane_written);
   const Plane<rational> plane{};
   CHECK(all_zero(plane));
   CHECK(default_initialized_over_a_pattern_is_zero<Plane<rational>>());
@@ -482,7 +485,15 @@ TEST_CASE("The scalar concepts accept the types that meet their "
   static_assert(!core::exact_scalar<std::complex<double>>);
   static_assert(!core::exact_scalar<std::string>);
 
+  // The same answers at run time, for runs that set the assertions aside.
   CHECK(core::ring_scalar<double>);
+  CHECK(core::ring_scalar<rational>);
+  CHECK_FALSE(core::ring_scalar<std::string>);
+  CHECK_FALSE(core::ring_scalar<without_multiplication>);
+  CHECK_FALSE(core::ring_scalar<without_coefficient_conversion>);
+  CHECK_FALSE(core::ring_scalar<without_unary_minus>);
+  CHECK_FALSE(core::ring_scalar<not_copyable>);
+  CHECK(core::exact_scalar<rational>);
   CHECK_FALSE(core::exact_scalar<double>);
 }
 

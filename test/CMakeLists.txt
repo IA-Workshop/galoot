@@ -683,7 +683,10 @@ add_executable(support_rational_overflow_fail support/rational_overflow_fail.cpp
 target_link_libraries(support_rational_overflow_fail PRIVATE
   galoot_test_support)
 set(rational_does_not_fit "rational: a result does not fit std::int64_t")
-foreach(case IN ITEMS add_above subtract_below multiply_above numerator_min)
+# add_far_above's sum, wrapped, would be -2, which no later check catches;
+# the others would wrap to values that the constructor's own check rejects.
+foreach(case IN ITEMS add_above add_far_above subtract_below multiply_above
+    numerator_min)
   add_test(NAME support.rational_rejects_${case}
     COMMAND ${expect_output} "Subprocess aborted" ${rational_does_not_fit}
       -- $<TARGET_FILE:support_rational_overflow_fail> ${case})
