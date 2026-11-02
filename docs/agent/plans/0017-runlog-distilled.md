@@ -44,6 +44,8 @@ Ambiguity A2. The median is the low median (the middle value, or the lower of th
 ## 3. Acceptance criteria
 
 1. `runs.tsv` after compaction holds the header, the rows the rule of section 4.2 keeps, the anchor rows, and every row written after the boundary, each byte-identical to its line before compaction and in the same order. Expected at the boundary (from `2d90f41`, which the claim does not change): 235,590 rows before; 1,666 kept by the rule and 3 anchors (none of which the rule keeps), so 1,669 rows from the boundary, plus the rows this branch appends after it.
+
+   *Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* the expected counts here are of the first rule; with the rule widened after the W5 review, 1,727 era rows stay (1,724 by the rule, 3 anchors).
 2. `history/groups.tsv` has one row per era, step, preset, selection family, mode, and outcome, with the columns of section 4.1; `history/eras.tsv` one row for the era. `tools/runlog check` at the compaction commit and at the branch head exits 0, which includes the byte-for-byte regeneration.
 3. The retrieval command of section 4.5 prints the removed rows: at least the 233,921 rows that are not kept.
 4. `tools/runlog check` exits 1 and names the problem when a removed row is back in the log, when a kept row is missing or doubled, when a history row differs in any cell, and when an era row differs.
@@ -75,6 +77,8 @@ A row stays when its revision is a committed one (12 hex digits, no `-dirty`, no
 - its step is `check` or `trace` and its family is one of the cheap gates: `trace`, `trace-gate`, `convention-trace`, `markers`, `golden`, `citations`.
 
 At `2d90f41` this keeps 1,666 rows, 612,647 bytes.
+
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* this is the first rule. The rule in force keeps also every `workflow` row of a named preset at any revision, `lint` rows of committed revisions, and the cheap gates `golden-facts`, `reference-markers`, `golden-check`, and `conventions_check`: 1,724 rows of the first era.
 
 ### 4.3 The compaction and its boundary
 
@@ -115,11 +119,15 @@ git show <era>:docs/agent/records/performance/runs.tsv
 
 Kept: every row of a build or test run of a committed revision, verbatim; the anchor rows; every row after the boundary; for every group of removed and kept rows, the count, the counts of failed and dirty rows, the distinct revisions, the first and latest time and revision, the hosts and toolchain states, and first, latest, least, low median, and range of wall time, peak memory, and retired instructions; all raw rows in git at `B`.
 
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* this is the first rule's list; see section 4.2's note for the rule in force. Gate steps outside the rule are among the rows lost from the working tree and are read back from git.
+
 Lost from the working tree (still in git): each removed row's own values; its selection beyond the family (the case and limit of a calibration compile, for example; the campaigns' results are in their own records directories); user and system time, cycles, cache events, energy, other processes' CPU time, the sibling's and the pinned CPU's busy time, the processors, and the options of the removed rows, none of which is aggregated.
 
 ## 5. Proposed governance wording (decision 0170, for the owner to ratify)
 
 Nothing below takes effect until ratified. Until then the texts stand as they are; this unit's compaction is done under the owner's ruling of 2026-11-01.
+
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* the P13 and DoD-25 texts below promise that every gate run stays in the log, which the compaction did not do (W5 review, finding F1). They are replaced by the wording of decision 0170's addendum of 2026-11-01, which is the text proposed for ratification; they are kept here as first written.
 
 P7 (new second sentence; the rest unchanged):
 
@@ -129,9 +137,13 @@ P13 (first sentence replaced, and a sentence added after the energy sentence):
 
 > Each build and test run is timed by `tools/timed`, which appends its wall time, revision, branch, preset, selection, and exit status to the run log, `docs/agent/records/performance/runs.tsv`. The runs of a measurement campaign go to the campaign's own log instead, named when the run starts and committed with the campaign's records. [Where the machine exposes them ... (unchanged) ... and says so (decision 0018).] When a log grows too large to work with, the owner may approve its compaction at a recorded boundary revision: its rows up to the boundary are distilled into the performance history (P7) and removed from the log, except the rows of build and test runs of committed revisions, which include every gate run and stay in the log unchanged, and the few rows that later merges of other branches need. The removed rows stay in version control, and the history names the command that retrieves them. [These times are tracked and noted ... (unchanged).]
 
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* replaced by decision 0170's addendum ("which include every gate run" is false).
+
 DoD-25 (plan 0001):
 
 > DoD-25 (P7, P13). The performance history baseline is committed; `runs.tsv` keeps a row for every gate run through every compaction of the log, and the history distills the rest (P7).
+
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* replaced by decision 0170's addendum.
 
 ## 6. Tests and expected values
 
@@ -228,6 +240,8 @@ O5. **Criterion 10, formatting:** the project's Python is not formatted by `ruff
 
 O6. **Row counts differ from criterion 1 by the rows written after the boundary.** Kept from the boundary: 1,669 (1,666 by the rule, 3 anchors). The log holds 1,689 rows at `a3f0a60` (20 written since the boundary, all by this branch), and more after the final checks.
 
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* with the widened rule, 1,727 era rows stay.
+
 O7. **The self-check kills the anchor mutants first by its expected values,** not by the merges; a separate run showed that every anchor mutant also fails at least one merge check of cases 7, 9, or 10 (listed below).
 
 O8. **Not edited:** governance, `.claude/agents/build-expert.md`, the harness docstring (D10), `compile.tsv`. The agent cost record (`agent-cost.tsv`) is left to the coordinator: this agent cannot see its own token count.
@@ -256,6 +270,8 @@ O8. **Not edited:** governance, `.claude/agents/build-expert.md`, the harness do
 | `history/groups.tsv` | | 1,206 groups of the 235,590 rows (385 KB) |
 | `history/eras.tsv` | | 1 era: `ebdd06d09289`, 235,590 rows, 1,669 kept, anchors 235538, 235539, 235591 |
 | `compile.tsv` | 2,521 rows | unchanged |
+
+*Superseded, see the note of 2026-11-01 under "W5 review fixes" ("Corrections to the recorded text"):* the figures of this table are the first rule's; at `227d2c8` and later the era records 1,727 kept and the log holds 1,765 rows or more.
 
 What the history shows, for example: the passing `workflow ... all-clean` runs (configure, build, and the whole suite from an empty tree) on gcc-debug went from 2.226 s (first, 2026-10-31T21:54:18Z) to 17.007 s (latest, 2026-11-01T04:27:09Z), 23 runs, low median 2.618 s; on gcc-asan from 5.130 s to 21.403 s, 12 runs. The 210,848 `ceiling-cert` probe compiles are two groups (pass and fail): 148,430 passing compiles with a low median of 0.163 s and 8.85 × 10⁸ instructions, and 62,418 failing ones with 0.165 s and 8.90 × 10⁸.
 
@@ -317,6 +333,13 @@ R4. **F6, recorded as a departure.** The cases that show the anchor fix is neede
 R5. **`tools.runlog_check` reads agent records from a CTest test.** That sits against the principle of decision 0080. It is skipped outside a git checkout and in a clone without the eras' commits, but a contributor who deleted the records directory would see it fail. This is left to the owner, in decision 0170's addendum. It costs about 2.7 s and about 740 MB peak memory per preset.
 
 R6. **`eras.tsv`'s row was edited in place once more, in `227d2c8`,** on this branch, before any merge into `develop`. The review branch that holds the earlier row is merged into this branch.
+
+### Corrections to the recorded text (note of 2026-11-01, after the delta review, finding D2)
+
+Earlier sections of this plan are kept as they were written. They still state the first rule, its counts (1,666 rows by the rule, 1,669 era rows kept), and the first proposed wording of P13 and DoD-25 ("which include every gate run", "`runs.tsv` keeps a row for every gate run"), and the review found that wording false (F1). Each such place now has a pointer, in italics, to this note. In force:
+
+- The rule is that of `tools/runlog` from `5bd42ce` on, as `history/README.md` lists it: 1,724 rows of the first era by the rule and 3 anchors, so 1,727 kept.
+- The wording proposed for ratification is that of decision 0170's addendum of 2026-11-01, made exact after the delta review (finding D3). It names only what the rule keeps, and says that every other row, a gate run under another name or on an uncommitted tree among them, is counted in the history and retrievable from git.
 
 ### The fixes
 

@@ -16,6 +16,8 @@ P13 says `tools/timed` appends every build and test run to `runs.tsv`; P7 says t
 2. Move the campaign rows into per-campaign files. The bulk stays in the working tree under other names, which is an archive copy in all but name.
 3. Distill every row up to a boundary revision into a committed history of per-kind statistics, keep the build and test rows of committed revisions (which include every gate run) in the log verbatim, remove the rest, and leave the raw rows in git, retrievable by one command. Route future campaigns to their own logs, distilled the same way when the campaign closes.
 
+   *Pointer added 2026-11-01, the text above kept as written:* "which include every gate run" is false; see the addenda below.
+
 ## Decision
 
 Option 3, as plan 0017 designs it: `tools/runlog` (`summary`, `compact`, `check`, `prune`); the history in `docs/agent/records/performance/history/` (`eras.tsv`, `groups.tsv`, `toolchain.tsv`); `tools/timed --log <file>` and `TIMED_LOG` for campaign logs. A compaction keeps, besides the build and test rows, the anchor rows that keep union merges of branches based before the boundary correct, and is checked by regenerating the history from git byte for byte.
@@ -32,13 +34,19 @@ P13, the first sentence replaced by two, and one sentence added after the senten
 
 > When a log grows too large to work with, the owner may approve its compaction at a recorded boundary revision: its rows up to the boundary are distilled into the performance history (P7) and removed from the log, except the rows of build and test runs of committed revisions, which include every gate run and stay in the log unchanged, and the few rows that later merges of other branches need. The removed rows stay in version control, and the history names the command that retrieves them.
 
+*Pointer added 2026-11-01, the text above kept as written:* this sentence is false ("which include every gate run") and is replaced by the wording of the last addendum below, the one proposed for ratification.
+
 DoD-25 of plan 0001:
 
 > DoD-25 (P7, P13). The performance history baseline is committed; `runs.tsv` keeps a row for every gate run through every compaction of the log, and the history distills the rest (P7).
 
+*Pointer added 2026-11-01, the text above kept as written:* replaced by the first addendum's DoD-25 wording below.
+
 ## Consequences
 
 - `runs.tsv` drops from 235,590 rows to about 1,669 at the boundary plus later rows; the raw rows are read back with `git show <era>:docs/agent/records/performance/runs.tsv`.
+
+  *Pointer added 2026-11-01, the text above kept as written:* with the rule widened in the first addendum, 1,727 rows of the era stay.
 - Per-row values of the removed rows (each probe's time, counters, energy, options) are no longer in the working tree. Aggregates of wall time, peak memory, and instructions are.
 - A branch based before a boundary that was not a local branch at compaction time can bring removed rows back in a merge; `tools/runlog check` finds them and `tools/runlog prune` removes them.
 - Each later compaction, including the distilling of a closed campaign's log, needs the owner's approval until the wording above is ratified, and afterwards as the ratified P13 says.
