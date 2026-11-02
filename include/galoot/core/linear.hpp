@@ -3,7 +3,8 @@
 
 // The operations of the vector space of multivectors: the sum and the
 // difference of two multivectors of one algebra, as the operators + and -,
-// and the product and quotient of a multivector by a scalar, as * and /.
+// the product and quotient of a multivector by a scalar, as * and /, and
+// the negation of a multivector, as unary -.
 //
 //   struct rga3 {
 //     static constexpr auto value = galoot::core::rigid<3>();
@@ -21,10 +22,11 @@
 //   double on_e34 = galoot::core::get<"e34">(m);  // -1, since e43 = -e34
 //   Line d = 2.0 * a;  // or a * 2.0: a Line, 2 on e43
 //   Line e = a / 4.0;  // 0.25 on e43
+//   Line f = -a;  // -1 on e43
 //
 // Result layouts: a sum or a difference of two values of one type is that
 // type, so a + b above is a Line, with the line's orientations, and so is a
-// multiple or a quotient of a by a scalar. A sum or a difference of two
+// multiple, a quotient, or the negation of a. A sum or a difference of two
 // different layouts is the canonical set of the blades either holds, each
 // once with orientation +1, in order of grade and then of index list, as
 // for a product: its type is mv<Alg, sum_layout<Alg, A, B>, T>. Convert it
@@ -347,6 +349,18 @@ template <metric_like Alg, blade_set A, ring_scalar T>
   mv<Alg, A, T> out;
   for (std::size_t i = 0; i < A.size(); ++i) {
     out.coefficients[i] = static_cast<T>(x.coefficients[i] / s);
+  }
+  return out;
+}
+
+/// -x: each coefficient of x negated by T's unary minus, so that over IEEE
+/// 754 a +0.0 becomes -0.0, which 0.0 - x_i would not give. The result has
+/// x's type.
+template <metric_like Alg, blade_set A, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, A, T> operator-(const mv<Alg, A, T>& x) {
+  mv<Alg, A, T> out;
+  for (std::size_t i = 0; i < A.size(); ++i) {
+    out.coefficients[i] = static_cast<T>(-x.coefficients[i]);
   }
   return out;
 }
