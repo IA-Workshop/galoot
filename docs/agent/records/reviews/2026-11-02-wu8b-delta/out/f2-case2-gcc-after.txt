@@ -1,0 +1,114 @@
+$S/probes/f2.cpp: In function ‘void f()’:
+$S/probes/f2.cpp:32:40: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>::mv(<brace-enclosed initializer list>)’
+   32 |   [[maybe_unused]] Scalar<rational> x{1};
+      |                                        ^
+  • there are 11 candidates
+In file included from $S/probes/f2.cpp:8:
+    • candidate 1: ‘template<long unsigned int N> constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<_Sp> (&)[N]) [with long unsigned int N = N; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:600:13:
+        600 |   constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+            |             ^~
+      • template argument deduction/substitution failed:
+        •   mismatched types ‘std::remove_cvref_t<test_support::rational> [N]’ and ‘int’
+          $S/probes/f2.cpp:32:40:
+             32 |   [[maybe_unused]] Scalar<rational> x{1};
+                |                                        ^
+    • candidate 2: ‘template<class Value>  requires  not_a_coefficient<Value, T> constexpr galoot::core::mv<Alg, Blades, T>::mv(Value&&) [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:577:22:
+        577 |   constexpr explicit mv(Value&& /*value*/) {
+            |                      ^~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • $S/new/include/galoot/core/mv.hpp: In substitution of ‘template<class Value>  requires  not_a_coefficient<Value, T> constexpr galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>::mv(Value&&) [with Value = int]’:
+          • required from here
+            $S/probes/f2.cpp:32:40:   
+               32 |   [[maybe_unused]] Scalar<rational> x{1};
+                  |                                        ^
+          • required for the satisfaction of ‘not_a_coefficient<Value, T>’ [with Value = int; T = test_support::rational]
+            $S/new/include/galoot/core/mv.hpp:389:9:   
+              389 | concept not_a_coefficient =
+                  |         ^~~~~~~~~~~~~~~~~
+          • the expression ‘!(constructible_from<T, Value>) [with T = test_support::rational; Value = int]’ evaluated to ‘false’
+            $S/new/include/galoot/core/mv.hpp:390:39:
+              390 |     !multivector_or_derived<Value> && !std::constructible_from<T, Value>;
+                  |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    • candidate 3: ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector_or_derived<Values> && ...))) && !(sizeof ... (Values ...) == 1 && ((not_a_coefficient<Values, T> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {Values ...}; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:562:46:
+        562 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+            |                                              ^~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • $S/new/include/galoot/core/mv.hpp: In substitution of ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector_or_derived<Values> && ...))) && !(sizeof ... (Values ...) == 1 && ((not_a_coefficient<Values, T> && ...))) constexpr galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>::mv(Values&& ...) [with Values = {int}]’:
+          • required from here
+            $S/probes/f2.cpp:32:40:   
+               32 |   [[maybe_unused]] Scalar<rational> x{1};
+                  |                                        ^
+          • required by the constraints of ‘template<class Alg, blade_set<...auto...> Blades, class T> template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector_or_derived<Values> && ...))) && !(sizeof ... (Values ...) == 1 && ((not_a_coefficient<Values, T> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...)’
+            $S/new/include/galoot/core/mv.hpp:562:46:   
+              562 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+                  |                                              ^~
+          • the expression ‘sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count [with Values = {int}; Alg = rga3; Blades = galoot::core::blade_set<1>{{{{0, 1}}}}; T = test_support::rational]’ evaluated to ‘false’
+            $S/new/include/galoot/core/mv.hpp:557:57:
+              557 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+                  |                                       ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+    • candidate 4: ‘template<blade_set<...auto...> From>  requires ! galoot::core::detail::holds_every_mask(Blades, From) constexpr galoot::core::mv<Alg, Blades, T>::mv(const galoot::core::mv<Alg, From, T>&) [with blade_set<...auto...> From = From; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:545:22:
+        545 |   constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
+            |                      ^~
+      • template argument deduction/substitution failed:
+        •   mismatched types ‘const galoot::core::mv<rga3, From, test_support::rational>’ and ‘int’
+          $S/probes/f2.cpp:32:40:
+             32 |   [[maybe_unused]] Scalar<rational> x{1};
+                |                                        ^
+    • candidate 5: ‘template<blade_set<...auto...> From>  requires  galoot::core::detail::holds_every_mask(Blades, From) constexpr galoot::core::mv<Alg, Blades, T>::mv(const galoot::core::mv<Alg, From, T>&) [with blade_set<...auto...> From = From; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:528:22:
+        528 |   constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
+            |                      ^~
+      • template argument deduction/substitution failed:
+        •   mismatched types ‘const galoot::core::mv<rga3, From, test_support::rational>’ and ‘int’
+          $S/probes/f2.cpp:32:40:
+             32 |   [[maybe_unused]] Scalar<rational> x{1};
+                |                                        ^
+    • candidate 6: ‘constexpr galoot::core::detail::coefficient_storage<Alg, Blades, T, Ts>::coefficient_storage(Ts ...) requires  sizeof ... (Ts ...) > 0 [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational; Ts = {test_support::rational}]’
+      $S/new/include/galoot/core/mv.hpp:333:42:
+        333 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+            |                                          ^~~~~~~~~~~~~~~~~~~
+      • inherited here
+        $S/new/include/galoot/core/mv.hpp:512:45:
+          512 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+              |                                             ^~~~~~~~~~
+      • no known conversion for argument 1 from ‘int’ to ‘test_support::rational’
+        $S/new/include/galoot/core/mv.hpp:333:64:
+          333 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+              |                                                              ~~^~~~~~~~~~
+    • candidate 7: ‘constexpr galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational, test_support::rational>::coefficient_storage(const galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational, test_support::rational>&)’
+      $S/new/include/galoot/core/mv.hpp:320:8:
+        320 | struct coefficient_storage {
+            |        ^~~~~~~~~~~~~~~~~~~
+      • inherited here
+        $S/new/include/galoot/core/mv.hpp:512:45:
+          512 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+              |                                             ^~~~~~~~~~
+      • an inherited constructor is not a candidate for initialization from an expression of the same or derived type
+    • candidate 8: ‘constexpr galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational, test_support::rational>::coefficient_storage(galoot::core::detail::coefficient_storage<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational, test_support::rational>&&)’
+      $S/new/include/galoot/core/mv.hpp:320:8:
+        320 | struct coefficient_storage {
+            |        ^~~~~~~~~~~~~~~~~~~
+      • inherited here
+        $S/new/include/galoot/core/mv.hpp:512:45:
+          512 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+              |                                             ^~~~~~~~~~
+      • an inherited constructor is not a candidate for initialization from an expression of the same or derived type
+    • candidate 9: ‘constexpr galoot::core::mv<Alg, Blades, T>::mv() [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; T = test_support::rational]’
+      $S/new/include/galoot/core/mv.hpp:501:13:
+        501 |   constexpr mv() = default;
+            |             ^~
+      • candidate expects 0 arguments, 1 provided
+    • candidate 10: ‘constexpr galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>::mv(const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>&)’
+      $S/new/include/galoot/core/mv.hpp:438:8:
+        438 | struct mv : detail::storage_of<Alg, Blades, T> {
+            |        ^~
+      • no known conversion for argument 1 from ‘int’ to ‘const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>&’
+    • candidate 11: ‘constexpr galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>::mv(galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>&&)’
+      • no known conversion for argument 1 from ‘int’ to ‘galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, test_support::rational>&&’
+timed: probe delta-wu8b:probe-f2-2:g++:new took 0.544 s (exit 1)
