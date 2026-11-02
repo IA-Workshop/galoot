@@ -71,7 +71,7 @@ Measured by `../../performance/linear-cost/measure.py a2468eb <scratch> 3 4`: ev
 | `smoke_test.cpp` | 1,135.8 M (0.1), 0.136 s | 1,142.6 M (0.1), 0.140 s | 1,046.5 M (1.4), 0.149 s | 1,056.7 M (1.0), 0.149 s |
 | `linear_test.cpp` (new) | | 34,061 M (26), 2.43 s, 403 MiB | | 29,930 M (130), 2.16 s, 327 MiB |
 
-`mv_test.cpp` grows by 0.8% on GCC and 1.1% on Clang, from the tests of `part`, `has_name`, and the fault scalars; the test author's estimate was 0.8% on GCC. The other suites change by less than 0.4%, with tests unchanged: the headers' parse cost, and on GCC a fall of 0.13% for `product_test.cpp`, within twice the spread. `linear_test.cpp` costs about half of `mv_test.cpp`. The test programs run in under 0.1 s each.
+`mv_test.cpp` grows by 0.8% on GCC and 1.1% on Clang, from the tests of `part`, `has_name`, and the fault scalars; the test author's estimate was 0.8% on GCC. The other suites change by less than 0.4%, with tests unchanged: the headers' parse cost, and on GCC a fall of 0.13% for `product_test.cpp`, within twice the spread. `linear_test.cpp` costs about half of `mv_test.cpp`. In the final gcc-debug run the test programs took 0.00 s (`core.linear`), 0.02 s (`core.mv`, `core.unary`), 0.01 s (`core.identities`), and 0.16 s (`core.product`).
 
 ### P2: the includer of `core.hpp`
 
