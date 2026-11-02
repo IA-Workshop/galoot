@@ -293,7 +293,7 @@ def era_record(revision, log, rows, kept, anchors):
 
 def replay(top, log, eras, states):
     """Recomputes each recorded era of a log from git, in order. Yields
-    (era row, history rows, kept, removed) for each."""
+    (era row, history rows, kept, removed, kept rows in order) for each."""
     kept_before = collections.Counter()
     for era in eras:
         if era[1] != log:
@@ -305,7 +305,8 @@ def replay(top, log, eras, states):
         kept_before += kept
         yield (era_record(era[0], log, rows, kept, anchors),
                summarize(columns, [line for _, line in rows], era[0], log,
-                         states), kept, removed)
+                         states), kept, removed,
+               [line for _, line in rows if line in kept])
 
 
 def insertions(base, tip, branch):
@@ -421,7 +422,7 @@ def compact(top, revision, log):
         raise Refused(f"{log} already has an era at {revision}")
     states = read_toolchain(top)
     kept_before = collections.Counter()
-    for _, _, kept, _ in replay(top, log, eras, states):
+    for _, _, kept, _, _ in replay(top, log, eras, states):
         kept_before += kept
 
     columns, lines = log_at(top, revision, log)
@@ -469,17 +470,24 @@ def check(top, log):
         if (cells[0], cells[1]) not in known:
             problems.append(f"{GROUPS} has a row of era {cells[0]} of "
                             f"{cells[1]}, which {ERAS} does not record")
+    if not os.path.exists(os.path.join(top, ERAS)):
+        had = git(top, "log", "-1", "--format=%h", "--", ERAS).strip()
+        if had:
+            problems.append(f"{ERAS} is missing, though commit {had} has "
+                            "changed it; restore the history from git")
     visited = logs_to_visit(eras, log)
-    if not visited:
+    if not visited and not problems:
         print(f"runlog: {ERAS} records no era")
     for name in visited:
         found = len(problems)
         recorded = [era for era in eras if era[1] == name]
         kept_all, removed_all = collections.Counter(), collections.Counter()
-        for era, (record, history, kept, removed) in zip(
+        orders = []
+        for era, (record, history, kept, removed, order) in zip(
                 recorded, replay(top, name, eras, states)):
             kept_all += kept
             removed_all += removed
+            orders.append((era[0], kept, order))
             if era != record:
                 problems.append(f"{ERAS}: era {era[0]} of {name} is\n  "
                                 + "\t".join(era) + "\nbut recomputes as\n  "
@@ -494,6 +502,8 @@ def check(top, log):
         except FileNotFoundError:
             working = []
         problems += log_problems(name, working, kept_all, removed_all)
+        if len(problems) == found:
+            problems += order_problems(name, working, orders)
         if len(problems) == found:
             print(f"runlog: {name}: {len(recorded)} eras match the history; "
                   f"{sum(kept_all.values())} kept rows present once; no "
@@ -510,6 +520,21 @@ def group_difference(era, log, committed, history):
                     f"{found}\nbut recomputes as\n  {expected}")
     return (f"{GROUPS}: era {era} of {log} has {len(committed)} group rows, "
             f"but recomputes to {len(history)}")
+
+
+def order_problems(name, working, orders):
+    """Each era whose kept rows the log holds in another order. Checked
+    once the counts agree, so a difference here is an order only."""
+    problems = []
+    for era, kept, order in orders:
+        placed = [(number, line) for number, line in enumerate(working, 2)
+                  if line in kept]
+        for (number, found), expected in zip(placed, order):
+            if found != expected:
+                problems.append(f"{name}: the rows era {era} kept are out "
+                                f"of their order from line {number}")
+                break
+    return problems
 
 
 def log_problems(name, working, kept, removed):
@@ -538,7 +563,7 @@ def prune(top, log):
     states = read_toolchain(top)
     for name in logs_to_visit(eras, log):
         kept_all, removed_all = collections.Counter(), collections.Counter()
-        for _, _, kept, removed in replay(top, name, eras, states):
+        for _, _, kept, removed, _ in replay(top, name, eras, states):
             kept_all += kept
             removed_all += removed
         path = os.path.join(top, name)

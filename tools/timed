@@ -17,11 +17,13 @@
 #
 # A measurement campaign keeps its rows out of the run log by naming its own
 # log, with --log or, for every run of a shell or script, the environment
-# variable TIMED_LOG; --log wins when both are given. The file gets the same
-# columns, and a header when it is new.
+# variable TIMED_LOG; --log wins when both are given. --log is taken from the
+# current directory; TIMED_LOG must be an absolute path, since every run of a
+# script reads it again from wherever that run starts. The file gets the
+# same columns, and a header when it is new.
 #
 # Usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]
-#   file       the log to append to, from the current directory
+#   file       the log to append to, a path from the current directory
 #   step       build or test (or another word for other commands)
 #   preset     the CMake preset, or - for none
 #   selection  what ran: a target, a label regex, or "all"
@@ -29,6 +31,11 @@ set -u
 
 usage="usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]"
 log=${TIMED_LOG:-}
+if [[ -n $log && $log != /* && ${1:-} != --log ]]; then
+  # Each run would read a relative path from its own directory.
+  echo "timed: refused: TIMED_LOG must be an absolute path, not '$log'" >&2
+  exit 2
+fi
 if [[ ${1:-} == --log ]]; then
   if [[ $# -lt 2 ]]; then
     echo "$usage" >&2
