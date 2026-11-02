@@ -812,3 +812,5 @@ Deferred or recorded as nits (not changed):
 - D12: the 22 untouched compile-fail sources with lint findings, as departure 8 above (W9, reported).
 
 Header change after the delta review, for a delta review (decision 0094 item 3): `9f7ea99`, the range message's text only.
+
+`develop` moved to `eb20336` (the run-log compaction, merged there at `3f6bf9e`) and is merged into this branch in the commit that carries this paragraph: `runs.tsv` and `test/CMakeLists.txt` merged without conflict, and `tools/runlog check` on the merged tree reports the one era matching the history, 1,727 kept rows present once, and no removed row present, so no `tools/runlog prune` was needed. This replaces departure 9 of the review fixes.

@@ -76,3 +76,9 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	research	antiproduct growth (research/antiproduct-growth)	opus	360189	121	7515	reported by harness as subagent_tokens (includes about 1h40 waiting for the timing lock)
 2026-11-01	research	API design (research/api-design), hci-expert role; its three Sonnet reading assistants used about 176k, 239k and 237k tokens	opus	354265	87	2100	reported by harness as subagent_tokens (assistants' tokens as the researcher reported them, not included)
 2026-11-01	plan-0016	WU8 planner (cpp-expert role), incl. ruling revisions	opus	513359	98	0	reported by harness as subagent_tokens (cumulative over three resumptions; wall time not summed)
+2026-11-01	plan-0017	run-log compaction planner and implementer (performance-engineer role), incl. two fix rounds	opus	466511	~230	0	reported by harness as subagent_tokens (cumulative over three resumptions; wall time not summed)
+2026-11-01	plan-0017	run-log compaction blind reviewer (W5)	opus	248074	75	1298	reported by harness as subagent_tokens
+2026-11-01	plan-0017	run-log compaction delta reviewer	sonnet	152936	52	654	reported by harness as subagent_tokens
+2026-11-01	plan-0016	WU8a implementer (cpp-expert role), incl. review-fix round	opus	806505	~400	0	reported by harness as subagent_tokens (cumulative over two resumptions; wall time not summed)
+2026-11-01	plan-0016	WU8a blind reviewer (W5)	opus	370021	112	1414	reported by harness as subagent_tokens
+2026-11-01	plan-0016	WU8a hci-expert reading	opus	333420	86	1592	reported by harness as subagent_tokens

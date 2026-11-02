@@ -799,6 +799,30 @@ add_test(NAME tools.measure_record
 set_tests_properties(tools.measure_record PROPERTIES
   LABELS "tools;tools.measure")
 
+# tools.runlog: the history the run-log tool distills, the rows a compaction
+# keeps, and union merges across a compaction, in scratch repositories.
+add_test(NAME tools.runlog
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/runlog_test.py
+    ${PROJECT_SOURCE_DIR}/tools/runlog
+    ${CMAKE_CURRENT_BINARY_DIR}/runlog)
+set_tests_properties(tools.runlog PROPERTIES
+  LABELS "tools;tools.runlog")
+
+# tools.runlog_check: the run log of this checkout and its distilled history
+# agree. Each era recomputes from git as recorded, each row an era kept is
+# there once and in its order, and no row an era removed has come back, as a
+# union merge of a branch from before the era can bring them back. Skipped
+# outside a git checkout and in a clone that lacks the eras' commits. Its
+# own label, runlog, selects it alone, to run it once for a merge rather
+# than in every preset.
+add_test(NAME tools.runlog_check
+  COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/runlog check
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+set_tests_properties(tools.runlog_check PROPERTIES
+  LABELS "tools;tools.runlog_check;runlog"
+  SKIP_REGULAR_EXPRESSION "not inside a git checkout;is not in this clone's history")
+
 # The golden values that tests compare the library with. They come from the
 # reference scripts in test/reference/, never from the library, so this
 # target does not link galoot::core. A test that needs them links it and

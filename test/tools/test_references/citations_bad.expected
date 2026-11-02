@@ -74,3 +74,5 @@ citations_bad/parts.cpp:34: cites a project document or record instead of statin
 citations_bad/parts.cpp:35: cites a project document or record instead of stating the reason: '§3.1.2 of the conventions'
 citations_bad/parts.cpp:36: cites a project document or record instead of stating the reason: '§3 of the conventions'
 citations_bad/parts.cpp:37: cites a project document or record instead of stating the reason: 'tickets D3'
+citations_bad/parts.cpp:38: cites a project document or record instead of stating the reason: 'docs/agent'
+citations_bad/parts.cpp:39: cites a project document or record instead of stating the reason: 'docs/agent'

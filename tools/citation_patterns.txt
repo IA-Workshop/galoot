@@ -30,8 +30,10 @@
 # Agent records live under docs/agent. The run log that tools/timed and
 # tools/measure append to, and its directory, which tools/measure leaves out
 # of its check for uncommitted changes, are those tools' interface, not a
-# citation; any other path there is.
-docs/agent(?!/records/performance(?:/runs\.tsv)?\b(?!/))
+# citation; so are the history directory beside the run log and its three
+# tables, which tools/runlog writes and checks. Any other path there is a
+# citation.
+docs/agent(?!/records/performance(?:/runs\.tsv|/history(?:/(?:eras|groups|toolchain)\.tsv)?)?\b(?!/))
 # Units of work, criteria, gates, review findings and tickets, and
 # departures.
 \bWU\d+\b
