@@ -109,7 +109,7 @@ constexpr std::array<T, K> counting() {
 // Whether every coefficient of x is T{}.
 template <class Type>
 constexpr bool all_zero(const Type& x) {
-  using T = decltype(x.coefficients)::value_type;
+  using T = Type::scalar_type;
   // NOLINTNEXTLINE(readability-use-anyofallof): one loop reads plainly.
   for (const T& c : x.coefficients) {
     if (!(c == T{})) {
@@ -169,7 +169,7 @@ TYPE_TO_STRING_AS("std::complex<double>", std::complex<double>);
 //   copyable and standard-layout when its scalar is, holds K coefficients in
 //   K times the size of its scalar for a nonempty layout, and neither a
 //   one-blade multivector nor a larger one converts implicitly from its
-//   scalar, for the
+//   scalar, and it names its scalar and algebra types, for the
 //   point, line, plane, and motor of rigid(3), a conformal(3) vector, a
 //   sparse set in sixteen generators, and an empty set
 TEST_CASE_TEMPLATE("mv is a trivially copyable value with exactly its "
@@ -192,6 +192,8 @@ TEST_CASE_TEMPLATE("mv is a trivially copyable value with exactly its "
   CHECK_FALSE(std::is_convertible_v<T, Scalar<T>>);
   CHECK_FALSE(std::is_convertible_v<T, Line<T>>);
 
+  static_assert(std::same_as<typename Line<T>::scalar_type, T>);
+  static_assert(std::same_as<typename Line<T>::algebra_type, rga3>);
   CHECK(Line<T>::component_count == 6);
   CHECK(Motor<T>::component_count == 8);
 }
@@ -607,7 +609,7 @@ constexpr core::oriented_blade blade_of(std::string_view name) {
 // an lvalue, a const lvalue, and an rvalue, whose result is an rvalue.
 template <class Type, core::detail::name_list Name>
 constexpr bool get_reaches(std::size_t at) {
-  using T = decltype(Type{}.coefficients)::value_type;
+  using T = Type::scalar_type;
   static_assert(std::is_same_v<decltype(get<Name>(std::declval<Type&>())), T&>);
   static_assert(std::is_same_v<decltype(get<Name>(std::declval<const Type&>())),
                                const T&>);
