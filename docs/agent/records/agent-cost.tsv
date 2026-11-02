@@ -86,3 +86,16 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-02	plan-0016	WU8b blind reviewer (W5)	opus	282661	69	815	reported by harness as subagent_tokens
 2026-11-02	plan-0016	WU8b hci-expert reading	opus	221979	57	1211	reported by harness as subagent_tokens
 2026-11-02	plan-0016	WU8b delta reviewer	opus	266514	63	1060	reported by harness as subagent_tokens
+2026-11-02	plan-0018	WU9 blind reviewer	opus	209582	61	793	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	gate-M2	M2 gate evidence researcher	sonnet	127256	22	145	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10 planner (plan 0019)	opus	258999	44	972	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a test author	opus	421645	134	2557	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a implementer (to first hand-back)	opus	316015	144	2719	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a implementer (review fixes, resumed)	opus	409499	204	5727	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a blind reviewer	opus	314116	89	1520	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a delta reviewer	opus	211751	76	1160	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b test author	opus	438090	135	4043	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b implementer (final, includes the resumed review-fix rounds)	opus	524272	219	7786	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b blind reviewer	opus	288691	67	1305	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b delta reviewer	opus	214136	67	1071	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	audit-post-wu10	post-WU10 auditor	opus	330564	129	1261	reported by harness as subagent_tokens; backfilled by the coordinator

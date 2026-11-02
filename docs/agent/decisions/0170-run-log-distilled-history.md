@@ -1,6 +1,6 @@
 # 0170 The run log is distilled into the performance history; campaigns keep their own logs
 
-- Status: ratified by the owner, 2026-11-02 (decision 0162 item 3: the merge check runs once per merge); the wording of P7, P13, and DoD-25 below takes effect only when the owner ratifies it. The first compaction of `runs.tsv` (plan 0017) is done under the owner's ruling of 2026-11-01 and does not wait for this record.
+- Status: ratified by the owner, 2026-11-02 (decision 0162 item 3: the merge check runs once per merge), and applied to PERFORMANCE.md (P7, P8, P9, P13) and plan 0001 (DoD-25) in the merge `ab7af27`; `tools/runlog` keeps rows whose selection starts with `gate:`. The first compaction of `runs.tsv` (plan 0017) is done under the owner's ruling of 2026-11-01 and does not wait for this record.
 - Date: 2026-11-01
 - Proposed by: Claude (agent, Opus 5.5), performance-engineer role, planner of plan 0017.
 

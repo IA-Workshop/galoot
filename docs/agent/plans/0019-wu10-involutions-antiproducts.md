@@ -1,6 +1,6 @@
 # 0019 WU10: involutions, complements, antiproducts, sums and scaling
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU10a merged (`81ffedf`). WU10b implemented on its branch, awaiting review (section 10).
+- Status: WU10a merged `81ffedf` and WU10b merged `a5e8c14`, 2026-11-02, both after a blind review and a delta review (records/reviews/2026-11-02-wu10a-*, -wu10b-*). Closed except the open owner items in the post-WU10 audit (records/gates/2026-11-02-post-wu10-audit.md).
 - Branches, from `develop` at `19273a6` (the merge of WU9) or later, one after the other (section 1, departure 1):
   - WU10a: `feature/core-antiproducts`, worktree `.claude/worktrees/core-antiproducts`.
   - WU10b: `feature/core-linear`, worktree `.claude/worktrees/core-linear`, branched after WU10a merges.

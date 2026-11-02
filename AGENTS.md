@@ -15,7 +15,7 @@ The governance in `docs/agent/governance/` binds all work. Read the constitution
 | [STYLE.md](docs/agent/governance/STYLE.md) | C++ style, formatting, and static checks |
 | [CONVENTIONS.md](docs/agent/governance/CONVENTIONS.md) | The mathematical conventions every part shares |
 
-Research notes in `docs/agent/research-notes/` hold the evidence behind many rules. A unit in progress has its plan in `docs/agent/plans/`; read it before continuing the unit (W3). The latest session handoff is `docs/agent/records/handoff-2026-11-02.md`.
+Research notes in `docs/agent/research-notes/` hold the evidence behind many rules. A unit in progress has its plan in `docs/agent/plans/`; read it before continuing the unit (W3). The latest session handoff is `docs/agent/records/handoff-2026-11-02-third.md`.
 
 ## Rules that are easy to miss
 
