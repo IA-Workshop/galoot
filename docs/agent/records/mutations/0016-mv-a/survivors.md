@@ -32,7 +32,7 @@ Each of the plan's mutants (section 8, WU8a) is in the driver; the test that kil
 | get returning the first blade with the mask regardless of orientation | `get_ignores_sign` (the lookup takes the first blade with the mask) and `get_orientation_as_absent` | as above; `core.mv_get_opposite` |
 | has_blade raising an error for an invalid name | `has_blade_errors_on_invalid_name` | the build of core.mv, at its has_blade assertions for x1 and e0 |
 | equality skipping the last coefficient | `equality_skips_last` | core.mv, the equality test at the last place |
-| the count catch-all accepting K - 1 | `count_accepts_one_short` | `core.mv_one_too_few` (and `mv_too_few`, `mv_too_many`, whose messages lose the counts' failure) |
+| the count catch-all accepting K - 1 | `count_accepts_one_short` | `core.mv_one_too_few` (and `mv_too_few`, `mv_too_many`, whose required "3 == 6" and "7 == 6" no longer print once the condition is not a single comparison) |
 | the K-parameter constructor not explicit for K = 1 | `one_value_implicit` | core.mv's `!is_convertible` assertion; run-time mode: `core.mv_scalar_implicit` |
 | the storage's default member initializer removed | `no_default_initializer` | core.mv's zero assertions; run-time mode: the zero CHECKs over the 0xA5 pattern |
 | the rational without normalization, with a negative denominator kept, or with the overflow guard removed | `rational_not_normalized`, `rational_negative_denominator_kept`, `rational_no_sum_guard`, `rational_no_product_guard`, `rational_min_accepted` | support.rational's hand values; the `support.rational_rejects_*` and `support.rational_consteval_*` tests |

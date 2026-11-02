@@ -1,0 +1,6 @@
+Retired instructions per use, slope from 64 to 256 uses, mean of the repeats
+
+gcc galoot-O0: type 2.111e+06, construction of a new type 8.204e+06, construction of an existing type 3.192e+06 (a function each), get 3.747e+05 above an index read (index function of six reads 5.804e+06)
+gcc galoot-O2: type 2.111e+06, construction of a new type 6.341e+06, construction of an existing type 4.320e+06 (a function each), get 3.132e+05 above an index read (index function of six reads 7.680e+06)
+clang galoot-O0: type 1.999e+06, construction of a new type 2.231e+06, construction of an existing type 1.102e+06 (a function each), get 3.819e+05 above an index read (index function of six reads 1.221e+06)
+clang galoot-O2: type 1.995e+06, construction of a new type 3.053e+06, construction of an existing type 1.606e+06 (a function each), get 3.745e+05 above an index read (index function of six reads 3.428e+06)
