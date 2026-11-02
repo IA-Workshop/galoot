@@ -749,8 +749,8 @@ template <class Type, core::detail::name_list Name>
 constexpr bool named_at(std::size_t at, core::mask_t mask, int sign) {
   const core::oriented_blade expected{.mask = mask, .sign = sign};
   return blade_of(Name.text()) == expected &&
-         Type::layout.blades.at(at) == expected &&
-         core::has_name<Type, Name> && get_reaches<Type, Name>(at);
+         Type::layout.blades.at(at) == expected && core::has_name<Type, Name> &&
+         get_reaches<Type, Name>(at);
 }
 
 } // namespace
