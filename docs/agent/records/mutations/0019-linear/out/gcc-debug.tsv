@@ -1,0 +1,12 @@
+mutant	build_exit	build_failures	failed_tests
+sum_adds_first_term_to_zero	0	-	core.linear
+difference_takes_y_with_plus	1	linear_test: test/core/linear_test.cpp:177:25: error: static assertion failed	core.linear
+sum_drops_blades_only_y_holds	1	linear_test: test/core/linear_test.cpp:236:47: error: static assertion failed	core.linear
+scale_left_multiplies_on_the_right	0	-	core.linear
+divide_multiplies_by_reciprocal	1	linear_test: test/core/linear_test.cpp:623:47: error: static assertion failed	core.linear core.linear_divide_accepts_nonzero
+divide_zero_check_removed	0	-	core.linear_divide_consteval_zero core.linear_divide_rejects_zero
+scalar_catch_all_any_type	1	linear_test: test/core/linear_test.cpp:773:17: error: static assertion failed	-
+part_calls_truncate	1	mv_test: test/core/mv_test.cpp:2255:17: error: static assertion failed	core.mv_part_never_checks_int64 core.mv_part_never_checks_int64_antiscalar core.mv_part_never_checks_rational core.mv_part_never_checks_counted
+ring_fault_reports_next_message	0	-	core.mv_scalar_lacks_addition core.mv_scalar_without_arithmetic
+negation_subtracts_from_zero	0	-	core.linear
+sum_layout_keeps_orientations	1	linear_test: test/core/linear_test.cpp:222:22: error: static assertion failed	core.linear

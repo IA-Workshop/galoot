@@ -1,6 +1,6 @@
 # 0019 WU10: involutions, complements, antiproducts, sums and scaling
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU10a implemented on its branch, awaiting review (section 10).
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU10a merged (`81ffedf`). WU10b implemented on its branch, awaiting review (section 10).
 - Branches, from `develop` at `19273a6` (the merge of WU9) or later, one after the other (section 1, departure 1):
   - WU10a: `feature/core-antiproducts`, worktree `.claude/worktrees/core-antiproducts`.
   - WU10b: `feature/core-linear`, worktree `.claude/worktrees/core-linear`, branched after WU10a merges.
@@ -359,3 +359,29 @@ After the review (findings of the blind review, each fixed in its own commit):
 - F6: configuring stops when a header under `include/galoot` is missing from the header set (`f129e01`), checked with an unlisted probe header.
 - F7: the examples declare their names and compile; every rejecting overload states the requires-expression answer; `(!x) == y`; derived classes get the mv type from `~` and `!`; `std::views` beside `std::ranges` (`35ba6b6`).
 - F8 (the `slow` label): accepted by the review; its notes go to the coordinator.
+
+### WU10b
+
+Implemented on `feature/core-linear` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, in separate commits before the code). Not reviewed yet; not merged.
+
+Commits, in the order of section 4: the test author's eight commits (the tests of `has_name`, the ring-operations messages, sums, scaling, negation, and `part`, the message record, and a lint pass); then the operand checks moved to `mv.hpp` (approach 1, `3d7907a`); `has_blade` renamed `has_name` (2, `cbf5423`, with its layout fixed in `c8c5901`); the ring-operations fault split (3, `28a6fd2`); sums and differences with the sum kernel and `sum_layout` (4, `f6277d8`); scaling and division (5, `501e353`); negation (6, `2bcd67d`); `part`, `truncate`'s comment, and CONVENTIONS version 1.8 (7, `93d2e2f`); the trace rows (8, `b668de7`); the measured compile limit of a sum of two layouts in the comments (`e2be608`); the records.
+
+Departures and readings (C20):
+
+1. W2: the test author's commits came first and the code after, as in WU10a, so the project does not build from `1aa4e70` to `2bcd67d`: `mv_test.cpp` waits for `has_name` and then for `part` (fixed at `93d2e2f`), `linear_test.cpp` for `linear.hpp` and its three operation families (fixed at `2bcd67d`), and the ten ring-operations compile-fail tests of `a5673bb` fail until `28a6fd2`. Each message says what does not build. My own commits `3d7907a` to `2bcd67d` were each checked by the tests that could build (named in each message), not by the full suite. The full suite passes from `93d2e2f`.
+2. `cbf5423` (the rename) left the concept in a layout that `clang-format` changes; `c8c5901` fixes it alone, layout only.
+3. The S7 accept and reject assertions for `sum_layout` are the test author's, in `linear_test.cpp` (the two layouts it names, `has_sum_layout<rga3>` and `!has_sum_layout<int>`); none was added in the header. The detail facilities (`same_layout_v`, `with_plus_signs`, `scalar_of_another_type`, the five ring clauses) are asserted through the public behavior the tests pin, not by `static_assert`s of their own.
+4. `ring_scalar` is now written as the conjunction of five named detail concepts (`ring_addition` and the others), so the multivector's five checks read the concept's own clauses (decision 0169); its meaning is unchanged, and `mv_test.cpp` pins each clause against a scalar that lacks it alone.
+5. A `volatile` scalar reaches the scalar catch-all and is told it is of another type; the comment says to copy it to a T first. Stripping cv-qualification in the constraint was weighed and not done (decision 0167). No test pins either way.
+6. The mutant set adds two of my own (negation as `0 - x`, and `sum_layout` keeping the operands' orientations). No list of further mutants from the test author was found in the branch's records, so none was taken from there.
+7. The limit of `sum_layout` on Clang at n = 8 was measured to fail at -O0 with libstdc++'s assertions only; that it fails at -O2 too is inferred (more steps without the assertions), and the comment's "up to 7" bound was measured at all three configurations.
+8. One test run repeated an unchanged revision and configuration (core.product and core.unary on gcc-debug after `3d7907a`, to read the count), and one mistaken target name made a `core.mv` run test stale programs (15 failed or not run, rerun after building the right targets); both are in the run log. The scratch probes of the header examples and of the sums (`examples.cpp`, `sum_probe.cpp`) were compiled through `tools/timed` but are not committed; the limits probe is, in `records/mutations/0019-linear/`.
+
+Evidence:
+
+- Verification: hand values of sums of one type and of two oriented layouts, signed zeros, the vector-space, module, and negation laws over seeded random integer multivectors of rigid(3), conformal(3), and mixed layouts, distributivity of `*`, `^`, `%`, `&` over sums (also in conformal(2)), division over `std::int64_t`, the test rational, and double (`3.0 / 10.0` against the reciprocal), the order of scaling and of the products with a 2 by 2 matrix scalar, the integer zero divisor at compile time and at run time, `part` against `truncate` over five scalars and its constant evaluation where `truncate` fails, `has_name`, and the five ring-operation messages and their order. All pass.
+- Validation: not performed. The operations are the vector-space operations of their definitions, and no independent referent beyond the definitions was used (V8).
+- Mutants (`records/mutations/0019-linear/README.md`): all 11 killed on gcc-debug and clang-debug, each by a test, none by a warning.
+- Diagnostics: every new rejection gives one error, with the message on its first error line, on both compilers; sizes in the same README.
+- W10 and P2 (pinned, three repeats, `records/performance/linear-cost/`): `mv_test.cpp` +0.8% on GCC and +1.1% on Clang; the other affected suites under +0.4%; `linear_test.cpp` 34.1 G instructions on GCC and 29.9 G on Clang; a unit that includes only `core.hpp` +6.9 M (+0.7%) on GCC and +7.9 M (+0.8%) on Clang.
+- Final runs: recorded in the commit after the records.
