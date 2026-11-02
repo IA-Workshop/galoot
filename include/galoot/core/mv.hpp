@@ -1083,10 +1083,9 @@ using coefficient_reference = decltype(std::forward_like<X>(
 /// Whether a layout holds a blade in either orientation is not asked by a
 /// concept of its own.
 template <class X, detail::name_list Name>
-concept has_name =
-    multivector<X> &&
-    detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
-        detail::NameLookup::found;
+concept has_name = multivector<X> &&
+                   detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
+                       detail::NameLookup::found;
 
 /// The coefficient of x on the blade named Name: get<"e43">(line) reads it,
 /// and get<"e43">(line) = 1.0 writes it. The name is oriented, as in the
