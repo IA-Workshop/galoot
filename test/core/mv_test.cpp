@@ -763,6 +763,54 @@ TEST_CASE("has_blade answers for every name without an error") {
   CHECK(core::has_blade<Line<double>, "e12">);
 }
 
+// Reference: independent value: an oriented name stands for the canonical
+//   blade of its indices times the parity of their inversions, so in rigid(3)
+//   e234 is e423 and e4321 is e1234, while e14 = -e41, e32 = -e23,
+//   e324 = -e423, e21 = -e12, and e2134 = -e1234; contract: has_name is true
+//   exactly for a name that get reads, a name that stands for a blade of the
+//   layout with the orientation the layout gives it however the name is
+//   spelled, and false, never an error, for a blade that the layout holds
+//   with the other orientation and for a blade that it lacks
+TEST_CASE("has_name is true for the oriented names that get reads") {
+  using Bivectors = core::mv<rga3, core::of_grade<4, 2>, std::int64_t>;
+  static_assert(core::has_name<Line<std::int64_t>, "e41">);
+  static_assert(core::has_name<Plane<std::int64_t>, "e423">);
+  static_assert(core::has_name<Bivectors, "e12">);
+  static_assert(core::has_name<const Motor<std::int64_t>&, "e1234">);
+
+  // Another spelling of a blade with the layout's orientation.
+  static_assert(core::has_name<Plane<std::int64_t>, "e234">);
+  static_assert(core::has_name<Motor<std::int64_t>, "e4321">);
+
+  // A blade that the layout holds, named with the other orientation.
+  static_assert(!core::has_name<Line<std::int64_t>, "e14">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e32">);
+  static_assert(!core::has_name<Plane<std::int64_t>, "e324">);
+  static_assert(!core::has_name<Bivectors, "e21">);
+  static_assert(!core::has_name<Motor<std::int64_t>, "e2134">);
+
+  // A blade that the layout lacks, a text that is not a name, and a type
+  // that is not a multivector.
+  static_assert(!core::has_name<Line<std::int64_t>, "e1">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e1234">);
+  static_assert(!core::has_name<Line<std::int64_t>, "e5">);
+  static_assert(!core::has_name<Line<std::int64_t>, "x1">);
+  static_assert(!core::has_name<std::int64_t, "1">);
+
+  // get reads the place of each accepted name: the plane's e423 is its
+  // first place, the motor's e1234 its last.
+  constexpr Plane<std::int64_t> plane{1, 2, 3, 4};
+  constexpr Motor<std::int64_t> motor{1, 2, 3, 4, 5, 6, 7, 8};
+  static_assert(get<"e234">(plane) == 1);
+  static_assert(get<"e4321">(motor) == 8);
+
+  const volatile std::int64_t one = 1;
+  const Plane<std::int64_t> at_run_time{one, 2, 3, 4};
+  CHECK(get<"e234">(at_run_time) == 1);
+  CHECK(core::has_name<Plane<std::int64_t>, "e234">);
+  CHECK_FALSE(core::has_name<Plane<std::int64_t>, "e324">);
+}
+
 // Reference: contract: the rejecting overload of get and the constructor for
 //   a wrong count make generic code that probes a call or a construction
 //   told yes, while has_blade answers no, as their comments say
