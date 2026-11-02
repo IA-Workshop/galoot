@@ -219,6 +219,13 @@ def summary_values(tool, directory):
     check("summary of a nine-column log", result.stdout.splitlines()[1:],
           [expected[2]])
 
+    # A blank line, as a hand edit or a lost row can leave, is refused.
+    repo.write("blank.tsv", f"{HEADER}\n{rows[0]}\n\n{rows[1]}\n")
+    result = repo.run("summary", repo.path("blank.tsv"))
+    check("summary of a log with a blank line", result.returncode, 2)
+    if "blank.tsv:3 is blank" not in result.stderr:
+        failures.append(f"blank line stderr: {result.stderr!r}")
+
     # A second header line, as a doubled union merge leaves, is refused.
     repo.write("doubled.tsv", f"{HEADER}\n{rows[0]}\n{HEADER}\n{rows[1]}\n")
     result = repo.run("summary", repo.path("doubled.tsv"))
@@ -522,7 +529,9 @@ def campaign_log(tool, directory):
     repo.write(campaign, "\n".join([HEADER, probe_row(90), kept_row(91),
                                     probe_row(92)]) + "\n")
     boundary2 = repo.commit("compact the run log; a campaign log")
-    result = repo.run("compact", boundary2, "--log", campaign)
+    # An absolute path is recorded relative to the checkout, as a relative
+    # one is.
+    result = repo.run("compact", boundary2, "--log", repo.path(campaign))
     check("compact --log exit", result.returncode, 0)
     check("campaign log after compaction",
           repo.read(campaign).splitlines()[1:], [kept_row(91), probe_row(92)])

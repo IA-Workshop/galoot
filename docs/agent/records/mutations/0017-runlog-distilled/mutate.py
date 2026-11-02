@@ -135,6 +135,12 @@ MUTANTS = {
     "relative_env_allowed": (
         TIMED, "if [[ -n $log && $log != /* && ${1:-} != --log ]]; then",
         "if false; then", MEASURE_TEST),
+    "blank_line_allowed": (
+        RUNLOG, "        if not line:\n            raise Refused",
+        "        if False:\n            raise Refused", RUNLOG_TEST),
+    "relative_keeps_abs": (
+        RUNLOG, "        return os.path.relpath(log, top)",
+        "        return log", RUNLOG_TEST),
     "log_ignored": (
         MEASURE, "log = log_path or os.path.join(",
         "log = os.path.join(", MEASURE_TEST),
