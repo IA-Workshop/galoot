@@ -33,7 +33,10 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 1.6 | an oriented name lists generators in the order of their product | yes |
 | 1.7 | results are ordered by grade, then by index list | yes |
 | 2.1 | the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it | yes |
+| 2.1 | the antireverse of a blade of antigrade m is (-1)^(m(m-1)/2) times it | yes |
+| 2.1 | the grade involution of a grade-k blade is (-1)^k times it | yes |
 | 3.1 | u ^ right(u) = antiscalar and left(u) ^ u = antiscalar | yes |
+| 3.1 | the left complement of the right complement is the identity | yes |
 | 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | no |
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
 | 3.4 | in a degenerate metric the double bulk dual is zero | no |
@@ -55,3 +58,8 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 6.3 | the round bulk has neither e4 nor e5 | no |
 | 6.4 | rounds and flats have a carrier, cocarrier, center, container, partner, attitude, and radius | no |
 | 7.1 | a * b is the geometric product geometric_product(a, b) | yes |
+| 7.1 | a ^ b is the wedge | yes |
+| 7.1 | a % b is the geometric antiproduct geometric_antiproduct(a, b) | yes |
+| 7.1 | a & b is the antiwedge antiwedge(a, b) | yes |
+| 7.1 | ~a is the reverse reverse(a) | yes |
+| 7.1 | !a is the right complement right_complement(a) | yes |
