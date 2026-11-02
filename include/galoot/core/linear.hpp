@@ -332,13 +332,22 @@ template <metric_like Alg, blade_set A, ring_scalar T>
 /// 2 is -3. The result has x's type.
 ///
 /// Requires: s has x's scalar type T exactly, as for s * x, and T has a /
-/// whose result converts to T; a T without one has no x / s, and the call is
-/// the compiler's own error. For an integer T, as std::numeric_limits<T>
-/// tells (is_integer), s is not zero: checked by GALOOT_ASSERT in every
-/// constant evaluation, which then fails, and at run time when
-/// GALOOT_CHECKING is 1, which then aborts with the message; with
-/// GALOOT_CHECKING 0 the division by zero is undefined behavior. A floating
-/// T is not checked: IEEE 754 defines its division by zero.
+/// whose result converts to T; for a T without one, a requires-expression
+/// that asks whether x / s is valid answers no, and a call is the
+/// compiler's own error. For an integer T, s is not zero, whatever its sign
+/// or width: checked by GALOOT_ASSERT in every constant evaluation, which
+/// then fails, and at run time when GALOOT_CHECKING is 1, which then aborts
+/// with the message; with GALOOT_CHECKING 0 the division by zero is
+/// undefined behavior. An integer T here is one whose std::numeric_limits
+/// specialization describes an integer type with its range (is_specialized
+/// and is_integer, with is_signed, digits, min(), and max()) and which has
+/// ==; a type whose limits say less, or without ==, is not checked. A
+/// floating T is not checked: at run time IEEE 754 defines its division by
+/// zero, and in a constant evaluation a division by zero of any type is not
+/// a constant expression, so a constant x / 0.0 fails with the compiler's
+/// own error. Otherwise the scalar's own arithmetic decides: over a signed
+/// integer type, min() / -1 overflows, which is undefined at run time and
+/// fails a constant evaluation, as an overflowing sum does.
 template <metric_like Alg, blade_set A, ring_scalar T>
   requires detail::scalar_has_division<T>
 [[nodiscard]] constexpr mv<Alg, A, T> operator/(const mv<Alg, A, T>& x,

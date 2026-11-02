@@ -1022,6 +1022,10 @@ truncate(const mv<Alg, From, T>& x) {
 /// such as double, an mv of another algebra or scalar, or a class derived
 /// from an mv, with one error. It returns a default value of the target,
 /// where it has one, so that a use of the result raises no second error.
+/// Its return type is deduced from its body, so a requires-expression that
+/// asks whether truncate<double>(x) is valid does not answer: deducing the
+/// type compiles the message, and the program fails to compile there. Ask
+/// whether the target is an mv type of x's algebra and scalar instead.
 template <class Target, metric_like Alg, blade_set From, ring_scalar T>
   requires(!detail::multivector_of<Target, Alg, T>)
 constexpr auto truncate(const mv<Alg, From, T>& x) {
@@ -1044,7 +1048,9 @@ constexpr auto truncate(const mv<Alg, From, T>& x) {
 /// part<Line>(motor) names the target by its type and
 /// part<line_layout>(motor) by its layout; the type must be an mv type
 /// itself, as for truncate. Found by argument-dependent lookup, so the call
-/// needs no namespace.
+/// needs no namespace, unless a variable or other non-template named part is
+/// in scope: then part<Line>(motor) is not read as a call of this function
+/// and fails to compile; write galoot::core::part<Line>(motor).
 ///
 /// Requires: nothing of the dropped coefficients. Nothing is checked, for
 /// any scalar, in a constant evaluation or at run time, whatever
@@ -1073,7 +1079,9 @@ part(const mv<Alg, From, T>& x) {
 /// such as double, an mv of another algebra or scalar, or a class derived
 /// from an mv, with one error, as for truncate. It returns a default value
 /// of the target, where it has one, so that a use of the result raises no
-/// second error.
+/// second error. As for truncate, its return type is deduced from its body,
+/// so a requires-expression that asks whether part<double>(x) is valid does
+/// not answer: the program fails to compile there, with this message.
 template <class Target, metric_like Alg, blade_set From, ring_scalar T>
   requires(!detail::multivector_of<Target, Alg, T>)
 constexpr auto part(const mv<Alg, From, T>& x) {
