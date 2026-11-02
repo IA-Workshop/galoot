@@ -1,0 +1,29 @@
+program.cpp:62:13: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = fixed]
+   62 |   const gc::mv<rga3, point_layout, fixed> s{};
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:196:46: note: because 'fixed' does not satisfy 'semiregular'
+  196 | template <metric_like Alg, blade_set Blades, std::semiregular T>
+      |                                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:282:44: note: because 'fixed' does not satisfy 'default_initializable'
+  282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+      |                                            ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:166:37: note: because 'fixed' does not satisfy 'constructible_from'
+  166 |     concept default_initializable = constructible_from<_Tp>
+      |                                     ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: note: because 'is_constructible_v<fixed>' evaluated to false
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: error: no matching constructor for initialization of 'fixed'
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^
+program.cpp:30:12: note: candidate constructor not viable: requires single argument 'value', but no arguments were provided
+   30 |   explicit fixed(std::int64_t value) : sixteenths(value * 16) {}
+      |            ^     ~~~~~~~~~~~~~~~~~~
+program.cpp:29:8: note: candidate constructor (the implicit copy constructor) not viable: requires 1 argument, but 0 were provided
+   29 | struct fixed {
+      |        ^~~~~
+program.cpp:29:8: note: candidate constructor (the implicit move constructor) not viable: requires 1 argument, but 0 were provided
+   29 | struct fixed {
+      |        ^~~~~
+program.cpp:29:8: note: 'fixed' defined here
+2 errors generated.

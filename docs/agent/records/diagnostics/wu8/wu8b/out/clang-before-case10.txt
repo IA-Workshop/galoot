@@ -1,0 +1,9 @@
+In file included from program.cpp:8:
+In file included from <before>/include/galoot/core.hpp:12:
+<before>/include/galoot/core/mv.hpp:405:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+  405 |     static_assert(false, "get: the type has no blade of this name; its "
+      |                   ^~~~~
+program.cpp:51:8: note: in instantiation of function template specialization 'galoot::core::get<detail::name_list<3>{{"e1"}}, const galoot::core::mv<rga3, blade_set<6>{{{{3, 1}, {5, 1}, {9, 1}, {6, 1}, {10, 1}, {12, 1}}}}, double> &>' requested here
+   51 |   r += get<"e1">(b);
+      |        ^
+1 error generated.

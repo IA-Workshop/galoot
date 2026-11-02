@@ -1,0 +1,10 @@
+In file included from ../../../../../../include/galoot/core.hpp:12,
+                 from program.cpp:8:
+../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(const galoot::core::mv<Alg, From, T>&) [with blade_set<...auto...> From = galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’:
+program.cpp:47:18:   required from here
+   47 |   const Point s{q};
+      |                  ^
+../../../../../../include/galoot/core/mv.hpp:497:19: error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+  497 |     static_assert(false, "conversion drops blades of its input: it is "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

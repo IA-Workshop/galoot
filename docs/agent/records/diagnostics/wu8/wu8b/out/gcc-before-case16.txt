@@ -1,0 +1,10 @@
+In file included from <before>/include/galoot/core.hpp:12,
+                 from program.cpp:8:
+<before>/include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {const std::array<double, 4>&}; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’:
+program.cpp:70:23:   required from here
+   70 |   const Point s{values};
+      |                       ^
+<before>/include/galoot/core/mv.hpp:255:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+  255 |     static_assert(sizeof...(Values) == component_count,
+      |                   ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+  • the comparison reduces to ‘(1 == 4)’

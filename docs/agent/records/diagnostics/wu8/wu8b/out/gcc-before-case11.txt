@@ -1,0 +1,43 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:53:48: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+   53 |   const gc::mv<rga3, point_layout, const double> s{};
+      |                                                ^
+program.cpp:53:48: note: constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from program.cpp:5:
+  • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = const double]’:
+  • required from here
+    program.cpp:53:48:   
+  • required for the satisfaction of ‘assignable_from<_Tp&, _Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:148:13:   
+      148 |     concept assignable_from
+          |             ^~~~~~~~~~~~~~~
+  • required for the satisfaction of ‘movable<_Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:273:13:   
+      273 |     concept movable = is_object_v<_Tp> && move_constructible<_Tp>
+          |             ^~~~~~~
+  • required for the satisfaction of ‘copyable<_Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:277:13:   
+      277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+          |             ^~~~~~~~
+  • required for the satisfaction of ‘semiregular<T>’ [with T = const double]
+    /usr/include/c++/16/concepts:282:13:   
+      282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+          |             ^~~~~~~~~~~
+  • in requirements with ‘_Lhs __lhs’, ‘_Rhs&& __rhs’ [with _Lhs = const double&; _Rhs = const double]
+    /usr/include/c++/16/concepts:151:10:   
+      151 |       && requires(_Lhs __lhs, _Rhs&& __rhs) {
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      152 |         { __lhs = static_cast<_Rhs&&>(__rhs) } -> same_as<_Lhs>;
+          |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      153 |       };
+          |       ~   
+  • the required expression ‘__lhs = static_cast<_Rhs&&>(__rhs)’ is invalid
+    /usr/include/c++/16/concepts:152:17:
+      152 |         { __lhs = static_cast<_Rhs&&>(__rhs) } -> same_as<_Lhs>;
+          |           ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail
+program.cpp:54:10: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘const int’
+   54 |   r += s.coefficients[0];
+      |          ^~~~~~~~~~~~

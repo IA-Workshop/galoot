@@ -1,0 +1,9 @@
+In file included from program.cpp:8:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:527:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+  527 |     static_assert(false, "mv: give the coefficients one by one, not as one "
+      |                   ^~~~~
+program.cpp:70:15: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<const std::array<double, 4> &>' requested here
+   70 |   const Point s{values};
+      |               ^
+1 error generated.

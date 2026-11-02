@@ -1,0 +1,9 @@
+In file included from program.cpp:8:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:419:17: error: static assertion failed due to requirement 'scalar_is_not_bool': mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+  419 |   static_assert(scalar_is_not_bool,
+      |                 ^~~~~~~~~~~~~~~~~~
+program.cpp:59:42: note: in instantiation of template class 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, bool>' requested here
+   59 |   const gc::mv<rga3, point_layout, bool> s{};
+      |                                          ^
+1 error generated.
