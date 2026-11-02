@@ -56,7 +56,7 @@ struct counted {
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 int comparisons = 0;
 
-bool operator==(const counted& a, const counted& b) {
+[[maybe_unused]] bool operator==(const counted& a, const counted& b) {
   ++comparisons;
   return a.value == b.value;
 }
@@ -67,7 +67,7 @@ bool operator==(const counted& a, const counted& b) {
 template <>
 struct std::numeric_limits<counted> {
   [[maybe_unused]] static constexpr bool is_specialized = true;
-  static constexpr bool is_exact = true;
+  [[maybe_unused]] static constexpr bool is_exact = true;
 };
 
 namespace {

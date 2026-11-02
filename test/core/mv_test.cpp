@@ -1650,7 +1650,16 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
                 1'152'780'773'560'811'521);
   CHECK(e12_squared<4096, 4096, float>() == -16777216.0F);
   CHECK(e12_squared<24929, 673, std::int64_t>() == -16777217);
+  // The same answers at run time, for runs that set the assertions aside.
+  CHECK(e12_exact<4096, 4096, float>);
   CHECK_FALSE(e12_exact<24929, 673, float>);
+  CHECK(e12_exact<24929, 673, double>);
+  CHECK(e1234_exact<8192, 8192, 8192, 16384, double>);
+  CHECK_FALSE(e1234_exact<32767, 32767, 32767, 32767, double>);
+  CHECK(e1234_exact<32767, 32767, 32767, 32767, rational>);
+  CHECK_FALSE(e12_exact<4096, 4096, short>);
+  CHECK(e12_exact<217, 151, short>);
+  CHECK_FALSE(e12_exact<128, 256, short>);
 }
 
 namespace {
