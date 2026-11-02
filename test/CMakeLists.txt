@@ -1306,22 +1306,27 @@ set_tests_properties(
   tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
 
-# core.product: the geometric product and the wedge, as functions and as the
-# operators * and ^, against the reference tables.
+# core.product: the geometric product, the wedge, and their antiproducts, as
+# functions and as the operators * ^ % &, against the reference tables.
 galoot_add_test(MODULE core COMPONENT product)
 target_link_libraries(core_product_test PRIVATE galoot_test_support
   galoot_golden)
 
-# core.product_mixed_<cause>_<spelling>: a product of operands from two
-# algebras or with two scalar types fails to compile with one error, the
-# message of the product as written.
+# core.product_mixed_<cause>_<spelling>: a product or an antiproduct of
+# operands from two algebras or with two scalar types fails to compile with
+# one error, the message of the product as written.
 set(product_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(product_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
-foreach(spelling IN ITEMS geometric_product wedge times caret)
+foreach(spelling IN ITEMS geometric_product wedge times caret
+    geometric_antiproduct antiwedge percent ampersand)
   if(spelling STREQUAL "times")
     set(written "a * b")
   elseif(spelling STREQUAL "caret")
     set(written "a ^ b")
+  elseif(spelling STREQUAL "percent")
+    set(written "a % b")
+  elseif(spelling STREQUAL "ampersand")
+    set(written "a & b")
   else()
     set(written "${spelling}")
   endif()
@@ -1352,5 +1357,20 @@ foreach(spelling IN ITEMS geometric_product times)
     MODULE core COMPONENT product
     SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_narrow}"
+    ONE_ERROR FORBID "apply:")
+endforeach()
+# The same for the geometric antiproduct, whose plan multiplies the
+# complements: the right complement of 1 is e12, so it holds -10000 too.
+set(antiproduct_narrow "the scalar type cannot hold one of the antiproduct's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+foreach(spelling IN ITEMS geometric_antiproduct percent)
+  if(spelling STREQUAL "percent")
+    set(written "a % b")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
+    MESSAGE "${written}: ${antiproduct_narrow}"
     ONE_ERROR FORBID "apply:")
 endforeach()
