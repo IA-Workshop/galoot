@@ -133,18 +133,50 @@ constexpr std::remove_cvref_t<X> reject_product() {
 
 } // namespace detail
 
+/// The layout of the result of each product of an mv on the layout A by an
+/// mv on the layout B in the algebra Alg: the blades the product can reach,
+/// each with orientation +1, in order of grade and, within a grade, of index
+/// list (e12, e13, e14, e23, ...). The products declare their result types
+/// through these, mv<Alg, wedge_layout<Alg, A, B>, T> for the wedge, so a
+/// program can name the result type of a product, and a compiler prints it in
+/// these terms.
+// clang-tidy reads the operation, once substituted, as a C-style cast of its
+// value, which the source does not have.
+// NOLINTBEGIN(modernize-avoid-c-style-cast)
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto geometric_product_layout =
+    detail::product_plan<detail::BinaryOperation::geometric_product, Alg, A, B>.result;
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto wedge_layout =
+    detail::product_plan<detail::BinaryOperation::wedge, Alg, A, B>.result;
+// NOLINTEND(modernize-avoid-c-style-cast)
+
 /// The geometric product x y of two multivectors of one algebra, on the
 /// blades that the product can reach. The coefficient of each blade is the
-/// sum over the pairs of blades whose product lands on it, evaluated as
-/// detail::apply evaluates it.
+/// sum, over the pairs of blades of x and y whose product reaches it, of the
+/// two coefficients times the exact coefficient of that blade product.
 ///
 /// Requires: x and y have the same algebra and the same scalar type, and
-/// the scalar holds every coefficient of the product exactly where its
-/// numeric_limits can tell; otherwise the call is rejected at compile time.
+/// the scalar holds every exact coefficient of the product where its
+/// numeric_limits can tell (an integer type within its range, a binary
+/// floating type within its digits); otherwise the call is rejected at
+/// compile time with a message that names it.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr auto geometric_product(const mv<Alg, A, T>& x,
-                                               const mv<Alg, B, T>& y) {
-  return detail::apply<detail::BinaryOperation::geometric_product>(x, y);
+[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+geometric_product(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  constexpr bool scalar_holds_every_coefficient_of_the_product =
+      detail::coefficients_exact<detail::BinaryOperation::geometric_product,
+                                 Alg, A, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_product,
+                "geometric_product: the scalar type cannot hold one of the "
+                "product's exact coefficients; use a scalar type that holds "
+                "larger integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_product) {
+    return detail::apply<detail::BinaryOperation::geometric_product,
+                         geometric_product_layout<Alg, A, B>>(x, y);
+  } else {
+    return {};
+  }
 }
 
 /// Rejects a geometric_product whose operands are not in one algebra with
@@ -162,11 +194,14 @@ constexpr std::remove_cvref_t<X> geometric_product(const X& /*x*/,
 /// The wedge x ∧ y of two multivectors of one algebra, on the blades that
 /// the product can reach. It does not depend on the metric.
 ///
-/// Requires: as for geometric_product.
+/// Requires: x and y have the same algebra and the same scalar type;
+/// otherwise the call is rejected at compile time. Every coefficient of the
+/// wedge of two blades is +1, -1, or 0, so every scalar type holds them.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr auto wedge(const mv<Alg, A, T>& x,
-                                   const mv<Alg, B, T>& y) {
-  return detail::apply<detail::BinaryOperation::wedge>(x, y);
+[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+wedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  return detail::apply<detail::BinaryOperation::wedge, wedge_layout<Alg, A, B>>(
+      x, y);
 }
 
 /// Rejects a wedge whose operands are not in one algebra with one scalar
@@ -178,11 +213,23 @@ constexpr std::remove_cvref_t<X> wedge(const X& /*x*/, const Y& /*y*/) {
                                 Y>();
 }
 
-/// x * y is geometric_product(x, y).
+/// x * y is geometric_product(x, y). A scalar that cannot hold one of the
+/// product's coefficients is rejected with a message that names x * y.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr auto operator*(const mv<Alg, A, T>& x,
-                                       const mv<Alg, B, T>& y) {
-  return geometric_product(x, y);
+[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+operator*(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+  constexpr bool scalar_holds_every_coefficient_of_the_product =
+      detail::coefficients_exact<detail::BinaryOperation::geometric_product,
+                                 Alg, A, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_product,
+                "a * b: the scalar type cannot hold one of the product's "
+                "exact coefficients; use a scalar type that holds larger "
+                "integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_product) {
+    return geometric_product(x, y);
+  } else {
+    return {};
+  }
 }
 
 /// Rejects x * y for operands that are not in one algebra with one scalar
@@ -196,8 +243,8 @@ constexpr std::remove_cvref_t<X> operator*(const X& /*x*/, const Y& /*y*/) {
 
 /// x ^ y is wedge(x, y). Parenthesize it next to ==, which binds tighter.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr auto operator^(const mv<Alg, A, T>& x,
-                                       const mv<Alg, B, T>& y) {
+[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+operator^(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return wedge(x, y);
 }
 
