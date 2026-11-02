@@ -1336,3 +1336,21 @@ foreach(spelling IN ITEMS geometric_product wedge times caret)
     MESSAGE "${written}: ${product_scalars}"
     ONE_ERROR FORBID "different algebras")
 endforeach()
+
+# core.product_narrow_scalar_<spelling>: a product with an exact coefficient
+# that the scalar type cannot hold, e12 e12 = -10000 in diag(100, 100) over
+# std::int8_t, fails to compile with one error, the message of the product
+# as written; the message of the internal kernel must not appear.
+set(product_narrow "the scalar type cannot hold one of the product's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+foreach(spelling IN ITEMS geometric_product times)
+  if(spelling STREQUAL "times")
+    set(written "a * b")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_narrow}"
+    ONE_ERROR FORBID "apply:")
+endforeach()

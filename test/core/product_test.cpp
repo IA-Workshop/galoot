@@ -196,6 +196,39 @@ TEST_CASE("the result has the layout the plan gives") {
                              decltype(core::geometric_product(L{}, V{}))>);
 }
 
+// Reference: independent value: by hand from the definitions, the result of a
+//   product holds the blades it reaches, each with sign +1, in order of grade
+//   and then of index list: two vectors of rigid(3) wedge to the six
+//   bivectors and multiply to the scalar and the six bivectors, and two lines
+//   multiply to the scalar, the six bivectors, and e1234, whatever the
+//   orientations of the operands' blades
+TEST_CASE("the result of a product is the canonical set of its blades") {
+  using Point = core::mv<rga3, core::blades<rga3, "e1 e2 e3 e4">, std::int64_t>;
+  using Line = core::mv<rga3, core::blades<rga3, "e41 e42 e43 e23 e31 e12">,
+                        std::int64_t>;
+  using Bivectors = core::mv<rga3, core::of_grade<4, 2>, std::int64_t>;
+  using Even = core::mv<rga3, core::blades<rga3, "1 e12 e13 e14 e23 e24 e34">,
+                        std::int64_t>;
+  using EvenFull =
+      core::mv<rga3, core::blades<rga3, "1 e12 e13 e14 e23 e24 e34 e1234">,
+               std::int64_t>;
+  const Point p{1, 0, 0, 1};
+  const Point q{0, 1, 0, 1};
+  const Line l{0, 0, 1, 0, 0, 0};
+  static_assert(std::same_as<decltype(p ^ q), Bivectors>);
+  static_assert(std::same_as<decltype(core::wedge(p, q)), Bivectors>);
+  static_assert(std::same_as<decltype(p * q), Even>);
+  static_assert(std::same_as<decltype(core::geometric_product(p, q)), Even>);
+  static_assert(std::same_as<decltype(l * l), EvenFull>);
+  static_assert(
+      std::same_as<decltype(core::geometric_product(l, l)), EvenFull>);
+  // The values on the canonical blades: p ^ q = (e1 + e4) ^ (e2 + e4) =
+  // e12 + e14 - e24, since e4 ^ e2 = -e24 and e4 ^ e4 = 0.
+  CHECK(value_on(p ^ q, 0b0011) == 1);
+  CHECK(value_on(p ^ q, 0b1001) == 1);
+  CHECK(value_on(p ^ q, 0b1010) == -1);
+}
+
 // Reference: identity: associativity of the geometric product and of the wedge
 //   on random integer multivectors of rigid(3) and conformal(3), whose sums
 //   are exact, and the wedge of a vector with itself is zero
