@@ -215,24 +215,43 @@ def kept_by_rule(tool, directory):
         row(at(3), clean, "workflow", "lint", "all-clean", "1.0"),
         row(at(4), clean, "configure", "gcc-debug", "fresh", "1.0"),
         row(at(5), clean, "gate", "-", "trace", "1.0"),
-        row(at(6), clean, "check", "-", "golden:x", "1.0"),
+        # A workflow of a named preset stays at any revision, since a
+        # merge's checks may run on the uncommitted merged tree.
+        row(at(6), dirty, "workflow", "gcc-debug", "all-clean", "1.0"),
+        row(at(7), "unavailable", "workflow", "clang-asan", "all", "1.0"),
+        # Style checks.
+        row(at(8), clean, "lint", "-", "ruff", "1.0"),
+        row(at(9), clean, "lint", "lint", "clang-tidy units", "1.0"),
     ]
+    # Each cheap gate's family, as a check step and as a trace step.
+    gates = ("trace", "trace-gate", "convention-trace", "markers", "golden",
+             "citations", "golden-facts", "reference-markers", "golden-check",
+             "conventions_check")
+    kept += [row(at(10, i), clean, "check", "-", f"{name}:x", "1.0")
+             for i, name in enumerate(gates)]
+    kept += [row(at(11, i), clean, "trace", "-", name, "1.0")
+             for i, name in enumerate(gates)]
     removed = [
-        row(at(7), dirty, "build", "gcc-debug", "all", "1.0"),
-        row(at(8), "unavailable", "build", "gcc-debug", "all", "1.0"),
-        row(at(9), clean, "build", "-", "sketch-a", "1.0"),
-        row(at(10), clean, "measure", "-", "ceiling-cert:x:L1", "1.0"),
-        row(at(11), clean, "probe", "-", "p", "1.0"),
-        row(at(12), clean, "check", "-", "metric-like-holes:a", "1.0"),
-        row(at(13), clean, "spike", "-", "api-design:run", "1.0"),
-        row(at(14), dirty, "gate", "-", "trace", "1.0"),
+        row(at(20), dirty, "build", "gcc-debug", "all", "1.0"),
+        row(at(21), "unavailable", "build", "gcc-debug", "all", "1.0"),
+        row(at(22), clean, "build", "-", "sketch-a", "1.0"),
+        row(at(23), clean, "measure", "-", "ceiling-cert:x:L1", "1.0"),
+        row(at(24), clean, "probe", "-", "p", "1.0"),
+        row(at(25), clean, "check", "-", "metric-like-holes:a", "1.0"),
+        row(at(26), clean, "spike", "-", "api-design:run", "1.0"),
+        row(at(27), dirty, "gate", "-", "trace", "1.0"),
+        row(at(28), clean, "workflow", "-", "all", "1.0"),
+        row(at(29), dirty, "lint", "-", "ruff", "1.0"),
+        row(at(30), dirty, "check", "-", "golden-facts", "1.0"),
+        row(at(31), clean, "check", "-", "golden-facts-probe", "1.0"),
     ]
     # The last row is one the rule keeps, so that the boundary's anchor
     # adds nothing.
-    last = row(at(15), clean, "build", "gcc-release", "all", "1.0")
-    repo.write_log([kept[0], removed[0], kept[1], removed[1], removed[2],
-                    kept[2], removed[3], kept[3], removed[4], removed[5],
-                    kept[4], removed[6], kept[5], removed[7], last])
+    last = row(at(40), clean, "build", "gcc-release", "all", "1.0")
+    mixed = []
+    for i in range(max(len(kept), len(removed))):
+        mixed += kept[i:i + 1] + removed[i:i + 1]
+    repo.write_log(mixed + [last])
     boundary = repo.commit("log")
     result = repo.run("compact", boundary)
     check("compact exit (rule)", result.returncode, 0)
