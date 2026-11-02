@@ -167,8 +167,9 @@ TYPE_TO_STRING_AS("std::complex<double>", std::complex<double>);
 
 // Reference: contract: a multivector is not an aggregate, is trivially
 //   copyable and standard-layout when its scalar is, holds K coefficients in
-//   K times the size of its scalar for a nonempty layout, and a one-blade
-//   multivector is constructed from its scalar only explicitly, for the
+//   K times the size of its scalar for a nonempty layout, and neither a
+//   one-blade multivector nor a larger one converts implicitly from its
+//   scalar, for the
 //   point, line, plane, and motor of rigid(3), a conformal(3) vector, a
 //   sparse set in sixteen generators, and an empty set
 TEST_CASE_TEMPLATE("mv is a trivially copyable value with exactly its "
@@ -187,6 +188,9 @@ TEST_CASE_TEMPLATE("mv is a trivially copyable value with exactly its "
 
   static_assert(!std::is_convertible_v<T, Scalar<T>>);
   static_assert(std::is_constructible_v<Scalar<T>, T>);
+  static_assert(!std::is_convertible_v<T, Line<T>>);
+  CHECK_FALSE(std::is_convertible_v<T, Scalar<T>>);
+  CHECK_FALSE(std::is_convertible_v<T, Line<T>>);
 
   CHECK(Line<T>::component_count == 6);
   CHECK(Motor<T>::component_count == 8);
@@ -724,4 +728,59 @@ TEST_CASE("Probes of get and of construction answer yes for a misuse") {
   static_assert(!core::has_blade<Line<double>, "e1">);
   static_assert(std::is_constructible_v<Line<double>, double, double, double>);
   CHECK(requires(Line<double>& line) { get<"e41">(line); });
+}
+
+namespace {
+
+// A scalar of two lanes computed side by side, as a vector unit holds them:
+// it has the arithmetic of a ring, lane by lane, and no ==, since two lanes
+// are not one truth value.
+struct two_lanes {
+  double first = 0;
+  double second = 0;
+
+  two_lanes() = default;
+  explicit two_lanes(std::int64_t value)
+      : first(static_cast<double>(value)), second(static_cast<double>(value)) {}
+  two_lanes(double a, double b) : first(a), second(b) {}
+
+  friend two_lanes operator+(const two_lanes& a, const two_lanes& b) {
+    return {a.first + b.first, a.second + b.second};
+  }
+  friend two_lanes operator-(const two_lanes& a, const two_lanes& b) {
+    return {a.first - b.first, a.second - b.second};
+  }
+  friend two_lanes operator*(const two_lanes& a, const two_lanes& b) {
+    return {a.first * b.first, a.second * b.second};
+  }
+  friend two_lanes operator-(const two_lanes& a) {
+    return {-a.first, -a.second};
+  }
+};
+
+} // namespace
+
+// Reference: contract: ring_scalar does not require ==, so a scalar of
+//   lanes without one is accepted, its multivector is a type that is made,
+//   copied, and read, and the multivector has no == either, which generic
+//   code that asks is told
+TEST_CASE("mv over a scalar without == is a type without ==") {
+  static_assert(core::ring_scalar<two_lanes>);
+  static_assert(!std::equality_comparable<two_lanes>);
+  static_assert(std::is_trivially_copyable_v<Line<two_lanes>>);
+  static_assert(!std::equality_comparable<Line<two_lanes>>);
+
+  const volatile double half = 0.5;
+  Line<two_lanes> line{};
+  get<"e41">(line) = two_lanes{half, -half};
+  const Line<two_lanes> copy = line;
+  CHECK(get<"e41">(copy).first == 0.5);
+  CHECK(get<"e41">(copy).second == -0.5);
+  CHECK(get<"e12">(copy).first == 0.0);
+  const two_lanes e41 = get<"e41">(copy);
+  const two_lanes sum = (e41 + e41) - (-e41) * two_lanes{1.0, 1.0};
+  CHECK(sum.first == 1.5);
+  CHECK(sum.second == -1.5);
+  CHECK(core::ring_scalar<two_lanes>);
+  CHECK_FALSE(std::equality_comparable<Line<two_lanes>>);
 }

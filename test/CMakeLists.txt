@@ -911,6 +911,7 @@ mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
 mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
 mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
 mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
+mv_rejects(one_value "${mv_count}" REQUIRE "1 == 6" ONE_ERROR)
 # An algebra that is not one fails the class template's constraint, so the
 # diagnostic is the compiler's account of metric_like.
 mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
@@ -934,6 +935,15 @@ mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR)
 mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
   "${float_conversion}" ONE_ERROR)
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
+# A scalar that is not semiregular fails mv's template head, so the message
+# is the compiler's account of the concept (and, on Clang, a second error
+# from inside <concepts>).
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(not_semiregular "required for the satisfaction of ‘semiregular<T>’")
+else()
+  set(not_semiregular "does not satisfy 'semiregular'")
+endif()
+mv_rejects(scalar_without_default "${not_semiregular}")
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
 # blades. A message's ; would split it into two list items, so it is held as
