@@ -189,16 +189,29 @@ struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
   static_assert(ring_scalar<T>,
                 "mv: the scalar type must support +, -, *, unary - and "
                 "construction from an integer coefficient");
-  static_assert(
-      detail::blades_in_algebra<
-          std::remove_cvref_t<decltype(Alg::value)>::generator_count, Blades>,
-      "mv: the blade set names a generator beyond e_n");
-  static_assert(detail::signs_valid<Blades>,
-                "mv: the blade set holds a sign other than +1 or -1");
-  static_assert(detail::distinct_masks<Blades>,
-                "mv: the blade set holds one blade twice, perhaps in both "
-                "orientations");
 
+private:
+  // The rules a layout must keep, each named, so that a compiler that prints
+  // the condition of a failed assertion prints the rule.
+  static constexpr bool layout_names_only_generators_of_the_algebra =
+      detail::blades_in_algebra<
+          std::remove_cvref_t<decltype(Alg::value)>::generator_count, Blades>;
+  static constexpr bool layout_signs_are_plus_or_minus_one =
+      detail::signs_valid<Blades>;
+  static constexpr bool layout_holds_each_blade_once =
+      detail::distinct_masks<Blades>;
+  static_assert(layout_names_only_generators_of_the_algebra,
+                "mv: the layout names a generator that the algebra does not "
+                "have; a layout written for a larger algebra cannot be used "
+                "here");
+  static_assert(layout_signs_are_plus_or_minus_one,
+                "mv: the layout holds a sign other than +1 or -1; give each "
+                "blade of a layout written out by hand the sign +1 or -1");
+  static_assert(layout_holds_each_blade_once,
+                "mv: the layout holds one blade twice, perhaps in both "
+                "orientations; list each blade once");
+
+public:
   /// The algebra tag.
   using algebra_type = Alg;
   /// The layout: the oriented blades the coefficients are stored on.
