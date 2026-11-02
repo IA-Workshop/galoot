@@ -1,0 +1,25 @@
+std::regular<Line>                                         yes
+std::is_aggregate_v<Line>                                  no
+std::is_trivially_copyable_v<Line>                         yes
+std::is_default_constructible_v<Line>                      yes
+std::is_constructible_v<Line, double, double, double>      yes
+std::is_constructible_v<Line, std::array<double, 6>>       yes
+std::is_convertible_v<double, Scalar>                      no
+std::is_constructible_v<Scalar, double>                    yes
+std::ranges::range<Line>                                   no
+std::ranges::range<decltype(Line::coefficients)>           yes
+tuple-like Line (std::tuple_size)                          no
+requires { get<"e1">(line) } (the line holds no e1)        yes
+gc::has_blade<Line, "e1">                                  no
+gc::has_blade<Line, "e41">                                 yes
+gc::ring_scalar<bool>                                      yes
+gc::ring_scalar<char>                                      yes
+gc::ring_scalar<int*>                                      no
+gc::ring_scalar<std::string>                               no
+std::is_same_v<mv<cga3, line_layout>, mv<cga3, blades<cga3,...>>> yes
+std::is_same_v<Line, mv<rga3, blades<rga3, "...">, double>> yes
+std::is_same_v<Line, mv<rga3, blades<rga3, "e41  e42 ...">>> (2 sp) yes
+FPoint(0.1 double, ...) by parentheses holds 0.10000000149011612
+Point(2^53 + 1 long long, ...) by parentheses holds 9007199254740992
+auto [all] = point binds a 4-element array
+a bool line constructs: 1 1

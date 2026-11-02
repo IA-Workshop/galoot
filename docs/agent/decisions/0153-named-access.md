@@ -22,3 +22,26 @@
 ## Consequences
 
 Plan 0016 tests E6, E7, E9, and E10. The implementer records the final messages in an appended section here.
+
+## Implementation, 2026-11-01 (WU8a)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8a of plan 0016.
+
+1. `has_blade<X, Name>` is a concept over data: `multivector<X>` and a lookup of the name in X's layout, a variable template evaluated once per type and name. The lookup reuses `blade_set.hpp`'s `name_count`, `next_name`, and `parse_name`, and returns why a name fails as a value, so the concept is false, never an error, for every name.
+2. `get<Name>(x)` is one function template on a forwarding reference, constrained by `has_blade`, returning `std::forward_like<X>(x.coefficients[at])` with `at` a constant.
+3. The rejection is one overload, constrained by `multivector<X> && !has_blade<X, Name>`, whose body selects the message of the cause by an `if constexpr` chain of `static_assert(false, ...)`. One overload with a branch per cause reads more plainly than seven overloads with seven constraints, and gives the same diagnostic, since each compiler prints the instantiation of the function and then the one failed assertion.
+4. Departure from decision 0033's form P: the rejecting overload declares get's return type rather than deducing `auto` and returning a placeholder. With a deduced return type a `requires`-expression that asks whether `get<"e1">(line)` is valid instantiates the body and becomes a hard error (research note 0010, detection table); with the declared type it answers yes without compiling the message, which is the documented consequence plan 0016 test E10 expects. The return statement after the assertions keeps the declared type, so a use of the result, as in `get<"e1">(line) = 2.0`, raises no second error.
+5. A seventh cause, beyond the six of item 3 above: a name that lists one generator twice, such as `e11`, is not a blade name in the sense of the other six messages, so it has its own.
+6. The final messages, each tested on both compilers by a compile-fail test that requires it, forbids the other six and the parser's `blades:` messages, and requires one error:
+
+| Cause | Message | Test |
+| --- | --- | --- |
+| An algebra of more than nine generators | get: names have one digit per index, so they are read only for n up to 9; reach the coefficient by its position | `core.mv_get_wide_algebra` |
+| Not one name | get: give one blade name | `core.mv_get_two_names` |
+| Not a name | get: a name is 1 or e followed by generator indices, as in e41 | `core.mv_get_not_a_name`, `core.mv_get_index_zero` |
+| A repeated generator | get: the name lists one generator twice; a blade names each generator once | `core.mv_get_repeated_generator` |
+| An index above n | get: the name has an index above n, the number of generators | `core.mv_get_above_n` |
+| A blade the layout lacks | get: the type has no blade of this name; its layout lists the names it holds | `core.mv_get_absent` |
+| The other orientation | get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value | `core.mv_get_opposite` |
+
+The wide-algebra message gained its fix after a semicolon ("reach the coefficient by its position"), following the message style of plan 0016 reading 21; the others are the plan's wording.

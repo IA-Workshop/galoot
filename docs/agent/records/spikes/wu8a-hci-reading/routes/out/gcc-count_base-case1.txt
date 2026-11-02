@@ -1,0 +1,12 @@
+In file included from program.cpp:10:
+mv_routes.hpp: In instantiation of ‘constexpr galoot::core::detail::component_count_check<K>::component_count_check(Values&& ...) [with Values = {int, int, int}; long unsigned int K = 4]’:
+mv_routes.hpp:362:55:   required from here
+  362 |   using detail::component_count_check<Blades.size()>::component_count_check;
+      |                                                       ^~~~~~~~~~~~~~~~~~~~~
+program.cpp:81:24:   in ‘constexpr’ expansion of ‘((galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>*)(& s))->galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv<int, int, int>(1, 2, 3)’
+   81 |   const Point s{1, 2, 3};
+      |                        ^
+mv_routes.hpp:144:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+  144 |     static_assert(sizeof...(Values) == K,
+      |                   ~~~~~~~~~~~~~~~~~~^~~~
+  • the comparison reduces to ‘(3 == 4)’

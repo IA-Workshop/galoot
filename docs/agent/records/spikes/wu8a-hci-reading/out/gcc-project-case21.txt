@@ -1,0 +1,21 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:158:11: error: no match for ‘operator==’ (operand types are ‘const Scalar’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>’} and ‘double’)
+  158 |   r += (s == 2.0) ? 1.0 : 0.0;
+      |         ~ ^~ ~~~
+      |         |    |
+      |         |    double
+      |         const Scalar {aka const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>}
+  • there is 1 candidate
+    first_user.cpp:158:11:
+      158 |   r += (s == 2.0) ? 1.0 : 0.0;
+          |         ~~^~~~~~
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+    • candidate 1: ‘constexpr bool galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::operator==(const galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>; T = double; long unsigned int ...I = {0}]’
+      ../../../../../include/galoot/core/mv.hpp:150:3:
+        150 |   operator==(const coefficient_storage& other) const
+            |   ^~~~~~~~
+      • no known conversion for argument 1 from ‘double’ to ‘const galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0> >&’
+        ../../../../../include/galoot/core/mv.hpp:150:41:
+          150 |   operator==(const coefficient_storage& other) const
+              |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~

@@ -637,3 +637,182 @@ No bound applies. The outcome of each part compares these with the actuals. This
 ## Owner rulings on O1 and O2 (2026-11-01)
 
 The owner ratified both proposals ("proceed as recommended"; decision 0161). CONVENTIONS 4.5 (version 1.7) now says that a conversion which drops blades verifies the dropped part is zero when the scalar is exact, and that the rounding-scalar bound belongs to operations that drop part of their own result. PERFORMANCE P5 says "trivially copyable". So R1 and the conditions that WU8b's rounding-scalar behavior of `truncate` merges only when O1 is settled no longer apply: WU8b implements criterion 16 as ruled.
+
+## Outcome, WU8a (2026-11-01, Claude, agent, Opus 5.5, cpp-expert, implementer)
+
+Status: done on `feature/core-mv-a`, awaiting the hci-expert reading and the W5 blind review. Code and tests final at `669f7e2` (the header last changed there, in a comment; its code last changed at `878b624`); `develop` (with plan 0015) merged in at `b89b9ba`, whose full suites pass on gcc-debug (195 of 195) and clang-debug (197 of 197). This section is committed after them; the seven presets from new, empty trees and the W10 after rows run at this section's commit and are recorded in the commit that follows it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. One expected message changed, listed in `59c1057`: `core.blade_set_names_zero` (`blades<0, "e1">`) gave "blade_set: an algebra has at least one generator". A tag with no generators is not `metric_like`, so it now fails `blades`' constraint; the test requires "metric_like" and forbids `make_blades` and the index message. Every other migrated expected value and message is unchanged.
+2. `59c1057`'s message miscounts the migration: blade_set_test.cpp has 21 migrated uses, not 18, and the compile-fail sources are 22 files with 23 uses (21 by the script, plus `names_zero`). History is not rewritten.
+3. Named access has seven causes, not six: a name that lists one generator twice (`e11`) has its own message and test (`core.mv_get_repeated_generator`). The wide-algebra message gained a fix after a semicolon. Final wording in decision 0153's appended section.
+4. The rejection of `get` is one overload with an `if constexpr` chain, not one catch-all per cause, and it declares `get`'s return type instead of form P's deduced `auto` and placeholder (decision 0153 appendix, item 4): with a deduced type, test E10's `requires`-probe would be a hard error.
+5. `==` is written out and constrained by `std::equality_comparable<T>`, not defaulted (decision 0150 appendix, item 3), and the storage base takes the multivector type as a parameter so that no two types compare (item 2).
+6. A GCC 16.2.1 wrong-code defect was found and worked around: the zero initializer is `coefficients{zero_at(I)...}`, not `{}` (decision 0150 appendix, item 4; lesson 0065; reproducer in `docs/agent/records/spikes/gcc-shared-array-initializer/`, no Galoot code). Not reported upstream (agents do not contact maintainers); the reproducer is kept for the owner.
+7. `scalar_type` is not provided (no caller in WU8a, S16); WU8b adds it if its conversions need it.
+8. Build tooling: `galoot_add_compile_fail_test` gained `ONE_ERROR` (every output line with "error:" must hold a required literal), with `core.mv_two_errors` (WILL_FAIL) showing it can fail. Messages with a `;` are passed to it with character 1, as `galoot_expected_findings` already does.
+9. Lint of compile-fail sources, run by hand at each commit with clang-tidy (`.clang-tidy`, warnings as errors), because no build compiles them: a tidy check counts; the compiler's own diagnostics of the deliberate mistake (`clang-diagnostic-*`) are the failure under test and do not. Four suppressions, each with its reason beside it: `misc-include-cleaner` in `blade_set_names_zero_fail.cpp`, `blade_set_blades_not_metric_like_fail.cpp`, and `mv_not_metric_like_fail.cpp` (the failed constraint hides the header's use), and the narrowing checks in `mv_narrowing_float_fail.cpp` (the narrowing is the mistake). Pre-existing findings in touched files were fixed (six hand-written sets moved to `std::to_array` for `readability-trailing-comma`, `59c1057`). Not fixed, outside this unit's files (W9, reported): `plan_not_metric_like_fail.cpp` and `plan_map_not_metric_like_fail.cpp` have the same include-cleaner artifact.
+10. Commits that fail by design, each saying so (W2): `380a355` and `15dd5a0` (tests before their code; the gates passed on their trees, extracted with `git archive`), and `461e3dd` (the GCC regression test before its fix; fails core.mv on gcc-debug only). `669f7e2`'s gates ran at `12e0e22`, a records-only commit, because untracked records were present at `669f7e2`.
+11. `b94e50a` committed the diagnostics record's `program.cpp` unformatted (it is under `docs/`, outside `format-check`); `ce9d15e` formats it and regenerates the texts.
+12. P13 lapses: `clang-format` runs, the preprocessing check of `<concepts>` (`-E`, line counts), and `git archive` extractions were not run through `tools/timed`. Every build, test, probe compile, lint, and measurement was.
+13. The header-cost rise (+0.45 % and +0.53 % for `core.hpp`) exceeds the spread of three repeats; its attribution to parsing `mv.hpp` and to `metric.hpp` in `blade_set.hpp` is by construction. A Clang `-ftime-trace` was taken and was too noisy to attribute 4 to 5 M instructions.
+14. Measurements ran on the shared machine with other workstreams active (load average 4 to 5 at the start), pinned to CPU 10 with an idle sibling (at most 0.01 s busy); instruction counts are compared, not times.
+15. Observed, not explained: with the rational's sum guard removed, Clang 23.1.4 still printed the call of `rational_failed` with its message after the overflow of `2^62 + 2^62` in constant evaluation, so `support.rational_consteval_add` passed on clang-debug with that mutant; GCC stopped at the overflow. `support.rational_rejects_add_far_above` (`max + max`) kills the mutant on both (`a6037b0`).
+
+### Commits
+
+| Commit | Content |
+| --- | --- |
+| `0782a8e` | W10 before rows (fresh gcc-debug and clang-debug trees at `965059e`; 93 and 95 compile rows; 140 of 140 and 142 of 142) |
+| `59c1057` | `blades<Alg, "...">` and the migration (W9 list in the message; see departures 1 and 2) |
+| `42eed2f` | `test/support/rational.hpp` and `support.rational` with its rejections |
+| `70cacfd` | merge of `develop` (decision 0161, O1 and O2) |
+| `380a355`, `d6a8a27` | tests of the type (E1 to E5, E8, E14, E15), then `mv.hpp`'s concepts, storage, type, count constructor, and checks |
+| `461e3dd`, `284c7e7` | the GCC regression test, then the zero initializer written per place |
+| `15dd5a0`, `878b624` | tests of named access (E6, E7, E9, E10, `bare_user.cpp`), then `get` and `has_blade` |
+| `b94e50a`, `ce9d15e` | the diagnostics record (E17) |
+| `4150039`, `a6037b0` | test-only additions for mutants: `core.mv_one_too_few`; `add_far_above`, run-time concept checks, the constexpr variable of the regression test |
+| `152514a`, `bc1493e`, `0acef07` | the mutation driver, its runs, the survivors; decisions 0150 and 0153 appended; lesson 0065; the GCC reproducer |
+| `669f7e2`, `12e0e22` | the measured limit in `mv`'s comment; the cost records and decision 0156 |
+| `b89b9ba` | merge of `develop` (plan 0015) |
+
+### Criteria
+
+1. Met at `d6a8a27` and after: E1 over five scalars for the point, line, plane, motor, the scalar "1", a conformal(3) vector, the sparse set in R(15,0,1), and the empty set; sizes 48, 24, 64; template arguments for double and the rational, and the empty and sparse sets; `!is_convertible<T, mv>` for one blade.
+2. Met: zero by default at compile time and over a 0xA5 pattern at run time, five scalars, also after a constant evaluation wrote into a zero value (from `284c7e7`).
+3. Met: one value per component in layout order, five scalars, compile time and through volatile; `core.mv_too_few` ("3 == 6"), `core.mv_one_too_few` ("3 == 4"), `core.mv_too_many` ("7 == 6"), each one error on both compilers; narrowing (`int` into double, `double` into float) is the compiler's narrowing error, "narrow" on both; `core.mv_scalar_implicit` records the compiler's conversion error.
+4. Met: a change at each of 6 and 8 places is unequal, five scalars; -0.0 == +0.0 and a NaN unequal for double; no `==` across layouts, algebras, or scalars.
+5. Met: the concepts on every type of the criterion, at compile time and (from `a6037b0`) at run time; `core.mv_not_ring_scalar` and `core.mv_scalar_without_multiplication`, one error with the literal.
+6. Met: each layout check fires alone on its hand-written set, one error, both compilers (eight tests); every set from `full`, each `of_grade`, a merge, and named sets for n = 1 to 8 accepted.
+7. Met at `878b624`: 20 names of the rigid(3) point, line, plane, motor and a conformal(3) layout with e45, over five scalars, by the test's own inversion count; lvalue, const lvalue, and rvalue categories; `has_blade` false without error for every case of E7.
+8. Met: eight compile-fail tests (seven causes, two for "not a name"), each one error, its message, none of the other six nor `blades:`, on both compilers.
+9. Met at `42eed2f` (and `a6037b0`): hand values; field identities on 2,000 seeded triples (seed from doctest's `rand_seed`, printed); equality against cross-multiplication; six run-time rejections and two compile-fail; `is_exact`.
+10. Met: limits n = 10 (GCC) and 8 (Clang), stated in the `///` comment, not below 6; per-type, per-construction, and per-get costs; header costs (decision 0156, `docs/agent/records/performance/mv/`). W10 after: in the commit that follows this section.
+11. 11a met at `59c1057` (departure 1 for `names_zero`); `core.blade_set_blades_not_metric_like` on both compilers. 11b met at `b94e50a` and `ce9d15e`, regenerated at `12e0e22` for `669f7e2`: the record is `docs/agent/records/diagnostics/wu8/` and is quoted below; every route marked "in WU8a" is in the header (2, 3, 4, 5, 6 in the tests' declarations, 7).
+12. Met at `c3d4e45` (recorded in the commit after it): the seven presets from new, empty trees each built `all` and passed every test: gcc-debug 195 of 195, gcc-release 195 of 195, gcc-asan 187 of 187, clang-debug 197 of 197, clang-release 197 of 197, clang-asan 197 of 197, lint 197 of 197 (its clang-tidy clean over every built unit), `core.bare_compile` among them. `all_verify_interface_header_sets` built on gcc-debug, clang-debug, and lint, and `format-check` passed on all three. The W10 after rows are from the gcc-debug and clang-debug trees (`docs/agent/records/performance/mv/README.md`, W10). The job pool had 23 of 23 slots free before and after.
+
+Mutation (DoD): 28 mutants on gcc-debug and clang-debug in both modes; every one killed by a test except `shared_zero_initializer` on clang-debug, which is equivalent there (`docs/agent/records/mutations/0016-mv-a/survivors.md`).
+
+### The diagnostics record (criterion 11b), quoted
+
+Lines / longest line in characters (installed path length for after), GCC 16.2.1 and Clang 23.1.4:
+
+| Mistake | Compiler | Before, form R | Before, form P | After, WU8a |
+| --- | --- | --- | --- | --- |
+| `const Point s{1, 2, 3};` | GCC | compiles silently, w = 0 | compiles silently | 10 / 468, one error, "(3 == 4)" |
+| | Clang | compiles silently | compiles silently | 12 / 194, one error, "'3 == 4'" |
+| `get<"e14">(l)` (other orientation) | GCC | 25 / 677 | 9 / 534 | 10 / 504, its own message |
+| | Clang | 13 / 301 | 8 / 218 | 9 / 248 |
+| `get<"e1">(l)` (absent) | GCC | 25 / 676 | 9 / 533 | 10 / 503, its own message |
+| | Clang | 13 / 300 | 8 / 217 | 9 / 247 |
+| `const Point s = q;` (lossy) | GCC | 4 / 799 | 9 / 892 | 4 / 811, the compiler's message (WU8b adds the catch-all) |
+| | Clang | 10 / 301 | 8 / 268 | 16 / 282, the compiler's message; the notes name `Motor` (aka `mv<rga3, motor_layout, double>`) |
+
+The wrong count is now caught; named access names each cause; GCC's lines stay long because it prints the layout's masks through libstdc++'s wrapper in every instantiation context, which only route 1 (names as written in the type) would shorten. For the owner (section 16): whether this calls for more.
+
+### V10
+
+- Verification: E1 to E16 passed (contract, independent-value, and identity tests) on gcc-debug and clang-debug at `b89b9ba`; the seven presets follow. E17 is a record of readability, not verification.
+- Validation: the oriented names of rigid(3) against CONVENTIONS 1.6 (E6, the test's own inversion count against the table's values); conformal(3)'s e45. The products are WU8b's.
+- Scalars: the rational's exactness rests on its overflow checks (tested at their bounds); the IEEE behavior of `==` on double is checked for signed zero and NaN.
+
+### Open items
+
+1. The hci-expert reading and the W5 blind review (section 12), with the usability checklist.
+2. The owner's question on the diagnostics record (section 16).
+3. The GCC defect is unreported upstream; the reproducer is ready.
+4. Knowledge base: note `cpp-language/lang-gcc-shared-array-initializer.md` and exercise `exercise-archive/cpp-shared-array-initializer.md` on branch `kb/cpp-shared-array-initializer` (worktree `knowledge-base-worktrees/cpp-shared-array-initializer`, commit `2919f6c`), for the coordinator to merge.
+5. Pre-existing lint artifact in the two plan not-metric-like sources (departure 9).
+6. WU8b, after this part merges.
+
+### Agent cost
+
+About 220 tool calls by the implementer; the token count is not visible to me. The plan estimated 480k to 650k tokens and 185 to 250 tool calls with review fixes.
+
+### Review fixes (2026-11-01)
+
+The W5 blind review (`docs/agent/records/reviews/2026-11-01-wu8a-mv.md`, merged at `e541ab4`) and the hci-expert reading (`docs/agent/records/reviews/2026-11-01-wu8a-hci-reading.md`, merged at `d9e1521`) were fixed in one round, each change in its own commit, tests before the code they judge.
+
+Departures of this round (C20):
+
+1. Blind F4 (a scalar that is not semiregular) is met by a test of the compiler's wording (`core.mv_scalar_without_default`), not by a literal message; the alternative (a weaker constraint and an assertion in the body) was not tried, for the reason in decision 0150's review section, item 5.
+2. `ring_scalar<bool>` stays true and is documented in the concept's comment, not rejected (blind F10).
+3. Blind F10's `[[nodiscard]]` on `zero_at` no longer applies: the pack-of-T storage (H1) needs no `zero_at`.
+4. The layout messages say "the algebra does not have" rather than "beyond e_n", which also answers blind F10's point that messages wrote e_n where comments write e1 to en.
+5. `11feaf6`'s tests were run on the working tree before the commit (core.mv, both compilers); its full suites ran at `b123788`, whose tests are the same.
+6. Probes outside a build or test, all through `tools/timed`: `h5:p10`, `h5:p11` (the claims of the reworded comments), `review-f7:p9:*` (which written places trigger the GCC defect).
+7. **The lint preset failed from `ed8be5a` to `f066f02`, unseen at the time.** clang-tidy's `bugprone-crtp-constructor-accessibility` read the storage base, whose first parameter was then the `mv` type, as a CRTP base with public constructors. The per-commit lint step built the lint preset and then printed `$?` after a command substitution in the same `echo`, so it printed 0 for a failed build: the builds' own logs show the failure at `ed8be5a`, `3d8df77`, `0b316df`, and `b123788`. The new lint tree of the final check at `f066f02` found it; `af447ae` fixes it (the base takes the algebra, layout, and scalar) and the lint preset passes there. The earlier lint steps of this unit printed the exit status directly or read the logs, and their logs show no failure (`d6a8a27`, `284c7e7`, `878b624`, `669f7e2`). The per-commit step now prints the exit status before anything else.
+8. Lint by hand of every compile-fail source at the final revision, not only the touched ones, finds tidy-check findings (trailing commas, include-cleaner) in 22 sources that this unit did not change (`git diff 965059e` is empty for each): `blade_product_overflow_fail.cpp`, `blade_product_sum_overflow_fail.cpp`, `blade_set_full_wide_fail.cpp`, `blade_set_index_of_bad_sign_fail.cpp`, `blade_set_index_of_repeated_adjacent_fail.cpp`, `blade_set_index_of_repeated_mask_fail.cpp`, `blade_set_merge_repeated_in_second_empty_first_fail.cpp`, and fifteen `plan_*_fail.cpp`. A defect outside the unit (W9), reported and not fixed here; every source this unit added or changed is clean.
+9. `develop` has not moved since `b89b9ba` merged it (`ebdd06d`), so the P9 checks run on this branch's head as it is. (Superseded: `develop` moved to `eb20336` during the delta review; see "Delta-review fixes" below.)
+
+| Finding | Fix | Commits |
+| --- | --- | --- |
+| B1 (blind F1): four compile-fail tests found their literal in their own path | `galoot_add_compile_fail_test` stops configuring when MESSAGE or REQUIRE occurs in the source path (`galoot_check_literals_outside_path`), shown to fail by `tools.compile_fail_literal_in_path_rejects`; the tests require each compiler's words. Defect outside the unit (W9), fixed because the check catches it: `core.metric_like_no_generators`, `core.plan_not_metric_like`, `core.plan_map_not_metric_like` | `bf1ac75` |
+| B1b (blind F2): a double into a float layout is two errors | The intended error is the language's narrowing error; the second is the compiler's -Wconversion warning made an error on the same line. `core.mv_narrowing_float` requires both, and ONE_ERROR allows exactly those two | `bf1ac75`, `162cd96` |
+| B3 (blind F3) | two-lane scalar without == (ring_scalar true, Line made and read, not equality_comparable); `!is_convertible_v<T, Line<T>>`; `core.mv_one_value` ("1 == 6") | `14bff60` |
+| Blind F4 | `core.mv_scalar_without_default`, compiler wording, labeled | `14bff60` |
+| Blind F9 | (2^62 / 3)(3 / 2^62) == 1 | `14bff60` |
+| HCI H1 (F1) | constructor parameters a pack of T; narrowing says "from 'int' to 'double'" | `162cd96` (test), `ed8be5a` |
+| HCI H2, H3 (F2, F3), blind F10 | named layout rules; "layout" in every message; a fix after each semicolon | `294d265` (test), `3d8df77` |
+| HCI H4 (F4) | `scalar_type` | `7d46580` (test), `0b316df` |
+| HCI H5 (F5), blind F6, HCI F13, F14, blind F10 | comments say what is shown: braces against parentheses, the array probe, where Clang names aliases, a layout does not keep its algebra, printing through `coefficients`, bool, the forward declaration's comment | `b123788` |
+| Blind F7 | the defect comment says what was observed; the regression test writes every place; lesson 0065 corrected by a dated section; the knowledge-base note narrowed (`kb/cpp-shared-array-initializer`, `227c20f`, `ad3ae5b`) | `ed8be5a`, `11feaf6`, this record |
+| Blind F10, outcome count | "Four suppressions" in departure 9 above; the helper's comment line within 80 columns | this record, `bf1ac75` |
+
+Header changes after the review, for the delta review (decision 0094 item 3): `ed8be5a` (the storage base, its constructor's parameter list, the zero initializer's comment), `af447ae` (the storage base's template parameters: algebra, layout, and scalar in place of the `mv` type), `3d8df77` (the three layout checks, their members and messages), `0b316df` (`scalar_type`), and `b123788` (comments only: the head comment, `ring_scalar`, the forward declaration, `mv`, the K-value constructor, the count catch-all). `blade_set.hpp` did not change.
+
+Mutation after the fixes (`9b42298`, `docs/agent/records/mutations/0016-mv-a/survivors.md`): 36 mutants on gcc-debug and clang-debug in both modes; all killed by tests except `shared_zero_initializer` on clang-debug, which is equivalent there. `mv_alg_unconstrained` and `blades_unconstrained` are killed on both compilers by `core.mv_not_metric_like` and by `core.blade_set_blades_not_metric_like` and `core.blade_set_names_zero`.
+
+The diagnostics record was regenerated for the reviewed header (`b123788`); `summary.tsv` is unchanged.
+
+Deferred, with the unit that takes them (recorded, not changed):
+
+- Blind F2 (two errors for a double into a float layout): recorded as compiler behavior above; nothing in the library can remove the compiler's -Wconversion error.
+- Blind F5 (a copy from a class derived from `mv` reaches the count message), blind F8 (positional `get<0>` gives a deduction failure in internal terms): WU8b, with the conversions and the catch-alls for single arguments.
+- HCI F7 (the absent message's list of names for a computed layout), F8 (reference, const, and bool scalars), F10 (double braces and whole arrays): WU8b.
+- HCI F9 (a tag without `value`): the owner, or WU16 with the model tags.
+- HCI F11, F12: owner decisions (below).
+- HCI F13 and F14: commented now (`b123788`); WU9's mixed-algebra messages and WU15's `format` take the rest.
+- HCI F15 (GCC 16 drops `explicit` from an inherited constructor template whose `explicit(bool)` reads its own parameters): affects only classes derived from `mv`; with F6.
+- HCI F16 (commas between names in `blades`): WU4's parser, a later unit.
+- HCI F17: recorded as not recommended.
+- The plan's first usage snippet (section 4) puts `gc::get<"e23">(axis) = 2.0;` at namespace scope, where it is not a statement; inside a function it compiles. It matters when it becomes documentation (W12, WU16).
+
+Owner decisions, not implemented:
+
+1. HCI F6: named model classes deriving from `mv` (`struct Line : mv<rga3, line_layout, double> { using mv::mv; };`). Measured by the reading: GCC's line for the lossy assignment falls from 811 to 98 characters and `get`'s from 499 to 257; the cost is two types per layout (results of products are `mv`s and need a conversion into the named class), `multivector` accepting derived classes, and a workaround for GCC 16 dropping `explicit(bool)` from an inherited constructor template (F15).
+2. HCI F11: `has_blade<Line, "e14">` is false though the line holds the blade e14 in the other orientation; rename to say "this oriented name" (`has_name`), or keep the name and document it.
+3. HCI F12: whether `mv` is tuple-like, with a positional `get<0>` beside `get<"e41">`, and structured bindings; today `auto [all] = p;` binds the whole array.
+
+Checks at the end of the review fixes, at `9d6bb48` (build inputs those of `af447ae`; recorded in the commit after it): the seven presets from new, empty trees each built `all` and passed every test, gcc-debug 199 of 199, gcc-release 199 of 199, gcc-asan 191 of 191 (plan 0015's canary is not registered there), clang-debug 201 of 201, clang-release 201 of 201, clang-asan 201 of 201, lint 201 of 201 with clang-tidy clean over every built unit (no failed step in its log); `all_verify_interface_header_sets` and `format-check` passed on gcc-debug, clang-debug, and lint; `core.bare_compile` passed in each. The job pool had 23 of 23 slots free before and after. The delta review of the header changes listed above is pending.
+
+### Delta-review fixes (2026-11-01)
+
+The delta review (`docs/agent/records/reviews/2026-11-01-wu8a-delta.md`, merged at `d203322`) accepted the review fixes after one test-only fix.
+
+Correction, dated 2026-11-01 (D10): the review-fixes section above says the diagnostics record "was regenerated for the reviewed header (`b123788`)". The texts committed at `63513f1` were regenerated for `af447ae`, as the record's README says; `b123788` was the regeneration before it.
+
+| Finding | Fix | Commits |
+| --- | --- | --- |
+| D1 (blocks): the distinct storage base had no test that could fail | core.mv tests the expression `a == b` in a concept, `has_equality_with`, for a rigid(3) point against an R(4,0,0) point, a line against rigid(3)'s bivectors, and a line over double against one over float; the `equality_comparable_with` assertions stay as a record of the standard concept's answer | `b2edac9` (test-only) |
+| D2: the scalar's constraint in the template head | `names_a_line<without_default>` is false, `names_a_line<double>` and `<std::string>` true | `b2edac9` |
+| D3: decision 0150 named the superseded base | a dated addendum for `af447ae` | this record |
+| D4: the range message gave no fix | "...; use a layout whose blades are all in this algebra" | `067f53c` (test), `9f7ea99` |
+| D6: ONE_ERROR's comment overstated the check | "allows only error lines that hold one of those two texts; it does not count the lines" | `067f53c` |
+| D7: get at n = 9 | `get<"e19">`, `"e9"`, `"e123456789"` in R(9,0,0) | `b2edac9` |
+| D8: the rational sum's common-factor step | 1/2^62 + 1/2^62 = 1/2^61 | `b2edac9` |
+| D10 | the correction above | this record |
+
+Deferred or recorded as nits (not changed):
+
+- D5: GCC names the rule too, in its "evaluates to false" note after the masks, and the GCC side is untested (the mutant `repeat_rule_renamed` survives on GCC). A nit; the rule names are tested on Clang.
+- D9: the configure-time check finds a literal only when it lies wholly inside the source path; a literal straddling the path and the compiler's decoration, or naming an included header's path, would pass it. No present literal is of either kind (the reviewer's decoys fail all 103 compile-fail tests). A decoy run registered as a test would close it; later work.
+- D11: the K-value constructor copies each by-value parameter into the array; `std::move(values)...` would save one copy per coefficient for a scalar that allocates. When such a scalar has a user.
+- D12: the 22 untouched compile-fail sources with lint findings, as departure 8 above (W9, reported).
+
+Header change after the delta review, for a delta review (decision 0094 item 3): `9f7ea99`, the range message's text only.
+
+`develop` moved to `eb20336` (the run-log compaction, merged there at `3f6bf9e`) and is merged into this branch in the commit that carries this paragraph: `runs.tsv` and `test/CMakeLists.txt` merged without conflict, and `tools/runlog check` on the merged tree reports the one era matching the history, 1,727 kept rows present once, and no removed row present, so no `tools/runlog prune` was needed. This replaces departure 9 of the review fixes.
+
+P9 checks of the merged tree, at `cde1dee` (recorded in the commit after it; the build inputs are the same): the seven presets from new, empty trees each built `all` and passed every test, gcc-debug 201 of 201, gcc-release 201 of 201, gcc-asan 193 of 193 (plan 0015's canary is not registered there), clang-debug 203 of 203, clang-release 203 of 203, clang-asan 203 of 203, lint 203 of 203. The lint tree's build of `all` exited 0 with no failed step in its log (clang-tidy as errors), and its header sets and `format-check` exited 0, as did gcc-debug's and clang-debug's; each exit status was read directly after its command. The trace gate and the marker, golden, citation, regeneration, and include-scan gates exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `9f7ea99`'s message change is pending.

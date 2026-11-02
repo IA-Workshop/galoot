@@ -29,10 +29,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
+#include <type_traits>
 #include <utility>
 
 #include <galoot/core/assert.hpp>
 #include <galoot/core/bits.hpp>
+#include <galoot/core/metric.hpp>
 
 namespace galoot::core {
 
@@ -385,7 +387,7 @@ struct name_list {
   std::array<char, L> chars{};
 
   // Not explicit, so that a string literal can be written directly as the
-  // template argument, as in blades<4, "e41 e42 e43">.
+  // template argument, as in blades<rga3, "e41 e42 e43">.
   // A C array, so that L is deduced from the literal.
   // NOLINTNEXTLINE(*-avoid-c-arrays,*-explicit-constructor)
   consteval name_list(const char (&text)[L]) noexcept {
@@ -501,7 +503,7 @@ consteval auto make_blades() {
                 "blades: names such as e123 have one digit per index, so they "
                 "are read only for n up to 9, and a larger algebra takes "
                 "masks");
-  if constexpr (valid_generator_count<N>() && N <= max_compact_generators) {
+  if constexpr (N <= max_compact_generators) {
     constexpr NameError error = first_error(Names.text(), N);
     static_assert(error != NameError::no_names,
                   "blades: the list names no blade");
@@ -583,20 +585,24 @@ inline constexpr auto merge = detail::make_merge<A, B>();
 template <blade_set S, mask_t Mask>
 inline constexpr std::size_t index_of = detail::make_index_of<S, Mask>();
 
-/// The oriented blades named in Names, in the order written. Names are
-/// separated by spaces. "1" is the scalar; any other name is e followed by
-/// generator indices, one digit each, and stands for the product of those
-/// generators in the order written: the canonical blade of their mask times
-/// the sign of the permutation that sorts them. So in an algebra of four
-/// generators, blades<4, "e41 e23 e31"> holds -e14, +e23, and -e13.
+/// The oriented blades named in Names, in the order written, for the algebra
+/// of the tag Alg. Names are separated by spaces. "1" is the scalar; any
+/// other name is e followed by generator indices, one digit each, and stands
+/// for the product of those generators in the order written: the canonical
+/// blade of their mask times the sign of the permutation that sorts them. So
+/// in rigid(3), with the tag rga3, blades<rga3, "e41 e23 e31"> holds -e14,
+/// +e23, and -e13. Only the algebra's number of generators n is read; the set
+/// does not depend on the metric.
 ///
-/// Requires: 1 <= N <= 9, because each index is one digit; at least one
-/// name; each name 1 or e followed by digits from 1 to N, none repeated; and
-/// no blade named twice, in either order. Each is checked at compile time,
-/// with a message for the first name that breaks it.
-/// Guarantees: blades<N, Names>.size() is the number of names.
-template <std::size_t N, detail::name_list Names>
-inline constexpr auto blades = detail::make_blades<N, Names>();
+/// Requires: Alg is metric_like, or the variable does not match; n <= 9,
+/// because each index is one digit; at least one name; each name 1 or e
+/// followed by digits from 1 to n, none repeated; and no blade named twice,
+/// in either order. Each is checked at compile time, with a message for the
+/// first name that breaks it.
+/// Guarantees: blades<Alg, Names>.size() is the number of names.
+template <metric_like Alg, detail::name_list Names>
+inline constexpr auto blades = detail::make_blades<
+    std::remove_cvref_t<decltype(Alg::value)>::generator_count, Names>();
 
 } // namespace galoot::core
 

@@ -1,0 +1,13 @@
+first_user.cpp:122:30: error: no viable constructor or deduction guide for deduction of template arguments of 'blade_set'
+  122 |   using Named = gc::mv<rga3, "e41 e42 e43 e23 e31 e12", double>;
+      |                              ^
+../../../../../include/galoot/core/blade_set.hpp:69:8: note: candidate template ignored: could not match 'galoot::core::blade_set<K>' against 'const char *'
+   69 | struct blade_set {
+      |        ^
+../../../../../include/galoot/core/blade_set.hpp:69:8: note: implicit deduction guide declared as 'template <std::size_t K> blade_set(galoot::core::blade_set<K>) -> galoot::core::blade_set<K>'
+../../../../../include/galoot/core/blade_set.hpp:69:8: note: candidate template ignored: could not match 'std::array<oriented_blade, K>' against 'const char *'
+../../../../../include/galoot/core/blade_set.hpp:69:8: note: implicit deduction guide declared as 'template <std::size_t K> blade_set(std::array<oriented_blade, K>) -> galoot::core::blade_set<K>'
+first_user.cpp:123:9: error: unknown type name 'Named'
+  123 |   const Named s{};
+      |         ^
+2 errors generated.

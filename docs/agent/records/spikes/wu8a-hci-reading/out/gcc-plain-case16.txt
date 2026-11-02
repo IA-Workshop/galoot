@@ -1,0 +1,18 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:136:28: error: use of invalid variable template ‘blades<galoot::core::metric<4>, galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e2"}}>’
+  136 |   constexpr auto set = gc::blades<metric_type, "e1 e2">;
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+first_user.cpp:136:28: note: constraints not satisfied
+In file included from /usr/include/c++/16/format:52,
+                 from first_user.cpp:8:
+  • /usr/include/c++/16/span: In substitution of ‘template<class Alg, name_list<...auto...> Names>  requires  metric_like<Alg> constexpr const auto galoot::core::blades<Alg, Names> [with Alg = galoot::core::metric<4>; name_list<...auto...> Names = galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e2"}}]’:
+  • required from here
+    first_user.cpp:136:28:   
+  • required for the satisfaction of ‘metric_like<Alg>’ [with Alg = galoot::core::metric<4>]
+    ../../../../../include/galoot/core/metric.hpp:301:9:   
+      301 | concept metric_like =
+          |         ^~~~~~~~~~~
+  • error: ‘value’ is not a member of ‘galoot::core::metric<4>’
+    /usr/include/c++/16/span:472:47:
+      472 |         is_integral_v<remove_cvref_t<decltype(_Tp::value)>>
+          |                                               ^~~

@@ -1,0 +1,8 @@
+In file included from program.cpp:10:
+./mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+  526 |     static_assert(false, "get: the type stores this blade with the other "
+      |                   ^~~~~
+program.cpp:89:8: note: in instantiation of function template specialization 'galoot::core::get<detail::name_list<4>{{"e14"}}, Line &>' requested here
+   89 |   r += get<"e14">(l);
+      |        ^
+1 error generated.

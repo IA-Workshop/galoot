@@ -1,0 +1,5 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:127:55: error: type/value mismatch at argument 1 in template parameter list for ‘template<class Alg, name_list<...auto...> Names>  requires  metric_like<Alg> constexpr const auto galoot::core::blades<Alg, Names>’
+  127 |   constexpr auto counted = gc::blades<4, "e1 e2 e3 e4">;
+      |                                                       ^
+first_user.cpp:127:55: note:   expected a type, got ‘4’

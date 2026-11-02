@@ -1,0 +1,16 @@
+In file included from first_user.cpp:13:
+In file included from ../../../../../include/galoot/core.hpp:9:
+In file included from ../../../../../include/galoot/core/blade_product.hpp:43:
+../../../../../include/galoot/core/blade_set.hpp:512:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::bad_index': blades: after the e, a name lists generator indices, each a digit from 1 to 9
+  512 |     static_assert(error != NameError::bad_index,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../../../../include/galoot/core/blade_set.hpp:604:40: note: in instantiation of function template specialization 'galoot::core::detail::make_blades<4UL, detail::name_list<29>{{"e41, e42, e43, e23, e31, e12"}}>' requested here
+  604 | inline constexpr auto blades = detail::make_blades<
+      |                                        ^
+first_user.cpp:112:31: note: in instantiation of variable template specialization 'galoot::core::blades' requested here
+  112 |   constexpr auto commas = gc::blades<rga3, "e41, e42, e43, e23, e31, e12">;
+      |                               ^
+../../../../../include/galoot/core/blade_set.hpp:512:25: note: expression evaluates to '3 != 3'
+  512 |     static_assert(error != NameError::bad_index,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,5 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:92:18: error: conversion from ‘double’ to ‘galoot::core::detail::component<float, 0>’ {aka ‘float’} may change value [-Werror=float-conversion]
+   92 |   const FPoint s(d, 0, 0, 1);
+      |                  ^
+cc1plus: all warnings being treated as errors

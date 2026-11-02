@@ -1,0 +1,27 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ and ‘const Motor’)
+  103 |   r += (l == q) ? 1.0 : 0.0;
+      |         ~ ^~ ~
+      |         |    |
+      |         Line const Motor
+  • there are 2 candidates
+    program.cpp:103:11:
+      103 |   r += (l == q) ? 1.0 : 0.0;
+          |         ~~^~~~
+In file included from program.cpp:10:
+    • candidate 1: ‘constexpr bool galoot::core::detail::packed_storage<Multivector, T, Ts>::operator==(const galoot::core::detail::packed_storage<Multivector, T, Ts>&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>; T = double; Ts = {double, double, double, double, double, double, double, double}]’ (reversed)
+      mv_routes.hpp:203:32:
+        203 |   [[nodiscard]] constexpr bool operator==(const packed_storage& other) const
+            |                                ^~~~~~~~
+      • no known conversion for argument 1 from ‘Line’ to ‘const galoot::core::detail::packed_storage<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>, double, double, double, double, double, double, double, double, double>&’
+        mv_routes.hpp:203:65:
+          203 |   [[nodiscard]] constexpr bool operator==(const packed_storage& other) const
+              |                                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~
+    • candidate 2: ‘constexpr bool galoot::core::detail::packed_storage<Multivector, T, Ts>::operator==(const galoot::core::detail::packed_storage<Multivector, T, Ts>&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; T = double; Ts = {double, double, double, double, double, double}]’
+      mv_routes.hpp:203:32:
+        203 |   [[nodiscard]] constexpr bool operator==(const packed_storage& other) const
+            |                                ^~~~~~~~
+      • no known conversion for argument 1 from ‘const Motor’ to ‘const galoot::core::detail::packed_storage<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, double, double, double, double, double, double, double>&’
+        mv_routes.hpp:203:65:
+          203 |   [[nodiscard]] constexpr bool operator==(const packed_storage& other) const
+              |                                           ~~~~~~~~~~~~~~~~~~~~~~^~~~~

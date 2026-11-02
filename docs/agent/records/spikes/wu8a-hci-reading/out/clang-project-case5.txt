@@ -1,0 +1,4 @@
+first_user.cpp:92:18: error: implicit conversion loses floating-point precision: 'double' to 'component<float, 0UL>' (aka 'float') [-Werror,-Wimplicit-float-conversion]
+   92 |   const FPoint s(d, 0, 0, 1);
+      |                ~ ^
+1 error generated.

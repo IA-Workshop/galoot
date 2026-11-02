@@ -1,0 +1,8 @@
+first_user.cpp:84:26: error: non-constant-expression cannot be narrowed from type 'int' to 'component<double, 3UL>' (aka 'double') in initializer list [-Wc++11-narrowing]
+   84 |   const Point s{1, 2, 3, w};
+      |                          ^
+first_user.cpp:84:26: note: insert an explicit cast to silence this issue
+   84 |   const Point s{1, 2, 3, w};
+      |                          ^
+      |                          static_cast<double>( )
+1 error generated.

@@ -71,15 +71,23 @@ endfunction()
 
 # galoot_add_compile_fail_test(NAME <name> MODULE <module>
 #   COMPONENT <component> SOURCE <file> MESSAGE <literal>
-#   [REQUIRE <literal>...] [FORBID <literal>...])
+#   [REQUIRE <literal>...] [FORBID <literal>...] [ONE_ERROR])
 #
 # Registers the test <module>.<name>, which compiles <file> and passes only if
 # the compile fails, its output contains <literal> and every REQUIRE literal,
 # and it contains no FORBID literal, each matched as written
 # (test/expect_output.cmake). FORBID is for a misuse whose diagnostic must
-# leave out a message that would be false. The values are literals rather
-# than regular expressions, so that no test passes on a loose pattern such as
-# .*, and because diagnostics quote C++ source full of regex metacharacters.
+# leave out a message that would be false. With ONE_ERROR, every line of the
+# output that holds "error:" must also hold MESSAGE or a REQUIRE literal, so
+# that a misuse which raises a second, different error fails the test. The
+# values are literals rather than regular expressions, so that no test passes
+# on a loose pattern such as .*, and because diagnostics quote C++ source full
+# of regex metacharacters.
+#
+# Every diagnostic line starts with the path of the source, so a required
+# literal that occurs in that path would be found in the output of any
+# compile error at all. Configuring stops when MESSAGE or a REQUIRE literal
+# occurs in the absolute path of <file> (galoot_check_literals_outside_path).
 #
 # A GALOOT_ASSERT message reaches the diagnostic only through the source line
 # the compiler echoes, so an unrelated error on that line would show it too;
@@ -100,8 +108,23 @@ endfunction()
 # way would compile. Each test names its own object, so that no two write one
 # file; the compiler writes it only if the source compiles, which fails the
 # test.
+# galoot_check_literals_outside_path(<test name> <source path> <literal>...)
+#
+# Stops configuring with a message naming the literal when one of the
+# literals occurs in the source path.
+function(galoot_check_literals_outside_path name source)
+  foreach(literal IN LISTS ARGN)
+    string(FIND "${source}" "${literal}" at)
+    if(NOT at EQUAL -1)
+      message(FATAL_ERROR "${name}: the required literal '${literal}' "
+        "occurs in the source path ${source}, so the output of any compile "
+        "error would hold it; rename the file or require another literal")
+    endif()
+  endforeach()
+endfunction()
+
 function(galoot_add_compile_fail_test)
-  cmake_parse_arguments(PARSE_ARGV 0 arg ""
+  cmake_parse_arguments(PARSE_ARGV 0 arg "ONE_ERROR"
     "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE;FORBID")
   if(arg_MESSAGE MATCHES ";")
     message(FATAL_ERROR "galoot_add_compile_fail_test(${arg_NAME}): MESSAGE "
@@ -112,11 +135,17 @@ function(galoot_add_compile_fail_test)
   if(arg_FORBID)
     set(forbid FORBID ${arg_FORBID})
   endif()
+  set(only "")
+  if(arg_ONE_ERROR)
+    set(only ONLY "error:")
+  endif()
   galoot_compile_command(compile)
   cmake_path(ABSOLUTE_PATH arg_SOURCE OUTPUT_VARIABLE source)
+  galoot_check_literals_outside_path(${arg_MODULE}.${arg_NAME} "${source}"
+    "${arg_MESSAGE}" ${arg_REQUIRE})
   add_test(NAME ${arg_MODULE}.${arg_NAME}
     COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/test/expect_output.cmake
-      -- 1 ${arg_MESSAGE} ${arg_REQUIRE} ${forbid}
+      -- 1 ${only} ${arg_MESSAGE} ${arg_REQUIRE} ${forbid}
       -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
         -o ${arg_MODULE}_${arg_NAME}_compile_fail.o -c ${source}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

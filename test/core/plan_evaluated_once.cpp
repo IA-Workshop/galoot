@@ -30,10 +30,10 @@ struct r6 {
   static constexpr auto value = core::R<6, 0, 0>();
 };
 
-constexpr auto point = core::blades<4, "e1 e2 e3 e4">;
-constexpr auto line = core::blades<4, "e41 e42 e43 e23 e31 e12">;
-constexpr auto plane = core::blades<4, "e423 e431 e412 e321">;
-constexpr auto motor = core::blades<4, "1 e41 e42 e43 e23 e31 e12 e1234">;
+constexpr auto point = core::blades<rga3, "e1 e2 e3 e4">;
+constexpr auto line = core::blades<rga3, "e41 e42 e43 e23 e31 e12">;
+constexpr auto plane = core::blades<rga3, "e423 e431 e412 e321">;
+constexpr auto motor = core::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">;
 
 // 8 x 8 pairs less the 4 x 4 whose blades both hold e4.
 constexpr const auto& motor_motor =

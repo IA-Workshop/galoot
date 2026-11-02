@@ -155,6 +155,25 @@ add_test(NAME tests.compile_fail_flags_rejects
 set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
   PROPERTIES LABELS "tests;tests.compile_fail")
 
+# tools.compile_fail_literal_in_path_*: a compile-fail test whose required
+# literal occurs in its own source path stops configuring, since any compile
+# error would show the literal; one outside the path passes.
+set(literal_in_path_check
+  ${CMAKE_COMMAND} -DLITERAL=narrow -DSOURCE=/src/core/mv_narrowing_fail.cpp
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/literal_in_path_check.cmake)
+add_test(NAME tools.compile_fail_literal_in_path_rejects
+  COMMAND ${expect_output} 1
+    "fixture: the required literal 'narrow' occurs in the source path"
+    -- ${literal_in_path_check})
+add_test(NAME tools.compile_fail_literal_in_path_accepts
+  COMMAND ${expect_output} 0 "the literal is outside the path"
+    -- ${CMAKE_COMMAND} -DLITERAL=narrow
+      -DSOURCE=/src/core/mv_int_variable_fail.cpp
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/literal_in_path_check.cmake)
+set_tests_properties(tools.compile_fail_literal_in_path_rejects
+  tools.compile_fail_literal_in_path_accepts PROPERTIES
+  LABELS "tools;tools.compile_fail")
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
 add_test(NAME core.bare_compile
@@ -251,6 +270,14 @@ galoot_add_compile_fail_test(NAME metric_type_width MODULE core COMPONENT metric
   MESSAGE "metric: n is larger than the number of bits in a blade mask"
   REQUIRE "static assertion failed")
 
+# How each compiler says that a type does not meet metric_like. The concept's
+# name alone would not do: it occurs in the paths of the files that test it.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(not_metric_like "required for the satisfaction of ‘metric_like<Alg>’")
+else()
+  set(not_metric_like "does not satisfy 'metric_like'")
+endif()
+
 # core.metric_like_no_generators: a tag whose metric has no generators fails
 # metric_like, and the diagnostic names the generator count, not a later
 # requirement that would also fail.
@@ -258,7 +285,7 @@ galoot_add_compile_fail_test(NAME metric_like_no_generators
   MODULE core COMPONENT metric
   SOURCE core/metric_like_no_generators_fail.cpp
   MESSAGE "generator_count"
-  REQUIRE "metric_like")
+  REQUIRE "${not_metric_like}")
 
 # tools.expect_output_forbid: a forbidden literal in the output fails the
 # check, which WILL_FAIL turns into a pass; its twin passes because the
@@ -330,7 +357,21 @@ blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
 blade_set_rejects(names_above_9
   "blades: names such as e123 have one digit per index, so they are read only for n up to 9, and a larger algebra takes masks"
   FORBID "${repeated_generator}")
-blade_set_rejects(names_zero "${no_generators}" FORBID "${index_above_n}")
+# blades takes an algebra tag, so a type that is not one, and a tag whose
+# metric has no generators, fail its metric_like constraint before a name is
+# read. The function that parses the names carries the concept's argument
+# too, so the tests forbid its name, which would point the user at internal
+# code.
+galoot_add_compile_fail_test(NAME blade_set_blades_not_metric_like
+  MODULE core COMPONENT blade_set
+  SOURCE core/blade_set_blades_not_metric_like_fail.cpp
+  MESSAGE "${not_metric_like}"
+  FORBID "make_blades")
+galoot_add_compile_fail_test(NAME blade_set_names_zero
+  MODULE core COMPONENT blade_set
+  SOURCE core/blade_set_names_zero_fail.cpp
+  MESSAGE "${not_metric_like}"
+  FORBID "make_blades" "${index_above_n}")
 blade_set_rejects(full_zero "${no_generators}")
 blade_set_rejects(full_wide
   "blade_set: n is larger than the number of bits in a blade mask")
@@ -740,12 +781,12 @@ set_tests_properties(tools.plan_cost_model_passes
 galoot_add_compile_fail_test(NAME plan_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_not_metric_like_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_product_plan")
 galoot_add_compile_fail_test(NAME plan_map_not_metric_like
   MODULE core COMPONENT plan
   SOURCE core/plan_map_not_metric_like_fail.cpp
-  MESSAGE "metric_like"
+  MESSAGE "${not_metric_like}"
   FORBID "make_unary_map")
 
 # tools.measure_record: the fields of a cost row, and the reader's `--` for
@@ -793,6 +834,206 @@ target_sources(galoot_golden INTERFACE
     FILES reference/golden.hpp)
 target_compile_features(galoot_golden INTERFACE cxx_std_23)
 set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+
+# The test-only rational scalar: an exact scalar whose values need not be
+# integers, which tests use as an oracle. It belongs to the tests, not the
+# library, so it does not link galoot::core. A test that needs it links this
+# target and includes <support/rational.hpp>; the header also compiles on its
+# own, in all_verify_interface_header_sets.
+add_library(galoot_test_support INTERFACE)
+target_sources(galoot_test_support INTERFACE
+  FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+    FILES support/rational.hpp)
+target_compile_features(galoot_test_support INTERFACE cxx_std_23)
+set_property(TARGET galoot_test_support
+  PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+
+# support.rational: hand values, the field identities on seeded random
+# fractions, equality against cross-multiplication, and results at the bounds
+# of std::int64_t.
+galoot_add_test(MODULE support COMPONENT rational)
+target_link_libraries(support_rational_test PRIVATE galoot_test_support)
+
+# support.rational_rejects_<case>: a result that does not fit, a zero
+# denominator, or a division by zero aborts at run time with its message, in
+# every preset, since the rational checks whatever the checking mode.
+add_executable(support_rational_overflow_fail support/rational_overflow_fail.cpp)
+target_link_libraries(support_rational_overflow_fail PRIVATE
+  galoot_test_support)
+set(rational_does_not_fit "rational: a result does not fit std::int64_t")
+# add_far_above's sum, wrapped, would be -2, which no later check catches;
+# the others would wrap to values that the constructor's own check rejects.
+foreach(case IN ITEMS add_above add_far_above subtract_below multiply_above
+    numerator_min)
+  add_test(NAME support.rational_rejects_${case}
+    COMMAND ${expect_output} "Subprocess aborted" ${rational_does_not_fit}
+      -- $<TARGET_FILE:support_rational_overflow_fail> ${case})
+  set_tests_properties(support.rational_rejects_${case} PROPERTIES
+    LABELS "support;support.rational")
+endforeach()
+add_test(NAME support.rational_rejects_zero_denominator
+  COMMAND ${expect_output} "Subprocess aborted"
+    "rational: the denominator is zero"
+    -- $<TARGET_FILE:support_rational_overflow_fail> zero_denominator)
+add_test(NAME support.rational_rejects_divide_by_zero
+  COMMAND ${expect_output} "Subprocess aborted" "rational: division by zero"
+    -- $<TARGET_FILE:support_rational_overflow_fail> divide_by_zero)
+set_tests_properties(support.rational_rejects_zero_denominator
+  support.rational_rejects_divide_by_zero PROPERTIES
+  LABELS "support;support.rational")
+
+# support.rational_consteval_<operation>: the same overflow ends a constant
+# evaluation, and the diagnostic shows the message through the line of the
+# failing call, which only that call names.
+foreach(operation IN ITEMS add multiply)
+  galoot_add_compile_fail_test(NAME rational_consteval_${operation}
+    MODULE support COMPONENT rational
+    SOURCE support/rational_consteval_${operation}_fail.cpp
+    MESSAGE "${rational_does_not_fit}"
+    REQUIRE rational_failed)
+endforeach()
+
+# core.mv: the multivector type, its scalar concepts, construction,
+# equality, and the checks of its layout, over the five scalar types it must
+# serve, the test rational among them.
+galoot_add_test(MODULE core COMPONENT mv)
+target_link_libraries(core_mv_test PRIVATE galoot_test_support)
+
+# core.mv_<case>: each misuse of the type fails to compile with one error
+# that carries its literal message, and no other message of the type. The
+# layout checks are tried on sets written out by hand, which no constructor
+# of blade sets would build.
+function(mv_rejects case message)
+  galoot_add_compile_fail_test(NAME mv_${case}
+    MODULE core COMPONENT mv
+    SOURCE core/mv_${case}_fail.cpp
+    MESSAGE "${message}"
+    ${ARGN})
+endfunction()
+# A message's ; would split it into two list items, so it is held as
+# character 1, which expect_output.cmake reads as a ;.
+string(ASCII 1 semicolon)
+set(mv_beyond_n "mv: the layout names a generator that the algebra does not have${semicolon} use a layout whose blades are all in this algebra")
+set(mv_bad_sign "mv: the layout holds a sign other than +1 or -1${semicolon} give each blade of a layout written out by hand the sign +1 or -1")
+set(mv_repeated "mv: the layout holds one blade twice, perhaps in both orientations${semicolon} list each blade once")
+# Clang prints the condition of a failed static_assert before its message;
+# each layout check reads a member named for its rule, so that the condition
+# Clang prints is the rule and not the layout's masks.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(mv_range_rule "due to requirement 'layout_names_only_generators_of_the_algebra'")
+  set(mv_sign_rule "due to requirement 'layout_signs_are_plus_or_minus_one'")
+  set(mv_repeat_rule "due to requirement 'layout_holds_each_blade_once'")
+else()
+  set(mv_range_rule "")
+  set(mv_sign_rule "")
+  set(mv_repeat_rule "")
+endif()
+set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient")
+set(mv_count
+  "mv: give one value for each component, in the order the layout lists them")
+foreach(case IN ITEMS beyond_n beyond_n_31)
+  mv_rejects(${case} "${mv_beyond_n}" REQUIRE ${mv_range_rule} ONE_ERROR
+    FORBID "${mv_bad_sign}" "${mv_repeated}" "blade set")
+endforeach()
+foreach(case IN ITEMS bad_sign bad_sign_second)
+  mv_rejects(${case} "${mv_bad_sign}" REQUIRE ${mv_sign_rule} ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_repeated}" "blade set")
+endforeach()
+foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
+    repeated_after)
+  mv_rejects(${case} "${mv_repeated}" REQUIRE ${mv_repeat_rule} ONE_ERROR
+    FORBID "${mv_beyond_n}" "${mv_bad_sign}" "blade set")
+endforeach()
+mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR)
+mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
+mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
+mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
+mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
+mv_rejects(one_value "${mv_count}" REQUIRE "1 == 6" ONE_ERROR)
+# An algebra that is not one fails the class template's constraint, so the
+# diagnostic is the compiler's account of metric_like.
+mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
+# These record the compiler's own wording: narrowing in brace initialization,
+# and an implicit conversion that no constructor allows ("conversion from").
+# A new compiler may change them.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(narrowing_from_int
+    "narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]")
+  set(narrowing_from_double
+    "narrowing conversion of ‘w’ from ‘double’ to ‘float’ [-Werror=narrowing]")
+  set(float_conversion
+    "conversion from ‘double’ to ‘float’ may change value [-Werror=float-conversion]")
+else()
+  set(narrowing_from_int
+    "cannot be narrowed from type 'int' to 'double' in initializer list")
+  set(narrowing_from_double
+    "cannot be narrowed from type 'double' to 'float' in initializer list")
+  set(float_conversion
+    "loses floating-point precision: 'double' to 'float' [-Werror,-Wimplicit-float-conversion]")
+endif()
+# The constructor's parameters are the scalar type itself, so the messages
+# name it and no helper of the library.
+mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR FORBID "component<")
+# A double variable into a float place is also a -Wconversion error on both
+# compilers under the project's flags, on the same line: the language's
+# narrowing error is the one the type promises, the second is the compiler's
+# warning made an error. ONE_ERROR allows only error lines that hold one of
+# those two texts; it does not count the lines.
+mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
+  "${float_conversion}" ONE_ERROR FORBID "component<")
+mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
+# A scalar that is not semiregular fails mv's template head, so the message
+# is the compiler's account of the concept (and, on Clang, a second error
+# from inside <concepts>).
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(not_semiregular "required for the satisfaction of ‘semiregular<T>’")
+else()
+  set(not_semiregular "does not satisfy 'semiregular'")
+endif()
+mv_rejects(scalar_without_default "${not_semiregular}")
+# core.mv_get_<case>: get rejects each kind of name it cannot read with
+# that kind's message alone: never another kind's, nor the name parser's of
+# blades. A message's ; is held as character 1, as for the layout messages.
+set(mv_get_messages
+  "get: names have one digit per index, so they are read only for n up to 9${semicolon} reach the coefficient by its position"
+  "get: give one blade name"
+  "get: a name is 1 or e followed by generator indices, as in e41"
+  "get: the name lists one generator twice${semicolon} a blade names each generator once"
+  "get: the name has an index above n, the number of generators"
+  "get: the type has no blade of this name${semicolon} its layout lists the names it holds"
+  "get: the type stores this blade with the other orientation${semicolon} use the name its layout gives it and negate the value")
+function(mv_get_rejects case message)
+  set(others ${mv_get_messages})
+  list(REMOVE_ITEM others "${message}")
+  list(LENGTH mv_get_messages all)
+  list(LENGTH others rest)
+  math(EXPR removed "${all} - ${rest}")
+  if(NOT removed EQUAL 1)
+    message(FATAL_ERROR "mv_get_rejects(${case}): '${message}' is not one "
+      "of the messages of get")
+  endif()
+  mv_rejects(get_${case} "${message}" ONE_ERROR FORBID ${others} "blades:")
+endfunction()
+list(GET mv_get_messages 0 mv_get_wide)
+list(GET mv_get_messages 1 mv_get_one_name)
+list(GET mv_get_messages 2 mv_get_not_a_name)
+list(GET mv_get_messages 3 mv_get_repeated)
+list(GET mv_get_messages 4 mv_get_above_n)
+list(GET mv_get_messages 5 mv_get_absent)
+list(GET mv_get_messages 6 mv_get_opposite)
+mv_get_rejects(wide_algebra "${mv_get_wide}")
+mv_get_rejects(two_names "${mv_get_one_name}")
+mv_get_rejects(not_a_name "${mv_get_not_a_name}")
+mv_get_rejects(index_zero "${mv_get_not_a_name}")
+mv_get_rejects(repeated_generator "${mv_get_repeated}")
+mv_get_rejects(above_n "${mv_get_above_n}")
+mv_get_rejects(absent "${mv_get_absent}")
+mv_get_rejects(opposite "${mv_get_opposite}")
+
+# A file with a second, unrelated error fails a one-error test, so the test
+# above can fail; WILL_FAIL turns that failure into a pass.
+mv_rejects(two_errors "${mv_count}" ONE_ERROR)
+set_tests_properties(core.mv_two_errors PROPERTIES WILL_FAIL ON)
 
 # reference.golden: the committed golden.hpp is byte for byte what golden.py
 # writes now, so a hand edit, or a header left stale after a change to the

@@ -1,0 +1,11 @@
+first_user.cpp:173:17: error: type 'double' cannot be narrowed to 'component<int, 0UL>' (aka 'int') in initializer list [-Wc++11-narrowing]
+  173 |   const ILine s{0.5, 0, 0, 0, 0, 0};
+      |                 ^~~
+first_user.cpp:173:17: note: insert an explicit cast to silence this issue
+  173 |   const ILine s{0.5, 0, 0, 0, 0, 0};
+      |                 ^~~
+      |                 static_cast<int>( )
+first_user.cpp:173:17: error: implicit conversion from 'double' to 'component<int, 0UL>' (aka 'int') changes value from 0.5 to 0 [-Werror,-Wliteral-conversion]
+  173 |   const ILine s{0.5, 0, 0, 0, 0, 0};
+      |               ~ ^~~
+2 errors generated.

@@ -1,0 +1,4 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:84:26: warning: narrowing conversion of ‘w’ from ‘int’ to ‘galoot::core::detail::component<double, 3>’ {aka ‘double’} [-Wnarrowing]
+   84 |   const Point s{1, 2, 3, w};
+      |                          ^

@@ -33,3 +33,36 @@ For the constructor itself (plan 0016, planning probe 2):
 - Conversions between blade sets become constructors of the target (decision 0155), so `Motor{line}`, `Motor(line)`, and `static_cast<Motor>(line)` all work; with the aggregate only the last two did.
 - PERFORMANCE P5 still says "Values are trivially copyable aggregates (STYLE S8)". That text is not covered by this ruling and is not edited; plan 0016 asks the owner to ratify "trivially copyable" in its place.
 - Plan 0016's tests E1 to E3 change accordingly.
+
+## Implementation, 2026-11-01 (WU8a)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8a of plan 0016.
+
+1. The checks of the layout, in `mv`'s body, each a `static_assert` with a literal message, each reading a variable template evaluated once for each set (and, for the range, each number of generators) that a program uses:
+   - every blade names only e1 to en (`detail::blades_in_algebra<n, Blades>`, through `plan.hpp`'s `all_in_algebra`): "mv: the blade set names a generator beyond e_n";
+   - every sign is +1 or -1 (`detail::signs_valid<Blades>`, the variable `index_of` already reads): "mv: the blade set holds a sign other than +1 or -1";
+   - no mask appears twice, in either orientation, by the direct comparison of every pair (`detail::distinct_masks<Blades>`, O(K²) steps): "mv: the blade set holds one blade twice, perhaps in both orientations".
+
+   The canonical-order fast path stays unbuilt (plan 0016 reading 16); the measured limit is in decision 0156.
+2. The storage base is `detail::coefficient_storage<Multivector, T, std::index_sequence<I...>>`, whose first parameter is the multivector type itself. Two multivector types with the same scalar and number of blades would otherwise share the base, and its `==` would compare a Line with any other six-blade type of any algebra. With the type in the base, values of different layouts, algebras, or scalars do not compare, as plan 0016 reading 13 requires.
+3. `==` is written out (`coefficients == other.coefficients`) and constrained by `std::equality_comparable<T>`, rather than defaulted. With a defaulted body, GCC 16.2.1 failed to compile `std::equality_comparable<mv<..., T>>` for a scalar without `==` (inside `std::array`'s `==`), where the plan wants a multivector of such a scalar to exist without `==`.
+4. The zero initializer is written once per place, `coefficients{zero_at(I)...}`, not `coefficients{}`: GCC 16.2.1 miscompiles the latter after a constant evaluation in the same translation unit writes into a zero value of the type (lesson 0065; the reproducer, which needs no Galoot code, is under `docs/agent/records/spikes/gcc-shared-array-initializer/`).
+5. Members: `algebra_type`, `layout`, and `component_count` (the last named so that Clang prints "3 == 6" and not the layout). `scalar_type` has no caller in WU8a and is left for the part that needs it (STYLE S16).
+6. The count catch-all is constrained to any number of values other than none, the component count, and a single multivector, so that copies and, in WU8b, conversions are not caught.
+
+## Review fixes, 2026-11-01 (WU8a)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, after the W5 blind review and the hci-expert reading of WU8a. They change items 1, 2, 4, and 5 of the implementation section above:
+
+1. The storage base is `detail::coefficient_storage<Multivector, T, Ts...>`, with Ts the scalar type once per component (built by `detail::storage_of` from an index pack through `template <std::size_t> using same = T;`). Its constructor's parameters are then T itself, so a narrowing error names the scalar ("from 'int' to 'double'") and no helper of the library. The zero initializer is `coefficients{Ts{}...}`, still one initializer per place.
+2. The three layout checks read private static members named for their rules (`layout_names_only_generators_of_the_algebra`, `layout_signs_are_plus_or_minus_one`, `layout_holds_each_blade_once`), so that Clang's "due to requirement" names the rule instead of printing the layout's masks. Their messages say "layout" and give a fix after a semicolon:
+   - "mv: the layout names a generator that the algebra does not have; a layout written for a larger algebra cannot be used here";
+   - "mv: the layout holds a sign other than +1 or -1; give each blade of a layout written out by hand the sign +1 or -1";
+   - "mv: the layout holds one blade twice, perhaps in both orientations; list each blade once".
+3. `scalar_type` is provided: the tests' helpers use it, which is its present caller.
+4. `ring_scalar<bool>` stays true and is documented: bool meets the requirements through integer promotion though its + is not a ring's. Rejecting it would need a special case and a message that the scalar message does not fit.
+5. A scalar that is not `std::semiregular` is still rejected by `mv`'s template head with the compiler's account of the concept (`core.mv_scalar_without_default` records each compiler's wording). Constraining by a weaker concept and asserting `std::semiregular` in the body is the alternative the blind review names; it was not tried here, because the base class is formed from T before the body's assertions are read, so a reference scalar would likely fail there first (inferred). It is left for WU8b with the hci reading's F8 (references, const, and bool).
+
+### Addendum, 2026-11-01: the storage base's parameters (`af447ae`)
+
+Item 1 of the review fixes above names the base `detail::coefficient_storage<Multivector, T, Ts...>`. At `af447ae` its first parameter, the multivector type, was replaced by the multivector's algebra and layout: the base is `detail::coefficient_storage<Alg, Blades, T, Ts...>`, built by `detail::storage_of<Alg, Blades, T>`. Reason: clang-tidy's `bugprone-crtp-constructor-accessibility` read a base whose first parameter is the derived class as a CRTP base with public constructors, which the inherited constructors need. The parameters still differ for every multivector type, so no two types share a base and none compares with another through it; the test that `a == b` is not a valid expression across algebras, layouts, and scalars is in core.mv (`b2edac9`). The text above is kept as written.

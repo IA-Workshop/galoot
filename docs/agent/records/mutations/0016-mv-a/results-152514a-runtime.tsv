@@ -1,0 +1,57 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+no_range_check	gcc-debug	runtime	0	8	killed	core.mv_beyond_n,core.mv_beyond_n_31	-	-	-	-
+no_range_check	clang-debug	runtime	0	8	killed	core.mv_beyond_n,core.mv_beyond_n_31	-	-	-	-
+no_sign_check	gcc-debug	runtime	0	8	killed	core.mv_bad_sign,core.mv_bad_sign_second	-	-	-	-
+no_sign_check	clang-debug	runtime	0	8	killed	core.mv_bad_sign,core.mv_bad_sign_second	-	-	-	-
+no_repeat_check	gcc-debug	runtime	0	8	killed	core.mv_repeated_mask,core.mv_repeated_orientations,core.mv_repeated_apart,core.mv_repeated_after	-	-	-	-
+no_repeat_check	clang-debug	runtime	0	8	killed	core.mv_repeated_mask,core.mv_repeated_orientations,core.mv_repeated_apart,core.mv_repeated_after	-	-	-	-
+no_scalar_check	gcc-debug	runtime	0	8	killed	core.mv_not_ring_scalar,core.mv_scalar_without_multiplication	-	-	-	-
+no_scalar_check	clang-debug	runtime	0	8	killed	core.mv_not_ring_scalar,core.mv_scalar_without_multiplication	-	-	-	-
+range_ignores_algebra	gcc-debug	runtime	0	8	killed	core.mv_beyond_n,core.mv_beyond_n_31	-	-	-	-
+range_ignores_algebra	clang-debug	runtime	0	8	killed	core.mv_beyond_n,core.mv_beyond_n_31	-	-	-	-
+repeat_scan_two_on	gcc-debug	runtime	0	8	killed	core.mv_repeated_mask,core.mv_repeated_orientations	-	-	-	-
+repeat_scan_two_on	clang-debug	runtime	0	8	killed	core.mv_repeated_mask,core.mv_repeated_orientations	-	-	-	-
+repeat_compares_orientation	gcc-debug	runtime	0	8	killed	core.mv_repeated_orientations	-	-	-	-
+repeat_compares_orientation	clang-debug	runtime	0	8	killed	core.mv_repeated_orientations	-	-	-	-
+ring_scalar_no_unary_minus	gcc-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+ring_scalar_no_unary_minus	clang-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+exact_scalar_ignores_limits	gcc-debug	runtime	0	8	killed	core.mv	-	-	The scalar concepts accept the types that meet their requirements	-
+exact_scalar_ignores_limits	clang-debug	runtime	0	8	killed	core.mv	-	-	The scalar concepts accept the types that meet their requirements	-
+multivector_keeps_reference	gcc-debug	runtime	1	-	killed	-	mv.hpp:225	mv_test.cpp:11,mv_test.cpp:12,mv_test.cpp:27,mv_test.cpp:29,mv_test.cpp:596,mv_test.cpp:597,mv_test.cpp:602,mv_test.cpp:608,mv_test.cpp:609,mv_test.cpp:620,mv_test.cpp:633,mv_test.cpp:636	-	test/core/mv_test.cpp:672:13: error: no matching function for call to ‘get<"e23">({anonymous}::Line<double>&)’
+multivector_keeps_reference	clang-debug	runtime	1	-	killed	-	mv.hpp:225	mv_test.cpp:596,mv_test.cpp:597,mv_test.cpp:602,mv_test.cpp:608,mv_test.cpp:609,mv_test.cpp:620,mv_test.cpp:633,mv_test.cpp:636,mv_test.cpp:637,mv_test.cpp:638,mv_test.cpp:672,mv_test.cpp:674	-	test/core/mv_test.cpp:672:3: error: no matching function for call to 'get'
+no_default_initializer	gcc-debug	runtime	0	8	killed	core.mv,core.mv_too_few,core.mv_one_too_few,core.mv_too_many	-	-	mv is zero by default<std::int64_t> | mv is zero by default<float> | mv is zero by default<double>	-
+no_default_initializer	clang-debug	runtime	0	8	killed	core.mv,core.mv_too_few,core.mv_one_too_few,core.mv_too_many	-	-	mv is zero by default<std::int64_t> | mv is zero by default<float> | mv is zero by default<double>	-
+shared_zero_initializer	gcc-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+shared_zero_initializer	clang-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+one_value_implicit	gcc-debug	runtime	0	8	killed	core.mv_scalar_implicit	-	-	-	-
+one_value_implicit	clang-debug	runtime	0	8	killed	core.mv_scalar_implicit	-	-	-	-
+equality_skips_last	gcc-debug	runtime	0	8	killed	core.mv	-	-	mv equality compares every coefficient<std::int64_t> | mv equality compares every coefficient<rational> | mv equality compares every coefficient<float> | mv equality compares every coefficient<double> | mv equality compares every coefficient<std::complex<double>>	-
+equality_skips_last	clang-debug	runtime	0	8	killed	core.mv	-	-	mv equality compares every coefficient<std::int64_t> | mv equality compares every coefficient<rational> | mv equality compares every coefficient<float> | mv equality compares every coefficient<double> | mv equality compares every coefficient<std::complex<double>>	-
+count_accepts_one_short	gcc-debug	runtime	0	8	killed	core.mv_too_few,core.mv_one_too_few,core.mv_too_many	-	-	-	-
+count_accepts_one_short	clang-debug	runtime	0	8	killed	core.mv_too_few,core.mv_one_too_few,core.mv_too_many	-	-	-	-
+get_ignores_sign	gcc-debug	runtime	0	8	killed	core.mv_get_opposite	-	-	-	-
+get_ignores_sign	clang-debug	runtime	0	8	killed	core.mv_get_opposite	-	-	-	-
+get_orientation_as_absent	gcc-debug	runtime	0	8	killed	core.mv_get_opposite	-	-	-	-
+get_orientation_as_absent	clang-debug	runtime	0	8	killed	core.mv_get_opposite	-	-	-	-
+get_one_place_off	gcc-debug	runtime	0	8	killed	core.mv	-	-	get reaches the coefficient of each oriented name<std::int64_t> | get reaches the coefficient of each oriented name<rational> | get reaches the coefficient of each oriented name<float> | get reaches the coefficient of each oriented name<double> | get reaches the coefficient of each oriented name<std::complex<double>> | get reads and writes a line at run time	-
+get_one_place_off	clang-debug	runtime	0	8	killed	core.mv	-	-	get reaches the coefficient of each oriented name<std::int64_t> | get reaches the coefficient of each oriented name<rational> | get reaches the coefficient of each oriented name<float> | get reaches the coefficient of each oriented name<double> | get reaches the coefficient of each oriented name<std::complex<double>> | get reads and writes a line at run time	-
+has_blade_errors_on_invalid_name	gcc-debug	runtime	1	-	killed	-	-	mv_test.cpp:24,mv_test.cpp:27	-	include/galoot/core/mv.hpp:276:21: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+has_blade_errors_on_invalid_name	clang-debug	runtime	1	-	killed	-	-	mv_test.cpp:27,mv_test.cpp:696,mv_test.cpp:697	-	include/galoot/core/mv.hpp:293:30: error: constexpr variable 'name_lookup_v<galoot::core::mv<(anonymous namespace)::rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double
+absent_message_lost	gcc-debug	runtime	0	8	killed	core.mv_get_absent	-	-	-	-
+absent_message_lost	clang-debug	runtime	0	8	killed	core.mv_get_absent	-	-	-	-
+blades_fixed_four	gcc-debug	runtime	1	-	killed	-	blade_set.hpp:515,mv.hpp:375	blade_set_test.cpp:24,blade_set_test.cpp:507,blade_set_test.cpp:675,blade_set_test.cpp:676,blade_set_test.cpp:678,blade_set_test.cpp:692,blade_set_test.cpp:693,blade_set_test.cpp:694,blade_set_test.cpp:695,blade_set_test.cpp:696,mv_test.cpp:25,mv_test.cpp:27	-	include/galoot/core/blade_set.hpp:515:25: error: static assertion failed: blades: a name has an index above n, the number of generators
+blades_fixed_four	clang-debug	runtime	1	-	killed	-	blade_set.hpp:515,mv.hpp:375	blade_set_test.cpp:24,blade_set_test.cpp:507,blade_set_test.cpp:675,blade_set_test.cpp:676,blade_set_test.cpp:678,blade_set_test.cpp:692,blade_set_test.cpp:693,blade_set_test.cpp:694,blade_set_test.cpp:695,blade_set_test.cpp:696,mv_test.cpp:25,mv_test.cpp:27	-	include/galoot/core/blade_set.hpp:515:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::index_above_n': blades: a name has an index above n, the number o
+sign_zero_accepted	gcc-debug	runtime	0	8	killed	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict,core.blade_set_merge_bad_sign_second_shared,core.plan_bad_sign,core.plan_map_bad_sign,core.mv_bad_sign	-	-	-	-
+sign_zero_accepted	clang-debug	runtime	0	8	killed	core.blade_set_merge_bad_sign,core.blade_set_merge_bad_sign_second,core.blade_set_merge_bad_sign_no_conflict,core.blade_set_merge_bad_sign_second_shared,core.plan_bad_sign,core.plan_map_bad_sign,core.mv_bad_sign	-	-	-	-
+rational_not_normalized	gcc-debug	runtime	0	8	killed	support.rational	-	-	rational gives the hand values in lowest terms | rational satisfies the field identities on random fractions | rational equality agrees with cross-multiplication	-
+rational_not_normalized	clang-debug	runtime	0	8	killed	support.rational	-	-	rational gives the hand values in lowest terms | rational satisfies the field identities on random fractions | rational equality agrees with cross-multiplication	-
+rational_negative_denominator_kept	gcc-debug	runtime	0	8	killed	support.rational	-	-	rational gives the hand values in lowest terms | rational satisfies the field identities on random fractions | rational equality agrees with cross-multiplication	-
+rational_negative_denominator_kept	clang-debug	runtime	0	8	killed	support.rational	-	-	rational gives the hand values in lowest terms | rational satisfies the field identities on random fractions | rational equality agrees with cross-multiplication	-
+rational_no_sum_guard	gcc-debug	runtime	0	8	killed	support.rational_consteval_add	-	-	-	-
+rational_no_sum_guard	clang-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+rational_no_product_guard	gcc-debug	runtime	0	8	killed	support.rational_rejects_multiply_above,support.rational_consteval_multiply	-	-	-	-
+rational_no_product_guard	clang-debug	runtime	0	8	killed	support.rational_rejects_multiply_above,support.rational_consteval_multiply	-	-	-	-
+rational_min_accepted	gcc-debug	runtime	0	8	killed	support.rational_rejects_numerator_min	-	-	-	-
+rational_min_accepted	clang-debug	runtime	0	8	killed	support.rational_rejects_numerator_min	-	-	-	-
+one_error_inert	gcc-debug	runtime	0	8	killed	core.mv_two_errors	-	-	-	-
+one_error_inert	clang-debug	runtime	0	8	killed	core.mv_two_errors	-	-	-	-
