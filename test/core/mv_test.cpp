@@ -39,6 +39,7 @@
 
 #include <reference/golden.hpp>
 #include <support/rational.hpp>
+#include <support/scalar_faults.hpp>
 #include <unistd.h> // IWYU pragma: keep
 
 namespace {
@@ -542,6 +543,80 @@ TEST_CASE("The scalar concepts accept the types that meet their "
   CHECK_FALSE(core::ring_scalar<bool>);
   CHECK(core::exact_scalar<rational>);
   CHECK_FALSE(core::exact_scalar<double>);
+}
+
+namespace {
+
+// The five requirements of ring_scalar after semiregular and not bool, each
+// written out from its statement, so that a test scalar can be shown to
+// fail exactly one of them.
+template <class T>
+concept adds = requires(const T& a, const T& b) {
+  { a + b } -> std::convertible_to<T>;
+};
+template <class T>
+concept subtracts = requires(const T& a, const T& b) {
+  { a - b } -> std::convertible_to<T>;
+};
+template <class T>
+concept multiplies = requires(const T& a, const T& b) {
+  { a * b } -> std::convertible_to<T>;
+};
+template <class T>
+concept negates = requires(const T& a) {
+  { -a } -> std::convertible_to<T>;
+};
+template <class T>
+concept made_from_coefficients = std::constructible_from<T, std::int64_t>;
+
+// How many of the five requirements T meets.
+template <class T>
+inline constexpr int requirements_met =
+    (adds<T> ? 1 : 0) + (subtracts<T> ? 1 : 0) + (multiplies<T> ? 1 : 0) +
+    (negates<T> ? 1 : 0) + (made_from_coefficients<T> ? 1 : 0);
+
+} // namespace
+
+// Reference: contract: ring_scalar is one concept whose requirements after
+//   semiregular and not bool are a + b, a - b, a * b, -a, and construction
+//   from the integer coefficient type, so a semiregular scalar that lacks any
+//   one of them is rejected, and each scalar the multivector's messages are
+//   tested on lacks the one its name gives and meets the other four
+TEST_CASE("Each fault scalar lacks exactly one requirement of ring_scalar") {
+  using namespace test_support;
+  static_assert(std::same_as<core::coefficient_type, std::int64_t>);
+
+  static_assert(std::semiregular<lacks_addition>);
+  static_assert(!adds<lacks_addition>);
+  static_assert(requirements_met<lacks_addition> == 4);
+  static_assert(!core::ring_scalar<lacks_addition>);
+
+  static_assert(std::semiregular<lacks_subtraction>);
+  static_assert(!subtracts<lacks_subtraction>);
+  static_assert(requirements_met<lacks_subtraction> == 4);
+  static_assert(!core::ring_scalar<lacks_subtraction>);
+
+  static_assert(std::semiregular<lacks_multiplication>);
+  static_assert(!multiplies<lacks_multiplication>);
+  static_assert(requirements_met<lacks_multiplication> == 4);
+  static_assert(!core::ring_scalar<lacks_multiplication>);
+
+  static_assert(std::semiregular<lacks_unary_minus>);
+  static_assert(!negates<lacks_unary_minus>);
+  static_assert(requirements_met<lacks_unary_minus> == 4);
+  static_assert(!core::ring_scalar<lacks_unary_minus>);
+
+  static_assert(std::semiregular<lacks_integer_construction>);
+  static_assert(!made_from_coefficients<lacks_integer_construction>);
+  static_assert(requirements_met<lacks_integer_construction> == 4);
+  static_assert(!core::ring_scalar<lacks_integer_construction>);
+
+  // A scalar that meets all five is a ring scalar, so the five are all that
+  // the fault scalars miss.
+  static_assert(requirements_met<std::int64_t> == 5);
+  static_assert(requirements_met<rational> == 5);
+  CHECK(requirements_met<lacks_addition> == 4);
+  CHECK_FALSE(core::ring_scalar<lacks_integer_construction>);
 }
 
 // Reference: contract: multivector holds for a specialization of mv with any

@@ -843,7 +843,7 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/rational.hpp)
+    FILES support/rational.hpp support/scalar_faults.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -928,7 +928,16 @@ else()
   set(mv_sign_rule "")
   set(mv_repeat_rule "")
 endif()
-set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient${semicolon} use a number type such as double or an integer type")
+# The five requirements of a ring scalar after semiregular, each with its
+# own message, in the order the multivector checks them.
+set(mv_no_addition "mv: the scalar type has no addition${semicolon} give it a + b, or use a number type such as double")
+set(mv_no_subtraction "mv: the scalar type has no subtraction${semicolon} give it a - b, or use a number type such as double")
+set(mv_no_multiplication "mv: the scalar type has no multiplication${semicolon} give it a * b, or use a number type such as double")
+set(mv_no_unary_minus "mv: the scalar type has no unary minus${semicolon} give it -a, which the products use for a term of coefficient -1")
+set(mv_no_integer_construction "mv: the scalar type cannot be made from an integer coefficient${semicolon} give it a constructor from std::int64_t, or use a number type such as double")
+set(mv_ring_messages "${mv_no_addition}" "${mv_no_subtraction}"
+  "${mv_no_multiplication}" "${mv_no_unary_minus}"
+  "${mv_no_integer_construction}")
 set(mv_scalar_qualified "mv: the scalar type is a reference or is const or volatile${semicolon} give the type itself, as in double for const double")
 set(mv_scalar_bool "mv: bool cannot be the scalar type, since true + true is true${semicolon} use an integer type such as int")
 set(mv_scalar_semiregular "mv: the scalar type must be default constructible, copyable, and assignable${semicolon} give it a default constructor that makes its zero")
@@ -948,23 +957,52 @@ foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
   mv_rejects(${case} "${mv_repeated}" REQUIRE ${mv_repeat_rule} ONE_ERROR
     FORBID "${mv_beyond_n}" "${mv_bad_sign}" "blade set")
 endforeach()
-mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR
-  FORBID "${mv_scalar_semiregular}")
-mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR
-  FORBID "${mv_scalar_semiregular}")
+# core.mv_<case> for a scalar without a requirement of a ring scalar: the
+# message of the requirement that fails, and none of the other four. Each
+# scalar_lacks case lacks one requirement alone; each other case lacks
+# several and must be told the first, in the order addition, subtraction,
+# multiplication, unary minus, construction from an integer: a colour code
+# has no arithmetic, std::string has + but not - or *, a length has + and -
+# but not *, and the last two lack * and -a, and -a and the constructor.
+function(mv_ring_rejects case message)
+  set(others ${mv_ring_messages})
+  list(REMOVE_ITEM others "${message}")
+  list(LENGTH mv_ring_messages all)
+  list(LENGTH others rest)
+  math(EXPR removed "${all} - ${rest}")
+  if(NOT removed EQUAL 1)
+    message(FATAL_ERROR "mv_ring_rejects(${case}): '${message}' is not one "
+      "of the messages of a ring scalar's requirements")
+  endif()
+  mv_rejects(${case} "${message}" ONE_ERROR
+    FORBID ${others} "${mv_scalar_semiregular}")
+endfunction()
+mv_ring_rejects(scalar_lacks_addition "${mv_no_addition}")
+mv_ring_rejects(scalar_lacks_subtraction "${mv_no_subtraction}")
+mv_ring_rejects(scalar_lacks_multiplication "${mv_no_multiplication}")
+mv_ring_rejects(scalar_lacks_unary_minus "${mv_no_unary_minus}")
+mv_ring_rejects(scalar_lacks_integer_construction
+  "${mv_no_integer_construction}")
+mv_ring_rejects(not_ring_scalar "${mv_no_subtraction}")
+mv_ring_rejects(scalar_without_multiplication "${mv_no_multiplication}")
+mv_ring_rejects(scalar_without_arithmetic "${mv_no_addition}")
+mv_ring_rejects(scalar_without_multiplication_or_negation
+  "${mv_no_multiplication}")
+mv_ring_rejects(scalar_without_negation_or_construction "${mv_no_unary_minus}")
 # A scalar with several faults gives the message of the first alone: a
 # const or reference scalar is not semiregular either, and bool has the
 # operations of the last check.
 foreach(case IN ITEMS scalar_reference scalar_const)
   mv_rejects(${case} "${mv_scalar_qualified}" ONE_ERROR
-    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+    FORBID "${mv_scalar_semiregular}" ${mv_ring_messages})
 endforeach()
-mv_rejects(scalar_bool "${mv_scalar_bool}" ONE_ERROR FORBID "${mv_scalar}")
+mv_rejects(scalar_bool "${mv_scalar_bool}" ONE_ERROR
+  FORBID ${mv_ring_messages})
 # A scalar that has a default constructor and cannot be copied or assigned
 # is told so, not to give it a default constructor.
 foreach(case IN ITEMS scalar_move_only scalar_const_member)
   mv_rejects(${case} "${mv_scalar_copyable}" ONE_ERROR
-    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+    FORBID "${mv_scalar_semiregular}" ${mv_ring_messages})
 endforeach()
 mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
 mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
@@ -972,7 +1010,7 @@ mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
 mv_rejects(one_value "${mv_count}" REQUIRE "1 == 6" ONE_ERROR)
 # An algebra that is not one fails the class template's constraint, so the
 # diagnostic is the compiler's account of metric_like.
-mv_rejects(not_metric_like "${not_metric_like}" FORBID "${mv_scalar}")
+mv_rejects(not_metric_like "${not_metric_like}" FORBID ${mv_ring_messages})
 # These record the compiler's own wording: narrowing in brace initialization,
 # and an implicit conversion that no constructor allows ("conversion from").
 # A new compiler may change them.
@@ -1005,7 +1043,7 @@ mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
 # A scalar without a default constructor is not semiregular; its value of
 # the type is made, too, and raises no second error.
 mv_rejects(scalar_without_default "${mv_scalar_semiregular}" ONE_ERROR
-  FORBID "${mv_scalar}" "${mv_scalar_copyable}")
+  FORBID ${mv_ring_messages} "${mv_scalar_copyable}")
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
 # blades. A message's ; is held as character 1, as for the layout messages.
