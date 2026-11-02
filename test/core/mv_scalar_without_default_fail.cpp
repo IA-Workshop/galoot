@@ -1,12 +1,10 @@
 // A line over a fixed-point type that has no default constructor, so it is
-// not semiregular: mv's template head rejects it, with the compiler's account
-// of the constraint. This file must not compile.
+// not semiregular: mv rejects it with its message, and making the value
+// raises no second error. This file must not compile.
 #include <cstdint>
 
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
-// mv is used below; its failed constraint hides that use from the check.
-// NOLINTNEXTLINE(misc-include-cleaner)
 #include <galoot/core/mv.hpp>
 
 namespace {
