@@ -340,14 +340,20 @@ template <metric_like Alg, blade_set A, ring_scalar T>
 /// with the message; with GALOOT_CHECKING 0 the division by zero is
 /// undefined behavior. An integer T here is one whose std::numeric_limits
 /// specialization describes an integer type with its range (is_specialized
-/// and is_integer, with is_signed, digits, min(), and max()) and which has
-/// ==; a type whose limits say less, or without ==, is not checked. A
-/// floating T is not checked: at run time IEEE 754 defines its division by
-/// zero, and in a constant evaluation a division by zero of any type is not
-/// a constant expression, so a constant x / 0.0 fails with the compiler's
-/// own error. Otherwise the scalar's own arithmetic decides: over a signed
-/// integer type, min() / -1 overflows, which is undefined at run time and
-/// fails a constant evaluation, as an overflowing sum does.
+/// and is_integer, with is_signed and digits, and min() and max() that
+/// convert implicitly to std::int64_t and std::uint64_t) and which has ==.
+/// A type whose limits say less, whose min() and max() convert only
+/// explicitly, as a big-integer class's often do, or which has no ==, is
+/// not checked, and its own / decides what a zero divisor does. A floating
+/// T is not checked: at run time IEEE 754 defines its division by zero, and
+/// in a constant evaluation a division of a built-in floating type by zero
+/// is not a constant expression, so a constant x / 0.0 fails with the
+/// compiler's own error; a scalar of the user's decides for itself.
+/// Otherwise the scalar's own arithmetic decides: over a signed integer
+/// type at least as wide as int, min() / -1 overflows, which is undefined
+/// at run time and fails a constant evaluation, as an overflowing sum does;
+/// over short or signed char the quotient is computed in int and converted
+/// back, giving min() again.
 template <metric_like Alg, blade_set A, ring_scalar T>
   requires detail::scalar_has_division<T>
 [[nodiscard]] constexpr mv<Alg, A, T> operator/(const mv<Alg, A, T>& x,

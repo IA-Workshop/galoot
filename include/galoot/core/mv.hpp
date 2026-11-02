@@ -1048,9 +1048,10 @@ constexpr auto truncate(const mv<Alg, From, T>& x) {
 /// part<Line>(motor) names the target by its type and
 /// part<line_layout>(motor) by its layout; the type must be an mv type
 /// itself, as for truncate. Found by argument-dependent lookup, so the call
-/// needs no namespace, unless a variable or other non-template named part is
-/// in scope: then part<Line>(motor) is not read as a call of this function
-/// and fails to compile; write galoot::core::part<Line>(motor).
+/// needs no namespace, unless a variable or a type named part is in scope:
+/// then part<Line>(motor) is not read as a call of this function and fails
+/// to compile; write galoot::core::part<Line>(motor). A function named part
+/// in scope does not stop it.
 ///
 /// Requires: nothing of the dropped coefficients. Nothing is checked, for
 /// any scalar, in a constant evaluation or at run time, whatever
