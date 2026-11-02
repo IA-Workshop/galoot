@@ -73,3 +73,73 @@ Compile rows of fresh gcc-debug and clang-debug trees, each built once with the 
 | `test/support/rational_test.cpp` | clang-debug | absent | 0.94, 5.51, 223 |
 
 The header units and the tests that existed before move by under 2.5 % in instructions; `blade_set_test.cpp` rises 2.3 % on GCC and 0.7 % on Clang, from its new test case and the algebra tags. The new costs are `mv_test.cpp` and `rational_test.cpp`.
+
+# WU8b: apply, conversions, truncate (plan 0016, criteria 21 to 23)
+
+Measured by Claude (agent, Opus 5.5), cpp-expert role, with `measure_mv_b.py` here, on the headers of `7ee7d32` (the code of `be1b209`; `4253555` changes `mv.hpp`'s comments only). GCC 16.2.1 and Clang 23.1.4 with libstdc++ 16; every compile pinned to CPU 10 through `tools/timed measure`, into this campaign's own log, `runs.tsv` here (selections `mvb-limits:*`, `mvb-growth:*`, `mvb-headers:*`, `mvb-uses:*`). The sibling thread was busy at most 0.01 s and other processes ran on CPU 10 at most 0.02 s per compile. The machine was shared (load average 1 to 5 during the runs); instruction counts are compared, not times. The timing lock of the machine's measurement queue was free when the runs started and was not taken. No bound applies (C14). Outputs in `out-wu8b-7ee7d32/`; the generated units are not kept.
+
+Commands, from the worktree root with the job pool exported:
+
+```bash
+export TIMED_LOG=$PWD/docs/agent/records/performance/mv/runs.tsv
+M=docs/agent/records/performance/mv/measure_mv_b.py; O=docs/agent/records/performance/mv/out-wu8b-7ee7d32
+python3 -I $M limits $O 10
+python3 -I $M growth 11d1ec9 $O 3 10
+python3 -I $M headers 11d1ec9 $O 3 10
+python3 -I $M uses $O 3 10
+```
+
+## Limits (criterion 21, `limits.tsv`)
+
+`apply` on `full<n>` times `full<n>`, and on each unary map of `full<n>`, at the largest n whose plan or map builds at the default limits (product_plan's and unary_map's comments), on run-time inputs, one trial build at each point, in the three configurations (Galoot's flags at -O0 with checking, at -O2 without, and bare `-std=c++23 -pedantic-errors -O2`):
+
+| Compiler | Points | Result |
+| --- | --- | --- |
+| Clang 23.1.4 | geometric product n = 5 in R(5,0,0), R(4,0,1), conformal(3); dense form n = 4; wedge, antiproduct, antiwedge n = 5; reverse, antireverse, grade involution n = 7; complements n = 8 | builds at every point in all three configurations, except the two complements at n = 8 in the bare configuration, which stop in the map's own generation (`plan.hpp:915`, the step limit; without `_GLIBCXX_ASSERTIONS` libstdc++'s subscripts count more, as unary_map's comment says) and so are not points where the map builds |
+| GCC 16.2.1 | geometric product n = 6 in the three diagonal-type forms (4,096 terms, one fold of 4,096 statements); dense form n = 5; wedge, antiproduct, antiwedge n = 6; maps n = 9 | builds at every point in all three configurations; the largest, the dense n = 5 product, at 82 G instructions, 3.9 s, and 0.8 GiB at -O0 |
+
+So `apply` builds wherever its plan or map builds. No plan that Clang builds has more than 1,024 terms, half of its fold limit of 2,048 (decision 0154).
+
+## P2, the fixed use through apply (criterion 22, `growth.tsv`, `growth-summary.txt`)
+
+Plan 0013's fixed use, four typed rigid(3) products (point ⟑ point, line ⟑ plane, motor ⟑ point, point ⟑ motor) in R(n−1,0,1) with e4 as e_n, -O0 with the test flags, three repeats. "Plans" reads a term of each plan at run time; "apply" applies the four products to multivectors read at run time. Mean retired instructions above the baseline of the same tree and n (the sets and no product), in M:
+
+| | GCC plans, before (`11d1ec9`) | GCC plans, after | GCC apply, after | Clang plans, before | Clang plans, after | Clang apply, after |
+| --- | --- | --- | --- | --- | --- | --- |
+| n = 4 | 304.6 | 305.1 | 822.8 | 549.0 | 548.8 | 802.2 |
+| n = 8 | 307.3 | 307.7 | 825.7 | 552.2 | 552.9 | 804.6 |
+| n = 12 | 311.7 | 311.0 | 829.7 | 557.4 | 557.1 | 808.0 |
+| n = 16 | 316.5 | 316.3 | 835.6 | 562.1 | 561.6 | 816.9 |
+
+- Growth with n at fixed use, n = 4 to 16: plans 12 M on GCC and 13 M on Clang, before and after alike; through apply 13 M on GCC and 15 M on Clang. The extra 1 to 2 M is within the repeats' spread at n = 16 on Clang (8.7 M) and is the layout checks of the eight multivector types per n (each type checks its layout once against n). The growth itself is the one evaluation of `metric_like` per algebra that decision 0107 identified, as in decision 0113.
+- Cost of applying the four products above reading their plans: +518 M on GCC and +253 M on Clang at every n: the multivector types of the inputs and results, the four kernels, and the functions that make the inputs.
+- Baseline: 905 → 915 M on GCC and 924 → 934 M on Clang (the header cost below).
+
+## Header cost to every includer (`headers.tsv`)
+
+An empty unit including one header, -O0 with the test flags, three repeats each, interleaved; mean retired instructions, spread in parentheses:
+
+| Header | GCC before (`11d1ec9`) | GCC after | Clang before | Clang after |
+| --- | --- | --- | --- | --- |
+| `galoot/core.hpp` | 0.8575 G (0.0 M) | 0.8676 G (0.2 M), +1.2 % | 0.9169 G (4.1 M) | 0.9255 G (2.2 M), +0.9 % |
+| `galoot/core/mv.hpp` | 0.8567 G (0.3 M) | 0.8666 G (0.1 M), +1.2 % | 0.9162 G (0.9 M) | 0.9265 G (4.1 M), +1.1 % |
+
+The rise exceeds the spread on both compilers. `mv.hpp` adds no standard header and instantiates nothing at namespace scope; the cause, by construction and not separately measured, is parsing the added declarations (the kernel, `apply`, the conversion constructors, `truncate`, and the scalar checks), about 10 M instructions on GCC and 9 M on Clang.
+
+## Cost per use (criterion 23, `uses.tsv`, `uses-summary.txt`)
+
+Slopes from 64 to 256 uses over distinct four-blade layouts of R(15,0,1), mean of three repeats, in retired instructions per use. Every unit compiled.
+
+| Use | GCC -O0 | GCC -O2 | Clang -O0 | Clang -O2 |
+| --- | --- | --- | --- | --- |
+| The plan of a new product of a four-blade layout with itself (16 terms), generated | 65 M | 64 M | 157 M | 157 M |
+| Its kernel and the result type, applied once, above the plan | 83 M | 44 M | 34 M | 32 M |
+| An existing product applied in a function of its own, with the construction of its input | 6.3 M | 5.7 M | 3.0 M | 4.3 M |
+| A conversion to the same layout reversed, above making a value of that layout | 18 M | 11 M | 7.8 M | 8.3 M |
+| A truncation to the first two blades, above making a value of that layout | 13 M | 7.2 M | 6.9 M | 6.1 M |
+
+The kernel's cost on GCC at -O0 (83 M for 16 terms) exceeds its plan's; it includes a new result type with its layout checks, the kernel's variable template, the instantiation of the expanded function and of its term calls, and their code at -O0. A program pays it once per distinct product, as it pays the plan.
+
+## W10 (criterion 23)
+
+Before: fresh gcc-debug and clang-debug trees at `11d1ec9`, rows copied into `compile.tsv` in `bc4b767` (137 and 139 rows). After: the fresh trees of the final check, in the commit that records it (plan 0016, Outcome WU8b).

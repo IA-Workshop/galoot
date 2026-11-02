@@ -1,0 +1,6 @@
+Retired instructions per use, slope from 64 to 256 uses, mean of the repeats
+
+gcc galoot-O0: plan of a new product 6.519e+07, its kernel 8.338e+07, an existing product applied again 6.265e+06 (a function each, with its construction), conversion 1.812e+07, truncate 1.259e+07
+gcc galoot-O2: plan of a new product 6.443e+07, its kernel 4.371e+07, an existing product applied again 5.726e+06 (a function each, with its construction), conversion 1.078e+07, truncate 7.224e+06
+clang galoot-O0: plan of a new product 1.565e+08, its kernel 3.425e+07, an existing product applied again 2.958e+06 (a function each, with its construction), conversion 7.750e+06, truncate 6.938e+06
+clang galoot-O2: plan of a new product 1.572e+08, its kernel 3.151e+07, an existing product applied again 4.347e+06 (a function each, with its construction), conversion 8.282e+06, truncate 6.086e+06
