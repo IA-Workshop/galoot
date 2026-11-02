@@ -211,8 +211,7 @@ private:
       detail::distinct_masks<Blades>;
   static_assert(layout_names_only_generators_of_the_algebra,
                 "mv: the layout names a generator that the algebra does not "
-                "have; a layout written for a larger algebra cannot be used "
-                "here");
+                "have; use a layout whose blades are all in this algebra");
   static_assert(layout_signs_are_plus_or_minus_one,
                 "mv: the layout holds a sign other than +1 or -1; give each "
                 "blade of a layout written out by hand the sign +1 or -1");
