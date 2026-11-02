@@ -23,12 +23,14 @@ Revision: `feature/core-antiproducts` at `5f209d4` (the trace commit) for the mu
 | the algebra constraint is dropped from the four new catch-alls | killed | killed | a `static_assert` of `product_test.cpp` (line 698, `can_antiwedge<R, C>`) and the four `core.product_mixed_algebras_*` tests of the new spellings |
 | the scalar constraint is dropped from the four new catch-alls | killed | killed | a `static_assert` of `product_test.cpp` (line 697) and the four `core.product_mixed_scalars_*` tests of the new spellings |
 | `left_complement_sign` is flipped for e12 in `bits.hpp` | killed | killed | `core.product` at run time (the composed antiproduct tables) |
+| `geometric_antiproduct` checks the geometric product's coefficients (from the blind review) | killed | killed | `core.product_narrow_scalar_on_scalars_geometric_antiproduct`, added after the review; the earlier tests on `full<2>` let it through |
+| `%` checks the geometric product's coefficients (from the blind review) | killed | killed | `core.product_narrow_scalar_on_scalars_percent`, likewise |
 
 No mutant was killed by a warning: every compile failure in the records is a `static_assert` of a test file, except for the last mutant, where `unary_test.cpp` and `identities_test.cpp` did not compile because the unary map's own generation check (`plan.hpp`, "a complement's sign differs from its closed form") caught the flipped sign. That check is the library's, not a test's, so the kill counted is `core.product`'s, whose program built and failed at run time on both compilers.
 
 One caution in reading the records: when a program does not build, CTest runs the previous build of it, which passes, so a failed build appears with that test absent from the failed list. Every kill above is either a fresh build that failed in a test's own `static_assert`, or a fresh program or compile-fail test that failed.
 
-No equivalent survivor.
+No equivalent survivor. The last two rows were run after the review's fixes, at `02d64d0`.
 
 ## Diagnostics
 
