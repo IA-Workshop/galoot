@@ -1181,6 +1181,32 @@ foreach(scalar IN ITEMS int64 int64_antiscalar rational rational_antiscalar
     core.mv_truncate_unchecked_${scalar} PROPERTIES LABELS "core;core.mv")
 endforeach()
 
+# core.mv_part_<case>: a target that is not a multivector type of the
+# input's algebra and scalar type gives part's message, and not truncate's.
+set(mv_part_target "part: the target must be an mv type of the same algebra and scalar type, not a class derived from one${semicolon} part changes only which blades are held")
+foreach(case IN ITEMS other_algebra not_a_type other_scalar derived
+    result_used)
+  mv_rejects(part_${case} "${mv_part_target}" ONE_ERROR FORBID "truncate:")
+endforeach()
+
+# core.mv_part_never_checks_<case>: one program, built with checking on
+# whatever the preset, takes the part on a line of a motor whose scalar or
+# antiscalar is not zero, which truncate would reject, over each exact
+# scalar; it must keep the line and, over a scalar whose == counts its
+# calls, compare nothing.
+add_executable(core_mv_part_checking core/mv_part_checking.cpp)
+target_include_directories(core_mv_part_checking PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(core_mv_part_checking PRIVATE galoot_test_support)
+target_compile_features(core_mv_part_checking PRIVATE cxx_std_23)
+target_compile_definitions(core_mv_part_checking PRIVATE GALOOT_CHECKING=1)
+foreach(case IN ITEMS int64 int64_antiscalar rational counted)
+  add_test(NAME core.mv_part_never_checks_${case}
+    COMMAND core_mv_part_checking ${case})
+  set_tests_properties(core.mv_part_never_checks_${case} PROPERTIES
+    LABELS "core;core.mv")
+endforeach()
+
 # A file with a second, unrelated error fails a one-error test, so the test
 # above can fail; WILL_FAIL turns that failure into a pass.
 mv_rejects(two_errors "${mv_count}" ONE_ERROR)

@@ -2189,6 +2189,91 @@ TEST_CASE("truncate is found beside the names it shares") {
   CHECK(std::get<0>(one) == 1);
 }
 
+// Reference: contract: part keeps each blade of the target that the input
+//   holds, with the sign of the conversion, gives zero for a blade of the
+//   target that the input lacks, takes the target by its type or by its
+//   layout, and drops the rest whatever it holds, so where the dropped part
+//   is zero it equals truncate in type and value, and where it is not zero,
+//   a motor's scalar 7 and antiscalar 9, it gives the line all the same,
+//   over every scalar, at compile time and at run time
+TEST_CASE_TEMPLATE("part keeps the blades of its target", T, std::int64_t,
+                   rational, float, double, std::complex<double>) {
+  static_assert(std::same_as<decltype(core::part<Line<T>>(Motor<T>{})),
+                             decltype(core::truncate<Line<T>>(Motor<T>{}))>);
+  static_assert(
+      std::same_as<decltype(core::part<line_layout>(Motor<T>{})), Line<T>>);
+  static_assert(
+      std::same_as<decltype(core::part<const Line<T>&>(Motor<T>{})), Line<T>>);
+  static_assert(core::part<Line<T>>(motor_of_line<T>(0, 0)) ==
+                core::truncate<Line<T>>(motor_of_line<T>(0, 0)));
+  static_assert(core::part<line_layout>(motor_of_line<T>(0, 0)) ==
+                counting_line<T>());
+  static_assert(core::part<OtherLine<T>>(motor_of_line<T>(0, 0)) ==
+                OtherLine<T>{counting_line<T>()});
+  static_assert(core::part<Motor<T>>(counting_line<T>()) ==
+                Motor<T>{counting_line<T>()});
+  constexpr auto k = [](int i) { return scalar_of<T>(i); };
+  static_assert(core::part<Flector<T>>(Point<T>{k(1), k(2), k(3), k(4)}) ==
+                Flector<T>{Point<T>{k(1), k(2), k(3), k(4)}});
+
+  // A dropped part that is not zero.
+  static_assert(core::part<Line<T>>(motor_of_line<T>(7, 9)) ==
+                counting_line<T>());
+  static_assert(core::part<line_layout>(motor_of_line<T>(7, 9)) ==
+                counting_line<T>());
+
+  const volatile int one = 1;
+  const Motor<T> zero_rest = motor_of_line<T>(0 * one, 0);
+  CHECK(core::part<Line<T>>(zero_rest) == core::truncate<Line<T>>(zero_rest));
+  CHECK(core::part<line_layout>(zero_rest) ==
+        core::truncate<line_layout>(zero_rest));
+  const Motor<T> nonzero = motor_of_line<T>(7 * one, 9);
+  CHECK(core::part<Line<T>>(nonzero) == counting_line<T>());
+  CHECK(core::part<line_layout>(nonzero) == counting_line<T>());
+}
+
+namespace {
+
+// Whether taking the part on a line of the motor with the given scalar and
+// antiscalar is a constant expression, as truncates_in_a_constant_evaluation
+// asks of truncate.
+template <class T, int Scalar, int Antiscalar = 0>
+concept parts_in_a_constant_evaluation = requires {
+  typename std::integral_constant<
+      bool, core::part<line_layout>(motor_of_line<T>(Scalar, Antiscalar)) ==
+                counting_line<T>()>;
+};
+
+} // namespace
+
+// Reference: contract: part never checks what it drops, so over an exact
+//   scalar, std::int64_t or the test rational, the part on a line of a motor
+//   whose scalar or antiscalar is 7 is a constant expression, while truncate
+//   of the same motor fails its check and is not one
+TEST_CASE("part never checks what it drops, where truncate does") {
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 0>);
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 7>);
+  static_assert(parts_in_a_constant_evaluation<std::int64_t, 0, 7>);
+  static_assert(parts_in_a_constant_evaluation<rational, 7>);
+  static_assert(parts_in_a_constant_evaluation<rational, 0, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 0, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<rational, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<rational, 0, 7>);
+  CHECK(parts_in_a_constant_evaluation<std::int64_t, 7>);
+  CHECK_FALSE(truncates_in_a_constant_evaluation<std::int64_t, 7>);
+}
+
+// Reference: contract: part is called without a namespace, as
+//   argument-dependent lookup finds it, for a scalar from namespace std
+TEST_CASE("part is found by argument-dependent lookup") {
+  const Motor<std::complex<double>> motor{};
+  const Line<std::complex<double>> line = part<line_layout>(motor);
+  CHECK(line == Line<std::complex<double>>{});
+  CHECK(get<"e41">(part<Line<std::complex<double>>>(motor)) ==
+        std::complex<double>{});
+}
+
 namespace {
 
 // A class derived from a line, as a user might declare a named type.
