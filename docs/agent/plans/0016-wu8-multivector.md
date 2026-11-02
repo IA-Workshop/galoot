@@ -962,4 +962,4 @@ Diagnostics after the fixes (`docs/agent/records/diagnostics/wu8/wu8b/`, at `ef5
 
 Mutation after the fixes: 24 changed or new mutants on gcc-debug and clang-debug in both modes, all killed by tests (`docs/agent/records/mutations/0016-mv-b/survivors.md`, review section).
 
-Checks at the final revision: in the commit after this section.
+Checks at `812398d` (the build inputs of `13b53ee`; recorded in the commit after it): the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 240 of 240, gcc-release 240 of 240, gcc-asan 232 of 232 (plan 0015's canary is not registered there), clang-debug 242 of 242, clang-release 242 of 242, clang-asan 242 of 242, lint 242 of 242 (clang-tidy as errors over every built unit). `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; each exit status was read directly after its command. The trace gate and the marker, golden, citation, regeneration, include-scan, and format gates exited 0, and `tools/runlog check` exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `ef579e2` is pending.
