@@ -376,6 +376,7 @@ Departures and readings (C20):
 6. The mutant set adds two of my own (negation as `0 - x`, and `sum_layout` keeping the operands' orientations). No list of further mutants from the test author was found in the branch's records, so none was taken from there.
 7. The limit of `sum_layout` on Clang at n = 8 was measured to fail at -O0 with libstdc++'s assertions only; that it fails at -O2 too is inferred (more steps without the assertions), and the comment's "up to 7" bound was measured at all three configurations.
 8. One test run repeated an unchanged revision and configuration (core.product and core.unary on gcc-debug after `3d7907a`, to read the count), and one mistaken target name made a `core.mv` run test stale programs (15 failed or not run, rerun after building the right targets); both are in the run log. The scratch probes of the header examples and of the sums (`examples.cpp`, `sum_probe.cpp`) were compiled through `tools/timed` but are not committed; the limits probe is, in `records/mutations/0019-linear/`.
+9. `0ef7c22` formats one line of `mv_test.cpp` that the rename of `cbf5423` left as `clang-format` would not; the format check before the final runs found it. Layout only.
 
 Evidence:
 
@@ -385,4 +386,3 @@ Evidence:
 - Diagnostics: every new rejection gives one error, with the message on its first error line, on both compilers; sizes in the same README.
 - W10 and P2 (pinned, three repeats, `records/performance/linear-cost/`): `mv_test.cpp` +0.8% on GCC and +1.1% on Clang; the other affected suites under +0.4%; `linear_test.cpp` 34.1 G instructions on GCC and 29.9 G on Clang; a unit that includes only `core.hpp` +6.9 M (+0.7%) on GCC and +7.9 M (+0.8%) on Clang.
 - Final runs: all seven presets from new empty build trees at `0ef7c22`, the final revision of the build inputs, with a clean tree (the run rows say `0ef7c222826b` without `-dirty`; only the run log was modified during the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 295 tests, gcc-asan 287, clang-debug, clang-release, clang-asan, and lint 297, all passing; the lint build includes the header checks and `format-check`. The trace gate and `tools/runlog check` exit 0. The commit after `0ef7c22` records these results, the run rows, and one wording of the mutation README, and changes no build input.
-9. `0ef7c22` formats one line of `mv_test.cpp` that the rename of `cbf5423` left as `clang-format` would not; the format check before the final runs found it. Layout only.
