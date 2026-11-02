@@ -839,3 +839,97 @@ TEST_CASE("The scaling operators leave other types alone") {
 
 } // namespace scaling_user_code
 } // namespace
+
+// Reference: independent value: by hand, the negation of a multivector
+//   negates each coefficient, so -l for a line with 1 to 6 holds -1 to -6,
+//   and over double each +0.0 becomes -0.0, which 0.0 - 0.0 would not give;
+//   contract: the result has the input's type
+TEST_CASE("Negation negates each coefficient and keeps the layout") {
+  using L = Line<std::int64_t>;
+  using M = Motor<std::int64_t>;
+  using F = FlatPoint<std::int64_t>;
+  static_assert(std::same_as<decltype(-L{}), L>);
+  static_assert(std::same_as<decltype(-M{}), M>);
+  static_assert(std::same_as<decltype(-F{}), F>);
+  static_assert(std::same_as<decltype(-Line<double>{}), Line<double>>);
+  static_assert((-L{1, 2, 3, 4, 5, 6}) == L{-1, -2, -3, -4, -5, -6});
+
+  const volatile std::int64_t one = 1;
+  const L l{one, -2, 3, -4, 5, -6};
+  CHECK((-l) == L{-1, 2, -3, 4, -5, 6});
+  const M m{one, 2, 3, 4, 5, 6, 7, 8};
+  CHECK((-m) == M{-1, -2, -3, -4, -5, -6, -7, -8});
+
+  const volatile double zero = 0.0;
+  const Line<double> zeros{zero, zero, zero, zero, zero, zero};
+  const Line<double> negated = -zeros;
+  for (std::size_t k = 0; k < Line<double>::component_count; ++k) {
+    CAPTURE(k);
+    CHECK(std::signbit(negated.coefficients.at(k)));
+  }
+}
+
+namespace {
+
+// -(-a) = a, -a = (-1) a, a - b = a + (-b), and -(a + b) = (-a) + (-b), on
+// random values of the layouts A and B of one algebra, compared blade by
+// blade.
+template <class A, class B>
+void check_negation_laws(std::mt19937_64& source) {
+  for (int k = 0; k < 4; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    CHECK(difference(-(-a), a) == "");
+    CHECK(difference(-a, std::int64_t{-1} * a) == "");
+    CHECK(difference(a - b, a + (-b)) == "");
+    CHECK(difference(-(a + b), (-a) + (-b)) == "");
+  }
+}
+
+} // namespace
+
+// Reference: identity: negation is the additive inverse, so -(-a) = a,
+//   -a = (-1) a, a - b = a + (-b), and -(a + b) = (-a) + (-b), on random
+//   integer multivectors of rigid(3) and conformal(3) and of mixed layouts
+TEST_CASE("Negation is the additive inverse") {
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
+  using R = core::mv<rga3, core::full<4>, std::int64_t>;
+  using C = core::mv<cga3, core::full<5>, std::int64_t>;
+  check_negation_laws<R, R>(source);
+  check_negation_laws<C, C>(source);
+  check_negation_laws<Line<std::int64_t>, Plane<std::int64_t>>(source);
+  check_negation_laws<OtherLine<std::int64_t>, Motor<std::int64_t>>(source);
+  check_negation_laws<ConformalWide<std::int64_t>, FlatPoint<std::int64_t>>(
+      source);
+}
+
+// A scope that sees galoot::core's operators by a using-directive, with
+// types of its own with and without a unary minus.
+namespace {
+namespace negation_user_code {
+
+using namespace galoot::core;
+
+struct widget {};
+
+struct gadget {
+  friend int operator-(gadget /*g*/) { return 6; }
+};
+
+template <class X>
+concept has_negation = requires(X x) { -x; };
+
+// Reference: contract: with galoot::core's operators in scope by a
+//   using-directive, a type of the user's without a unary minus still has
+//   none, a type with its own keeps it, and a multivector has one
+TEST_CASE("Negation leaves other types alone") {
+  static_assert(!has_negation<widget>);
+  static_assert(std::same_as<decltype(-gadget{}), int>);
+  CHECK((-gadget{}) == 6);
+  static_assert(has_negation<mv<rga3, full<4>, double>>);
+}
+
+} // namespace negation_user_code
+} // namespace
