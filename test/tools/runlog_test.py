@@ -14,8 +14,9 @@ import shutil
 import subprocess
 import sys
 
-LOG = "docs/agent/records/performance/runs.tsv"
-HISTORY = "docs/agent/records/performance/history"
+RECORDS = "docs/agent/records/performance"
+LOG = f"{RECORDS}/runs.tsv"
+HISTORY = f"{RECORDS}/history"
 COLUMNS = ("utc_start revision branch step preset selection wall_s exit host "
            "mode cpus user_s sys_s maxrss_kib inst_p_u inst_e_u cycles_u "
            "l1d_loads_u l1d_misses_u l2_refs_u l2_misses_u llc_refs_u "
@@ -77,8 +78,7 @@ class Repo:
         shutil.rmtree(self.top, ignore_errors=True)
         os.makedirs(os.path.join(self.top, HISTORY))
         self.git("init", "-q", "-b", "dev")
-        self.write(".gitattributes",
-                   "/docs/agent/records/**/*.tsv merge=union\n")
+        self.write(".gitattributes", "*.tsv merge=union\n")
         self.write(f"{HISTORY}/toolchain.tsv", TOOLCHAIN)
         self.git("add", ".")
         self.git("commit", "-q", "-m", "start")
@@ -220,7 +220,7 @@ def kept_by_rule(tool, directory):
     removed = [
         row(at(7), dirty, "build", "gcc-debug", "all", "1.0"),
         row(at(8), "unavailable", "build", "gcc-debug", "all", "1.0"),
-        row(at(9), clean, "build", "-", "spike-a", "1.0"),
+        row(at(9), clean, "build", "-", "sketch-a", "1.0"),
         row(at(10), clean, "measure", "-", "ceiling-cert:x:L1", "1.0"),
         row(at(11), clean, "probe", "-", "p", "1.0"),
         row(at(12), clean, "check", "-", "metric-like-holes:a", "1.0"),

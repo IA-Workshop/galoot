@@ -18,10 +18,10 @@ Usage, from anywhere inside the checkout:
 
 <path> is relative to the checkout's root. `compact` defaults to the run log,
 docs/agent/records/performance/runs.tsv; `check` and `prune` default to every
-log the history has an era of. The history is in
-docs/agent/records/performance/history/: eras.tsv (one row per era),
-groups.tsv (one row per era and kind of run), and toolchain.tsv (the
-toolchain in force from a given time, written by hand).
+log the history has an era of. The history is the directory `history` beside
+the run log: eras.tsv (one row per era), groups.tsv (one row per era and
+kind of run), and toolchain.tsv (the toolchain in force from a given time,
+written by hand).
 
 An era is every row of the log at its revision that no earlier era of the
 same log kept. Its rows are grouped by step, preset, selection family (the
@@ -56,8 +56,9 @@ import re
 import subprocess
 import sys
 
-RUN_LOG = "docs/agent/records/performance/runs.tsv"
-HISTORY = "docs/agent/records/performance/history"
+RECORDS = "docs/agent/records/performance"
+RUN_LOG = f"{RECORDS}/runs.tsv"
+HISTORY = f"{RECORDS}/history"
 ERAS = f"{HISTORY}/eras.tsv"
 GROUPS = f"{HISTORY}/groups.tsv"
 TOOLCHAIN = f"{HISTORY}/toolchain.tsv"
