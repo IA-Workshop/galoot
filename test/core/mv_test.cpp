@@ -743,14 +743,14 @@ constexpr bool get_reaches(std::size_t at) {
 }
 
 // Whether Name stands for the blade (mask, sign), by the reading above, and
-// is at position `at` of Type's layout, where has_blade finds it and get
+// is at position `at` of Type's layout, where has_name finds it and get
 // reaches it.
 template <class Type, core::detail::name_list Name>
 constexpr bool named_at(std::size_t at, core::mask_t mask, int sign) {
   const core::oriented_blade expected{.mask = mask, .sign = sign};
   return blade_of(Name.text()) == expected &&
          Type::layout.blades.at(at) == expected &&
-         core::has_blade<Type, Name> && get_reaches<Type, Name>(at);
+         core::has_name<Type, Name> && get_reaches<Type, Name>(at);
 }
 
 } // namespace
@@ -814,28 +814,28 @@ TEST_CASE("get reads and writes a line at run time") {
   CHECK(std::get<1>(pair) == 2.0);
 }
 
-// Reference: contract: has_blade is true only for a name the layout holds
+// Reference: contract: has_name is true only for a name the layout holds
 //   with that orientation, and false, never an error, for the other
 //   orientation, a blade the layout lacks, a name with an index above n, a
 //   text that is not a name, two names, and a type that is not a
 //   multivector
-TEST_CASE("has_blade answers for every name without an error") {
-  static_assert(!core::has_blade<Line<double>, "e14">);
-  static_assert(!core::has_blade<Line<double>, "e24">);
-  static_assert(!core::has_blade<Line<double>, "e34">);
-  static_assert(!core::has_blade<Line<double>, "e13">);
-  static_assert(!core::has_blade<Line<double>, "e1">);
-  static_assert(!core::has_blade<Line<double>, "e5">);
-  static_assert(!core::has_blade<Line<double>, "x1">);
-  static_assert(!core::has_blade<Line<double>, "e0">);
-  static_assert(!core::has_blade<Line<double>, "e11">);
-  static_assert(!core::has_blade<Line<double>, "e1 e2">);
-  static_assert(!core::has_blade<Line<double>, "">);
-  static_assert(!core::has_blade<Empty<double>, "1">);
-  static_assert(!core::has_blade<std::array<double, 6>, "e41">);
-  static_assert(core::has_blade<const Line<double>&, "e41">);
-  static_assert(core::has_blade<Motor<float>, "1">);
-  CHECK(core::has_blade<Line<double>, "e12">);
+TEST_CASE("has_name answers for every name without an error") {
+  static_assert(!core::has_name<Line<double>, "e14">);
+  static_assert(!core::has_name<Line<double>, "e24">);
+  static_assert(!core::has_name<Line<double>, "e34">);
+  static_assert(!core::has_name<Line<double>, "e13">);
+  static_assert(!core::has_name<Line<double>, "e1">);
+  static_assert(!core::has_name<Line<double>, "e5">);
+  static_assert(!core::has_name<Line<double>, "x1">);
+  static_assert(!core::has_name<Line<double>, "e0">);
+  static_assert(!core::has_name<Line<double>, "e11">);
+  static_assert(!core::has_name<Line<double>, "e1 e2">);
+  static_assert(!core::has_name<Line<double>, "">);
+  static_assert(!core::has_name<Empty<double>, "1">);
+  static_assert(!core::has_name<std::array<double, 6>, "e41">);
+  static_assert(core::has_name<const Line<double>&, "e41">);
+  static_assert(core::has_name<Motor<float>, "1">);
+  CHECK(core::has_name<Line<double>, "e12">);
 }
 
 // Reference: independent value: an oriented name stands for the canonical
@@ -888,10 +888,10 @@ TEST_CASE("has_name is true for the oriented names that get reads") {
 
 // Reference: contract: the rejecting overload of get and the constructor for
 //   a wrong count make generic code that probes a call or a construction
-//   told yes, while has_blade answers no, as their comments say
+//   told yes, while has_name answers no, as their comments say
 TEST_CASE("Probes of get and of construction answer yes for a misuse") {
   static_assert(requires(Line<double>& line) { get<"e1">(line); });
-  static_assert(!core::has_blade<Line<double>, "e1">);
+  static_assert(!core::has_name<Line<double>, "e1">);
   static_assert(std::is_constructible_v<Line<double>, double, double, double>);
   CHECK(requires(Line<double>& line) { get<"e41">(line); });
 }
@@ -1001,12 +1001,12 @@ TEST_CASE("get reads names in an algebra of nine generators") {
   static_assert(named_at<Nine, "e19">(0, 0b100000001, 1));
   static_assert(named_at<Nine, "e9">(1, 0b100000000, 1));
   static_assert(named_at<Nine, "e123456789">(2, 0b111111111, 1));
-  static_assert(!core::has_blade<Nine, "e91">); // the other orientation
+  static_assert(!core::has_name<Nine, "e91">); // the other orientation
   Nine x{1, 2, 3};
   get<"e9">(x) = 5.0;
   CHECK(get<"e19">(x) == 1.0);
   CHECK(get<"e9">(x) == 5.0);
-  CHECK(core::has_blade<Nine, "e123456789">);
+  CHECK(core::has_name<Nine, "e123456789">);
 }
 
 // Applying plans and maps, converting between layouts, and truncating.

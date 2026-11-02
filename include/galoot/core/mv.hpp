@@ -1070,15 +1070,20 @@ using coefficient_reference = decltype(std::forward_like<X>(
 
 } // namespace detail
 
-/// Whether the multivector type X, with any cv-qualification and reference,
-/// holds the blade named Name with the orientation the name gives it.
+/// Whether Name is a name that get reads in the multivector type X, with any
+/// cv-qualification and reference: a name of a blade of X's layout, with the
+/// orientation the layout gives it, however its indices are ordered. In a
+/// line that stores e41 = -e14, has_name<Line, "e41"> is true and
+/// has_name<Line, "e14"> is false, though the line holds that blade.
 ///
 /// Requires: nothing. False, never an error, for a type that is not a
 /// multivector, a name that is not valid in its algebra, a blade the layout
 /// lacks, and a blade the layout holds with the other orientation. A name
 /// is "1" or e followed by generator indices, one digit each, as for blades.
+/// Whether a layout holds a blade in either orientation is not asked by a
+/// concept of its own.
 template <class X, detail::name_list Name>
-concept has_blade =
+concept has_name =
     multivector<X> &&
     detail::name_lookup_v<std::remove_cvref_t<X>, Name>.result ==
         detail::NameLookup::found;
@@ -1088,7 +1093,7 @@ concept has_blade =
 /// layout: a line that stores e41 = -e14 is read with "e41". The function is
 /// found by argument-dependent lookup, so the call needs no namespace.
 ///
-/// Requires: has_blade<X, Name>. Any other name is rejected at compile time
+/// Requires: has_name<X, Name>. Any other name is rejected at compile time
 /// with one error whose message names the cause: a blade the layout lacks
 /// in either orientation; one it holds with the other orientation (use the
 /// name the layout gives and negate the value; for a layout in canonical
@@ -1099,13 +1104,13 @@ concept has_blade =
 /// generators, where names are not read and coefficients are reached by
 /// position. Because the rejecting overload exists, a
 /// requires-expression that asks whether get<"e1">(line) is valid is told
-/// yes for any name; ask has_blade instead.
+/// yes for any name; ask has_name instead.
 /// Guarantees: a reference to the coefficient, with the value category of
 /// x: an rvalue reference for an rvalue, so the result of get on a
 /// temporary must not outlive it. The position is found at compile time,
 /// once for each type and name.
 template <detail::name_list Name, class X>
-  requires has_blade<X, Name>
+  requires has_name<X, Name>
 // x is forwarded by std::forward_like, which gives the coefficient the value
 // category of x; the check counts only std::forward.
 // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward)
@@ -1115,11 +1120,11 @@ template <detail::name_list Name, class X>
   return std::forward_like<X>(x.coefficients[at]);
 }
 
-/// Rejects any name that has_blade refuses, with the message for its cause.
+/// Rejects any name that has_name refuses, with the message for its cause.
 /// Its return type is that of get, so that the message is the only error
 /// and a requires-expression gets an answer without compiling the message.
 template <detail::name_list Name, class X>
-  requires(multivector<X> && !has_blade<X, Name>)
+  requires(multivector<X> && !has_name<X, Name>)
 // NOLINTNEXTLINE(cppcoreguidelines-missing-std-forward): as for get above.
 constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
   using enum detail::NameLookup;
