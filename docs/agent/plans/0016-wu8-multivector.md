@@ -899,3 +899,67 @@ Lines / longest installed line, before (`8f341c2`) and after (`942a2d7`'s header
 ### Agent cost
 
 About 300 tool calls by the implementer; the token count is not visible to me. The plan estimated 500k to 650k tokens and 190 to 250 tool calls with review fixes.
+
+### Review fixes, WU8b (2026-11-01)
+
+The W5 blind review (`docs/agent/records/reviews/2026-11-01-wu8b-mv.md`, blind-reviewer, Opus 5.5, at `6c9df63`: block on F1) and the hci-expert reading (`docs/agent/records/reviews/2026-11-01-wu8b-hci-reading.md`, at `6c9df63`: nothing blocks) were merged into this branch at `aa867a8` (run log by union; `tools/runlog check` exit 0) and fixed in one round, tests before the code they judge.
+
+Departures of this round (C20):
+
+1. Not changed, for the owner: the conversion's message (blind F7, hci S5), whose wording is decision 0155 item 2's ruling; and the ring-operations message (hci C3), whose wording is decision 0152's. Each review proposes a rewording; neither is applied.
+2. hci C1 makes the braced-list catch-all a single-argument constructor that is not `explicit`, read as allowed by STYLE S8 for a constructor that only rejects; the reason and the lint suppressions are beside it (decision 0150, review fixes of WU8b, item 4).
+3. F4's mutant (`>= 64` to `> 64`) no longer applies: F1's fix removes the shift by `digits` and the guard with it.
+4. Mutants whose first forms were diagnosed by the compiler themselves were rewritten and rerun, not counted (`survivors.md`, review section).
+5. Skipped, small items the coordinator left optional: hci C5 (truncate's constant-evaluation diagnostic and run-time location, which follow from `GALOOT_ASSERT`) and hci C8 / blind F10 (misuses outside the catalogue, such as `truncate<"e41 ...">`), listed for WU9 and WU15.
+6. `fdd72ae`'s wording "lossless" for diagnostics case 17 was wrong (a point into a motor is lossy); the record is corrected in `71d040a` and the case is now a line into a motor.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| Blind F1 (blocks): `long double` fails on GCC under -Werror | The bound shifts by no type's digits; long double products and checks tested | `425493c` (tests), `ef579e2` |
+| Blind F2: a single explicit-constructible value gets the array message | A coefficient is a value T is constructible from; `core.mv_one_explicit_value` ("1 == 6"); probes | `425493c`, `ef579e2` |
+| Blind F3: only the first dropped place tested | Antiscalar cases at compile time and in the truncate programs; the review's mutant killed | `425493c`; mutants `71d040a` |
+| Blind F4 | With F1 (departure 3) | `425493c`, `ef579e2` |
+| Blind F5, hci departure 1 judgment | Owner question, unchanged | |
+| Blind F6, hci S5 (comment) | The lossy catch-all's comment states its probe answers | `ef579e2` |
+| Blind F7, hci S5 (wording), hci C6 | Coefficient check: "apply:" prefix and a constant named for its rule; conversion wording for the owner (departure 1) | `425493c`, `ef579e2` |
+| Blind F8 | The bound is exact: signed min() to max(), floats by the odd part and the exponent range | `425493c`, `ef579e2`, `13b53ee` (test) |
+| Blind F9, hci S1 | Owner question (two meanings of truncate); the Requires paragraph reworded | `ef579e2` |
+| Blind F10, hci C8 | Skipped (departure 5) | |
+| Blind F11 | Process, recorded | |
+| hci S2 | Two messages for canonical layouts: absent, and the other orientation with the naming rule | `425493c`, `ef579e2` |
+| hci S3 | Default construction and copying checked apart; `core.mv_scalar_move_only`, `_const_member` | `425493c`, `ef579e2` |
+| hci S4 | truncate's message and comment state the rule; `core.mv_truncate_derived` | `425493c`, `ef579e2` |
+| hci S6 | Fixes as trailing comments on the converting constructors' lines; both compilers' echoes checked | `ef579e2`, `71d040a` |
+| hci S7 | Owner question (a scalar conversion) | |
+| hci C1 | The braced-list catch-all not explicit; `core.mv_coefficients_as_braced_list_copy` | `425493c`, `ef579e2` |
+| hci C2 | truncate's catch-all returns a default target; `core.mv_truncate_result_used` | `425493c`, `ef579e2` |
+| hci C3 | Not changed (departure 1) | |
+| hci C4 | Its own message for one value of another type; `core.mv_value_not_scalar` | `425493c`, `ef579e2` |
+| hci C5 | Skipped (departure 5) | |
+| hci C7 | The header's opening comment shows a conversion and truncate | `ef579e2` |
+
+Changes to code or comments after the reviews, for the delta review: `ef579e2` (`mv.hpp`, all of the above). Tests: `425493c`, `13b53ee`. Records: `aa867a8` (the reviews' merge), `71d040a` (diagnostics rerun), `432e5f9` (mutants, decisions), and this section.
+
+Diagnostics after the fixes (`docs/agent/records/diagnostics/wu8/wu8b/`, at `ef579e2`'s header; lines / longest installed line; one error unless marked):
+
+| Mistake | GCC before (`8f341c2`) | GCC after | Clang before | Clang after |
+| --- | --- | --- | --- | --- |
+| `const Point s = q;` (implicit, lossy) | 4 / 811 | 9 / 811, the compiler's, with the catch-all's line ending `// truncate<Type>(x)` | 16 / 282 | 28 / 282, the same |
+| `const Point s{q};` | 65 / 1,090 | 10 / 925 | 25 / 331 | 9 / 268 |
+| `get<"e1">` on `of_grade<4, 2>` | 10 / 511 | 10 / 511 | 9 / 249 | 9 / 249 |
+| `get<"e21">` on `of_grade<4, 2>` | 10 / 512 | 10 / 512, the naming rule | 9 / 250 | 9 / 250 |
+| scalar `const double` | 43 / 532, 2 errors | 10 / 379 | 19 / 235 | 9 / 230 |
+| scalar `double&` | 31 / 527, 2 errors | 10 / 374 | 16 / 165 | 9 / 230 |
+| scalar `bool` | compiles | 10 / 356 | compiles | 9 / 193 |
+| scalar without a default constructor | 45 / 525, 3 errors | 14 / 1,338, 2 (the program's use of a member) | 29 / 163, 2 | 9 / 238 |
+| scalar `std::unique_ptr<double>` | 46 / 543, 3 errors | 10 / 376 | 28 / 194, 2 | 9 / 274 |
+| `Point s{{1, 2, 3, 1}}` | 65 / 791 | 10 / 521 | 26 / 216 | 9 / 200 |
+| `Point s = {{1, 2, 3, 1}}` | 6 / 441 | 10 / 521 | 26 / 216 | 9 / 200 |
+| `Point s{values}`, a std::array | 10 / 483, "1 == 4" | 10 / 475 | 12 / 210, "1 == 4" | 9 / 210 |
+| `Point s{std::complex<double>{1, 0}}` | 10 / 475, "1 == 4" | 10 / 467, its own message | 12 / 201, "1 == 4" | 9 / 201 |
+| `const double s = truncate<double>(q);` | 7 / 69, 2 (no truncate) | 10 / 453, one error | 7 / 83, 2 | 9 / 228 |
+| `const Motor s = l;` (implicit, lossless) | 4 / 889 | 9 / 889, with the line ending `// write Type{x}` | 16 / 319 | 28 / 319 |
+
+Mutation after the fixes: 24 changed or new mutants on gcc-debug and clang-debug in both modes, all killed by tests (`docs/agent/records/mutations/0016-mv-b/survivors.md`, review section).
+
+Checks at the final revision: in the commit after this section.
