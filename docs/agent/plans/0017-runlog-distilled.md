@@ -376,3 +376,30 @@ These ran in throwaway worktrees, uncommitted, then were aborted and removed. `c
 ### Verification at the final head
 
 The P9 runs (the seven presets from new empty build trees, which hold the full suite on gcc-debug and clang-debug, the sanitizers, and the lint preset; and the trace gate) ran at the commit that adds this section. Their results are in the message of the next commit, which adds only run rows. `test/CMakeLists.txt` changed (`tools.runlog_check`), so the build description changed.
+
+## W5 delta review fixes (2026-11-01, Claude, agent, Opus 5.5, performance-engineer)
+
+The delta review (`docs/agent/records/reviews/2026-11-01-runlog-distilled-delta.md`, blind-reviewer, Claude Sonnet 5.5, on `98fa35b`) returned "accept after fixes", with nothing blocking. Its record was merged into this branch (`6d65639`, a fast-forward).
+
+### Departures
+
+R7. **`0fe7a18` puts the citation pattern and the fixture cases that judge it in one commit** (finding D5, W9). The pattern and its expected findings are one change of one regular expression, but they were not committed apart, and the commit is listed here for that reason; history is not rewritten. The two shapes the review found passing, `.../performance/history.md` and `.../history/eras.tsv.bak`, are the old tail of the pattern (`runs.tsv.bak` passed before this branch too) and are not changed.
+
+R8. **The order of the commits differs from the order of the findings:** D4's label (`1135370`) went before D3's wording (`e9a78f7`), because that wording names the label.
+
+### Commits
+
+| Finding | Commit | What |
+| --- | --- | --- |
+| D2 | `194d56c` | Pointers, in italics, at each place in this plan (criterion 1, section 4.2, section 4.7, section 5's P13 and DoD-25, O6, the outcome's table) and in decision 0170 (option 3, its first P13 and DoD-25 sentences, its count) that still carried the first promise or counts, to the note "Corrections to the recorded text" in the section above; the recorded text is kept. The READMEs were already corrected |
+| D4 | `1135370` | `tools.runlog_check` gets the label `runlog`; it still runs in every preset. Only that line and its comment of `test/CMakeLists.txt` change |
+| D3 | `e9a78f7` | A second addendum to decision 0170 (proposed) gives the exact P13 sentence: the `gate` step and the `check` and `trace` steps of the ten named cheap gates, not every check |
+| D6 | `5b88708` | Cases for a blank log line (refused) and an absolute `--log` path (recorded relative); the reviewer's survivors `blank_line_allowed` and `relative_keeps_abs` are killed |
+| D7 | `c7f11d3` | Case 13 reads `tools.runlog_check`'s skip expressions from `test/CMakeLists.txt` and checks that they match the tool's two messages; two mutants that reword the messages are killed. 45 of 45 mutants killed (`mutants-after-delta-review.tsv`) |
+| D5 | this section, R7 | |
+
+D1 (gate runs the rule still misses) and D8 (resurrection caught, not prevented) need no change: the wording states both, and the `gate:` prefix and the P8 and P9 wording are proposed in decision 0170.
+
+### Verification
+
+The affected checks ran at each commit of this round and the full suite ran at the end; the revisions and results are in the message of the commit that adds their run rows.
