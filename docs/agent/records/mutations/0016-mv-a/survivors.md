@@ -40,3 +40,18 @@ Each of the plan's mutants (section 8, WU8a) is in the driver; the test that kil
 | blades<Alg> reading n from the wrong place (a fixed 4) | `blades_fixed_four` | blade_set_test.cpp and mv_test.cpp, at names of n other than 4 |
 
 Beyond the plan's list: `no_scalar_check`, `range_ignores_algebra`, `exact_scalar_ignores_limits`, `multivector_keeps_reference`, `shared_zero_initializer`, `absent_message_lost`, and `one_error_inert` (the compile-fail helper's one-error option made inert, killed by `core.mv_two_errors`).
+
+## After the review fixes (`9b42298`)
+
+`results-9b42298-review-{normal,runtime}.tsv`: the driver updated for the reviewed header (36 mutants, the eight new ones from the reviews' findings), on gcc-debug and clang-debug in both modes. Every mutant is killed by a test on both presets in both modes, except `shared_zero_initializer` on clang-debug, equivalent there as before. No build failed on warnings alone. The review's survivors, now killed:
+
+| Mutant | Killed by (normal mode; the run-time mode agrees or kills at run time) |
+| --- | --- |
+| `mv_alg_unconstrained` (mv's `metric_like Alg` made `class Alg`, at its three declarations) | `core.mv_not_metric_like`, which requires the compiler's "does not satisfy 'metric_like'" or "‘metric_like<Alg>’", not a word of its path |
+| `blades_unconstrained` | `core.blade_set_blades_not_metric_like` and `core.blade_set_names_zero` |
+| `ring_requires_equality` | core.mv's two-lane scalar (`static_assert(core::ring_scalar<two_lanes>)` and mv's scalar check) |
+| `equality_requires_removed` | core.mv's `!std::equality_comparable<Line<two_lanes>>`; run-time mode: its CHECK |
+| `catchall_k1_not_explicit` | core.mv's `!std::is_convertible_v<T, Line<T>>`; run-time mode: its CHECK |
+| `catchall_counts_ignored_for_one` | `core.mv_one_value` ("1 == 6") |
+| `rational_product_no_cancel` | support.rational's (2^62 / 3)(3 / 2^62) == 1 |
+| `literal_in_path_check_inert` | `tools.compile_fail_literal_in_path_rejects` |

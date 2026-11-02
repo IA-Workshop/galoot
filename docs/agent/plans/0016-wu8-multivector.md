@@ -652,7 +652,7 @@ Status: done on `feature/core-mv-a`, awaiting the hci-expert reading and the W5 
 6. A GCC 16.2.1 wrong-code defect was found and worked around: the zero initializer is `coefficients{zero_at(I)...}`, not `{}` (decision 0150 appendix, item 4; lesson 0065; reproducer in `docs/agent/records/spikes/gcc-shared-array-initializer/`, no Galoot code). Not reported upstream (agents do not contact maintainers); the reproducer is kept for the owner.
 7. `scalar_type` is not provided (no caller in WU8a, S16); WU8b adds it if its conversions need it.
 8. Build tooling: `galoot_add_compile_fail_test` gained `ONE_ERROR` (every output line with "error:" must hold a required literal), with `core.mv_two_errors` (WILL_FAIL) showing it can fail. Messages with a `;` are passed to it with character 1, as `galoot_expected_findings` already does.
-9. Lint of compile-fail sources, run by hand at each commit with clang-tidy (`.clang-tidy`, warnings as errors), because no build compiles them: a tidy check counts; the compiler's own diagnostics of the deliberate mistake (`clang-diagnostic-*`) are the failure under test and do not. Three suppressions, each with its reason beside it: `misc-include-cleaner` in `blade_set_names_zero_fail.cpp`, `blade_set_blades_not_metric_like_fail.cpp`, and `mv_not_metric_like_fail.cpp` (the failed constraint hides the header's use), and the narrowing checks in `mv_narrowing_float_fail.cpp` (the narrowing is the mistake). Pre-existing findings in touched files were fixed (six hand-written sets moved to `std::to_array` for `readability-trailing-comma`, `59c1057`). Not fixed, outside this unit's files (W9, reported): `plan_not_metric_like_fail.cpp` and `plan_map_not_metric_like_fail.cpp` have the same include-cleaner artifact.
+9. Lint of compile-fail sources, run by hand at each commit with clang-tidy (`.clang-tidy`, warnings as errors), because no build compiles them: a tidy check counts; the compiler's own diagnostics of the deliberate mistake (`clang-diagnostic-*`) are the failure under test and do not. Four suppressions, each with its reason beside it: `misc-include-cleaner` in `blade_set_names_zero_fail.cpp`, `blade_set_blades_not_metric_like_fail.cpp`, and `mv_not_metric_like_fail.cpp` (the failed constraint hides the header's use), and the narrowing checks in `mv_narrowing_float_fail.cpp` (the narrowing is the mistake). Pre-existing findings in touched files were fixed (six hand-written sets moved to `std::to_array` for `readability-trailing-comma`, `59c1057`). Not fixed, outside this unit's files (W9, reported): `plan_not_metric_like_fail.cpp` and `plan_map_not_metric_like_fail.cpp` have the same include-cleaner artifact.
 10. Commits that fail by design, each saying so (W2): `380a355` and `15dd5a0` (tests before their code; the gates passed on their trees, extracted with `git archive`), and `461e3dd` (the GCC regression test before its fix; fails core.mv on gcc-debug only). `669f7e2`'s gates ran at `12e0e22`, a records-only commit, because untracked records were present at `669f7e2`.
 11. `b94e50a` committed the diagnostics record's `program.cpp` unformatted (it is under `docs/`, outside `format-check`); `ce9d15e` formats it and regenerates the texts.
 12. P13 lapses: `clang-format` runs, the preprocessing check of `<concepts>` (`-E`, line counts), and `git archive` extractions were not run through `tools/timed`. Every build, test, probe compile, lint, and measurement was.
@@ -729,3 +729,55 @@ The wrong count is now caught; named access names each cause; GCC's lines stay l
 ### Agent cost
 
 About 220 tool calls by the implementer; the token count is not visible to me. The plan estimated 480k to 650k tokens and 185 to 250 tool calls with review fixes.
+
+### Review fixes (2026-11-01)
+
+The W5 blind review (`docs/agent/records/reviews/2026-11-01-wu8a-mv.md`, merged at `e541ab4`) and the hci-expert reading (`docs/agent/records/reviews/2026-11-01-wu8a-hci-reading.md`, merged at `d9e1521`) were fixed in one round, each change in its own commit, tests before the code they judge.
+
+Departures of this round (C20):
+
+1. Blind F4 (a scalar that is not semiregular) is met by a test of the compiler's wording (`core.mv_scalar_without_default`), not by a literal message; the alternative (a weaker constraint and an assertion in the body) was not tried, for the reason in decision 0150's review section, item 5.
+2. `ring_scalar<bool>` stays true and is documented in the concept's comment, not rejected (blind F10).
+3. Blind F10's `[[nodiscard]]` on `zero_at` no longer applies: the pack-of-T storage (H1) needs no `zero_at`.
+4. The layout messages say "the algebra does not have" rather than "beyond e_n", which also answers blind F10's point that messages wrote e_n where comments write e1 to en.
+5. `11feaf6`'s tests were run on the working tree before the commit (core.mv, both compilers); its full suites ran at `b123788`, whose tests are the same.
+6. Probes outside a build or test, all through `tools/timed`: `h5:p10`, `h5:p11` (the claims of the reworded comments), `review-f7:p9:*` (which written places trigger the GCC defect).
+
+| Finding | Fix | Commits |
+| --- | --- | --- |
+| B1 (blind F1): four compile-fail tests found their literal in their own path | `galoot_add_compile_fail_test` stops configuring when MESSAGE or REQUIRE occurs in the source path (`galoot_check_literals_outside_path`), shown to fail by `tools.compile_fail_literal_in_path_rejects`; the tests require each compiler's words. Defect outside the unit (W9), fixed because the check catches it: `core.metric_like_no_generators`, `core.plan_not_metric_like`, `core.plan_map_not_metric_like` | `bf1ac75` |
+| B1b (blind F2): a double into a float layout is two errors | The intended error is the language's narrowing error; the second is the compiler's -Wconversion warning made an error on the same line. `core.mv_narrowing_float` requires both, and ONE_ERROR allows exactly those two | `bf1ac75`, `162cd96` |
+| B3 (blind F3) | two-lane scalar without == (ring_scalar true, Line made and read, not equality_comparable); `!is_convertible_v<T, Line<T>>`; `core.mv_one_value` ("1 == 6") | `14bff60` |
+| Blind F4 | `core.mv_scalar_without_default`, compiler wording, labeled | `14bff60` |
+| Blind F9 | (2^62 / 3)(3 / 2^62) == 1 | `14bff60` |
+| HCI H1 (F1) | constructor parameters a pack of T; narrowing says "from 'int' to 'double'" | `162cd96` (test), `ed8be5a` |
+| HCI H2, H3 (F2, F3), blind F10 | named layout rules; "layout" in every message; a fix after each semicolon | `294d265` (test), `3d8df77` |
+| HCI H4 (F4) | `scalar_type` | `7d46580` (test), `0b316df` |
+| HCI H5 (F5), blind F6, HCI F13, F14, blind F10 | comments say what is shown: braces against parentheses, the array probe, where Clang names aliases, a layout does not keep its algebra, printing through `coefficients`, bool, the forward declaration's comment | `b123788` |
+| Blind F7 | the defect comment says what was observed; the regression test writes every place; lesson 0065 corrected by a dated section; the knowledge-base note narrowed (`kb/cpp-shared-array-initializer`, `227c20f`, `ad3ae5b`) | `ed8be5a`, `11feaf6`, this record |
+| Blind F10, outcome count | "Four suppressions" in departure 9 above; the helper's comment line within 80 columns | this record, `bf1ac75` |
+
+Header changes after the review, for the delta review (decision 0094 item 3): `ed8be5a` (the storage base, its constructor's parameter list, the zero initializer's comment), `3d8df77` (the three layout checks, their members and messages), `0b316df` (`scalar_type`), and `b123788` (comments only: the head comment, `ring_scalar`, the forward declaration, `mv`, the K-value constructor, the count catch-all). `blade_set.hpp` did not change.
+
+Mutation after the fixes (`9b42298`, `docs/agent/records/mutations/0016-mv-a/survivors.md`): 36 mutants on gcc-debug and clang-debug in both modes; all killed by tests except `shared_zero_initializer` on clang-debug, which is equivalent there. `mv_alg_unconstrained` and `blades_unconstrained` are killed on both compilers by `core.mv_not_metric_like` and by `core.blade_set_blades_not_metric_like` and `core.blade_set_names_zero`.
+
+The diagnostics record was regenerated for the reviewed header (`b123788`); `summary.tsv` is unchanged.
+
+Deferred, with the unit that takes them (recorded, not changed):
+
+- Blind F2 (two errors for a double into a float layout): recorded as compiler behavior above; nothing in the library can remove the compiler's -Wconversion error.
+- Blind F5 (a copy from a class derived from `mv` reaches the count message), blind F8 (positional `get<0>` gives a deduction failure in internal terms): WU8b, with the conversions and the catch-alls for single arguments.
+- HCI F7 (the absent message's list of names for a computed layout), F8 (reference, const, and bool scalars), F10 (double braces and whole arrays): WU8b.
+- HCI F9 (a tag without `value`): the owner, or WU16 with the model tags.
+- HCI F11, F12: owner decisions (below).
+- HCI F13 and F14: commented now (`b123788`); WU9's mixed-algebra messages and WU15's `format` take the rest.
+- HCI F15 (GCC 16 drops `explicit` from an inherited constructor template whose `explicit(bool)` reads its own parameters): affects only classes derived from `mv`; with F6.
+- HCI F16 (commas between names in `blades`): WU4's parser, a later unit.
+- HCI F17: recorded as not recommended.
+- The plan's first usage snippet (section 4) puts `gc::get<"e23">(axis) = 2.0;` at namespace scope, where it is not a statement; inside a function it compiles. It matters when it becomes documentation (W12, WU16).
+
+Owner decisions, not implemented:
+
+1. HCI F6: named model classes deriving from `mv` (`struct Line : mv<rga3, line_layout, double> { using mv::mv; };`). Measured by the reading: GCC's line for the lossy assignment falls from 811 to 98 characters and `get`'s from 499 to 257; the cost is two types per layout (results of products are `mv`s and need a conversion into the named class), `multivector` accepting derived classes, and a workaround for GCC 16 dropping `explicit(bool)` from an inherited constructor template (F15).
+2. HCI F11: `has_blade<Line, "e14">` is false though the line holds the blade e14 in the other orientation; rename to say "this oriented name" (`has_name`), or keep the name and document it.
+3. HCI F12: whether `mv` is tuple-like, with a positional `get<0>` beside `get<"e41">`, and structured bindings; today `auto [all] = p;` binds the whole array.

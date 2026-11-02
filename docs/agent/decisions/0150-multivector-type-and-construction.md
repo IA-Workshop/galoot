@@ -49,3 +49,16 @@ Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8a of plan
 4. The zero initializer is written once per place, `coefficients{zero_at(I)...}`, not `coefficients{}`: GCC 16.2.1 miscompiles the latter after a constant evaluation in the same translation unit writes into a zero value of the type (lesson 0065; the reproducer, which needs no Galoot code, is under `docs/agent/records/spikes/gcc-shared-array-initializer/`).
 5. Members: `algebra_type`, `layout`, and `component_count` (the last named so that Clang prints "3 == 6" and not the layout). `scalar_type` has no caller in WU8a and is left for the part that needs it (STYLE S16).
 6. The count catch-all is constrained to any number of values other than none, the component count, and a single multivector, so that copies and, in WU8b, conversions are not caught.
+
+## Review fixes, 2026-11-01 (WU8a)
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, after the W5 blind review and the hci-expert reading of WU8a. They change items 1, 2, 4, and 5 of the implementation section above:
+
+1. The storage base is `detail::coefficient_storage<Multivector, T, Ts...>`, with Ts the scalar type once per component (built by `detail::storage_of` from an index pack through `template <std::size_t> using same = T;`). Its constructor's parameters are then T itself, so a narrowing error names the scalar ("from 'int' to 'double'") and no helper of the library. The zero initializer is `coefficients{Ts{}...}`, still one initializer per place.
+2. The three layout checks read private static members named for their rules (`layout_names_only_generators_of_the_algebra`, `layout_signs_are_plus_or_minus_one`, `layout_holds_each_blade_once`), so that Clang's "due to requirement" names the rule instead of printing the layout's masks. Their messages say "layout" and give a fix after a semicolon:
+   - "mv: the layout names a generator that the algebra does not have; a layout written for a larger algebra cannot be used here";
+   - "mv: the layout holds a sign other than +1 or -1; give each blade of a layout written out by hand the sign +1 or -1";
+   - "mv: the layout holds one blade twice, perhaps in both orientations; list each blade once".
+3. `scalar_type` is provided: the tests' helpers use it, which is its present caller.
+4. `ring_scalar<bool>` stays true and is documented: bool meets the requirements through integer promotion though its + is not a ring's. Rejecting it would need a special case and a message that the scalar message does not fit.
+5. A scalar that is not `std::semiregular` is still rejected by `mv`'s template head with the compiler's account of the concept (`core.mv_scalar_without_default` records each compiler's wording). Constraining by a weaker concept and asserting `std::semiregular` in the body is the alternative the blind review names; it was not tried here, because the base class is formed from T before the body's assertions are read, so a reference scalar would likely fail there first (inferred). It is left for WU8b with the hci reading's F8 (references, const, and bool).

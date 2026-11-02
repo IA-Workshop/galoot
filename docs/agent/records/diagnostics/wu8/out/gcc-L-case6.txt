@@ -4,7 +4,7 @@ In file included from ../../../../../include/galoot/core.hpp:12,
 program.cpp:56:17:   required from here
    56 |   r += get<"e1">(l);
       |        ~~~~~~~~~^~~
-../../../../../include/galoot/core/mv.hpp:377:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
-  377 |     static_assert(false, "get: the type has no blade of this name; its "
+../../../../../include/galoot/core/mv.hpp:406:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+  406 |     static_assert(false, "get: the type has no blade of this name; its "
       |                   ^~~~~
   • ‘false’ evaluates to false

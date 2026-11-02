@@ -1,16 +1,16 @@
 program.cpp:59:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
    59 |   const Point s = q;
       |               ^   ~
-../../../../../include/galoot/core/mv.hpp:184:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
-  184 | struct mv
+../../../../../include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
+  197 | struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
       |        ^~
-../../../../../include/galoot/core/mv.hpp:184:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
-  184 | struct mv
+../../../../../include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, gc::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
+  197 | struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
       |        ^~
-../../../../../include/galoot/core/mv.hpp:226:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
-  226 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+../../../../../include/galoot/core/mv.hpp:255:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  255 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
       |                                              ^
-../../../../../include/galoot/core/mv.hpp:225:14: note: because '!(sizeof...(Values) == 1 && multivector<const galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double> &>)' evaluated to false
-  225 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
+../../../../../include/galoot/core/mv.hpp:254:14: note: because '!(sizeof...(Values) == 1 && multivector<const galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double> &>)' evaluated to false
+  254 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
       |              ^
 1 error generated.

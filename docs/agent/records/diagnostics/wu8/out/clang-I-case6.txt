@@ -1,7 +1,7 @@
 In file included from program.cpp:8:
 In file included from ../../../../../include/galoot/core.hpp:12:
-../../../../../include/galoot/core/mv.hpp:377:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
-  377 |     static_assert(false, "get: the type has no blade of this name; its "
+../../../../../include/galoot/core/mv.hpp:406:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+  406 |     static_assert(false, "get: the type has no blade of this name; its "
       |                   ^~~~~
 program.cpp:56:8: note: in instantiation of function template specialization 'galoot::core::get<detail::name_list<3>{{"e1"}}, galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>' requested here
    56 |   r += get<"e1">(l);
