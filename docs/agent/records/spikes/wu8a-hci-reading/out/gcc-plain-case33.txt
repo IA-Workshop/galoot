@@ -1,0 +1,13 @@
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&) [with name_list<...auto...> Name = detail::name_list<3>{std::array<char, 3>{"e1"}}; X = const mv<rga3, blade_set<6>{std::array<oriented_blade, 6>{std::__array_traits<oriented_blade, 6>::_Type{oriented_blade{9, -1}, oriented_blade{10, -1}, oriented_blade{12, -1}, oriented_blade{6, 1}, oriented_blade{5, -1}, oriented_blade{3, 1}}}}, double>&; detail::coefficient_reference<X> = const double&]’:
+first_user.cpp:206:23:   required from ‘use(int, double)::<lambda(const auto:11&)> [with auto:11 = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>]’
+  206 |       return get<"e1">(x);
+      |              ~~~~~~~~~^~~
+first_user.cpp:211:13:   required from here
+  211 |   r += first(l);
+      |        ~~~~~^~~
+../../../../../include/galoot/core/mv.hpp:377:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+  377 |     static_assert(false, "get: the type has no blade of this name; its "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

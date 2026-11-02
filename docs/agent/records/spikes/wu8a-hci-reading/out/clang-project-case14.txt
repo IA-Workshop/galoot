@@ -1,0 +1,7 @@
+first_user.cpp:127:39: error: template argument for template type parameter must be a type
+  127 |   constexpr auto counted = gc::blades<4, "e1 e2 e3 e4">;
+      |                                       ^
+../../../../../include/galoot/core/blade_set.hpp:603:23: note: template parameter is declared here
+  603 | template <metric_like Alg, detail::name_list Names>
+      |                       ^
+1 error generated.

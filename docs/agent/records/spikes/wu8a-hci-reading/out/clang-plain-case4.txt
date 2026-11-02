@@ -1,0 +1,8 @@
+first_user.cpp:88:18: error: non-constant-expression cannot be narrowed from type 'double' to 'component<float, 0UL>' (aka 'float') in initializer list [-Wc++11-narrowing]
+   88 |   const FPoint s{d, 0, 0, 1};
+      |                  ^
+first_user.cpp:88:18: note: insert an explicit cast to silence this issue
+   88 |   const FPoint s{d, 0, 0, 1};
+      |                  ^
+      |                  static_cast<float>( )
+1 error generated.

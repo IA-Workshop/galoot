@@ -1,0 +1,4 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:88:18: warning: narrowing conversion of ‘d’ from ‘double’ to ‘galoot::core::detail::component<float, 0>’ {aka ‘float’} [-Wnarrowing]
+   88 |   const FPoint s{d, 0, 0, 1};
+      |                  ^

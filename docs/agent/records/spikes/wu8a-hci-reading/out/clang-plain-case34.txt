@@ -1,0 +1,4 @@
+first_user.cpp:214:17: error: invalid range expression of type 'Line' (aka 'gc::mv<rga3, line_layout, double>'); no viable 'begin' function available
+  214 |   for (double c : l) {
+      |                 ^ ~
+1 error generated.

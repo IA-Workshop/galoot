@@ -1,0 +1,16 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:287:51: error: type/value mismatch at argument 1 in template parameter list for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+  287 |   using Swapped = gc::mv<line_layout, rga3, double>;
+      |                                                   ^
+first_user.cpp:287:51: note:   expected a type, got ‘line_layout’
+first_user.cpp:287:51: error: type/value mismatch at argument 2 in template parameter list for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+first_user.cpp:287:51: note:   expected a constant of type ‘blade_set<...auto...>’, got ‘rga3’
+first_user.cpp:287:19: error: expected type-specifier
+  287 |   using Swapped = gc::mv<line_layout, rga3, double>;
+      |                   ^~
+first_user.cpp:288:9: error: ‘Swapped’ does not name a type
+  288 |   const Swapped s{};
+      |         ^~~~~~~
+first_user.cpp:289:8: error: ‘s’ was not declared in this scope
+  289 |   r += s.coefficients[0];
+      |        ^

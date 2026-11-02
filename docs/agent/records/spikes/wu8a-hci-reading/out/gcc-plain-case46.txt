@@ -1,0 +1,5 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:292:45: error: designated initializers cannot be used with a non-aggregate type ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>’
+  292 |   const Point s{.coefficients = {1, 2, 3, 1}};
+      |                                             ^
+first_user.cpp:292:45: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(<brace-enclosed initializer list>)’

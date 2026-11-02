@@ -1,0 +1,4 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:173:35: error: narrowing conversion of ‘5.0e-1’ from ‘double’ to ‘galoot::core::detail::component<int, 0>’ {aka ‘int’} [-Wnarrowing]
+  173 |   const ILine s{0.5, 0, 0, 0, 0, 0};
+      |                                   ^

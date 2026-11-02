@@ -1,0 +1,19 @@
+program.cpp:95:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
+   95 |   const Point s = q;
+      |               ^   ~
+./mv_routes.hpp:291:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
+  291 | struct mv
+      |        ^~
+./mv_routes.hpp:291:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
+  291 | struct mv
+      |        ^~
+./mv_routes.hpp:143:13: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  143 |   constexpr component_count_check(Values&&... /*values*/) {
+      |             ^
+./mv_routes.hpp:142:14: note: because 'sizeof...(Values) > 1' (1 > 1) evaluated to false
+  142 |     requires(sizeof...(Values) > 1 && sizeof...(Values) != K)
+      |              ^
+./mv_routes.hpp:136:22: note: explicit constructor is not a candidate
+  136 |   constexpr explicit component_count_check(Values&&... /*values*/) {
+      |                      ^
+1 error generated.

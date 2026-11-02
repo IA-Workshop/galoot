@@ -1,0 +1,4 @@
+first_user.cpp:192:11: error: non-const lvalue reference to type 'double' cannot bind to a temporary of type 'double'
+  192 |   double& dangling = get<"e43">(make_line());
+      |           ^          ~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

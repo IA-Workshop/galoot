@@ -1,0 +1,4 @@
+first_user.cpp:278:9: error: type 'Line' (aka 'gc::mv<rga3, line_layout, double>') does not provide a subscript operator
+  278 |   r += l[0];
+      |        ~^~
+1 error generated.

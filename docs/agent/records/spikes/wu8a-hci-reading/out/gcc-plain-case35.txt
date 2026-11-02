@@ -1,0 +1,65 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:247:11: error: no match for ‘operator==’ (operand types are ‘const LaneLine’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, use(int, double)::lanes>’} and ‘const LaneLine’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, use(int, double)::lanes>’})
+  247 |   r += (a == b) ? 1.0 : 0.0;
+      |         ~ ^~ ~
+      |         |    |
+      |         |    mv<[...],[...],[...]>
+      |         mv<[...],[...],[...]>
+  • there is 1 candidate
+    first_user.cpp:247:11:
+      247 |   r += (a == b) ? 1.0 : 0.0;
+          |         ~~^~~~
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+    • candidate 1: ‘constexpr bool galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::operator==(const galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, use(int, double)::lanes>; T = use(int, double)::lanes; long unsigned int ...I = {0, 1, 2, 3, 4, 5}]’ (reversed)
+      ../../../../../include/galoot/core/mv.hpp:150:3:
+        150 |   operator==(const coefficient_storage& other) const
+            |   ^~~~~~~~
+      • constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from first_user.cpp:6:
+        • /usr/include/c++/16/concepts: In instantiation of ‘constexpr bool galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::operator==(const galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, use(int, double)::lanes>; T = use(int, double)::lanes; long unsigned int ...I = {0, 1, 2, 3, 4, 5}]’:
+        • required from here
+          first_user.cpp:247:14:   
+            247 |   r += (a == b) ? 1.0 : 0.0;
+                |              ^
+        • required for the satisfaction of ‘__weakly_eq_cmp_with<_Tp, _Tp>’ [with _Tp = use::lanes]
+          /usr/include/c++/16/concepts:325:15:   
+            325 |       concept __weakly_eq_cmp_with
+                |               ^~~~~~~~~~~~~~~~~~~~
+        • required for the satisfaction of ‘equality_comparable<T>’ [with T = use::lanes]
+          /usr/include/c++/16/concepts:335:13:   
+            335 |     concept equality_comparable = __detail::__weakly_eq_cmp_with<_Tp, _Tp>;
+                |             ^~~~~~~~~~~~~~~~~~~
+        • in requirements with ‘std::remove_reference_t<_Tp>& __t’, ‘std::remove_reference_t<_Rhs>& __u’ [with _Tp = use::lanes; _Up = use::lanes]
+          /usr/include/c++/16/concepts:326:4:   
+            326 |         = requires(__detail::__cref<_Tp> __t, __detail::__cref<_Up> __u) {
+                |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            327 |           { __t == __u } -> __boolean_testable;
+                |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            328 |           { __t != __u } -> __boolean_testable;
+                |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            329 |           { __u == __t } -> __boolean_testable;
+                |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            330 |           { __u != __t } -> __boolean_testable;
+                |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            331 |         };
+                |         ~  
+        • the required expression ‘(__t == __u)’ is invalid
+          /usr/include/c++/16/concepts:327:17:
+            327 |           { __t == __u } -> __boolean_testable;
+                |             ~~~~^~~~~~
+        • the required expression ‘(__t != __u)’ is invalid
+          /usr/include/c++/16/concepts:328:17:
+            328 |           { __t != __u } -> __boolean_testable;
+                |             ~~~~^~~~~~
+        • the required expression ‘(__u == __t)’ is invalid
+          /usr/include/c++/16/concepts:329:17:
+            329 |           { __u == __t } -> __boolean_testable;
+                |             ~~~~^~~~~~
+        • the required expression ‘(__u != __t)’ is invalid
+          /usr/include/c++/16/concepts:330:17:
+            330 |           { __u != __t } -> __boolean_testable;
+                |             ~~~~^~~~~~
+        • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail

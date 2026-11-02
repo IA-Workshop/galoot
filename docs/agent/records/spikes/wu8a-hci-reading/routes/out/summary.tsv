@@ -1,0 +1,97 @@
+compiler	route	case	status	lines	errors	longest_installed	machinery	user_names	first_error
+gcc	none	0	0	0	0	0	no	no	
+gcc	none	1	1	9	1	463	yes	yes	mv_routes.hpp:372:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	none	2	1	5	1	147	yes	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘galoot::core::detail::component<double, 3>’ {aka ‘double’} [-Werror=narrowing]
+gcc	none	3	1	9	1	499	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	none	4	1	9	1	498	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	none	5	1	4	1	811	yes	yes	program.cpp:95:19: error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::ori
+gcc	none	6	1	11	1	429	yes	yes	mv_routes.hpp:323:15: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	none	7	1	28	1	1046	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::
+gcc	count_base	0	0	0	0	0	no	no	
+gcc	count_base	1	1	12	1	707	yes	yes	mv_routes.hpp:144:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	count_base	2	1	5	1	147	yes	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘galoot::core::detail::component<double, 3>’ {aka ‘double’} [-Werror=narrowing]
+gcc	count_base	3	1	9	1	499	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	count_base	4	1	9	1	498	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	count_base	5	1	4	1	811	yes	yes	program.cpp:95:19: error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::ori
+gcc	count_base	6	1	11	1	429	yes	yes	mv_routes.hpp:323:15: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	count_base	7	1	28	1	1046	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::
+gcc	type_pack	0	0	0	0	0	no	no	
+gcc	type_pack	1	1	9	1	463	yes	yes	mv_routes.hpp:372:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	type_pack	2	1	5	1	96	no	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	type_pack	3	1	9	1	499	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	type_pack	4	1	9	1	498	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	type_pack	5	1	4	1	811	yes	yes	program.cpp:95:19: error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::ori
+gcc	type_pack	6	1	11	1	429	yes	yes	mv_routes.hpp:323:15: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	type_pack	7	1	28	1	1031	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::
+gcc	named_checks	0	0	0	0	0	no	no	
+gcc	named_checks	1	1	9	1	463	yes	yes	mv_routes.hpp:372:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	named_checks	2	1	5	1	147	yes	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘galoot::core::detail::component<double, 3>’ {aka ‘double’} [-Werror=narrowing]
+gcc	named_checks	3	1	9	1	499	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	named_checks	4	1	9	1	498	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	named_checks	5	1	4	1	811	yes	yes	program.cpp:95:19: error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::ori
+gcc	named_checks	6	1	9	1	454	yes	yes	mv_routes.hpp:314:17: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	named_checks	7	1	28	1	1046	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::
+gcc	named_class	0	1	10	3	52	no	yes	program.cpp:69:17: error: static assertion failed
+gcc	named_class	1	1	12	1	463	yes	yes	mv_routes.hpp:372:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	named_class	2	1	5	1	147	yes	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘galoot::core::detail::component<double, 3>’ {aka ‘double’} [-Werror=narrowing]
+gcc	named_class	3	1	9	1	257	yes	yes	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	named_class	4	1	9	1	256	yes	yes	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	named_class	5	1	4	1	98	no	yes	program.cpp:95:19: error: conversion from ‘const Motor’ to non-scalar type ‘const Point’ requested
+gcc	named_class	6	1	11	1	429	yes	yes	mv_routes.hpp:323:15: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	named_class	7	1	27	1	865	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ and ‘const Motor’)
+gcc	all	0	0	0	0	0	no	no	
+gcc	all	1	1	15	1	779	yes	yes	mv_routes.hpp:144:37: error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	all	2	1	5	1	96	no	yes	program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+gcc	all	3	1	9	1	257	yes	yes	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+gcc	all	4	1	9	1	256	yes	yes	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	all	5	1	4	1	98	no	yes	program.cpp:95:19: error: conversion from ‘const Motor’ to non-scalar type ‘const Point’ requested
+gcc	all	6	1	9	1	454	yes	yes	mv_routes.hpp:314:17: error: static assertion failed: mv: the blade set names a generator beyond e_n
+gcc	all	7	1	27	1	783	yes	yes	program.cpp:103:11: error: no match for ‘operator==’ (operand types are ‘Line’ and ‘const Motor’)
+clang	none	0	0	0	0	0	no	no	
+clang	none	1	1	11	1	194	yes	yes	mv_routes.hpp:372:19: error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the or
+clang	none	2	1	8	1	167	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'component<double, 3UL>' (aka 'double') in initializer list [-Wc++11-nar
+clang	none	3	1	8	1	248	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	none	4	1	8	1	247	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	none	5	1	16	1	279	yes	yes	program.cpp:95:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [.
+clang	none	6	1	10	1	237	yes	yes	mv_routes.hpp:323:7: error: static assertion failed due to requirement 'detail::blades_in_algebra<3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {
+clang	none	7	1	8	1	407	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' (aka 'gc::mv<rga3, line_layout, double>') and 'const Motor' (aka 'const gc::mv<rga3, mo
+clang	count_base	0	0	0	0	0	no	no	
+clang	count_base	1	1	11	1	179	yes	yes	mv_routes.hpp:144:19: error: static assertion failed due to requirement 'sizeof...(Values) == 4UL': mv: give one value for each component, in the order the layo
+clang	count_base	2	1	8	1	167	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'component<double, 3UL>' (aka 'double') in initializer list [-Wc++11-nar
+clang	count_base	3	1	8	1	248	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	count_base	4	1	8	1	247	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	count_base	5	1	19	1	279	yes	yes	program.cpp:95:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [.
+clang	count_base	6	1	10	1	237	yes	yes	mv_routes.hpp:323:7: error: static assertion failed due to requirement 'detail::blades_in_algebra<3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {
+clang	count_base	7	1	8	1	407	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' (aka 'gc::mv<rga3, line_layout, double>') and 'const Motor' (aka 'const gc::mv<rga3, mo
+clang	type_pack	0	0	0	0	0	no	no	
+clang	type_pack	1	1	11	1	194	yes	yes	mv_routes.hpp:372:19: error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the or
+clang	type_pack	2	1	8	1	136	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	type_pack	3	1	8	1	248	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	type_pack	4	1	8	1	247	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	type_pack	5	1	16	1	279	yes	yes	program.cpp:95:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [.
+clang	type_pack	6	1	10	1	237	yes	yes	mv_routes.hpp:323:7: error: static assertion failed due to requirement 'detail::blades_in_algebra<3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {
+clang	type_pack	7	1	8	1	405	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' (aka 'gc::mv<rga3, line_layout, double>') and 'const Motor' (aka 'const gc::mv<rga3, mo
+clang	named_checks	0	0	0	0	0	no	no	
+clang	named_checks	1	1	11	1	194	yes	yes	mv_routes.hpp:372:19: error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the or
+clang	named_checks	2	1	8	1	167	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'component<double, 3UL>' (aka 'double') in initializer list [-Wc++11-nar
+clang	named_checks	3	1	8	1	248	yes	no	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	named_checks	4	1	8	1	247	yes	no	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	named_checks	5	1	16	1	279	yes	yes	program.cpp:95:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [.
+clang	named_checks	6	1	8	1	177	yes	yes	mv_routes.hpp:314:17: error: static assertion failed due to requirement 'layout_names_only_generators_of_the_algebra': mv: the blade set names a generator beyon
+clang	named_checks	7	1	8	1	407	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' (aka 'gc::mv<rga3, line_layout, double>') and 'const Motor' (aka 'const gc::mv<rga3, mo
+clang	named_class	0	0	0	0	0	no	no	
+clang	named_class	1	1	11	1	194	yes	yes	mv_routes.hpp:372:19: error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the or
+clang	named_class	2	1	8	1	167	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'component<double, 3UL>' (aka 'double') in initializer list [-Wc++11-nar
+clang	named_class	3	1	8	1	169	yes	yes	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	named_class	4	1	8	1	149	yes	yes	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	named_class	5	1	16	1	164	no	yes	program.cpp:95:15: error: no viable conversion from 'const Motor' to 'const Point'
+clang	named_class	6	1	10	1	237	yes	yes	mv_routes.hpp:323:7: error: static assertion failed due to requirement 'detail::blades_in_algebra<3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {
+clang	named_class	7	1	8	1	365	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' and 'const Motor')
+clang	all	0	0	0	0	0	no	no	
+clang	all	1	1	11	1	179	yes	yes	mv_routes.hpp:144:19: error: static assertion failed due to requirement 'sizeof...(Values) == 4UL': mv: give one value for each component, in the order the layo
+clang	all	2	1	8	1	136	no	yes	program.cpp:85:26: error: non-constant-expression cannot be narrowed from type 'int' to 'double' in initializer list [-Wc++11-narrowing]
+clang	all	3	1	8	1	169	yes	yes	mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate th
+clang	all	4	1	8	1	149	yes	yes	mv_routes.hpp:523:19: error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	all	5	1	19	1	164	no	yes	program.cpp:95:15: error: no viable conversion from 'const Motor' to 'const Point'
+clang	all	6	1	8	1	177	yes	yes	mv_routes.hpp:314:17: error: static assertion failed due to requirement 'layout_names_only_generators_of_the_algebra': mv: the blade set names a generator beyon
+clang	all	7	1	8	1	363	yes	yes	program.cpp:103:11: error: invalid operands to binary expression ('Line' and 'const Motor')

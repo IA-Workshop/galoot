@@ -1,0 +1,70 @@
+In file included from first_user.cpp:8:
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:5208:3: error: static assertion failed due to requirement 'is_default_constructible_v<std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>>': std::formatter must be specialized for each type being formatted
+ 5208 |         (is_default_constructible_v<formatter<_Args, _CharT>> && ...),
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:5435:4: note: in instantiation of template class 'std::__format::_Checking_scanner<char, galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' requested here
+ 5435 |           __scanner(_M_str);
+      |           ^
+first_user.cpp:185:40: note: in instantiation of function template specialization 'std::basic_format_string<char, galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>::basic_format_string<char[3]>' requested here
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                                        ^
+In file included from first_user.cpp:8:
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4829:18: error: static assertion failed due to requirement 'is_default_constructible_v<std::formatter<galoot::core::mv<rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, char>>': std::formatter must be specialized for the type of each format arg
+ 4829 |           static_assert(is_default_constructible_v<formatter<_Tq, _CharT>>,
+      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4851:12: note: in instantiation of function template specialization 'std::__format::_Arg_store<std::basic_format_context<std::__format::_Sink_iter<char>, char>, std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char>>::handle>::_S_make_elt<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' requested here
+ 4851 |         : _M_args{_S_make_elt(__a)...}
+      |                   ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4901:14: note: in instantiation of function template specialization 'std::__format::_Arg_store<std::basic_format_context<std::__format::_Sink_iter<char>, char>, std::__format::_Arg_value<std::basic_format_context<std::__format::_Sink_iter<char>, char>>::handle>::_Arg_store<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' requested here
+ 4901 |       return _Store(__fmt_args...);
+      |              ^
+first_user.cpp:185:33: note: in instantiation of function template specialization 'std::format<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>' requested here
+  185 |   r += static_cast<double>(std::format("{}", l).size());
+      |                                 ^
+In file included from first_user.cpp:8:
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4840:31: error: no matching constructor for initialization of 'basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char>>'
+ 4840 |           basic_format_arg<_Context> __arg(__v);
+      |                                      ^     ~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4314:11: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>' to 'const basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char>>' for 1st argument
+ 4314 |     class basic_format_arg
+      |           ^~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4314:11: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>' to 'basic_format_arg<std::basic_format_context<std::__format::_Sink_iter<char>, char>>' for 1st argument
+ 4314 |     class basic_format_arg
+      |           ^~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4522:2: note: candidate template ignored: constraints not satisfied [with _Tp = galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>]
+ 4522 |         basic_format_arg(_Tp& __v) noexcept
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4520:11: note: because '__format::__formattable_with<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>, std::basic_format_context<std::__format::_Sink_iter<char>, char>>' evaluated to false
+ 4520 |         requires __format::__formattable_with<_Tp, _Context>
+      |                  ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bits/formatfwd.h:102:9: note: because 'std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' does not satisfy 'semiregular'
+  102 |       = semiregular<_Formatter>
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:282:27: note: because 'std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' does not satisfy 'copyable'
+  282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+      |                           ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:277:24: note: because 'std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' does not satisfy 'copy_constructible'
+  277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+      |                        ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:181:9: note: because 'std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' does not satisfy 'move_constructible'
+  181 |       = move_constructible<_Tp>
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:176:7: note: because 'constructible_from<std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> >, std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> >>' evaluated to false
+  176 |     = constructible_from<_Tp, _Tp> && convertible_to<_Tp, _Tp>;
+      |       ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: note: because 'is_constructible_v<std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>, std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>>' evaluated to false
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: error: call to deleted constructor of 'std::formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>'
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^~~~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:219:7: note: 'formatter' has been explicitly marked deleted here
+  219 |       formatter(const formatter&) = delete;
+      |       ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:216:12: note: 'formatter<galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>>' defined here
+  216 |     struct formatter
+      |            ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/format:4322:7: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+ 4322 |       basic_format_arg() noexcept : _M_type(__format::_Arg_none) { }
+      |       ^
+4 errors generated.

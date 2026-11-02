@@ -1,0 +1,19 @@
+program.cpp:95:15: error: no viable conversion from 'const Motor' to 'const Point'
+   95 |   const Point s = q;
+      |               ^   ~
+program.cpp:39:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' to 'const Point &' for 1st argument
+   39 | struct Point : gc::mv<rga3, point_layout, double> {
+      |        ^~~~~
+program.cpp:39:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' to 'Point &&' for 1st argument
+   39 | struct Point : gc::mv<rga3, point_layout, double> {
+      |        ^~~~~
+./mv_routes.hpp:143:13: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  143 |   constexpr component_count_check(Values&&... /*values*/) {
+      |             ^
+./mv_routes.hpp:142:14: note: because 'sizeof...(Values) > 1' (1 > 1) evaluated to false
+  142 |     requires(sizeof...(Values) > 1 && sizeof...(Values) != K)
+      |              ^
+./mv_routes.hpp:136:22: note: explicit constructor is not a candidate
+  136 |   constexpr explicit component_count_check(Values&&... /*values*/) {
+      |                      ^
+1 error generated.
