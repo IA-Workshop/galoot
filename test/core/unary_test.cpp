@@ -453,7 +453,7 @@ concept has_right_complement_layout =
 // Reference: independent value: by hand from the definitions in rigid(3),
 //   the layout names hold the complements of the blades of the input in
 //   canonical order with sign +1: the trivectors for the vectors, the vectors
-//   for a plane, and the scalar, the six bivectors, and e1234 for a motor;
+//   for a plane, and the scalar, the six bivectors, and e1234 for a motor,
 //   and they take only an algebra
 TEST_CASE("the complement layout names are the canonical sets") {
   static_assert(core::right_complement_layout<rga3, point_layout> ==

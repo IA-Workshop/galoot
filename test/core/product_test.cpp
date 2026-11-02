@@ -36,6 +36,9 @@ namespace core = galoot::core;
 struct rga3 {
   static constexpr auto value = core::rigid<3>();
 };
+struct cga2 {
+  static constexpr auto value = core::conformal<2>();
+};
 struct cga3 {
   static constexpr auto value = core::conformal<3>();
 };
@@ -307,13 +310,16 @@ concept has_caret = requires(X x, Y y) { x ^ y; };
 } // namespace user_code
 } // namespace
 
-// Reference: comparison: every pair of basis blades of rigid(3) and
-// conformal(3)
+// Reference: comparison: every pair of basis blades of rigid(3),
+// conformal(2), and conformal(3)
 //   against the exact tables, which satisfy e_i e_j + e_j e_i = 2 g_ij, for
 //   the product and the wedge, covering the shared-generator, sign, and zero
-//   cases
+//   cases, in a diagonal form and in forms that are not diagonal with an even
+//   and an odd number of generators
 TEST_CASE("geometric_product and wedge of basis blades equal the tables") {
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
   CHECK(table_mismatches<rga3, 4>(golden::gp_tables::rigid_3) == 0);
+  CHECK(table_mismatches<cga2, 4>(golden::gp_tables::conformal_2) == 0);
   CHECK(table_mismatches<cga3, 5>(golden::gp_tables::conformal_3) == 0);
 }
 
@@ -471,21 +477,25 @@ TEST_CASE("the overloads take the right operands") {
 }
 
 // Reference: independent value: for every pair of basis blades of rigid(3),
-//   conformal(3), the degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and
-//   random form 1, the geometric antiproduct left(right(a) ⟑ right(b)) and the
+//   conformal(2), conformal(3), the degenerate form
+//   [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and random form 1, the geometric
+//   antiproduct left(right(a) ⟑ right(b)) and the
 //   antiwedge left(right(a) ∧ right(b)), composed in the test from the exact
 //   product tables, which satisfy e_i e_j + e_j e_i = 2 g_ij, and the
 //   complement tables, which satisfy u ^ right(u) = antiscalar and
 //   left(u) ^ u = antiscalar, covering odd and even n, where the two
-//   complements agree and differ
+//   complements agree and differ, and forms that are not diagonal at both
 TEST_CASE("geometric_antiproduct and antiwedge of basis blades equal the "
           "composition of the tables") {
   REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
   REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
   REQUIRE(degenerate3::value.gram == golden::gp_tables::degenerate_3_gram);
   REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
   CHECK(antiproduct_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
             golden::gp_tables::rigid_3, golden::complements::n4) == 0);
+  CHECK(antiproduct_mismatches<core::mv<cga2, core::full<4>, std::int64_t>>(
+            golden::gp_tables::conformal_2, golden::complements::n4) == 0);
   CHECK(antiproduct_mismatches<core::mv<cga3, core::full<5>, std::int64_t>>(
             golden::gp_tables::conformal_3, golden::complements::n5) == 0);
   CHECK(antiproduct_mismatches<
@@ -640,7 +650,7 @@ concept has_wedge_layout =
 //   geometric product of two points, the six bivectors for their wedge, e12,
 //   e13, e23, and e1234 for their geometric antiproduct, the six bivectors
 //   for the antiwedge of two planes, and the scalar for the antiwedge of a
-//   point and a plane; and they take only an algebra
+//   point and a plane, and they take only an algebra
 TEST_CASE("the product layout names are the canonical sets of the blades") {
   constexpr auto point = core::blades<rga3, "e1 e2 e3 e4">;
   constexpr auto plane = core::blades<rga3, "e423 e431 e412 e321">;
