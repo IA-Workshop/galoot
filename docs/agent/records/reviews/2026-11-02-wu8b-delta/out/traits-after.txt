@@ -1,0 +1,38 @@
+== traits g++ new compile exit 0, errors 0, lines 1
+   run exit 0
+Line<double> <- int                          constructible 1 convertible 0
+Line<double> <- double                       constructible 1 convertible 0
+Line<double> <- explicit_to_double           constructible 1 convertible 0
+Line<double> <- implicit_to_double           constructible 1 convertible 0
+Line<double> <- std::complex<double>         constructible 1 convertible 0
+Line<double> <- std::string                  constructible 1 convertible 0
+Line<double> <- arr6                         constructible 1 convertible 0
+Line<double> <- const double*                constructible 1 convertible 0
+Line<double> <- std::vector<double>          constructible 1 convertible 0
+Line<double> <- Line<float>                  constructible 0 convertible 0
+Line<double> <- derived_line                 constructible 1 convertible 1
+Line<rational> <- int                        constructible 1 convertible 0
+Line<rational> <- std::int64_t               constructible 1 convertible 0
+Line<rational> <- rational                   constructible 1 convertible 0
+Line<rational> <- derived_rational           constructible 1 convertible 0
+Line<rational> <- double                     constructible 1 convertible 0
+Scalar<double> <- int                        constructible 1 convertible 0
+Scalar<double> <- double                     constructible 1 convertible 0
+Scalar<double> <- explicit_to_double         constructible 0 convertible 0
+Scalar<double> <- implicit_to_double         constructible 1 convertible 0
+Scalar<double> <- std::complex<double>       constructible 1 convertible 0
+Scalar<rational> <- int                      constructible 0 convertible 0
+Scalar<rational> <- rational                 constructible 1 convertible 0
+Scalar<rational> <- derived_rational         constructible 1 convertible 0
+Scalar<std::complex<double>> <- double       constructible 1 convertible 0
+Scalar<std::complex<double>> <- std::complex<float> constructible 1 convertible 0
+Scalar<std::complex<float>> <- std::complex<double> constructible 0 convertible 0
+Line<std::complex<float>> <- std::complex<double> constructible 1 convertible 0
+Line<std::complex<double>> <- std::complex<float> constructible 1 convertible 0
+Point<double> <- d_arr4                      constructible 1 convertible 1
+Point<double> <- cd_arr4                     constructible 1 convertible 1
+Point<double> <- d_arr6                      constructible 1 convertible 1
+Point<double> <- double[4]                   constructible 1 convertible 1
+Point<double> <- arr4                        constructible 1 convertible 0
+Point<double> <- span4                       constructible 1 convertible 0
+Scalar<double> <- double (&)[1]              constructible 1 convertible 1

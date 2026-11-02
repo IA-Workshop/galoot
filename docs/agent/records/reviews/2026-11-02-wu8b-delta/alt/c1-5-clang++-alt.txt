@@ -1,0 +1,29 @@
+$S/probes/c1.cpp:46:15: error: no viable conversion from 'double[4]' to 'const Point' (aka 'const core::mv<rga3, point_layout, double>')
+   46 |   const Point p = raw;
+      |               ^   ~~~
+$S/alt/include/galoot/core/mv.hpp:438:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'double[4]' to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &' for 1st argument
+  438 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+$S/alt/include/galoot/core/mv.hpp:438:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'double[4]' to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double> &&' for 1st argument
+  438 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+$S/alt/include/galoot/core/mv.hpp:600:13: note: candidate constructor [with N = 4] not viable: expects an rvalue for 1st argument
+  600 |   constexpr mv(std::remove_cvref_t<T> (&& /*values*/)[N]) {
+      |             ^  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+$S/alt/include/galoot/core/mv.hpp:562:46: note: candidate template ignored: constraints not satisfied [with Values = <double (&)[4]>]
+  562 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+$S/alt/include/galoot/core/mv.hpp:560:14: note: because '!(sizeof...(Values) == 1 && detail::not_a_coefficient<double (&)[4], double>)' evaluated to false
+  560 |              !(sizeof...(Values) == 1 &&
+      |              ^
+$S/alt/include/galoot/core/mv.hpp:528:22: note: explicit constructor is not a candidate
+  528 |   constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
+      |                      ^
+$S/alt/include/galoot/core/mv.hpp:545:22: note: explicit constructor is not a candidate
+  545 |   constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
+      |                      ^
+$S/alt/include/galoot/core/mv.hpp:577:22: note: explicit constructor is not a candidate
+  577 |   constexpr explicit mv(Value&& /*value*/) {
+      |                      ^
+1 error generated.
+timed: probe delta-wu8b:probe-c1-5:clang++:alt took 0.331 s (exit 1)

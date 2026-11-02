@@ -1,0 +1,13 @@
+In file included from test/core/mv_apply_inexact_short_fail.cpp:5:
+include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Target, T> galoot::core::detail::apply(const galoot::core::mv<Alg, A, T>&, const galoot::core::mv<Alg, B, T>&) [with BinaryOperation Op = galoot::core::detail::BinaryOperation::gp; blade_set<...auto...> Target = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}; Alg = {anonymous}::diagonal; blade_set<...auto...> A = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{3, 1}}}}; blade_set<...auto...> B = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{3, 1}}}}; T = short int]’:
+include/galoot/core/mv.hpp:732:55:   required from ‘constexpr galoot::core::mv<Alg, product_plan<Op, Alg, A, B>.result, T> galoot::core::detail::apply(const galoot::core::mv<Alg, A, T>&, const galoot::core::mv<Alg, B, T>&) [with BinaryOperation Op = galoot::core::detail::BinaryOperation::gp; Alg = {anonymous}::diagonal; blade_set<...auto...> A = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{3, 1}}}}; blade_set<...auto...> B = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{3, 1}}}}; T = short int]’
+  732 |   return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+test/core/mv_apply_inexact_short_fail.cpp:22:58:   required from here
+   22 |   return galoot::core::detail::apply<BinaryOperation::gp>(x, x).coefficients[0];
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+include/galoot/core/mv.hpp:711:17: error: static assertion failed: the scalar type cannot hold one of this product's exact coefficients; use a scalar type that holds larger integers exactly
+  711 |   static_assert(exact, "the scalar type cannot hold one of this product's "
+      |                 ^~~~~
+  • ‘exact’ evaluates to false
+timed: spike hci-wu8b:inexact:short:g++ took 0.104 s (exit 1)

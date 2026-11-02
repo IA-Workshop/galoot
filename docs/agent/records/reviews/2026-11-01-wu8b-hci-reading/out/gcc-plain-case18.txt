@@ -1,0 +1,22 @@
+user.cpp: In function ‘double use()’:
+user.cpp:143:36: error: no matching function for call to ‘truncate<Line>(const Line&, double)’
+  143 |   const auto s = gc::truncate<Line>(l, 1e-12);  // a tolerance, as some libraries take
+      |                  ~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  • there are 3 candidates
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+    • candidate 1: ‘template<blade_set<...auto...> To, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) constexpr galoot::core::mv<Alg, To, T> galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:808:40:
+        808 | [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
+            |                                        ^~~~~~~~
+      • candidate expects 1 argument, 2 provided
+    • candidate 2: ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && (multivector_of<Target, Alg, T>) constexpr std::remove_cvref_t<_Tp1> galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:825:1:
+        825 | truncate(const mv<Alg, From, T>& x) {
+            | ^~~~~~~~
+      • candidate expects 1 argument, 2 provided
+    • candidate 3: ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && !(multivector_of<Target, Alg, T>) constexpr auto galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:833:16:
+        833 | constexpr auto truncate(const mv<Alg, From, T>& x) {
+            |                ^~~~~~~~
+      • candidate expects 1 argument, 2 provided

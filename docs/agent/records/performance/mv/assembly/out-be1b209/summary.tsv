@@ -1,0 +1,15 @@
+compiler	function	mul	addsub	negate	convert	branch	call	constant	stores	zero_stores	other
+gcc	library_point_gp_point	15	10	0	0	0	0	0	4	0	33
+gcc	library_point_wedge_point	12	6	0	0	0	0	0	3	0	22
+gcc	library_motor_gp_point	28	20	0	0	0	0	0	8	0	41
+gcc	hand_point_gp_point	15	10	0	0	0	0	0	4	0	32
+gcc	hand_point_wedge_point	12	6	0	0	0	0	0	3	0	22
+gcc	hand_motor_gp_point	28	20	0	0	0	0	0	8	0	41
+gcc	written_point	1	1	0	0	0	0	2	4	0	7
+clang	library_point_gp_point	15	8	0	0	0	0	0	4	0	27
+clang	library_point_wedge_point	12	6	0	0	0	0	0	3	0	23
+clang	library_motor_gp_point	28	20	0	0	0	0	0	8	0	39
+clang	hand_point_gp_point	15	8	0	0	0	0	0	4	0	27
+clang	hand_point_wedge_point	12	6	0	0	0	0	0	3	0	22
+clang	hand_motor_gp_point	28	20	0	0	0	0	0	8	0	41
+clang	written_point	2	0	0	0	0	0	1	3	0	6

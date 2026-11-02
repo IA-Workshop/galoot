@@ -2,6 +2,7 @@
 
 - Status: claimed 2026-11-01 (planner: Claude, agent, Opus 5.5, cpp-expert role, with the hci-expert and math-expert role files for the interface and the mathematics). Revised 2026-11-01 for the owner's rulings ("proceed as recommended") on this plan's questions and on research note 0019's (section 2), and again on 2026-11-01 for the owner's later ruling that `blade_set` keeps its `std::array` (section 2). Not started.
 - Unit: WU8 of plan 0001 (`mv.hpp`), in two parts run one after the other: WU8a on branch `feature/core-mv-a` (worktree `.claude/worktrees/core-mv-a`), then WU8b on branch `feature/core-mv-b` (worktree `.claude/worktrees/core-mv-b`), branched from `develop` after WU8a merges. Each part has its own W5 review and merge. WU8b is claimed by a dated line in this plan when WU8a has merged, as plan 0013 did for WU7b (decision 0158).
+- WU8b claimed 2026-11-01 on `feature/core-mv-b` (worktree `.claude/worktrees/core-mv-b`), branched from `develop` at `8f341c2`, the merge of WU8a. Implementer: Claude (agent, Opus 5.5), cpp-expert role.
 - Decision numbers 0150 to 0159, all assigned (section 5, "Both parts"). The owner's rulings are recorded in 0150, 0151, 0152, 0153, 0155, 0157, 0158, and 0159 (commit `daf69d8`); 0154 and 0156 are the implementers'.
 - Depends on: WU7 (plan 0013, merged: `product_plan` for the four binary operations and `unary_map` for the five unary maps, typed onto canonical result sets), Spike F (research note 0012), Spike C (note 0010) with decision 0033, and research note 0019 (API design, its spike under `docs/agent/records/spikes/api-design/`). Not sequenced after plan 0015 (section 1, reading 22).
 - Goal: the type a user holds. `mv<Alg, Blades, T>` stores one coefficient of a scalar type T on each oriented blade of a blade set; it is constructed from exactly one value per component and is zero by default; the scalar concepts say which T are accepted; the type rejects a blade set that is wrong for its algebra; `get<"e41">(x)` reads and writes a coefficient by its oriented name; `==` compares exactly; a plan or map is applied to stored coefficients with straight-line code whose coefficients are exact in the scalar; a conversion between blade sets is explicit, and the lossy one is `truncate<Type>(x)` or `truncate<Blades>(x)`, checked in checking mode for exact scalars. DoD-7 holds across five scalars. Blade sets are spelled with the algebra, `blades<rga3, "...">`, and the diagnostics of the three likeliest mistakes are recorded before and after, for the owner to judge whether more is needed (section 5, "Other routes to readable diagnostics").
@@ -816,3 +817,164 @@ Header change after the delta review, for a delta review (decision 0094 item 3):
 `develop` moved to `eb20336` (the run-log compaction, merged there at `3f6bf9e`) and is merged into this branch in the commit that carries this paragraph: `runs.tsv` and `test/CMakeLists.txt` merged without conflict, and `tools/runlog check` on the merged tree reports the one era matching the history, 1,727 kept rows present once, and no removed row present, so no `tools/runlog prune` was needed. This replaces departure 9 of the review fixes.
 
 P9 checks of the merged tree, at `cde1dee` (recorded in the commit after it; the build inputs are the same): the seven presets from new, empty trees each built `all` and passed every test, gcc-debug 201 of 201, gcc-release 201 of 201, gcc-asan 193 of 193 (plan 0015's canary is not registered there), clang-debug 203 of 203, clang-release 203 of 203, clang-asan 203 of 203, lint 203 of 203. The lint tree's build of `all` exited 0 with no failed step in its log (clang-tidy as errors), and its header sets and `format-check` exited 0, as did gcc-debug's and clang-debug's; each exit status was read directly after its command. The trace gate and the marker, golden, citation, regeneration, and include-scan gates exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `9f7ea99`'s message change is pending.
+
+## Outcome, WU8b (2026-11-01, Claude, agent, Opus 5.5, cpp-expert, implementer)
+
+Status: done on `feature/core-mv-b`, awaiting the hci-expert reading and the W5 blind review (section 12). The header's code is final at `be1b209` (comments at `4253555`); tests final at `aecb0f8`. This section is committed after them; the seven presets from new, empty trees and the W10 after rows run at this section's commit and are recorded in the commit that follows it.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. **The lossy assignment `const Point s = q;` keeps the compiler's message.** The brief for this part asked for a literal message there "(the plan says WU8b adds it)". The plan's R7 and criterion 17, and decision 0155 item 2 (the owner's ruling), say an implicit conversion is the compiler's own error, because every converting constructor is `explicit` (STYLE S8); WU8a's outcome table and diagnostics record had said WU8b's catch-all would replace it, which cannot hold, since an `explicit` constructor is not a candidate in copy-initialization. Followed the ruling. The alternative, a lossy catch-all without `explicit`, was measured (one error with the literal: GCC 10 lines, Clang 9) and is recorded for the owner (decision 0155, WU8b section, item 3; `docs/agent/records/diagnostics/wu8/wu8b/`).
+2. Beyond the plan's design, decided with the usability checklist for the deferred review items: `mv`'s template head now takes `std::destructible` (was `std::semiregular`), the scalar is checked in the body in a fixed order (reference or cv, bool, semiregular, ring operations), and `ring_scalar` excludes `bool`, reversing WU8a's review-fixes item 4 (decision 0150, WU8b section). Two existing expected values changed with it, listed in `fdd72ae`: `core.mv_scalar_without_default` (compiler wording to the literal) and the template-head test (`names_a_line<without_default>` false to true).
+3. `run_product` and `run_map` return their result by value (`be1b209`), after the first assembly read found Clang storing per term through a reference (decision 0154 item 3). Not in the plan's design.
+4. The rejecting constructors for a single non-coefficient argument (HCI F10) and the derived-class exclusion (blind F5) are new interface (decision 0150, WU8b section). The array catch-all is a constructor template from a C array reference, with the C-array lint check suppressed beside it and its reason.
+5. The run-time abort tests of `truncate` are one program built in each checking mode and run under `expect_output.cmake` (`core.mv_truncate_nonzero_*`, `core.mv_truncate_unchecked_*`), not `WILL_FAIL` tests registered where `GALOOT_CHECKING` is ON: CTest's `WILL_FAIL` does not pass an abort, and the fixed-mode programs run in every preset (decision 0155, WU8b section, item 6).
+6. The plan's mutants "first term added to zero" and "(c x) y", expected to be equivalent or killed only by the assembly criterion, are killed by tests (the sign of a zero, and an overflow), so neither is recorded as equivalent.
+7. Added beyond the test list: `core.mv_apply_target_lacks_blade` and `_map_target_lacks_blade` (the target checks), `core.mv_truncate_other_scalar`, `core.mv_coefficients_as_array` and `_as_braced_list`, `core.mv_scalar_{reference,const,bool}`, `core.mv_get_absent_ordered`, a test of the detail helpers (S7), and a conformal(3) conversion and truncate test (criterion 19, `aecb0f8`).
+8. Commits that fail by design (W2): `fdd72ae` and `86eeaa4` are tests before their code and do not build; their cheap gates passed on their trees extracted with `git archive`, and lint and the tests were run at `942a2d7`, the code commit after them.
+9. The measurement campaign wrote its 504 rows to its own log, `docs/agent/records/performance/mv/runs.tsv`, as the performance README directs for campaigns, not to the run log; build, test, lint, and gate runs are in the run log. The machine's timing lock was free and was not taken (the brief has math-tools read-only); measurements are pinned instruction counts.
+10. P13 lapses: two `-fsyntax-only` checks of `core.hpp` while writing the header, `clang-format` runs, `git archive` extractions, and `c++filt` were not run through `tools/timed`. Every build, test, lint, gate, probe, measurement, and mutation run was.
+11. The F7 decision: a message that says how a canonical layout's blades are named, not a function listing names (decision 0153, WU8b section). A hand-written layout in canonical order gets that message too, which is true of it.
+12. Not done, recorded: the three open owner decisions of WU8a (named model classes, `has_blade`'s naming of the other orientation, positional `get`), as briefed.
+
+### Commits
+
+| Commit | Content |
+| --- | --- |
+| `11d1ec9`, `bc4b767` | claim; W10 before rows (fresh gcc-debug and clang-debug trees at `11d1ec9`, 137 and 139 compile rows; 201 of 201 and 203 of 203) |
+| `fdd72ae`, `86eeaa4` | tests of the kernel, conversions, truncate, and the deferred diagnostics (changed expected values listed in `fdd72ae`); tests of the detail helpers |
+| `942a2d7` | `apply`, the coefficient check, conversions, `truncate`, the review items; trace row 4.5 |
+| `f48f2a8` | `bare_user.cpp` converts and truncates (DoD-6) |
+| `e85aa2b` | the diagnostics record of WU8b |
+| `be1b209`, `a5d5ef3` | kernel results by value; the assembly read |
+| `7d5f643`, `b79716c`, `aecb0f8` | tests: apply's target checks; run-time CHECKs of the bounds and a quieter counting scalar (from the mutation runs); conformal(3) conversion and truncate |
+| `7ee7d32` | mutation records; decisions 0154, and sections of 0150, 0153, 0155 |
+| `4253555`, `7635164` | the measured limits in `apply`'s comments; limits, P2, header and per-use costs; decision 0156's section |
+
+### Criteria
+
+13. Met at `942a2d7` and after (test `fdd72ae`): `apply` equals the loop over the plan's terms for every pair of basis inputs and 16 seeded random pairs, rigid(3), R(4,0,0), R(1,3,0), conformal(2) on `full<4>`, the degenerate form and random form 1 on `full<3>`, four binary operations and five maps, both compilers. The range was not reduced.
+14. Met: F3 to F5 in static_asserts and through volatile; F6 for the four golden forms on `full<n>` over the rational with denominators 2, 3, 5.
+15. Met: the five plans over the five scalars equal the golden composition in `std::int64_t`, converted (complex by bilinearity); the bound (coefficients at most 2, at most 48 terms per output, inputs at most 2^4) is asserted from the plans.
+16. Met: both sides of each bound (float 2^24 and 2^24 + 1, double 2^53 and 32767^4, short 32767 and 32768, `int`, `std::int64_t`, the rational), in static_asserts and, from `b79716c`, CHECKs; `core.mv_apply_inexact_{float,double,short}` on both compilers.
+17. Met, with departure 1: every lossless pair of the rigid(3) layouts (scalar, point, line, plane, motor, flector, a line of other orientations) over five scalars and three spellings; p ∧ q as a Line is (3, 3, 3, −3, 6, −3); `core.mv_conversion_lossy_{brace,paren,cast}` require the literal; `_implicit_lossy` and `_implicit_lossless` record each compiler's wording.
+18. Met: by type and by layout; kept and missing blades; for `std::int64_t` and the rational a nonzero dropped coefficient fails a constant evaluation (`core.mv_truncate_consteval_nonzero{,_rational}`, and in core.mv by a requires-probe) and aborts with checking on (`core.mv_truncate_nonzero_{int64,rational,counted}`); with checking off the line is kept and `==` is not called (`core.mv_truncate_unchecked_*`); over double nothing is checked; the target catch-all (`core.mv_truncate_{other_algebra,not_a_type,other_scalar}`); trace row 4.5 `yes`, pinned by core.mv.
+19. Met at `aecb0f8`: `apply`, conversions, and `truncate` in static_asserts and through volatile in rigid(3) and conformal(3).
+20. Met: 31 mutants, all killed by tests on gcc-debug and clang-debug in both modes (`docs/agent/records/mutations/0016-mv-b/survivors.md`), each bound tested on both sides.
+21. Met: `apply` builds wherever its plan or map builds, both compilers, three configurations; no plan Clang builds exceeds 1,024 terms, so the fold limit (2,048) does not bind; stated in the comments (decision 0156, WU8b section).
+22. Met: P2 through `apply` at n = 4, 8, 12, 16, before (`11d1ec9`) and after: growth 13 M (GCC) and 15 M (Clang) against 12 M and 13 M through the plans alone.
+23. Met. Per-use and header costs recorded; `bare_user.cpp` extended. At `6b40bed` (this section's commit; recorded in the commit after it), the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 228 of 228, gcc-release 228 of 228, gcc-asan 220 of 220 (plan 0015's canary is not registered there), clang-debug 230 of 230, clang-release 230 of 230, clang-asan 230 of 230, lint 230 of 230 (clang-tidy as errors over every built unit); `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; `core.bare_compile` passed in each; each exit status was read directly after its command. W10 after: the gcc-debug and clang-debug trees of that check, 160 and 162 compile rows (`docs/agent/records/performance/mv/README.md`, W10): headers and older test units move under 1.5 %, `mv_test.cpp` grows from 13.2 to 64.5 G instructions on GCC (11.1 to 57.0 on Clang) with its new tests. The job pool had 23 of 23 slots free before and after.
+24. Met at `be1b209` (`docs/agent/records/performance/mv/assembly/`): point ⟑ point, point ∧ point, motor ⟑ point over double at -O2 on both compilers: one multiplication per term, no multiplication by ±1, no conversion, no constant load, no branch, no call (inlined, as the hand-written functions), no zero store, for the kernel and for a written default value; additions terms − outputs, except GCC's point ⟑ point, where its vectorizer uses two spare lanes in both the library and the hand-written form.
+
+### Diagnostics (the deferred items and the lossy assignment)
+
+Lines / longest installed line, before (`8f341c2`) and after (`942a2d7`'s header), GCC 16.2.1 and Clang 23.1.4 (`docs/agent/records/diagnostics/wu8/wu8b/`):
+
+| Mistake | GCC before | GCC after | Clang before | Clang after |
+| --- | --- | --- | --- | --- |
+| `const Point s = q;` (implicit, lossy) | 4 / 811 | 9 / 811, compiler's | 16 / 282 | 28 / 282, compiler's |
+| `const Point s{q};` (explicit, lossy) | 65 / 1,090 | 10 / 925, literal | 25 / 331 | 9 / 268, literal |
+| `get<"e1">` on an `of_grade` layout (F7) | 10 / 511 | 10 / 511, new words | 9 / 249 | 9 / 249 |
+| `const double` scalar (F8) | 43 / 532, 2 errors | 10 / 379 | 19 / 235 | 9 / 230 |
+| `double&` scalar (F8) | 31 / 527, 2 errors | 10 / 374 | 16 / 165 | 9 / 230 |
+| `bool` scalar (F8) | compiles | 10 / 356 | compiles | 9 / 193 |
+| no default constructor | 45 / 525, 3 errors | 14 / 1,338, 2 (the second from the program's use of a member) | 29 / 163, 2 | 9 / 228 |
+| `Point s{{1, 2, 3, 1}}` (F10) | 65 / 791 | 10 / 517 | 26 / 216 | 9 / 200 |
+| `Point s{values}`, a std::array (F10) | 10 / 483, "1 == 4" | 10 / 475 | 12 / 210, "1 == 4" | 9 / 210 |
+
+### V10
+
+- Verification: F1 to F13 passed (proof over the stated ranges, identity on seeded inputs, independent values by hand and from the golden tables) on gcc-debug and clang-debug at `aecb0f8`'s tests; the seven presets follow. The diagnostics record and the assembly read are records, not verification.
+- Validation, rigid(3): the line through two points has direction q − p and moment p × q (F3); motor ⟑ point against a product derived from the masks and squares by a separate route (the assembly read's hand-written function, same terms). Conformal(3): the hand value F4.
+- Scalars: exactness of each scalar's conversion of the coefficients rests on IEEE 754's binary formats (background) and is checked through `std::numeric_limits`; `std::complex<double>` is not checked, as documented.
+- Not validated: the non-diagonal antiproducts (plan 0013, departure 8).
+
+### Open items
+
+1. The hci-expert reading and the W5 blind review, with the usability checklist (section 12).
+2. For the owner: a literal message for the implicit lossy conversion (departure 1); the three WU8a owner decisions, unchanged.
+3. Knowledge base: note `cpp-language/lang-rejecting-constructors-and-kernel-results.md` and exercise `exercise-archive/cpp-rejecting-constructors-and-kernel-results.md` (`cpp-ce31-2026-11-01`) on branch `kb/cpp-catch-alls-and-kernel-results` (worktree `knowledge-base-worktrees/cpp-catch-alls-and-kernel-results`, commit `b8dfff8`), for the coordinator to merge.
+4. The kernel's per-product cost on GCC at -O0 (83 M instructions for 16 terms) is recorded with two unmeasured candidates (decision 0156, WU8b section, item 4).
+
+### Agent cost
+
+About 300 tool calls by the implementer; the token count is not visible to me. The plan estimated 500k to 650k tokens and 190 to 250 tool calls with review fixes.
+
+### Review fixes, WU8b (2026-11-01)
+
+The W5 blind review (`docs/agent/records/reviews/2026-11-01-wu8b-mv.md`, blind-reviewer, Opus 5.5, at `6c9df63`: block on F1) and the hci-expert reading (`docs/agent/records/reviews/2026-11-01-wu8b-hci-reading.md`, at `6c9df63`: nothing blocks) were merged into this branch at `aa867a8` (run log by union; `tools/runlog check` exit 0) and fixed in one round, tests before the code they judge.
+
+Departures of this round (C20):
+
+1. Not changed, for the owner: the conversion's message (blind F7, hci S5), whose wording is decision 0155 item 2's ruling; and the ring-operations message (hci C3), whose wording is decision 0152's. Each review proposes a rewording; neither is applied.
+2. hci C1 makes the braced-list catch-all a single-argument constructor that is not `explicit`, read as allowed by STYLE S8 for a constructor that only rejects; the reason and the lint suppressions are beside it (decision 0150, review fixes of WU8b, item 4).
+3. F4's mutant (`>= 64` to `> 64`) no longer applies: F1's fix removes the shift by `digits` and the guard with it.
+4. Mutants whose first forms were diagnosed by the compiler themselves were rewritten and rerun, not counted (`survivors.md`, review section).
+5. Skipped, small items the coordinator left optional: hci C5 (truncate's constant-evaluation diagnostic and run-time location, which follow from `GALOOT_ASSERT`) and hci C8 / blind F10 (misuses outside the catalogue, such as `truncate<"e41 ...">`), listed for WU9 and WU15.
+6. The first diagnostics record (`e85aa2b`) called its case 17 lossless, wrongly (a point into a motor is lossy); the record is corrected in `71d040a` and the case is now a line into a motor.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| Blind F1 (blocks): `long double` fails on GCC under -Werror | The bound shifts by no type's digits; long double products and checks tested | `425493c` (tests), `ef579e2` |
+| Blind F2: a single explicit-constructible value gets the array message | A coefficient is a value T is constructible from; `core.mv_one_explicit_value` ("1 == 6"); probes | `425493c`, `ef579e2` |
+| Blind F3: only the first dropped place tested | Antiscalar cases at compile time and in the truncate programs; the review's mutant killed | `425493c`; mutants `71d040a` |
+| Blind F4 | With F1 (departure 3) | `425493c`, `ef579e2` |
+| Blind F5, hci departure 1 judgment | Owner question, unchanged | |
+| Blind F6, hci S5 (comment) | The lossy catch-all's comment states its probe answers | `ef579e2` |
+| Blind F7, hci S5 (wording), hci C6 | Coefficient check: "apply:" prefix and a constant named for its rule; conversion wording for the owner (departure 1) | `425493c`, `ef579e2` |
+| Blind F8 | The bound is exact: signed min() to max(), floats by the odd part and the exponent range | `425493c`, `ef579e2`, `13b53ee` (test) |
+| Blind F9, hci S1 | Owner question (two meanings of truncate); the Requires paragraph reworded | `ef579e2` |
+| Blind F10, hci C8 | Skipped (departure 5) | |
+| Blind F11 | Process, recorded | |
+| hci S2 | Two messages for canonical layouts: absent, and the other orientation with the naming rule | `425493c`, `ef579e2` |
+| hci S3 | Default construction and copying checked apart; `core.mv_scalar_move_only`, `_const_member` | `425493c`, `ef579e2` |
+| hci S4 | truncate's message and comment state the rule; `core.mv_truncate_derived` | `425493c`, `ef579e2` |
+| hci S6 | Fixes as trailing comments on the converting constructors' lines; both compilers' echoes checked | `ef579e2`, `71d040a` |
+| hci S7 | Owner question (a scalar conversion) | |
+| hci C1 | The braced-list catch-all not explicit; `core.mv_coefficients_as_braced_list_copy` | `425493c`, `ef579e2` |
+| hci C2 | truncate's catch-all returns a default target; `core.mv_truncate_result_used` | `425493c`, `ef579e2` |
+| hci C3 | Not changed (departure 1) | |
+| hci C4 | Its own message for one value of another type; `core.mv_value_not_scalar` | `425493c`, `ef579e2` |
+| hci C5 | Skipped (departure 5) | |
+| hci C7 | The header's opening comment shows a conversion and truncate | `ef579e2` |
+
+Changes to code or comments after the reviews, for the delta review: `ef579e2` (`mv.hpp`, all of the above). Tests: `425493c`, `13b53ee`. Records: `aa867a8` (the reviews' merge), `71d040a` (diagnostics rerun), `432e5f9` (mutants, decisions), and this section.
+
+Diagnostics after the fixes (`docs/agent/records/diagnostics/wu8/wu8b/`, at `ef579e2`'s header; lines / longest installed line; one error unless marked):
+
+| Mistake | GCC before (`8f341c2`) | GCC after | Clang before | Clang after |
+| --- | --- | --- | --- | --- |
+| `const Point s = q;` (implicit, lossy) | 4 / 811 | 9 / 811, the compiler's, with the catch-all's line ending `// truncate<Type>(x)` | 16 / 282 | 28 / 282, the same |
+| `const Point s{q};` | 65 / 1,090 | 10 / 925 | 25 / 331 | 9 / 268 |
+| `get<"e1">` on `of_grade<4, 2>` | 10 / 511 | 10 / 511 | 9 / 249 | 9 / 249 |
+| `get<"e21">` on `of_grade<4, 2>` | 10 / 512 | 10 / 512, the naming rule | 9 / 250 | 9 / 250 |
+| scalar `const double` | 43 / 532, 2 errors | 10 / 379 | 19 / 235 | 9 / 230 |
+| scalar `double&` | 31 / 527, 2 errors | 10 / 374 | 16 / 165 | 9 / 230 |
+| scalar `bool` | compiles | 10 / 356 | compiles | 9 / 193 |
+| scalar without a default constructor | 45 / 525, 3 errors | 14 / 1,338, 2 (the program's use of a member) | 29 / 163, 2 | 9 / 238 |
+| scalar `std::unique_ptr<double>` | 46 / 543, 3 errors | 10 / 376 | 28 / 194, 2 | 9 / 274 |
+| `Point s{{1, 2, 3, 1}}` | 65 / 791 | 10 / 521 | 26 / 216 | 9 / 200 |
+| `Point s = {{1, 2, 3, 1}}` | 6 / 441 | 17 / 910, 2 errors, the compiler's (after the delta review's D1) | 26 / 216 | 7 / 81, the compiler's |
+| `Point s{values}`, a std::array | 10 / 483, "1 == 4" | 10 / 475 | 12 / 210, "1 == 4" | 9 / 210 |
+| `Point s{std::complex<double>{1, 0}}` | 10 / 475, "1 == 4" | 10 / 467, its own message | 12 / 201, "1 == 4" | 9 / 201 |
+| `const double s = truncate<double>(q);` | 7 / 69, 2 (no truncate) | 10 / 453, one error | 7 / 83, 2 | 9 / 228 |
+| `const Motor s = l;` (implicit, lossless) | 4 / 889 | 9 / 889, with the line ending `// write Type{x}` | 16 / 319 | 28 / 319 |
+
+Mutation after the fixes: 24 changed or new mutants on gcc-debug and clang-debug in both modes, all killed by tests (`docs/agent/records/mutations/0016-mv-b/survivors.md`, review section).
+
+Checks at `812398d` (the build inputs of `13b53ee`; recorded in the commit after it): the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 240 of 240, gcc-release 240 of 240, gcc-asan 232 of 232 (plan 0015's canary is not registered there), clang-debug 242 of 242, clang-release 242 of 242, clang-asan 242 of 242, lint 242 of 242 (clang-tidy as errors over every built unit). `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; each exit status was read directly after its command. The trace gate and the marker, golden, citation, regeneration, include-scan, and format gates exited 0, and `tools/runlog check` exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `ef579e2` is pending.
+
+### Delta-review fixes, WU8b (2026-11-02)
+
+The delta review (`docs/agent/records/reviews/2026-11-02-wu8b-delta.md`, blind-reviewer, Opus 5.5, at `00235b8`: block on D1; every other first-review fix confirmed) was merged into this branch at `9c9770b` (`tools/runlog check` exit 0) and fixed, test before code.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| D1 (blocks): the non-explicit braced-list catch-all made every C array convert implicitly | `explicit` restored, its two lint suppressions removed, its comment states its probe answers; the copy-list test removed and a test that a C array converts to no multivector and reaches a span overload added. This withdraws hci C1 and departure 2 of the review fixes above: `Point p = {{...}};` is the compiler's error again | `dbdc122` (test), `0c7daa9` |
+| D2: a one-blade value from a value T accepts only explicitly is 114 lines on GCC | Open, for the owner or WU9 (a catch-all would change three `is_constructible` answers) | |
+| D3: a partial `numeric_limits` specialization is no longer checked | Open, for the owner or WU9 (a conforming specialization has every member) | |
+| D4: apply's Requires paragraph stated the bound in part | The exponent bound and the unsigned rule added | `0c7daa9` |
+
+Changes to code or comments after the delta review, for its delta review: `0c7daa9` (`mv.hpp`: the catch-all's `explicit`, its comment and suppressions, and apply's Requires paragraph). Test: `dbdc122`. Records: `9c9770b` (the review's merge), `6f74b92` (diagnostics, decision 0150, mutants), and this section.
+
+Checks at `5bcd38b` (this section's commit; recorded in the commit after it): the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 239 of 239, gcc-release 239 of 239, gcc-asan 231 of 231, clang-debug 241 of 241, clang-release 241 of 241, clang-asan 241 of 241, lint 241 of 241 (clang-tidy as errors over every built unit); `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; each exit status was read directly after its command. The gates and `tools/runlog check` exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `0c7daa9` is pending.

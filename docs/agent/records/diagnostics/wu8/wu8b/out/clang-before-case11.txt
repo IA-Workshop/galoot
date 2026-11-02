@@ -1,0 +1,19 @@
+program.cpp:59:13: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = const double]
+   59 |   const gc::mv<rga3, point_layout, const double> s{};
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:196:46: note: because 'const double' does not satisfy 'semiregular'
+  196 | template <metric_like Alg, blade_set Blades, std::semiregular T>
+      |                                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:282:27: note: because 'const double' does not satisfy 'copyable'
+  282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+      |                           ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:277:51: note: because 'const double' does not satisfy 'movable'
+  277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+      |                                                   ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:274:10: note: because 'assignable_from<const double &, const double>' evaluated to false
+  274 |       && assignable_from<_Tp&, _Tp> && swappable<_Tp>;
+      |          ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:152:10: note: because '__lhs = static_cast<_Rhs &&>(__rhs)' would be invalid: cannot assign to variable '__lhs' with const-qualified type 'const double &'
+  152 |         { __lhs = static_cast<_Rhs&&>(__rhs) } -> same_as<_Lhs>;
+      |                 ^
+1 error generated.

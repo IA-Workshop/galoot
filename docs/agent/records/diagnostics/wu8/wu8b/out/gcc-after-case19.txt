@@ -1,0 +1,10 @@
+In file included from ../../../../../../include/galoot/core.hpp:12,
+                 from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(Value&&) [with Value = std::complex<double>; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’:
+program.cpp:88:43:   required from here
+   88 |   const Point s{std::complex<double>{1, 0}};
+      |                                           ^
+../../../../../../include/galoot/core/mv.hpp:583:21: error: static assertion failed: mv: the value does not convert to the scalar type; give one value of the scalar type for each component
+  583 |       static_assert(false, "mv: the value does not convert to the scalar "
+      |                     ^~~~~
+  • ‘false’ evaluates to false

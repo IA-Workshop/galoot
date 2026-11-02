@@ -897,7 +897,7 @@ endforeach()
 # equality, and the checks of its layout, over the five scalar types it must
 # serve, the test rational among them.
 galoot_add_test(MODULE core COMPONENT mv)
-target_link_libraries(core_mv_test PRIVATE galoot_test_support)
+target_link_libraries(core_mv_test PRIVATE galoot_test_support galoot_golden)
 
 # core.mv_<case>: each misuse of the type fails to compile with one error
 # that carries its literal message, and no other message of the type. The
@@ -929,6 +929,10 @@ else()
   set(mv_repeat_rule "")
 endif()
 set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient")
+set(mv_scalar_qualified "mv: the scalar type is a reference or is const or volatile${semicolon} give the type itself, as in double for const double")
+set(mv_scalar_bool "mv: bool cannot be the scalar type, since true + true is true${semicolon} use an integer type such as int")
+set(mv_scalar_semiregular "mv: the scalar type must be default constructible, copyable, and assignable${semicolon} give it a default constructor that makes its zero")
+set(mv_scalar_copyable "mv: the scalar type must be copyable and assignable, as a number is${semicolon} give it copy construction and copy assignment, which a move-only type or a class with a const member lacks")
 set(mv_count
   "mv: give one value for each component, in the order the layout lists them")
 foreach(case IN ITEMS beyond_n beyond_n_31)
@@ -944,8 +948,24 @@ foreach(case IN ITEMS repeated_mask repeated_orientations repeated_apart
   mv_rejects(${case} "${mv_repeated}" REQUIRE ${mv_repeat_rule} ONE_ERROR
     FORBID "${mv_beyond_n}" "${mv_bad_sign}" "blade set")
 endforeach()
-mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR)
-mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR)
+mv_rejects(not_ring_scalar "${mv_scalar}" ONE_ERROR
+  FORBID "${mv_scalar_semiregular}")
+mv_rejects(scalar_without_multiplication "${mv_scalar}" ONE_ERROR
+  FORBID "${mv_scalar_semiregular}")
+# A scalar with several faults gives the message of the first alone: a
+# const or reference scalar is not semiregular either, and bool has the
+# operations of the last check.
+foreach(case IN ITEMS scalar_reference scalar_const)
+  mv_rejects(${case} "${mv_scalar_qualified}" ONE_ERROR
+    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+endforeach()
+mv_rejects(scalar_bool "${mv_scalar_bool}" ONE_ERROR FORBID "${mv_scalar}")
+# A scalar that has a default constructor and cannot be copied or assigned
+# is told so, not to give it a default constructor.
+foreach(case IN ITEMS scalar_move_only scalar_const_member)
+  mv_rejects(${case} "${mv_scalar_copyable}" ONE_ERROR
+    FORBID "${mv_scalar_semiregular}" "${mv_scalar}")
+endforeach()
 mv_rejects(too_few "${mv_count}" REQUIRE "3 == 6" ONE_ERROR)
 mv_rejects(one_too_few "${mv_count}" REQUIRE "3 == 4" ONE_ERROR)
 mv_rejects(too_many "${mv_count}" REQUIRE "7 == 6" ONE_ERROR)
@@ -982,15 +1002,10 @@ mv_rejects(narrowing_int "${narrowing_from_int}" ONE_ERROR FORBID "component<")
 mv_rejects(narrowing_float "${narrowing_from_double}" REQUIRE
   "${float_conversion}" ONE_ERROR FORBID "component<")
 mv_rejects(scalar_implicit "conversion from" ONE_ERROR)
-# A scalar that is not semiregular fails mv's template head, so the message
-# is the compiler's account of the concept (and, on Clang, a second error
-# from inside <concepts>).
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  set(not_semiregular "required for the satisfaction of ‘semiregular<T>’")
-else()
-  set(not_semiregular "does not satisfy 'semiregular'")
-endif()
-mv_rejects(scalar_without_default "${not_semiregular}")
+# A scalar without a default constructor is not semiregular; its value of
+# the type is made, too, and raises no second error.
+mv_rejects(scalar_without_default "${mv_scalar_semiregular}" ONE_ERROR
+  FORBID "${mv_scalar}" "${mv_scalar_copyable}")
 # core.mv_get_<case>: get rejects each kind of name it cannot read with
 # that kind's message alone: never another kind's, nor the name parser's of
 # blades. A message's ; is held as character 1, as for the layout messages.
@@ -1001,6 +1016,8 @@ set(mv_get_messages
   "get: the name lists one generator twice${semicolon} a blade names each generator once"
   "get: the name has an index above n, the number of generators"
   "get: the type has no blade of this name${semicolon} its layout lists the names it holds"
+  "get: the type has no blade of this name, in either orientation${semicolon} its layout does not hold it"
+  "get: the type stores this blade with the other orientation${semicolon} its layout names each blade by its indices in increasing order, as e12 for e21${semicolon} use that name and negate the value"
   "get: the type stores this blade with the other orientation${semicolon} use the name its layout gives it and negate the value")
 function(mv_get_rejects case message)
   set(others ${mv_get_messages})
@@ -1020,7 +1037,9 @@ list(GET mv_get_messages 2 mv_get_not_a_name)
 list(GET mv_get_messages 3 mv_get_repeated)
 list(GET mv_get_messages 4 mv_get_above_n)
 list(GET mv_get_messages 5 mv_get_absent)
-list(GET mv_get_messages 6 mv_get_opposite)
+list(GET mv_get_messages 6 mv_get_absent_ordered)
+list(GET mv_get_messages 7 mv_get_opposite_ordered)
+list(GET mv_get_messages 8 mv_get_opposite)
 mv_get_rejects(wide_algebra "${mv_get_wide}")
 mv_get_rejects(two_names "${mv_get_one_name}")
 mv_get_rejects(not_a_name "${mv_get_not_a_name}")
@@ -1028,7 +1047,101 @@ mv_get_rejects(index_zero "${mv_get_not_a_name}")
 mv_get_rejects(repeated_generator "${mv_get_repeated}")
 mv_get_rejects(above_n "${mv_get_above_n}")
 mv_get_rejects(absent "${mv_get_absent}")
+mv_get_rejects(absent_ordered "${mv_get_absent_ordered}")
+mv_get_rejects(opposite_ordered "${mv_get_opposite_ordered}")
 mv_get_rejects(opposite "${mv_get_opposite}")
+
+# core.mv_conversion_<case>, core.mv_coefficients_<case>: a conversion
+# that drops blades, in each spelling that reaches a constructor, gives the
+# conversion's message; coefficients given as one array or one braced list
+# give theirs, not the count's. An implicit conversion between layouts
+# reaches no constructor, since each is explicit, so its tests record the
+# compiler's own wording, which a new compiler may change.
+set(mv_lossy "conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)")
+set(mv_one_by_one "mv: give the coefficients one by one, not as one array or braced list${semicolon} write one value for each component, in the order the layout lists them")
+set(mv_not_scalar "mv: the value does not convert to the scalar type${semicolon} give one value of the scalar type for each component")
+foreach(case IN ITEMS brace paren cast)
+  mv_rejects(conversion_lossy_${case} "${mv_lossy}" ONE_ERROR
+    FORBID "${mv_count}" "${mv_one_by_one}")
+endforeach()
+foreach(case IN ITEMS as_array as_braced_list)
+  mv_rejects(coefficients_${case} "${mv_one_by_one}" ONE_ERROR
+    FORBID "${mv_count}" "${mv_lossy}" "${mv_not_scalar}")
+endforeach()
+# One value that does not convert to the scalar type, and is no array, is
+# told so; one value of a scalar with an explicit constructor from it, such
+# as an integer for the test rational, is a wrong count like any other.
+mv_rejects(value_not_scalar "${mv_not_scalar}" ONE_ERROR
+  FORBID "${mv_count}" "${mv_one_by_one}")
+mv_rejects(one_explicit_value "${mv_count}" REQUIRE "1 == 6" ONE_ERROR
+  FORBID "${mv_one_by_one}" "${mv_not_scalar}")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(implicit_conversion "to non-scalar type")
+else()
+  set(implicit_conversion "no viable conversion from")
+endif()
+foreach(case IN ITEMS lossy lossless)
+  mv_rejects(conversion_implicit_${case} "${implicit_conversion}" ONE_ERROR
+    FORBID "${mv_lossy}" "${mv_count}")
+endforeach()
+
+# core.mv_apply_inexact_<scalar>: a product whose plan has a coefficient
+# that the scalar type cannot hold exactly: -(2^24 + 1) in float, 32767^4 in
+# double, and -2^24 in short.
+set(mv_inexact "apply: the scalar type cannot hold one of the product's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+foreach(case IN ITEMS float double short)
+  mv_rejects(apply_inexact_${case} "${mv_inexact}" ONE_ERROR)
+endforeach()
+# core.mv_apply_target_lacks_blade, core.mv_apply_map_target_lacks_blade: a
+# product or a map written onto a layout that lacks a blade of its result.
+mv_rejects(apply_target_lacks_blade
+  "apply: the target layout does not hold every blade of the product"
+  ONE_ERROR)
+mv_rejects(apply_map_target_lacks_blade
+  "apply: the target layout does not hold every blade of the map" ONE_ERROR)
+
+# core.mv_truncate_<case>: a target that is not a multivector type of the
+# input's algebra and scalar type gives truncate's message; and a nonzero
+# coefficient dropped in a constant evaluation ends it with the message of
+# the check, over std::int64_t and over the test rational.
+set(mv_truncate_target "truncate: the target must be an mv type of the same algebra and scalar type, not a class derived from one${semicolon} truncate changes only which blades are held")
+foreach(case IN ITEMS other_algebra not_a_type other_scalar derived
+    result_used)
+  mv_rejects(truncate_${case} "${mv_truncate_target}" ONE_ERROR)
+endforeach()
+set(mv_truncate_dropped "truncate: a dropped coefficient is not zero")
+foreach(case IN ITEMS consteval_nonzero consteval_nonzero_rational)
+  mv_rejects(truncate_${case} "${mv_truncate_dropped}"
+    REQUIRE assertion_failed)
+endforeach()
+
+# core.mv_truncate_nonzero_<scalar>, core.mv_truncate_unchecked_<scalar>: one
+# program built in each checking mode truncates a motor whose scalar is not
+# zero. With checking on it aborts with the message, over each exact
+# scalar; with checking off it keeps the line and, over a scalar whose ==
+# counts its calls, compares nothing. The programs take the core's headers
+# directly, so that the preset's mode does not reach them.
+foreach(mode IN ITEMS 1 0)
+  add_executable(core_mv_truncate_mode_${mode} core/mv_truncate_assert_fail.cpp)
+  target_include_directories(core_mv_truncate_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(core_mv_truncate_mode_${mode} PRIVATE
+    galoot_test_support)
+  target_compile_features(core_mv_truncate_mode_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(core_mv_truncate_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+foreach(scalar IN ITEMS int64 int64_antiscalar rational rational_antiscalar
+    counted)
+  add_test(NAME core.mv_truncate_nonzero_${scalar}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${mv_truncate_dropped} ("
+      -- $<TARGET_FILE:core_mv_truncate_mode_1> ${scalar})
+  add_test(NAME core.mv_truncate_unchecked_${scalar}
+    COMMAND core_mv_truncate_mode_0 ${scalar})
+  set_tests_properties(core.mv_truncate_nonzero_${scalar}
+    core.mv_truncate_unchecked_${scalar} PROPERTIES LABELS "core;core.mv")
+endforeach()
 
 # A file with a second, unrelated error fails a one-error test, so the test
 # above can fail; WILL_FAIL turns that failure into a pass.

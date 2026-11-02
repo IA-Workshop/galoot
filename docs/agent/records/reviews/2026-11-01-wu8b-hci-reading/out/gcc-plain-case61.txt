@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&) [with name_list<...auto...> Name = detail::name_list<4>{std::array<char, 4>{"e21"}}; X = const mv<rga3, blade_set<6>{std::array<oriented_blade, 6>{std::__array_traits<oriented_blade, 6>::_Type{oriented_blade{3, 1}, oriented_blade{5, 1}, oriented_blade{9, 1}, oriented_blade{6, 1}, oriented_blade{10, 1}, oriented_blade{12, 1}}}}, double>&; detail::coefficient_reference<X> = const double&]’:
+user.cpp:247:18:   required from here
+  247 |   r += get<"e21">(b);  // computed layout, other orientation
+      |        ~~~~~~~~~~^~~
+include/galoot/core/mv.hpp:1013:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+ 1013 |     static_assert(false, "get: the type stores this blade with the other "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

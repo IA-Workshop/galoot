@@ -1,0 +1,89 @@
+setting	compiler	case	status	lines	errors	first_error_at	longest	first_error	run
+branch	gcc	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+branch	clang	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+branch	gcc	1	1	9	1	2	811	error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, 	
+branch	clang	1	1	28	1	1	290	error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4	
+branch	gcc	3	1	9	1	2	889	error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1},	
+branch	clang	3	1	28	1	1	315	error: no viable conversion from 'mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 	
+branch	gcc	4	1	11	1	2	874	error: could not convert ‘l’ from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_bl	
+branch	clang	4	1	28	1	1	327	error: no viable conversion from returned value of type 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<8>	
+branch	gcc	5	1	7	1	2	985	error: invalid initialization of reference of type ‘const Motor&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::	
+branch	clang	5	1	7	1	1	304	error: no matching function for call to 'take_motor'	
+branch	gcc	7	1	23	1	2	1524	error: no matching function for call to ‘std::vector<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>:	
+branch	clang	7	1	10	1	1	384	error: no matching member function for call to 'push_back'	
+branch	gcc	22	1	17	2	2	906	error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type	
+branch	clang	22	1	7	1	1	95	error: chosen constructor is explicit in copy-initialization	
+branch	gcc	70	1	21	1	2	954	error: no matching function for call to ‘f(const Motor&)’	
+branch	clang	70	1	10	1	1	310	error: no matching function for call to 'f'	
+branch	gcc	71	1	21	1	2	942	error: no matching function for call to ‘g(Line&)’	
+branch	clang	71	1	10	1	1	304	error: no matching function for call to 'g'	
+branch	gcc	72	1	8	2	2	1278	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Ty	
+branch	clang	72	1	22	2	1	439	error: no viable conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const std::variant<Point, Line>' (aka 'const std::variant<gc::mv<rga3, point_layout, double>, gc::mv	
+branch	gcc	73	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+branch	clang	73	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+lossy	gcc	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 1, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+lossy	clang	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 1, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+lossy	gcc	1	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	clang	1	1	9	1	3	268	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	gcc	3	1	9	1	2	889	error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1},	
+lossy	clang	3	1	31	1	1	315	error: no viable conversion from 'mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 	
+lossy	gcc	4	1	11	1	2	874	error: could not convert ‘l’ from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_bl	
+lossy	clang	4	1	31	1	1	327	error: no viable conversion from returned value of type 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<8>	
+lossy	gcc	5	1	7	1	2	985	error: invalid initialization of reference of type ‘const Motor&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::	
+lossy	clang	5	1	7	1	1	304	error: no matching function for call to 'take_motor'	
+lossy	gcc	7	1	23	1	2	1524	error: no matching function for call to ‘std::vector<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>:	
+lossy	clang	7	1	10	1	1	384	error: no matching member function for call to 'push_back'	
+lossy	gcc	22	1	17	2	2	906	error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type	
+lossy	clang	22	1	7	1	1	95	error: chosen constructor is explicit in copy-initialization	
+lossy	gcc	70	1	13	1	2	74	error: call of overloaded ‘f(const Motor&)’ is ambiguous	
+lossy	clang	70	1	10	1	1	60	error: call to 'f' is ambiguous	
+lossy	gcc	71	1	10	1	7	860	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	clang	71	1	9	1	3	250	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	gcc	72	1	8	2	2	1278	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Ty	
+lossy	clang	72	1	104	4	3	589	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	gcc	73	1	13	1	10	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+lossy	clang	73	1	12	1	3	268	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+both	gcc	0	0	0	0	0	0		is_convertible<Line, Motor> 1, <Motor, Point> 1, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+both	clang	0	0	0	0	0	0		is_convertible<Line, Motor> 1, <Motor, Point> 1, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+both	gcc	1	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+both	clang	1	1	9	1	3	268	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+both	gcc	3	1	10	1	7	999	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	clang	3	1	9	1	3	322	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	gcc	4	1	10	1	7	999	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	clang	4	1	9	1	3	322	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	gcc	5	1	10	1	7	999	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	clang	5	1	9	1	3	322	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	gcc	7	1	10	1	7	999	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	clang	7	1	9	1	3	322	error: static assertion failed: mv: a conversion between layouts is explicit, though this one drops nothing; write Type{x}	
+both	gcc	22	1	17	2	2	906	error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type	
+both	clang	22	1	7	1	1	95	error: chosen constructor is explicit in copy-initialization	
+both	gcc	70	1	13	1	2	74	error: call of overloaded ‘f(const Motor&)’ is ambiguous	
+both	clang	70	1	10	1	1	60	error: call to 'f' is ambiguous	
+both	gcc	71	1	13	1	2	67	error: call of overloaded ‘g(Line&)’ is ambiguous	
+both	clang	71	1	10	1	1	67	error: call to 'g' is ambiguous	
+both	gcc	72	1	8	2	2	1278	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Ty	
+both	clang	72	1	104	4	3	589	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+both	gcc	73	1	13	1	10	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+both	clang	73	1	12	1	3	268	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)	
+array	gcc	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+array	clang	0	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+array	gcc	1	1	9	1	2	811	error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, 	
+array	clang	1	1	28	1	1	290	error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4	
+array	gcc	3	1	9	1	2	889	error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1},	
+array	clang	3	1	28	1	1	315	error: no viable conversion from 'mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 	
+array	gcc	4	1	11	1	2	874	error: could not convert ‘l’ from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_bl	
+array	clang	4	1	28	1	1	327	error: no viable conversion from returned value of type 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<8>	
+array	gcc	5	1	7	1	2	985	error: invalid initialization of reference of type ‘const Motor&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::	
+array	clang	5	1	7	1	1	304	error: no matching function for call to 'take_motor'	
+array	gcc	7	1	23	1	2	1524	error: no matching function for call to ‘std::vector<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>:	
+array	clang	7	1	10	1	1	384	error: no matching member function for call to 'push_back'	
+array	gcc	22	1	10	1	7	525	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them	
+array	clang	22	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them	
+array	gcc	70	1	21	1	2	954	error: no matching function for call to ‘f(const Motor&)’	
+array	clang	70	1	10	1	1	310	error: no matching function for call to 'f'	
+array	gcc	71	1	21	1	2	942	error: no matching function for call to ‘g(Line&)’	
+array	clang	71	1	10	1	1	304	error: no matching function for call to 'g'	
+array	gcc	72	1	8	2	2	1278	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Ty	
+array	clang	72	1	22	2	1	439	error: no viable conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const std::variant<Point, Line>' (aka 'const std::variant<gc::mv<rga3, point_layout, double>, gc::mv	
+array	gcc	73	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1
+array	clang	73	0	0	0	0	0		is_convertible<Line, Motor> 0, <Motor, Point> 0, is_constructible<Motor, Line> 1, Motor{l} == expected 1

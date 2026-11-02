@@ -1,0 +1,225 @@
+compiler	flags	case	status	lines	errors	first_error_at	longest	first_error
+gcc	project	0	0	0	0	0	0	
+gcc	plain	0	0	0	0	0	0	
+clang	project	0	0	0	0	0	0	
+clang	plain	0	0	0	0	0	0	
+gcc	project	1	1	9	1	2	808	error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_bl
+gcc	plain	1	1	9	1	2	808	error: conversion from ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_bl
+clang	project	1	1	28	1	1	290	error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
+clang	plain	1	1	28	1	1	290	error: no viable conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'
+gcc	project	2	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	plain	2	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	project	2	1	9	1	3	265	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	plain	2	1	9	1	3	265	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	project	3	1	9	1	2	886	error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_
+gcc	plain	3	1	9	1	2	886	error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_
+clang	project	3	1	28	1	1	327	error: no viable conversion from 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>'
+clang	plain	3	1	28	1	1	327	error: no viable conversion from 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>'
+gcc	project	4	1	11	1	2	871	error: could not convert ‘l’ from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core
+gcc	plain	4	1	11	1	2	871	error: could not convert ‘l’ from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core
+clang	project	4	1	28	1	1	327	error: no viable conversion from returned value of type 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>'
+clang	plain	4	1	28	1	1	327	error: no viable conversion from returned value of type 'const mv<[...], blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>'
+gcc	project	5	1	7	1	2	995	error: invalid initialization of reference of type ‘const Motor&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, 
+gcc	plain	5	1	7	1	2	995	error: invalid initialization of reference of type ‘const Motor&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, 
+clang	project	5	1	7	1	1	307	error: no matching function for call to 'take_motor'
+clang	plain	5	1	7	1	1	307	error: no matching function for call to 'take_motor'
+gcc	project	6	1	7	1	2	918	error: invalid initialization of reference of type ‘const Point&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 
+gcc	plain	6	1	7	1	2	918	error: invalid initialization of reference of type ‘const Point&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 
+clang	project	6	1	7	1	1	285	error: no matching function for call to 'take_point'
+clang	plain	6	1	7	1	1	285	error: no matching function for call to 'take_point'
+gcc	project	7	1	23	1	2	1565	error: no matching function for call to ‘std::vector<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::orient
+gcc	plain	7	1	23	1	2	1565	error: no matching function for call to ‘std::vector<galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::orient
+clang	project	7	1	10	1	1	390	error: no matching member function for call to 'push_back'
+clang	plain	7	1	10	1	1	390	error: no matching member function for call to 'push_back'
+gcc	project	8	1	21	1	18	1700	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	plain	8	1	21	1	18	1700	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	project	8	1	18	1	3	513	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	plain	8	1	18	1	3	513	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	project	9	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	plain	9	1	10	1	7	933	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	project	9	1	9	1	3	266	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+clang	plain	9	1	9	1	3	266	error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+gcc	project	10	1	113	1	2	1191	error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{1
+gcc	plain	10	1	113	1	2	1191	error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{1
+clang	project	10	1	43	1	1	241	error: no matching constructor for initialization of 'const FLine' (aka 'const gc::mv<rga3, line_layout, float>')
+clang	plain	10	1	43	1	1	241	error: no matching constructor for initialization of 'const FLine' (aka 'const gc::mv<rga3, line_layout, float>')
+gcc	project	11	1	113	1	2	998	error: no matching function for call to ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}
+gcc	plain	11	1	113	1	2	998	error: no matching function for call to ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}
+clang	project	11	1	43	1	1	288	error: no matching constructor for initialization of 'const R3Vector' (aka 'const gc::mv<r3, gc::blades<r3, "e1 e2 e3">, double>')
+clang	plain	11	1	43	1	1	288	error: no matching constructor for initialization of 'const R3Vector' (aka 'const gc::mv<r3, gc::blades<r3, "e1 e2 e3">, double>')
+gcc	project	12	1	10	1	7	700	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	plain	12	1	10	1	7	700	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	project	12	1	9	1	3	321	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	plain	12	1	9	1	3	321	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	project	13	1	10	1	7	532	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	plain	13	1	10	1	7	532	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	project	13	1	9	1	3	251	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	plain	13	1	9	1	3	251	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	project	14	1	14	2	7	549	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	plain	14	1	14	2	7	549	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	project	14	1	12	2	3	226	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	plain	14	1	12	2	3	226	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	project	15	1	51	1	2	320	error: no matching function for call to ‘truncate<"e41 e42 e43 e23 e31 e12">(const Motor&)’
+gcc	plain	15	1	51	1	2	320	error: no matching function for call to ‘truncate<"e41 e42 e43 e23 e31 e12">(const Motor&)’
+clang	project	15	1	13	1	1	188	error: no matching function for call to 'truncate'
+clang	plain	15	1	13	1	1	188	error: no matching function for call to 'truncate'
+gcc	project	16	1	34	1	2	257	error: no matching function for call to ‘truncate(const Motor&)’
+gcc	plain	16	1	34	1	2	257	error: no matching function for call to ‘truncate(const Motor&)’
+clang	project	16	1	13	1	1	110	error: no matching function for call to 'truncate'
+clang	plain	16	1	13	1	1	110	error: no matching function for call to 'truncate'
+gcc	project	17	1	24	1	14	2558	error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+gcc	plain	17	1	24	1	14	2558	error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+clang	project	17	1	22	1	1	251	error: constexpr variable 's' must be initialized by a constant expression
+clang	plain	17	1	22	1	1	251	error: constexpr variable 's' must be initialized by a constant expression
+gcc	project	18	1	22	1	2	257	error: no matching function for call to ‘truncate<Line>(const Line&, double)’
+gcc	plain	18	1	22	1	2	257	error: no matching function for call to ‘truncate<Line>(const Line&, double)’
+clang	project	18	1	13	1	1	140	error: no matching function for call to 'truncate'
+clang	plain	18	1	13	1	1	140	error: no matching function for call to 'truncate'
+gcc	project	19	1	10	1	7	529	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	19	1	10	1	7	529	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	19	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	19	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	20	1	10	1	7	483	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	20	1	10	1	7	483	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	20	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	20	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	21	1	10	1	7	483	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	21	1	10	1	7	483	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	21	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	21	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	22	1	17	2	2	908	error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blad
+gcc	plain	22	1	17	2	2	908	error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blad
+clang	project	22	1	7	1	1	85	error: chosen constructor is explicit in copy-initialization
+clang	plain	22	1	7	1	1	85	error: chosen constructor is explicit in copy-initialization
+gcc	project	23	1	10	1	7	481	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	23	1	10	1	7	481	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	23	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	23	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	24	1	10	1	7	529	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	24	1	10	1	7	529	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	24	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	24	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	25	1	10	1	7	468	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	25	1	10	1	7	468	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	25	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	25	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	26	1	10	1	7	466	error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+gcc	plain	26	1	10	1	7	466	error: static assertion failed: mv: give one value for each component, in the order the layout lists them
+clang	project	26	1	12	1	3	198	error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the order the layout lists them
+clang	plain	26	1	12	1	3	198	error: static assertion failed due to requirement 'sizeof...(Values) == component_count': mv: give one value for each component, in the order the layout lists them
+gcc	project	27	1	10	1	7	482	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	27	1	10	1	7	482	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	27	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	27	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	28	1	10	1	7	475	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	28	1	10	1	7	475	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	28	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	28	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	29	1	13	1	2	889	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_b
+gcc	plain	29	1	13	1	2	889	error: conversion from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_b
+clang	project	29	1	27	1	1	369	error: no viable conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const std::optional<Point>' (aka 'const std::optional<gc::mv<rga3, point_layout, double>>')
+clang	plain	29	1	27	1	1	369	error: no viable conversion from 'const Motor' (aka 'const gc::mv<rga3, motor_layout, double>') to 'const std::optional<Point>' (aka 'const std::optional<gc::mv<rga3, point_layout, double>>')
+gcc	project	30	0	0	0	0	0	
+gcc	plain	30	0	0	0	0	0	
+clang	project	30	0	0	0	0	0	
+clang	plain	30	0	0	0	0	0	
+gcc	project	31	0	0	0	0	0	
+gcc	plain	31	0	0	0	0	0	
+clang	project	31	0	0	0	0	0	
+clang	plain	31	0	0	0	0	0	
+gcc	project	32	1	14	2	7	888	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	plain	32	1	14	2	7	888	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	project	32	1	36	2	3	356	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+clang	plain	32	1	36	2	3	356	error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+gcc	project	33	1	10	1	7	367	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	plain	33	1	10	1	7	367	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	project	33	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+clang	plain	33	1	9	1	3	208	error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+gcc	project	34	1	9	1	2	307	error: conversion from ‘double’ to non-scalar type ‘const Scalar’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>’} requested
+gcc	plain	34	1	9	1	2	307	error: conversion from ‘double’ to non-scalar type ‘const Scalar’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{0, 1}}}}, double>’} requested
+clang	project	34	1	31	1	1	212	error: no viable conversion from 'double' to 'const Scalar' (aka 'const gc::mv<rga3, gc::blades<rga3, "1">, double>')
+clang	plain	34	1	31	1	1	212	error: no viable conversion from 'double' to 'const Scalar' (aka 'const gc::mv<rga3, gc::blades<rga3, "1">, double>')
+gcc	project	35	0	0	0	0	0	
+gcc	plain	35	0	0	0	0	0	
+clang	project	35	0	0	0	0	0	
+clang	plain	35	0	0	0	0	0	
+gcc	project	40	1	10	1	7	379	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	plain	40	1	10	1	7	379	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	project	40	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	plain	40	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	project	41	1	10	1	7	374	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	plain	41	1	10	1	7	374	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	project	41	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	plain	41	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	project	42	1	10	1	7	364	error: static assertion failed: mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+gcc	plain	42	1	10	1	7	364	error: static assertion failed: mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+clang	project	42	1	9	1	3	201	error: static assertion failed due to requirement 'scalar_is_not_bool': mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+clang	plain	42	1	9	1	3	201	error: static assertion failed due to requirement 'scalar_is_not_bool': mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+gcc	project	43	1	14	2	7	1336	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	plain	43	1	14	2	7	1336	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	project	43	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	plain	43	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	project	44	1	10	1	7	393	error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+gcc	plain	44	1	10	1	7	393	error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+clang	project	44	1	9	1	3	209	error: static assertion failed due to requirement 'scalar_has_ring_operations': mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+clang	plain	44	1	9	1	3	209	error: static assertion failed due to requirement 'scalar_has_ring_operations': mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+gcc	project	45	1	10	1	7	367	error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+gcc	plain	45	1	10	1	7	367	error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+clang	project	45	1	9	1	3	209	error: static assertion failed due to requirement 'scalar_has_ring_operations': mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+clang	plain	45	1	9	1	3	209	error: static assertion failed due to requirement 'scalar_has_ring_operations': mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+gcc	project	46	0	0	0	0	0	
+gcc	plain	46	0	0	0	0	0	
+clang	project	46	0	0	0	0	0	
+clang	plain	46	0	0	0	0	0	
+gcc	project	47	1	10	1	7	384	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	plain	47	1	10	1	7	384	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	project	47	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	plain	47	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	project	48	1	14	2	7	1333	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	plain	48	1	14	2	7	1333	error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	project	48	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+clang	plain	48	1	9	1	3	236	error: static assertion failed due to requirement 'scalar_is_semiregular': mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+gcc	project	49	1	10	1	7	382	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	plain	49	1	10	1	7	382	error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	project	49	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+clang	plain	49	1	9	1	3	238	error: static assertion failed due to requirement 'scalar_is_not_a_reference_or_qualified': mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+gcc	project	50	0	0	0	0	0	
+gcc	plain	50	0	0	0	0	0	
+clang	project	50	0	0	0	0	0	
+clang	plain	50	0	0	0	0	0	
+gcc	project	51	0	0	0	0	0	
+gcc	plain	51	0	0	0	0	0	
+clang	project	51	0	0	0	0	0	
+clang	plain	51	0	0	0	0	0	
+gcc	project	52	0	0	0	0	0	
+gcc	plain	52	0	0	0	0	0	
+clang	project	52	0	0	0	0	0	
+clang	plain	52	0	0	0	0	0	
+gcc	project	53	1	22	2	2	533	error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
+gcc	plain	53	1	22	2	2	533	error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
+clang	project	53	1	10	1	1	161	error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = later]
+clang	plain	53	1	10	1	1	161	error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = later]
+gcc	project	60	1	10	1	7	519	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+gcc	plain	60	1	10	1	7	519	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	project	60	1	9	1	3	247	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	plain	60	1	9	1	3	247	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+gcc	project	61	1	10	1	7	520	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+gcc	plain	61	1	10	1	7	520	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+clang	project	61	1	9	1	3	248	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+clang	plain	61	1	9	1	3	248	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+gcc	project	62	1	10	1	7	474	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+gcc	plain	62	1	10	1	7	474	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	project	62	1	9	1	3	230	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	plain	62	1	9	1	3	230	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+gcc	project	63	1	10	1	7	524	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+gcc	plain	63	1	10	1	7	524	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+clang	project	63	1	9	1	3	252	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+clang	plain	63	1	9	1	3	252	error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+gcc	project	64	1	10	1	7	523	error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	plain	64	1	10	1	7	523	error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	project	64	1	9	1	3	251	error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+clang	plain	64	1	9	1	3	251	error: static assertion failed: get: the type has no blade of this name; its layout lists the names it holds
+gcc	project	65	1	10	1	7	565	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+gcc	plain	65	1	10	1	7	565	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	project	65	1	9	1	3	265	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order
+clang	plain	65	1	9	1	3	265	error: static assertion failed: get: the type has no blade of this name; its layout lists blades in order of grade, each named by its indices in increasing order

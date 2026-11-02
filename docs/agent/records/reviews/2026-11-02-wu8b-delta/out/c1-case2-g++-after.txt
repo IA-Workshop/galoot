@@ -1,0 +1,5 @@
+$S/probes/c1.cpp: In function ‘int main()’:
+$S/probes/c1.cpp:39:52: error: conversion from ‘double [4]’ to non-scalar type ‘std::variant<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>, std::span<const double, 18446744073709551615> >’ requested
+   39 |   std::variant<Point, std::span<const double>> v = raw;
+      |                                                    ^~~
+timed: probe delta-wu8b:probe-c1-2:g++:new took 0.309 s (exit 1)

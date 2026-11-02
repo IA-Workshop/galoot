@@ -1,0 +1,13 @@
+user.cpp:143:18: error: no matching function for call to 'truncate'
+  143 |   const auto s = gc::truncate<Line>(l, 1e-12);  // a tolerance, as some libraries take
+      |                  ^~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:808:40: note: candidate function template not viable: requires single argument 'x', but 2 arguments were provided
+  808 | [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
+      |                                        ^        ~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:825:1: note: candidate function template not viable: requires single argument 'x', but 2 arguments were provided
+  825 | truncate(const mv<Alg, From, T>& x) {
+      | ^        ~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:833:16: note: candidate function template not viable: requires single argument 'x', but 2 arguments were provided
+  833 | constexpr auto truncate(const mv<Alg, From, T>& x) {
+      |                ^        ~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

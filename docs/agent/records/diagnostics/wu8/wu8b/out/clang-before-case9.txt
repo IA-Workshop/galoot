@@ -1,0 +1,25 @@
+program.cpp:53:15: error: no matching constructor for initialization of 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
+   53 |   const Point s{q};
+      |               ^~~~
+<before>/include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>' for 1st argument
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+<before>/include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>' for 1st argument
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+<before>/include/galoot/core/mv.hpp:254:46: note: candidate template ignored: constraints not satisfied [with Values = <const Motor &>]
+  254 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+<before>/include/galoot/core/mv.hpp:253:14: note: because '!(sizeof...(Values) == 1 && multivector<const galoot::core::mv<rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double> &>)' evaluated to false
+  253 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
+      |              ^
+<before>/include/galoot/core/mv.hpp:233:13: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+  233 |   constexpr mv() = default;
+      |             ^
+<before>/include/galoot/core/mv.hpp:134:42: note: candidate inherited constructor not viable: requires 4 arguments, but 1 was provided
+  134 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+      |                                          ^                   ~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:244:45: note: constructor from base class 'coefficient_storage<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double, double, double, double, double>' inherited here
+  244 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+      |                                             ^
+1 error generated.

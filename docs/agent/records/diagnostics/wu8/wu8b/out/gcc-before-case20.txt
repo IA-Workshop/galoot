@@ -1,0 +1,7 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:92:24: error: ‘truncate’ is not a member of ‘gc’
+   92 |   const double s = gc::truncate<double>(q);
+      |                        ^~~~~~~~
+program.cpp:92:33: error: expected primary-expression before ‘double’
+   92 |   const double s = gc::truncate<double>(q);
+      |                                 ^~~~~~

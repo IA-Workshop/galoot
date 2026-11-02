@@ -1,0 +1,14 @@
+$S/probes/c1.cpp: In function ‘int main()’:
+$S/probes/c1.cpp:37:14: error: call of overloaded ‘g(double [4])’ is ambiguous
+   37 |   std::puts(g(raw));
+      |             ~^~~~~
+  • there are 2 candidates
+    • candidate 1: ‘const char* g(const Point&)’
+      $S/probes/c1.cpp:21:37:
+         21 | [[maybe_unused]] static const char* g(const Point&) { return "Point"; }
+            |                                     ^
+    • candidate 2: ‘const char* g(std::span<const double>)’
+      $S/probes/c1.cpp:22:37:
+         22 | [[maybe_unused]] static const char* g(std::span<const double>) { return "span"; }
+            |                                     ^
+timed: probe delta-wu8b:probe-c1-1:g++:new took 0.289 s (exit 1)

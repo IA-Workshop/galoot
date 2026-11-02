@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘constexpr auto galoot::core::truncate(const mv<Alg, S, T>&) [with Target = mv<rga3, blade_set<6>{std::array<oriented_blade, 6>{std::__array_traits<oriented_blade, 6>::_Type{oriented_blade{9, -1}, oriented_blade{10, -1}, oriented_blade{12, -1}, oriented_blade{6, 1}, oriented_blade{5, -1}, oriented_blade{3, 1}}}}, float>; Alg = rga3; blade_set<...auto...> From = blade_set<8>{std::array<oriented_blade, 8>{std::__array_traits<oriented_blade, 8>::_Type{oriented_blade{0, 1}, oriented_blade{9, -1}, oriented_blade{10, -1}, oriented_blade{12, -1}, oriented_blade{6, 1}, oriented_blade{5, -1}, oriented_blade{3, 1}, oriented_blade{15, 1}}}}; T = double]’:
+user.cpp:123:37:   required from here
+  123 |   const auto s = gc::truncate<FLine>(q);  // truncate and change the scalar
+      |                  ~~~~~~~~~~~~~~~~~~~^~~
+include/galoot/core/mv.hpp:834:17: error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+  834 |   static_assert(false, "truncate: the target must be a multivector type of "
+      |                 ^~~~~
+  • ‘false’ evaluates to false

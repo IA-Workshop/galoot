@@ -1,0 +1,28 @@
+program.cpp:95:13: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = std::unique_ptr<double>]
+   95 |   const gc::mv<rga3, point_layout, std::unique_ptr<double>> s{};
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:196:46: note: because 'std::unique_ptr<double>' does not satisfy 'semiregular'
+  196 | template <metric_like Alg, blade_set Blades, std::semiregular T>
+      |                                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:282:27: note: because 'std::unique_ptr<double>' does not satisfy 'copyable'
+  282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+      |                           ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:277:24: note: because 'std::unique_ptr<double>' does not satisfy 'copy_constructible'
+  277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+      |                        ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:182:10: note: because 'constructible_from<std::unique_ptr<double>, std::unique_ptr<double> &>' evaluated to false
+  182 |       && constructible_from<_Tp, _Tp&> && convertible_to<_Tp&, _Tp>
+      |          ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: note: because 'is_constructible_v<std::unique_ptr<double>, std::unique_ptr<double> &>' evaluated to false
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:162:30: error: call to deleted constructor of 'std::unique_ptr<double>'
+  162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+      |                              ^~~~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bits/unique_ptr.h:543:7: note: 'unique_ptr' has been explicitly marked deleted here
+  543 |       unique_ptr(const unique_ptr&) = delete;
+      |       ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bits/unique_ptr.h:270:11: note: 'unique_ptr<double>' defined here
+  270 |     class unique_ptr
+      |           ^
+2 errors generated.

@@ -1,0 +1,13 @@
+mutant	result	killed by
+odd_part_not_divided	build fails	static_assert mv_test.cpp:1679 (e12_exact<4096, 4096, float>)
+exponent_strict	build fails	static_assert mv_test.cpp:1697 (e12_exact<128, 256, half_like>)
+odd_bits_one_more	build fails	static_assert mv_test.cpp:1682 (!e12_exact<24929, 673, float>)
+signed_guard_too_low	build fails	static_assert mv_test.cpp:1699 (!e12_exact<4096, 4096, short>)
+signed_as_magnitude	build fails	static_assert mv_test.cpp:1701 (e12_exact<128, 256, short>)
+coefficient_by_convertibility	build fails	static_assert mv_test.cpp:2099 (!not_a_coefficient<int, rational>)
+pointer_not_several	build fails	static_assert mv_test.cpp:2102 (holds_several_values<const double*>)
+braced_catch_all_explicit_again	builds; core.mv fails	core.mv_coefficients_as_braced_list_copy
+copyable_fault_skipped	builds; core.mv fails	core.mv_scalar_move_only, core.mv_scalar_const_member
+truncate_catch_all_returns_x	builds; core.mv fails	core.mv_truncate_result_used
+opposite_ordered_not_told	builds; core.mv fails	core.mv_get_opposite_ordered
+truncate_skips_last_place	build fails	static_assert mv_test.cpp:1990 (!truncates_in_a_constant_evaluation<std::int64_t, 0, 7>)

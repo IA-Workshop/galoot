@@ -1,0 +1,9 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+float_exponent_ignored	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1698	mv_test.cpp:1698	-	test/core/mv_test.cpp:1698:17: error: static assertion failed
+float_exponent_ignored	clang-debug	normal	1	-	killed	-	mv_test.cpp:1698	mv_test.cpp:1698	-	test/core/mv_test.cpp:1698:17: error: static assertion failed due to requirement '!e12_exact<256, 256, (anonymous namespace)::half_like>'
+float_bound_on_magnitude	gcc-debug	normal	1	-	killed	-	mv.hpp:788,mv_test.cpp:1681,mv_test.cpp:1697,mv_test.cpp:1711	mv_test.cpp:35,mv_test.cpp:1646,mv_test.cpp:1681,mv_test.cpp:1697,mv_test.cpp:1711	-	test/core/mv_test.cpp:1681:17: error: static assertion failed
+float_bound_on_magnitude	clang-debug	normal	1	-	killed	-	mv.hpp:788,mv_test.cpp:1681,mv_test.cpp:1697,mv_test.cpp:1711	mv_test.cpp:35,mv_test.cpp:1646,mv_test.cpp:1681,mv_test.cpp:1697,mv_test.cpp:1711	-	test/core/mv_test.cpp:1681:17: error: static assertion failed due to requirement 'e12_exact<8192, 4096, float>'
+integer_min_one_below	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1702	mv_test.cpp:1702	-	test/core/mv_test.cpp:1702:17: error: static assertion failed
+integer_min_one_below	clang-debug	normal	1	-	killed	-	mv_test.cpp:1702	mv_test.cpp:1702	-	test/core/mv_test.cpp:1702:17: error: static assertion failed due to requirement '!e12_exact<9, 3641, short>'
+integer_bound_one_above	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1704	mv_test.cpp:1704	-	test/core/mv_test.cpp:1704:17: error: static assertion failed
+integer_bound_one_above	clang-debug	normal	1	-	killed	-	mv_test.cpp:1704	mv_test.cpp:1704	-	test/core/mv_test.cpp:1704:17: error: static assertion failed due to requirement '!e1234_exact<1, 1, 128, 256, short>'

@@ -30,3 +30,12 @@ From `docs/agent/records/performance/mv/README.md` (revision `0acef07`):
 
 - A layout of more than 256 blades on Clang, or 1,024 on GCC, fails in `distinct_masks` with the compiler's step or operation limit. If a use reaches that (for example, a full algebra of nine generators as one type on Clang), the fast path is the remedy, by a new decision with its own measurement.
 - The cost per type and per first construction makes a program that declares many types pay more than with the aggregate (plan 0016 risk 6); no aggregate exists to compare with now.
+
+## WU8b, 2026-11-01
+
+Recorded by Claude (agent, Opus 5.5), cpp-expert role, implementing WU8b of plan 0016. Measurements in `docs/agent/records/performance/mv/README.md`, section WU8b (headers of `7ee7d32`).
+
+1. Limits (criterion 21): `apply` builds wherever its plan or map builds at the default limits, on GCC 16.2.1 and Clang 23.1.4, in the three configurations of decision 0103, up to the plan ceilings of decision 0113 (Clang: `full<5>` products, the dense `full<4>`, maps to `full<7>` and complements to `full<8>`; GCC: `full<6>` products, 4,096 terms in one fold, the dense `full<5>`, maps to `full<9>`). The ceilings are stated in `apply`'s comment. No plan Clang builds exceeds 1,024 terms, so the expansion is not chunked (decision 0154 item 5).
+2. P2 (criterion 22): the fixed use of decision 0113 through `apply` grows by 13 M instructions (GCC) and 15 M (Clang) from n = 4 to 16, against 12 M and 13 M for the plans alone; the cause is the algebra's `metric_like` check and the multivector types' layout checks per n, as before. The question of decision 0107 item 4 stays the owner's.
+3. Costs, recorded and not bounded (C14): `core.hpp` alone +1.2 % (GCC) and +0.9 % (Clang); a new product's kernel and result type 83 M instructions on GCC at -O0 (44 M at -O2) and 32 to 34 M on Clang, above its plan; a conversion 8 to 18 M, a truncation 6 to 13 M, an existing product applied again 3 to 6 M.
+4. No change is made for these costs. If the kernel's cost on GCC at -O0 matters to a user, the candidates are fewer constant evaluations per term (each term reads the kernel's array five times as a template argument) and one instantiation of the term function per coefficient rather than per term and flag; neither is measured.
