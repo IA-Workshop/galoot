@@ -778,8 +778,14 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
 /// default limits has more than 1,024 terms. Measured at the default limits, at
 /// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
-/// plan builds, up to full<5> times full<5> on Clang 23 and full<6> times
-/// full<6> (4,096 terms) on GCC 16, as product_plan's comment states them.
+/// plan builds. The plans build up to full<6> times full<6> (4,096 terms) on
+/// GCC 16, and up to full<5> times full<5> on Clang 23, with one exception
+/// there: the geometric antiproduct of full<5> in conformal(3) builds only
+/// with _GLIBCXX_ASSERTIONS, which libstdc++ defines by itself only without
+/// optimization, because without it each subscript is a function call that
+/// Clang counts, and the plan then needs more than Clang's default steps
+/// (-fconstexpr-steps=1200000 is enough). product_plan's comment gives the
+/// counts, taken with _GLIBCXX_ASSERTIONS.
 /// Guarantees: the coefficient of each blade of Target is the sum over the
 /// terms on it, multiplied by the blade's sign in Target, evaluated in the
 /// order stated; with an exact scalar the result is exact. A constant

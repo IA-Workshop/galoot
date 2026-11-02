@@ -28,8 +28,17 @@
 // type; two mv types that differ in either are rejected at compile time with
 // a message that names the mistake. A scalar operand is not accepted here.
 // A class derived from mv is accepted when the product is valid, and gets
-// the compiler's own error when it is not. Compile cost: each pair of operand
-// layouts builds one plan, within the limits that detail::apply states.
+// the compiler's own error when it is not.
+//
+// Compile cost: each pair of operand layouts builds one plan, a constant
+// evaluation, so the compiler's limits on constant evaluation bound the
+// layouts a product accepts. Typed layouts such as a point, a line, a plane,
+// or a motor are far below them. Two full multivectors of five generators
+// are near them on Clang 23 with libstdc++: the geometric antiproduct of two
+// full<5> multivectors of conformal(3) builds only while libstdc++'s
+// assertions are on, and in a dense form of five generators no geometric
+// product or antiproduct of two full<5> multivectors builds; the comment of
+// geometric_antiproduct gives the details and the workaround.
 
 #include <concepts>
 #include <type_traits>
@@ -331,6 +340,22 @@ constexpr std::remove_cvref_t<X> operator^(const X& /*x*/, const Y& /*y*/) {
 /// twice, and Clang 23 about four and a half times, what they cost in 4
 /// generators, while the same four geometric products cost the same at both
 /// sizes.
+///
+/// Limit: on Clang 23 with libstdc++, the plan of two full<5> multivectors
+/// of conformal(3) takes about 950,000 of Clang's default 1,048,576 steps of
+/// constant evaluation while libstdc++'s assertions are on
+/// (_GLIBCXX_ASSERTIONS, which libstdc++ defines by itself only in a build
+/// without optimization), and more than the limit without them, since each
+/// array subscript then costs a function call. So an optimized build, or one
+/// with _GLIBCXX_NO_ASSERTIONS, fails with "constexpr evaluation hit maximum
+/// step limit" inside the plan's generation, followed by errors that do not
+/// name the product. Raising the limit builds it: -fconstexpr-steps=1200000
+/// is enough, measured. So do smaller layouts, such as full<5> with the
+/// vectors, Clang with libc++, and GCC 16 at its default limits. In a dense
+/// form of five generators, where every pair of generators is coupled, Clang
+/// 23 cannot build the plan of two full<5> multivectors in any
+/// configuration at its default limits, for the geometric product as well;
+/// GCC 16 can.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
 geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
@@ -387,7 +412,8 @@ constexpr std::remove_cvref_t<X> antiwedge(const X& /*x*/, const Y& /*y*/) {
 
 /// x % y is geometric_antiproduct(x, y). It binds as * does, left to right.
 /// A scalar that cannot hold one of the antiproduct's coefficients is
-/// rejected with a message that names x % y.
+/// rejected with a message that names x % y. The limit on Clang that
+/// geometric_antiproduct states applies here too.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
 operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
