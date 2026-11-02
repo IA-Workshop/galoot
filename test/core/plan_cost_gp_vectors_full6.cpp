@@ -20,7 +20,8 @@ struct r6 {
 };
 
 constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, r6, core::of_grade<6, 1>, core::full<6>>;
+    product_plan<BinaryOperation::geometric_product, r6, core::of_grade<6, 1>,
+                 core::full<6>>;
 
 } // namespace
 

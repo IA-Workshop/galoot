@@ -44,7 +44,8 @@ constexpr core::blade_set<3> sparse_b{
 };
 
 constexpr const auto& plan =
-    product_plan<BinaryOperation::antigp, rigid15, sparse_a, sparse_b>;
+    product_plan<BinaryOperation::geometric_antiproduct, rigid15, sparse_a,
+                 sparse_b>;
 
 } // namespace
 

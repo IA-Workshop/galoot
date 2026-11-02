@@ -6,7 +6,7 @@
    "ts": 0,
    "dur": 9000,
    "args": {
-    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::gp, alg, set1, set1>"
+    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, alg, set1, set1>"
    }
   },
   {
@@ -24,7 +24,7 @@
    "ts": 0,
    "dur": 5000,
    "args": {
-    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::gp, alg, set2, set2>"
+    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, alg, set2, set2>"
    }
   },
   {
@@ -42,7 +42,7 @@
    "ts": 0,
    "dur": 7000,
    "args": {
-    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::gp, alg, set3, set3>"
+    "detail": "galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, alg, set3, set3>"
    }
   },
   {

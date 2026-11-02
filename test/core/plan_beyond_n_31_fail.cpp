@@ -22,7 +22,8 @@ constexpr core::blade_set<1> top{{{
     {.mask = core::mask_t{1} << (core::mask_bits - 1), .sign = 1},
 }}};
 
-constexpr const auto& plan = product_plan<BinaryOperation::gp, r31, top, top>;
+constexpr const auto& plan =
+    product_plan<BinaryOperation::geometric_product, r31, top, top>;
 static_assert(plan.terms.empty());
 
 } // namespace

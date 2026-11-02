@@ -928,7 +928,7 @@ else()
   set(mv_sign_rule "")
   set(mv_repeat_rule "")
 endif()
-set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient")
+set(mv_scalar "mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient${semicolon} use a number type such as double or an integer type")
 set(mv_scalar_qualified "mv: the scalar type is a reference or is const or volatile${semicolon} give the type itself, as in double for const double")
 set(mv_scalar_bool "mv: bool cannot be the scalar type, since true + true is true${semicolon} use an integer type such as int")
 set(mv_scalar_semiregular "mv: the scalar type must be default constructible, copyable, and assignable${semicolon} give it a default constructor that makes its zero")
@@ -1057,7 +1057,7 @@ mv_get_rejects(opposite "${mv_get_opposite}")
 # give theirs, not the count's. An implicit conversion between layouts
 # reaches no constructor, since each is explicit, so its tests record the
 # compiler's own wording, which a new compiler may change.
-set(mv_lossy "conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)")
+set(mv_lossy "mv: the conversion drops blades of its input${semicolon} it is lossy, so request it with truncate<Type>(x)")
 set(mv_one_by_one "mv: give the coefficients one by one, not as one array or braced list${semicolon} write one value for each component, in the order the layout lists them")
 set(mv_not_scalar "mv: the value does not convert to the scalar type${semicolon} give one value of the scalar type for each component")
 foreach(case IN ITEMS brace paren cast)
@@ -1305,3 +1305,34 @@ set_tests_properties(
   tools.test_references_trace_accepts
   tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
+
+# core.product: the geometric product and the wedge, as functions and as the
+# operators * and ^, against the reference tables.
+galoot_add_test(MODULE core COMPONENT product)
+target_link_libraries(core_product_test PRIVATE galoot_test_support
+  galoot_golden)
+
+# core.product_mixed_<cause>_<spelling>: a product of operands from two
+# algebras or with two scalar types fails to compile with one error, the
+# message of the product as written.
+set(product_algebras "the operands are in different algebras${semicolon} both must be in the same one")
+set(product_scalars "the operands have different scalar types${semicolon} convert one explicitly first")
+foreach(spelling IN ITEMS geometric_product wedge times caret)
+  if(spelling STREQUAL "times")
+    set(written "a * b")
+  elseif(spelling STREQUAL "caret")
+    set(written "a ^ b")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_mixed_algebras_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_mixed_algebras_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_algebras}"
+    ONE_ERROR FORBID "different scalar types")
+  galoot_add_compile_fail_test(NAME product_mixed_scalars_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_mixed_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_scalars}"
+    ONE_ERROR FORBID "different algebras")
+endforeach()

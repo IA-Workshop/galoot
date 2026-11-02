@@ -17,8 +17,8 @@ struct r3 {
 
 constexpr core::blade_set<1> unsigned_blade{{{{.mask = 0b0001, .sign = 0}}}};
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, r3, unsigned_blade, core::full<3>>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          r3, unsigned_blade, core::full<3>>;
 static_assert(plan.terms.empty());
 
 } // namespace

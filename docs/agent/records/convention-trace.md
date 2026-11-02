@@ -54,4 +54,4 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 6.2 | a flat object is a rigid object wedged with e5 | no |
 | 6.3 | the round bulk has neither e4 nor e5 | no |
 | 6.4 | rounds and flats have a carrier, cocarrier, center, container, partner, attitude, and radius | no |
-| 7.1 | a * b is the geometric product geometric_product(a, b) | no |
+| 7.1 | a * b is the geometric product geometric_product(a, b) | yes |

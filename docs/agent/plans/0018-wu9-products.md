@@ -1,6 +1,6 @@
 # 0018 WU9: geometric product, wedge, and their operators
 
-- Status: claimed 2026-11-02 (planner: Claude, agent, Sonnet 5.5; implementer and reviewers to be named by the coordinator at branching). Not started.
+- Status: implemented, reviewed (blind review blocked once, fixed), merged to `develop` 2026-11-02.
 - Branch `feature/core-products`, worktree `.claude/worktrees/core-products`, from `develop` at the claim commit. Decision numbers 0162 to 0169 (0170 belongs to the run log, 0130 to the job pool).
 - Source of scope: plan 0001 (WU9, size S), plan 0016 section 15 "Deferred" and its R6, decision 0159, the 2026-11-02 handoff.
 - Goal: public `geometric_product(x, y)` and `wedge(x, y)` on multivectors of one algebra, with the operators `*` and `^` (CONVENTIONS 7.1), each a one-line caller of `detail::apply`; the enumerator rename of decision 0159; a mixed-algebra catch-all with a message in the user's terms.
@@ -71,4 +71,14 @@ One implementer (cpp-expert role, Opus, high), one doctest-expert for the tests,
 
 ## 10. Outcome
 
-Not started.
+Review: the blind review (Opus 5.5, `records/reviews/2026-11-02-wu9-products.md`) blocked on one fix, F1: a mixed product written as `auto r = a * b;` gave two errors, and the catch-alls returned `void`. F1 to F3 were fixed together in `product.hpp`: the catch-alls return the first operand's type, each condition compares the two algebras or scalar types themselves so the compilers print both, and the messages begin `a * b:` and `a ^ b:` for the operators. The compile-fail tests now write the product into a variable.
+
+Also fixed: the ring-operations message of `mv` now gives a fix after a semicolon (F11); the product enumerators have underlying type `int`, so Clang prints their values and not a raw byte in result types (F12); the header comment states the result layout, the requires-expression answer, derived operands and the cost, and its example compiles (F6, F7); the tests no longer carry two checks that could not fail, take the expected result type from the layout and not from the implementation, and pin the concepts directly (F8, F9); decision 0164 records the header choice (F10).
+
+Not done, with the reason: F5 (a narrow scalar through a public product still begins `apply:`): the fix belongs with the other product messages in WU10, which adds the antiproducts that share it; F13's wording changes beyond the prefix; the P2 growth of the new includer beyond the smoke-test figure; the derived-class catch-all (WU16).
+
+Mutants: the planned sixth (a shared-generator sign flip) was not run by the author. The reviewer ran it on gcc-debug and killed it at run time, with two operand-swap mutants; the author's six were killed on gcc-debug and clang-debug for the four function and operator mutants, and the two constraint mutants only by the compile-fail tests on gcc-debug (the README states this).
+
+Departures: commits 2 to 4 were one commit; no sub-agent implemented or tested the unit, so no cost row; tests and code are in one commit (W9, the review lists the tests and expected values as the exception requires).
+
+Evidence: all seven presets passed from new empty trees at the final revision of the build inputs (gcc-debug and gcc-release 247, gcc-asan 239, clang-debug, clang-release, clang-asan and lint 249), after three earlier runs that failed on defects now fixed (reference markers; unused locals and the enum-size lint of the first fix pass; the suppression comment placement). The trace gate and `tools/runlog check` exit 0.

@@ -41,8 +41,8 @@ struct dense5 {
 
 constexpr core::blade_set<1> pseudoscalar{{{{.mask = 0b11111, .sign = 1}}}};
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, dense5, pseudoscalar, pseudoscalar>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          dense5, pseudoscalar, pseudoscalar>;
 static_assert(plan.terms.size() == 1);
 
 } // namespace

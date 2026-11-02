@@ -123,7 +123,7 @@ read_back(const core::detail::typed_plan<R, T>& plan) {
 // The geometric-product plan of A and B in Alg, read back.
 template <core::metric_like Alg, core::blade_set A, core::blade_set B>
 constexpr auto gp_terms =
-    read_back(product_plan<BinaryOperation::gp, Alg, A, B>);
+    read_back(product_plan<BinaryOperation::geometric_product, Alg, A, B>);
 
 constexpr mask_t e1 = 0b0001;
 constexpr mask_t e2 = 0b0010;
@@ -258,8 +258,9 @@ constexpr bool equals_generation(const core::metric<N>& g,
                                  const core::blade_set<KB>& bs,
                                  const std::array<plan_term, T>& plan) {
   std::array<plan_term, T> again{};
-  const std::size_t count = generate_plan<BinaryOperation::gp, Capacity>(
-      g, as.blades, bs.blades, again);
+  const std::size_t count =
+      generate_plan<BinaryOperation::geometric_product, Capacity>(
+          g, as.blades, bs.blades, again);
   return count == T && again == plan;
 }
 
@@ -507,7 +508,7 @@ static_assert(std::is_aggregate_v<plan_term>);
 static_assert(std::is_trivially_copyable_v<plan_term>);
 static_assert(
     std::is_same_v<
-        decltype(product_plan<BinaryOperation::gp, rga3, point, point>.terms),
+        decltype(product_plan<BinaryOperation::geometric_product, rga3, point, point>.terms),
         std::array<core::detail::typed_term, 15>>);
 
 // The terms of a plan, generated at run time into storage of the counted
@@ -523,10 +524,11 @@ generated_plan generate(const core::metric<N>& g,
                         std::span<const oriented_blade> as,
                         std::span<const oriented_blade> bs) {
   generated_plan plan;
-  plan.counted = generate_plan<BinaryOperation::gp, Capacity>(g, as, bs, {});
+  plan.counted = generate_plan<BinaryOperation::geometric_product, Capacity>(
+      g, as, bs, {});
   plan.terms.resize(plan.counted);
-  plan.written =
-      generate_plan<BinaryOperation::gp, Capacity>(g, as, bs, plan.terms);
+  plan.written = generate_plan<BinaryOperation::geometric_product, Capacity>(
+      g, as, bs, plan.terms);
   return plan;
 }
 
@@ -623,10 +625,11 @@ std::vector<oriented_blade> e1_signs(std::span<const oriented_blade> set) {
 // Two uses of one plan, in two functions. That they share one evaluation is
 // not something a test of values can see; the values are what is checked.
 std::size_t point_terms() {
-  return product_plan<BinaryOperation::gp, rga3, point, point>.terms.size();
+  return product_plan<BinaryOperation::geometric_product, rga3, point, point>.terms.size();
 }
 coefficient_type point_scalar() {
-  const auto& plan = product_plan<BinaryOperation::gp, rga3, point, point>;
+  const auto& plan =
+      product_plan<BinaryOperation::geometric_product, rga3, point, point>;
   return plan.terms.front().coefficient;
 }
 
@@ -644,8 +647,8 @@ TEST_CASE("Every plan of every blade times every blade is the products of "
   for_each_signature([](const char* name, const auto& g) {
     constexpr std::size_t n = std::remove_cvref_t<decltype(g)>::generator_count;
     constexpr auto& all = core::full<n>;
-    constexpr std::size_t capacity =
-        plan_capacity(BinaryOperation::gp, all.blades, all.blades, n);
+    constexpr std::size_t capacity = plan_capacity(
+        BinaryOperation::geometric_product, all.blades, all.blades, n);
     INFO(name);
     CHECK(capacity == blade_count(n) / 2);
 
@@ -746,8 +749,9 @@ TEST_CASE("generate_plan counts every term and writes only what fits") {
   const plan_term untouched{.a = 9, .b = 9, .out = 0, .coefficient = 9};
   std::array<plan_term, 5> storage{};
   storage.fill(untouched);
-  const std::size_t count = generate_plan<BinaryOperation::gp, 2>(
-      rga3::value, point.blades, point.blades, std::span(storage).first(3));
+  const std::size_t count =
+      generate_plan<BinaryOperation::geometric_product, 2>(
+          rga3::value, point.blades, point.blades, std::span(storage).first(3));
   CHECK(count == 15);
   CHECK(storage.at(0) == plan_term{.a = 0, .b = 0, .out = 0, .coefficient = 1});
   CHECK(storage.at(1) ==
@@ -757,12 +761,12 @@ TEST_CASE("generate_plan counts every term and writes only what fits") {
   CHECK(storage.at(3) == untouched);
   CHECK(storage.at(4) == untouched);
 
-  CHECK(generate_plan<BinaryOperation::gp, 2>(rga3::value, point.blades,
-                                              point.blades, {}) == 15);
+  CHECK(generate_plan<BinaryOperation::geometric_product, 2>(
+            rga3::value, point.blades, point.blades, {}) == 15);
   std::array<plan_term, 16> roomy{};
   roomy.fill(untouched);
-  CHECK(generate_plan<BinaryOperation::gp, 2>(rga3::value, point.blades,
-                                              point.blades, roomy) == 15);
+  CHECK(generate_plan<BinaryOperation::geometric_product, 2>(
+            rga3::value, point.blades, point.blades, roomy) == 15);
   CHECK(std::ranges::equal(std::span(roomy).first(15),
                            gp_terms<rga3, point, point>));
   CHECK(roomy.at(15) == untouched);
@@ -775,10 +779,12 @@ TEST_CASE("A plan with an empty blade set is empty") {
   CHECK(gp_terms<rga3, none, point>.empty());
   CHECK(gp_terms<rga3, point, none>.empty());
   CHECK(gp_terms<rga3, none, none>.empty());
-  CHECK(generate_plan<BinaryOperation::gp, 1>(rga3::value, none.blades,
-                                              point.blades, {}) == 0);
-  CHECK(plan_capacity(BinaryOperation::gp, none.blades, point.blades, 4) == 1);
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, none.blades, 4) == 1);
+  CHECK(generate_plan<BinaryOperation::geometric_product, 1>(
+            rga3::value, none.blades, point.blades, {}) == 0);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, none.blades,
+                      point.blades, 4) == 1);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, point.blades,
+                      none.blades, 4) == 1);
 }
 
 // Reference: contract: a mask listed twice in a set is not rejected, and
@@ -807,15 +813,19 @@ TEST_CASE("A repeated blade gets the terms of each place that lists it") {
 // generators of A and B together, counted here, so the capacity of a plan is
 // the largest of these over its pairs, wherever that pair lies in the sets
 TEST_CASE("plan_capacity is the largest bound over the pairs") {
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades, 4) ==
-        largest_pair_bound(point, point));
-  CHECK(plan_capacity(BinaryOperation::gp, point.blades, point.blades, 4) == 2);
-  CHECK(plan_capacity(BinaryOperation::gp, line.blades, plane.blades, 4) == 8);
-  CHECK(plan_capacity(BinaryOperation::gp, motor.blades, point.blades, 4) == 8);
-  CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
-                      sparse_second<16>.blades, 16) == 4);
-  CHECK(plan_capacity(BinaryOperation::gp, sparse_first<16>.blades,
-                      sparse_second<16>.blades, 16) ==
+  CHECK(plan_capacity(BinaryOperation::geometric_product, point.blades,
+                      point.blades, 4) == largest_pair_bound(point, point));
+  CHECK(plan_capacity(BinaryOperation::geometric_product, point.blades,
+                      point.blades, 4) == 2);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, line.blades,
+                      plane.blades, 4) == 8);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, motor.blades,
+                      point.blades, 4) == 8);
+  CHECK(plan_capacity(BinaryOperation::geometric_product,
+                      sparse_first<16>.blades, sparse_second<16>.blades,
+                      16) == 4);
+  CHECK(plan_capacity(BinaryOperation::geometric_product,
+                      sparse_first<16>.blades, sparse_second<16>.blades, 16) ==
         largest_pair_bound(sparse_first<16>, sparse_second<16>));
 
   // The largest pair in the middle of each set: e123 with e1 needs 4.
@@ -829,15 +839,15 @@ TEST_CASE("plan_capacity is the largest bound over the pairs") {
       },
   };
   constexpr core::blade_set<1> just_e1{{{{.mask = e1, .sign = 1}}}};
-  CHECK(plan_capacity(BinaryOperation::gp, middle.blades, just_e1.blades, 3) ==
-        4);
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, middle.blades, 3) ==
-        4);
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e1.blades, 3) ==
-        1);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, middle.blades,
+                      just_e1.blades, 3) == 4);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, just_e1.blades,
+                      middle.blades, 3) == 4);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, just_e1.blades,
+                      just_e1.blades, 3) == 1);
   constexpr core::blade_set<1> just_e2{{{{.mask = e2, .sign = 1}}}};
-  CHECK(plan_capacity(BinaryOperation::gp, just_e1.blades, just_e2.blades, 3) ==
-        2);
+  CHECK(plan_capacity(BinaryOperation::geometric_product, just_e1.blades,
+                      just_e2.blades, 3) == 2);
 }
 
 // Reference: independent value: in R(32,0,0), the widest algebra a mask
@@ -955,7 +965,7 @@ constexpr mask_t e234 = 0b1110;
 constexpr mask_t e1234 = 0b1111;
 constexpr mask_t e5 = 0b10000;
 
-constexpr auto gp = BinaryOperation::gp;
+constexpr auto gp = BinaryOperation::geometric_product;
 constexpr auto wedge = BinaryOperation::wedge;
 
 // Whether `result` holds the blades of `masks`, in that order, each with sign
@@ -1927,7 +1937,7 @@ using core::detail::unary_map;
 using core::detail::unary_term;
 using core::detail::UnaryOperation;
 
-constexpr auto antigp = BinaryOperation::antigp;
+constexpr auto antigp = BinaryOperation::geometric_antiproduct;
 constexpr auto antiwedge = BinaryOperation::antiwedge;
 constexpr auto reverse = UnaryOperation::reverse;
 constexpr auto antireverse = UnaryOperation::antireverse;

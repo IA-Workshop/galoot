@@ -20,8 +20,8 @@ constexpr core::blade_set<2> doubled{{{
     {.mask = 0b0010, .sign = 2},
 }}};
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, r3, core::full<3>, doubled>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          r3, core::full<3>, doubled>;
 static_assert(plan.terms.empty());
 
 } // namespace

@@ -18,8 +18,8 @@ struct r5 {
   static constexpr auto value = core::R<5, 0, 0>();
 };
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, r5, core::full<5>, core::full<5>>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          r5, core::full<5>, core::full<5>>;
 
 } // namespace
 
