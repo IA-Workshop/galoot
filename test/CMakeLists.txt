@@ -1312,6 +1312,14 @@ set_tests_properties(
 galoot_add_test(MODULE core COMPONENT unary)
 target_link_libraries(core_unary_test PRIVATE galoot_golden)
 
+# core.identities: the De Morgan laws, the associativity of the
+# antiproducts, and the product rules of the involutions, through the public
+# functions and operators over many signatures. It tests product.hpp and
+# unary.hpp together, so it also carries their labels.
+galoot_add_test(MODULE core COMPONENT identities)
+set_property(TEST core.identities APPEND PROPERTY LABELS core.product
+  core.unary)
+
 # core.product: the geometric product, the wedge, and their antiproducts, as
 # functions and as the operators * ^ % &, against the reference tables.
 galoot_add_test(MODULE core COMPONENT product)
