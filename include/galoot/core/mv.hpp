@@ -19,6 +19,18 @@
 //   Line axis{0, 0, 1, 0, 0, 0};  // the z axis through the origin
 //   Line none;                     // every coefficient zero
 //
+// A value moves to a layout that holds all its blades by an explicit
+// conversion, and to one that lacks some of them by truncate, which names
+// the loss:
+//
+//   inline constexpr auto motor_layout =
+//       galoot::core::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">;
+//   using Motor = galoot::core::mv<rga3, motor_layout, double>;
+//
+//   Motor m{axis};                                // or Motor(axis)
+//   Line back = galoot::core::truncate<Line>(m);  // drops 1 and e1234
+//   // Motor wrong = axis;  does not compile: conversions are explicit
+//
 // Since e41 = -e14, the coefficient written on e41 multiplies -e14, and no
 // sign is hidden from the formula. Naming the layout and the type, as above,
 // also lets Clang name them in some of its own errors, such as the
@@ -26,6 +38,7 @@
 // still shows a layout as its masks and signs.
 
 #include <array>
+#include <bit>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
@@ -120,7 +133,8 @@ enum class ScalarFault : std::uint8_t {
   none,
   reference_or_qualified,
   boolean,
-  not_semiregular,
+  not_default_initializable,
+  not_copyable,
   no_ring_operations,
 };
 
@@ -130,8 +144,10 @@ template <class T>
     return ScalarFault::reference_or_qualified;
   } else if constexpr (std::same_as<T, bool>) {
     return ScalarFault::boolean;
-  } else if constexpr (!std::semiregular<T>) {
-    return ScalarFault::not_semiregular;
+  } else if constexpr (!std::default_initializable<T>) {
+    return ScalarFault::not_default_initializable;
+  } else if constexpr (!std::copyable<T>) {
+    return ScalarFault::not_copyable;
   } else if constexpr (!ring_scalar<T>) {
     return ScalarFault::no_ring_operations;
   } else {
@@ -367,11 +383,23 @@ concept multivector_or_derived =
     requires(const std::remove_cvref_t<X>& x) { detail::as_multivector(x); };
 
 // Whether a single constructor argument of type Value is not a coefficient
-// of a multivector over T: neither a multivector nor a value that converts
-// to T, such as a whole array of coefficients.
+// of a multivector over T: neither a multivector nor a value that T can be
+// made from, explicitly or not, such as a whole array of coefficients.
 template <class Value, class T>
 concept not_a_coefficient =
-    !multivector_or_derived<Value> && !std::convertible_to<Value, T>;
+    !multivector_or_derived<Value> && !std::constructible_from<T, Value>;
+
+// Whether a value of type Value holds several values, as an array, a
+// pointer to one, or a container does: what a user who passes the
+// coefficients in one argument passes.
+template <class Value>
+concept holds_several_values =
+    std::is_array_v<std::remove_cvref_t<Value>> ||
+    std::is_pointer_v<std::remove_cvref_t<Value>> ||
+    requires(const std::remove_cvref_t<Value>& values) {
+      values.begin();
+      values.end();
+    };
 
 } // namespace detail
 
@@ -383,11 +411,11 @@ concept not_a_coefficient =
 /// Requires: Alg is metric_like and T is std::destructible, or the type does
 /// not match. Checked when the type is used, each with its own message, in
 /// this order, so that a scalar with several faults gives one error: T is
-/// not a reference and not const or volatile; T is not bool; T is
-/// std::semiregular; T is a ring_scalar. Then, also each with its own
-/// message: every blade of the layout names only e1 to en; every sign is +1
-/// or -1; and no mask appears twice, in either orientation. A layout is a
-/// list of oriented blades and does not keep the algebra named in
+/// not a reference and not const or volatile; T is not bool; T is default
+/// constructible; T is copyable and assignable; T is a ring_scalar. Then, also
+/// each with its own message: every blade of the layout names only e1 to en;
+/// every sign is +1 or -1; and no mask appears twice, in either orientation. A
+/// layout is a list of oriented blades and does not keep the algebra named in
 /// blades<Alg, ...>: any algebra with enough generators accepts it. Generic
 /// code that only names mv<A, B, std::string> is told that it is a type; it
 /// fails when used. The repeated-mask check compares every pair of blades,
@@ -417,8 +445,10 @@ private:
       scalar_fault != detail::ScalarFault::reference_or_qualified;
   static constexpr bool scalar_is_not_bool =
       scalar_fault != detail::ScalarFault::boolean;
-  static constexpr bool scalar_is_semiregular =
-      scalar_fault != detail::ScalarFault::not_semiregular;
+  static constexpr bool scalar_is_default_constructible =
+      scalar_fault != detail::ScalarFault::not_default_initializable;
+  static constexpr bool scalar_is_copyable =
+      scalar_fault != detail::ScalarFault::not_copyable;
   static constexpr bool scalar_has_ring_operations =
       scalar_fault != detail::ScalarFault::no_ring_operations;
   static_assert(scalar_is_not_a_reference_or_qualified,
@@ -427,10 +457,15 @@ private:
   static_assert(scalar_is_not_bool,
                 "mv: bool cannot be the scalar type, since true + true is "
                 "true; use an integer type such as int");
-  static_assert(scalar_is_semiregular,
+  static_assert(scalar_is_default_constructible,
                 "mv: the scalar type must be default constructible, "
                 "copyable, and assignable; give it a default constructor "
                 "that makes its zero");
+  static_assert(scalar_is_copyable,
+                "mv: the scalar type must be copyable and assignable, as a "
+                "number is; give it copy construction and copy assignment, "
+                "which a move-only type or a class with a const member "
+                "lacks");
   static_assert(scalar_has_ring_operations,
                 "mv: the scalar type must support +, -, *, unary - and "
                 "construction from an integer coefficient");
@@ -482,12 +517,15 @@ public:
   /// moves to the place of its blade here, negated where the two layouts
   /// give the blade opposite orientations, so the value is unchanged; the
   /// blades the source lacks are zero. Explicit, as every conversion between
-  /// layouts is: Motor m = line; does not compile.
+  /// layouts is: Motor m = line; does not compile. The comment at the end of
+  /// the declaration's line is for the reader of a compiler's error: both
+  /// compilers show this line when they skip the constructor in such an
+  /// implicit conversion.
   template <blade_set From>
   // A requires-clause needs the parentheses around a function call.
   // NOLINTNEXTLINE(readability-redundant-parentheses)
     requires(detail::holds_every_mask(Blades, From))
-  constexpr explicit mv(const mv<Alg, From, T>& source) {
+  constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
     this->coefficients =
         detail::run_map<detail::identity_kernel<From, Blades>, Blades.size()>(
             source.coefficients,
@@ -499,10 +537,12 @@ public:
   /// this layout lacks: it would lose that blade's coefficient. Such a
   /// conversion is named, truncate<Type>(x). An implicit conversion, such
   /// as const Line l = motor;, reaches no constructor and is the compiler's
-  /// own error.
+  /// own error, which shows this declaration's line and the comment at its
+  /// end. Because this constructor exists, std::is_constructible_v<Line,
+  /// Motor> is true; std::is_convertible_v<Motor, Line> is false.
   template <blade_set From>
     requires(!detail::holds_every_mask(Blades, From))
-  constexpr explicit mv(const mv<Alg, From, T>& /*source*/) {
+  constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
     static_assert(false, "conversion drops blades of its input: it is "
                          "lossy, so request it with truncate<Type>(x)");
   }
@@ -525,40 +565,59 @@ public:
                   "layout lists them");
   }
 
-  /// Rejects a single argument that is neither a coefficient nor a
-  /// multivector, such as a std::array of the coefficients, Line{values},
-  /// or a braced list of them, Line{{0, 0, 1, 0, 0, 0}}, which an aggregate
-  /// would take, with one error. Because these constructors exist,
-  /// std::is_constructible_v<Line, std::array<double, 6>> is true.
+  /// Rejects, with one error, a single argument that is neither a
+  /// multivector nor a value that T can be made from: one that holds
+  /// several values, such as a std::array of the coefficients,
+  /// Line{values}, with the message for coefficients given in one argument,
+  /// and any other, such as a std::complex<double> for a double layout, with
+  /// the message that the value does not convert. Because this constructor
+  /// exists, std::is_constructible_v<Line, std::array<double, 6>> is true.
   template <class Value>
     requires detail::not_a_coefficient<Value, T>
-  constexpr explicit mv(Value&& /*values*/) {
-    static_assert(false, "mv: give the coefficients one by one, not as one "
-                         "array or braced list; write one value for each "
-                         "component, in the order the layout lists them");
+  constexpr explicit mv(Value&& /*value*/) {
+    if constexpr (detail::holds_several_values<Value>) {
+      static_assert(false, "mv: give the coefficients one by one, not as one "
+                           "array or braced list; write one value for each "
+                           "component, in the order the layout lists them");
+    } else {
+      static_assert(false, "mv: the value does not convert to the scalar "
+                           "type; give one value of the scalar type for each "
+                           "component");
+    }
   }
 
-  // A braced list of values binds to an array parameter and to nothing else,
-  // so that is the parameter this rejection needs.
+  // The constructor below is not explicit, as its comment says why.
+  // NOLINTBEGIN(cppcoreguidelines-explicit-constructor,misc-explicit-constructor)
+  /// Rejects, with one error, coefficients given as a braced list in a
+  /// second pair of braces, Line{{0, 0, 1, 0, 0, 0}}, which an aggregate
+  /// would take: a braced list binds to an array parameter and to nothing
+  /// else, so that is the parameter this rejection needs. It alone is not
+  /// explicit, so that Line l = {{...}}; gets this message too, and it
+  /// converts nothing: only a braced list or an array of T reaches it, and
+  /// it always fails.
   template <std::size_t N>
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
-  constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
     static_assert(false, "mv: give the coefficients one by one, not as one "
                          "array or braced list; write one value for each "
                          "component, in the order the layout lists them");
   }
+  // NOLINTEND(cppcoreguidelines-explicit-constructor,misc-explicit-constructor)
 };
 
 namespace detail {
 
-// Whether std::numeric_limits<T> describes an integer type with its max(),
-// or a floating type of radix 2 with its digits. A program's own
-// specialization may define fewer members; a member it lacks makes the
-// answer no, not an error.
+// Whether std::numeric_limits<T> describes an integer type with its range,
+// or a floating type of radix 2 with its digits and exponent range. A
+// program's own specialization may define fewer members; a member it lacks
+// makes the answer no, not an error.
 template <class T>
 concept integer_limits = requires {
   requires std::numeric_limits<T>::is_specialized;
   requires std::numeric_limits<T>::is_integer;
+  { std::numeric_limits<T>::is_signed } -> std::convertible_to<bool>;
+  { std::numeric_limits<T>::digits } -> std::convertible_to<int>;
+  { std::numeric_limits<T>::min() } -> std::convertible_to<std::int64_t>;
   { std::numeric_limits<T>::max() } -> std::convertible_to<std::uint64_t>;
 };
 template <class T>
@@ -567,12 +626,16 @@ concept binary_floating_limits = requires {
   requires !std::numeric_limits<T>::is_exact;
   requires std::numeric_limits<T>::radix == 2;
   { std::numeric_limits<T>::digits } -> std::convertible_to<int>;
+  { std::numeric_limits<T>::max_exponent } -> std::convertible_to<int>;
 };
 
 // Whether the integer c converts to T exactly, as far as
-// std::numeric_limits<T> tells: for an integer type, |c| is at most max();
-// for a floating type of radix 2, |c| is at most 2^digits, below which a
-// binary float holds every integer. A type that its limits describe as
+// std::numeric_limits<T> tells. A signed integer type holds c when c lies
+// from min() to max(); an unsigned one, whose arithmetic is modular, when
+// |c| is at most max(). A floating type of radix 2 holds c when the odd
+// part of |c| has at most `digits` bits and |c| is below 2^max_exponent: it
+// holds every integer up to 2^digits, and above that the ones that are a
+// smaller integer times a power of two. A type that its limits describe as
 // neither, such as a type without a specialization or an exact type that is
 // not an integer type, is not checked.
 template <class T>
@@ -582,11 +645,23 @@ template <class T>
       c < 0 ? std::uint64_t{0} - static_cast<std::uint64_t>(c)
             : static_cast<std::uint64_t>(c);
   if constexpr (integer_limits<T>) {
-    return magnitude <= static_cast<std::uint64_t>(limits::max());
+    if constexpr (limits::is_signed) {
+      // A signed type of 63 or more digits holds every std::int64_t.
+      return limits::digits >= 63 ||
+             (c >= static_cast<coefficient_type>(limits::min()) &&
+              c <= static_cast<coefficient_type>(limits::max()));
+    } else {
+      return magnitude <= static_cast<std::uint64_t>(limits::max());
+    }
   } else if constexpr (binary_floating_limits<T>) {
-    return limits::digits >= 64 ||
-           magnitude <=
-               (std::uint64_t{1} << static_cast<unsigned>(limits::digits));
+    // No shift by `digits`, which may be 64 or more.
+    const int odd_bits =
+        magnitude == 0
+            ? 0
+            : std::bit_width(magnitude >> static_cast<unsigned>(
+                                              std::countr_zero(magnitude)));
+    return odd_bits <= limits::digits &&
+           std::bit_width(magnitude) <= limits::max_exponent;
   } else {
     return true;
   }
@@ -684,14 +759,14 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 ///
 /// Requires: Target holds every blade of the plan's result, in either
 /// orientation, and every coefficient of the plan converts to T exactly
-/// where std::numeric_limits<T> can tell (integer types up to max(), binary
-/// floating types up to 2^digits): each checked at compile time with its
-/// own message. A scalar without a specialization, such as
-/// std::complex<float>, must hold the coefficients exactly without a check.
-/// The code is one fold expression over the terms, and Clang 23 stops a
-/// fold at 2,048 terms; no plan that Clang 23 builds at its default limits
-/// has more than 1,024 terms. Measured at the default limits, at -O0 and
-/// -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
+/// where std::numeric_limits<T> can tell (a signed integer type within
+/// min() to max(), a binary floating type when the odd part of |c| fits its
+/// digits): each checked at compile time with its own message. A scalar without
+/// a specialization, such as std::complex<float>, must hold the coefficients
+/// exactly without a check. The code is one fold expression over the terms, and
+/// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
+/// default limits has more than 1,024 terms. Measured at the default limits, at
+/// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
 /// plan builds, up to full<5> times full<5> on Clang 23 and full<6> times
 /// full<6> (4,096 terms) on GCC 16, as product_plan's comment states them.
 /// Guarantees: the coefficient of each blade of Target is the sum over the
@@ -704,16 +779,19 @@ template <BinaryOperation Op, blade_set Target, metric_like Alg, blade_set A,
                                                  const mv<Alg, B, T>& y) {
   constexpr bool target_holds_result =
       holds_every_mask(Target, product_plan<Op, Alg, A, B>.result);
-  constexpr bool exact = coefficients_exact<Op, Alg, A, B, T>;
+  constexpr bool scalar_holds_every_coefficient_of_the_product =
+      coefficients_exact<Op, Alg, A, B, T>;
   static_assert(target_holds_result,
                 "apply: the target layout does not hold every blade of the "
                 "product");
-  static_assert(exact, "the scalar type cannot hold one of this product's "
-                       "exact coefficients; use a scalar type that holds "
-                       "larger integers exactly");
+  static_assert(scalar_holds_every_coefficient_of_the_product,
+                "apply: the scalar type cannot hold one of the product's "
+                "exact coefficients; use a scalar type that holds larger "
+                "integers exactly");
 
   mv<Alg, Target, T> out;
-  if constexpr (target_holds_result && exact) {
+  if constexpr (target_holds_result &&
+                scalar_holds_every_coefficient_of_the_product) {
     out.coefficients =
         run_product<product_kernel<Op, Alg, A, B, Target>, Target.size()>(
             x.coefficients, y.coefficients,
@@ -792,17 +870,20 @@ concept multivector_of =
 /// the blade opposite orientations; every other blade of To is zero; and
 /// the blades of x that To lacks are dropped. It drops components, not
 /// digits: no coefficient is rounded. truncate<Line>(motor) names the
-/// target by its type and truncate<line_layout>(motor) by its layout.
+/// target by its type and truncate<line_layout>(motor) by its layout. The
+/// type must be an mv type itself, not a class derived from one; to reach
+/// such a class, truncate to its layout and make the class from the result,
+/// which needs a constructor of the class's own, since an inherited
+/// constructor does not take a value of the base.
 ///
-/// Requires: in checking mode, for an exact_scalar T with ==, every
-/// coefficient that it drops is zero, checked by GALOOT_ASSERT, so that a
-/// constant evaluation that drops a nonzero coefficient fails, and a run
-/// with GALOOT_CHECKING 1 aborts with the message. With GALOOT_CHECKING 0 the
-/// check is not evaluated at run time. For a rounding scalar nothing is
-/// checked: a coefficient that should be zero may be a rounding error away
-/// from it, and truncate has no error bound to test it against; the
-/// operations that drop part of their own result check it against their
-/// own bound.
+/// Requires, for an exact_scalar T with ==: every coefficient that it drops
+/// is zero. Checked by GALOOT_ASSERT in every constant evaluation, which
+/// then fails, and at run time when GALOOT_CHECKING is 1, which then aborts
+/// with the message; with GALOOT_CHECKING 0 the coefficients are dropped
+/// unchecked at run time. For a rounding scalar nothing is checked: a
+/// coefficient that should be zero may be a rounding error away from it,
+/// and truncate has no error bound to test it against; the operations that
+/// drop part of their own result check it against their own bound.
 /// Guarantees: the result is exact, for any scalar.
 template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
@@ -826,15 +907,21 @@ truncate(const mv<Alg, From, T>& x) {
   return truncate<std::remove_cvref_t<Target>::layout>(x);
 }
 
-/// Rejects a target that is not a multivector type of x's algebra and
-/// scalar type, with one error.
+/// Rejects a target that is not an mv type of x's algebra and scalar type,
+/// such as double, an mv of another algebra or scalar, or a class derived
+/// from an mv, with one error. It returns a default value of the target,
+/// where it has one, so that a use of the result raises no second error.
 template <class Target, metric_like Alg, blade_set From, ring_scalar T>
   requires(!detail::multivector_of<Target, Alg, T>)
 constexpr auto truncate(const mv<Alg, From, T>& x) {
-  static_assert(false, "truncate: the target must be a multivector type of "
-                       "the same algebra and scalar type; truncate changes "
-                       "only which blades are held");
-  return x;
+  static_assert(false, "truncate: the target must be an mv type of the same "
+                       "algebra and scalar type, not a class derived from "
+                       "one; truncate changes only which blades are held");
+  if constexpr (std::default_initializable<std::remove_cvref_t<Target>>) {
+    return std::remove_cvref_t<Target>{};
+  } else {
+    return x;
+  }
 }
 
 namespace detail {
@@ -851,6 +938,7 @@ enum class NameLookup : std::uint8_t {
   absent,
   absent_from_ordered_layout,
   other_orientation,
+  other_orientation_in_ordered_layout,
 };
 
 struct name_lookup {
@@ -904,9 +992,13 @@ look_up_name(const blade_set<K>& layout, std::size_t n, std::string_view text) {
 
   for (std::size_t at = 0; at < K; ++at) {
     if (layout.blades[at].mask == parsed.blade.mask) {
-      const NameLookup result = layout.blades[at].sign == parsed.blade.sign
-                                    ? NameLookup::found
-                                    : NameLookup::other_orientation;
+      if (layout.blades[at].sign == parsed.blade.sign) {
+        return {.result = NameLookup::found, .at = at};
+      }
+      const NameLookup result =
+          in_canonical_order(layout)
+              ? NameLookup::other_orientation_in_ordered_layout
+              : NameLookup::other_orientation;
       return {.result = result, .at = at};
     }
   }
@@ -953,13 +1045,14 @@ concept has_blade =
 ///
 /// Requires: has_blade<X, Name>. Any other name is rejected at compile time
 /// with one error whose message names the cause: a blade the layout lacks
-/// (for a layout in canonical order, such as one that full, of_grade, or a
-/// product generates, the message says so, since such a layout lists no
-/// names of its own), one it holds with the other orientation (use the name
-/// the layout gives and negate the value), an index above n, a text that is not
-/// a name, a name with a repeated generator, more than one name, or an algebra
-/// of more than nine generators, where names are not read and coefficients are
-/// reached by position. Because the rejecting overload exists, a
+/// in either orientation; one it holds with the other orientation (use the
+/// name the layout gives and negate the value; for a layout in canonical
+/// order, such as one that full, of_grade, or a product generates, which
+/// lists no names of its own, the message says how its blades are named);
+/// an index above n; a text that is not a name; a name with a repeated
+/// generator; more than one name; or an algebra of more than nine
+/// generators, where names are not read and coefficients are reached by
+/// position. Because the rejecting overload exists, a
 /// requires-expression that asks whether get<"e1">(line) is valid is told
 /// yes for any name; ask has_blade instead.
 /// Guarantees: a reference to the coefficient, with the value category of
@@ -1006,9 +1099,13 @@ constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
     static_assert(false, "get: the type has no blade of this name; its "
                          "layout lists the names it holds");
   } else if constexpr (cause == absent_from_ordered_layout) {
-    static_assert(false, "get: the type has no blade of this name; its "
-                         "layout lists blades in order of grade, each named "
-                         "by its indices in increasing order");
+    static_assert(false, "get: the type has no blade of this name, in either "
+                         "orientation; its layout does not hold it");
+  } else if constexpr (cause == other_orientation_in_ordered_layout) {
+    static_assert(false, "get: the type stores this blade with the other "
+                         "orientation; its layout names each blade by its "
+                         "indices in increasing order, as e12 for e21; use "
+                         "that name and negate the value");
   } else {
     static_assert(false, "get: the type stores this blade with the other "
                          "orientation; use the name its layout gives it and "
