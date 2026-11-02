@@ -1,0 +1,2 @@
+variant span
+timed: probe delta-wu8b:run-c1-2:clang++:old took 0.045 s (exit 0)
