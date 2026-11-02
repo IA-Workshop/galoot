@@ -1442,6 +1442,7 @@ endforeach()
 # core.linear: sums, differences, scaling by a scalar, and negation, with
 # values written out from the definitions and the laws of a vector space.
 galoot_add_test(MODULE core COMPONENT linear)
+target_link_libraries(core_linear_test PRIVATE galoot_test_support)
 
 # core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
 # from two algebras or with two scalar types fails to compile with one
@@ -1463,3 +1464,72 @@ foreach(spelling IN ITEMS plus minus)
     MESSAGE "${written}: ${product_scalars}"
     ONE_ERROR FORBID "different algebras")
 endforeach()
+
+# core.linear_<spelling>_<case>: a scalar of a type other than the
+# multivector's scalar type fails to compile with one error, the message of
+# the operation as written. The condition compares the two types, so that
+# the compilers print them, the scalar's first.
+set(linear_scalar_type "the scalar is not of the multivector's scalar type${semicolon} write it in that type, as 2.0 for 2 when the scalar type is double")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(linear_int_for_double "‘int’ is not the same as ‘double’")
+else()
+  set(linear_int_for_double "due to requirement 'std::is_same_v<int, double>'")
+endif()
+galoot_add_compile_fail_test(NAME linear_scale_left_int
+  MODULE core COMPONENT linear SOURCE core/linear_scale_left_int_fail.cpp
+  MESSAGE "s * a: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+galoot_add_compile_fail_test(NAME linear_scale_right_int
+  MODULE core COMPONENT linear SOURCE core/linear_scale_right_int_fail.cpp
+  MESSAGE "a * s: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+galoot_add_compile_fail_test(NAME linear_divide_int
+  MODULE core COMPONENT linear SOURCE core/linear_divide_int_fail.cpp
+  MESSAGE "a / s: ${linear_scalar_type}"
+  REQUIRE "${linear_int_for_double}" ONE_ERROR)
+# 2.5 times an integer multivector, which a conversion to the scalar type
+# would truncate.
+galoot_add_compile_fail_test(NAME linear_scale_left_fraction
+  MODULE core COMPONENT linear SOURCE core/linear_scale_left_fraction_fail.cpp
+  MESSAGE "s * a: ${linear_scalar_type}" ONE_ERROR)
+# With every core header, a number of another type is rejected by the
+# scaling's overload, not the products', and two multivectors of two scalar
+# types by the products', not the scaling's.
+galoot_add_compile_fail_test(NAME linear_scale_with_products
+  MODULE core COMPONENT linear SOURCE core/linear_scale_with_products_fail.cpp
+  MESSAGE "a * s: ${linear_scalar_type}" ONE_ERROR FORBID "a * b:")
+galoot_add_compile_fail_test(NAME linear_product_with_scaling
+  MODULE core COMPONENT linear SOURCE core/linear_product_with_scaling_fail.cpp
+  MESSAGE "a * b: ${product_scalars}" ONE_ERROR FORBID "s * a:" "a * s:")
+
+# core.linear_divide_consteval_zero: an integer division by zero in a
+# constant evaluation ends it with the message of the check.
+set(linear_zero_divisor "a / s: an integer scalar cannot divide by zero")
+galoot_add_compile_fail_test(NAME linear_divide_consteval_zero
+  MODULE core COMPONENT linear
+  SOURCE core/linear_divide_consteval_zero_fail.cpp
+  MESSAGE "${linear_zero_divisor}" REQUIRE assertion_failed)
+
+# core.linear_divide_rejects_zero, core.linear_divide_accepts_<case>: one
+# program, built with checking on whatever the preset, divides at run time.
+# An integer division by zero aborts with the message; division by 2, and a
+# floating division by 0.0, which IEEE 754 defines, exit 0. Division by zero
+# with checking off is undefined for an integer type, so it is not run.
+add_executable(core_linear_divide_assert_fail
+  core/linear_divide_assert_fail.cpp)
+target_include_directories(core_linear_divide_assert_fail PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_features(core_linear_divide_assert_fail PRIVATE cxx_std_23)
+target_compile_definitions(core_linear_divide_assert_fail PRIVATE
+  GALOOT_CHECKING=1)
+add_test(NAME core.linear_divide_rejects_zero
+  COMMAND ${expect_output} "Subprocess aborted"
+    "galoot: assertion failed: ${linear_zero_divisor} (" linear.hpp:
+    -- $<TARGET_FILE:core_linear_divide_assert_fail> int64_zero)
+add_test(NAME core.linear_divide_accepts_nonzero
+  COMMAND core_linear_divide_assert_fail int64)
+add_test(NAME core.linear_divide_accepts_floating_zero
+  COMMAND core_linear_divide_assert_fail double_zero)
+set_tests_properties(core.linear_divide_rejects_zero
+  core.linear_divide_accepts_nonzero core.linear_divide_accepts_floating_zero
+  PROPERTIES LABELS "core;core.linear")
