@@ -299,3 +299,57 @@ V10: verification (the self-checks, the mutation runs, the trial merges, the reg
 ### Agent cost (decision 0019)
 
 Planner and implementer in one run: about 120 tool calls; token counts are not visible to this agent (the estimate was 450,000 tokens and 250 calls). Machine time of the checks: each `tools/runlog check` 2.4 to 2.7 s, each compaction 3.7 to 4.2 s, the self-check about 5 s, the 26 mutants about 2 minutes, the seven fresh workflows about 99 s per round.
+
+## W5 review fixes (2026-11-01, Claude, agent, Opus 5.5, performance-engineer)
+
+The W5 review (`docs/agent/records/reviews/2026-11-01-runlog-distilled.md`, blind-reviewer, on `69f814f`) returned "accept after fixes". Its record was merged into this branch (`bbe13f2`, a fast-forward). `develop` was still at `ebdd06d`, so there was nothing of it to merge.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+R1. **The widened rule adds 58 rows, not the review's "about 60".** These are 45 workflow rows at `-dirty` or `unavailable` revisions, 7 `lint` rows, and 6 cheap-gate rows. The review's figure of 8 cheap-gate rows also counts the two `-dirty` rows of `reference-markers` and `golden-facts`. The rule keeps cheap gates only at committed revisions, as the instruction asked.
+
+R2. **Some gate steps are still outside the rule:** the four `build` and `configure` rows of the WU1 merge at `0863bad-dirty`, cheap gates and trial-merge runs at `-dirty` revisions, and gate runs under names the rule does not know. The wording now says this plainly (history README, D1, D2, and decision 0170's addendum). A lasting promise needs a marker; decision 0170's addendum proposes the selection prefix `gate:`. A column is not cheap.
+
+R3. **The commit message of `0811e17` names a wrong commit.** It says the cheap-gate families were in case 2 "since 71a1f05"; the commit is `6368822`. History was not rewritten.
+
+R4. **F6, recorded as a departure.** The cases that show the anchor fix is needed (9 and 10) were committed in `1a10aeb`, together with the fix, and not before it. The mutant `base_end_only` (the old rule) shows separately that they fail against the old rule.
+
+R5. **`tools.runlog_check` reads agent records from a CTest test.** That sits against the principle of decision 0080. It is skipped outside a git checkout and in a clone without the eras' commits, but a contributor who deleted the records directory would see it fail. This is left to the owner, in decision 0170's addendum. It costs about 2.7 s and about 740 MB peak memory per preset.
+
+R6. **`eras.tsv`'s row was edited in place once more, in `227d2c8`,** on this branch, before any merge into `develop`. The review branch that holds the earlier row is merged into this branch.
+
+### The fixes
+
+| Finding | Commits | What |
+| --- | --- | --- |
+| F1 | `6368822` (test, fails alone, listed), `5bd42ce` (rule), `227d2c8` (compaction correction, listed), `d194ef3` (wording) | The rule keeps `workflow` rows of a named preset at any revision, `lint` rows of committed revisions, and `golden-facts`, `reference-markers`, `golden-check`, and `conventions_check`. The compaction was run again from the boundary's log followed by the 38 later rows. `runs.tsv` gains 58 lines and no other change. `eras.tsv` records 1,727 kept rows with the same 3 anchors. `groups.tsv` is byte-identical. The wording says what the rule keeps and that other gate rows are retrievable from git |
+| F2 | `9740fc6`, `d194ef3` | CTest `tools.runlog_check` runs `tools/runlog check` on the checkout's own log in every preset, skipped outside a git checkout and in a clone without the eras' commits (a depth-1 clone and a non-checkout were tried). The README's warning covers every way a merge brings rows back. P8 and P9 wording is proposed in decision 0170 |
+| F3 | `0fe7a18` (patterns and fixtures only, listed), `5ed3b5c` | The citation check accepts the history directory and its three tables; any other path under it still fails (fixture). The tool and its test write the path plainly |
+| F4 | `0811e17`, `5ed3b5c` | One case for each untested branch: the toolchain interval's ends, a header without `mode` (the default is kept for that case, not dead, and says so), a second header line, group rows of an unrecorded era, a later era's refusal, `check --log` with a campaign log compacted by `compact --log`. Every cheap-gate family is in case 2 |
+| F5 | `5ffde56` (tests, fail alone, listed), `156db03` | `check` fails when an era's kept rows are out of their order, and when `eras.tsv` is missing although git history has changed it |
+| F6 | this section, R4 | |
+| F7 | `5ed3b5c`, `d194ef3` | The docstring is rewrapped. `Refused` says `prune` can refuse after rewriting an earlier log. The anchor intersection is computed once. The README says the files are only appended to once merged |
+| F8 | `5ed3b5c`, `af17155` | `ruff check` (its own rules) passes on `tools/runlog`, `test/tools/runlog_test.py`, `test/tools/measure_record_test.py`, and `mutate.py`. `tools/measure` keeps its earlier `SIM905` findings, which were there before this branch |
+| F9 | `d194ef3` | Status line updated; 620,714 bytes at `a3f0a60` |
+| F10 | `5ffde56` (test), `156db03` | `tools/timed` refuses a relative `TIMED_LOG` before running anything. `--log` is still taken from the current directory. The README uses `"$PWD/..."` |
+| F11 | `d194ef3` | The history README says a later era refuses while a branch from before the first era is open |
+
+Mutants: 41 of 41 killed at `9740fc6` (`docs/agent/records/mutations/0017-runlog-distilled/mutants-9740fc6.tsv`). This is the earlier 26 plus 15 new: the reviewer's six survivors, and one for each part of these fixes.
+
+### Row counts
+
+| | Rows in `runs.tsv` | Era rows kept |
+| --- | --- | --- |
+| Before compaction (`ebdd06d`) | 235,590 | |
+| First rule, at `a3f0a60` | 1,689 (620,714 bytes) | 1,669 (1,666 by the rule, 3 anchors) |
+| First rule, at `69f814f` | 1,707 | 1,669 |
+| Widened rule, at `227d2c8` | 1,765 | 1,727 (1,724 by the rule, 3 anchors) |
+| At `9538e73` | 1,769 | 1,727 |
+
+### Trial merges against `feature/core-mv-a` at `9b42298` (its head at the time)
+
+These ran in throwaway worktrees, uncommitted, then were aborted and removed. `core-mv-a` merged this branch at `9538e73`, and this branch merged `core-mv-a`. Both had no conflict and `tools/runlog check` exited 0. The result has 2,772 rows, with each of `core-mv-a`'s 1,003 rows that are not in the boundary's log, and each of this branch's 1,769, present once.
+
+### Verification at the final head
+
+The P9 runs (the seven presets from new empty build trees, which hold the full suite on gcc-debug and clang-debug, the sanitizers, and the lint preset; and the trace gate) ran at the commit that adds this section. Their results are in the message of the next commit, which adds only run rows. `test/CMakeLists.txt` changed (`tools.runlog_check`), so the build description changed.
