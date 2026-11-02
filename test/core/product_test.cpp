@@ -625,6 +625,39 @@ TEST_CASE("the result of an antiproduct is the canonical set of its blades") {
   CHECK(value_on(x_plane & y_plane, 0b1100) == 1);
 }
 
+namespace {
+
+template <class Alg>
+concept has_wedge_layout =
+    requires { core::wedge_layout<Alg, core::full<2>, core::full<2>>; };
+
+} // namespace
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   the layout names hold the blades each product of a point and a point, a
+//   plane and a plane, or a point and a plane reaches, with sign +1 in order
+//   of grade and then of index list: the scalar and the six bivectors for the
+//   geometric product of two points, the six bivectors for their wedge, e12,
+//   e13, e23, and e1234 for their geometric antiproduct, the six bivectors
+//   for the antiwedge of two planes, and the scalar for the antiwedge of a
+//   point and a plane; and they take only an algebra
+TEST_CASE("the product layout names are the canonical sets of the blades") {
+  constexpr auto point = core::blades<rga3, "e1 e2 e3 e4">;
+  constexpr auto plane = core::blades<rga3, "e423 e431 e412 e321">;
+  static_assert(core::geometric_product_layout<rga3, point, point> ==
+                core::blades<rga3, "1 e12 e13 e14 e23 e24 e34">);
+  static_assert(core::wedge_layout<rga3, point, point> == core::of_grade<4, 2>);
+  static_assert(core::geometric_antiproduct_layout<rga3, point, point> ==
+                core::blades<rga3, "e12 e13 e23 e1234">);
+  static_assert(core::antiwedge_layout<rga3, plane, plane> ==
+                core::of_grade<4, 2>);
+  static_assert(core::antiwedge_layout<rga3, point, plane> ==
+                core::of_grade<4, 0>);
+  static_assert(has_wedge_layout<rga3>);
+  static_assert(!has_wedge_layout<int>);
+  CHECK(core::wedge_layout<rga3, point, point>.size() == 6);
+}
+
 // Reference: identity: associativity of the geometric antiproduct and of the
 //   antiwedge on random integer multivectors of rigid(3) and conformal(3),
 //   whose sums are exact

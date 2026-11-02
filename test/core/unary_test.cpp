@@ -442,6 +442,31 @@ TEST_CASE("the sign maps keep the layout and the complements are canonical") {
       std::same_as<decltype(core::left_complement(f)), FlatComplement>);
 }
 
+namespace {
+
+template <class Alg>
+concept has_right_complement_layout =
+    requires { core::right_complement_layout<Alg, core::full<2>>; };
+
+} // namespace
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   the layout names hold the complements of the blades of the input in
+//   canonical order with sign +1: the trivectors for the vectors, the vectors
+//   for a plane, and the scalar, the six bivectors, and e1234 for a motor;
+//   and they take only an algebra
+TEST_CASE("the complement layout names are the canonical sets") {
+  static_assert(core::right_complement_layout<rga3, point_layout> ==
+                core::of_grade<4, 3>);
+  static_assert(core::left_complement_layout<rga3, plane_layout> ==
+                core::of_grade<4, 1>);
+  static_assert(core::right_complement_layout<rga3, motor_layout> ==
+                core::blades<rga3, "1 e12 e13 e14 e23 e24 e34 e1234">);
+  static_assert(has_right_complement_layout<rga3>);
+  static_assert(!has_right_complement_layout<int>);
+  CHECK(core::left_complement_layout<rga3, motor_layout>.size() == 8);
+}
+
 // Reference: independent value: by hand in rigid(3), the right complement of
 //   the right complement is (-1)^(gr ag) times the input, so !!p is -p for a
 //   point, whose grade 1 and antigrade 3 give -1, and !!l is l for a line,

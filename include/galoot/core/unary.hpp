@@ -28,19 +28,26 @@
 
 namespace galoot::core {
 
-/// The layout of the right or the left complement of an mv on the layout S
-/// in the algebra Alg: the complements of the blades of S, each with
-/// orientation +1, in order of grade and then of index list. The complements
-/// declare their result types through these, so a program can name them.
-// clang-tidy reads the operation, once substituted, as a C-style cast of its
-// value, which the source does not have.
+// The layouts of the complements' results, named so that a program can name
+// them and a compiler prints them in these terms. clang-tidy reads the
+// operation, once substituted, as a C-style cast of its value, which the
+// source does not have.
 // NOLINTBEGIN(modernize-avoid-c-style-cast)
+
+/// The layout of right_complement(x) for x on the layout S in the algebra
+/// Alg: the complements of the blades of S, each with orientation +1, in
+/// order of grade and then of index list. The vectors of rigid(3) give the
+/// trivectors.
 template <metric_like Alg, blade_set S>
 inline constexpr auto right_complement_layout =
     detail::unary_map<detail::UnaryOperation::right_complement, Alg, S>.result;
+
+/// The layout of left_complement(x), the same blades as
+/// right_complement_layout<Alg, S>.
 template <metric_like Alg, blade_set S>
 inline constexpr auto left_complement_layout =
     detail::unary_map<detail::UnaryOperation::left_complement, Alg, S>.result;
+
 // NOLINTEND(modernize-avoid-c-style-cast)
 
 /// The reverse of x: each blade of grade k times (-1)^(k(k-1)/2), which

@@ -192,29 +192,42 @@ constexpr std::remove_cvref_t<X> reject_product() {
 
 } // namespace detail
 
-/// The layout of the result of each product of an mv on the layout A by an
-/// mv on the layout B in the algebra Alg: the blades the product can reach,
-/// each with orientation +1, in order of grade and, within a grade, of index
-/// list (e12, e13, e14, e23, ...). The products declare their result types
-/// through these, mv<Alg, wedge_layout<Alg, A, B>, T> for the wedge, so a
-/// program can name the result type of a product, and a compiler prints it in
-/// these terms.
-// clang-tidy reads the operation, once substituted, as a C-style cast of its
-// value, which the source does not have.
+// The layouts of the products' results. A product's declared result type
+// names its layout through these, so that a program can name the result type
+// of a product and a compiler prints it in these terms, and not through the
+// plan that computes it. clang-tidy reads the operation, once substituted, as
+// a C-style cast of its value, which the source does not have.
 // NOLINTBEGIN(modernize-avoid-c-style-cast)
+
+/// The layout of geometric_product(x, y) for x on the layout A and y on the
+/// layout B in the algebra Alg: the blades the product can reach, each with
+/// orientation +1, in order of grade and, within a grade, of index list
+/// (e12, e13, e14, e23, ...). Two vectors of rigid(3) give the scalar and the
+/// six bivectors.
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto geometric_product_layout =
     detail::product_plan<detail::BinaryOperation::geometric_product, Alg, A, B>.result;
+
+/// The layout of wedge(x, y), as for geometric_product_layout: two vectors
+/// give the bivectors, mv<Alg, wedge_layout<Alg, A, B>, T>.
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto wedge_layout =
     detail::product_plan<detail::BinaryOperation::wedge, Alg, A, B>.result;
+
+/// The layout of geometric_antiproduct(x, y), as for
+/// geometric_product_layout: two points of rigid(3) give e12, e13, e23, and
+/// e1234.
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto geometric_antiproduct_layout =
     detail::product_plan<detail::BinaryOperation::geometric_antiproduct, Alg,
                          A, B>.result;
+
+/// The layout of antiwedge(x, y), as for geometric_product_layout: a point
+/// and a plane of rigid(3) give the scalar.
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto antiwedge_layout =
     detail::product_plan<detail::BinaryOperation::antiwedge, Alg, A, B>.result;
+
 // NOLINTEND(modernize-avoid-c-style-cast)
 
 /// The geometric product x y of two multivectors of one algebra, on the
