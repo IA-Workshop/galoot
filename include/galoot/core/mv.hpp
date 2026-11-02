@@ -261,28 +261,36 @@ constexpr void accumulate(T& out, const T& value) {
   }
 }
 
-// The terms of Kernel, one statement each, in order, with every position
-// and coefficient a constant.
+// The R coefficients of a result from the terms of Kernel, one statement
+// each, in order, with every position and coefficient a constant; the
+// positions no term reaches are zero. The result is a local array returned
+// by value, not one written through a reference, so that a compiler that
+// keeps the code out of line need not assume a write to it can change an
+// input, and keeps the partial sums in registers.
 // clang-tidy reads the parentheses that a fold expression needs as
 // redundant once the fold is expanded.
 // NOLINTBEGIN(readability-redundant-parentheses)
-template <const auto& Kernel, class T, std::size_t R, std::size_t KX,
+template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t... K>
-constexpr void run_map(std::array<T, R>& out, const std::array<T, KX>& x,
-                       std::index_sequence<K...> /*terms*/) {
+constexpr std::array<T, R> run_map(const std::array<T, KX>& x,
+                                   std::index_sequence<K...> /*terms*/) {
+  std::array<T, R> out{};
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],
                                                       x[Kernel[K].a]),
    ...);
+  return out;
 }
 
-template <const auto& Kernel, class T, std::size_t R, std::size_t KX,
+template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t KY, std::size_t... K>
-constexpr void run_product(std::array<T, R>& out, const std::array<T, KX>& x,
-                           const std::array<T, KY>& y,
-                           std::index_sequence<K...> /*terms*/) {
+constexpr std::array<T, R> run_product(const std::array<T, KX>& x,
+                                       const std::array<T, KY>& y,
+                                       std::index_sequence<K...> /*terms*/) {
+  std::array<T, R> out{};
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(
        out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),
    ...);
+  return out;
 }
 // NOLINTEND(readability-redundant-parentheses)
 
@@ -480,10 +488,11 @@ public:
   // NOLINTNEXTLINE(readability-redundant-parentheses)
     requires(detail::holds_every_mask(Blades, From))
   constexpr explicit mv(const mv<Alg, From, T>& source) {
-    detail::run_map<detail::identity_kernel<From, Blades>>(
-        this->coefficients, source.coefficients,
-        std::make_index_sequence<
-            detail::identity_kernel<From, Blades>.size()>{});
+    this->coefficients =
+        detail::run_map<detail::identity_kernel<From, Blades>, Blades.size()>(
+            source.coefficients,
+            std::make_index_sequence<
+                detail::identity_kernel<From, Blades>.size()>{});
   }
 
   /// Rejects, with one error, a conversion from a layout with a blade that
@@ -702,10 +711,11 @@ template <BinaryOperation Op, blade_set Target, metric_like Alg, blade_set A,
 
   mv<Alg, Target, T> out;
   if constexpr (target_holds_result && exact) {
-    run_product<product_kernel<Op, Alg, A, B, Target>>(
-        out.coefficients, x.coefficients, y.coefficients,
-        std::make_index_sequence<
-            product_kernel<Op, Alg, A, B, Target>.size()>{});
+    out.coefficients =
+        run_product<product_kernel<Op, Alg, A, B, Target>, Target.size()>(
+            x.coefficients, y.coefficients,
+            std::make_index_sequence<
+                product_kernel<Op, Alg, A, B, Target>.size()>{});
   }
   return out;
 }
@@ -737,8 +747,8 @@ template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
 
   mv<Alg, Target, T> out;
   if constexpr (target_holds_result) {
-    run_map<map_kernel<Op, Alg, S, Target>>(
-        out.coefficients, x.coefficients,
+    out.coefficients = run_map<map_kernel<Op, Alg, S, Target>, Target.size()>(
+        x.coefficients,
         std::make_index_sequence<map_kernel<Op, Alg, S, Target>.size()>{});
   }
   return out;
@@ -792,9 +802,10 @@ concept multivector_of =
 template <blade_set To, metric_like Alg, blade_set From, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
   mv<Alg, To, T> kept;
-  detail::run_map<detail::identity_kernel<From, To>>(
-      kept.coefficients, x.coefficients,
-      std::make_index_sequence<detail::identity_kernel<From, To>.size()>{});
+  kept.coefficients =
+      detail::run_map<detail::identity_kernel<From, To>, To.size()>(
+          x.coefficients,
+          std::make_index_sequence<detail::identity_kernel<From, To>.size()>{});
   if constexpr (exact_scalar<T> && std::equality_comparable<T>) {
     detail::check_dropped(x.coefficients, detail::dropped_positions<From, To>);
   }
