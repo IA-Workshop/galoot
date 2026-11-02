@@ -1916,6 +1916,53 @@ TEST_CASE("truncate checks what it drops over an exact scalar") {
   CHECK(truncates_in_a_constant_evaluation<double, 7>);
 }
 
+namespace {
+
+// A conformal(3) layout that holds a vector's blades, in another order and
+// with e54 = -e45 beside them.
+inline constexpr auto conformal_wide_layout =
+    core::blades<cga3, "e5 e4 e3 e2 e1 e54">;
+template <class T>
+using ConformalWide = core::mv<cga3, conformal_wide_layout, T>;
+
+// Whether truncating a wide conformal value over std::int64_t whose e54 is
+// E54 back to a vector is a constant expression.
+template <int E54>
+concept conformal_truncates = requires {
+  typename std::integral_constant<
+      bool, core::truncate<conformal_vector_layout>(
+                ConformalWide<std::int64_t>{5, 4, 3, 2, 1, E54}) ==
+                ConformalVector<std::int64_t>{1, 2, 3, 4, 5}>;
+};
+
+} // namespace
+
+// Reference: contract: in conformal(3) a vector converts to a layout that
+//   holds its blades, each coefficient moving to the place of its blade,
+//   and truncating back gives the vector, with e54 = -e45 dropped only when
+//   it is zero, at compile time and, from values read through volatile, at
+//   run time alike
+TEST_CASE("Conversion and truncate agree at compile time and run time in "
+          "conformal(3)") {
+  constexpr ConformalVector<double> v{1, 2, 3, 4, 5};
+  constexpr ConformalWide<double> wide{v};
+  static_assert(wide == ConformalWide<double>{5, 4, 3, 2, 1, 0});
+  static_assert(core::truncate<ConformalVector<double>>(wide) == v);
+  static_assert(core::truncate<conformal_vector_layout>(
+                    ConformalWide<std::int64_t>{5, 4, 3, 2, 1, 0}) ==
+                ConformalVector<std::int64_t>{1, 2, 3, 4, 5});
+  static_assert(conformal_truncates<0>);
+  static_assert(!conformal_truncates<7>);
+
+  const volatile double one = 1.0;
+  const ConformalVector<double> vv{one, 2 * one, 3 * one, 4 * one, 5 * one};
+  const ConformalWide<double> wide_at_run_time{vv};
+  CHECK(wide_at_run_time == wide);
+  CHECK(core::truncate<ConformalVector<double>>(wide_at_run_time) == v);
+  CHECK(core::truncate<conformal_vector_layout>(
+            ConformalWide<double>{5, 4, 3, 2, 1, one}) == v);
+}
+
 // Reference: contract: truncate and get are called without a namespace, as
 //   argument-dependent lookup finds them, beside the POSIX truncate of
 //   unistd.h and std::get of tuple, for a scalar from namespace std
