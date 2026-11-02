@@ -1,0 +1,15 @@
+mutation	selfcheck_exit	verdict	first_difference
+weight_typed_clang	1	killed	refit gives 'typed\ttype.scan\t24', not in docs/agent/records/performance/plan-cost-model/out/weights-clang-galoot-O0.tsv
+weight_fill_clang	1	killed	refit gives 'fill\tgen.term\t0', not in docs/agent/records/performance/plan-cost-model/out/weights-clang-galoot-O0.tsv
+weight_map_typed_clang	1	killed	refit gives 'map_typed\tmap_typed.term\t0', not in docs/agent/records/performance/plan-cost-model/out/weights-clang-galoot-O0.tsv
+figure_gp-r-5_clang	1	killed	figures: 'gp-r-5\t1024\t32\tcollect\t655240\tfill\t639615\tyes' is now 'gp-r-5\t1024\t32\tcollect\t655239\tfill\t639615\tyes'
+weight_typed_gcc	1	killed	refit gives 'typed\ttype.scan\t169', not in docs/agent/records/performance/plan-cost-model/out/weights-gcc-galoot-O0.tsv
+weight_fill_gcc	1	killed	refit gives 'fill\tgen.term\t0', not in docs/agent/records/performance/plan-cost-model/out/weights-gcc-galoot-O0.tsv
+weight_map_typed_gcc	1	killed	refit gives 'map_typed\tmap_typed.term\t0', not in docs/agent/records/performance/plan-cost-model/out/weights-gcc-galoot-O0.tsv
+figure_gp-r-5_gcc	1	killed	figures: 'gp-r-5\t1024\t32\tfill\t3611427\tcount\t3528441\tyes' is now 'gp-r-5\t1024\t32\tfill\t3611426\tcount\t3528441\tyes'
+event_type.scan_clang	1	killed	refit gives 'map_typed\t#names\tmap_typed.blade,map_typed.term,type.term', not in docs/agent/records/performance/plan-cost-model/out/weights-clang-galoot-O0.tsv
+event_type.scan_gcc	1	killed	refit gives 'map_typed\t#names\tmap_typed.blade,map_typed.term,type.term', not in docs/agent/records/performance/plan-cost-model/out/weights-gcc-galoot-O0.tsv
+event_gen.term_clang	1	killed	refit gives 'count\t#names\tabp.base,abp.bit,abp.entry,abp.entry_implied,abp.step,add.call,add.cancel,add.cancel_shift,add.cl_equal,add.cl_grade,add.cl_index,add.insert_end,add.insert_mid,add.insert_s
+event_gen.term_gcc	1	killed	refit gives 'count\t#names\tabp.base,abp.bit,abp.entry,abp.entry_implied,abp.step,add.call,add.cancel,add.cancel_shift,add.cl_equal,add.cl_grade,add.cl_index,add.insert_end,add.insert_mid,add.insert_s
+event_collect.scan_clang	1	killed	refit gives 'collect\t#names\tcollect.cl_equal,collect.cl_grade,collect.cl_index,collect.new_end,collect.new_mid,collect.repeat,collect.shift,collect.term', not in docs/agent/records/performance/plan-
+event_collect.scan_gcc	1	killed	refit gives 'collect\t#names\tcollect.cl_equal,collect.cl_grade,collect.cl_index,collect.new_end,collect.new_mid,collect.repeat,collect.shift,collect.term', not in docs/agent/records/performance/plan-

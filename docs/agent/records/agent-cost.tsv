@@ -70,3 +70,9 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-01	plan-0014	metric_like blind reviewer (W5)	opus	238928	89	1745	reported by harness as subagent_tokens
 2026-11-01	research	metric_like cheaper-check proof (research/metric-like-proof)	opus	294043	89	1513	reported by harness as subagent_tokens
 2026-11-01	research	job pool generalization survey (research/jobpool-generalization)	opus	220486	103	1420	reported by harness as subagent_tokens
+2026-11-01	plan-0015	certified plan limits planner and implementer (performance-engineer role), incl. review-fix round	opus	642035	330	0	reported by harness as subagent_tokens (cumulative over two resumptions; wall time not summed)
+2026-11-01	plan-0015	certified plan limits blind reviewer (W5)	opus	313735	118	2154	reported by harness as subagent_tokens
+2026-11-01	research	constexpr ceiling certification (research/constexpr-ceiling-certification)	opus	580104	276	7285	reported by harness as subagent_tokens
+2026-11-01	research	antiproduct growth (research/antiproduct-growth)	opus	360189	121	7515	reported by harness as subagent_tokens (includes about 1h40 waiting for the timing lock)
+2026-11-01	research	API design (research/api-design), hci-expert role; its three Sonnet reading assistants used about 176k, 239k and 237k tokens	opus	354265	87	2100	reported by harness as subagent_tokens (assistants' tokens as the researcher reported them, not included)
+2026-11-01	plan-0016	WU8 planner (cpp-expert role), incl. ruling revisions	opus	513359	98	0	reported by harness as subagent_tokens (cumulative over three resumptions; wall time not summed)
