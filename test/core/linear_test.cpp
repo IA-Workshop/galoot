@@ -725,8 +725,9 @@ concept divides_in_a_constant_evaluation = requires {
 //   7, 8, 9, 0, 1, and 2 divided by 2 give 3, 4, 4, 0, 0, and 1, and over
 //   short 7, -7, 8, -8, 1, and 0 divided by 2 give 3, -3, 4, -4, 0, and 0;
 //   contract: the check that an integer divisor is not zero accepts a
-//   negative divisor and checks every integer type, so a division by zero
-//   over std::int64_t, unsigned, or short is not a constant expression
+//   negative divisor, so a division by -2 over std::int64_t or short, and by
+//   2 over unsigned, is a constant expression, while a division by zero over
+//   any of the three is not one, as no integer division by zero is
 TEST_CASE("Integer division checks for a zero divisor of every integer type") {
   using L = Line<std::int64_t>;
   static_assert((L{7, -7, 8, -8, 1, 0} / std::int64_t{-2}) ==

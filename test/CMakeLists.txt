@@ -1538,6 +1538,15 @@ galoot_add_compile_fail_test(NAME linear_divide_consteval_zero
   MODULE core COMPONENT linear
   SOURCE core/linear_divide_consteval_zero_fail.cpp
   MESSAGE "${linear_zero_divisor}" REQUIRE assertion_failed)
+# The same over unsigned and short. A division by zero is never a constant
+# expression, so requiring assertion_failed is what shows that the check,
+# and not the language alone, stops each of them.
+foreach(type IN ITEMS unsigned short)
+  galoot_add_compile_fail_test(NAME linear_divide_consteval_zero_${type}
+    MODULE core COMPONENT linear
+    SOURCE core/linear_divide_consteval_zero_${type}_fail.cpp
+    MESSAGE "${linear_zero_divisor}" REQUIRE assertion_failed)
+endforeach()
 
 # core.linear_divide_rejects_zero, core.linear_divide_accepts_<case>: one
 # program, built with checking on whatever the preset, divides at run time.
