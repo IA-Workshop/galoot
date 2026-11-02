@@ -1,6 +1,6 @@
 # 0019 WU10: involutions, complements, antiproducts, sums and scaling
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started.
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started. WU10a is claimed.
 - Branches, from `develop` at `19273a6` (the merge of WU9) or later, one after the other (section 1, departure 1):
   - WU10a: `feature/core-antiproducts`, worktree `.claude/worktrees/core-antiproducts`.
   - WU10b: `feature/core-linear`, worktree `.claude/worktrees/core-linear`, branched after WU10a merges.
@@ -290,6 +290,10 @@ WU10b:
 
 For the coordinator, not the owner: M3's "V12 double tests with forward bounds" have no unit yet (R5).
 
+### Owner rulings, 2026-11-02
+
+O1: agreed. CONVENTIONS version 1.8 (`part` in 4.5, negation in 7.1) and the reading of C8 are ratified; the version row is added in the WU10b commits that build them. O2: agreed. Decision 0140 stays proposed, and the antiproducts are built on the present conjugation. The owner also asked the coordinator to proceed until a decision needs the owner.
+
 ## 9. Agent cost estimate
 
 Recorded in `docs/agent/records/agent-cost.tsv` as each agent finishes. Figures for comparison: WU7b's implementer used 674k tokens and WU8b's 865k; their blind reviews used 280k to 360k.
@@ -309,4 +313,4 @@ Size M overall, as plan 0001 has it: about 2.2M to 3.2M tokens in all. The mecha
 
 ## 10. Outcome
 
-Not started.
+Not started. WU10a is claimed.
