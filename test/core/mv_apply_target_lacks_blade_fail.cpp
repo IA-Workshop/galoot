@@ -18,7 +18,8 @@ using Point = galoot::core::mv<rga3, point_layout, double>;
 
 [[maybe_unused]] double onto(const Point& p, const Point& q) {
   using galoot::core::detail::BinaryOperation;
-  return galoot::core::detail::apply<BinaryOperation::gp, line_layout>(p, q)
+  return galoot::core::detail::apply<BinaryOperation::geometric_product,
+                                     line_layout>(p, q)
       .coefficients[0];
 }
 

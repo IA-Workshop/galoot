@@ -18,7 +18,8 @@ constexpr std::array<core::oriented_blade, 1> first{
 constexpr std::array<core::oriented_blade, 1> second{
     {{.mask = 0b0001, .sign = 1}}};
 
-static_assert(core::detail::generate_plan<BinaryOperation::antigp, 4>(
-                  core::R<3, 0, 0>(), first, second, {}) == 1);
+static_assert(
+    core::detail::generate_plan<BinaryOperation::geometric_antiproduct, 4>(
+        core::R<3, 0, 0>(), first, second, {}) == 1);
 
 } // namespace

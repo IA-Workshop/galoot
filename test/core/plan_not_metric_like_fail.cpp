@@ -10,8 +10,8 @@ namespace core = galoot::core;
 using core::detail::BinaryOperation;
 using core::detail::product_plan;
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, int, core::full<2>, core::full<2>>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          int, core::full<2>, core::full<2>>;
 static_assert(plan.terms.size() == 16);
 
 } // namespace

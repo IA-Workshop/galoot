@@ -1011,9 +1011,9 @@ template <class Alg, core::blade_set Set>
 int form_mismatches(std::mt19937_64& source) {
   using enum BinaryOperation;
   using enum UnaryOperation;
-  return product_mismatches<gp, Alg, Set>(source) +
+  return product_mismatches<geometric_product, Alg, Set>(source) +
          product_mismatches<wedge, Alg, Set>(source) +
-         product_mismatches<antigp, Alg, Set>(source) +
+         product_mismatches<geometric_antiproduct, Alg, Set>(source) +
          product_mismatches<antiwedge, Alg, Set>(source) +
          map_mismatches<reverse, Alg, Set>(source) +
          map_mismatches<antireverse, Alg, Set>(source) +
@@ -1084,24 +1084,25 @@ constexpr core::oriented_blade plus(core::mask_t mask) {
 //   output whose first term is (-1)(+0.0) keeps -0.0 where adding to zero
 //   gives +0.0, and -0.0 in an input otherwise gives equal values
 TEST_CASE("apply assigns the first term of each output and adds the rest") {
-  constexpr const auto& plan =
-      product_plan<BinaryOperation::gp, rga3, point_layout, point_layout>;
+  constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                            rga3, point_layout, point_layout>;
   static_assert(first_terms_marked(
-      core::detail::product_kernel<BinaryOperation::gp, rga3, point_layout,
-                                   point_layout, plan.result>));
+      core::detail::product_kernel<BinaryOperation::geometric_product, rga3,
+                                   point_layout, point_layout, plan.result>));
   static_assert(first_terms_marked(
       core::detail::product_kernel<
-          BinaryOperation::gp, rga3, motor_layout, point_layout,
-          product_plan<BinaryOperation::gp, rga3, motor_layout, point_layout>.result>));
+          BinaryOperation::geometric_product, rga3, motor_layout, point_layout,
+          product_plan<BinaryOperation::geometric_product, rga3, motor_layout, point_layout>.result>));
 
   constexpr Point<double> minus_one{-1.0, 0.0, 0.0, 0.0};
   constexpr Point<double> zero{};
-  constexpr auto product = apply<BinaryOperation::gp>(minus_one, zero);
+  constexpr auto product =
+      apply<BinaryOperation::geometric_product>(minus_one, zero);
   static_assert(std::signbit(get<"e12">(product)));
   static_assert(!std::signbit(get<"1">(product)));
   static_assert(!std::signbit(
-      product_by_loop<BinaryOperation::gp, rga3, point_layout, point_layout>(
-          minus_one.coefficients, zero.coefficients)
+      product_by_loop<BinaryOperation::geometric_product, rga3, point_layout,
+                      point_layout>(minus_one.coefficients, zero.coefficients)
           .at(1)));
   // The reverse negates e12 and e23 of a line's canonical blades, as a
   // first term of -1.
@@ -1113,13 +1114,14 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
   const volatile double negative_zero = -0.0;
   const Point<double> p{1.0, negative_zero, 3.0, 1.0};
   const Point<double> q{4.0, 5.0, 6.0, 1.0};
-  CHECK(apply<BinaryOperation::gp>(p, q) ==
-        apply<BinaryOperation::gp>(Point<double>{1, 0, 3, 1}, q));
-  CHECK(std::signbit(get<"e12">(apply<BinaryOperation::gp>(
+  CHECK(
+      apply<BinaryOperation::geometric_product>(p, q) ==
+      apply<BinaryOperation::geometric_product>(Point<double>{1, 0, 3, 1}, q));
+  CHECK(std::signbit(get<"e12">(apply<BinaryOperation::geometric_product>(
       Point<double>{-1.0 * (1.0 + negative_zero), 0, 0, 0}, zero))));
   CHECK(first_terms_marked(
-      core::detail::product_kernel<BinaryOperation::gp, rga3, point_layout,
-                                   point_layout, plan.result>));
+      core::detail::product_kernel<BinaryOperation::geometric_product, rga3,
+                                   point_layout, point_layout, plan.result>));
   CHECK(plan.result.blades.at(1) == plus(0b0011));
 }
 
@@ -1130,11 +1132,11 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
 TEST_CASE("apply multiplies the inputs before the coefficient") {
   using One = core::mv<doubled1, core::blades<doubled1, "e1">, double>;
   constexpr double largest = std::numeric_limits<double>::max();
-  static_assert(get<"1">(apply<BinaryOperation::gp>(One{largest}, One{0.25})) ==
-                largest / 2);
+  static_assert(get<"1">(apply<BinaryOperation::geometric_product>(
+                    One{largest}, One{0.25})) == largest / 2);
   const volatile double quarter = 0.25;
-  CHECK(get<"1">(apply<BinaryOperation::gp>(One{largest}, One{quarter})) ==
-        largest / 2);
+  CHECK(get<"1">(apply<BinaryOperation::geometric_product>(
+            One{largest}, One{quarter})) == largest / 2);
 }
 
 // Reference: independent value: by hand, from e1 e1 = e2 e2 = e3 e3 = 1 and
@@ -1148,7 +1150,7 @@ TEST_CASE("apply multiplies the inputs before the coefficient") {
 TEST_CASE("apply gives the products of two points of rigid(3)") {
   constexpr Point<double> p{1, 2, 3, 1};
   constexpr Point<double> q{4, 5, 6, 1};
-  constexpr auto product = apply<BinaryOperation::gp>(p, q);
+  constexpr auto product = apply<BinaryOperation::geometric_product>(p, q);
   constexpr auto wedge = apply<BinaryOperation::wedge>(p, q);
   static_assert(decltype(product)::layout.blades == std::to_array({
                                                         plus(0),
@@ -1170,7 +1172,7 @@ TEST_CASE("apply gives the products of two points of rigid(3)") {
   const volatile double one = 1.0;
   const Point<double> pv{one, 2 * one, 3 * one, one};
   const Point<double> qv{4 * one, 5 * one, 6 * one, one};
-  CHECK(apply<BinaryOperation::gp>(pv, qv).coefficients ==
+  CHECK(apply<BinaryOperation::geometric_product>(pv, qv).coefficients ==
         std::array<double, 7>{32, -3, -6, -3, -3, -3, -3});
   CHECK(Line<double>{apply<BinaryOperation::wedge>(pv, qv)} ==
         Line<double>{3, 3, 3, -3, 6, -3});
@@ -1185,7 +1187,7 @@ TEST_CASE("apply gives the products of two points of rigid(3)") {
 TEST_CASE("apply gives the geometric product of two conformal(3) vectors") {
   constexpr ConformalVector<double> v{1, 2, 3, 4, 5};
   constexpr ConformalVector<double> w{1, 0, 0, 1, 1};
-  constexpr auto product = apply<BinaryOperation::gp>(v, w);
+  constexpr auto product = apply<BinaryOperation::geometric_product>(v, w);
   static_assert(decltype(product)::layout.blades == std::to_array({
                                                         plus(0),
                                                         plus(0b00011),
@@ -1205,7 +1207,7 @@ TEST_CASE("apply gives the geometric product of two conformal(3) vectors") {
 
   const volatile double one = 1.0;
   const ConformalVector<double> vv{one, 2 * one, 3 * one, 4 * one, 5 * one};
-  CHECK(apply<BinaryOperation::gp>(vv, w).coefficients ==
+  CHECK(apply<BinaryOperation::geometric_product>(vv, w).coefficients ==
         std::array<double, 11>{-8, -2, -3, -3, -4, 0, 2, 2, 3, 3, -1});
 }
 
@@ -1335,8 +1337,8 @@ Type random_fractions(std::mt19937_64& source) {
   return x;
 }
 
-// Whether apply<gp> of `pairs` pairs of random fractions on full<n> in the
-// form Alg equals their product composed from `table`.
+// Whether apply<geometric_product> of `pairs` pairs of random fractions on
+// full<n> in the form Alg equals their product composed from `table`.
 template <class Alg, std::size_t N>
 bool matches_table(std::span<const golden::product> table,
                    std::mt19937_64& source, int pairs) {
@@ -1344,7 +1346,7 @@ bool matches_table(std::span<const golden::product> table,
   for (int k = 0; k < pairs; ++k) {
     const X x = random_fractions<X>(source);
     const X y = random_fractions<X>(source);
-    if (!holds_composed(apply<BinaryOperation::gp>(x, y),
+    if (!holds_composed(apply<BinaryOperation::geometric_product>(x, y),
                         composed_product(table, N, X::layout, X::layout,
                                          x.coefficients, y.coefficients))) {
       return false;
@@ -1521,16 +1523,16 @@ TEST_CASE_TEMPLATE("apply is exact over the five scalars on bounded inputs", T,
                    std::complex<double>) {
   using enum BinaryOperation;
   static_assert(exact_for_bounded_inputs(
-      product_plan<gp, rga3, point_layout, point_layout>));
+      product_plan<geometric_product, rga3, point_layout, point_layout>));
   static_assert(exact_for_bounded_inputs(
-      product_plan<gp, rga3, line_layout, plane_layout>));
+      product_plan<geometric_product, rga3, line_layout, plane_layout>));
   static_assert(exact_for_bounded_inputs(
-      product_plan<gp, rga3, motor_layout, point_layout>));
+      product_plan<geometric_product, rga3, motor_layout, point_layout>));
   static_assert(exact_for_bounded_inputs(
-      product_plan<antigp, rga3, motor_layout, point_layout>));
-  static_assert(
-      exact_for_bounded_inputs(product_plan<gp, cga3, conformal_vector_layout,
-                                            conformal_vector_layout>));
+      product_plan<geometric_antiproduct, rga3, motor_layout, point_layout>));
+  static_assert(exact_for_bounded_inputs(
+      product_plan<geometric_product, cga3, conformal_vector_layout,
+                   conformal_vector_layout>));
 
   const std::span<const golden::product> rigid = golden::gp_tables::rigid_3;
   const std::span<const golden::product> conformal =
@@ -1539,19 +1541,19 @@ TEST_CASE_TEMPLATE("apply is exact over the five scalars on bounded inputs", T,
       golden::complements::n4;
   const std::array<std::int64_t, 4> plane_re{-5, 0, 12, 16};
   const std::array<std::int64_t, 4> plane_im{8, -16, 1, -3};
-  CHECK(exact_in<gp, T, Point<T>, Point<T>>(rigid, 4, {}, point_re,
-                                            imaginary<T>(point_im), other_re,
-                                            imaginary<T>(other_im)));
-  CHECK(exact_in<gp, T, Line<T>, Plane<T>>(rigid, 4, {}, line_re,
-                                           imaginary<T>(line_im), plane_re,
-                                           imaginary<T>(plane_im)));
-  CHECK(exact_in<gp, T, Motor<T>, Point<T>>(rigid, 4, {}, motor_re,
-                                            imaginary<T>(motor_im), point_re,
-                                            imaginary<T>(point_im)));
-  CHECK(exact_in<antigp, T, Motor<T>, Point<T>>(
+  CHECK(exact_in<geometric_product, T, Point<T>, Point<T>>(
+      rigid, 4, {}, point_re, imaginary<T>(point_im), other_re,
+      imaginary<T>(other_im)));
+  CHECK(exact_in<geometric_product, T, Line<T>, Plane<T>>(
+      rigid, 4, {}, line_re, imaginary<T>(line_im), plane_re,
+      imaginary<T>(plane_im)));
+  CHECK(exact_in<geometric_product, T, Motor<T>, Point<T>>(
+      rigid, 4, {}, motor_re, imaginary<T>(motor_im), point_re,
+      imaginary<T>(point_im)));
+  CHECK(exact_in<geometric_antiproduct, T, Motor<T>, Point<T>>(
       rigid, 4, complements, motor_re, imaginary<T>(motor_im), point_re,
       imaginary<T>(point_im)));
-  CHECK(exact_in<gp, T, ConformalVector<T>, ConformalVector<T>>(
+  CHECK(exact_in<geometric_product, T, ConformalVector<T>, ConformalVector<T>>(
       conformal, 5, {}, vector_re, imaginary<T>(vector_im), other_vector_re,
       imaginary<T>(other_vector_im)));
 }
@@ -1581,12 +1583,13 @@ struct diagonal4 {
 // diag(G1, G2, G3, G4), has only coefficients that T holds exactly.
 template <int G1, int G2, class T>
 constexpr bool e12_exact =
-    core::detail::coefficients_exact<BinaryOperation::gp, diagonal2<G1, G2>,
+    core::detail::coefficients_exact<BinaryOperation::geometric_product,
+                                     diagonal2<G1, G2>,
                                      core::blades<diagonal2<G1, G2>, "e12">,
                                      core::blades<diagonal2<G1, G2>, "e12">, T>;
 template <int G1, int G2, int G3, int G4, class T>
 constexpr bool e1234_exact = core::detail::coefficients_exact<
-    BinaryOperation::gp, diagonal4<G1, G2, G3, G4>,
+    BinaryOperation::geometric_product, diagonal4<G1, G2, G3, G4>,
     core::blades<diagonal4<G1, G2, G3, G4>, "e1234">,
     core::blades<diagonal4<G1, G2, G3, G4>, "e1234">, T>;
 
@@ -1635,7 +1638,8 @@ template <int G1, int G2, int G3, int G4, class T>
 constexpr T e1234_squared() {
   using Diagonal = diagonal4<G1, G2, G3, G4>;
   using E1234 = core::mv<Diagonal, core::blades<Diagonal, "e1234">, T>;
-  return get<"1">(apply<BinaryOperation::gp>(E1234{T(1)}, E1234{T(1)}));
+  return get<"1">(
+      apply<BinaryOperation::geometric_product>(E1234{T(1)}, E1234{T(1)}));
 }
 
 // The scalar of e12 e12 in diag(G1, G2), computed by apply over T.
@@ -1643,7 +1647,8 @@ template <int G1, int G2, class T>
 constexpr T e12_squared() {
   using E12 =
       core::mv<diagonal2<G1, G2>, core::blades<diagonal2<G1, G2>, "e12">, T>;
-  return get<"1">(apply<BinaryOperation::gp>(E12{T(1)}, E12{T(1)}));
+  return get<"1">(
+      apply<BinaryOperation::geometric_product>(E12{T(1)}, E12{T(1)}));
 }
 
 } // namespace
@@ -1850,9 +1855,11 @@ template <class Target, class A, class B>
 constexpr bool onto_equals_converted(const A& a, const B& b) {
   using enum BinaryOperation;
   constexpr auto layout = Target::layout;
-  return apply<gp, layout>(a, b) == Target{apply<gp>(a, b)} &&
+  return apply<geometric_product, layout>(a, b) ==
+             Target{apply<geometric_product>(a, b)} &&
          apply<wedge, layout>(a, b) == Target{apply<wedge>(a, b)} &&
-         apply<antigp, layout>(a, b) == Target{apply<antigp>(a, b)} &&
+         apply<geometric_antiproduct, layout>(a, b) ==
+             Target{apply<geometric_antiproduct>(a, b)} &&
          apply<antiwedge, layout>(a, b) == Target{apply<antiwedge>(a, b)};
 }
 
@@ -1881,18 +1888,19 @@ TEST_CASE("apply onto a target layout equals the converted result") {
   static_assert(onto_equals_converted<Every<double>>(m, p));
   static_assert(onto_equals_converted<Every<double>>(p, m));
   static_assert(onto_equals_converted<Every<double>>(l, l));
-  static_assert(apply<BinaryOperation::gp, motor_layout>(p, q) ==
-                Motor<double>{apply<BinaryOperation::gp>(p, q)});
-  static_assert(apply<BinaryOperation::gp, flector_layout>(m, p) ==
-                Flector<double>{apply<BinaryOperation::gp>(m, p)});
+  static_assert(apply<BinaryOperation::geometric_product, motor_layout>(p, q) ==
+                Motor<double>{apply<BinaryOperation::geometric_product>(p, q)});
+  static_assert(
+      apply<BinaryOperation::geometric_product, flector_layout>(m, p) ==
+      Flector<double>{apply<BinaryOperation::geometric_product>(m, p)});
   static_assert(apply<UnaryOperation::right_complement, plane_layout>(p) ==
                 Plane<double>{apply<UnaryOperation::right_complement>(p)});
 
   const volatile double one = 1.0;
   const Motor<double> mv{one, 2, -3, 4, 5, 6, -7, 8};
   CHECK(onto_equals_converted<Every<double>>(mv, p));
-  CHECK(apply<BinaryOperation::gp, flector_layout>(mv, p) ==
-        Flector<double>{apply<BinaryOperation::gp>(mv, p)});
+  CHECK(apply<BinaryOperation::geometric_product, flector_layout>(mv, p) ==
+        Flector<double>{apply<BinaryOperation::geometric_product>(mv, p)});
 }
 
 // Reference: contract: the wedge of a line and a plane of rigid(3) has no

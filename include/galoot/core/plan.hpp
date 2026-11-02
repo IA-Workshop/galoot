@@ -85,11 +85,11 @@ namespace galoot::core::detail {
 /// argument.
 enum class BinaryOperation : std::uint8_t {
   /// The geometric product e_A e_B, from the metric.
-  gp,
+  geometric_product,
   /// The exterior product e_A ∧ e_B, which does not depend on the metric.
   wedge,
   /// The geometric antiproduct e_A ⟇ e_B = left(right(e_A) right(e_B)).
-  antigp,
+  geometric_antiproduct,
   /// The antiwedge e_A ∨ e_B = left(right(e_A) ∧ right(e_B)), which does not
   /// depend on the metric.
   antiwedge,
@@ -102,8 +102,8 @@ enum class BinaryOperation : std::uint8_t {
 /// Requires: nothing.
 [[nodiscard]] constexpr BinaryOperation
 base_operation(BinaryOperation op) noexcept {
-  if (op == BinaryOperation::antigp) {
-    return BinaryOperation::gp;
+  if (op == BinaryOperation::geometric_antiproduct) {
+    return BinaryOperation::geometric_product;
   }
   if (op == BinaryOperation::antiwedge) {
     return BinaryOperation::wedge;
@@ -144,10 +144,10 @@ struct plan_term {
 /// generated.
 [[nodiscard]] constexpr std::size_t
 pair_capacity(BinaryOperation op, mask_t a, mask_t b, std::size_t n) noexcept {
-  if (op == BinaryOperation::antigp) {
+  if (op == BinaryOperation::geometric_antiproduct) {
     return product_capacity(complement_mask(a, n), complement_mask(b, n));
   }
-  return op == BinaryOperation::gp ? product_capacity(a, b) : 1;
+  return op == BinaryOperation::geometric_product ? product_capacity(a, b) : 1;
 }
 
 /// A term list capacity that suffices for every pair of a blade of `as` with
@@ -186,10 +186,11 @@ plan_capacity(BinaryOperation op, std::span<const oriented_blade> as,
 /// Guarantees: the result is exact, with no zero coefficient. The wedge reads
 /// nothing of `g`.
 template <BinaryOperation Op, std::size_t Capacity, std::size_t N>
-  requires(Op == BinaryOperation::gp || Op == BinaryOperation::wedge)
+  requires(Op == BinaryOperation::geometric_product ||
+           Op == BinaryOperation::wedge)
 [[nodiscard]] constexpr term_list<Capacity>
 pair_terms(const metric<N>& g, mask_t a, mask_t b) noexcept {
-  if constexpr (Op == BinaryOperation::gp) {
+  if constexpr (Op == BinaryOperation::geometric_product) {
     return blade_product<Capacity>(g, a, b);
   } else {
     GALOOT_ASSERT(in_algebra(a | b, N), "blade has a generator beyond e_n");

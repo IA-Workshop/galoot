@@ -16,7 +16,8 @@ using Point = galoot::core::mv<rga3, point_layout, double>;
 
 [[maybe_unused]] double read(const Point& p, const Point& q) {
   using galoot::core::detail::BinaryOperation;
-  return get<"e1">(galoot::core::detail::apply<BinaryOperation::gp>(p, q));
+  return get<"e1">(
+      galoot::core::detail::apply<BinaryOperation::geometric_product>(p, q));
 }
 
 } // namespace

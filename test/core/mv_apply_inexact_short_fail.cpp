@@ -19,7 +19,8 @@ using Blade = galoot::core::mv<diagonal, layout, short>;
 
 [[maybe_unused]] Blade::scalar_type square(const Blade& x) {
   using galoot::core::detail::BinaryOperation;
-  return galoot::core::detail::apply<BinaryOperation::gp>(x, x).coefficients[0];
+  return galoot::core::detail::apply<BinaryOperation::geometric_product>(x, x)
+      .coefficients[0];
 }
 
 } // namespace

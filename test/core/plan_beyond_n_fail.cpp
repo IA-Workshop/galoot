@@ -22,7 +22,7 @@ constexpr core::blade_set<2> beyond{{{
 }}};
 
 constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, r3, beyond, core::full<3>>;
+    product_plan<BinaryOperation::geometric_product, r3, beyond, core::full<3>>;
 static_assert(plan.terms.empty());
 
 } // namespace

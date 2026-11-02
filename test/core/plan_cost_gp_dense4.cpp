@@ -19,8 +19,8 @@ struct dense4 {
       core::from_gram({{2, 1, 1, 1}, {1, 2, 1, 1}, {1, 1, 2, 1}, {1, 1, 1, 2}});
 };
 
-constexpr const auto& plan =
-    product_plan<BinaryOperation::gp, dense4, core::full<4>, core::full<4>>;
+constexpr const auto& plan = product_plan<BinaryOperation::geometric_product,
+                                          dense4, core::full<4>, core::full<4>>;
 
 } // namespace
 

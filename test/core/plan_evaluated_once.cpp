@@ -37,11 +37,11 @@ constexpr auto motor = core::blades<rga3, "1 e41 e42 e43 e23 e31 e12 e1234">;
 
 // 8 x 8 pairs less the 4 x 4 whose blades both hold e4.
 constexpr const auto& motor_motor =
-    product_plan<BinaryOperation::gp, rga3, motor, motor>;
+    product_plan<BinaryOperation::geometric_product, rga3, motor, motor>;
 static_assert(motor_motor.terms.size() == 48);
 // 6 x 4 pairs less the 3 x 3 whose blades both hold e4.
 constexpr const auto& line_plane =
-    product_plan<BinaryOperation::gp, rga3, line, plane>;
+    product_plan<BinaryOperation::geometric_product, rga3, line, plane>;
 static_assert(line_plane.terms.size() == 15);
 // Each vector shares a generator with three of the six bivectors.
 constexpr const auto& point_line =
@@ -52,7 +52,7 @@ static_assert(point_line.terms.size() == 12);
 // a bivector holding e4 with a trivector holding it, and less the 3 of e1234
 // with a trivector holding e4.
 constexpr const auto& motor_point =
-    product_plan<BinaryOperation::antigp, rga3, motor, point>;
+    product_plan<BinaryOperation::geometric_antiproduct, rga3, motor, point>;
 static_assert(motor_point.terms.size() == 20);
 
 constexpr const auto& right_six =
@@ -73,20 +73,22 @@ static_assert(reverse_six.terms.size() == 64);
 // them.
 // NOLINTBEGIN(misc-use-internal-linkage)
 std::size_t motor_terms() {
-  return product_plan<BinaryOperation::gp, rga3, motor, motor>.terms.size();
+  return product_plan<BinaryOperation::geometric_product, rga3, motor, motor>.terms.size();
 }
 
 core::coefficient_type motor_scalar() {
-  const auto& plan = product_plan<BinaryOperation::gp, rga3, motor, motor>;
+  const auto& plan =
+      product_plan<BinaryOperation::geometric_product, rga3, motor, motor>;
   return plan.terms.front().coefficient;
 }
 
 std::size_t line_plane_terms() {
-  return product_plan<BinaryOperation::gp, rga3, line, plane>.terms.size();
+  return product_plan<BinaryOperation::geometric_product, rga3, line, plane>.terms.size();
 }
 
 core::coefficient_type line_plane_first() {
-  const auto& plan = product_plan<BinaryOperation::gp, rga3, line, plane>;
+  const auto& plan =
+      product_plan<BinaryOperation::geometric_product, rga3, line, plane>;
   return plan.terms.front().coefficient;
 }
 
@@ -100,11 +102,12 @@ core::coefficient_type point_line_first() {
 }
 
 std::size_t motor_point_terms() {
-  return product_plan<BinaryOperation::antigp, rga3, motor, point>.terms.size();
+  return product_plan<BinaryOperation::geometric_antiproduct, rga3, motor, point>.terms.size();
 }
 
 core::coefficient_type motor_point_first() {
-  const auto& plan = product_plan<BinaryOperation::antigp, rga3, motor, point>;
+  const auto& plan =
+      product_plan<BinaryOperation::geometric_antiproduct, rga3, motor, point>;
   return plan.terms.front().coefficient;
 }
 
