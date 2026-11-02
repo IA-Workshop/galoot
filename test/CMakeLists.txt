@@ -1057,7 +1057,7 @@ mv_get_rejects(opposite "${mv_get_opposite}")
 # give theirs, not the count's. An implicit conversion between layouts
 # reaches no constructor, since each is explicit, so its tests record the
 # compiler's own wording, which a new compiler may change.
-set(mv_lossy "conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)")
+set(mv_lossy "mv: the conversion drops blades of its input${semicolon} it is lossy, so request it with truncate<Type>(x)")
 set(mv_one_by_one "mv: give the coefficients one by one, not as one array or braced list${semicolon} write one value for each component, in the order the layout lists them")
 set(mv_not_scalar "mv: the value does not convert to the scalar type${semicolon} give one value of the scalar type for each component")
 foreach(case IN ITEMS brace paren cast)

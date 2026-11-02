@@ -548,8 +548,8 @@ public:
   template <blade_set From>
     requires(!detail::holds_every_mask(Blades, From))
   constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
-    static_assert(false, "conversion drops blades of its input: it is "
-                         "lossy, so request it with truncate<Type>(x)");
+    static_assert(false, "mv: the conversion drops blades of its input; it "
+                         "is lossy, so request it with truncate<Type>(x)");
   }
 
   /// Rejects any other number of values, other than none and a single
