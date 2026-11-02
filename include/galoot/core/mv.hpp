@@ -881,6 +881,33 @@ concept multivector_of =
     std::same_as<typename std::remove_cvref_t<Target>::algebra_type, Alg> &&
     std::same_as<typename std::remove_cvref_t<Target>::scalar_type, T>;
 
+// Whether two multivector types X and Y, without cv-qualification or
+// reference, have the same algebra, and the same scalar type.
+template <class X, class Y>
+inline constexpr bool same_algebra_v = false;
+
+template <class Alg, blade_set A, blade_set B, class T, class U>
+inline constexpr bool same_algebra_v<mv<Alg, A, T>, mv<Alg, B, U>> = true;
+
+template <class X, class Y>
+inline constexpr bool same_scalar_v = false;
+
+template <class Alg, class Beta, blade_set A, blade_set B, class T>
+inline constexpr bool same_scalar_v<mv<Alg, A, T>, mv<Beta, B, T>> = true;
+
+/// Two multivectors that a product or a sum accepts: one algebra, one scalar
+/// type.
+template <class X, class Y>
+concept product_operands =
+    multivector<X> && multivector<Y> &&
+    same_algebra_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>> &&
+    same_scalar_v<std::remove_cvref_t<X>, std::remove_cvref_t<Y>>;
+
+/// Two multivectors that a product or a sum rejects.
+template <class X, class Y>
+concept mismatched_operands =
+    multivector<X> && multivector<Y> && !product_operands<X, Y>;
+
 } // namespace detail
 
 /// x on the layout To: each blade of To that x holds, in either
