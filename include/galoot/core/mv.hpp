@@ -21,7 +21,9 @@
 //
 // Since e41 = -e14, the coefficient written on e41 multiplies -e14, and no
 // sign is hidden from the formula. Naming the layout and the type, as above,
-// also lets Clang print those names in its diagnostics.
+// also lets Clang name them in some of its own errors, such as the
+// candidates of a failed conversion; the context of the library's messages
+// still shows a layout as its masks and signs.
 
 #include <array>
 #include <concepts>
@@ -48,7 +50,9 @@ namespace galoot::core {
 /// the fewest declarations is tested first, so that a compiler's account of
 /// a failure stays short. Not checked, and required: T{} is the zero of T,
 /// and +, -, * obey the ring laws. Equality is not required, so that a
-/// scalar holding several lanes at once is accepted.
+/// scalar holding several lanes at once is accepted. bool meets these
+/// requirements, through integer promotion, though its + is not a ring's
+/// (true + true is true); it is accepted and is not a scalar to use.
 template <class T>
 concept ring_scalar = std::semiregular<T> && requires(const T& a, const T& b) {
   { a + b } -> std::convertible_to<T>;
@@ -64,6 +68,7 @@ concept ring_scalar = std::semiregular<T> && requires(const T& a, const T& b) {
 template <class T>
 concept exact_scalar = ring_scalar<T> && std::numeric_limits<T>::is_exact;
 
+/// The multivector type, defined below.
 template <metric_like Alg, blade_set Blades, std::semiregular T>
 struct mv;
 
@@ -168,7 +173,9 @@ using storage_of =
 /// Requires: Alg is metric_like and T is std::semiregular, or the type does
 /// not match. Checked when the type is used, each with its own message: T is
 /// a ring_scalar; every blade of the layout names only e1 to en; every sign
-/// is +1 or -1; and no mask appears twice, in either orientation. Generic
+/// is +1 or -1; and no mask appears twice, in either orientation. A layout
+/// is a list of oriented blades and does not keep the algebra named in
+/// blades<Alg, ...>: any algebra with enough generators accepts it. Generic
 /// code that only names mv<A, B, std::string> is told that it is a type; it
 /// fails when used. The repeated-mask check compares every pair of blades,
 /// so the compiler's limits on constant evaluation bound the size of a
@@ -183,7 +190,9 @@ using storage_of =
 /// place. Two values of one type compare with == and != coefficient by
 /// coefficient, exactly; with a floating scalar that is IEEE equality, so
 /// -0.0 equals +0.0 and a coefficient that is a NaN makes them unequal.
-/// Values of different layouts, algebras, or scalars do not compare.
+/// Values of different layouts, algebras, or scalars do not compare. The
+/// type has no output operator or formatter; std::format("{}",
+/// x.coefficients) prints its coefficients.
 template <metric_like Alg, blade_set Blades, std::semiregular T>
 struct mv : detail::storage_of<mv<Alg, Blades, T>, T, Blades.size()> {
   static_assert(ring_scalar<T>,
@@ -225,9 +234,12 @@ public:
   constexpr mv() = default;
 
   /// From exactly one value per component, in the order the layout lists
-  /// the blades: Line{0, 0, 1, 0, 0, 0}. Each value converts to T as in
-  /// brace initialization, so an integer literal is accepted for a floating
-  /// scalar and a variable that would narrow is an error. Explicit when the
+  /// the blades: Line{0, 0, 1, 0, 0, 0}. With braces, each value converts
+  /// to T as in brace initialization: an integer literal is accepted for a
+  /// floating scalar, and a variable that would narrow is rejected (an error
+  /// on Clang; on GCC a warning, an error when warnings are errors). With
+  /// parentheses, Line(0, 0, 1, 0, 0, 0), values convert as for any
+  /// constructor and may narrow without a diagnostic. Explicit when the
   /// layout holds one blade, so that a scalar never converts silently into
   /// a multivector.
   using detail::storage_of<mv, T, Blades.size()>::storage_of;
@@ -235,7 +247,8 @@ public:
   /// Rejects any other number of values, other than none and a single
   /// multivector, with one error that prints the number given and the
   /// number of components, as "3 == 6". Because this constructor exists,
-  /// std::is_constructible_v<Line, double, double, double> is true.
+  /// std::is_constructible_v<Line, double, double, double> is true, and so
+  /// is std::is_constructible_v<Line, std::array<double, 6>>.
   template <class... Values>
     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
