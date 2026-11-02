@@ -3,7 +3,12 @@
 //
 //   int64     a motor over std::int64_t with the scalar 7, truncated to a
 //             line, which must abort with the message when checking is on
-//   rational  the same over the test rational
+//   int64_antiscalar
+//             the same with the scalar 0 and the antiscalar 7, the last
+//             place truncate drops
+//   rational  the same as int64 over the test rational
+//   rational_antiscalar
+//             the same as int64_antiscalar over the test rational
 //   counted   the same over an exact scalar that counts its comparisons;
 //             with checking off it must keep the line, compare nothing, and
 //             exit 0
@@ -11,6 +16,8 @@
 // The input is read at run time, so no call is evaluated at compile time.
 // A usage error, or a kept coefficient that is wrong, exits 2 or 1 with a
 // message, which fails every test that runs this program.
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <limits>
@@ -88,12 +95,16 @@ bool same(const T& a, const T& b) {
 }
 bool same(const counted& a, const counted& b) { return a.value == b.value; }
 
-// Truncates the motor (scalar, 1 to 6 on the line, 0) to a line, and returns
-// whether the line holds 1 to 6.
+// Truncates the motor (scalar, 1 to 6 on the line, antiscalar) to a line,
+// and returns whether the line holds 1 to 6.
 template <class T>
-bool keeps_the_line(std::int64_t scalar) {
+bool keeps_the_line(std::int64_t scalar, std::int64_t antiscalar) {
   using Motor = galoot::core::mv<rga3, motor_layout, T>;
-  const Motor motor{T(scalar), T(1), T(2), T(3), T(4), T(5), T(6), T(0)};
+  const std::array<std::int64_t, 8> v{scalar, 1, 2, 3, 4, 5, 6, antiscalar};
+  Motor motor{};
+  for (std::size_t i = 0; i < v.size(); ++i) {
+    motor.coefficients.at(i) = T(v.at(i));
+  }
   const auto line = galoot::core::truncate<line_layout>(motor);
   for (std::size_t i = 0; i < line.coefficients.size(); ++i) {
     const T expected(static_cast<std::int64_t>(i) + 1);
@@ -109,7 +120,8 @@ bool keeps_the_line(std::int64_t scalar) {
 int main(int argc, char** argv) {
   const std::span<char*> args(argv, static_cast<std::size_t>(argc));
   if (args.size() != 2) {
-    std::fputs("usage: mv_truncate_assert_fail int64|rational|counted\n",
+    std::fputs("usage: mv_truncate_assert_fail int64|int64_antiscalar|"
+               "rational|rational_antiscalar|counted\n",
                stderr);
     return 2;
   }
@@ -119,11 +131,15 @@ int main(int argc, char** argv) {
   const std::string_view which = args[1];
   bool kept = false;
   if (which == "int64") {
-    kept = keeps_the_line<std::int64_t>(scalar);
+    kept = keeps_the_line<std::int64_t>(scalar, 0);
+  } else if (which == "int64_antiscalar") {
+    kept = keeps_the_line<std::int64_t>(0, scalar);
   } else if (which == "rational") {
-    kept = keeps_the_line<test_support::rational>(scalar);
+    kept = keeps_the_line<test_support::rational>(scalar, 0);
+  } else if (which == "rational_antiscalar") {
+    kept = keeps_the_line<test_support::rational>(0, scalar);
   } else if (which == "counted") {
-    kept = keeps_the_line<counted>(scalar);
+    kept = keeps_the_line<counted>(scalar, 0);
     if (comparisons != 0) {
       std::fputs("mv_truncate_assert_fail: the check compared values\n",
                  stderr);

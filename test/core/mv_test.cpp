@@ -1611,11 +1611,16 @@ constexpr T e12_squared() {
 
 // Reference: independent value: by hand, e12 e12 = -g11 g22 and e1234 e1234
 //   = g11 g22 g33 g44 in a diagonal form, 4096^2 = 2^24, 24929 * 673 =
-//   16,777,217 = 2^24 + 1, 8192^3 * 16384 = 2^53, and 32767^4 =
-//   1,152,780,773,560,811,521 lies between 2^53 and 2^63, and float holds
-//   every integer up to 2^24, double up to 2^53, short up to 32767 = 217 * 151,
-//   and 32768 = 128 * 256 is above it; contract: a product whose plan has a
-//   coefficient that the scalar type cannot hold exactly is rejected
+//   16,777,217 = 2^24 + 1, 4095 * 4097 = 2^24 - 1, 8192 * 4096 = 2^25,
+//   8192^3 * 16384 = 2^53, and 32767^4 = 1,152,780,773,560,811,521 is odd
+//   and lies between 2^53 and 2^63, and a binary float of p digits holds an
+//   integer exactly when its odd part has at most p bits, so float (24
+//   digits) holds 2^24 - 1, 2^24, and 2^25 and not 2^24 + 1, double (53)
+//   holds 2^53 and not 32767^4, and long double (64 digits on x86-64) every
+//   one of them, and short holds -32768 = -(128 * 256) to 32767 = 7 * 31 *
+//   151 = 217 * 151 and not -32769 = -(9 * 3641) or 32768; contract: a
+//   product whose plan has a coefficient that the scalar type cannot hold
+//   exactly is rejected
 TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   // 2^24 and 2^53, written out.
   constexpr std::int64_t two_to_24 = 16'777'216;
@@ -1625,9 +1630,14 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   static_assert(std::int64_t{8192} * 8192 * 8192 * 16384 == two_to_53);
   static_assert(std::int64_t{32767} * 32767 * 32767 * 32767 ==
                 1'152'780'773'560'811'521);
-  static_assert(217 * 151 == 32767 && 128 * 256 == 32768);
+  static_assert(217 * 151 == 32767 && 7 * 31 * 151 == 32767);
+  static_assert(128 * 256 == 32768 && 9 * 3641 == 32769);
+  static_assert(std::int64_t{4095} * 4097 == two_to_24 - 1);
+  static_assert(std::int64_t{8192} * 4096 == 2 * two_to_24);
 
   static_assert(e12_exact<4096, 4096, float>);
+  static_assert(e12_exact<4095, 4097, float>);
+  static_assert(e12_exact<8192, 4096, float>);
   static_assert(!e12_exact<24929, 673, float>);
   static_assert(e12_exact<24929, 673, double>);
   static_assert(e12_exact<24929, 673, int>);
@@ -1636,14 +1646,22 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   static_assert(!e1234_exact<32767, 32767, 32767, 32767, double>);
   static_assert(e1234_exact<32767, 32767, 32767, 32767, std::int64_t>);
   static_assert(e1234_exact<32767, 32767, 32767, 32767, rational>);
+  static_assert(e1234_exact<32767, 32767, 32767, 32767, long double>);
+  static_assert(e12_exact<24929, 673, long double>);
   static_assert(!e12_exact<4096, 4096, short>);
   static_assert(e12_exact<217, 151, short>);
-  static_assert(!e12_exact<128, 256, short>);
+  static_assert(e12_exact<128, 256, short>);
+  static_assert(!e12_exact<9, 3641, short>);
+  static_assert(e1234_exact<1, 7, 31, 151, short>);
+  static_assert(!e1234_exact<1, 1, 128, 256, short>);
   static_assert(e12_exact<4096, 4096, std::complex<double>>);
 
   static_assert(e12_squared<4096, 4096, float>() == -16777216.0F);
   static_assert(e12_squared<24929, 673, double>() == -16777217.0);
   static_assert(e12_squared<217, 151, short>() == -32767);
+  static_assert(e12_squared<128, 256, short>() == -32768);
+  static_assert(e12_squared<8192, 4096, float>() == -33554432.0F);
+  static_assert(e12_squared<24929, 673, long double>() == -16777217.0L);
   static_assert(e1234_squared<8192, 8192, 8192, 16384, double>() ==
                 9007199254740992.0);
   static_assert(e1234_squared<32767, 32767, 32767, 32767, std::int64_t>() ==
@@ -1659,7 +1677,14 @@ TEST_CASE("apply checks that the scalar holds the plan's coefficients") {
   CHECK(e1234_exact<32767, 32767, 32767, 32767, rational>);
   CHECK_FALSE(e12_exact<4096, 4096, short>);
   CHECK(e12_exact<217, 151, short>);
-  CHECK_FALSE(e12_exact<128, 256, short>);
+  CHECK(e12_exact<128, 256, short>);
+  CHECK_FALSE(e12_exact<9, 3641, short>);
+  CHECK(e1234_exact<1, 7, 31, 151, short>);
+  CHECK_FALSE(e1234_exact<1, 1, 128, 256, short>);
+  CHECK(e12_exact<4095, 4097, float>);
+  CHECK(e12_exact<8192, 4096, float>);
+  CHECK(e1234_exact<32767, 32767, 32767, 32767, long double>);
+  CHECK(e12_squared<24929, 673, long double>() == -16777217.0L);
 }
 
 namespace {
@@ -1888,31 +1913,37 @@ TEST_CASE_TEMPLATE("truncate keeps the blades of its target", T, std::int64_t,
 
 namespace {
 
-// Whether truncating the motor with the given scalar to a line is a
-// constant expression: a constant evaluation that fails, as a failed check
-// fails it, makes the template argument invalid, so the answer is no.
-template <class T, int Scalar>
+// Whether truncating the motor with the given scalar and antiscalar to a
+// line is a constant expression: a constant evaluation that fails, as a
+// failed check fails it, makes the template argument invalid, so the answer
+// is no.
+template <class T, int Scalar, int Antiscalar = 0>
 concept truncates_in_a_constant_evaluation = requires {
-  typename std::integral_constant<bool, core::truncate<line_layout>(
-                                            motor_of_line<T>(Scalar, 0)) ==
-                                            counting_line<T>()>;
+  typename std::integral_constant<
+      bool, core::truncate<line_layout>(motor_of_line<T>(Scalar, Antiscalar)) ==
+                counting_line<T>()>;
 };
 
 } // namespace
 
 // Reference: contract: truncate checks that the part it drops is zero, for
 //   an exact scalar, in every constant evaluation, so dropping a nonzero
-//   scalar of a motor over std::int64_t or the test rational is no constant
+//   scalar or a nonzero antiscalar of a motor, the first and the last
+//   dropped places, over std::int64_t or the test rational is no constant
 //   expression, while over a rounding scalar nothing is checked
 TEST_CASE("truncate checks what it drops over an exact scalar") {
   static_assert(truncates_in_a_constant_evaluation<std::int64_t, 0>);
   static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 7>);
   static_assert(truncates_in_a_constant_evaluation<rational, 0>);
   static_assert(!truncates_in_a_constant_evaluation<rational, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<std::int64_t, 0, 7>);
+  static_assert(!truncates_in_a_constant_evaluation<rational, 0, 7>);
+  static_assert(truncates_in_a_constant_evaluation<double, 0, 7>);
   static_assert(truncates_in_a_constant_evaluation<double, 7>);
   static_assert(truncates_in_a_constant_evaluation<float, 7>);
   static_assert(truncates_in_a_constant_evaluation<std::complex<double>, 7>);
   CHECK_FALSE(truncates_in_a_constant_evaluation<std::int64_t, 7>);
+  CHECK_FALSE(truncates_in_a_constant_evaluation<std::int64_t, 0, 7>);
   CHECK(truncates_in_a_constant_evaluation<double, 7>);
 }
 
@@ -1999,7 +2030,10 @@ TEST_CASE("A class derived from a multivector copies and converts") {
 
 // Reference: contract: the helpers of conversion and of the coefficient
 //   check answer as their comments state: a class derived from an mv is
-//   taken as a multivector, and an array is no coefficient, std::numeric_limits
+//   taken as a multivector, an array or a complex number is no coefficient
+//   of a double layout while an integer is one of a rational layout, an
+//   array, a pointer, or a container holds several values and a number does
+//   not, std::numeric_limits
 //   describes int and short as integer types and float and double as binary
 //   floating types, and neither for the test rational or std::complex, and a
 //   motor truncated to a line drops the scalar and the antiscalar, its
@@ -2011,6 +2045,15 @@ TEST_CASE("The helpers of conversion and exactness answer as stated") {
   static_assert(!detail::multivector_or_derived<std::array<double, 6>>);
   static_assert(detail::not_a_coefficient<std::array<double, 6>, double>);
   static_assert(!detail::not_a_coefficient<int, double>);
+  static_assert(!detail::not_a_coefficient<int, rational>);
+  static_assert(detail::not_a_coefficient<std::complex<double>, double>);
+  static_assert(detail::holds_several_values<std::array<double, 6>>);
+  static_assert(detail::holds_several_values<const double*>);
+  // A C array is what the check is for.
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+  static_assert(detail::holds_several_values<double (&)[4]>);
+  static_assert(!detail::holds_several_values<std::complex<double>>);
+  static_assert(!detail::holds_several_values<double>);
   static_assert(!detail::not_a_coefficient<Motor<double>, double>);
   static_assert(detail::integer_limits<int> && detail::integer_limits<short>);
   static_assert(!detail::integer_limits<double> &&
@@ -2045,5 +2088,11 @@ TEST_CASE("Probes of conversion answer as the constructors' comments say") {
   static_assert(
       !std::is_constructible_v<Point<double>, EuclideanPoint<double>>);
   static_assert(!std::is_constructible_v<Line<double>, Line<float>>);
+  // An integer for a rational, whose constructor from it is explicit, is a
+  // coefficient: one is a wrong count for a line, and a one-blade value
+  // cannot be made from it implicitly.
+  static_assert(std::is_constructible_v<Line<rational>, int>);
+  static_assert(!std::is_constructible_v<Scalar<rational>, int>);
   CHECK(std::is_constructible_v<Line<double>, Motor<double>>);
+  CHECK(std::is_constructible_v<Line<rational>, int>);
 }
