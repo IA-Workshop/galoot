@@ -34,3 +34,17 @@ Kills by a compile error in the header: in the run-time mode, `float_bound_one_b
 | truncate<Type> accepting a type of another algebra | `truncate_other_algebra` | the `multivector_of` assertions, `core.mv_truncate_other_algebra` |
 
 The other mutants are the checks this unit adds, each removed or weakened: the coefficient check and both target checks (`core.mv_apply_inexact_*`, `core.mv_apply_target_lacks_blade`, `core.mv_apply_map_target_lacks_blade`), the sign of the target in the product and map kernels (F11, F5), the lossy catch-all's message (`core.mv_conversion_lossy_*`), truncate's check removed and the other-scalar target (core.mv, `core.mv_truncate_*`), bool in `ring_scalar`, each scalar check, the template head, the placeholder storage (`core.mv_scalar_without_default`, on both compilers), the array and braced-list catch-alls (`core.mv_coefficients_as_*`), the derived-class exclusion, and the ordered absent message (`core.mv_get_absent_ordered`).
+
+## Review fixes, 2026-11-01
+
+After the W5 blind review and the hci-expert reading of WU8b, the driver gained mutants for the code that the fixes changed or added (`ef579e2`), and the mutants whose anchors moved were rewritten (44 mutants in the driver now). The 24 changed or new ones ran on gcc-debug and clang-debug in both modes:
+
+| File | Revision | Result |
+| --- | --- | --- |
+| `results-71d040a-review-normal.tsv`, `-runtime.tsv` | `71d040a` (header of `ef579e2`) | all killed except `float_exponent_ignored` (survived on both presets in both modes); `float_bound_on_magnitude` was killed by an unused-variable warning of the mutant itself, and `integer_min_one_below` and `integer_bound_one_above` on GCC by an overflow diagnostic of the mutant's own `min() - 1` and `max() + 1` (a warning in the run-time mode) |
+| `results-13b53ee-review-rerun-normal.tsv`, `-runtime.tsv` | `13b53ee` (one test added) | those four, the three flawed forms rewritten (`odd_bits` kept in use; `c + 1 >= min()` and `c - 1 <= max()`): all killed on both presets in both modes |
+
+1. `float_exponent_ignored`: no present scalar has an exponent range small enough for |c| < 2^max_exponent to matter (float's is 128). `13b53ee` adds a test-only scalar whose limits describe IEEE half precision (11 digits, exponent to 2^16): 2^15 is held and 2^16 is not. Killed at `13b53ee`.
+2. The three rewritten forms: a mutant must change the code under test and nothing that a compiler diagnoses by itself; the first forms did not meet that and are not counted.
+
+The review's own surviving mutants are killed: the check stopping after the first dropped place (`truncate_checks_first_only`, by the antiscalar cases of the constant-evaluation test and `core.mv_truncate_nonzero_*_antiscalar`), and `>= 64` changed to `> 64`, whose code is gone with F1's fix (the bound shifts by no type's digits; the long double products and checks stay in the tests).

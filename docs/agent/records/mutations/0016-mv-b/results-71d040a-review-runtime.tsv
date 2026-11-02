@@ -1,0 +1,49 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+float_bound_one_below	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_bound_one_below	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_bound_one_above	gcc-debug	runtime	0	8	killed	core.mv,core.mv_apply_inexact_float	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_bound_one_above	clang-debug	runtime	0	8	killed	core.mv,core.mv_apply_inexact_float	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_exponent_ignored	gcc-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+float_exponent_ignored	clang-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+float_bound_on_magnitude	gcc-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1099,mv_test.cpp:1584,mv_test.cpp:1588,mv_test.cpp:1607,mv_test.cpp:1638,mv_test.cpp:1649,mv_test.cpp:1663	-	include/galoot/core/mv.hpp:658:15: error: unused variable ‘odd_bits’ [-Werror=unused-variable]
+float_bound_on_magnitude	clang-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1663,mv_truncate_assert_fail.cpp:29,smoke_test.cpp:3	-	include/galoot/core/mv.hpp:658:15: error: unused variable 'odd_bits' [-Werror,-Wunused-variable]
+integer_min_excluded	gcc-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1662	-	include/galoot/core/mv.hpp:787:17: error: static assertion failed: apply: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
+integer_min_excluded	clang-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1662	-	include/galoot/core/mv.hpp:787:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': apply: the scalar type cannot hold one of the product's exact coef
+integer_min_one_below	gcc-debug	runtime	1	-	warning	-	-	mv_test.cpp:35,mv_test.cpp:1584,mv_test.cpp:1644	-	include/galoot/core/mv.hpp:651:65: error: integer overflow in expression of type ‘galoot::core::coefficient_type’ {aka ‘long int’} results in ‘9223372036854775807’ [-Werror=overflow]
+integer_min_one_below	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_max_excluded	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_max_excluded	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_bound_one_above	gcc-debug	runtime	1	-	warning	-	-	mv_test.cpp:35,mv_test.cpp:1584,mv_test.cpp:1644	-	include/galoot/core/mv.hpp:652:65: error: integer overflow in expression of type ‘galoot::core::coefficient_type’ {aka ‘long int’} results in ‘-9223372036854775808’ [-Werror=overflow]
+integer_bound_one_above	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_bound_on_magnitude	gcc-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1662	-	include/galoot/core/mv.hpp:787:17: error: static assertion failed: apply: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
+integer_bound_on_magnitude	clang-debug	runtime	1	-	killed	-	mv.hpp:787	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1662	-	include/galoot/core/mv.hpp:787:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': apply: the scalar type cannot hold one of the product's exact coef
+no_coefficient_check	gcc-debug	runtime	0	8	killed	core.mv_apply_inexact_float,core.mv_apply_inexact_double,core.mv_apply_inexact_short	-	-	-	-
+no_coefficient_check	clang-debug	runtime	0	8	killed	core.mv_apply_inexact_float,core.mv_apply_inexact_double,core.mv_apply_inexact_short	-	-	-	-
+truncate_other_algebra	gcc-debug	runtime	0	8	killed	core.mv_truncate_other_algebra	-	-	-	-
+truncate_other_algebra	clang-debug	runtime	0	8	killed	core.mv_truncate_other_algebra	-	-	-	-
+truncate_other_scalar	gcc-debug	runtime	0	8	killed	core.mv_truncate_other_scalar,core.mv_truncate_result_used	-	-	-	-
+truncate_other_scalar	clang-debug	runtime	0	8	killed	core.mv_truncate_other_scalar,core.mv_truncate_result_used	-	-	-	-
+no_semiregular_scalar_check	gcc-debug	runtime	0	8	killed	core.mv_scalar_without_default	-	-	-	-
+no_semiregular_scalar_check	clang-debug	runtime	0	8	killed	core.mv_scalar_without_default	-	-	-	-
+no_copyable_scalar_check	gcc-debug	runtime	0	8	killed	core.mv_scalar_move_only,core.mv_scalar_const_member	-	-	-	-
+no_copyable_scalar_check	clang-debug	runtime	0	8	killed	core.mv_scalar_move_only,core.mv_scalar_const_member	-	-	-	-
+array_reaches_count	gcc-debug	runtime	0	8	killed	core.mv_coefficients_as_array,core.mv_value_not_scalar	-	-	-	-
+array_reaches_count	clang-debug	runtime	0	8	killed	core.mv_coefficients_as_array,core.mv_value_not_scalar	-	-	-	-
+no_braced_list_catch_all	gcc-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list,core.mv_coefficients_as_braced_list_copy	-	-	-	-
+no_braced_list_catch_all	clang-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list,core.mv_coefficients_as_braced_list_copy	-	-	-	-
+braced_list_catch_all_explicit	gcc-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list_copy	-	-	-	-
+braced_list_catch_all_explicit	clang-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list_copy	-	-	-	-
+coefficient_by_conversion	gcc-debug	runtime	0	8	killed	core.mv_one_explicit_value	-	-	-	-
+coefficient_by_conversion	clang-debug	runtime	0	8	killed	core.mv_one_explicit_value	-	-	-	-
+several_values_always	gcc-debug	runtime	0	8	killed	core.mv_value_not_scalar	-	-	-	-
+several_values_always	clang-debug	runtime	0	8	killed	core.mv_value_not_scalar	-	-	-	-
+several_values_no_containers	gcc-debug	runtime	0	8	killed	core.mv_coefficients_as_array	-	-	-	-
+several_values_no_containers	clang-debug	runtime	0	8	killed	core.mv_coefficients_as_array	-	-	-	-
+truncate_checks_first_only	gcc-debug	runtime	0	8	killed	core.mv,core.mv_truncate_nonzero_int64_antiscalar,core.mv_truncate_nonzero_rational_antiscalar	-	-	truncate checks what it drops over an exact scalar	-
+truncate_checks_first_only	clang-debug	runtime	0	8	killed	core.mv,core.mv_truncate_nonzero_int64_antiscalar,core.mv_truncate_nonzero_rational_antiscalar	-	-	truncate checks what it drops over an exact scalar	-
+truncate_catch_all_returns_source	gcc-debug	runtime	0	8	killed	core.mv_truncate_result_used	-	-	-	-
+truncate_catch_all_returns_source	clang-debug	runtime	0	8	killed	core.mv_truncate_result_used	-	-	-	-
+opposite_message_not_ordered	gcc-debug	runtime	0	8	killed	core.mv_get_opposite_ordered	-	-	-	-
+opposite_message_not_ordered	clang-debug	runtime	0	8	killed	core.mv_get_opposite_ordered	-	-	-	-
+absent_message_not_ordered	gcc-debug	runtime	0	8	killed	core.mv_get_absent_ordered	-	-	-	-
+absent_message_not_ordered	clang-debug	runtime	0	8	killed	core.mv_get_absent_ordered	-	-	-	-

@@ -56,7 +56,7 @@ SCALED_FIRST = (
     "static_cast<T>(Kernel[K].coefficient) * x[Kernel[K].a])) * "
     "y[Kernel[K].b])),\n"
     "   ...);\n")
-EXACT = '  static_assert(exact, "the scalar type cannot hold one of this'
+EXACT = "  static_assert(scalar_holds_every_coefficient_of_the_product,\n"
 PRODUCT_TARGET = (
     "  static_assert(target_holds_result,\n"
     "                \"apply: the target layout does not hold every blade of "
@@ -81,26 +81,34 @@ MUTATIONS = [
         ("  if constexpr (C == -2) {\n", "  if constexpr (C == -1) {\n")]),
     ("coefficient_times_first_input", [(PRODUCT_FOLD, SCALED_FIRST)]),
     ("float_bound_one_below", [
-        ("           magnitude <=\n"
-         "               (std::uint64_t{1} << static_cast<unsigned>"
-         "(limits::digits));\n",
-         "           magnitude <\n"
-         "               (std::uint64_t{1} << static_cast<unsigned>"
-         "(limits::digits));\n")]),
+        ("    return odd_bits <= limits::digits &&\n",
+         "    return odd_bits < limits::digits &&\n")]),
     ("float_bound_one_above", [
-        ("           magnitude <=\n"
-         "               (std::uint64_t{1} << static_cast<unsigned>"
-         "(limits::digits));\n",
-         "           magnitude <=\n"
-         "               (std::uint64_t{1} << static_cast<unsigned>"
-         "(limits::digits)) + 1;\n")]),
-    ("integer_bound_one_below", [
-        ("    return magnitude <= static_cast<std::uint64_t>(limits::max());\n",
-         "    return magnitude < static_cast<std::uint64_t>(limits::max());\n")]),
+        ("    return odd_bits <= limits::digits &&\n",
+         "    return odd_bits <= limits::digits + 1 &&\n")]),
+    ("float_exponent_ignored", [
+        ("    return odd_bits <= limits::digits &&\n"
+         "           std::bit_width(magnitude) <= limits::max_exponent;\n",
+         "    return odd_bits <= limits::digits;\n")]),
+    ("float_bound_on_magnitude", [
+        ("    return odd_bits <= limits::digits &&\n",
+         "    return odd_bits >= 0 &&\n"
+         "           std::bit_width(magnitude - 1) <= limits::digits &&\n")]),
+    ("integer_min_excluded", [
+        ("             (c >= static_cast<coefficient_type>(limits::min()) &&\n",
+         "             (c > static_cast<coefficient_type>(limits::min()) &&\n")]),
+    ("integer_min_one_below", [
+        ("             (c >= static_cast<coefficient_type>(limits::min()) &&\n",
+         "             (c + 1 >= static_cast<coefficient_type>(limits::min()) &&\n")]),
+    ("integer_max_excluded", [
+        ("              c <= static_cast<coefficient_type>(limits::max()));\n",
+         "              c < static_cast<coefficient_type>(limits::max()));\n")]),
     ("integer_bound_one_above", [
-        ("    return magnitude <= static_cast<std::uint64_t>(limits::max());\n",
-         "    return magnitude <= static_cast<std::uint64_t>(limits::max()) + "
-         "1;\n")]),
+        ("              c <= static_cast<coefficient_type>(limits::max()));\n",
+         "              c - 1 <= static_cast<coefficient_type>(limits::max()));\n")]),
+    ("integer_bound_on_magnitude", [
+        ("             (c >= static_cast<coefficient_type>(limits::min()) &&\n",
+         "             (c >= -static_cast<coefficient_type>(limits::max()) &&\n")]),
     ("no_coefficient_check", [(EXACT, disabled(EXACT))]),
     ("no_product_target_check", [(PRODUCT_TARGET, disabled(PRODUCT_TARGET))]),
     ("no_map_target_check", [(MAP_TARGET, disabled(MAP_TARGET))]),
@@ -157,8 +165,11 @@ MUTATIONS = [
         ("  static_assert(scalar_is_not_bool,\n",
          "  static_assert(true || scalar_is_not_bool,\n")]),
     ("no_semiregular_scalar_check", [
-        ("  static_assert(scalar_is_semiregular,\n",
-         "  static_assert(true || scalar_is_semiregular,\n")]),
+        ("  static_assert(scalar_is_default_constructible,\n",
+         "  static_assert(true || scalar_is_default_constructible,\n")]),
+    ("no_copyable_scalar_check", [
+        ("  static_assert(scalar_is_copyable,\n",
+         "  static_assert(true || scalar_is_copyable,\n")]),
     ("semiregular_head", [(HEAD, "template <metric_like Alg, blade_set Blades, "
                                  "std::semiregular T>\n")]),
     ("no_placeholder_storage", [
@@ -171,10 +182,36 @@ MUTATIONS = [
          "               (detail::not_a_coefficient<Values, T> && ...)))\n",
          "             true)\n")]),
     ("no_braced_list_catch_all", [
-        ("  constexpr explicit mv(const std::remove_cvref_t<T> "
-         "(& /*values*/)[N]) {\n",
+        ("  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {\n",
+         "  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N])\n"
+         "    requires false\n  {\n")]),
+    ("braced_list_catch_all_explicit", [
+        ("  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {\n",
          "  constexpr explicit mv(const std::remove_cvref_t<T> "
-         "(& /*values*/)[N])\n    requires false\n  {\n")]),
+         "(& /*values*/)[N]) {\n")]),
+    ("coefficient_by_conversion", [
+        ("    !multivector_or_derived<Value> && !std::constructible_from<T, Value>;\n",
+         "    !multivector_or_derived<Value> && !std::convertible_to<Value, T>;\n")]),
+    ("several_values_always", [
+        ("    std::is_array_v<std::remove_cvref_t<Value>> ||\n",
+         "    true || std::is_array_v<std::remove_cvref_t<Value>> ||\n")]),
+    ("several_values_no_containers", [
+        ("    requires(const std::remove_cvref_t<Value>& values) {\n"
+         "      values.begin();\n",
+         "    requires(const std::remove_cvref_t<Value>& values) {\n"
+         "      values.not_a_member();\n")]),
+    ("truncate_checks_first_only", [
+        ("    GALOOT_ASSERT(c[at] == T{}, \"truncate: a dropped coefficient is "
+         "not zero\");\n",
+         "    GALOOT_ASSERT(c[at] == T{}, \"truncate: a dropped coefficient is "
+         "not zero\");\n    break;\n")]),
+    ("truncate_catch_all_returns_source", [
+        ("    return std::remove_cvref_t<Target>{};\n", "    return x;\n")]),
+    ("opposite_message_not_ordered", [
+        ("          in_canonical_order(layout)\n"
+         "              ? NameLookup::other_orientation_in_ordered_layout\n",
+         "          false\n"
+         "              ? NameLookup::other_orientation_in_ordered_layout\n")]),
     ("derived_reaches_count", [
         ("               (detail::multivector_or_derived<Values> && ...)) &&\n",
          "               (multivector<Values> && ...)) &&\n")]),
