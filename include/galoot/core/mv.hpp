@@ -586,23 +586,22 @@ public:
     }
   }
 
-  // The constructor below is not explicit, as its comment says why.
-  // NOLINTBEGIN(cppcoreguidelines-explicit-constructor,misc-explicit-constructor)
   /// Rejects, with one error, coefficients given as a braced list in a
   /// second pair of braces, Line{{0, 0, 1, 0, 0, 0}}, which an aggregate
-  /// would take: a braced list binds to an array parameter and to nothing
-  /// else, so that is the parameter this rejection needs. It alone is not
-  /// explicit, so that Line l = {{...}}; gets this message too, and it
-  /// converts nothing: only a braced list or an array of T reaches it, and
-  /// it always fails.
+  /// would take, or as a C array of T: a braced list binds to an array
+  /// parameter and to nothing else, so that is the parameter this rejection
+  /// needs. Explicit, as every single-argument constructor is, so a C array
+  /// converts to no multivector implicitly; Line l = {{...}}; is then the
+  /// compiler's error, which names the explicit constructor. Because this
+  /// constructor and the one above exist, std::is_constructible_v<Line,
+  /// double (&)[6]> is true; std::is_convertible_v is false.
   template <std::size_t N>
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
-  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+  constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
     static_assert(false, "mv: give the coefficients one by one, not as one "
                          "array or braced list; write one value for each "
                          "component, in the order the layout lists them");
   }
-  // NOLINTEND(cppcoreguidelines-explicit-constructor,misc-explicit-constructor)
 };
 
 namespace detail {
@@ -759,9 +758,11 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 ///
 /// Requires: Target holds every blade of the plan's result, in either
 /// orientation, and every coefficient of the plan converts to T exactly
-/// where std::numeric_limits<T> can tell (a signed integer type within
-/// min() to max(), a binary floating type when the odd part of |c| fits its
-/// digits): each checked at compile time with its own message. A scalar without
+/// where std::numeric_limits<T> can tell (a signed integer type when c is
+/// within min() to max(), an unsigned one, whose arithmetic is modular, when
+/// |c| is at most max(), and a binary floating type when the odd part of |c|
+/// fits its digits and |c| is below 2^max_exponent): each checked at compile
+/// time with its own message. A scalar without
 /// a specialization, such as std::complex<float>, must hold the coefficients
 /// exactly without a check. The code is one fold expression over the terms, and
 /// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
