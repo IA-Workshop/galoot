@@ -360,6 +360,17 @@ def checks(tool, directory):
                                      a[4] + "\n" + a[1] + "\n"),
             "out of their order")
 
+    # An era whose commit this clone lacks, as in a shallow clone, cannot
+    # be recomputed, and check says so rather than failing on git's words.
+    eras_text = repo.read(f"{HISTORY}/eras.tsv")
+    repo.write(f"{HISTORY}/eras.tsv", eras_text.replace(boundary, "0" * 12))
+    result = repo.run("check")
+    check("check exit, era not in the clone", result.returncode, 2)
+    if "is not in this clone's history" not in result.stderr:
+        failures.append(f"check stderr, era not in the clone: "
+                        f"{result.stderr!r}")
+    repo.write(f"{HISTORY}/eras.tsv", eras_text)
+
     # Both history files gone: check fails rather than finding no era.
     eras, groups = (repo.read(f"{HISTORY}/{n}")
                     for n in ("eras.tsv", "groups.tsv"))

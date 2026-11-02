@@ -105,6 +105,13 @@ def git(top, *args):
     return result.stdout.decode()
 
 
+def has_commit(top, revision):
+    result = subprocess.run(["git", "-C", top, "cat-file", "-e",
+                             f"{revision}^{{commit}}"], capture_output=True,
+                            check=False)
+    return result.returncode == 0
+
+
 def checkout_root():
     result = subprocess.run(["git", "rev-parse", "--show-toplevel"],
                             capture_output=True, text=True, check=False)
@@ -298,6 +305,9 @@ def replay(top, log, eras, states):
     for era in eras:
         if era[1] != log:
             continue
+        if not has_commit(top, era[0]):
+            raise Refused(f"era {era[0]} is not in this clone's history, so "
+                          "it cannot be recomputed")
         columns, lines = log_at(top, era[0], log)
         rows = era_lines(lines, kept_before)
         anchors = set() if era[4] == "-" else set(map(int, era[4].split(",")))
