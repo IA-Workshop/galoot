@@ -126,15 +126,18 @@ Type random_integers(std::mt19937_64& source) {
 
 } // namespace
 
-// Reference: proof: every pair of basis blades of rigid(3) and conformal(3)
-//   against the tables of the reference, for the product and the wedge,
-//   covering the shared-generator, sign, and zero cases.
+// Reference: comparison: every pair of basis blades of rigid(3) and
+// conformal(3)
+//   against the exact tables, which satisfy e_i e_j + e_j e_i = 2 g_ij, for
+//   the product and the wedge, covering the shared-generator, sign, and zero
+//   cases
 TEST_CASE("geometric_product and wedge of basis blades equal the tables") {
   CHECK(table_mismatches<rga3, 4>(golden::gp_tables::rigid_3) == 0);
   CHECK(table_mismatches<cga3, 5>(golden::gp_tables::conformal_3) == 0);
 }
 
-// A hand-checked case: in rigid(3) e1 e1 = 1, e1 e2 = e12, e4 e4 = 0.
+// Reference: independent value: by hand, in rigid(3), e1 e1 = 1, e1 e2 = e12,
+//   e2 e1 = -e12, e4 e4 = 0, and e1 ^ e1 = 0
 TEST_CASE("products of two vectors") {
   constexpr auto vectors = core::of_grade<4, 1>;
   using V = core::mv<rga3, vectors, std::int64_t>;
@@ -150,9 +153,9 @@ TEST_CASE("products of two vectors") {
   CHECK(value_on(core::wedge(e1, e1), 0b0011) == 0);
 }
 
-// Reference: definition: a * b is the geometric product geometric_product(a,
-//   b), and a ^ b is the wedge of a and b, each with the type and the value
-//   of the named function
+// Reference: identity: a * b is the geometric product geometric_product(a, b)
+//   and a ^ b is the wedge, each with the type and the value of the named
+//   function
 TEST_CASE("the operators are the named functions") {
   using X = core::mv<rga3, core::full<4>, double>;
   using L = core::mv<rga3, core::of_grade<4, 2>, double>;
@@ -184,6 +187,8 @@ TEST_CASE("the operators are the named functions") {
   }
 }
 
+// Reference: contract: the result of a product has the blades of the plan's
+//   result set and the scalar type of the operands
 TEST_CASE("the result has the layout the plan gives") {
   using L = core::mv<rga3, core::of_grade<4, 2>, std::int64_t>;
   using V = core::mv<rga3, core::of_grade<4, 1>, std::int64_t>;
@@ -199,9 +204,9 @@ TEST_CASE("the result has the layout the plan gives") {
                              decltype(core::geometric_product(L{}, V{}))>);
 }
 
-// Reference: proof: associativity of the geometric product and of the wedge
-//   on random integer multivectors of rigid(3) and conformal(3), whose
-//   sums are exact; the wedge of a vector with itself is zero.
+// Reference: identity: associativity of the geometric product and of the wedge
+//   on random integer multivectors of rigid(3) and conformal(3), whose sums
+//   are exact, and the wedge of a vector with itself is zero
 TEST_CASE("the products are associative and a vector wedges to zero") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);
@@ -227,10 +232,9 @@ TEST_CASE("the products are associative and a vector wedges to zero") {
     CHECK((w ^ w) == decltype(w ^ w){});
   }
 }
-
-// The catch-all overloads are the only error of a bad call, and they make a
-// requires-expression answer yes for it, as get does; the valid overloads
-// are not captured, and other types' operators are untouched.
+// Reference: contract: a mixed call has the catch-all as its only candidate and
+//   a requires-expression answers yes for it, as for get, while the valid
+//   overloads are not captured and the operators of other types are untouched
 TEST_CASE("the overloads take the right operands") {
   using R = core::mv<rga3, core::full<4>, double>;
   using F = core::mv<rga3, core::full<4>, float>;
