@@ -157,7 +157,8 @@ TEST_CASE("rational equality agrees with cross-multiplication") {
 //   exactly, at the largest sums and products that fit: (max - 1) + 1 = max,
 //   -(max - 1) - 1 = -max, and 3037000499^2 = 9223372030926249001, the
 //   largest square below max = 9223372036854775807, and a product whose parts
-//   cancel, (2^62 / 3)(3 / 2^62) = 1
+//   cancel, (2^62 / 3)(3 / 2^62) = 1, and a sum whose denominators share a
+//   factor, 1/2^62 + 1/2^62 = 1/2^61
 TEST_CASE("rational forms results up to the bounds of std::int64_t") {
   constexpr std::int64_t max = std::numeric_limits<std::int64_t>::max();
   static_assert(has_members(rational{max - 1} + rational{1}, max, 1));
@@ -173,4 +174,12 @@ TEST_CASE("rational forms results up to the bounds of std::int64_t") {
   static_assert(rational{two_62, 3} * rational{3, two_62} == rational{1});
   const volatile std::int64_t one = 1;
   CHECK(rational{two_62 * one, 3} * rational{3, two_62 * one} == rational{1});
+
+  // 1/2^62 + 1/2^62 = 1/2^61 only if the denominators are first divided by
+  // their common factor: their product, 2^124, does not fit.
+  constexpr std::int64_t two_61 = 2305843009213693952; // 2^61
+  static_assert(rational{1, two_62} + rational{1, two_62} ==
+                rational{1, two_61});
+  CHECK(rational{one, two_62 * one} + rational{one, two_62 * one} ==
+        rational{1, two_61});
 }

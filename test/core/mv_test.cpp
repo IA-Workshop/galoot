@@ -359,13 +359,35 @@ TEST_CASE("mv equality over double is IEEE equality") {
   CHECK(not_a_number != copy);
 }
 
+namespace {
+
+// Whether a == b is a valid expression, tested as such: the standard
+// equality_comparable_with also asks for a common reference, which two
+// unrelated class types never have, so it cannot tell whether == exists.
+template <class A, class B>
+concept has_equality_with = requires(const A& a, const B& b) { a == b; };
+
+} // namespace
+
 // Reference: contract: multivectors of different layouts, algebras, or
 //   scalars are different types and have no ==, even when they hold the
-//   same number of coefficients of one scalar
+//   same number of coefficients of one scalar, tested on the expression a == b
+//   itself
 TEST_CASE("mv compares only with its own type") {
   using Bivectors = core::mv<rga3, core::of_grade<4, 2>, double>;
   using FourEuclidean =
       core::mv<euclidean<4>, core::blades<euclidean<4>, "e1 e2 e3 e4">, double>;
+  static_assert(has_equality_with<Line<double>, Line<double>>);
+  static_assert(!has_equality_with<Point<double>, FourEuclidean>);
+  static_assert(!has_equality_with<Line<double>, Bivectors>);
+  static_assert(!has_equality_with<Line<double>, Line<float>>);
+  CHECK(has_equality_with<Line<double>, Line<double>>);
+  CHECK_FALSE(has_equality_with<Point<double>, FourEuclidean>);
+  CHECK_FALSE(has_equality_with<Line<double>, Bivectors>);
+  CHECK_FALSE(has_equality_with<Line<double>, Line<float>>);
+
+  // The standard concept says no for any two class types without a common
+  // reference, whatever == does; these record its answer.
   static_assert(std::equality_comparable<Line<double>>);
   static_assert(!std::equality_comparable_with<Line<double>, Bivectors>);
   static_assert(!std::equality_comparable_with<Point<double>, FourEuclidean>);
@@ -789,4 +811,57 @@ TEST_CASE("mv over a scalar without == is a type without ==") {
   CHECK(sum.second == -1.5);
   CHECK(core::ring_scalar<two_lanes>);
   CHECK_FALSE(std::equality_comparable<Line<two_lanes>>);
+}
+
+namespace {
+
+// Whether mv<rga3, line_layout, T> names a type, as generic code asks.
+template <class T>
+concept names_a_line = requires { typename core::mv<rga3, line_layout, T>; };
+
+// A scalar without a default constructor, which is not semiregular.
+struct without_default {
+  explicit without_default(std::int64_t /*value*/) {}
+};
+
+} // namespace
+
+// Reference: contract: mv's template head requires a semiregular scalar, so
+//   generic code that asks whether mv names a type over a scalar without a
+//   default constructor is told no, while a semiregular scalar that is not a
+//   ring scalar, such as std::string, is told yes and fails only when used,
+//   as the comment of mv says
+TEST_CASE("mv's template head asks for a semiregular scalar") {
+  static_assert(names_a_line<double>);
+  static_assert(!names_a_line<without_default>);
+  static_assert(names_a_line<std::string>);
+  CHECK(names_a_line<double>);
+  CHECK_FALSE(names_a_line<without_default>);
+  CHECK(names_a_line<std::string>);
+}
+
+namespace {
+
+// R(9, 0, 0), the widest algebra whose blades have names, and a layout of
+// its two blades that need the index 9.
+inline constexpr auto nine_layout =
+    core::blades<euclidean<9>, "e19 e9 e123456789">;
+using Nine = core::mv<euclidean<9>, nine_layout, double>;
+
+} // namespace
+
+// Reference: independent value: in R(9, 0, 0) e19 is the mask of bits 0 and
+//   8 with sign +1, e9 bit 8, and e123456789 every bit, read by the test's
+//   own inversion count; contract: get reads names for n up to 9, the
+//   largest n whose indices are single digits
+TEST_CASE("get reads names in an algebra of nine generators") {
+  static_assert(named_at<Nine, "e19">(0, 0b100000001, 1));
+  static_assert(named_at<Nine, "e9">(1, 0b100000000, 1));
+  static_assert(named_at<Nine, "e123456789">(2, 0b111111111, 1));
+  static_assert(!core::has_blade<Nine, "e91">); // the other orientation
+  Nine x{1, 2, 3};
+  get<"e9">(x) = 5.0;
+  CHECK(get<"e19">(x) == 1.0);
+  CHECK(get<"e9">(x) == 5.0);
+  CHECK(core::has_blade<Nine, "e123456789">);
 }
