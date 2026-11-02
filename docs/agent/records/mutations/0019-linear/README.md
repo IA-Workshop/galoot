@@ -1,43 +1,48 @@
 # WU10b sums, scaling, negation, part, and the ring-operation messages: mutants, diagnostics, and costs
 
-Revision: `feature/core-linear` at `b668de7` (the trace commit) for the mutants; the diagnostics and the limits of `sum_layout` at the same headers; the costs at `e2be608`, whose headers differ from `b668de7` in comments only. Toolchain: g++ 16.2.1 and clang++ 23.1.4, on ds-001.
+Revision: `feature/core-linear` at `b668de7` (the trace commit) for the first mutant runs and at `64598f3` for the runs after the review; the diagnostics and the limits of `sum_layout` at the same headers; the costs at `e2be608`, whose headers differ from `b668de7` in comments only. Toolchain: g++ 16.2.1 and clang++ 23.1.4, on ds-001.
 
 ## Mutants
 
 `mutate.py <preset>` applied each mutant to one header, built `core_linear_test`, `core_linear_divide_assert_fail`, `core_mv_test`, and `core_mv_part_checking` with `ninja -k 0`, ran the tests labeled `core.linear` or `core.mv` (the two test programs, their compile-fail tests, and the run-time checks of division and of `part`), and restored the header. The rows of each run are in `out/gcc-debug.tsv` and `out/clang-debug.tsv`, with the first error line of every program that did not build; the runs are in `runs.tsv` under the selection `mutant:<name>`.
 
-The nine mutants of plan 0019 section 6, and two of the implementer's own (the last two rows). No list of further mutants from the test author was found in the branch's records or commit messages, so none was added from that source.
+The nine mutants of plan 0019 section 6, two of the implementer's own (the next two rows), and five added after the blind review (the last five rows): four the review found surviving the first suite, and one for the specialization that its finding F2 led to. All sixteen were run again after the review's fixes, at `64598f3`, on both presets; the line numbers are those of that revision. No list of further mutants from the test author was found in the branch's records or commit messages, so none was added from that source.
 
 | Mutant | gcc-debug | clang-debug | Killed by |
 | --- | --- | --- | --- |
 | the sum kernel adds its first term to zero | killed | killed | `core.linear` at run time: the test case "A blade that only one operand holds keeps the sign of a zero" (0.0 + −0.0 is +0.0) |
-| a difference takes y with +1 | killed | killed | a `static_assert` of `linear_test.cpp` (line 177, `(b - a) == L{9, ...}`) |
-| a two-layout sum drops the blades only y holds | killed | killed | a `static_assert` of `linear_test.cpp` (line 236, the line plus the antiscalar) |
+| a difference takes y with +1 | killed | killed | a `static_assert` of `linear_test.cpp` (line 178, `(b - a) == L{9, ...}`) |
+| a two-layout sum drops the blades only y holds | killed | killed | a `static_assert` of `linear_test.cpp` (line 237, the line plus the antiscalar) |
 | `s * a` computes x_i * s | killed | killed | `core.linear` at run time: the 2 by 2 matrix scalar, E12 on the left of E21 |
-| `/` multiplies by the reciprocal | killed | killed | a `static_assert` of `linear_test.cpp` (line 623: over `std::int64_t` the reciprocal of 2 is 0), and `core.linear_divide_accepts_nonzero` |
-| the integer zero assertion is removed | killed | killed | `core.linear_divide_consteval_zero` (no `assertion_failed` in the output) and `core.linear_divide_rejects_zero` (no abort with the message) |
-| the scalar catch-all's constraint is widened to every type (`ring_scalar<S>` dropped) | killed | killed | a `static_assert` of `linear_test.cpp` (line 773, `!can_scale_left<std::string, L>`) |
+| `/` multiplies by the reciprocal | killed | killed | a `static_assert` of `linear_test.cpp` (line 675: over `std::int64_t` the reciprocal of 2 is 0), `core.linear_divide_accepts_nonzero`, and `core.linear_divide_accepts_negative` |
+| the integer zero assertion is removed | killed | killed | `core.linear_divide_consteval_zero` (no `assertion_failed` in the output) and the three `core.linear_divide_rejects_*` run-time tests (no abort with the message) |
+| the scalar catch-all's constraint is widened to every type (`ring_scalar<S>` dropped) | killed | killed | a `static_assert` of `linear_test.cpp` (line 885, `!can_scale_left<std::string, L>`) |
 | `part` calls `truncate` | killed | killed | a `static_assert` of `mv_test.cpp` (line 2255, `parts_in_a_constant_evaluation<std::int64_t, 7>`), and the four `core.mv_part_never_checks_*` run-time tests |
 | one ring-operations fault reports the next clause's message (no addition reported as no subtraction) | killed | killed | `core.mv_scalar_lacks_addition` and `core.mv_scalar_without_arithmetic` (each requires the addition message and forbids the others) |
 | negation subtracts from zero, `T{} - x_i` | killed | killed | `core.linear` at run time: "Negation negates each coefficient and keeps the layout" (−(+0.0) must be −0.0) |
-| `sum_layout` keeps the operands' orientations (`merge<A, B>`) | killed | killed | a `static_assert` of `linear_test.cpp` (line 222, `decltype(L{} + AS{})` is the canonical set) |
+| `sum_layout` keeps the operands' orientations (`merge<A, B>`) | killed | killed | a `static_assert` of `linear_test.cpp` (line 223, `decltype(L{} + AS{})` is the canonical set) |
+| the integer zero check asserts `s > T{}`, so a negative divisor aborts (from the blind review) | killed | killed | a `static_assert` of `linear_test.cpp` (line 732, the division by −2 is no longer a constant expression), and `core.linear_divide_accepts_negative` |
+| the integer zero check runs only for a signed T (from the blind review) | killed | killed | `core.linear_divide_rejects_unsigned_zero` (the division traps without the message) |
+| `operator/` loses its requirement that T has `/` (from the blind review) | killed | killed | a `static_assert` of `linear_test.cpp` (line 757, `!can_divide<Line<mat2>, mat2>`) |
+| the scalar catch-all loses `multivector<X>` (from the blind review) | killed | killed | a `static_assert` of `linear_test.cpp` (line 962, `!has_scale_left<int, grid>`, a type with a member `scalar_type`) |
+| the specialization `sum_layout<Alg, A, A> = A` is dropped (after the review's F2) | killed | killed | a `static_assert` of `linear_test.cpp` (line 168, `decltype(L{} + L{})` is `L`) |
 
 No mutant was killed by a warning: every compile failure in the records is a `static_assert` of a test file. When a program does not build, CTest may run its previous build, which passes, so a failed build can appear without that program's test in the failed list (the row of `scalar_catch_all_any_type`); every kill above is either a fresh build that failed in a test's own `static_assert`, or a fresh compile-fail or run-time test that failed. No equivalent survivor.
 
 ## Diagnostics
 
-Each rejection gives one error, whose first line holds the message, on both compilers. `diagnostics.py` compiled each new compile-fail source of the sums, the scalings, `part`, and the ring operations, and the two existing sources whose message changed (`mv_not_ring_scalar_fail.cpp` and `mv_scalar_without_multiplication_fail.cpp`), with the test flags and `-fsyntax-only`; the rows are in `out/diagnostics.tsv`. Every source gives exactly one line that holds `error:`.
+Each rejection gives one error, whose first line holds the message, on both compilers. Measured again after the blind review, with the reworded scalar-type message (its first line grows by 61 characters) and the new `mv_part_probe_fail.cpp`. `diagnostics.py` compiled each new compile-fail source of the sums, the scalings, `part`, and the ring operations, and the two existing sources whose message changed (`mv_not_ring_scalar_fail.cpp` and `mv_scalar_without_multiplication_fail.cpp`), with the test flags and `-fsyntax-only`; the rows are in `out/diagnostics.tsv`. Every source gives exactly one line that holds `error:`.
 
 | Sources | First line, GCC | First line, Clang | Longest line, GCC | Longest line, Clang | Lines, GCC | Lines, Clang |
 | --- | --- | --- | --- | --- | --- | --- |
 | `a + b`, `a - b`, mixed algebras (2) | 154 | 248 | 1,402 to 1,403 | 438 to 439 | 12 | 11 |
 | `a + b`, `a - b`, mixed scalars (2) | 156 | 207 | 1,515 to 1,516 | 467 to 468 | 12 | 11 |
-| `s * a`, `a * s`, `a / s` with an int for double (3) | 196 | 245 | 390 | 275 to 280 | 9 | 8 |
-| `s * a`, 2.5 for an integer multivector | 196 | 246 | 395 | 285 | 9 | 8 |
-| `a * 2` with every core header | 196 | 245 | 390 | 284 | 10 | 9 |
+| `s * a`, `a * s`, `a / s` with an int for double (3) | 257 | 306 | 390 | 306 | 9 | 8 |
+| `s * a`, 2.5 for an integer multivector | 257 | 307 | 395 | 307 | 9 | 8 |
+| `a * 2` with every core header | 257 | 306 | 390 | 306 | 10 | 9 |
 | a double line times a float motor with every core header (the products' message) | 157 | 208 | 1,529 | 477 | 15 | 12 |
 | `a / s` by zero in a constant evaluation | 154 | 136 | 391 | 213 | 16 | 16 |
-| `part` with a bad target (5) | 210 | 210 | 470 to 722 | 273 to 393 | 9 | 8 |
+| `part` with a bad target (5), and a requires-expression probing it | 210 | 210 | 470 to 722 | 268 to 393 | 9 | 8 |
 | the ring operations, one requirement lacking (5) | 154 to 207 | 195 to 271 | 479 to 502 | 256 to 280 | 9 | 8 |
 | the ring operations, several lacking, and the two existing sources (5) | 154 to 170 | 195 to 214 | 469 to 484 | 245 to 276 | 9 | 8 |
 

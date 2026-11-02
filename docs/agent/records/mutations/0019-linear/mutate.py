@@ -101,6 +101,22 @@ MUTANTS = {
     "sum_layout_keeps_orientations": ("linear.hpp", [(
         "    merge<detail::with_plus_signs(A), detail::with_plus_signs(B)>;",
         "    merge<A, B>;", None)]),
+    # From the blind review, which found them surviving the first suite.
+    "divide_check_rejects_negative": ("linear.hpp", [(
+        "GALOOT_ASSERT(s != T{},", "GALOOT_ASSERT(s > T{},", None)]),
+    "divide_check_signed_only": ("linear.hpp", [(
+        "if constexpr (detail::integer_limits<T> && std::equality_comparable<T>)",
+        "if constexpr (detail::integer_limits<T> && std::equality_comparable<T> &&\n"
+        "                std::is_signed_v<T>)", None)]),
+    "divide_without_division_requirement": ("linear.hpp", [(
+        "  requires detail::scalar_has_division<T>\n", "", None)]),
+    "scalar_catch_all_without_multivector": ("linear.hpp", [(
+        "multivector<X> && !multivector_or_derived<S> && ring_scalar<S> &&",
+        "!multivector_or_derived<S> && ring_scalar<S> &&", None)]),
+    # The specialization of sum_layout for one layout is dropped.
+    "sum_layout_without_specialization": ("linear.hpp", [(
+        "template <metric_like Alg, blade_set A>\n"
+        "inline constexpr auto sum_layout<Alg, A, A> = A;\n", "", None)]),
 }
 
 
