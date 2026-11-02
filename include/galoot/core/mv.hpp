@@ -55,6 +55,31 @@
 
 namespace galoot::core {
 
+namespace detail {
+
+// The requirements of ring_scalar after semiregular, each named, so that a
+// multivector can report the first one a scalar fails with its own message.
+template <class T>
+concept ring_addition = requires(const T& a, const T& b) {
+  { a + b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_subtraction = requires(const T& a, const T& b) {
+  { a - b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_multiplication = requires(const T& a, const T& b) {
+  { a * b } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_unary_minus = requires(const T& a) {
+  { -a } -> std::convertible_to<T>;
+};
+template <class T>
+concept ring_from_coefficient = std::constructible_from<T, coefficient_type>;
+
+} // namespace detail
+
 /// A scalar type a multivector can hold.
 ///
 /// Requires of T: std::semiregular (default construction, copies, and
@@ -68,13 +93,11 @@ namespace galoot::core {
 /// T, and +, -, * obey the ring laws. Equality is not required, so that a
 /// scalar holding several lanes at once is accepted.
 template <class T>
-concept ring_scalar = !std::same_as<std::remove_cv_t<T>, bool> &&
-                      std::semiregular<T> && requires(const T& a, const T& b) {
-                        { a + b } -> std::convertible_to<T>;
-                        { a - b } -> std::convertible_to<T>;
-                        { a * b } -> std::convertible_to<T>;
-                        { -a } -> std::convertible_to<T>;
-                      } && std::constructible_from<T, coefficient_type>;
+concept ring_scalar =
+    !std::same_as<std::remove_cv_t<T>, bool> && std::semiregular<T> &&
+    detail::ring_addition<T> && detail::ring_subtraction<T> &&
+    detail::ring_multiplication<T> && detail::ring_unary_minus<T> &&
+    detail::ring_from_coefficient<T>;
 
 /// A ring scalar whose arithmetic is exact, as std::numeric_limits says:
 /// the integer types, and a type of the user's whose numeric_limits
@@ -135,7 +158,11 @@ enum class ScalarFault : std::uint8_t {
   boolean,
   not_default_initializable,
   not_copyable,
-  no_ring_operations,
+  no_addition,
+  no_subtraction,
+  no_multiplication,
+  no_unary_minus,
+  not_from_coefficient,
 };
 
 template <class T>
@@ -148,8 +175,16 @@ template <class T>
     return ScalarFault::not_default_initializable;
   } else if constexpr (!std::copyable<T>) {
     return ScalarFault::not_copyable;
-  } else if constexpr (!ring_scalar<T>) {
-    return ScalarFault::no_ring_operations;
+  } else if constexpr (!ring_addition<T>) {
+    return ScalarFault::no_addition;
+  } else if constexpr (!ring_subtraction<T>) {
+    return ScalarFault::no_subtraction;
+  } else if constexpr (!ring_multiplication<T>) {
+    return ScalarFault::no_multiplication;
+  } else if constexpr (!ring_unary_minus<T>) {
+    return ScalarFault::no_unary_minus;
+  } else if constexpr (!ring_from_coefficient<T>) {
+    return ScalarFault::not_from_coefficient;
   } else {
     return ScalarFault::none;
   }
@@ -414,20 +449,22 @@ concept holds_several_values =
 /// of Blades.blades[i].mask.
 ///
 /// Requires: Alg is metric_like and T is std::destructible, or the type does
-/// not match. Checked when the type is used, each with its own message, in
-/// this order, so that a scalar with several faults gives one error: T is
-/// not a reference and not const or volatile; T is not bool; T is default
-/// constructible; T is copyable and assignable; T is a ring_scalar. Then, also
-/// each with its own message: every blade of the layout names only e1 to en;
-/// every sign is +1 or -1; and no mask appears twice, in either orientation. A
-/// layout is a list of oriented blades and does not keep the algebra named in
-/// blades<Alg, ...>: any algebra with enough generators accepts it. Generic
-/// code that only names mv<A, B, std::string> is told that it is a type; it
-/// fails when used. The repeated-mask check compares every pair of blades,
-/// so the compiler's limits on constant evaluation bound the size of a
-/// layout. Measured at the default limits, alike at -O0 and -O2 and with or
-/// without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double> builds for n
-/// up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on GCC 16.
+/// not match. Checked when the type is used, each with its own message, in this
+/// order, so that a scalar with several faults gives one error: T is not a
+/// reference and not const or volatile; T is not bool; T is default
+/// constructible; T is copyable and assignable; and then the requirements of
+/// ring_scalar in its order: a + b, a - b, a * b, -a, and construction from
+/// coefficient_type. Then, also each with its own message: every blade of the
+/// layout names only e1 to en; every sign is +1 or -1; and no mask appears
+/// twice, in either orientation. A layout is a list of oriented blades and does
+/// not keep the algebra named in blades<Alg, ...>: any algebra with enough
+/// generators accepts it. Generic code that only names mv<A, B, std::string> is
+/// told that it is a type; it fails when used. The repeated-mask check compares
+/// every pair of blades, so the compiler's limits on constant evaluation bound
+/// the size of a layout. Measured at the default limits, alike at -O0 and -O2
+/// and with or without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double>
+/// builds for n up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on
+/// GCC 16.
 /// Guarantees: not an aggregate; trivially copyable and standard-layout when
 /// T is, with sizeof equal to the number of blades times sizeof(T) for a
 /// nonempty layout; usable as a template argument when T is a structural
@@ -454,8 +491,16 @@ private:
       scalar_fault != detail::ScalarFault::not_default_initializable;
   static constexpr bool scalar_is_copyable =
       scalar_fault != detail::ScalarFault::not_copyable;
-  static constexpr bool scalar_has_ring_operations =
-      scalar_fault != detail::ScalarFault::no_ring_operations;
+  static constexpr bool scalar_has_addition =
+      scalar_fault != detail::ScalarFault::no_addition;
+  static constexpr bool scalar_has_subtraction =
+      scalar_fault != detail::ScalarFault::no_subtraction;
+  static constexpr bool scalar_has_multiplication =
+      scalar_fault != detail::ScalarFault::no_multiplication;
+  static constexpr bool scalar_has_unary_minus =
+      scalar_fault != detail::ScalarFault::no_unary_minus;
+  static constexpr bool scalar_is_made_from_an_integer_coefficient =
+      scalar_fault != detail::ScalarFault::not_from_coefficient;
   static_assert(scalar_is_not_a_reference_or_qualified,
                 "mv: the scalar type is a reference or is const or volatile; "
                 "give the type itself, as in double for const double");
@@ -471,10 +516,22 @@ private:
                 "number is; give it copy construction and copy assignment, "
                 "which a move-only type or a class with a const member "
                 "lacks");
-  static_assert(scalar_has_ring_operations,
-                "mv: the scalar type must support +, -, *, unary - and "
-                "construction from an integer coefficient; use a number type "
-                "such as double or an integer type");
+  static_assert(scalar_has_addition,
+                "mv: the scalar type has no addition; give it a + b, or use a "
+                "number type such as double");
+  static_assert(scalar_has_subtraction,
+                "mv: the scalar type has no subtraction; give it a - b, or "
+                "use a number type such as double");
+  static_assert(scalar_has_multiplication,
+                "mv: the scalar type has no multiplication; give it a * b, or "
+                "use a number type such as double");
+  static_assert(scalar_has_unary_minus,
+                "mv: the scalar type has no unary minus; give it -a, which "
+                "the products use for a term of coefficient -1");
+  static_assert(scalar_is_made_from_an_integer_coefficient,
+                "mv: the scalar type cannot be made from an integer "
+                "coefficient; give it a constructor from std::int64_t, or use "
+                "a number type such as double");
 
   static constexpr bool layout_names_only_generators_of_the_algebra =
       detail::blades_in_algebra<
