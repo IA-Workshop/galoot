@@ -954,7 +954,7 @@ Diagnostics after the fixes (`docs/agent/records/diagnostics/wu8/wu8b/`, at `ef5
 | scalar without a default constructor | 45 / 525, 3 errors | 14 / 1,338, 2 (the program's use of a member) | 29 / 163, 2 | 9 / 238 |
 | scalar `std::unique_ptr<double>` | 46 / 543, 3 errors | 10 / 376 | 28 / 194, 2 | 9 / 274 |
 | `Point s{{1, 2, 3, 1}}` | 65 / 791 | 10 / 521 | 26 / 216 | 9 / 200 |
-| `Point s = {{1, 2, 3, 1}}` | 6 / 441 | 10 / 521 | 26 / 216 | 9 / 200 |
+| `Point s = {{1, 2, 3, 1}}` | 6 / 441 | 17 / 910, 2 errors, the compiler's (after the delta review's D1) | 26 / 216 | 7 / 81, the compiler's |
 | `Point s{values}`, a std::array | 10 / 483, "1 == 4" | 10 / 475 | 12 / 210, "1 == 4" | 9 / 210 |
 | `Point s{std::complex<double>{1, 0}}` | 10 / 475, "1 == 4" | 10 / 467, its own message | 12 / 201, "1 == 4" | 9 / 201 |
 | `const double s = truncate<double>(q);` | 7 / 69, 2 (no truncate) | 10 / 453, one error | 7 / 83, 2 | 9 / 228 |

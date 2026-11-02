@@ -1,5 +1,12 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:84:32: error: converting to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>’} from initializer list would use explicit constructor ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<_Sp> (&)[N]) [with long unsigned int N = 4; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double; std::remove_cvref_t<_Sp> = double]’
+   84 |   const Point s = {{1, 2, 3, 1}};
+      |                                ^
 In file included from ../../../../../../include/galoot/core.hpp:12,
                  from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp:600:22: note: ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<_Sp> (&)[N]) [with long unsigned int N = 4; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double; std::remove_cvref_t<_Sp> = double]’ declared here
+  600 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                      ^~
 ../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<_Sp> (&)[N]) [with long unsigned int N = 4; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double; std::remove_cvref_t<_Sp> = double]’:
 program.cpp:84:32:   required from here
    84 |   const Point s = {{1, 2, 3, 1}};

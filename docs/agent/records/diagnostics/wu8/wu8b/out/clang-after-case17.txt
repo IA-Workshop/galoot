@@ -13,9 +13,6 @@ program.cpp:80:15: error: no viable conversion from 'const mv<[...], blade_set<6
 ../../../../../../include/galoot/core/mv.hpp:558:14: note: because '!(sizeof...(Values) == 1 && detail::multivector_or_derived<const galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double> &>)' evaluated to false
   558 |              !(sizeof...(Values) == 1 &&
       |              ^
-../../../../../../include/galoot/core/mv.hpp:600:13: note: candidate template ignored: could not match 'const std::remove_cvref_t<double>[N]' (aka 'const double[N]') against 'const Line' (aka 'const gc::mv<rga3, line_layout, double>')
-  600 |   constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
-      |             ^
 ../../../../../../include/galoot/core/mv.hpp:528:22: note: explicit constructor is not a candidate
   528 |   constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
       |                      ^
@@ -24,5 +21,8 @@ program.cpp:80:15: error: no viable conversion from 'const mv<[...], blade_set<6
       |                      ^
 ../../../../../../include/galoot/core/mv.hpp:577:22: note: explicit constructor is not a candidate
   577 |   constexpr explicit mv(Value&& /*value*/) {
+      |                      ^
+../../../../../../include/galoot/core/mv.hpp:600:22: note: explicit constructor is not a candidate
+  600 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
       |                      ^
 1 error generated.

@@ -1,0 +1,5 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+no_braced_list_catch_all	gcc-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list	-	-	-	-
+no_braced_list_catch_all	clang-debug	runtime	0	8	killed	core.mv_coefficients_as_braced_list	-	-	-	-
+braced_list_catch_all_implicit	gcc-debug	runtime	1	-	killed	-	-	mv_test.cpp:2133,mv_test.cpp:2136,mv_test.cpp:2145	-	test/core/mv_test.cpp:2145:15: error: call of overloaded ‘takes(const double [4])’ is ambiguous
+braced_list_catch_all_implicit	clang-debug	runtime	1	-	killed	-	-	mv_test.cpp:2133,mv_test.cpp:2136,mv_test.cpp:2145	-	test/core/mv_test.cpp:2145:10: error: call to 'takes' is ambiguous

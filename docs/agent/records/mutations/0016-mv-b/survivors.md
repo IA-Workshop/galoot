@@ -48,3 +48,7 @@ After the W5 blind review and the hci-expert reading of WU8b, the driver gained 
 2. The three rewritten forms: a mutant must change the code under test and nothing that a compiler diagnoses by itself; the first forms did not meet that and are not counted.
 
 The review's own surviving mutants are killed: the check stopping after the first dropped place (`truncate_checks_first_only`, by the antiscalar cases of the constant-evaluation test and `core.mv_truncate_nonzero_*_antiscalar`), and `>= 64` changed to `> 64`, whose code is gone with F1's fix (the bound shifts by no type's digits; the long double products and checks stay in the tests).
+
+## Delta review, 2026-11-02
+
+After the delta review's D1 (`0c7daa9`, the braced-list catch-all explicit again), the driver's two mutants of that constructor were rewritten for the restored form: `no_braced_list_catch_all` (the catch-all never viable) and `braced_list_catch_all_implicit` (`explicit` removed). Both ran on gcc-debug and clang-debug in both modes (`results-0c7daa9-delta-normal.tsv`, `-runtime.tsv`): killed by `core.mv_coefficients_as_braced_list`, and by the test that a C array reaches a span overload (the build of core.mv stops at its ambiguous call), respectively.

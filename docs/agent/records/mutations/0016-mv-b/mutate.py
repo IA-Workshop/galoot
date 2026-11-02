@@ -182,13 +182,14 @@ MUTATIONS = [
          "               (detail::not_a_coefficient<Values, T> && ...)))\n",
          "             true)\n")]),
     ("no_braced_list_catch_all", [
-        ("  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {\n",
-         "  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N])\n"
-         "    requires false\n  {\n")]),
-    ("braced_list_catch_all_explicit", [
-        ("  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {\n",
+        ("  constexpr explicit mv(const std::remove_cvref_t<T> "
+         "(& /*values*/)[N]) {\n",
          "  constexpr explicit mv(const std::remove_cvref_t<T> "
-         "(& /*values*/)[N]) {\n")]),
+         "(& /*values*/)[N])\n    requires false\n  {\n")]),
+    ("braced_list_catch_all_implicit", [
+        ("  constexpr explicit mv(const std::remove_cvref_t<T> "
+         "(& /*values*/)[N]) {\n",
+         "  constexpr mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {\n")]),
     ("coefficient_by_conversion", [
         ("    !multivector_or_derived<Value> && !std::constructible_from<T, Value>;\n",
          "    !multivector_or_derived<Value> && !std::convertible_to<Value, T>;\n")]),

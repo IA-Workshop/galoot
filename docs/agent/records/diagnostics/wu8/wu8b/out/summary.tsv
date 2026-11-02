@@ -26,7 +26,7 @@ gcc	after	14	1	14	2	7	1338	1338
 gcc	after	15	1	10	1	7	547	521
 gcc	after	16	1	10	1	7	501	475
 gcc	after	17	1	9	1	2	889	889
-gcc	after	18	1	10	1	7	547	521
+gcc	after	18	1	17	2	2	910	910
 gcc	after	19	1	10	1	7	493	467
 gcc	after	20	1	10	1	7	479	453
 gcc	after	21	1	10	1	7	402	376
@@ -58,7 +58,7 @@ clang	after	14	1	9	1	3	264	238
 clang	after	15	1	9	1	3	226	200
 clang	after	16	1	9	1	3	226	210
 clang	after	17	1	28	1	1	345	319
-clang	after	18	1	9	1	3	226	200
+clang	after	18	1	7	1	1	93	81
 clang	after	19	1	9	1	3	201	201
 clang	after	20	1	9	1	3	235	228
 clang	after	21	1	9	1	3	300	274

@@ -1,9 +1,7 @@
-In file included from program.cpp:10:
-In file included from ../../../../../../include/galoot/core.hpp:12:
-../../../../../../include/galoot/core/mv.hpp:601:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
-  601 |     static_assert(false, "mv: give the coefficients one by one, not as one "
-      |                   ^~~~~
-program.cpp:84:19: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<4UL>' requested here
+program.cpp:84:15: error: chosen constructor is explicit in copy-initialization
    84 |   const Point s = {{1, 2, 3, 1}};
-      |                   ^
+      |               ^   ~~~~~~~~~~~~~~
+../../../../../../include/galoot/core/mv.hpp:600:22: note: explicit constructor declared here
+  600 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                      ^
 1 error generated.

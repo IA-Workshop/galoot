@@ -4,7 +4,7 @@ In file included from ../../../../../../include/galoot/core.hpp:12,
 program.cpp:99:18:   required from here
    99 |   r += get<"e21">(b);
       |        ~~~~~~~~~~^~~
-../../../../../../include/galoot/core/mv.hpp:1105:19: error: static assertion failed: get: the type stores this blade with the other orientation; its layout names each blade by its indices in increasing order, as e12 for e21; use that name and negate the value
- 1105 |     static_assert(false, "get: the type stores this blade with the other "
+../../../../../../include/galoot/core/mv.hpp:1106:19: error: static assertion failed: get: the type stores this blade with the other orientation; its layout names each blade by its indices in increasing order, as e12 for e21; use that name and negate the value
+ 1106 |     static_assert(false, "get: the type stores this blade with the other "
       |                   ^~~~~
   • ‘false’ evaluates to false
