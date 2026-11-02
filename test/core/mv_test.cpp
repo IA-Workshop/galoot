@@ -2126,6 +2126,45 @@ TEST_CASE("The helpers of conversion and exactness answer as stated") {
   CHECK(detail::holds_every_mask(motor_layout, other_line_layout));
 }
 
+namespace {
+
+// An overload set that takes either a point or a span of doubles, as a
+// user's function might.
+[[maybe_unused]] constexpr int takes(const Point<double>& /*point*/) {
+  return 1;
+}
+[[maybe_unused]] constexpr int takes(std::span<const double> /*values*/) {
+  return 2;
+}
+
+// Whether a C array of doubles reaches the span overload.
+constexpr bool array_takes_the_span() {
+  // A C array is the case under test.
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+  const double raw[4] = {1, 2, 3, 1};
+  return takes(raw) == 2;
+}
+
+} // namespace
+
+// Reference: contract: every constructor that takes one argument is
+//   explicit, the one that rejects coefficients given as a C array or
+//   braced list among them, so a C array of the scalar type converts to no
+//   multivector implicitly, and an overload set of a point and a span of
+//   doubles called with a C array chooses the span
+TEST_CASE("A C array converts to no multivector implicitly") {
+  // NOLINTBEGIN(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+  static_assert(!std::is_convertible_v<double (&)[4], Point<double>>);
+  static_assert(!std::is_convertible_v<const double (&)[4], Point<double>>);
+  static_assert(!std::is_convertible_v<double (&)[6], Point<double>>);
+  static_assert(!std::is_convertible_v<double (&)[1], Scalar<double>>);
+  static_assert(std::is_constructible_v<Point<double>, double (&)[4]>);
+  CHECK_FALSE(std::is_convertible_v<double (&)[4], Point<double>>);
+  // NOLINTEND(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+  static_assert(array_takes_the_span());
+  CHECK(array_takes_the_span());
+}
+
 // Reference: contract: generic code that probes a construction is told yes
 //   for each misuse that a constructor rejects with a message, a lossy
 //   conversion, a whole array of coefficients, and a wrong count, and no

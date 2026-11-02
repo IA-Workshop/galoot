@@ -1064,7 +1064,7 @@ foreach(case IN ITEMS brace paren cast)
   mv_rejects(conversion_lossy_${case} "${mv_lossy}" ONE_ERROR
     FORBID "${mv_count}" "${mv_one_by_one}")
 endforeach()
-foreach(case IN ITEMS as_array as_braced_list as_braced_list_copy)
+foreach(case IN ITEMS as_array as_braced_list)
   mv_rejects(coefficients_${case} "${mv_one_by_one}" ONE_ERROR
     FORBID "${mv_count}" "${mv_lossy}" "${mv_not_scalar}")
 endforeach()
