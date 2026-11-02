@@ -52,11 +52,13 @@ SIGN_TABLE_SIZES = (3, 4, 5)
 MAX_N = 6  # largest n of the signature tables
 
 # The forms whose full product tables are written out, by the name of their
-# golden values: a diagonal degenerate form, a non-diagonal one with two null
-# generators, a degenerate non-diagonal one whose first pivot is zero, and a
-# dense one with terms of up to four blades and coefficients up to 31.
+# golden values: a diagonal degenerate form, two non-diagonal ones with two
+# null generators, of an even and an odd number of generators, a degenerate
+# non-diagonal one whose first pivot is zero, and a dense one with terms of up
+# to four blades and coefficients up to 31.
 GP_TABLE_FORMS = (
     ("rigid_3", "rigid(3)", ref.rigid(3)),
+    ("conformal_2", "conformal(2)", ref.conformal(2)),
     ("conformal_3", "conformal(3)", ref.conformal(3)),
     ("degenerate_3", "the degenerate form", [[0, 1, 0], [1, 0, 0], [0, 0, 0]]),
     ("random_1", "seeded random form 1", ref.random_forms()[1]),

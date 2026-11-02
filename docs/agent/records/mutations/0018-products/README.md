@@ -23,6 +23,28 @@ Each mixed call gives one error, the message of the product as written. Sizes of
 | mixed algebras, `geometric_product(a, b)` | 1974, 14 | 507, 14 |
 | mixed scalars, `wedge(a, b)` | 1369, 12 | 493, 14 |
 
+After WU10a, which reworded these messages and added the antiproducts and the narrow-scalar messages (`../0019-antiproducts/diagnostics.py`, `out/diagnostics.tsv` there): the length of the first error line, which holds the message, then the longest line and the line count of the whole output, `-fsyntax-only`, g++ 16.2.1 and clang++ 23.1.4. Every source gives one line that holds `error:`.
+
+| Source | GCC first, longest, lines | Clang first, longest, lines |
+| --- | --- | --- |
+| mixed algebras, `a * b`, `a ^ b`, `a % b`, `a & b` | 155, 2412 to 2416, 14 | 249, 495 to 499, 11 |
+| mixed algebras, `geometric_product(a, b)` | 166, 2424, 14 | 260, 507, 11 |
+| mixed algebras, `wedge(a, b)` | 155, 2412, 14 | 249, 495, 11 |
+| mixed algebras, `geometric_antiproduct(a, b)` | 171, 2428, 14 | 265, 511, 11 |
+| mixed algebras, `antiwedge(a, b)` | 159, 2416, 14 | 253, 499, 11 |
+| mixed scalars, `a * b`, `a ^ b`, `a % b`, `a & b` | 157, 1819 to 1823, 14 | 208, 493 to 497, 11 |
+| mixed scalars, `geometric_product(a, b)` | 169, 1831, 14 | 220, 505, 11 |
+| mixed scalars, `wedge(a, b)` | 157, 1819, 14 | 208, 493, 11 |
+| mixed scalars, `geometric_antiproduct(a, b)` | 173, 1835, 14 | 224, 509, 11 |
+| mixed scalars, `antiwedge(a, b)` | 161, 1823, 14 | 212, 497, 11 |
+| narrow scalar, `a * b` | 200, 654, 9 | 267, 294, 8 |
+| narrow scalar, `geometric_product(a, b)` | 212, 662, 9 | 279, 314, 8 |
+| narrow scalar, `a % b` | 204, 658, 9 | 275, 296, 8 |
+| narrow scalar, `geometric_antiproduct(a, b)` | 220, 670, 9 | 291, 322, 8 |
+| `(p ^ q) == line`, a compiler error, not a library message | 966, 968, 29 | 404, 520, 8 |
+
+The longest GCC line is now the "In instantiation of" line of the rejecting function, with both operand types written out in full; it is about 450 characters longer than the WU9 figure above. The WU9 figures were taken at a revision before that review's fixes, and the difference was not traced further. On Clang the first line begins "static assertion failed due to requirement" and names the two types compared, or `scalar_holds_every_coefficient_of_the_product` (or `_antiproduct`) for a narrow scalar.
+
 The long GCC lines hold the compiler's expansion of the operand types, whose layouts print as masks; the message is the first thing on the first line, as with the earlier messages of the core.
 
 ## Behavior to know

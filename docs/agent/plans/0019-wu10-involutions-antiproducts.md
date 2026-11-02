@@ -1,6 +1,6 @@
 # 0019 WU10: involutions, complements, antiproducts, sums and scaling
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started. WU10a is claimed.
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU10a implemented on its branch, awaiting review (section 10).
 - Branches, from `develop` at `19273a6` (the merge of WU9) or later, one after the other (section 1, departure 1):
   - WU10a: `feature/core-antiproducts`, worktree `.claude/worktrees/core-antiproducts`.
   - WU10b: `feature/core-linear`, worktree `.claude/worktrees/core-linear`, branched after WU10a merges.
@@ -313,4 +313,45 @@ Size M overall, as plan 0001 has it: about 2.2M to 3.2M tokens in all. The mecha
 
 ## 10. Outcome
 
-Not started. WU10a is claimed.
+### WU10a
+
+Implemented on `feature/core-antiproducts` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, in separate commits before the code). Blind review (Claude, agent, Opus 5.5, blind-reviewer role, separate context): merge after fixes, F1 blocking; the fixes are listed below. A delta review follows; not merged.
+
+Commits, in the order of section 4: the six test commits of the test author (approach 1, 3, 5, 7, 9, and a lint pass over them); then F13's wording (approach 2); F5 and F12 for the geometric product (4); the antiproducts with `%` and `&` (6); `unary.hpp` with `~` and `!` and its line in `core.hpp` (8); the trace rows (10); the `slow` label of `core.identities` with the measured growth in the antiproduct's comment; the records (11).
+
+Departures and readings (C20):
+
+1. The result-layout variable templates are public names in `galoot::core` (`geometric_product_layout`, `wedge_layout`, `geometric_antiproduct_layout`, `antiwedge_layout`, `right_complement_layout`, `left_complement_layout`), not `detail::wedge_layout` as question 5(c) wrote. Clang 23 prints the qualifier, so in `detail` they leave `detail::` on the first line that criterion 4 forbids (decision 0166, with the probe). They are six new public names, documented in place; no test asserts them directly, only through the result types they declare.
+2. `galoot::core`'s header set in `CMakeLists.txt` lacked `product.hpp` since WU9, so the header checks never compiled it on its own. Both `product.hpp` and `unary.hpp` are now listed (a build-description change, so the final runs cover every test).
+3. The trace table also gains `a ^ b is the wedge` for 7.1, which section 2 names and the test author's list left out; the WU9 operator test already states it.
+4. `core.identities` carries the `slow` label, by measurement (records README): 19 s and 295 G instructions on GCC, 22 s and 299 G on Clang, 4.6 times `mv_test.cpp`.
+5. The rejecting function keeps WU9's shape, one function with a branch per spelling and cause (16 messages), rather than moving each message into its catch-all.
+6. The first run of the mutant "`%` calls `geometric_product`" was invalid on Clang (see the README) and was rewritten and run again on both presets.
+7. One diagnostic probe (the longest GCC line of one compile-fail source) and the `clang-format` checks ran without `tools/timed`; every build and test did run under it.
+8. W2: the test author's commits came first and the code after, not interleaved as section 4 has it, so five commits in a row leave the project unbuildable: `3a22686`, `fdc1cb6`, `0d3d990` (test commits that need headers not yet written), and `c120caa` and `a53d386` (code commits that come before the antiproducts the test file needs). Each message says it does not build. W2 allows only the single test commit to fail. Also `5cb362a` (review fix F4) fails `tests.reference_markers`, a semicolon in two new markers, fixed in `c04ea8b`.
+9. `28dd10c` combines the antiproduct's comment figures with the `slow` label of the test author's test (no expected value changes).
+10. The first outcome reported the seven-preset run as passing "at `28dd10c`". Its run rows say `28dd10cad9d0-dirty`: the records of `47dab5c` (this outcome and the 0018 README) were uncommitted tracked files during the run. That run is superseded by the run after the review fixes, below.
+
+Test author's finding, for the coordinator: Clang 23 at its default limits cannot evaluate the product plans of the dense random forms 3 and 7 of n = 5 on `full<5>` times `full<5>`, nor the antiproduct of vectors with bivectors there, nor three bivectors through `%`; GCC 16 can. So `identities_test.cpp` checks those two forms on bivectors and vectors only. This is generation cost, which WU10a does not change, and it bounds what the public products accept on Clang for dense forms of five generators.
+
+Evidence:
+
+- Verification: the golden composition of the antiproducts over every blade pair of four forms and the oriented rigid(3) blades; the golden signs and complements of every blade of `full<3>` to `full<5>` and of rigid(3) oriented; the layouts by `static_assert` against layouts written from the definition; the De Morgan laws, their converses, the associativity of `%` and `&`, the involution and complement relations, and the product rules of the involutions over the signature set (seeded, exact). All pass.
+- Validation: for rigid(3), the antiscalar is the identity of ⟇ (Lengyel's statement), and a point and a plane meet in gx x + gy y + gz z + gw w; passes. Non-diagonal antiproducts: validation not performed, as the owner accepted at M2.
+- Mutants (`records/mutations/0019-antiproducts/README.md`): all 15 (the 11 of section 6, with the F5 check dropped in each of its four spellings) killed on gcc-debug and clang-debug, each by a test, none by a warning. The flipped sign of `left_complement_sign` is caught first by the unary map's own generation check in two programs and killed by `core.product` at run time.
+- Diagnostics: every rejection gives one error with the message on its first error line on both compilers; no public spelling shows `apply:`; Clang's first line for `(p ^ q) == line` names `wedge_layout<rga3, ...>`, with no `product_plan`, `detail::`, or enum cast. Sizes beside the WU9 table in `records/mutations/0018-products/README.md`.
+- W10 and P2 (pinned, three repeats): `product_test.cpp` 21.6 G to 43.0 G instructions on GCC and 19.2 G to 42.7 G on Clang; a unit that includes only `core.hpp` +5.2 M (+0.6%) on GCC and +6.7 M (+0.7%) on Clang.
+- Question 3, through the public `%`, the four rigid(3) pairs from n = 4 to 16: +106.8% on GCC (747 M to 1,545 M) and +356.5% on Clang (914 M to 4,174 M), against +0.1% and −0.3% through `*`. The absolute growth matches decision 0141's plan-level figures within a few percent; the percentages are lower because the public path adds n-independent kernel code. 0141's triggers are unchanged and none fired.
+- Final runs: all seven presets from new empty build trees at `03b9443`, the final revision of the build inputs, with a clean tree (the run rows say `03b9443276d1` without `-dirty`; the run log itself does not count toward a dirty tree, and every other file was committed before the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 263 tests, gcc-asan 255, clang-debug, clang-release, clang-asan, and lint 265, all passing. The trace gate, `clang-format --dry-run --Werror`, and `tools/runlog check` exit 0. The commit after it records these results and the run rows, and changes nothing else.
+
+After the review (findings of the blind review, each fixed in its own commit):
+
+- F1, blocking: on Clang 23 with libstdc++, the geometric antiproduct of two `full<5>` multivectors of conformal(3) does not build in an optimized build, or in any build with `_GLIBCXX_NO_ASSERTIONS`. Its plan takes about 950,000 of Clang's 1,048,576 default steps with libstdc++'s assertions, which libstdc++ turns on by itself only without optimization, and more than the limit without them. Measured by the implementer with clang++ 23.1.4 on that pair: `-O0` builds; `-O1`, `-O2`, and `-O0 -D_GLIBCXX_NO_ASSERTIONS` fail at the step limit; `-O2 -D_GLIBCXX_ASSERTIONS` and `-O2 -fconstexpr-steps=1200000` build; libc++, GCC 16 at `-O0` and `-O2` with and without assertions, R(5,0,0), R(4,0,1), and the products `*`, `^`, `&` of the same conformal(3) operands all build. The `clang-measure` preset fails to build `core_product_test` and `core_identities_test` at this pair. Dense forms of five generators fail on Clang for `*` and `%` of `full<5>` at `-O0` already; GCC builds them. Fixed in `1fb18a4`: `product.hpp`'s header comment, `geometric_antiproduct`'s and `%`'s comments state the limit, the error the user sees, and the workaround; `apply`'s comment in `mv.hpp` no longer claims `full<5>` times `full<5>` on Clang with and without the assertions.
+  - The configuration gap, for the coordinator and the owner: every test preset defines `_GLIBCXX_ASSERTIONS` (the `checks` and `sanitizers` blocks of `CMakePresets.json`), so no preset of the suite builds what most Clang users ship, an optimized build without libstdc++'s assertions. Only the `clang-measure` presets do, and they are not in the merge checks. Adding a no-assertions optimized Clang build of `core.product` and `core.identities` to the merge checks would have caught F1; it costs one more build tree. No toolchain-matrix record names the presets' flags beyond decision 0006, which is not rewritten; a new decision would record the choice.
+- F2: two compile-fail tests take two scalars, whose product fits `std::int8_t` and whose antiproduct does not (`02d64d0`). The review's two surviving mutants (the antiproduct's spellings checking the product's coefficients) now die on gcc-debug and clang-debug, each by its new test.
+- F3: departures 8 to 10 above, and the final run below.
+- F4: each layout name has its own `///` comment, and the tests assert the blades each holds and that a non-algebra is rejected (`5cb362a`, markers fixed in `c04ea8b`).
+- F5: `golden.py` now writes the product table of conformal(2), four generators with a coupled null pair, and the table test of the products and the composed antiproduct test cover it (`c04ea8b`), so a non-diagonal form at even n is checked against an exact table.
+- F6: configuring stops when a header under `include/galoot` is missing from the header set (`f129e01`), checked with an unlisted probe header.
+- F7: the examples declare their names and compile; every rejecting overload states the requires-expression answer; `(!x) == y`; derived classes get the mv type from `~` and `!`; `std::views` beside `std::ranges` (`35ba6b6`).
+- F8 (the `slow` label): accepted by the review; its notes go to the coordinator.

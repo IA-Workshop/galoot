@@ -12,5 +12,6 @@
 #include <galoot/core/mv.hpp>            // IWYU pragma: export
 #include <galoot/core/plan.hpp>          // IWYU pragma: export
 #include <galoot/core/product.hpp>       // IWYU pragma: export
+#include <galoot/core/unary.hpp>         // IWYU pragma: export
 
 #endif // GALOOT_CORE_HPP

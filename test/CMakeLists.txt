@@ -1306,22 +1306,44 @@ set_tests_properties(
   tools.test_references_citations_rejects tools.test_references_citations_accepts
   PROPERTIES LABELS "tools;tools.test_references")
 
-# core.product: the geometric product and the wedge, as functions and as the
-# operators * and ^, against the reference tables.
+# core.unary: the reverse, the antireverse, the grade involution, and the
+# complements, as functions and as the operators ~ and !, against the
+# reference signs and complements.
+galoot_add_test(MODULE core COMPONENT unary)
+target_link_libraries(core_unary_test PRIVATE galoot_golden)
+
+# core.identities: the De Morgan laws, the associativity of the
+# antiproducts, and the product rules of the involutions, through the public
+# functions and operators over many signatures. It tests product.hpp and
+# unary.hpp together, so it also carries their labels. It is labeled slow:
+# its one source takes about 20 s and 1.4 GB to compile, several times any
+# other test, so it would set the pace of every build after a change to a
+# core header it does not test.
+galoot_add_test(MODULE core COMPONENT identities)
+set_property(TEST core.identities APPEND PROPERTY LABELS core.product
+  core.unary slow)
+
+# core.product: the geometric product, the wedge, and their antiproducts, as
+# functions and as the operators * ^ % &, against the reference tables.
 galoot_add_test(MODULE core COMPONENT product)
 target_link_libraries(core_product_test PRIVATE galoot_test_support
   galoot_golden)
 
-# core.product_mixed_<cause>_<spelling>: a product of operands from two
-# algebras or with two scalar types fails to compile with one error, the
-# message of the product as written.
-set(product_algebras "the operands are in different algebras${semicolon} both must be in the same one")
-set(product_scalars "the operands have different scalar types${semicolon} convert one explicitly first")
-foreach(spelling IN ITEMS geometric_product wedge times caret)
+# core.product_mixed_<cause>_<spelling>: a product or an antiproduct of
+# operands from two algebras or with two scalar types fails to compile with
+# one error, the message of the product as written.
+set(product_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
+set(product_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
+foreach(spelling IN ITEMS geometric_product wedge times caret
+    geometric_antiproduct antiwedge percent ampersand)
   if(spelling STREQUAL "times")
     set(written "a * b")
   elseif(spelling STREQUAL "caret")
     set(written "a ^ b")
+  elseif(spelling STREQUAL "percent")
+    set(written "a % b")
+  elseif(spelling STREQUAL "ampersand")
+    set(written "a & b")
   else()
     set(written "${spelling}")
   endif()
@@ -1335,4 +1357,46 @@ foreach(spelling IN ITEMS geometric_product wedge times caret)
     SOURCE core/product_mixed_scalars_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_scalars}"
     ONE_ERROR FORBID "different algebras")
+endforeach()
+
+# core.product_narrow_scalar_<spelling>: a product with an exact coefficient
+# that the scalar type cannot hold, e12 e12 = -10000 in diag(100, 100) over
+# std::int8_t, fails to compile with one error, the message of the product
+# as written; the message of the internal kernel must not appear.
+set(product_narrow "the scalar type cannot hold one of the product's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+foreach(spelling IN ITEMS geometric_product times)
+  if(spelling STREQUAL "times")
+    set(written "a * b")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
+    MESSAGE "${written}: ${product_narrow}"
+    ONE_ERROR FORBID "apply:")
+endforeach()
+# The same for the geometric antiproduct, whose plan multiplies the
+# complements: the right complement of 1 is e12, so it holds -10000 too.
+set(antiproduct_narrow "the scalar type cannot hold one of the antiproduct's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+foreach(spelling IN ITEMS geometric_antiproduct percent)
+  if(spelling STREQUAL "percent")
+    set(written "a % b")
+  else()
+    set(written "${spelling}")
+  endif()
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_${spelling}_fail.cpp
+    MESSAGE "${written}: ${antiproduct_narrow}"
+    ONE_ERROR FORBID "apply:")
+  # On full<2> the product and the antiproduct have the same coefficients
+  # up to sign, so these also take two scalars, whose product is 1 and whose
+  # antiproduct is -10000 e12: a check of the product's coefficients in place
+  # of the antiproduct's lets them through.
+  galoot_add_compile_fail_test(NAME product_narrow_scalar_on_scalars_${spelling}
+    MODULE core COMPONENT product
+    SOURCE core/product_narrow_scalar_on_scalars_${spelling}_fail.cpp
+    MESSAGE "${written}: ${antiproduct_narrow}"
+    ONE_ERROR FORBID "apply:")
 endforeach()
