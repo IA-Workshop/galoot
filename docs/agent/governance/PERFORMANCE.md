@@ -42,7 +42,7 @@ A run-time benchmark takes inputs the compiler cannot know and uses its results,
 
 ### P7 Performance history
 
-The measurements of P1, P2, and P6 are kept in `docs/agent/records/performance/`, each with its revision, toolchain, machine, options, and workload. Once the history shows how a quantity varies, a change that can affect the quantity is compared with the history by a criterion stated before the comparison, and a change beyond the variation is reported with its cause. A change of compiler, library, or machine is marked in the history so that it is not read as a change of the code.
+The measurements of P1, P2, and P6 are kept in `docs/agent/records/performance/`, each with its revision, toolchain, machine, options, and workload. Once the history shows how a quantity varies, a change that can affect the quantity is compared with the history by a criterion stated before the comparison, and a change beyond the variation is reported with its cause. A change of compiler, library, or machine is marked in the history so that it is not read as a change of the code. The history also holds the run log of P13 in distilled form: for each kind of run (its step, preset, selection family, placement, and outcome), the number of runs, the revisions and times they span, the toolchain in force, and the first, latest, least, median, and range of their wall time, peak memory, and retired instructions.
 
 ## Development cost
 
@@ -57,6 +57,7 @@ A test run holds the tests a change can affect, and no others until a merge need
 | The build description, compiler options, or toolchain | Every test built under what changed |
 | A vendored dependency in `include/ext/` | Every test that uses it |
 | A reference script or data in `test/reference/` | The checks that read it |
+| The run log, a campaign log, or the history in `docs/agent/records/performance/` | `tools/runlog check`, once for the merge (P9) |
 | Documentation only | None |
 
 Tests carry labels for their module and component, so a selection is named by labels rather than listed test by test.
@@ -71,6 +72,8 @@ Each merge runs the checks for the scope it integrates. A lower level never runs
 | Merge into a feature or subfeature branch | The selection of P8 for everything the branch changed since it left its parent, in each configuration the change can affect |
 | Merge into `develop` | The full suite on each supported compiler, one of them under the sanitizers of STYLE S5, and the mechanical style checks (W5) |
 | Release | The full suite in every supported configuration, the benchmarks, and an update of the performance history (W13) |
+
+A merge that changes a log under `docs/agent/records/performance/` runs `tools/runlog check` on the merged tree before the merge is committed, once for the merge and not in each configuration, and `tools/runlog prune` when the check reports removed rows. The CTest test `tools.runlog_check` carries the label `runlog` and is left out of the presets' runs.
 
 A test long enough to slow the edit and test cycle carries the label `slow`. It runs before a commit only when the change touches the component it tests, and otherwise from the next merge level up. Deferral moves a check to a later merge; it never omits one.
 
@@ -88,7 +91,7 @@ A run builds only the targets its selection needs. Build directories persist bet
 
 ### P13 Record of a run
 
-Each build and test run is timed by `tools/timed`, which appends its wall time, revision, branch, preset, selection, and exit status to `docs/agent/records/performance/runs.tsv`. Where the machine exposes them, a run also records peak memory, user-space performance counters (retired instructions, cycles, and cache references and misses at each level), and the package energy counter, each with the processor it ran on; a quantity the machine does not expose is recorded as unavailable. The energy counter covers the whole package, so an energy figure is comparable only for a run made while the machine is otherwise idle, and says so (decision 0018). These times are tracked and noted, never asserted on: they show how long the suites take and how that changes. The message of each merge names the selection that ran, its configurations, its outcome, its wall time, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).
+Each build and test run is timed by `tools/timed`, which appends its wall time, revision, branch, preset, selection, and exit status to the run log, `docs/agent/records/performance/runs.tsv`. The runs of a measurement campaign go to the campaign's own log instead, named when the run starts and committed with the campaign's records. Where the machine exposes them, a run also records peak memory, user-space performance counters (retired instructions, cycles, and cache references and misses at each level), and the package energy counter, each with the processor it ran on; a quantity the machine does not expose is recorded as unavailable. The energy counter covers the whole package, so an energy figure is comparable only for a run made while the machine is otherwise idle, and says so (decision 0018). These times are tracked and noted, never asserted on: they show how long the suites take and how that changes. The runs of the checks of a merge or a milestone gate are named `gate:<selection>`, and a compaction keeps every row so named. When a log grows too large to work with, the owner may approve its compaction at a recorded boundary revision: its rows up to the boundary are distilled into the performance history (P7) and removed from the log, except these, which stay in the log unchanged: the rows named `gate:<selection>`; the workflow runs of named presets at any revision; and, at committed revisions, the configure, build, and test runs of named presets, the `lint` and `gate` steps, and the `check` and `trace` steps of the cheap gates `tools/runlog` names (`trace`, `trace-gate`, `convention-trace`, `markers`, `golden`, `citations`, `golden-facts`, `reference-markers`, `golden-check`, `conventions_check`); and the few rows that later merges of other branches need. Any other row, a gate run under another name or on an uncommitted tree among them, is counted in the history and is retrieved from version control by the command the history names. The message of each merge names the selection that ran, its configurations, its outcome, its wall time, and any check deferred to a later merge (P9). Agent work also records its agent cost (W10).
 
 ## The development machine
 

@@ -252,6 +252,10 @@ def kept_by_rule(tool, directory):
         # Style checks.
         row(at(8), clean, "lint", "-", "ruff", "1.0"),
         row(at(9), clean, "lint", "lint", "clang-tidy units", "1.0"),
+        # A selection that starts with gate: marks a gate run, which stays
+        # at any step and revision.
+        row(at(12), dirty, "build", "gcc-debug", "gate:all-clean", "1.0"),
+        row(at(13), dirty, "test", "-", "gate:trace", "1.0"),
     ]
     # Each cheap gate's family, as a check step and as a trace step.
     gates = ("trace", "trace-gate", "convention-trace", "markers", "golden",

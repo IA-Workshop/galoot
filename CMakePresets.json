@@ -280,6 +280,11 @@
       },
       "output": {
         "outputOnFailure": true
+      },
+      "filter": {
+        "exclude": {
+          "label": "^runlog$"
+        }
       }
     },
     {
