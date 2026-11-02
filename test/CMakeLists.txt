@@ -1498,7 +1498,7 @@ endforeach()
 # multivector's scalar type fails to compile with one error, the message of
 # the operation as written. The condition compares the two types, so that
 # the compilers print them, the scalar's first.
-set(linear_scalar_type "the scalar is not of the multivector's scalar type${semicolon} write it in that type, as 2.0 for 2 when the scalar type is double")
+set(linear_scalar_type "the scalar is not of the multivector's scalar type, the second of the two types shown${semicolon} convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(linear_int_for_double "‘int’ is not the same as ‘double’")
 else()

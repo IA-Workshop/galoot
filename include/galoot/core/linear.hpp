@@ -383,9 +383,10 @@ template <class S, class X>
   requires detail::scalar_of_another_type<S, X>
 constexpr X operator*(const S& /*s*/, const X& x) {
   static_assert(std::is_same_v<S, typename X::scalar_type>,
-                "s * a: the scalar is not of the multivector's scalar type; "
-                "write it in that type, as 2.0 for 2 when the scalar type is "
-                "double");
+                "s * a: the scalar is not of the multivector's scalar type, "
+                "the second of the two types shown; convert it to that type "
+                "first, as 2.0 for 2 over double or std::int64_t{2} over "
+                "std::int64_t");
   return x;
 }
 
@@ -395,9 +396,10 @@ template <class X, class S>
   requires detail::scalar_of_another_type<S, X>
 constexpr X operator*(const X& x, const S& /*s*/) {
   static_assert(std::is_same_v<S, typename X::scalar_type>,
-                "a * s: the scalar is not of the multivector's scalar type; "
-                "write it in that type, as 2.0 for 2 when the scalar type is "
-                "double");
+                "a * s: the scalar is not of the multivector's scalar type, "
+                "the second of the two types shown; convert it to that type "
+                "first, as 2.0 for 2 over double or std::int64_t{2} over "
+                "std::int64_t");
   return x;
 }
 
@@ -407,9 +409,10 @@ template <class X, class S>
   requires detail::scalar_of_another_type<S, X>
 constexpr X operator/(const X& x, const S& /*s*/) {
   static_assert(std::is_same_v<S, typename X::scalar_type>,
-                "a / s: the scalar is not of the multivector's scalar type; "
-                "write it in that type, as 2.0 for 2 when the scalar type is "
-                "double");
+                "a / s: the scalar is not of the multivector's scalar type, "
+                "the second of the two types shown; convert it to that type "
+                "first, as 2.0 for 2 over double or std::int64_t{2} over "
+                "std::int64_t");
   return x;
 }
 

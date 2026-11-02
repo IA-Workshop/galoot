@@ -54,9 +54,11 @@ One text per spelling, from the three catch-alls constrained by `multivector<X> 
 
 | Spelling | Text |
 | --- | --- |
-| `s * a` | `s * a: the scalar is not of the multivector's scalar type; write it in that type, as 2.0 for 2 when the scalar type is double` |
-| `a * s` | `a * s: the scalar is not of the multivector's scalar type; write it in that type, as 2.0 for 2 when the scalar type is double` |
-| `a / s` | `a / s: the scalar is not of the multivector's scalar type; write it in that type, as 2.0 for 2 when the scalar type is double` |
+| `s * a` | `s * a: the scalar is not of the multivector's scalar type, the second of the two types shown; convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t` |
+| `a * s` | `a * s: the scalar is not of the multivector's scalar type, the second of the two types shown; convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t` |
+| `a / s` | `a / s: the scalar is not of the multivector's scalar type, the second of the two types shown; convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t` |
+
+Reworded after the blind review (its F5), by the implementer, with the expectations in `test/CMakeLists.txt` in the same listed commit: the earlier fix, "write it in that type, as 2.0 for 2 when the scalar type is double", fitted only a double multivector, while the rule rejects 2 for `std::int64_t`, 2.0 for float, and every scalar of another type. The new text points to the type the compiler prints second in the condition, `std::is_same_v<S, X::scalar_type>` (Clang's first line; GCC's note "'int' is not the same as 'double'"), and gives an example over double and over `std::int64_t`.
 
 Required beside the text in `core.linear_scale_left_int`, `core.linear_scale_right_int`, and `core.linear_divide_int`: on GCC 16 the note `‘int’ is not the same as ‘double’`, on Clang 23 `due to requirement 'std::is_same_v<int, double>'` (measured on a stand-in). `core.linear_scale_left_fraction` (2.5 times a `std::int64_t` line) requires only the `s * a` text. With `core.hpp` included, `core.linear_scale_with_products` (`a * 2`) must give the `a * s` text and not `a * b:`, and `core.linear_product_with_scaling` (a double line times a float motor) must give the products' `a * b: the operands have different scalar types; give both types the same scalar type` and neither `s * a:` nor `a * s:`.
 
