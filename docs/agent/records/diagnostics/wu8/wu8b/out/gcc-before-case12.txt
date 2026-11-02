@@ -1,14 +1,14 @@
 program.cpp: In function ‘double use(int)’:
-program.cpp:56:37: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
-   56 |   gc::mv<rga3, point_layout, double&> s{};
+program.cpp:62:37: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+   62 |   gc::mv<rga3, point_layout, double&> s{};
       |                                     ^
-program.cpp:56:37: note: constraints not satisfied
+program.cpp:62:37: note: constraints not satisfied
 In file included from /usr/include/c++/16/compare:44,
                  from /usr/include/c++/16/array:40,
                  from program.cpp:5:
   • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double&]’:
   • required from here
-    program.cpp:56:37:   
+    program.cpp:62:37:   
   • required for the satisfaction of ‘movable<_Tp>’ [with _Tp = double&]
     /usr/include/c++/16/concepts:273:13:   
       273 |     concept movable = is_object_v<_Tp> && move_constructible<_Tp>
@@ -26,6 +26,6 @@ In file included from /usr/include/c++/16/compare:44,
       273 |     concept movable = is_object_v<_Tp> && move_constructible<_Tp>
           |                       ^~~~~~~~~~~~~~~~
   • ‘double&’ is not an object type
-program.cpp:57:10: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘int’
-   57 |   r += s.coefficients[0];
+program.cpp:63:10: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘int’
+   63 |   r += s.coefficients[0];
       |          ^~~~~~~~~~~~

@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:917:17: error: static assertion failed: truncate: the target must be an mv type of the same algebra and scalar type, not a class derived from one; truncate changes only which blades are held
+  917 |   static_assert(false, "truncate: the target must be an mv type of the same "
+      |                 ^~~~~
+program.cpp:92:24: note: in instantiation of function template specialization 'galoot::core::truncate<double, rga3, blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, double>' requested here
+   92 |   const double s = gc::truncate<double>(q);
+      |                        ^
+1 error generated.

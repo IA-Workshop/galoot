@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:1105:19: error: static assertion failed: get: the type stores this blade with the other orientation; its layout names each blade by its indices in increasing order, as e12 for e21; use that name and negate the value
+ 1105 |     static_assert(false, "get: the type stores this blade with the other "
+      |                   ^~~~~
+program.cpp:99:8: note: in instantiation of function template specialization 'galoot::core::get<detail::name_list<4>{{"e21"}}, const galoot::core::mv<rga3, blade_set<6>{{{{3, 1}, {5, 1}, {9, 1}, {6, 1}, {10, 1}, {12, 1}}}}, double> &>' requested here
+   99 |   r += get<"e21">(b);
+      |        ^
+1 error generated.

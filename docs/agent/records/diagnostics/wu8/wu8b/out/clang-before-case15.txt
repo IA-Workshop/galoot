@@ -1,5 +1,5 @@
-program.cpp:66:15: error: no matching constructor for initialization of 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
-   66 |   const Point s{{1, 2, 3, 1}};
+program.cpp:72:15: error: no matching constructor for initialization of 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
+   72 |   const Point s{{1, 2, 3, 1}};
       |               ^~~~~~~~~~~~~~~
 <before>/include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit copy constructor) not viable: cannot convert initializer list argument to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>'
   197 | struct mv : detail::storage_of<Alg, Blades, T> {

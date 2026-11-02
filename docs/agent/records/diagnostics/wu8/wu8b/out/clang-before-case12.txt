@@ -1,5 +1,5 @@
-program.cpp:56:7: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = double &]
-   56 |   gc::mv<rga3, point_layout, double&> s{};
+program.cpp:62:7: error: constraints not satisfied for class template 'mv' [with Alg = rga3, Blades = blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, T = double &]
+   62 |   gc::mv<rga3, point_layout, double&> s{};
       |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 <before>/include/galoot/core/mv.hpp:196:46: note: because 'double &' does not satisfy 'semiregular'
   196 | template <metric_like Alg, blade_set Blades, std::semiregular T>

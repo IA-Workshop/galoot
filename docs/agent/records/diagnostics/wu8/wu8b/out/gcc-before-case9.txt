@@ -1,10 +1,10 @@
 program.cpp: In function ‘double use(int)’:
-program.cpp:47:18: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(<brace-enclosed initializer list>)’
-   47 |   const Point s{q};
+program.cpp:53:18: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(<brace-enclosed initializer list>)’
+   53 |   const Point s{q};
       |                  ^
   • there are 7 candidates
 In file included from <before>/include/galoot/core.hpp:12,
-                 from program.cpp:8:
+                 from program.cpp:10:
     • candidate 1: ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {Values ...}; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’
       <before>/include/galoot/core/mv.hpp:254:46:
         254 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
@@ -13,8 +13,8 @@ In file included from <before>/include/galoot/core.hpp:12,
         • constraints not satisfied
           • <before>/include/galoot/core/mv.hpp: In substitution of ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(Values&& ...) [with Values = {const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>&}]’:
           • required from here
-            program.cpp:47:18:   
-               47 |   const Point s{q};
+            program.cpp:53:18:   
+               53 |   const Point s{q};
                   |                  ^
           • required by the constraints of ‘template<class Alg, blade_set<...auto...> Blades, class T> template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...)’
             <before>/include/galoot/core/mv.hpp:254:46:   

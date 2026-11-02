@@ -1,10 +1,10 @@
 In file included from ../../../../../../include/galoot/core.hpp:12,
-                 from program.cpp:8:
-../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<T> (&)[N]) [with long unsigned int N = 4; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double; std::remove_cvref_t<T> = double]’:
-program.cpp:66:29:   required from here
-   66 |   const Point s{{1, 2, 3, 1}};
+                 from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<_Sp> (&)[N]) [with long unsigned int N = 4; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double; std::remove_cvref_t<_Sp> = double]’:
+program.cpp:72:29:   required from here
+   72 |   const Point s{{1, 2, 3, 1}};
       |                             ^
-../../../../../../include/galoot/core/mv.hpp:537:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
-  537 |     static_assert(false, "mv: give the coefficients one by one, not as one "
+../../../../../../include/galoot/core/mv.hpp:601:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+  601 |     static_assert(false, "mv: give the coefficients one by one, not as one "
       |                   ^~~~~
   • ‘false’ evaluates to false

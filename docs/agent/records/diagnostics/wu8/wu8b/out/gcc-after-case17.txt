@@ -1,9 +1,9 @@
 program.cpp: In function ‘double use(int)’:
-program.cpp:74:19: error: conversion from ‘mv<[...],galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}},[...]>’ to non-scalar type ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}},[...]>’ requested
-   74 |   const Motor s = p;
+program.cpp:80:19: error: conversion from ‘mv<[...],galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}},[...]>’ to non-scalar type ‘mv<[...],galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}},[...]>’ requested
+   80 |   const Motor s = l;
       |                   ^
 In file included from ../../../../../../include/galoot/core.hpp:12,
-                 from program.cpp:8:
-../../../../../../include/galoot/core/mv.hpp:496:22: note: explicit conversion function was not considered
-  496 |   constexpr explicit mv(const mv<Alg, From, T>& /*source*/) {
+                 from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp:528:22: note: explicit conversion function was not considered
+  528 |   constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
       |                      ^~

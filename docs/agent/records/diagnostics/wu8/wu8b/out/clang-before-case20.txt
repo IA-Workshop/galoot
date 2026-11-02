@@ -1,0 +1,7 @@
+program.cpp:92:24: error: no member named 'truncate' in namespace 'galoot::core'
+   92 |   const double s = gc::truncate<double>(q);
+      |                        ^~~~~~~~
+program.cpp:92:39: error: expected '(' for function-style cast or type construction
+   92 |   const double s = gc::truncate<double>(q);
+      |                                 ~~~~~~^
+2 errors generated.

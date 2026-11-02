@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:464:17: error: static assertion failed due to requirement 'scalar_is_copyable': mv: the scalar type must be copyable and assignable, as a number is; give it copy construction and copy assignment, which a move-only type or a class with a const member lacks
+  464 |   static_assert(scalar_is_copyable,
+      |                 ^~~~~~~~~~~~~~~~~~
+program.cpp:95:61: note: in instantiation of template class 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, std::unique_ptr<double>>' requested here
+   95 |   const gc::mv<rga3, point_layout, std::unique_ptr<double>> s{};
+      |                                                             ^
+1 error generated.

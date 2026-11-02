@@ -31,7 +31,7 @@ FLAGS = ["-std=c++23", "-Wall", "-Wextra", "-Wpedantic", "-Wconversion",
          "-Wshadow", "-Werror", "-ffp-contract=off", "-fsyntax-only",
          "-fno-diagnostics-color"]
 COMPILERS = {"gcc": "g++", "clang": "clang++"}
-CASES = (0, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17)
+CASES = (0, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22)
 ERROR = re.compile(r"\berror:")
 
 

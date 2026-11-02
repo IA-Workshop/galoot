@@ -1,14 +1,14 @@
 program.cpp: In function ‘double use(int)’:
-program.cpp:62:41: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
-   62 |   const gc::mv<rga3, point_layout, fixed> s{};
+program.cpp:68:41: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+   68 |   const gc::mv<rga3, point_layout, fixed> s{};
       |                                         ^
-program.cpp:62:41: note: constraints not satisfied
+program.cpp:68:41: note: constraints not satisfied
 In file included from /usr/include/c++/16/compare:44,
                  from /usr/include/c++/16/array:40,
                  from program.cpp:5:
   • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = fixed]’:
   • required from here
-    program.cpp:62:41:   
+    program.cpp:68:41:   
   • required for the satisfaction of ‘constructible_from<_Tp>’ [with _Tp = fixed]
     /usr/include/c++/16/concepts:161:13:   
       161 |     concept constructible_from
@@ -29,17 +29,17 @@ In file included from /usr/include/c++/16/compare:44,
   • error: no matching function for call to ‘fixed::fixed()’
     • there are 3 candidates
       • candidate 1: ‘fixed::fixed(int64_t)’
-        program.cpp:30:12:
-           30 |   explicit fixed(std::int64_t value) : sixteenths(value * 16) {}
+        program.cpp:34:12:
+           34 |   explicit fixed(std::int64_t value) : sixteenths(value * 16) {}
               |            ^~~~~
         • candidate expects 1 argument, 0 provided
       • candidate 2: ‘constexpr fixed::fixed(const fixed&)’
-        program.cpp:29:8:
-           29 | struct fixed {
+        program.cpp:33:8:
+           33 | struct fixed {
               |        ^~~~~
         • candidate expects 1 argument, 0 provided
       • candidate 3: ‘constexpr fixed::fixed(fixed&&)’
         • candidate expects 1 argument, 0 provided
-program.cpp:63:30: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘const int’
-   63 |   r += static_cast<double>(s.coefficients[0].sixteenths);
+program.cpp:69:30: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘const int’
+   69 |   r += static_cast<double>(s.coefficients[0].sixteenths);
       |                              ^~~~~~~~~~~~
