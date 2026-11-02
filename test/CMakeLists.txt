@@ -1188,6 +1188,9 @@ foreach(case IN ITEMS other_algebra not_a_type other_scalar derived
     result_used)
   mv_rejects(part_${case} "${mv_part_target}" ONE_ERROR FORBID "truncate:")
 endforeach()
+# A requires-expression that probes part with such a target does not answer:
+# the probe compiles the rejection, as the comment of part says.
+mv_rejects(part_probe "${mv_part_target}" ONE_ERROR FORBID "truncate:")
 
 # core.mv_part_never_checks_<case>: one program, built with checking on
 # whatever the preset, takes the part on a line of a motor whose scalar or
