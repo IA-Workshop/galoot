@@ -59,3 +59,14 @@ Beyond the plan's list: `no_scalar_check`, `range_ignores_algebra`, `exact_scala
 ## After the storage base took the algebra, layout, and scalar (`af447ae`)
 
 `results-af447ae-storage-normal.tsv`: the mutants of the storage base and the class head (`mv_alg_unconstrained`, `no_default_initializer`, `shared_zero_initializer`, `one_value_implicit`, `equality_skips_last`, `equality_requires_removed`), normal mode, gcc-debug and clang-debug: all killed by tests, except `shared_zero_initializer` on clang-debug, equivalent there.
+
+## After the delta-review fixes (`0baa6f7`, code of `9f7ea99`)
+
+`results-0baa6f7-delta-{normal,runtime}.tsv`: 41 mutants, the five that survived the delta review added, on gcc-debug and clang-debug in both modes. Every mutant is killed by a test on both presets in both modes, except `shared_zero_initializer` on clang-debug, equivalent there. No build failed on warnings alone.
+
+| Delta review's survivor | Killed by |
+| --- | --- |
+| `base_drops_alg`, `base_drops_layout` (D1) | core.mv's `!has_equality_with<Point<double>, FourEuclidean>` and `<Line<double>, Bivectors>`; run-time mode: their CHECKs |
+| `mv_scalar_unconstrained` (D2) | core.mv's `!names_a_line<without_default>` |
+| `lookup_wide_at_nine` (D7) | core.mv's names in R(9,0,0), which then reach get's wide-algebra message |
+| `rational_sum_no_scale_cancel` (D8) | support.rational's 1/2^62 + 1/2^62 = 1/2^61 |

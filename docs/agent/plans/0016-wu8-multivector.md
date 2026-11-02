@@ -744,7 +744,7 @@ Departures of this round (C20):
 6. Probes outside a build or test, all through `tools/timed`: `h5:p10`, `h5:p11` (the claims of the reworded comments), `review-f7:p9:*` (which written places trigger the GCC defect).
 7. **The lint preset failed from `ed8be5a` to `f066f02`, unseen at the time.** clang-tidy's `bugprone-crtp-constructor-accessibility` read the storage base, whose first parameter was then the `mv` type, as a CRTP base with public constructors. The per-commit lint step built the lint preset and then printed `$?` after a command substitution in the same `echo`, so it printed 0 for a failed build: the builds' own logs show the failure at `ed8be5a`, `3d8df77`, `0b316df`, and `b123788`. The new lint tree of the final check at `f066f02` found it; `af447ae` fixes it (the base takes the algebra, layout, and scalar) and the lint preset passes there. The earlier lint steps of this unit printed the exit status directly or read the logs, and their logs show no failure (`d6a8a27`, `284c7e7`, `878b624`, `669f7e2`). The per-commit step now prints the exit status before anything else.
 8. Lint by hand of every compile-fail source at the final revision, not only the touched ones, finds tidy-check findings (trailing commas, include-cleaner) in 22 sources that this unit did not change (`git diff 965059e` is empty for each): `blade_product_overflow_fail.cpp`, `blade_product_sum_overflow_fail.cpp`, `blade_set_full_wide_fail.cpp`, `blade_set_index_of_bad_sign_fail.cpp`, `blade_set_index_of_repeated_adjacent_fail.cpp`, `blade_set_index_of_repeated_mask_fail.cpp`, `blade_set_merge_repeated_in_second_empty_first_fail.cpp`, and fifteen `plan_*_fail.cpp`. A defect outside the unit (W9), reported and not fixed here; every source this unit added or changed is clean.
-9. `develop` has not moved since `b89b9ba` merged it (`ebdd06d`), so the P9 checks run on this branch's head as it is.
+9. `develop` has not moved since `b89b9ba` merged it (`ebdd06d`), so the P9 checks run on this branch's head as it is. (Superseded: `develop` moved to `eb20336` during the delta review; see "Delta-review fixes" below.)
 
 | Finding | Fix | Commits |
 | --- | --- | --- |
@@ -786,3 +786,29 @@ Owner decisions, not implemented:
 3. HCI F12: whether `mv` is tuple-like, with a positional `get<0>` beside `get<"e41">`, and structured bindings; today `auto [all] = p;` binds the whole array.
 
 Checks at the end of the review fixes, at `9d6bb48` (build inputs those of `af447ae`; recorded in the commit after it): the seven presets from new, empty trees each built `all` and passed every test, gcc-debug 199 of 199, gcc-release 199 of 199, gcc-asan 191 of 191 (plan 0015's canary is not registered there), clang-debug 201 of 201, clang-release 201 of 201, clang-asan 201 of 201, lint 201 of 201 with clang-tidy clean over every built unit (no failed step in its log); `all_verify_interface_header_sets` and `format-check` passed on gcc-debug, clang-debug, and lint; `core.bare_compile` passed in each. The job pool had 23 of 23 slots free before and after. The delta review of the header changes listed above is pending.
+
+### Delta-review fixes (2026-11-01)
+
+The delta review (`docs/agent/records/reviews/2026-11-01-wu8a-delta.md`, merged at `d203322`) accepted the review fixes after one test-only fix.
+
+Correction, dated 2026-11-01 (D10): the review-fixes section above says the diagnostics record "was regenerated for the reviewed header (`b123788`)". The texts committed at `63513f1` were regenerated for `af447ae`, as the record's README says; `b123788` was the regeneration before it.
+
+| Finding | Fix | Commits |
+| --- | --- | --- |
+| D1 (blocks): the distinct storage base had no test that could fail | core.mv tests the expression `a == b` in a concept, `has_equality_with`, for a rigid(3) point against an R(4,0,0) point, a line against rigid(3)'s bivectors, and a line over double against one over float; the `equality_comparable_with` assertions stay as a record of the standard concept's answer | `b2edac9` (test-only) |
+| D2: the scalar's constraint in the template head | `names_a_line<without_default>` is false, `names_a_line<double>` and `<std::string>` true | `b2edac9` |
+| D3: decision 0150 named the superseded base | a dated addendum for `af447ae` | this record |
+| D4: the range message gave no fix | "...; use a layout whose blades are all in this algebra" | `067f53c` (test), `9f7ea99` |
+| D6: ONE_ERROR's comment overstated the check | "allows only error lines that hold one of those two texts; it does not count the lines" | `067f53c` |
+| D7: get at n = 9 | `get<"e19">`, `"e9"`, `"e123456789"` in R(9,0,0) | `b2edac9` |
+| D8: the rational sum's common-factor step | 1/2^62 + 1/2^62 = 1/2^61 | `b2edac9` |
+| D10 | the correction above | this record |
+
+Deferred or recorded as nits (not changed):
+
+- D5: GCC names the rule too, in its "evaluates to false" note after the masks, and the GCC side is untested (the mutant `repeat_rule_renamed` survives on GCC). A nit; the rule names are tested on Clang.
+- D9: the configure-time check finds a literal only when it lies wholly inside the source path; a literal straddling the path and the compiler's decoration, or naming an included header's path, would pass it. No present literal is of either kind (the reviewer's decoys fail all 103 compile-fail tests). A decoy run registered as a test would close it; later work.
+- D11: the K-value constructor copies each by-value parameter into the array; `std::move(values)...` would save one copy per coefficient for a scalar that allocates. When such a scalar has a user.
+- D12: the 22 untouched compile-fail sources with lint findings, as departure 8 above (W9, reported).
+
+Header change after the delta review, for a delta review (decision 0094 item 3): `9f7ea99`, the range message's text only.
