@@ -34,7 +34,8 @@ GROUP_HEADER = (
 TOOLCHAIN = (
     "since_utc\thost\tgcc\tlibstdcxx\tclang\tcmake\tninja\tpython\tperf\t"
     "kernel\tsource\n"
-    "2026-01-01T00:00:00Z\th1\t16\t16\t23\t4.4\t1.13\t3.14\t7.3\t7.3\tfixture\n")
+    "2026-01-01T00:00:00Z\th1\t16\t16\t23\t4.4\t1.13\t3.14\t7.3\t7.3\tfixture\n"
+    "2026-01-01T00:05:00Z\th1\t17\t17\t23\t4.4\t1.13\t3.14\t7.3\t7.3\tfixture\n")
 NA = "unavailable"
 
 failures = []
@@ -164,6 +165,9 @@ def summary_values(tool, directory):
             maxrss="5"),
         row(at(4), "3" * 12, "workflow", "lint", "all-clean", "12.25",
             maxrss="7"),
+        # A run at the very second the second toolchain state begins: only
+        # that state was in force.
+        row(at(5), "4" * 12, "compile", "-", "x", "1.000", maxrss="9"),
     ]
     repo.write_log(rows)
     result = repo.run("summary", repo.path(LOG))
@@ -179,6 +183,10 @@ def summary_values(tool, directory):
          "h1", "unrecorded",
          "1", "7.500", "7.500", "7.500", "7.500", "0.000",
          "0", NA, NA, NA, NA, NA, "0", NA, NA, NA, NA, NA],
+        ["-", "-", "compile", "-", "x", "shared", "pass", "1", "0", "1",
+         at(5), at(5), "4" * 12, "4" * 12, "h1", "2026-01-01T00:05:00Z",
+         "1", "1.000", "1.000", "1.000", "1.000", "0.000",
+         "1", "9", "9", "9", "9", "0", "0", NA, NA, NA, NA, NA],
         ["-", "-", "measure", "-", "ceiling-cert", "shared", "pass", "2", "0",
          "1", at(2), at(2, 1), "1" * 12, "1" * 12, "h1", t0,
          "2", "0.010", "0.012", "0.010", "0.010", "0.002",
@@ -203,6 +211,20 @@ def summary_values(tool, directory):
     check("summary row count", len(got), len(expected))
     for i, (g, e) in enumerate(zip(got, expected)):
         check(f"summary row {i}", g, e)
+
+    # A log from before the cost columns has no mode column at all.
+    nine = "\t".join(COLUMNS[:9])
+    repo.write("nine.tsv", f"{nine}\n{rows[7]}\n")
+    result = repo.run("summary", repo.path("nine.tsv"))
+    check("summary of a nine-column log", result.stdout.splitlines()[1:],
+          [expected[2]])
+
+    # A second header line, as a doubled union merge leaves, is refused.
+    repo.write("doubled.tsv", f"{HEADER}\n{rows[0]}\n{HEADER}\n{rows[1]}\n")
+    result = repo.run("summary", repo.path("doubled.tsv"))
+    check("summary of a log with two headers", result.returncode, 2)
+    if "is a second header line" not in result.stderr:
+        failures.append(f"second header stderr: {result.stderr!r}")
 
 
 def kept_by_rule(tool, directory):
@@ -329,6 +351,9 @@ def checks(tool, directory):
             "group row 2 is")
     damaged(f"{HISTORY}/eras.tsv", lambda t: t.replace("\t11\t", "\t12\t"),
             f"era {boundary} of {LOG} is")
+    unknown = "\t".join(["f" * 12, LOG] + ["x"] * 32) + "\n"
+    damaged(f"{HISTORY}/groups.tsv", lambda t: t + unknown,
+            f"has a row of era {'f' * 12} of {LOG}, which")
     check("files restored", repo.history_files(), good)
     return repo, boundary, a, b, later
 
@@ -445,6 +470,52 @@ def second_era(tool, directory):
            probe_row(61)])
 
 
+def later_era_refusal(tool, directory):
+    """Case 11: a later compaction refuses when its boundary's log lacks a
+    row an earlier era kept, leaving every file as it was."""
+    repo, _, a, _, _ = compaction(tool, directory)
+    repo.commit("compact")
+    repo.write(LOG, repo.read(LOG).replace(a[1] + "\n", ""))
+    boundary2 = repo.commit("a kept row deleted")
+    before = repo.history_files()
+    result = repo.run("compact", boundary2)
+    check("refusal exit, kept row gone", result.returncode, 2)
+    if "lacks a row an earlier era kept" not in result.stderr:
+        failures.append(f"refusal stderr, kept row gone: {result.stderr!r}")
+    check("files unchanged, kept row gone", repo.history_files(), before)
+
+
+def campaign_log(tool, directory):
+    """Case 12: a campaign's own log is compacted with --log, and check
+    --log checks that log alone."""
+    repo, boundary, a, _, _ = compaction(tool, directory)
+    campaign = f"{os.path.dirname(LOG)}/campaign/runs.tsv"
+    os.makedirs(os.path.dirname(repo.path(campaign)))
+    repo.write(campaign, "\n".join([HEADER, probe_row(90), kept_row(91),
+                                    probe_row(92)]) + "\n")
+    boundary2 = repo.commit("compact the run log; a campaign log")
+    result = repo.run("compact", boundary2, "--log", campaign)
+    check("compact --log exit", result.returncode, 0)
+    check("campaign log after compaction",
+          repo.read(campaign).splitlines()[1:], [kept_row(91), probe_row(92)])
+    eras = [line.split("\t")[:4]
+            for line in repo.read(f"{HISTORY}/eras.tsv").splitlines()[1:]]
+    check("eras of two logs", eras,
+          [[boundary, LOG, "11", "5"], [boundary2, campaign, "3", "2"]])
+    repo.commit("compact the campaign log")
+    check("check of both logs", repo.run("check").returncode, 0)
+
+    # A removed row back in the run log: check --log of the campaign log
+    # does not look at it, and check of every log finds it.
+    repo.write(LOG, repo.read(LOG) + a[0] + "\n")
+    result = repo.run("check", "--log", campaign)
+    check("check --log of the campaign log", result.returncode, 0)
+    check("check --log names only that log",
+          result.stdout.strip().startswith(f"runlog: {campaign}:")
+          and LOG not in result.stdout, True)
+    check("check of every log", repo.run("check").returncode, 1)
+
+
 def merged_boundary_first(tool, directory):
     """Case 9: a branch that merged the boundary before the compaction has
     its rows inside the boundary's log, before the boundary's later rows."""
@@ -542,7 +613,7 @@ def main(tool, directory):
     directory = os.path.realpath(directory)
     cases = [summary_values, kept_by_rule, compaction, checks, refusals,
              pruning, merges, second_era, merged_boundary_first,
-             inserted_mid_log]
+             inserted_mid_log, later_era_refusal, campaign_log]
     for case in cases:
         try:
             case(tool, os.path.join(directory, case.__name__))
