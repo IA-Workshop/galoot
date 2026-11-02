@@ -977,4 +977,4 @@ The delta review (`docs/agent/records/reviews/2026-11-02-wu8b-delta.md`, blind-r
 
 Changes to code or comments after the delta review, for its delta review: `0c7daa9` (`mv.hpp`: the catch-all's `explicit`, its comment and suppressions, and apply's Requires paragraph). Test: `dbdc122`. Records: `9c9770b` (the review's merge), `6f74b92` (diagnostics, decision 0150, mutants), and this section.
 
-Checks at the final revision: in the commit after this section.
+Checks at `5bcd38b` (this section's commit; recorded in the commit after it): the seven presets from new, empty trees each configured, built `all` with no failed step, and passed every test: gcc-debug 239 of 239, gcc-release 239 of 239, gcc-asan 231 of 231, clang-debug 241 of 241, clang-release 241 of 241, clang-asan 241 of 241, lint 241 of 241 (clang-tidy as errors over every built unit); `all_verify_interface_header_sets` and `format-check` exited 0 on gcc-debug, clang-debug, and lint; each exit status was read directly after its command. The gates and `tools/runlog check` exited 0. The job pool had 23 of 23 slots free before and after. A delta review of `0c7daa9` is pending.
