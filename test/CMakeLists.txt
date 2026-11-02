@@ -1315,8 +1315,8 @@ target_link_libraries(core_product_test PRIVATE galoot_test_support
 # core.product_mixed_<cause>_<spelling>: a product of operands from two
 # algebras or with two scalar types fails to compile with one error, the
 # message of the product as written.
-set(product_algebras "the operands are in different algebras${semicolon} both must be in the same one")
-set(product_scalars "the operands have different scalar types${semicolon} convert one explicitly first")
+set(product_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
+set(product_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
 foreach(spelling IN ITEMS geometric_product wedge times caret)
   if(spelling STREQUAL "times")
     set(written "a * b")
