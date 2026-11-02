@@ -39,8 +39,8 @@ namespace detail {
 
 /// The ways a product is written, so that a message names the operation as
 /// the user wrote it.
-// NOLINTNEXTLINE(performance-enum-size): an int, so that a compiler prints
-// its values and not a byte.
+// An int, so that a compiler prints its values and not a byte.
+// NOLINTNEXTLINE(performance-enum-size)
 enum class ProductSpelling {
   geometric_product_function,
   wedge_function,
