@@ -14,14 +14,14 @@ import shutil
 import subprocess
 import sys
 
-RECORDS = "docs/agent/records/performance"
-LOG = f"{RECORDS}/runs.tsv"
-HISTORY = f"{RECORDS}/history"
-COLUMNS = ("utc_start revision branch step preset selection wall_s exit host "
-           "mode cpus user_s sys_s maxrss_kib inst_p_u inst_e_u cycles_u "
-           "l1d_loads_u l1d_misses_u l2_refs_u l2_misses_u llc_refs_u "
-           "llc_misses_u energy_pkg_j other_cpu_s sibling_busy_s "
-           "pinned_other_s options").split()
+LOG = "docs/agent/records/performance/runs.tsv"
+HISTORY = "docs/agent/records/performance/history"
+COLUMNS = ["utc_start", "revision", "branch", "step", "preset", "selection",
+           "wall_s", "exit", "host", "mode", "cpus", "user_s", "sys_s",
+           "maxrss_kib", "inst_p_u", "inst_e_u", "cycles_u", "l1d_loads_u",
+           "l1d_misses_u", "l2_refs_u", "l2_misses_u", "llc_refs_u",
+           "llc_misses_u", "energy_pkg_j", "other_cpu_s", "sibling_busy_s",
+           "pinned_other_s", "options"]
 HEADER = "\t".join(COLUMNS)
 GROUP_HEADER = (
     "era\tlog\tstep\tpreset\tfamily\tmode\toutcome\trows\tdirty\trevisions\t"
@@ -152,8 +152,8 @@ def summary_values(tool, directory):
             host="h2", mode="pinned", maxrss="20", inst_p="2000"),
         # A row from before the cost columns, and before the first
         # toolchain state.
-        "2025-12-31T23:00:00Z\tgggggggggggg\tdev\tbuild\tgcc-debug\tall\t"
-        "7.500\t0\th1",
+        ("2025-12-31T23:00:00Z\tgggggggggggg\tdev\tbuild\tgcc-debug\tall\t"
+         "7.500\t0\th1"),
         # Two probes of one campaign family.
         row(at(2), "1" * 12, "measure", "-", "ceiling-cert:case1:L5", "0.010",
             maxrss="20000", inst_p="5", inst_e="7"),
@@ -370,7 +370,7 @@ def refusals(tool, directory):
 
 def pruning(tool, directory):
     """Case 6: prune removes rows that came back, and nothing else."""
-    repo, boundary, a, b, later = refusals(tool, directory)
+    repo, _, a, b, _ = refusals(tool, directory)
     good = repo.read(LOG)
     repo.write(LOG, good + a[0] + "\n" + b[1] + "\n")
     result = repo.run("prune")
@@ -388,7 +388,7 @@ def has_once(repo, rows):
 
 def merges(tool, directory):
     """Case 7: union merges across the compaction, in each order."""
-    repo, boundary, a, b, later = compaction(tool, directory)
+    repo, _, _, b, _ = compaction(tool, directory)
     repo.commit("compact")
     old_rows = [kept_row(30), probe_row(31)]
 
@@ -429,7 +429,7 @@ def merges(tool, directory):
 def second_era(tool, directory):
     """Case 8: a second compaction does not count the first one's kept
     rows again."""
-    repo, boundary, a, b, later = compaction(tool, directory)
+    repo, _, a, b, later = compaction(tool, directory)
     repo.commit("compact")
     repo.write(LOG, repo.read(LOG) + kept_row(60) + "\n" + probe_row(61)
                + "\n")

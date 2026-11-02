@@ -69,8 +69,9 @@ MUTANTS = {
     "no_predecessor_anchor": (
         RUNLOG, "anchors.add(number - 1)", "pass", RUNLOG_TEST),
     "era_holders_not_skipped": (
-        RUNLOG, "        if holds_era(top, branch, revision, log):\n"
-        "            continue", "        if False:\n            continue",
+        RUNLOG, ("        if holds_era(top, branch, revision, log):\n"
+                 "            continue"),
+        "        if False:\n            continue",
         RUNLOG_TEST),
     "no_boundary_anchor": (
         RUNLOG, "anchors = {last}", "anchors = set()", RUNLOG_TEST),
@@ -138,8 +139,8 @@ def main(scratch, out, names):
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     with open(out, "w", encoding="utf-8") as f:
         f.write("mutant\tfile\ttest\tverdict\tfirst_failure\n")
-        for cells in rows:
-            f.write("\t".join(c.replace("\t", " ") for c in cells) + "\n")
+        f.writelines("\t".join(c.replace("\t", " ") for c in cells) + "\n"
+                     for cells in rows)
     for cells in rows:
         print(f"{cells[0]}: {cells[3]}")
     return 1 if any(cells[3] == "survived" for cells in rows) else 0

@@ -44,11 +44,11 @@ where another branch added rows would come back in the merge. A branch adds
 its rows at the end of its base's log, and when it merges a newer revision,
 the union puts them before that revision's later rows, inside the log. So
 the anchors are the last row at the era's revision and, for each local
-branch not merged into it (and not already holding the era), the rows on
-both sides of each place where the
-branch's log has rows its merge base's log lacks: the nearest rows of the
-base, and the rows next to those in the log at the era's revision, which a
-merge in the other order puts beside the branch's rows.
+branch not merged into it and not already holding the era, the rows on both
+sides of each place where the branch's log has rows its merge base's log
+lacks: the nearest rows of the base, and the rows next to those in the log
+at the era's revision, which a merge in the other order puts beside the
+branch's rows.
 
 The raw rows of an era are read back with
   git show <era>:<log>
@@ -61,9 +61,8 @@ import re
 import subprocess
 import sys
 
-RECORDS = "docs/agent/records/performance"
-RUN_LOG = f"{RECORDS}/runs.tsv"
-HISTORY = f"{RECORDS}/history"
+RUN_LOG = "docs/agent/records/performance/runs.tsv"
+HISTORY = "docs/agent/records/performance/history"
 ERAS = f"{HISTORY}/eras.tsv"
 GROUPS = f"{HISTORY}/groups.tsv"
 TOOLCHAIN = f"{HISTORY}/toolchain.tsv"
@@ -71,13 +70,14 @@ TOOLCHAIN = f"{HISTORY}/toolchain.tsv"
 QUANTITIES = ("wall_s", "maxrss_kib", "inst_u")
 STATISTICS = ("n", "first", "latest", "min", "median", "range")
 GROUP_KEY = ("step", "preset", "family", "mode", "outcome")
-ERA_COLUMNS = ("era log rows kept anchors first_utc latest_utc").split()
+ERA_COLUMNS = ["era", "log", "rows", "kept", "anchors", "first_utc",
+               "latest_utc"]
 GROUP_COLUMNS = (["era", "log", *GROUP_KEY, "rows", "dirty", "revisions",
                   "first_utc", "latest_utc", "first_revision",
                   "latest_revision", "hosts", "toolchains"]
                  + [f"{q}_{s}" for q in QUANTITIES for s in STATISTICS])
-TOOLCHAIN_COLUMNS = ("since_utc host gcc libstdcxx clang cmake ninja python "
-                     "perf kernel source").split()
+TOOLCHAIN_COLUMNS = ["since_utc", "host", "gcc", "libstdcxx", "clang", "cmake",
+                     "ninja", "python", "perf", "kernel", "source"]
 
 RUN_STEPS = {"configure", "build", "test", "workflow"}
 CHEAP_GATES = {"trace", "trace-gate", "convention-trace", "markers", "golden",
@@ -91,7 +91,9 @@ NO_TREE = "-"
 
 
 class Refused(Exception):
-    """A command that cannot go ahead; nothing has been written."""
+    """A command that cannot go ahead. compact refuses before it writes
+    anything; prune visits one log after another, so its refusal can follow
+    the rewrite of an earlier log."""
 
 
 def git(top, *args):
@@ -149,8 +151,8 @@ def fields(columns, line):
     cells = line.split("\t")
     cells += [MISSING] * (len(columns) - len(cells))
     row = dict(zip(columns, cells))
-    if not row.get("mode"):
-        row["mode"] = MISSING
+    # A log written before the column existed has no mode column at all.
+    row.setdefault("mode", MISSING)
     return row
 
 
@@ -433,8 +435,8 @@ def compact(top, revision, log):
     if missing:
         raise Refused(f"{log} lacks {sum(missing.values())} rows of the log "
                       f"at {revision}, such as: {next(iter(missing))[:80]}")
-    anchors = {n for n in anchors_for(top, revision, log, lines)
-               if n in {number for number, _ in rows}}
+    era_numbers = {number for number, _ in rows}
+    anchors = anchors_for(top, revision, log, lines) & era_numbers
     kept, removed = split_era(columns, rows, anchors)
     record = era_record(revision, log, rows, kept, anchors)
     history = summarize(columns, [line for _, line in rows], revision, log,
