@@ -577,8 +577,8 @@ TEST_CASE("the products round within their forward error bounds") {
 //   which satisfy e_i e_j + e_j e_i = 2 g_ij, and the complement tables,
 //   which satisfy u ^ right(u) = antiscalar and left(u) ^ u = antiscalar,
 //   with the geometric antiproduct of conformal(3) taken on pairs of grade
-//   sets that together reach every pair of grades rather than on two full
-//   multivectors
+//   sets that together reach every ordered pair of grades rather than on two
+//   full multivectors
 TEST_CASE("the antiproducts round within their forward error bounds") {
   INFO("seed: ", doctest::getContextOptions()->rand_seed);
   std::mt19937_64 source = seeded_source();
@@ -602,7 +602,7 @@ TEST_CASE("the antiproducts round within their forward error bounds") {
   // The geometric antiproduct of two full<5> values of conformal(3) needs
   // more constant-evaluation steps than Clang allows by default when
   // libstdc++'s assertions are off, so it is taken on pairs of grade sets
-  // that together reach every pair of grades.
+  // that together reach every ordered pair of grades, left and right.
   using C5 = full_mv<cga3, 5>;
   using Ends =
       core::mv<cga3, core::merge<core::of_grade<5, 0>, core::of_grade<5, 5>>,
@@ -636,6 +636,8 @@ TEST_CASE("the antiproducts round within their forward error bounds") {
                                "conformal(3) odd with odd grades", out, found);
   check_antiproducts<Even, Odd>(
       source, 40, c3, n5, "conformal(3) even with odd grades", out, found);
+  check_antiproducts<Odd, Even>(
+      source, 40, c3, n5, "conformal(3) odd with even grades", out, found);
   check_antiproducts<full_mv<degenerate3, 3>, full_mv<degenerate3, 3>>(
       source, 200, golden::gp_tables::degenerate_3, golden::complements::n3,
       "degenerate", out, found);
