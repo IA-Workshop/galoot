@@ -37,13 +37,16 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 2.1 | the grade involution of a grade-k blade is (-1)^k times it | yes |
 | 3.1 | u ^ right(u) = antiscalar and left(u) ^ u = antiscalar | yes |
 | 3.1 | the left complement of the right complement is the identity | yes |
-| 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | no |
-| 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
-| 3.4 | in a degenerate metric the double bulk dual is zero | no |
+| 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | yes |
+| 3.2 | the metric exomorphism sends e_A to the sum of det g[A, B] e_B | yes |
+| 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | yes |
+| 3.3 | the left duals are the right duals times (-1)^(gr ag) | yes |
+| 3.4 | in a degenerate metric the double bulk dual is zero | yes |
 | 4.1 | the wedge of two blades that share a generator is zero | yes |
 | 4.1 | e_i e_j + e_j e_i = 2 g_ij | yes |
+| 4.1 | the dot is a^T G b and the antidot a^T antiG b times the antiscalar | yes |
 | 4.2 | right(a ^ b) = right(a) v right(b) | yes |
-| 4.3 | a point projected onto a unitized plane has weight +1 | no |
+| 4.3 | a point projected onto a unitized plane has weight +1 | yes |
 | 4.4 | transform(x, V) has the blade set of x | no |
 | 4.5 | truncate checks that the part it drops is zero | yes |
 | 4.5 | part never checks what it drops | yes |

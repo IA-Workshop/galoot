@@ -1,0 +1,4 @@
+In instantiation of 'void detail::helper()':
+first.cpp:1:1: error: the message
+first.cpp:1:1: note: required from detail::helper
+first.cpp:2:1: error: the message, from detail::helper

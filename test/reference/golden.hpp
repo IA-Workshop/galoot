@@ -80,6 +80,14 @@ struct complement_pair {
   signed_blade left;
 };
 
+/// The image of a blade under a linear map: its first `size` terms, ordered
+/// by grade and then by index list; the remaining terms are {0, 0}.
+struct blade_image {
+  mask blade;
+  std::size_t size;
+  std::array<term, 3> terms;
+};
+
 // The canonical name of each blade lists the indices of its generators in
 // increasing order. Indexed by mask.
 // Fact: bit i - 1 of a blade mask stands for e_i
@@ -155,14 +163,14 @@ inline constexpr std::array<product, 9> conformal_3_products = {{
 }};
 } // namespace wedge_basis
 
-// Every product e_A e_B of two blades, in the wedge-monomial basis, for four
-// forms: rigid(3); conformal(3); the degenerate form [[0, 1, 0], [1, 0, 0],
-// [0, 0, 0]]; and seeded random form 1 of clifford_reference.py
-// (seed 20261031). Each table was validated before it was written by the
-// defining relations e_i e_j + e_j e_i = 2 g_ij, associativity on every
-// triple of blades, and the check that each blade is the antisymmetrized
-// product of its generators. Each form has its Gram matrix and det g; its
-// products are listed in order of a, then b.
+// Every product e_A e_B of two blades, in the wedge-monomial basis, for five
+// forms: rigid(3); conformal(2); conformal(3); the degenerate form [[0, 1,
+// 0], [1, 0, 0], [0, 0, 0]]; and seeded random form 1 of
+// clifford_reference.py (seed 20261031). Each table was validated before it
+// was written by the defining relations e_i e_j + e_j e_i = 2 g_ij,
+// associativity on every triple of blades, and the check that each blade is
+// the antisymmetrized product of its generators. Each form has its Gram
+// matrix and det g; its products are listed in order of a, then b.
 // Fact: e_i e_j + e_j e_i = 2 g_ij
 namespace gp_tables {
 inline constexpr std::array<std::array<int, 4>, 4> rigid_3_gram = {{
@@ -2289,6 +2297,108 @@ inline constexpr std::array<complement_pair, 32> n5 = {{
     {0b11111, {0b00000, 1}, {0b00000, 1}},
 }};
 } // namespace complements
+
+// The metric exomorphism G sends each blade e_A to the sum, over the blades
+// e_B of its grade, of the Gram minor det g[A, B] times e_B: it applies g to
+// a vector, and to a wedge of vectors it gives the wedge of their images.
+// For the five forms of gp_tables, indexed by mask. Each entry was computed
+// from the Gram minors and checked against a second route, the scalar part
+// of e_A ~e_B in the product table, and G was checked to compose with the
+// antiexomorphism left(G right(u)) to det g times the identity in either
+// order.
+// Fact: the metric exomorphism sends e_A to the sum of det g[A, B] e_B
+namespace exomorphisms {
+inline constexpr std::array<blade_image, 16> rigid_3 = {{
+    {0b0000, 1, {{{1, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0001, 1, {{{1, 0b0001}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0010, 1, {{{1, 0b0010}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0011, 1, {{{1, 0b0011}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0100, 1, {{{1, 0b0100}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0101, 1, {{{1, 0b0101}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0110, 1, {{{1, 0b0110}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0111, 1, {{{1, 0b0111}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1000, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1001, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1010, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1011, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1100, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1101, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1110, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1111, 0, {{{0, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+}};
+inline constexpr std::array<blade_image, 16> conformal_2 = {{
+    {0b0000, 1, {{{1, 0b0000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0001, 1, {{{1, 0b0001}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0010, 1, {{{1, 0b0010}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0011, 1, {{{1, 0b0011}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0100, 1, {{{-1, 0b1000}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0101, 1, {{{-1, 0b1001}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0110, 1, {{{-1, 0b1010}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b0111, 1, {{{-1, 0b1011}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1000, 1, {{{-1, 0b0100}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1001, 1, {{{-1, 0b0101}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1010, 1, {{{-1, 0b0110}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1011, 1, {{{-1, 0b0111}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1100, 1, {{{-1, 0b1100}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1101, 1, {{{-1, 0b1101}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1110, 1, {{{-1, 0b1110}, {0, 0b0000}, {0, 0b0000}}}},
+    {0b1111, 1, {{{-1, 0b1111}, {0, 0b0000}, {0, 0b0000}}}},
+}};
+inline constexpr std::array<blade_image, 32> conformal_3 = {{
+    {0b00000, 1, {{{1, 0b00000}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00001, 1, {{{1, 0b00001}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00010, 1, {{{1, 0b00010}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00011, 1, {{{1, 0b00011}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00100, 1, {{{1, 0b00100}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00101, 1, {{{1, 0b00101}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00110, 1, {{{1, 0b00110}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b00111, 1, {{{1, 0b00111}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01000, 1, {{{-1, 0b10000}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01001, 1, {{{-1, 0b10001}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01010, 1, {{{-1, 0b10010}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01011, 1, {{{-1, 0b10011}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01100, 1, {{{-1, 0b10100}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01101, 1, {{{-1, 0b10101}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01110, 1, {{{-1, 0b10110}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b01111, 1, {{{-1, 0b10111}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10000, 1, {{{-1, 0b01000}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10001, 1, {{{-1, 0b01001}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10010, 1, {{{-1, 0b01010}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10011, 1, {{{-1, 0b01011}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10100, 1, {{{-1, 0b01100}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10101, 1, {{{-1, 0b01101}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10110, 1, {{{-1, 0b01110}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b10111, 1, {{{-1, 0b01111}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11000, 1, {{{-1, 0b11000}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11001, 1, {{{-1, 0b11001}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11010, 1, {{{-1, 0b11010}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11011, 1, {{{-1, 0b11011}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11100, 1, {{{-1, 0b11100}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11101, 1, {{{-1, 0b11101}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11110, 1, {{{-1, 0b11110}, {0, 0b00000}, {0, 0b00000}}}},
+    {0b11111, 1, {{{-1, 0b11111}, {0, 0b00000}, {0, 0b00000}}}},
+}};
+inline constexpr std::array<blade_image, 8> degenerate_3 = {{
+    {0b000, 1, {{{1, 0b000}, {0, 0b000}, {0, 0b000}}}},
+    {0b001, 1, {{{1, 0b010}, {0, 0b000}, {0, 0b000}}}},
+    {0b010, 1, {{{1, 0b001}, {0, 0b000}, {0, 0b000}}}},
+    {0b011, 1, {{{-1, 0b011}, {0, 0b000}, {0, 0b000}}}},
+    {0b100, 0, {{{0, 0b000}, {0, 0b000}, {0, 0b000}}}},
+    {0b101, 0, {{{0, 0b000}, {0, 0b000}, {0, 0b000}}}},
+    {0b110, 0, {{{0, 0b000}, {0, 0b000}, {0, 0b000}}}},
+    {0b111, 0, {{{0, 0b000}, {0, 0b000}, {0, 0b000}}}},
+}};
+inline constexpr std::array<blade_image, 8> random_1 = {{
+    {0b000, 1, {{{1, 0b000}, {0, 0b000}, {0, 0b000}}}},
+    {0b001, 2, {{{2, 0b001}, {-3, 0b100}, {0, 0b000}}}},
+    {0b010, 2, {{{1, 0b010}, {-3, 0b100}, {0, 0b000}}}},
+    {0b011, 3, {{{2, 0b011}, {-6, 0b101}, {3, 0b110}}}},
+    {0b100, 3, {{{-3, 0b001}, {-3, 0b010}, {-2, 0b100}}}},
+    {0b101, 3, {{{-6, 0b011}, {-13, 0b101}, {-9, 0b110}}}},
+    {0b110, 3, {{{3, 0b011}, {-9, 0b101}, {-11, 0b110}}}},
+    {0b111, 1, {{{-31, 0b111}, {0, 0b000}, {0, 0b000}}}},
+}};
+} // namespace exomorphisms
 
 } // namespace golden
 

@@ -1,6 +1,6 @@
 # Galoot conventions specification
 
-Status: version 1.8, ratified by the owner on 2026-11-02 (version 1.8: "agreed", decisions 0167 and 0168; version 1.7: "proceed as recommended", decision 0161; version 1.6: "proceed as recommended", decisions 0155 and 0159). A convention here changes only by a change to this document that the owner ratifies (constitution C10).
+Status: version 1.9, ratified by the owner on 2026-11-04 (version 1.9: "take all recommendations", decision 0174; version 1.8: "agreed", decisions 0167 and 0168; version 1.7: "proceed as recommended", decision 0161; version 1.6: "proceed as recommended", decisions 0155 and 0159). A convention here changes only by a change to this document that the owner ratifies (constitution C10).
 
 This specification fixes the conventions that every part of Galoot shares: how generators and blades are numbered and named, the signs of complements and duals, the definitions of the products, the coordinates of the rigid and conformal objects, and the meaning of each operator. Each entry carries its evidence:
 
@@ -41,7 +41,7 @@ Component: core.
 
 3.1 The right complement ū and the left complement u̲ of a basis blade u are fixed by u ∧ ū = 𝟙 and u̲ ∧ u = 𝟙, and extend linearly. They satisfy u̲ = (−1)^(gr·ag) ū, and the left complement of the right complement is the identity. In rigid(3) this gives the 16-entry table of the design study. (Checked)
 
-3.2 The bulk of u applies the metric exomorphism, and the weight applies the antiexomorphism. In a diagonal metric, the bulk keeps the blades whose square is nonzero and the weight keeps the blades whose complement's square is nonzero; in rigid(3) the bulk is the part without e4 and the weight the part with it. (Confirmed, with the diagonal case Checked)
+3.2 The bulk of u applies the metric exomorphism, and the weight applies the antiexomorphism. In a diagonal metric, the bulk keeps the blades whose square is nonzero, each times the product of the squares of its generators, and the weight keeps the blades whose complement's square is nonzero, each times the product of the squares of the generators it lacks. In rigid(d) these factors are 1, the bulk is the part without e(d+1), and the weight is the part with it; with two or more null generators some blades are in neither. (Confirmed, with the diagonal case Checked)
 
 3.3 The bulk dual u★ is the right complement of the bulk, and the weight dual u☆ is the right complement of the weight. Then a ∧ b★ = (a • b)𝟙 for a and b of equal grade. Duals built on the left complement exist only under their own names, `left_bulk_dual` and `left_weight_dual`. (Checked; Confirmed)
 
@@ -59,7 +59,7 @@ Component: core.
 
 4.4 `transform(x, V)` applies a versor V to x by the parity of V's blades: an even V gives V ⟇ x ⟇ Ṽ, as in 5.4, and an odd V gives −V ⟇ x̂ ⟇ Ṽ, as in 5.6. A V with blades of both parities is rejected at compile time. The result has the blade set of x, and in checking mode every discarded part is verified to be zero (C8). `compose(Q2, Q1)` is Q2 ⟇ Q1 and applies Q1 first. (Proposed)
 
-4.5 A conversion to a blade set that omits blades of the input is lossy, is named `truncate<Blades>(x)`, or `truncate<Type>(x)` when the target is named by its type, and in checking mode verifies that what it drops is zero when the scalar is exact. An operation that drops part of its own result, such as `transform`, verifies on a rounding scalar that the dropped part is within that operation's forward error bound (decision 0010). It is never implicit. `part<Blades>(x)` and `part<Type>(x)` keep the same components and never check: what they drop is meant to be nonzero, as in a grade part. (Proposed)
+4.5 A conversion to a blade set that omits blades of the input is lossy, is named `truncate<Blades>(x)`, or `truncate<Type>(x)` when the target is named by its type, and in checking mode verifies that what it drops is zero when the scalar is exact. An operation that drops part of its own result, such as `transform`, verifies on a rounding scalar that the dropped part is within that operation's forward error bound (decision 0010). It is never implicit. `part<Blades>(x)` and `part<Type>(x)` keep the same components and never check: what they drop may be nonzero, as in a grade part. (Proposed)
 
 ## 5 Rigid objects in rigid(3)
 
@@ -147,3 +147,4 @@ These choices had no settled source and were ratified with this version:
 | 1.6 | 2026-11-01 | 4.5 also accepts the target's type, `truncate<Type>(x)` (decision 0155); 7.1 names the geometric product and antiproduct `geometric_product` and `geometric_antiproduct` (decision 0159); ratified by the owner: proceed as recommended |
 | 1.7 | 2026-11-01 | 4.5: a conversion that drops blades verifies the dropped part is zero when the scalar is exact; the rounding-scalar check belongs to operations that drop part of their own result (decision 0161); ratified by the owner: proceed as recommended |
 | 1.8 | 2026-11-02 | 4.5 names `part<Blades>(x)` and `part<Type>(x)`, which keep the same components as `truncate` and never check (decision 0168); 7.1 adds negation `-a` (decision 0167); ratified by the owner: agreed |
+| 1.9 | 2026-11-04 | 3.2 states the factor by which the bulk and the weight multiply each blade they keep in a diagonal metric, and that with two or more null generators some blades are in neither; 4.5 says that what `part` drops may be nonzero, in place of "is meant to be nonzero" (decision 0174); ratified by the owner: take all recommendations |

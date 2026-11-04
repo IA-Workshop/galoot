@@ -1,0 +1,49 @@
+mutant	build_exit	build_failures	failed_tests
+bulk_dual_uses_left_complement	0	-	core.dual core.dual_identities
+bulk_dual_omits_reverse	0	-	core.dual core.dual_identities
+bulk_dual_antiscalar_first	1	dual_identities: include/galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression	core.dual core.dual_identities
+weight_dual_is_bulk_dual	1	dual: test/core/dual_test.cpp:949:7: error: static assertion failed	core.dual core.dual_identities
+weight_calls_bulk	1	dual: test/core/dual_test.cpp:708:57: error: invalid operands to binary expression ('const blade_set<3UL>' and 'const blade_set<name_count(detail::name_list<3>{{"e4"}}.text())>')	core.dual core.dual_identities
+weight_right_complement_outside	0	-	core.dual core.dual_identities
+left_weight_dual_uses_right_complement	0	-	core.dual core.dual_identities
+dot_omits_reverse	0	-	core.dual core.dual_identities
+kernel_keeps_antiscalar_terms	1	dual: test/core/dual_test.cpp:1169:17: error: static assertion failed	core.dual core.dual_identities core.dual_narrow_scalar_dot core.dual_narrow_scalar_antidot
+kernel_keeps_every_term	1	dual: test/core/dual_test.cpp:1242:17: error: static assertion failed due to requirement 'core::dot_layout<(anonymous namespace)::rga3, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}>.size() == 0'	core.dual core.dual_identities
+kernel_adds_first_term_to_zero	1	dual: test/core/dual_test.cpp:1490:7: error: static assertion failed due to requirement 'scalar_terms_are<(anonymous namespace)::r300, core::of_grade<3, 1>, core::of_grade<3, 1>>(vectors)'	core.dual
+antidot_without_complements	1	dual: test/core/dual_test.cpp:1246:17: error: static assertion failed due to requirement 'core::antidot_layout<(anonymous namespace)::rga3, galoot::core::blade_set<1>{{{{1, 1}}}}, galoot::core::blade_set<1>{{{{1, 1}}}}>.size() == 0'	core.dual core.dual_identities
+antidot_right_complement_outside	0	-	-
+project_operands_swapped	1	dual: test/core/dual_test.cpp:1355:17: error: static assertion failed	-
+project_uses_bulk_dual	0	-	core.dual
+bulk_check_dropped	0	-	core.dual_narrow_scalar_bulk
+bulk_checks_weight	0	-	core.dual_narrow_scalar_bulk
+weight_check_dropped	0	-	core.dual_narrow_scalar_weight
+weight_checks_bulk	0	-	core.dual_narrow_scalar_weight
+bulk_dual_check_dropped	0	-	core.dual_narrow_scalar_bulk_dual
+bulk_dual_checks_weight	0	-	core.dual_narrow_scalar_bulk_dual
+weight_dual_check_dropped	0	-	core.dual_narrow_scalar_weight_dual
+weight_dual_checks_bulk	0	-	core.dual_narrow_scalar_weight_dual
+left_bulk_dual_check_dropped	0	-	core.dual_narrow_scalar_left_bulk_dual
+left_bulk_dual_checks_weight	0	-	core.dual_narrow_scalar_left_bulk_dual
+left_weight_dual_check_dropped	0	-	core.dual_narrow_scalar_left_weight_dual
+left_weight_dual_checks_bulk	0	-	core.dual_narrow_scalar_left_weight_dual
+dot_check_dropped	0	-	core.dual_narrow_scalar_dot
+dot_checks_antidot	0	-	core.dual_narrow_scalar_dot
+dot_checks_whole_product	1	dual: include/galoot/core/dual.hpp:491:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_dot': dot: the scalar type cannot hold one of the dot's exact coefficients; use a scalar type that holds larger integers exactly	-
+antidot_check_dropped	0	-	core.dual_narrow_scalar_antidot
+antidot_checks_dot	0	-	core.dual_narrow_scalar_antidot
+project_check_dropped	0	-	core.dual_narrow_scalar_project
+project_checks_bulk_dual	0	-	core.dual_narrow_scalar_project
+catch_alls_without_algebra_condition	1	dual: test/core/dual_test.cpp:1333:17: error: static assertion failed	core.dual_mixed_algebras_dot core.dual_mixed_algebras_antidot core.dual_mixed_algebras_project
+catch_alls_without_scalar_condition	1	dual: test/core/dual_test.cpp:1332:17: error: static assertion failed	core.dual_mixed_scalars_dot core.dual_mixed_scalars_antidot core.dual_mixed_scalars_project
+project_antiwedge_order_swapped	0	-	core.dual
+kernel_check_any_held	0	-	core.dual_narrow_scalar_dot_mixed_kernel core.dual_narrow_scalar_antidot_mixed_kernel
+project_checks_first_operand	1	dual: include/galoot/core/dual.hpp:604:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_projection': project: the scalar type cannot hold one of the projection's exact coefficients; use a scalar type that holds larger integers exactly	core.dual_narrow_scalar_project_first_operand
+bulk_layout_is_input	1	dual: test/core/dual_test.cpp:707:55: error: invalid operands to binary expression ('const blade_set<4>' (aka 'const galoot::core::blade_set<4>') and 'const blade_set<name_count(detail::name_list<9>{{"e1 e2 e3"}}.text())>') | dual_identities: include/galoot/core/dual.hpp:346:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {3, 1}, {5, 1}, {9, 1}, {6, 1}, {10, 1}, {12, 1}, {7, 1}, {11, 1}, {13, 1}, {14, 1}, {15, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, {17, 1}, {6	core.dual_compare_bulk core.dual_compare_weight core.dual_compare_weight_dual core.dual_compare_left_bulk_dual core.dual_compare_left_weight_dual core.dual_compare_project
+weight_layout_is_input	1	dual: test/core/dual_test.cpp:708:57: error: invalid operands to binary expression ('const blade_set<4>' (aka 'const galoot::core::blade_set<4>') and 'const blade_set<name_count(detail::name_list<3>{{"e4"}}.text())>') | dual_identities: include/galoot/core/dual.hpp:370:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{16, 1}, {17, 1}, {18, 1}, {20, 1}, {24, 1}, {19, 1}, {21, 1}, {25, 1}, {22, 1}, {26, 1}, {28, 1}, {23, 1}, {27, 1}, {29, 1}, {30, 1}, {31, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, {	core.dual_compare_weight core.dual_compare_left_weight_dual
+bulk_dual_layout_is_input	1	dual_identities: include/galoot/core/dual.hpp:396:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{16, 1}, {17, 1}, {18, 1}, {20, 1}, {24, 1}, {19, 1}, {21, 1}, {25, 1}, {22, 1}, {26, 1}, {28, 1}, {23, 1}, {27, 1}, {29, 1}, {30, 1}, {31, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, { | dual: test/core/dual_test.cpp:945:7: error: static assertion failed	core.dual_compare_bulk_dual
+weight_dual_layout_is_input	1	dual: test/core/dual_test.cpp:949:7: error: static assertion failed | dual_identities: include/galoot/core/dual.hpp:418:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {3, 1}, {5, 1}, {9, 1}, {6, 1}, {10, 1}, {12, 1}, {7, 1}, {11, 1}, {13, 1}, {14, 1}, {15, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, {17, 1}, {6	core.dual_compare_weight_dual core.dual_compare_project
+left_bulk_dual_layout_is_input	1	dual_identities: include/galoot/core/dual.hpp:441:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{16, 1}, {17, 1}, {18, 1}, {20, 1}, {24, 1}, {19, 1}, {21, 1}, {25, 1}, {22, 1}, {26, 1}, {28, 1}, {23, 1}, {27, 1}, {29, 1}, {30, 1}, {31, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, { | dual: include/galoot/core/dual.hpp:441:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<3>{{{{11, 1}, {13, 1}, {14, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'	core.dual_compare_left_bulk_dual
+left_weight_dual_layout_is_input	1	dual_identities: include/galoot/core/dual.hpp:463:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<16>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {3, 1}, {5, 1}, {9, 1}, {6, 1}, {10, 1}, {12, 1}, {7, 1}, {11, 1}, {13, 1}, {14, 1}, {15, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, {17, 1}, {6 | dual: include/galoot/core/dual.hpp:463:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<1>{{{{7, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, [...]>'	core.dual_compare_left_weight_dual
+dot_layout_is_input	1	dual: test/core/dual_test.cpp:1169:17: error: static assertion failed	core.dual_identities core.dual_compare_dot core.dual_compare_antidot
+antidot_layout_is_input	1	dual: test/core/dual_test.cpp:1170:17: error: static assertion failed | dual_identities: include/galoot/core/dual.hpp:540:12: error: no viable conversion from returned value of type 'mv<[...], blade_set<1>{{{{31, 1}}}}, [...]>' to function return type 'mv<[...], blade_set<32>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {3, 1}, {5, 1}, {9, 1}, {17, 1}, {6, 1}, {10, 1}, {18, 1}, {12, 1}, {20, 1}, {24, 1}, {7, 1}, {11, 1}, {19, 1}, {13, 1}, {21, 1}, {25, 1}, {14, 1}, {22, 1}, {26,	core.dual_identities core.dual_compare_antidot
+project_layout_is_input	1	dual: test/core/dual_test.cpp:1428:17: error: static assertion failed due to requirement 'core::project_layout<(anonymous namespace)::rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, galoot::core::blade_set<4>{{{{14, 1}, {13, -1}, {11, 1}, {7, -1}}}}> == core::of_grade<4, 2>'	core.dual_compare_project
