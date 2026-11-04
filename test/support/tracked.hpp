@@ -237,7 +237,7 @@ inline constexpr int rounding_margin = 2;
 }
 
 /// The largest value bound_ratio returns for a result within its bound,
-/// 1 + 6u = 1 + 3 2^-52.
+/// 1 + 4u = 1 + 2^-51.
 ///
 /// Derivation. For d within the bound the exact ratio r = |d - e| /
 /// (gamma_K M) is at most 1. bound_ratio forms the exact difference d - e
@@ -247,12 +247,13 @@ inline constexpr int rounding_margin = 2;
 /// division. Each multiplies or divides r by one factor (1 + delta) with
 /// |delta| <= u, so the computed ratio is r (1 + theta_5) with
 /// |theta_5| <= gamma_5 (Higham, Lemma 3.1), at most 1 + gamma_5.
-// gamma_5 = 5u / (1 - 5u) = 5u + 25u^2 / (1 - 5u) < 6u, and the doubles just
-// above 1 are 1 + 2u, 1 + 4u, 1 + 6u, so 1 + 6u is the smallest double at or
-// above 1 + gamma_5, and a computed ratio of a result within the bound never
-// exceeds it. A result whose exact ratio exceeds (1 + 6u) / (1 - gamma_5),
-// about 1 + 11u, is rejected.
-inline constexpr double ratio_limit = 1.0 + (6 * unit_roundoff);
+// gamma_5 = 5u / (1 - 5u) = 5u + 25u^2 / (1 - 5u) < 6u. The computed ratio
+// is a double, and the doubles just above 1 are 1 + 2u, 1 + 4u, 1 + 6u, so a
+// double at most 1 + gamma_5 is at most 1 + 4u: the computed ratio of a
+// result within the bound never exceeds 1 + 4u, and no smaller limit is
+// safe by this argument. A result whose exact ratio exceeds
+// (1 + 4u) / (1 - gamma_5), about 1 + 9u, is rejected.
+inline constexpr double ratio_limit = 1.0 + (4 * unit_roundoff);
 
 /// Whether the double d is within the forward error bound of the exact value
 /// `exact`, for a computation whose tracked run gave the count `roundings`

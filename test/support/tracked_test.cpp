@@ -169,3 +169,33 @@ TEST_CASE("the bound check rejects a result beyond the bound") {
   CHECK_FALSE(
       test_support::within_rounding_bound(std::nextafter(0.625, 0.0), e, 0, m));
 }
+
+// Reference: proof: with K = 2, gamma_2 = 1 / (2^52 - 1), so for d = 2^-50,
+//   e = 0, and M = (2^52 - 1) 2^-50 the exact ratio of the error to
+//   gamma_2 M is 1, computed as 1, and accepted, and with
+//   M = (2^52 - 9) 2^-50 it is (2^52 - 1) / (2^52 - 9), about 1 + 16u, and
+//   rejected, though the margin's tolerance admits it, and with K = 3 and
+//   M = (2^57 - 47) / 3 times 2^-54, just above d / gamma_3, the exact ratio
+//   is 1 - u / 16 and the computed one 1 + 2u, which the limit 1 + 4u
+//   accepts
+TEST_CASE("the ratio limit admits the bound and nothing beyond it") {
+  const double d = 0x1p-50;
+  const rational zero;
+  const std::int64_t two_50 = test_support::power_of_two(50);
+  const std::int64_t two_52 = test_support::power_of_two(52);
+
+  const rational at_bound{two_52 - 1, two_50};
+  CHECK(test_support::bound_ratio(d, zero, 2, at_bound) == 1.0);
+  CHECK(test_support::within_rounding_bound(d, zero, 2, at_bound));
+
+  const rational beyond{two_52 - 9, two_50};
+  CHECK(d <= test_support::rounding_tolerance(2, beyond));
+  CHECK(test_support::bound_ratio(d, zero, 2, beyond) >
+        test_support::ratio_limit);
+  CHECK_FALSE(test_support::within_rounding_bound(d, zero, 2, beyond));
+
+  const rational just_within{48'038'396'025'285'275,
+                             test_support::power_of_two(54)};
+  CHECK(test_support::bound_ratio(d, zero, 3, just_within) == 1.0 + (2 * u));
+  CHECK(test_support::within_rounding_bound(d, zero, 3, just_within));
+}
