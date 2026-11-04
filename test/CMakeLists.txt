@@ -1636,6 +1636,28 @@ dual_rejects_narrow_scalar(bulk_dual "bulk dual")
 dual_rejects_narrow_scalar(weight_dual "weight dual")
 dual_rejects_narrow_scalar(left_bulk_dual "left bulk dual")
 dual_rejects_narrow_scalar(left_weight_dual "left weight dual")
+dual_rejects_narrow_scalar(dot "dot")
+dual_rejects_narrow_scalar(antidot "antidot")
+
+# core.dual_mixed_<cause>_<function>: a dot or an antidot of operands from
+# two algebras or with two scalar types fails to compile with one error, the
+# message of the function, which names the cause.
+set(dual_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
+set(dual_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
+foreach(function IN ITEMS dot antidot)
+  galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_algebras_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_algebras}"
+    ONE_ERROR FORBID "different scalar types"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+  galoot_add_compile_fail_test(NAME dual_mixed_scalars_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_scalars_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_scalars}"
+    ONE_ERROR FORBID "different algebras"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+endforeach()
 
 # core.dual_compare_<function>: comparing a result with a value of another
 # layout fails to compile; Clang names the result's layout by the
@@ -1663,3 +1685,5 @@ dual_rejects_comparison(bulk_dual)
 dual_rejects_comparison(weight_dual)
 dual_rejects_comparison(left_bulk_dual)
 dual_rejects_comparison(left_weight_dual)
+dual_rejects_comparison(dot)
+dual_rejects_comparison(antidot)

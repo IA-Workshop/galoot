@@ -1,21 +1,25 @@
 // Tests of galoot/core/dual.hpp: the bulk and the weight of a multivector,
-// and its four duals.
+// its four duals, and the dot and the antidot of two multivectors.
 //
 // The bulk applies the metric exomorphism G, which sends a blade e_A to the
 // sum over the blades e_B of its grade of the Gram minor det g[A, B] times
 // e_B, and the weight applies the antiexomorphism left(G right(u)). The bulk
 // dual is the right complement of the bulk and the weight dual that of the
-// weight; the left duals take the left complement instead. The expected
-// values are composed in the test from the reference's table of G
-// and its tables of complements, or from the squares of a diagonal form, or
-// worked out by hand from those definitions. A result holds the canonical
-// blades the operation reaches, each with orientation +1, in order of grade
-// and then of index list; the expected layouts are written from that rule.
+// weight; the left duals take the left complement instead. The dot of a and
+// b is a^T G b on the scalar, and the antidot a^T antiG b on the antiscalar,
+// with antiG the antiexomorphism. The expected values are composed in the test
+// from the reference's table of G and its tables of complements, or from the
+// squares of a diagonal form, or worked out by hand from those definitions. A
+// result holds the canonical blades the operation reaches, each with
+// orientation +1, in order of grade and then of index list; the expected
+// layouts are written from that rule.
 #include <array>
 #include <bit>
+#include <cmath>
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <format>
 #include <random>
 #include <span>
 #include <string>
@@ -78,6 +82,15 @@ struct r202 {
 };
 struct r003 {
   static constexpr auto value = core::R<0, 0, 3>();
+};
+// Two generators of square 100 and two null ones.
+struct wide_null {
+  static constexpr auto value = core::from_gram({
+      {100, 0, 0, 0},
+      {0, 100, 0, 0},
+      {0, 0, 0, 0},
+      {0, 0, 0, 0},
+  });
 };
 
 inline constexpr auto point_layout = core::blades<rga3, "e1 e2 e3 e4">;
@@ -483,6 +496,91 @@ void check_double_duals(std::mt19937_64& source, std::int64_t det,
           "");
   }
 }
+
+// The number of pairs of basis blades s e_A and t e_B of the layout of X for
+// which the dot differs from s t G_AB on the scalar or the antidot from
+// s t times the antiexomorphism's entry on the antiscalar, both composed
+// from the tables; one more for each result layout that is not the scalar
+// alone or the antiscalar alone, since every form has G 1 = 1.
+template <class X>
+int dot_mismatches(std::span<const golden::blade_image> g,
+                   std::span<const golden::complement_pair> complements) {
+  if (!tables_in_place(g, complements)) {
+    return failure_if(true, "a table entry is out of its place");
+  }
+  const std::size_t size = g.size();
+  const core::mask_t antiscalar = static_cast<core::mask_t>(size - 1);
+  using D = decltype(core::dot(X{}, X{}));
+  using A = decltype(core::antidot(X{}, X{}));
+  int mismatches = 0;
+  std::vector<bool> scalar_only(size);
+  scalar_only.at(0) = true;
+  std::vector<bool> antiscalar_only(size);
+  antiscalar_only.at(antiscalar) = true;
+  const std::string dot_layout = layout_difference<D>(scalar_only);
+  const std::string antidot_layout = layout_difference<A>(antiscalar_only);
+  mismatches += failure_if(!dot_layout.empty(), "dot: " + dot_layout);
+  mismatches +=
+      failure_if(!antidot_layout.empty(), "antidot: " + antidot_layout);
+  for (std::size_t i = 0; i < X::component_count; ++i) {
+    for (std::size_t j = 0; j < X::component_count; ++j) {
+      const core::oriented_blade a = X::layout.blades.at(i);
+      const core::oriented_blade b = X::layout.blades.at(j);
+      X x{};
+      X y{};
+      x.coefficients.at(i) = 1;
+      y.coefficients.at(j) = 1;
+      by_mask unit(size);
+      unit.at(b.mask) = b.sign;
+      const std::int64_t dot = a.sign * exomorphism_of(g, unit).at(a.mask);
+      const std::int64_t antidot =
+          a.sign *
+          left_of(complements, exomorphism_of(g, right_of(complements, unit)))
+              .at(a.mask);
+      const std::string pair = "(" + blade_name(a.mask, a.sign) + ", " +
+                               blade_name(b.mask, b.sign) + ")";
+      const std::int64_t got_dot = value_on(core::dot(x, y), 0);
+      const std::int64_t got_antidot =
+          value_on(core::antidot(x, y), antiscalar);
+      mismatches += failure_if(got_dot != dot,
+                               "dot" + pair + " is " + std::to_string(got_dot) +
+                                   ", not " + std::to_string(dot));
+      mismatches +=
+          failure_if(got_antidot != antidot,
+                     "antidot" + pair + " is " + std::to_string(got_antidot) +
+                         ", not " + std::to_string(antidot));
+    }
+  }
+  return mismatches;
+}
+
+// The symmetry of the dot and the antidot, and the De Morgan relation
+// right(antidot(a, b)) = dot(right(a), right(b)), on random a of A and b of
+// B.
+template <class A, class B>
+void check_dot_relations(std::mt19937_64& source, const std::string& form) {
+  INFO("form: ", form);
+  for (int k = 0; k < 4; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    CHECK(difference(core::dot(a, b), core::dot(b, a)) == "");
+    CHECK(difference(core::antidot(a, b), core::antidot(b, a)) == "");
+    CHECK(difference(core::right_complement(core::antidot(a, b)),
+                     core::dot(core::right_complement(a),
+                               core::right_complement(b))) == "");
+  }
+}
+
+template <class X, class Y>
+concept can_call_dot = requires(X x, Y y) { core::dot(x, y); };
+template <class X, class Y>
+concept can_call_antidot = requires(X x, Y y) { core::antidot(x, y); };
+template <class Alg>
+concept has_dot_layout =
+    requires { core::dot_layout<Alg, core::full<2>, core::full<2>>; };
+template <class Alg>
+concept has_antidot_layout =
+    requires { core::antidot_layout<Alg, core::full<2>, core::full<2>>; };
 
 template <class Alg>
 concept has_bulk_layout = requires { core::bulk_layout<Alg, core::full<2>>; };
@@ -1001,3 +1099,280 @@ TEST_CASE("the bulk dual of a conformal sphere is a round point") {
   const Sphere s{-1, 1, 2, 3, -5};
   CHECK(Vector{core::bulk_dual(s)} == Vector{-1, -2, -3, -1, -5});
 }
+
+// Reference: independent value: for every pair of blades of rigid(3),
+//   conformal(2), conformal(3), the degenerate form
+//   [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and random form 1, whose Gram matrices
+//   satisfy e_i e_j + e_j e_i = 2 g_ij, the dot is a^T G b and the antidot
+//   a^T antiG b times the antiscalar, with G, since the metric exomorphism
+//   sends e_A to the sum of det g[A, B] e_B, and antiG = left(G right(u))
+//   composed with the complements, which satisfy u ^ right(u) = antiscalar
+//   and left(u) ^ u = antiscalar, the dot on the scalar alone and the
+//   antidot on the antiscalar alone
+TEST_CASE("dot and antidot of basis blades are the entries of G and antiG") {
+  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
+  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
+  REQUIRE(degenerate3::value.gram == golden::gp_tables::degenerate_3_gram);
+  REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
+  CHECK(dot_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::rigid_3, golden::complements::n4) == 0);
+  CHECK(dot_mismatches<core::mv<cga2, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::conformal_2, golden::complements::n4) == 0);
+  CHECK(dot_mismatches<core::mv<cga3, core::full<5>, std::int64_t>>(
+            golden::exomorphisms::conformal_3, golden::complements::n5) == 0);
+  CHECK(dot_mismatches<core::mv<degenerate3, core::full<3>, std::int64_t>>(
+            golden::exomorphisms::degenerate_3, golden::complements::n3) == 0);
+  CHECK(dot_mismatches<core::mv<random1, core::full<3>, std::int64_t>>(
+            golden::exomorphisms::random_1, golden::complements::n3) == 0);
+}
+
+// Reference: independent value: the same for every pair of blades of
+//   rigid(3) stored under their oriented names, where an oriented name lists
+//   generators in the order of their product, with G, since the metric
+//   exomorphism sends e_A to the sum of det g[A, B] e_B, and the
+//   complements, which satisfy u ^ right(u) = antiscalar and
+//   left(u) ^ u = antiscalar, so the dot is a^T G b and the antidot
+//   a^T antiG b times the antiscalar
+TEST_CASE("dot and antidot of oriented blades carry their orientations") {
+  const auto& names = golden::oriented_names::rigid_3;
+  REQUIRE(names.size() == Oriented::component_count);
+  for (std::size_t k = 0; k < names.size(); ++k) {
+    CAPTURE(names.at(k).name);
+    REQUIRE(Oriented::layout.blades.at(k).mask == names.at(k).blade.blade);
+    REQUIRE(Oriented::layout.blades.at(k).sign == names.at(k).blade.sign);
+  }
+  CHECK(dot_mismatches<Oriented>(golden::exomorphisms::rigid_3,
+                                 golden::complements::n4) == 0);
+}
+
+// Reference: independent value: by hand in rigid(3), where e1, e2, e3
+//   square to 1 and e4 to 0, the dot of two points is
+//   x1 x2 + y1 y2 + z1 z2 on the scalar and their antidot w1 w2 on e1234,
+//   and the dot of two motors is the product of their scalars plus the
+//   moments' dot product, since e31 = -e13 enters twice, and their antidot
+//   the directions' dot product plus the product of their e1234 parts
+TEST_CASE("dot and antidot of points and motors by hand") {
+  const Point p{2, 3, 5, 7};
+  const Point q{11, 13, 17, 19};
+  using Scalar = core::mv<rga3, core::blades<rga3, "1">, std::int64_t>;
+  using Top = core::mv<rga3, core::blades<rga3, "e1234">, std::int64_t>;
+  static_assert(std::same_as<decltype(core::dot(p, q)), Scalar>);
+  static_assert(std::same_as<decltype(core::antidot(p, q)), Top>);
+  CHECK(core::get<"1">(core::dot(p, q)) == (2 * 11) + (3 * 13) + (5 * 17));
+  CHECK(core::get<"e1234">(core::antidot(p, q)) == 7 * 19);
+
+  const Motor m{1, 2, 3, 4, 5, 6, 7, 8};
+  const Motor n{9, 10, 11, 12, 13, 14, 15, 16};
+  static_assert(std::same_as<decltype(core::dot(m, n)), Scalar>);
+  static_assert(std::same_as<decltype(core::antidot(m, n)), Top>);
+  CHECK(core::get<"1">(core::dot(m, n)) ==
+        (1 * 9) + (5 * 13) + (6 * 14) + (7 * 15));
+  CHECK(core::get<"e1234">(core::antidot(m, n)) ==
+        (2 * 10) + (3 * 11) + (4 * 12) + (8 * 16));
+}
+
+// Reference: independent value: by hand in R(3,0,0), e12 . e12 = +1, since
+//   the dot is a^T G b and G e12 = det [[1, 0], [0, 1]] e12 = e12, where the
+//   scalar part of the geometric product e12 e12 is -1
+TEST_CASE("the dot of e12 with itself is +1 in a Euclidean metric") {
+  using Bivector = core::mv<r300, core::blades<r300, "e12">, std::int64_t>;
+  const Bivector e12{1};
+  CHECK(core::get<"1">(core::dot(e12, e12)) == 1);
+}
+
+// Reference: identity: the dot and the antidot are symmetric, since G and
+//   antiG are symmetric, and right(antidot(a, b)) = dot(right(a), right(b)),
+//   since antiG = left G right and the right complement is a signed
+//   permutation whose inverse, the left complement, is its transpose, on
+//   random integer multivectors of every blade of rigid(3), conformal(2),
+//   conformal(3), the degenerate form, and random form 1, and on a point and
+//   a motor of rigid(3)
+TEST_CASE("dot and antidot are symmetric and related through complements") {
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
+  using R = core::mv<rga3, core::full<4>, std::int64_t>;
+  check_dot_relations<R, R>(source, "rigid(3)");
+  check_dot_relations<Point, Motor>(source, "rigid(3), point and motor");
+  check_dot_relations<Oriented, R>(source, "rigid(3), oriented");
+  check_dot_relations<core::mv<cga2, core::full<4>, std::int64_t>,
+                      core::mv<cga2, core::full<4>, std::int64_t>>(
+      source, "conformal(2)");
+  check_dot_relations<core::mv<cga3, core::full<5>, std::int64_t>,
+                      core::mv<cga3, core::full<5>, std::int64_t>>(
+      source, "conformal(3)");
+  check_dot_relations<core::mv<degenerate3, core::full<3>, std::int64_t>,
+                      core::mv<degenerate3, core::full<3>, std::int64_t>>(
+      source, "degenerate");
+  check_dot_relations<core::mv<random1, core::full<3>, std::int64_t>,
+                      core::mv<random1, core::full<3>, std::int64_t>>(
+      source, "random form 1");
+}
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   the dot holds the scalar only when the operands share a grade on which G
+//   is not zero, and the antidot holds e1234 only when they share one on
+//   which antiG is not zero, so the dot and the antidot of a point and a
+//   line, the dot of two multiples of e4, and the antidot of two multiples
+//   of e1 have no blade at all, while two points or two lines give the
+//   scalar and e1234, and the layout names give the same sets and take only
+//   an algebra
+TEST_CASE("the dot and antidot layouts are the scalar, the antiscalar, or "
+          "empty") {
+  constexpr auto scalar = core::blades<rga3, "1">;
+  constexpr auto antiscalar = core::blades<rga3, "e1234">;
+  constexpr auto e1 = core::blades<rga3, "e1">;
+  constexpr auto e4 = core::blades<rga3, "e4">;
+  static_assert(core::dot_layout<rga3, point_layout, point_layout> == scalar);
+  static_assert(core::dot_layout<rga3, line_layout, line_layout> == scalar);
+  static_assert(core::antidot_layout<rga3, point_layout, point_layout> ==
+                antiscalar);
+  static_assert(core::antidot_layout<rga3, line_layout, line_layout> ==
+                antiscalar);
+  static_assert(core::dot_layout<rga3, point_layout, line_layout>.size() == 0);
+  static_assert(core::antidot_layout<rga3, point_layout, line_layout>.size() ==
+                0);
+  static_assert(core::dot_layout<rga3, e4, e4>.size() == 0);
+  static_assert(core::antidot_layout<rga3, e1, e1>.size() == 0);
+  static_assert(core::dot_layout<rga3, e1, e1> == scalar);
+  static_assert(core::antidot_layout<rga3, e4, e4> == antiscalar);
+  static_assert(has_dot_layout<rga3>);
+  static_assert(has_antidot_layout<rga3>);
+  static_assert(!has_dot_layout<int>);
+  static_assert(!has_antidot_layout<int>);
+
+  const Point p{2, 3, 5, 7};
+  const Line l{1, 2, 3, 4, 5, 6};
+  static_assert(decltype(core::dot(p, l))::component_count == 0);
+  static_assert(decltype(core::antidot(l, p))::component_count == 0);
+  static_assert(
+      std::same_as<
+          decltype(core::dot(p, l)),
+          core::mv<rga3, core::dot_layout<rga3, point_layout, line_layout>,
+                   std::int64_t>>);
+  static_assert(
+      std::same_as<
+          decltype(core::antidot(l, l)),
+          core::mv<rga3, core::antidot_layout<rga3, line_layout, line_layout>,
+                   std::int64_t>>);
+  CHECK(core::dot_layout<rga3, point_layout, point_layout>.size() == 1);
+}
+
+// Reference: contract: the dot computes its one coefficient by assigning
+//   the first term rather than adding it to zero, so a lone product of
+//   -0.0 and 1.0 keeps its sign, as IEEE 754 gives -0.0 * 1.0 = -0.0 and
+//   0.0 + -0.0 = +0.0
+TEST_CASE("the dot keeps a negative zero") {
+  using V = core::mv<rga3, core::blades<rga3, "e1">, double>;
+  const V a{-0.0};
+  const V b{1.0};
+  const double d = core::get<"1">(core::dot(a, b));
+  INFO("dot: ", std::format("{}", d));
+  CHECK(std::signbit(d));
+}
+
+// Reference: independent value: by hand in diag(100, 100, 0, 0), the dot of
+//   two values on e1 e123 e124 reads only the terms on the scalar, of which
+//   e1 . e1 = 100 is the only one, since e3 and e4 are null and the form is
+//   diagonal, so std::int8_t holds it, although the whole product
+//   e123 reverse(e124) is -10000 e34, beyond std::int8_t, and likewise the
+//   antidot of two values on e234 e3 e4, whose right complements are -e1,
+//   e124, and -e123
+TEST_CASE("the dot and antidot accept a scalar that holds their own "
+          "coefficients") {
+  using Small =
+      core::mv<wide_null, core::blades<wide_null, "e1 e123 e124">, std::int8_t>;
+  using Complements =
+      core::mv<wide_null, core::blades<wide_null, "e234 e3 e4">, std::int8_t>;
+  const Small a{1, 0, 0};
+  const Complements b{1, 0, 0};
+  static_assert(
+      std::same_as<
+          decltype(core::dot(a, a)),
+          core::mv<wide_null, core::blades<wide_null, "1">, std::int8_t>>);
+  static_assert(
+      std::same_as<
+          decltype(core::antidot(b, b)),
+          core::mv<wide_null, core::blades<wide_null, "e1234">, std::int8_t>>);
+  CHECK(core::get<"1">(core::dot(a, a)) == 100);
+  CHECK(core::get<"e1234">(core::antidot(b, b)) == 100);
+}
+
+// Reference: independent value: in conformal(3), the round point
+//   p + e4 + (p^2 + r^2)/2 e5 has P . P = -r^2, as Lengyel's dot products
+//   page gives, since e4 . e5 = -1, worked by hand for p = (1, 2, 3) and
+//   r^2 = 2, where (p^2 + r^2)/2 = 8 and P . P = 14 - 16 = -2
+TEST_CASE("the dot of a round point with itself is minus its squared radius") {
+  using Vector = core::mv<cga3, core::of_grade<5, 1>, std::int64_t>;
+  const Vector round{1, 2, 3, 1, 8};
+  CHECK(core::get<"1">(core::dot(round, round)) == -2);
+}
+
+// Reference: contract: a dot or antidot of operands in two algebras or with
+//   two scalar types has the catch-all as its only candidate, and a
+//   requires-expression answers yes for it, as the library documents, while
+//   a valid call is not captured by it, since its result is on the scalar or
+//   the antiscalar and not the first operand's type, and a multivector and
+//   a number have no dot
+TEST_CASE("the dot and antidot overloads take the right operands") {
+  using R = core::mv<rga3, core::full<4>, double>;
+  using F = core::mv<rga3, core::full<4>, float>;
+  using C = core::mv<cga3, core::full<5>, double>;
+  static_assert(can_call_dot<R, R>);
+  static_assert(can_call_dot<R, F>);
+  static_assert(can_call_dot<R, C>);
+  static_assert(can_call_antidot<R, F>);
+  static_assert(can_call_antidot<R, C>);
+  static_assert(!can_call_dot<R, double>);
+  static_assert(!can_call_dot<double, R>);
+  static_assert(!can_call_antidot<R, int>);
+  static_assert(!can_call_antidot<int, R>);
+  static_assert(std::same_as<decltype(core::dot(R{}, R{})),
+                             core::mv<rga3, core::blades<rga3, "1">, double>>);
+  static_assert(
+      std::same_as<decltype(core::antidot(R{}, R{})),
+                   core::mv<rga3, core::blades<rga3, "e1234">, double>>);
+}
+
+// A scope that sees galoot::core's names by a using-directive, as a user's
+// code may, with types of its own: one with no dot or antidot and one with
+// its own. The library's catch-alls must leave both alone.
+namespace {
+namespace user_code {
+
+using namespace galoot::core;
+
+struct widget {};
+
+struct gadget {
+  friend int dot(gadget /*a*/, gadget /*b*/) { return 1; }
+  friend int antidot(gadget /*a*/, gadget /*b*/) { return 2; }
+};
+
+template <class X, class Y>
+concept has_dot = requires(X x, Y y) { dot(x, y); };
+template <class X, class Y>
+concept has_antidot = requires(X x, Y y) { antidot(x, y); };
+
+// Reference: contract: with galoot::core's names in scope by a
+//   using-directive, a type of the user's without a dot still has none, a
+//   type with its own dot and antidot keeps them, a multivector with such a
+//   type has none, and two multivectors find the library's by an
+//   unqualified call
+TEST_CASE("the dot and antidot leave other types alone") {
+  using R = mv<rga3, full<4>, double>;
+  static_assert(!has_dot<widget, widget>);
+  static_assert(!has_antidot<widget, widget>);
+  static_assert(!has_dot<R, widget>);
+  static_assert(!has_antidot<gadget, R>);
+  static_assert(std::same_as<decltype(dot(gadget{}, gadget{})), int>);
+  static_assert(std::same_as<decltype(antidot(gadget{}, gadget{})), int>);
+  CHECK(dot(gadget{}, gadget{}) == 1);
+  CHECK(antidot(gadget{}, gadget{}) == 2);
+  static_assert(has_dot<R, R>);
+  static_assert(has_antidot<R, R>);
+}
+
+} // namespace user_code
+} // namespace
