@@ -37,6 +37,7 @@
 //   left_weight_dual(x)  left(weight(x))
 //   dot(a, b)            the sum of a_A G_AB b_B, on the scalar
 //   antidot(a, b)        the sum of a_A (left G right)_AB b_B, times 𝟙
+//   project(a, b)        antiwedge(b, wedge(a, weight_dual(b)))
 //
 // In rigid(3), where e1, e2, e3 square to 1 and e4 to 0, the bulk is the part
 // without e4 and the weight the part with it, so bulk(x) + weight(x) is x,
@@ -67,7 +68,7 @@
 //
 // Nothing here checks anything: the bulk and the weight drop blades by
 // definition, the dot and the antidot compute one coefficient, and the duals
-// drop nothing.
+// and the projection drop nothing.
 //
 // The names bulk, weight, and dot are common words. A variable of one of
 // these names in scope stops an unqualified call of the function, as for any
@@ -196,13 +197,14 @@ inline constexpr bool weight_coefficients_exact = bulk_coefficients_exact<
 enum class DualSpelling {
   dot_function,
   antidot_function,
+  project_function,
 };
 
-/// The only error of a dot or an antidot of mismatched operands: the message
-/// names the operation and the cause. Each condition compares the two algebras
-/// or the two scalar types themselves, so that the compiler prints them. Its
-/// result type is that of the first operand, so that a variable initialized
-/// from the call adds no second error.
+/// The only error of a dot, an antidot, or a projection of mismatched
+/// operands: the message names the operation and the cause. Each condition
+/// compares the two algebras or the two scalar types themselves, so that the
+/// compiler prints them. Its result type is that of the first operand, so
+/// that a variable initialized from the call adds no second error.
 template <DualSpelling Spelling, class X, class Y>
 constexpr std::remove_cvref_t<X> reject_dual_operands() {
   using R = std::remove_cvref_t<X>;
@@ -215,10 +217,15 @@ constexpr std::remove_cvref_t<X> reject_dual_operands() {
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "dot: the operands are in different algebras; give both types the "
           "same algebra tag");
-    } else {
+    } else if constexpr (Spelling == antidot_function) {
       static_assert(
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "antidot: the operands are in different algebras; give both types "
+          "the same algebra tag");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "project: the operands are in different algebras; give both types "
           "the same algebra tag");
     }
   } else {
@@ -227,10 +234,15 @@ constexpr std::remove_cvref_t<X> reject_dual_operands() {
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "dot: the operands have different scalar types; give both types "
           "the same scalar type");
-    } else {
+    } else if constexpr (Spelling == antidot_function) {
       static_assert(
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "antidot: the operands have different scalar types; give both "
+          "types the same scalar type");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "project: the operands have different scalar types; give both "
           "types the same scalar type");
     }
   }
@@ -298,6 +310,13 @@ template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto antidot_layout =
     left_complement_layout<Alg, dot_layout<Alg, right_complement_layout<Alg, A>,
                                            right_complement_layout<Alg, B>>>;
+
+/// The layout of project(a, b) for a on the layout A and b on the layout B:
+/// the blades of the antiwedge of b with the wedge of a and the weight dual
+/// of b. A rigid(3) point onto a plane gives e1, e2, e3, and e4.
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto project_layout =
+    antiwedge_layout<Alg, B, wedge_layout<Alg, A, weight_dual_layout<Alg, B>>>;
 
 // NOLINTEND(modernize-avoid-c-style-cast)
 
@@ -532,6 +551,45 @@ template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> antidot(const X& /*a*/, const Y& /*b*/) {
   return detail::reject_dual_operands<detail::DualSpelling::antidot_function, X,
+                                      Y>();
+}
+
+/// The projection of a onto b, b ∨ (a ∧ weight_dual(b)): the antiwedge of b
+/// with the wedge of a and the weight dual of b. In rigid(3) it projects a
+/// point onto a plane or a line along the plane's or the line's normal
+/// direction: the point (1, 1, 7, 1) onto the plane z = 2 gives
+/// (1, 1, 2, 1), and a point projected onto a unitized plane, one whose
+/// normal has length 1, keeps its weight. The object comes first, as in
+/// project(point, plane). Never checks.
+///
+/// Requires: a and b have the same algebra and the same scalar type, and the
+/// scalar holds every exact coefficient of the weight dual of b, as for
+/// weight_dual (the wedge and the antiwedge have coefficients +1, -1, and 0,
+/// which every scalar holds); otherwise the call is rejected at compile time
+/// with a message that names project.
+/// Guarantees: on project_layout<Alg, A, B>.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, project_layout<Alg, A, B>, T>
+project(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
+  constexpr bool scalar_holds_every_coefficient_of_the_projection =
+      detail::weight_coefficients_exact<Alg, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_projection,
+                "project: the scalar type cannot hold one of the projection's "
+                "exact coefficients; use a scalar type that holds larger "
+                "integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_projection) {
+    return antiwedge(b, wedge(a, weight_dual(b)));
+  } else {
+    return {};
+  }
+}
+
+/// Rejects a projection whose operands are not in one algebra with one
+/// scalar type, as for dot: a requires-expression is told yes.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> project(const X& /*a*/, const Y& /*b*/) {
+  return detail::reject_dual_operands<detail::DualSpelling::project_function, X,
                                       Y>();
 }
 
