@@ -163,14 +163,14 @@ inline constexpr std::array<product, 9> conformal_3_products = {{
 }};
 } // namespace wedge_basis
 
-// Every product e_A e_B of two blades, in the wedge-monomial basis, for four
-// forms: rigid(3); conformal(3); the degenerate form [[0, 1, 0], [1, 0, 0],
-// [0, 0, 0]]; and seeded random form 1 of clifford_reference.py
-// (seed 20261031). Each table was validated before it was written by the
-// defining relations e_i e_j + e_j e_i = 2 g_ij, associativity on every
-// triple of blades, and the check that each blade is the antisymmetrized
-// product of its generators. Each form has its Gram matrix and det g; its
-// products are listed in order of a, then b.
+// Every product e_A e_B of two blades, in the wedge-monomial basis, for five
+// forms: rigid(3); conformal(2); conformal(3); the degenerate form [[0, 1,
+// 0], [1, 0, 0], [0, 0, 0]]; and seeded random form 1 of
+// clifford_reference.py (seed 20261031). Each table was validated before it
+// was written by the defining relations e_i e_j + e_j e_i = 2 g_ij,
+// associativity on every triple of blades, and the check that each blade is
+// the antisymmetrized product of its generators. Each form has its Gram
+// matrix and det g; its products are listed in order of a, then b.
 // Fact: e_i e_j + e_j e_i = 2 g_ij
 namespace gp_tables {
 inline constexpr std::array<std::array<int, 4>, 4> rigid_3_gram = {{

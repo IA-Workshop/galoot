@@ -616,7 +616,8 @@ def generate():
     open_namespace(out, "gp_tables",
                    "e_i e_j + e_j e_i = 2 g_ij",
                    "Every product e_A e_B of two blades, in the wedge-monomial "
-                   "basis, for four forms: rigid(3); conformal(3); the "
+                   "basis, for five forms: rigid(3); conformal(2); "
+                   "conformal(3); the "
                    "degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]]; and "
                    "seeded random form 1 of clifford_reference.py "
                    f"(seed {ref.SEED}). Each table was validated before it was "
@@ -747,7 +748,8 @@ def generate():
                    "The metric exomorphism G sends each blade e_A to the sum, "
                    "over the blades e_B of its grade, of the Gram minor "
                    "det g[A, B] times e_B: it applies g to a vector, and to a "
-                   "wedge of vectors it gives the wedge of their images. For the five forms of gp_tables, indexed by mask. "
+                   "wedge of vectors it gives the wedge of their images. For "
+                   "the five forms of gp_tables, indexed by mask. "
                    "Each entry was computed from the Gram minors and checked "
                    "against a second route, the scalar part of e_A ~e_B in "
                    "the product table, and G was checked to compose with the "
