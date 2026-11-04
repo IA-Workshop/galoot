@@ -37,6 +37,7 @@
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
+#include <galoot/core/dual.hpp>
 #include <galoot/core/linear.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -118,11 +119,30 @@ struct sample {
   std::vector<rational> on;
 };
 
-// p / 2^27 for a seeded p with |p| < 2^27, or, for a wide input, p / 2^(53
-// + s) with |p| < 2^53 and s from 0 to 6: a sum of two wide inputs needs up
-// to 60 bits, so it rounds in double.
-rational draw_value(std::mt19937_64& source, bool wide = false) {
-  if (wide) {
+// The inputs of a test: for products, p / 2^27 for a seeded p with
+// |p| < 2^27; for sums, p / 2^(53 + s) with |p| < 2^53 and s from 0 to 6, so
+// that a sum of two needs up to 60 bits and rounds in double; and for
+// products of three, as in the projection, p / 2^18 with |p| < 2^18, so that
+// a product of three needs up to 54 bits and rounds, while its exact value
+// keeps a denominator of at most 2^54; and for products by small integers,
+// as in the bulk of a form whose metric has entries other than 0 and +1 or
+// -1, p / 2^53 with |p| < 2^53, so that 3 x needs 55 bits and rounds.
+enum class Inputs : std::uint8_t { products, sums, triple, full_width };
+
+rational draw_value(std::mt19937_64& source, Inputs inputs = Inputs::products) {
+  if (inputs == Inputs::triple) {
+    constexpr std::int64_t triple_scale = test_support::power_of_two(18);
+    std::uniform_int_distribution<std::int64_t> numerator(-(triple_scale - 1),
+                                                          triple_scale - 1);
+    return rational{numerator(source), triple_scale};
+  }
+  if (inputs == Inputs::full_width) {
+    constexpr std::int64_t full_scale = test_support::power_of_two(53);
+    std::uniform_int_distribution<std::int64_t> numerator(-(full_scale - 1),
+                                                          full_scale - 1);
+    return rational{numerator(source), full_scale};
+  }
+  if (inputs == Inputs::sums) {
     constexpr std::int64_t wide_scale = test_support::power_of_two(53);
     std::uniform_int_distribution<std::int64_t> numerator(-(wide_scale - 1),
                                                           wide_scale - 1);
@@ -136,14 +156,14 @@ rational draw_value(std::mt19937_64& source, bool wide = false) {
 }
 
 template <class X>
-sample<X> draw(std::mt19937_64& source, bool wide = false) {
+sample<X> draw(std::mt19937_64& source, Inputs inputs = Inputs::products) {
   sample<X> s{
       .d = X{},
       .t = tracked_of<X>{},
       .on = std::vector<rational>(blade_count<typename X::algebra_type>),
   };
   for (std::size_t k = 0; k < X::component_count; ++k) {
-    const rational c = draw_value(source, wide);
+    const rational c = draw_value(source, inputs);
     const core::oriented_blade blade = X::layout.blades.at(k);
     s.d.coefficients.at(k) = test_support::nearest_double(c);
     s.t.coefficients.at(k) = tracked::input(c);
@@ -194,10 +214,15 @@ std::string text(const rational& x) {
 // the exact coefficients `expected`, indexed by mask. Each coefficient of
 // the result must be within its bound, and its tracked value must equal the
 // expected value; a blade the result lacks must be zero in `expected`. With
-// `exact`, the operation must not round at all.
+// Exactness::no_rounding the operation must not round at all; with
+// Exactness::exact_value it may count roundings that its double operations
+// do not make, such as products by 1, but its double result must still be
+// the exact value.
+enum class Exactness : std::uint8_t { rounds, exact_value, no_rounding };
+
 template <class R, class RT>
 void compare(const R& d, const RT& t, const std::vector<rational>& expected,
-             bool exact, const std::string& what, tally& out) {
+             Exactness exact, const std::string& what, tally& out) {
   static_assert(std::is_same_v<RT, tracked_of<R>>);
   std::vector<bool> held(expected.size());
   for (std::size_t k = 0; k < R::component_count; ++k) {
@@ -215,7 +240,13 @@ void compare(const R& d, const RT& t, const std::vector<rational>& expected,
       out.note(where + ": the tracked value is " + text(tk.value) +
                ", the reference " + text(e));
     }
-    if (exact && tk.roundings != 0) {
+    if (exact == Exactness::exact_value &&
+        test_support::exact_rational(dk) != e) {
+      ++out.rounded;
+      out.note(where + std::format(": {} is not the exact value ", dk) +
+               text(e));
+    }
+    if (exact == Exactness::no_rounding && tk.roundings != 0) {
       ++out.rounded;
       out.note(where + std::format(": {} roundings", tk.roundings));
     }
@@ -264,11 +295,12 @@ void check_tally(const tally& t, const std::string& family) {
 // over tracked, and compares both with `reference` of the exact inputs.
 template <class X, class Y, class Op, class Reference>
 void check_binary(std::mt19937_64& source, int samples, const Op& op,
-                  const Reference& reference, bool exact,
-                  const std::string& what, tally& out, bool wide = false) {
+                  const Reference& reference, Exactness exact,
+                  const std::string& what, tally& out,
+                  Inputs inputs = Inputs::products) {
   for (int s = 0; s < samples; ++s) {
-    const sample<X> a = draw<X>(source, wide);
-    const sample<Y> b = draw<Y>(source, wide);
+    const sample<X> a = draw<X>(source, inputs);
+    const sample<Y> b = draw<Y>(source, inputs);
     compare(op(a.d, b.d), op(a.t, b.t), reference(a.on, b.on), exact, what,
             out);
   }
@@ -276,10 +308,11 @@ void check_binary(std::mt19937_64& source, int samples, const Op& op,
 
 template <class X, class Op, class Reference>
 void check_unary(std::mt19937_64& source, int samples, const Op& op,
-                 const Reference& reference, bool exact,
-                 const std::string& what, tally& out) {
+                 const Reference& reference, Exactness exact,
+                 const std::string& what, tally& out,
+                 Inputs inputs = Inputs::products) {
   for (int s = 0; s < samples; ++s) {
-    const sample<X> a = draw<X>(source);
+    const sample<X> a = draw<X>(source, inputs);
     compare(op(a.d), op(a.t), reference(a.on), exact, what, out);
   }
 }
@@ -355,17 +388,17 @@ void check_products(std::mt19937_64& source, int samples,
       [](const auto& x, const auto& y) {
         return core::geometric_product(x, y);
       },
-      gp, false, form + ", geometric_product", out);
+      gp, Exactness::rounds, form + ", geometric_product", out);
   check_binary<X, Y>(
       source, samples, [](const auto& x, const auto& y) { return x * y; }, gp,
-      false, form + ", a * b", out);
+      Exactness::rounds, form + ", a * b", out);
   check_binary<X, Y>(
       source, samples,
       [](const auto& x, const auto& y) { return core::wedge(x, y); }, wedge,
-      false, form + ", wedge", out);
+      Exactness::rounds, form + ", wedge", out);
   check_binary<X, Y>(
       source, samples, [](const auto& x, const auto& y) { return x ^ y; },
-      wedge, false, form + ", a ^ b", out);
+      wedge, Exactness::rounds, form + ", a ^ b", out);
 }
 
 // GeometricAntiproduct false leaves out the geometric antiproduct, for
@@ -390,18 +423,18 @@ void check_antiproducts(std::mt19937_64& source, int samples,
         [](const auto& x, const auto& y) {
           return core::geometric_antiproduct(x, y);
         },
-        anti(false), false, form + ", geometric_antiproduct", out);
+        anti(false), Exactness::rounds, form + ", geometric_antiproduct", out);
     check_binary<X, Y>(
         source, samples, [](const auto& x, const auto& y) { return x % y; },
-        anti(false), false, form + ", a % b", out);
+        anti(false), Exactness::rounds, form + ", a % b", out);
   }
   check_binary<X, Y>(
       source, samples,
       [](const auto& x, const auto& y) { return core::antiwedge(x, y); },
-      anti(true), false, form + ", antiwedge", out);
+      anti(true), Exactness::rounds, form + ", antiwedge", out);
   check_binary<X, Y>(
       source, samples, [](const auto& x, const auto& y) { return x & y; },
-      anti(true), false, form + ", a & b", out);
+      anti(true), Exactness::rounds, form + ", a & b", out);
 }
 
 // The five maps and ~ and !, each of which must give the exact value.
@@ -422,26 +455,29 @@ void check_maps(std::mt19937_64& source, int samples,
   };
   check_unary<X>(
       source, samples, [](const auto& x) { return core::reverse(x); },
-      by(&golden::blade_signs::reverse), true, form + ", reverse", out);
+      by(&golden::blade_signs::reverse), Exactness::no_rounding,
+      form + ", reverse", out);
   check_unary<X>(
       source, samples, [](const auto& x) { return ~x; },
-      by(&golden::blade_signs::reverse), true, form + ", ~a", out);
-  check_unary<X>(
-      source, samples, [](const auto& x) { return core::antireverse(x); },
-      by(&golden::blade_signs::antireverse), true, form + ", antireverse", out);
-  check_unary<X>(
-      source, samples, [](const auto& x) { return core::grade_involution(x); },
-      by(&golden::blade_signs::involution), true, form + ", grade_involution",
+      by(&golden::blade_signs::reverse), Exactness::no_rounding, form + ", ~a",
       out);
   check_unary<X>(
-      source, samples, [](const auto& x) { return core::right_complement(x); },
-      right, true, form + ", right_complement", out);
+      source, samples, [](const auto& x) { return core::antireverse(x); },
+      by(&golden::blade_signs::antireverse), Exactness::no_rounding,
+      form + ", antireverse", out);
   check_unary<X>(
-      source, samples, [](const auto& x) { return !x; }, right, true,
-      form + ", !a", out);
+      source, samples, [](const auto& x) { return core::grade_involution(x); },
+      by(&golden::blade_signs::involution), Exactness::no_rounding,
+      form + ", grade_involution", out);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::right_complement(x); },
+      right, Exactness::no_rounding, form + ", right_complement", out);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return !x; }, right,
+      Exactness::no_rounding, form + ", !a", out);
   check_unary<X>(
       source, samples, [](const auto& x) { return core::left_complement(x); },
-      left, true, form + ", left_complement", out);
+      left, Exactness::no_rounding, form + ", left_complement", out);
 }
 
 // a + b and a - b on wide inputs, against the sum and the difference of the
@@ -466,10 +502,10 @@ void check_sums(std::mt19937_64& source, int samples, const std::string& form,
   };
   check_binary<X, Y>(
       source, samples, [](const auto& x, const auto& y) { return x + y; }, plus,
-      false, form + ", a + b", out, true);
+      Exactness::rounds, form + ", a + b", out, Inputs::sums);
   check_binary<X, Y>(
       source, samples, [](const auto& x, const auto& y) { return x - y; },
-      minus, false, form + ", a - b", out, true);
+      minus, Exactness::rounds, form + ", a - b", out, Inputs::sums);
 }
 
 // Negation, part, and truncate, which must give the exact value: the
@@ -492,11 +528,11 @@ void check_copies(std::mt19937_64& source, int samples, const std::string& form,
     return r;
   };
   check_unary<X>(
-      source, samples, [](const auto& x) { return -x; }, negated, true,
-      form + ", -a", out);
+      source, samples, [](const auto& x) { return -x; }, negated,
+      Exactness::no_rounding, form + ", -a", out);
   check_unary<X>(
       source, samples, [](const auto& x) { return core::part<Target>(x); },
-      kept, true, form + ", part", out);
+      kept, Exactness::no_rounding, form + ", part", out);
   // truncate drops only zeros here, as its contract asks, so its input is
   // the part it keeps, converted back to X.
   check_unary<X>(
@@ -505,7 +541,147 @@ void check_copies(std::mt19937_64& source, int samples, const std::string& form,
         using Y = std::remove_cvref_t<decltype(x)>;
         return core::truncate<Target>(Y{core::part<Target>(x)});
       },
-      kept, true, form + ", truncate", out);
+      kept, Exactness::no_rounding, form + ", truncate", out);
+}
+
+// G x, by mask, from a table of the metric exomorphism G indexed by mask:
+// each blade e_A goes to the sum of det g[A, B] e_B that its entry lists.
+// `found` is cleared when an entry is not where its index says.
+coefficients exomorphism(std::span<const golden::blade_image> g,
+                         const coefficients& x, bool& found) {
+  coefficients out(x.size());
+  for (std::size_t m = 0; m < x.size(); ++m) {
+    found = found && g[m].blade == m;
+    for (std::size_t k = 0; k < g[m].size; ++k) {
+      const golden::term& t = g[m].terms.at(k);
+      out.at(t.blade) = out.at(t.blade) + (rational{t.coefficient} * x[m]);
+    }
+  }
+  return out;
+}
+
+// The antiexomorphism, left(G right(x)).
+coefficients antiexomorphism(std::span<const golden::blade_image> g,
+                             std::span<const golden::complement_pair> c,
+                             const coefficients& x, bool& found) {
+  return complement(c, exomorphism(g, complement(c, x, true), found), false);
+}
+
+// Whether G sends each blade to at most one blade with coefficient +1 or -1,
+// a signed permutation with zeros: then the bulk, the weight, and the duals
+// only move, negate, or drop coefficients, and over double they are exact.
+bool moves_blades(std::span<const golden::blade_image> g) {
+  return std::ranges::all_of(g, [](const golden::blade_image& image) {
+    return image.size == 0 ||
+           (image.size == 1 && (image.terms.at(0).coefficient == 1 ||
+                                image.terms.at(0).coefficient == -1));
+  });
+}
+
+// The sum of a_A (y)_A over the blades: with y = G b this is a^T G b.
+rational pairing(const coefficients& a, const coefficients& y) {
+  rational sum;
+  for (std::size_t m = 0; m < a.size(); ++m) {
+    sum = sum + (a[m] * y[m]);
+  }
+  return sum;
+}
+
+// The bulk, the weight, and the four duals of one type, against G x and
+// left(G right(x)) from the exomorphism and complement tables, the duals as
+// the right or left complement of those: exact over double where G moves
+// blades, and within their bounds otherwise.
+template <class X>
+void check_duals(std::mt19937_64& source, int samples,
+                 std::span<const golden::blade_image> g,
+                 std::span<const golden::complement_pair> c,
+                 const std::string& form, tally& out, bool& found) {
+  // Where G only moves blades, every result must be exact on any input;
+  // elsewhere its products by integers round only on full-width inputs.
+  const bool moves = moves_blades(g);
+  const Exactness exact = moves ? Exactness::exact_value : Exactness::rounds;
+  const Inputs inputs = moves ? Inputs::products : Inputs::full_width;
+  const auto bulk = [&](const coefficients& x) {
+    return exomorphism(g, x, found);
+  };
+  const auto weight = [&](const coefficients& x) {
+    return antiexomorphism(g, c, x, found);
+  };
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::bulk(x); }, bulk, exact,
+      form + ", bulk", out, inputs);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::weight(x); }, weight,
+      exact, form + ", weight", out, inputs);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::bulk_dual(x); },
+      [&](const coefficients& x) { return complement(c, bulk(x), true); },
+      exact, form + ", bulk_dual", out, inputs);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::weight_dual(x); },
+      [&](const coefficients& x) { return complement(c, weight(x), true); },
+      exact, form + ", weight_dual", out, inputs);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::left_bulk_dual(x); },
+      [&](const coefficients& x) { return complement(c, bulk(x), false); },
+      exact, form + ", left_bulk_dual", out, inputs);
+  check_unary<X>(
+      source, samples, [](const auto& x) { return core::left_weight_dual(x); },
+      [&](const coefficients& x) { return complement(c, weight(x), false); },
+      exact, form + ", left_weight_dual", out, inputs);
+}
+
+// The dot a^T G b on the scalar and the antidot a^T antiG b on the
+// antiscalar, against the exomorphism and complement tables.
+template <class X, class Y>
+void check_dots(std::mt19937_64& source, int samples,
+                std::span<const golden::blade_image> g,
+                std::span<const golden::complement_pair> c,
+                const std::string& form, tally& out, bool& found) {
+  const std::size_t antiscalar = blade_count<typename X::algebra_type> - 1;
+  check_binary<X, Y>(
+      source, samples,
+      [](const auto& a, const auto& b) { return core::dot(a, b); },
+      [&](const coefficients& a, const coefficients& b) {
+        coefficients r(a.size());
+        r.at(0) = pairing(a, exomorphism(g, b, found));
+        return r;
+      },
+      Exactness::rounds, form + ", dot", out);
+  check_binary<X, Y>(
+      source, samples,
+      [](const auto& a, const auto& b) { return core::antidot(a, b); },
+      [&](const coefficients& a, const coefficients& b) {
+        coefficients r(a.size());
+        r.at(antiscalar) = pairing(a, antiexomorphism(g, c, b, found));
+        return r;
+      },
+      Exactness::rounds, form + ", antidot", out);
+}
+
+// The projection of a onto b, b v (a ^ weight_dual(b)), composed from the
+// tables in its three stages: the weight dual right(left(G right(b))), the
+// wedge from the product table, and the antiwedge left(right(b) ^ right(w)).
+// Its inputs are products of three, so they are the narrower ones.
+template <class X, class Y>
+void check_projection(std::mt19937_64& source, int samples,
+                      std::span<const golden::product> table,
+                      std::span<const golden::blade_image> g,
+                      std::span<const golden::complement_pair> c,
+                      const std::string& form, tally& out, bool& found) {
+  check_binary<X, Y>(
+      source, samples,
+      [](const auto& a, const auto& b) { return core::project(a, b); },
+      [&](const coefficients& a, const coefficients& b) {
+        const coefficients dual =
+            complement(c, antiexomorphism(g, c, b, found), true);
+        const coefficients w = table_product(table, a, dual, true, found);
+        return complement(c,
+                          table_product(table, complement(c, b, true),
+                                        complement(c, w, true), true, found),
+                          false);
+      },
+      Exactness::rounds, form + ", project", out, Inputs::triple);
 }
 
 // The seed source, its seed logged on failure.
@@ -767,4 +943,146 @@ TEST_CASE("scaling and division round each coefficient once") {
   CHECK(third.coefficients.at(0) != 5.0 * (1.0 / 3.0));
   CHECK(third.coefficients.at(1) == 10.0 / 3.0);
   CHECK(third.coefficients.at(2) == 7.0 / 3.0);
+}
+
+// Reference: independent value: by hand, the dot of two rigid(3) points is
+//   x1 y1 + x2 y2 + x3 y3, since e4 squares to 0, three products added in
+//   turn, so three roundings deep with the magnitude |x1 y1| + |x2 y2| +
+//   |x3 y3|, and the antidot of two planes is gx hx + gy hy + gz hz on the
+//   antiscalar, the right complement of a plane being -(gx e1 + gy e2 + gz e3
+//   + gw e4), likewise three deep: each kernel keeps only the scalar's terms
+TEST_CASE("the dot and the antidot count the roundings of their terms") {
+  const auto in = [](std::int64_t n, std::int64_t d) {
+    return tracked::input(rational{n, d});
+  };
+  using TPoint = tracked_of<Point>;
+  using TPlane = tracked_of<Plane>;
+  const TPoint x{in(1, 2), in(-3, 4), in(5, 8), in(7, 2)};
+  const TPoint y{in(3, 8), in(1, 4), in(-1, 2), in(5, 4)};
+  const auto d = core::dot(x, y);
+  static_assert(decltype(d)::component_count == 1);
+  CHECK(d.coefficients.at(0).value == rational{-5, 16});
+  CHECK(d.coefficients.at(0).magnitude == rational{11, 16});
+  CHECK(d.coefficients.at(0).roundings == 3);
+
+  const TPlane g{in(1, 2), in(-3, 4), in(5, 8), in(7, 2)};
+  const TPlane h{in(3, 8), in(1, 4), in(-1, 2), in(5, 4)};
+  const auto a = core::antidot(g, h);
+  static_assert(decltype(a)::component_count == 1);
+  static_assert(decltype(a)::layout.blades.at(0).mask == 0b1111);
+  CHECK(a.coefficients.at(0).value == rational{-5, 16});
+  CHECK(a.coefficients.at(0).magnitude == rational{11, 16});
+  CHECK(a.coefficients.at(0).roundings == 3);
+}
+
+// Reference: proof: the forward error bound gamma_K times the magnitude
+//   (Higham, Lemma 3.1), and a result that only moves, negates, or drops
+//   coefficients is exact; independent value: the bulk is G x and the weight
+//   left(G right(x)), where the metric exomorphism sends e_A to the sum of det
+//   g[A, B] e_B, read from its table, and the complements from theirs, which
+//   satisfy u ^ right(u) = antiscalar and left(u) ^ u = antiscalar, the
+//   duals being the right and left complements of those, on rigid(3),
+//   conformal(2), conformal(3), and the degenerate form, where G moves
+//   blades and every result must be exact, and on the random form
+TEST_CASE("the bulk, the weight, and the duals round within their bounds") {
+  INFO("seed: ", doctest::getContextOptions()->rand_seed);
+  std::mt19937_64 source = seeded_source();
+  tally out;
+  bool found = true;
+  const std::span<const golden::blade_image> r3 = golden::exomorphisms::rigid_3;
+  const std::span<const golden::complement_pair> n4 = golden::complements::n4;
+  check_duals<full_mv<rga3, 4>>(source, 100, r3, n4, "rigid(3)", out, found);
+  check_duals<Point>(source, 100, r3, n4, "rigid(3) point", out, found);
+  check_duals<Line>(source, 100, r3, n4, "rigid(3) line", out, found);
+  check_duals<Plane>(source, 100, r3, n4, "rigid(3) plane", out, found);
+  check_duals<Motor>(source, 100, r3, n4, "rigid(3) motor", out, found);
+  check_duals<full_mv<cga2, 4>>(source, 100, golden::exomorphisms::conformal_2,
+                                n4, "conformal(2)", out, found);
+  check_duals<full_mv<cga3, 5>>(source, 100, golden::exomorphisms::conformal_3,
+                                golden::complements::n5, "conformal(3)", out,
+                                found);
+  check_duals<full_mv<degenerate3, 3>>(
+      source, 100, golden::exomorphisms::degenerate_3, golden::complements::n3,
+      "degenerate", out, found);
+  check_duals<full_mv<random1, 3>>(source, 100, golden::exomorphisms::random_1,
+                                   golden::complements::n3, "random", out,
+                                   found);
+  CHECK(found);
+  check_tally(out, "bulk, weight, duals");
+}
+
+// Reference: proof: the forward error bound gamma_K times the magnitude
+//   (Higham, Lemma 3.1); independent value: the dot a^T G b and the antidot
+//   a^T left(G right(b)), where the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B, read from its table, and the complements from theirs,
+//   which satisfy u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
+TEST_CASE("the dot and the antidot round within their bounds") {
+  INFO("seed: ", doctest::getContextOptions()->rand_seed);
+  std::mt19937_64 source = seeded_source();
+  tally out;
+  bool found = true;
+  const std::span<const golden::blade_image> r3 = golden::exomorphisms::rigid_3;
+  const std::span<const golden::complement_pair> n4 = golden::complements::n4;
+  check_dots<full_mv<rga3, 4>, full_mv<rga3, 4>>(source, 100, r3, n4,
+                                                 "rigid(3)", out, found);
+  check_dots<Point, Point>(source, 100, r3, n4, "rigid(3) points", out, found);
+  check_dots<Line, Line>(source, 100, r3, n4, "rigid(3) lines", out, found);
+  check_dots<Plane, Plane>(source, 100, r3, n4, "rigid(3) planes", out, found);
+  check_dots<Motor, Motor>(source, 100, r3, n4, "rigid(3) motors", out, found);
+  check_dots<full_mv<cga2, 4>, full_mv<cga2, 4>>(
+      source, 100, golden::exomorphisms::conformal_2, n4, "conformal(2)", out,
+      found);
+  check_dots<full_mv<cga3, 5>, full_mv<cga3, 5>>(
+      source, 100, golden::exomorphisms::conformal_3, golden::complements::n5,
+      "conformal(3)", out, found);
+  check_dots<full_mv<degenerate3, 3>, full_mv<degenerate3, 3>>(
+      source, 100, golden::exomorphisms::degenerate_3, golden::complements::n3,
+      "degenerate", out, found);
+  check_dots<full_mv<random1, 3>, full_mv<random1, 3>>(
+      source, 100, golden::exomorphisms::random_1, golden::complements::n3,
+      "random", out, found);
+  CHECK(found);
+  check_tally(out, "dot, antidot");
+}
+
+// Reference: proof: the forward error bound gamma_K times the magnitude
+//   (Higham, Lemma 3.1), over the three stages of the projection;
+//   independent value: b v (a ^ weight_dual(b)), with the weight dual from
+//   the exomorphism table, as the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B, and
+//   the complement tables, which satisfy u ^ right(u) = antiscalar and
+//   left(u) ^ u = antiscalar, and the wedge and the antiwedge from the
+//   product tables, which satisfy e_i e_j + e_j e_i = 2 g_ij
+TEST_CASE("the projection rounds within its forward error bound") {
+  INFO("seed: ", doctest::getContextOptions()->rand_seed);
+  std::mt19937_64 source = seeded_source();
+  tally out;
+  bool found = true;
+  const std::span<const golden::product> t4 = golden::gp_tables::rigid_3;
+  const std::span<const golden::blade_image> r3 = golden::exomorphisms::rigid_3;
+  const std::span<const golden::complement_pair> n4 = golden::complements::n4;
+  check_projection<Point, Plane>(source, 100, t4, r3, n4,
+                                 "rigid(3) point onto plane", out, found);
+  check_projection<Point, Line>(source, 100, t4, r3, n4,
+                                "rigid(3) point onto line", out, found);
+  check_projection<Line, Plane>(source, 100, t4, r3, n4,
+                                "rigid(3) line onto plane", out, found);
+  check_projection<full_mv<rga3, 4>, full_mv<rga3, 4>>(source, 100, t4, r3, n4,
+                                                       "rigid(3)", out, found);
+  check_projection<full_mv<cga2, 4>, full_mv<cga2, 4>>(
+      source, 100, golden::gp_tables::conformal_2,
+      golden::exomorphisms::conformal_2, n4, "conformal(2)", out, found);
+  check_projection<full_mv<cga3, 5>, full_mv<cga3, 5>>(
+      source, 20, golden::gp_tables::conformal_3,
+      golden::exomorphisms::conformal_3, golden::complements::n5,
+      "conformal(3)", out, found);
+  check_projection<full_mv<degenerate3, 3>, full_mv<degenerate3, 3>>(
+      source, 100, golden::gp_tables::degenerate_3,
+      golden::exomorphisms::degenerate_3, golden::complements::n3, "degenerate",
+      out, found);
+  check_projection<full_mv<random1, 3>, full_mv<random1, 3>>(
+      source, 100, golden::gp_tables::random_1, golden::exomorphisms::random_1,
+      golden::complements::n3, "random", out, found);
+  CHECK(found);
+  check_tally(out, "projection");
 }
