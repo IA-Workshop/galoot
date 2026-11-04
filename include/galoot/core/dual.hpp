@@ -115,17 +115,24 @@ namespace galoot::core {
 
 namespace detail {
 
-// The antiscalar e12...n of the algebra Alg, as a layout of one blade.
+// The antiscalar e12...n of n generators, as a layout of one blade.
+[[nodiscard]] constexpr blade_set<1> antiscalar_of(std::size_t n) noexcept {
+  blade_set<1> set{};
+  set.blades[0] = {.mask = low_bits(n), .sign = 1};
+  return set;
+}
+
 template <metric_like Alg>
-inline constexpr blade_set<1> antiscalar_layout{
-    {{{.mask = low_bits(Alg::value.generator_count), .sign = 1}}}};
+inline constexpr blade_set<1> antiscalar_layout =
+    antiscalar_of(std::remove_cvref_t<decltype(Alg::value)>::generator_count);
 
 // The antiscalar with coefficient 1, the identity of the geometric
 // antiproduct.
 template <metric_like Alg, ring_scalar T>
 [[nodiscard]] constexpr mv<Alg, antiscalar_layout<Alg>, T> unit_antiscalar() {
   return mv<Alg, antiscalar_layout<Alg>, T>{
-      static_cast<T>(coefficient_type{1})};
+      static_cast<T>(coefficient_type{1}),
+  };
 }
 
 // The number of terms of the geometric product of A and B that land on the
