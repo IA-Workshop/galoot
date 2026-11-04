@@ -1492,10 +1492,11 @@ scalar_terms_are(std::span<const std::array<std::int64_t, 3>> expected) {
 
 } // namespace
 
-// Reference: definition: the scalar part of e_i e_j is g_ij, so in R(3,0,0)
-//   the vectors give e1 e1, e2 e2, e3 e3 with 1 each, in conformal(3)
-//   e4 e5 gives e4 . e5 = -1, the bivectors e12 and e13 against each other
-//   give no scalar, and e1 against e2 gives none
+// Reference: independent value: by hand from the definitions, the scalar
+//   part of e_i e_j is g_ij, so in R(3,0,0) the vectors give e1 e1, e2 e2,
+//   e3 e3 with 1 each, in conformal(3) e4 e5 gives e4 . e5 = -1, the
+//   bivectors e12 and e13 against each other give no scalar, and e1 against
+//   e2 gives none
 TEST_CASE("the dot's kernel keeps exactly the terms on the scalar") {
   constexpr std::array vectors{
       std::array<std::int64_t, 3>{0, 0, 1},
