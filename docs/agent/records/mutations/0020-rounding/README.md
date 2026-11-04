@@ -37,3 +37,19 @@ The largest ratio of \|d − e\| to γ_K M per family, at five seeds of `--rand-
 No ratio exceeds 1. The ratios near 1 come from coefficients with one rounding, where a single correctly rounded operation can have a relative error close to u and γ_1 = u / (1 − u). The ratios above 0.9 with two or more roundings come mostly from a product by an integer coefficient other than ±1 (the random form has coefficients up to 31), which rounds twice in a row on one term. They are information about the bound, not a reason to tighten it.
 
 Seed 0 is the seed of the CTest runs. The figures in the table come from direct runs of the program at `e36a905` that `tools/timed` did not log (a departure from P13, reported). Earlier runs at seeds 1, 2, 3, 20261104, and 4294967295 on clang-measure, through `tools/timed` (selections `core_rounding_test seed <s>`), at an uncommitted state that printed four digits and only the first figure, agree with the table to four digits; seed 4294967295 gave products 0.9945, antiproducts 0.9976, sums 0.9998.
+
+## Cost of the new units
+
+Each compile measured by `tools/measure` (build/<preset>/compile.tsv, not committed) at `e67eff2`, sources touched to force the compile, through `tools/timed` under the selection `gate:core.rounding|support.tracked`; the machine shared with other workstreams, compiles not pinned (P14), so the wall times are indicative and the instruction counts (performance and efficiency cores summed) the comparable figure.
+
+| Preset | `rounding_test.cpp`: wall, peak memory, instructions | `tracked_test.cpp` |
+| --- | --- | --- |
+| gcc-debug | 5.4 s, 646 MB, 70.6 G | 0.2 s, 91 MB, 1.5 G |
+| gcc-release | 8.8 s, 602 MB, 106.5 G | 0.3 s, 97 MB, 3.3 G |
+| gcc-asan | 26.1 s, 1,218 MB, 333.2 G | 0.6 s, 129 MB, 5.8 G |
+| clang-debug | 4.3 s, 393 MB, 51.5 G | 0.3 s, 123 MB, 0.9 G |
+| clang-release | 8.8 s, 385 MB, 105.2 G | 0.2 s, 128 MB, 1.4 G |
+| clang-asan | 33.0 s, 1,118 MB, 339.2 G | 0.3 s, 132 MB, 2.1 G |
+| clang-measure | 8.9 s, 384 MB, 105.3 G | 0.3 s, 128 MB, 1.4 G |
+
+The two tests together run in 1.0 to 1.9 s per preset (the CTest runs of the same selection). `core.rounding` is not labeled `slow`. No core header changed, so there is no before-and-after figure for other suites. `clang-measure`, the optimized Clang build without libstdc++'s assertions, builds and passes both units: the conformal(3) geometric antiproduct of two `full<5>` values, which that configuration cannot build, is left out of the test, and a pair of grade sets stands in.
