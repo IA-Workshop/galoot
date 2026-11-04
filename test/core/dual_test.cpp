@@ -1289,7 +1289,7 @@ TEST_CASE("the dot keeps a negative zero") {
 //   two values on e1 e123 e124 reads only the terms on the scalar, of which
 //   e1 . e1 = 100 is the only one, since e3 and e4 are null and the form is
 //   diagonal, so std::int8_t holds it, although the whole product
-//   e123 reverse(e124) is -10000 e34, beyond std::int8_t, and likewise the
+//   e123 reverse(e124) is +10000 e34, beyond std::int8_t, and likewise the
 //   antidot of two values on e234 e3 e4, whose right complements are -e1,
 //   e124, and -e123
 TEST_CASE("the dot and antidot accept a scalar that holds their own "
