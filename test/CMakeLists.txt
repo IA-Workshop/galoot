@@ -1608,10 +1608,11 @@ set_tests_properties(tools.expect_output_forbid_first_accepts
   tools.expect_output_forbid_first_no_line
   PROPERTIES LABELS "tools;tools.expect_output")
 
-# core.dual: the bulk, the weight, their duals, the dot, and the antidot,
-# against the reference's metric exomorphism and complements.
+# core.dual: the bulk, the weight, their duals, the dot, the antidot, and
+# the projection, against the reference's metric exomorphism and
+# complements.
 galoot_add_test(MODULE core COMPONENT dual)
-target_link_libraries(core_dual_test PRIVATE galoot_golden)
+target_link_libraries(core_dual_test PRIVATE galoot_golden galoot_test_support)
 
 # The names of the machinery under the operations, which the first error
 # line of a rejection must not show: the user wrote the operation, not these.
@@ -1638,13 +1639,14 @@ dual_rejects_narrow_scalar(left_bulk_dual "left bulk dual")
 dual_rejects_narrow_scalar(left_weight_dual "left weight dual")
 dual_rejects_narrow_scalar(dot "dot")
 dual_rejects_narrow_scalar(antidot "antidot")
+dual_rejects_narrow_scalar(project "projection")
 
-# core.dual_mixed_<cause>_<function>: a dot or an antidot of operands from
-# two algebras or with two scalar types fails to compile with one error, the
-# message of the function, which names the cause.
+# core.dual_mixed_<cause>_<function>: a dot, an antidot, or a projection of
+# operands from two algebras or with two scalar types fails to compile with
+# one error, the message of the function, which names the cause.
 set(dual_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(dual_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
-foreach(function IN ITEMS dot antidot)
+foreach(function IN ITEMS dot antidot project)
   galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
     MODULE core COMPONENT dual
     SOURCE core/dual_mixed_algebras_${function}_fail.cpp
@@ -1687,3 +1689,4 @@ dual_rejects_comparison(left_bulk_dual)
 dual_rejects_comparison(left_weight_dual)
 dual_rejects_comparison(dot)
 dual_rejects_comparison(antidot)
+dual_rejects_comparison(project)

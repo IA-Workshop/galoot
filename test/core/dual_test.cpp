@@ -1,5 +1,6 @@
 // Tests of galoot/core/dual.hpp: the bulk and the weight of a multivector,
-// its four duals, and the dot and the antidot of two multivectors.
+// its four duals, the dot and the antidot of two multivectors, and the
+// projection of one onto another.
 //
 // The bulk applies the metric exomorphism G, which sends a blade e_A to the
 // sum over the blades e_B of its grade of the Gram minor det g[A, B] times
@@ -7,7 +8,8 @@
 // dual is the right complement of the bulk and the weight dual that of the
 // weight; the left duals take the left complement instead. The dot of a and
 // b is a^T G b on the scalar, and the antidot a^T antiG b on the antiscalar,
-// with antiG the antiexomorphism. The expected values are composed in the test
+// with antiG the antiexomorphism. The projection of a onto b is
+// b v (a ^ weight_dual(b)). The expected values are composed in the test
 // from the reference's table of G and its tables of complements, or from the
 // squares of a diagonal form, or worked out by hand from those definitions. A
 // result holds the canonical blades the operation reaches, each with
@@ -35,6 +37,7 @@
 #include <doctest/doctest.h>
 
 #include <reference/golden.hpp>
+#include <support/rational.hpp>
 
 namespace {
 
@@ -581,6 +584,12 @@ concept has_dot_layout =
 template <class Alg>
 concept has_antidot_layout =
     requires { core::antidot_layout<Alg, core::full<2>, core::full<2>>; };
+
+template <class X, class Y>
+concept can_call_project = requires(X x, Y y) { core::project(x, y); };
+template <class Alg>
+concept has_project_layout =
+    requires { core::project_layout<Alg, core::full<2>, core::full<2>>; };
 
 template <class Alg>
 concept has_bulk_layout = requires { core::bulk_layout<Alg, core::full<2>>; };
@@ -1335,9 +1344,123 @@ TEST_CASE("the dot and antidot overloads take the right operands") {
                    core::mv<rga3, core::blades<rga3, "e1234">, double>>);
 }
 
+// Reference: independent value: by hand in rigid(3), a point projected
+//   onto a unitized plane has weight +1, and the projection of the point
+//   (1, 1, 7) onto the plane z = 2, the plane e412 - 2 e321, is the point
+//   (1, 1, 2) with weight 1, the foot of the perpendicular, on the canonical
+//   blades e1 e2 e3 e4
+TEST_CASE("a point projected onto the plane z = 2") {
+  const Point p{1, 1, 7, 1};
+  const Plane g{0, 0, 1, -2};
+  static_assert(std::same_as<decltype(core::project(p, g)), Point>);
+  CHECK(core::project(p, g) == Point{1, 1, 2, 1});
+}
+
+// Reference: independent value: by hand in rigid(3), a point projected
+//   onto a unitized plane has weight +1: for a plane with a unit normal n and
+//   offset d, the projection of the unitized point p is p - (n . p + d) n
+//   with weight 1, the closest point of the plane, which lies on it, so
+//   p v g = 0, and projecting it again leaves it unchanged, for exact
+//   rational normals (3/5, 4/5, 0) and (2/3, 2/3, 1/3) and rational points
+TEST_CASE("points projected onto unitized planes land on them with weight 1") {
+  using test_support::rational;
+  using P = core::mv<rga3, point_layout, rational>;
+  using G = core::mv<rga3, plane_layout, rational>;
+  const std::array<std::array<rational, 4>, 2> planes{{
+      {rational{3, 5}, rational{4, 5}, rational{0}, rational{-2}},
+      {rational{2, 3}, rational{2, 3}, rational{1, 3}, rational{1, 2}},
+  }};
+  const std::array<std::array<rational, 3>, 3> points{{
+      {rational{1}, rational{2}, rational{3}},
+      {rational{-7, 2}, rational{1, 3}, rational{5}},
+      {rational{0}, rational{-5, 4}, rational{9, 7}},
+  }};
+  for (std::size_t i = 0; i < planes.size(); ++i) {
+    for (std::size_t j = 0; j < points.size(); ++j) {
+      CAPTURE(i);
+      CAPTURE(j);
+      const auto& n = planes.at(i);
+      const auto& x = points.at(j);
+      const G g{n.at(0), n.at(1), n.at(2), n.at(3)};
+      const P p{x.at(0), x.at(1), x.at(2), rational{1}};
+      const rational distance = (n.at(0) * x.at(0)) + (n.at(1) * x.at(1)) +
+                                (n.at(2) * x.at(2)) + n.at(3);
+      const P foot{x.at(0) - (distance * n.at(0)),
+                   x.at(1) - (distance * n.at(1)),
+                   x.at(2) - (distance * n.at(2)), rational{1}};
+      const P projected = core::project(p, g);
+      CHECK(projected == foot);
+      CHECK(core::get<"e4">(projected) == rational{1});
+      CHECK(core::get<"1">(core::antiwedge(projected, g)) == rational{0});
+      CHECK(core::project(projected, g) == projected);
+    }
+  }
+}
+
+// Reference: independent value: by hand in rigid(3), the projection of the
+//   point (5, 7, -1) onto the x axis, the line with direction (1, 0, 0) on
+//   e41 and no moment, is the foot of the perpendicular (5, 0, 0) with
+//   weight 1, from weight_dual(e41) = -e23, p ^ -e23 = -5 e123 - e234, and
+//   e41 v that = 5 e1 + e4, and the projection is quadratic in the line, so
+//   the line with direction (2, 0, 0) gives (20, 0, 0, 4), and for the unit
+//   line through (0, 2, 3) and (1, 2, 3), the wedge of those points, the foot
+//   is (5, 2, 3) with weight 1, also computed exactly from the definitions
+//   apart from the library
+TEST_CASE("a point projected onto a line is the foot of the perpendicular") {
+  const Point p{5, 7, -1, 1};
+  static_assert(std::same_as<decltype(core::project(p, Line{})), Point>);
+  CHECK(core::project(p, Line{1, 0, 0, 0, 0, 0}) == Point{5, 0, 0, 1});
+  CHECK(core::project(p, Line{2, 0, 0, 0, 0, 0}) == Point{20, 0, 0, 4});
+  const Line l{core::wedge(Point{0, 2, 3, 1}, Point{1, 2, 3, 1})};
+  CHECK(core::project(p, l) == Point{5, 2, 3, 1});
+}
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   the projection of a point onto a plane or a line reaches the four
+//   vectors and that of a line onto a plane the six bivectors, each with
+//   sign +1 in order of grade and then of index list, and the layout name
+//   gives the same sets and takes only an algebra
+TEST_CASE("the projection layout name is the canonical set") {
+  static_assert(core::project_layout<rga3, point_layout, plane_layout> ==
+                core::of_grade<4, 1>);
+  static_assert(core::project_layout<rga3, point_layout, line_layout> ==
+                core::of_grade<4, 1>);
+  static_assert(core::project_layout<rga3, line_layout, plane_layout> ==
+                core::of_grade<4, 2>);
+  static_assert(has_project_layout<rga3>);
+  static_assert(!has_project_layout<int>);
+  static_assert(
+      std::same_as<
+          decltype(core::project(Line{}, Plane{})),
+          core::mv<rga3, core::project_layout<rga3, line_layout, plane_layout>,
+                   std::int64_t>>);
+  CHECK(core::project_layout<rga3, line_layout, plane_layout>.size() == 6);
+}
+
+// Reference: contract: a projection of operands in two algebras or with two
+//   scalar types has the catch-all as its only candidate, and a
+//   requires-expression answers yes for it, as the library documents, while
+//   a valid call is not captured by it, since a line projected onto a plane
+//   is on the canonical bivectors and not of the line's type, and a
+//   multivector and a number have no projection
+TEST_CASE("the project overloads take the right operands") {
+  using L = core::mv<rga3, line_layout, double>;
+  using G = core::mv<rga3, plane_layout, double>;
+  using F = core::mv<rga3, plane_layout, float>;
+  using C = core::mv<cga3, core::full<5>, double>;
+  static_assert(can_call_project<L, G>);
+  static_assert(can_call_project<L, F>);
+  static_assert(can_call_project<L, C>);
+  static_assert(!can_call_project<L, double>);
+  static_assert(!can_call_project<double, G>);
+  static_assert(!std::same_as<decltype(core::project(L{}, G{})), L>);
+  static_assert(std::same_as<decltype(core::project(L{}, G{})),
+                             core::mv<rga3, core::of_grade<4, 2>, double>>);
+}
+
 // A scope that sees galoot::core's names by a using-directive, as a user's
-// code may, with types of its own: one with no dot or antidot and one with
-// its own. The library's catch-alls must leave both alone.
+// code may, with types of its own: one with no dot, antidot, or project and
+// one with its own. The library's catch-alls must leave both alone.
 namespace {
 namespace user_code {
 
@@ -1348,19 +1471,22 @@ struct widget {};
 struct gadget {
   friend int dot(gadget /*a*/, gadget /*b*/) { return 1; }
   friend int antidot(gadget /*a*/, gadget /*b*/) { return 2; }
+  friend int project(gadget /*a*/, gadget /*b*/) { return 3; }
 };
 
 template <class X, class Y>
 concept has_dot = requires(X x, Y y) { dot(x, y); };
 template <class X, class Y>
 concept has_antidot = requires(X x, Y y) { antidot(x, y); };
+template <class X, class Y>
+concept has_project = requires(X x, Y y) { project(x, y); };
 
 // Reference: contract: with galoot::core's names in scope by a
-//   using-directive, a type of the user's without a dot still has none, a
-//   type with its own dot and antidot keeps them, a multivector with such a
-//   type has none, and two multivectors find the library's by an
-//   unqualified call
-TEST_CASE("the dot and antidot leave other types alone") {
+//   using-directive, a type of the user's without a dot or a projection
+//   still has none, a type with its own dot, antidot, and project keeps them, a
+//   multivector with such a type has none, and two multivectors find the
+//   library's by an unqualified call
+TEST_CASE("the dot, antidot, and project leave other types alone") {
   using R = mv<rga3, full<4>, double>;
   static_assert(!has_dot<widget, widget>);
   static_assert(!has_antidot<widget, widget>);
@@ -1372,6 +1498,11 @@ TEST_CASE("the dot and antidot leave other types alone") {
   CHECK(antidot(gadget{}, gadget{}) == 2);
   static_assert(has_dot<R, R>);
   static_assert(has_antidot<R, R>);
+  static_assert(!has_project<widget, widget>);
+  static_assert(!has_project<R, gadget>);
+  static_assert(std::same_as<decltype(project(gadget{}, gadget{})), int>);
+  CHECK(project(gadget{}, gadget{}) == 3);
+  static_assert(has_project<R, R>);
 }
 
 } // namespace user_code
