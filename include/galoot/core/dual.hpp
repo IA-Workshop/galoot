@@ -60,11 +60,11 @@
 // with orientation +1, in order of grade and then of index list, as for a
 // product. bulk of a rigid(3) line holds e12, e13, e23, where the line's
 // moment on e31 appears negated on e13; Line{bulk(l)} reads it back under the
-// line's orientations. The dot holds the scalar when its two operands share a
-// grade on which G is not zero and no blade otherwise, so dot(point, line) is
-// a value of an empty layout, and the type says it is zero; the antidot holds
-// 𝟙 likewise. Each result type is mv<Alg, bulk_layout<Alg, S>, T>, and
-// likewise for the other operations.
+// line's orientations. The dot holds the scalar alone when the metric pairs
+// some blade of one operand with some blade of the other, and no blade
+// otherwise, so dot(point, line) is a value of an empty layout, and the type
+// says it is zero; the antidot holds 𝟙 likewise. Each result type is
+// mv<Alg, bulk_layout<Alg, S>, T>, and likewise for the other operations.
 //
 // Nothing here checks anything: the bulk and the weight drop blades by
 // definition, the dot and the antidot compute one coefficient, and the duals
