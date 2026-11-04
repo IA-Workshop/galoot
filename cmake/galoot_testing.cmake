@@ -71,7 +71,8 @@ endfunction()
 
 # galoot_add_compile_fail_test(NAME <name> MODULE <module>
 #   COMPONENT <component> SOURCE <file> MESSAGE <literal>
-#   [REQUIRE <literal>...] [FORBID <literal>...] [ONE_ERROR])
+#   [REQUIRE <literal>...] [FORBID <literal>...] [ONE_ERROR]
+#   [FORBID_ON_FIRST_ERROR <literal>...])
 #
 # Registers the test <module>.<name>, which compiles <file> and passes only if
 # the compile fails, its output contains <literal> and every REQUIRE literal,
@@ -79,7 +80,10 @@ endfunction()
 # (test/expect_output.cmake). FORBID is for a misuse whose diagnostic must
 # leave out a message that would be false. With ONE_ERROR, every line of the
 # output that holds "error:" must also hold MESSAGE or a REQUIRE literal, so
-# that a misuse which raises a second, different error fails the test. The
+# that a misuse which raises a second, different error fails the test.
+# FORBID_ON_FIRST_ERROR, which needs ONE_ERROR, forbids each of its literals
+# on the first line that holds "error:" only, for internal names that may
+# appear in the notes around it but not in the line a reader sees first. The
 # values are literals rather than regular expressions, so that no test passes
 # on a loose pattern such as .*, and because diagnostics quote C++ source full
 # of regex metacharacters.
@@ -125,7 +129,8 @@ endfunction()
 
 function(galoot_add_compile_fail_test)
   cmake_parse_arguments(PARSE_ARGV 0 arg "ONE_ERROR"
-    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE" "REQUIRE;FORBID")
+    "NAME;MODULE;COMPONENT;SOURCE;MESSAGE"
+    "REQUIRE;FORBID;FORBID_ON_FIRST_ERROR")
   if(arg_MESSAGE MATCHES ";")
     message(FATAL_ERROR "galoot_add_compile_fail_test(${arg_NAME}): MESSAGE "
       "may not contain ';': ${arg_MESSAGE}")
@@ -139,13 +144,21 @@ function(galoot_add_compile_fail_test)
   if(arg_ONE_ERROR)
     set(only ONLY "error:")
   endif()
+  set(forbid_first "")
+  if(arg_FORBID_ON_FIRST_ERROR)
+    if(NOT arg_ONE_ERROR)
+      message(FATAL_ERROR "galoot_add_compile_fail_test(${arg_NAME}): "
+        "FORBID_ON_FIRST_ERROR needs ONE_ERROR")
+    endif()
+    set(forbid_first FORBID_FIRST ${arg_FORBID_ON_FIRST_ERROR})
+  endif()
   galoot_compile_command(compile)
   cmake_path(ABSOLUTE_PATH arg_SOURCE OUTPUT_VARIABLE source)
   galoot_check_literals_outside_path(${arg_MODULE}.${arg_NAME} "${source}"
     "${arg_MESSAGE}" ${arg_REQUIRE})
   add_test(NAME ${arg_MODULE}.${arg_NAME}
     COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/test/expect_output.cmake
-      -- 1 ${only} ${arg_MESSAGE} ${arg_REQUIRE} ${forbid}
+      -- 1 ${only} ${arg_MESSAGE} ${arg_REQUIRE} ${forbid} ${forbid_first}
       -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${compile}
         -o ${arg_MODULE}_${arg_NAME}_compile_fail.o -c ${source}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

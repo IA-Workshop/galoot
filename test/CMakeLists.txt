@@ -1584,3 +1584,74 @@ set_tests_properties(core.linear_divide_rejects_zero
   core.linear_divide_accepts_nonzero core.linear_divide_accepts_negative
   core.linear_divide_accepts_floating_zero
   PROPERTIES LABELS "core;core.linear")
+
+# tools.expect_output_forbid_first_*: FORBID_FIRST checks only the first line
+# that matches the ONLY regex, so a forbidden name on a later line or on a
+# line that does not match passes, the same name on the first line fails,
+# and a pattern that matches no line fails.
+set(first_error_fixture
+  ${CMAKE_CURRENT_SOURCE_DIR}/tools/expect_output/first_error.txt)
+add_test(NAME tools.expect_output_forbid_first_accepts
+  COMMAND ${expect_output} 0 ONLY "error:" "the message"
+    FORBID_FIRST "detail::"
+    -- ${CMAKE_COMMAND} -E cat ${first_error_fixture})
+add_test(NAME tools.expect_output_forbid_first_rejects
+  COMMAND ${expect_output} 1 "contains forbidden 'message'"
+    -- ${expect_output} 0 ONLY "error:" "the message" FORBID_FIRST "message"
+      -- ${CMAKE_COMMAND} -E cat ${first_error_fixture})
+add_test(NAME tools.expect_output_forbid_first_no_line
+  COMMAND ${expect_output} 1 "no line matches 'warning:'"
+    -- ${expect_output} 0 ONLY "warning:" FORBID_FIRST "detail::"
+      -- ${CMAKE_COMMAND} -E cat ${first_error_fixture})
+set_tests_properties(tools.expect_output_forbid_first_accepts
+  tools.expect_output_forbid_first_rejects
+  tools.expect_output_forbid_first_no_line
+  PROPERTIES LABELS "tools;tools.expect_output")
+
+# core.dual: the bulk, the weight, their duals, the dot, and the antidot,
+# against the reference's metric exomorphism and complements.
+galoot_add_test(MODULE core COMPONENT dual)
+target_link_libraries(core_dual_test PRIVATE galoot_golden)
+
+# The names of the machinery under the operations, which the first error
+# line of a rejection must not show: the user wrote the operation, not these.
+set(dual_internal_names "apply:" "geometric_product:" left_complement
+  product_plan "detail::")
+
+# core.dual_narrow_scalar_<function>: an operation with an exact coefficient
+# that the scalar type cannot hold fails to compile with one error, the
+# message of the operation as written. Each source picks a layout on which
+# the operation's own coefficients overflow std::int8_t while those of the
+# other operations that a wrong check could read instead do not.
+function(dual_rejects_narrow_scalar function noun)
+  galoot_add_compile_fail_test(NAME dual_narrow_scalar_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_narrow_scalar_${function}_fail.cpp
+    MESSAGE "${function}: the scalar type cannot hold one of the ${noun}'s exact coefficients${semicolon} use a scalar type that holds larger integers exactly"
+    ONE_ERROR FORBID_ON_FIRST_ERROR ${dual_internal_names})
+endfunction()
+dual_rejects_narrow_scalar(bulk "bulk")
+dual_rejects_narrow_scalar(weight "weight")
+
+# core.dual_compare_<function>: comparing a result with a value of another
+# layout fails to compile; Clang names the result's layout by the
+# operation's layout name, and neither compiler shows the plan or detail
+# names on its first error line.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(dual_compare_message "invalid operands to binary expression")
+else()
+  set(dual_compare_message "no match for")
+endif()
+function(dual_rejects_comparison function)
+  set(require "")
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(require REQUIRE "${function}_layout<")
+  endif()
+  galoot_add_compile_fail_test(NAME dual_compare_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_compare_${function}_fail.cpp
+    MESSAGE "${dual_compare_message}" ${require}
+    ONE_ERROR FORBID_ON_FIRST_ERROR product_plan "detail::")
+endfunction()
+dual_rejects_comparison(bulk)
+dual_rejects_comparison(weight)
