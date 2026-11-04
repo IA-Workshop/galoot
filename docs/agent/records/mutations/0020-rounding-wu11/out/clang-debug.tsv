@@ -9,4 +9,6 @@ project_nudged_16_ulps	0	-	core.rounding
 project_uses_bulk_dual	0	-	core.rounding
 products_rounded_through_float	0	-	core.rounding
 kernel_sums_nudged_one_ulp	0	-	core.rounding
+test_random_inputs_narrow	0	-	core.rounding
+test_sums_inputs_narrow	0	-	core.rounding
 exact_value_check_removed	0	-	-

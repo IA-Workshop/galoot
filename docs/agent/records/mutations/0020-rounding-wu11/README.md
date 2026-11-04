@@ -4,7 +4,7 @@ Revision: `feature/core-rounding-wu11` at `c32c619`, from `develop` at `535c91e`
 
 ## Mutants
 
-`mutate.py <preset>` as in the first group: each mutant applied to one file, `core_rounding_test` and `support_tracked_test` built with `ninja -k 0`, the tests labeled `core.rounding` or `support.tracked` run, the file restored. Rows: `out/gcc-debug.tsv`, `out/clang-debug.tsv`; runs in `runs.tsv` under `mutant:<name>`. The failing test cases come from `cases.py` on gcc-debug (selections `mutant-cases:<name>`), for the first seven mutants; the four larger projection nudges were run with `mutate.py` only.
+`mutate.py <preset>` as in the first group: each mutant applied to one file, `core_rounding_test` and `support_tracked_test` built with `ninja -k 0`, the tests labeled `core.rounding` or `support.tracked` run, the file restored. Rows: `out/gcc-debug.tsv`, `out/clang-debug.tsv`; runs in `runs.tsv` under `mutant:<name>`. The failing test cases come from `cases.py` on gcc-debug (selections `mutant-cases:<name>`), for the first seven mutants; the four larger projection nudges and the two narrow-input mutants were run with `mutate.py` only, at `f68975c`.
 
 | Mutant | gcc-debug | clang-debug | Killed by |
 | --- | --- | --- | --- |
@@ -16,6 +16,8 @@ Revision: `feature/core-rounding-wu11` at `c32c619`, from `develop` at `535c91e`
 | the kernels' products rounded through float (first group's mutant) | killed | killed | the products, the antiproducts, the duals (the random form's), the dot and antidot, and the projection |
 | one ulp after every sum of the kernels (first group's mutant) | killed | killed | the products, the antiproducts, the sums, the dot and antidot, and the projection |
 | the test's exact-value check removed | survived | survived | Equivalent: see below |
+| the random form's duals on the narrow inputs (from the review, L1) | killed | killed | `core.rounding`, by the check added in `f68975c` that the duals' largest ratio is above 0; it survived before |
+| the sums on the narrow inputs (added with L1) | killed | killed | `core.rounding`, by the same check on the sums |
 
 Every kill is a test failing at run time; no mutant stopped a build.
 

@@ -125,6 +125,13 @@ MUTANTS = {
          "out = review_nudge(static_cast<T>(out + value), 1);", None),
         ("out = static_cast<T>(out - value);",
          "out = review_nudge(static_cast<T>(out - value), 1);", None)]),
+    # From the review of this group: the random form's duals and the sums
+    # on the narrow inputs, on which they never round.
+    "test_random_inputs_narrow": ("test/core/rounding_test.cpp", [(
+        "const Inputs inputs = moves ? Inputs::products : Inputs::full_width;",
+        "const Inputs inputs = Inputs::products;", None)]),
+    "test_sums_inputs_narrow": ("test/core/rounding_test.cpp", [(
+        "Inputs::sums);", "Inputs::products);", [0, 1])]),
     # The test's own check that a result is the exact value, removed.
     "exact_value_check_removed": ("test/core/rounding_test.cpp", [(
         "    if (exact == Exactness::exact_value &&\n"
