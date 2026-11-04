@@ -22,7 +22,9 @@
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/dual.hpp>
-#include <galoot/core/linear.hpp>
+// The sums, multiples, and negations of multivectors, found by
+// argument-dependent lookup, which the include check does not see.
+#include <galoot/core/linear.hpp> // IWYU pragma: keep
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
 #include <galoot/core/product.hpp>

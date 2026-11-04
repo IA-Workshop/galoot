@@ -26,13 +26,17 @@
 #include <span>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
+#include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/dual.hpp>
 #include <galoot/core/linear.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
+#include <galoot/core/product.hpp>
+#include <galoot/core/unary.hpp>
 
 #include <doctest/doctest.h>
 
@@ -437,7 +441,7 @@ int wedge_dual_mismatches(
     return failure_if(true, "a table entry is out of its place");
   }
   const std::size_t size = g.size();
-  const core::mask_t antiscalar = static_cast<core::mask_t>(size - 1);
+  const auto antiscalar = static_cast<core::mask_t>(size - 1);
   int mismatches = 0;
   for (std::size_t i = 0; i < X::component_count; ++i) {
     for (std::size_t j = 0; j < X::component_count; ++j) {
@@ -512,7 +516,7 @@ int dot_mismatches(std::span<const golden::blade_image> g,
     return failure_if(true, "a table entry is out of its place");
   }
   const std::size_t size = g.size();
-  const core::mask_t antiscalar = static_cast<core::mask_t>(size - 1);
+  const auto antiscalar = static_cast<core::mask_t>(size - 1);
   using D = decltype(core::dot(X{}, X{}));
   using A = decltype(core::antidot(X{}, X{}));
   int mismatches = 0;
@@ -784,7 +788,7 @@ TEST_CASE("in rigid(3) the bulk and the weight split a multivector") {
   for (int k = 0; k < 8; ++k) {
     const X x = random_integers<X>(source);
     CHECK((X{core::bulk(x)} + X{core::weight(x)}) == x);
-    const Oriented y = random_integers<Oriented>(source);
+    const auto y = random_integers<Oriented>(source);
     CHECK((Oriented{core::bulk(y)} + Oriented{core::weight(y)}) == y);
   }
 }
@@ -1366,15 +1370,20 @@ TEST_CASE("points projected onto unitized planes land on them with weight 1") {
   using test_support::rational;
   using P = core::mv<rga3, point_layout, rational>;
   using G = core::mv<rga3, plane_layout, rational>;
-  const std::array<std::array<rational, 4>, 2> planes{{
-      {rational{3, 5}, rational{4, 5}, rational{0}, rational{-2}},
-      {rational{2, 3}, rational{2, 3}, rational{1, 3}, rational{1, 2}},
-  }};
-  const std::array<std::array<rational, 3>, 3> points{{
-      {rational{1}, rational{2}, rational{3}},
-      {rational{-7, 2}, rational{1, 3}, rational{5}},
-      {rational{0}, rational{-5, 4}, rational{9, 7}},
-  }};
+  const std::array planes{
+      std::array{rational{3, 5}, rational{4, 5}, rational{0}, rational{-2}},
+      std::array{
+          rational{2, 3},
+          rational{2, 3},
+          rational{1, 3},
+          rational{1, 2},
+      },
+  };
+  const std::array points{
+      std::array{rational{1}, rational{2}, rational{3}},
+      std::array{rational{-7, 2}, rational{1, 3}, rational{5}},
+      std::array{rational{0}, rational{-5, 4}, rational{9, 7}},
+  };
   for (std::size_t i = 0; i < planes.size(); ++i) {
     for (std::size_t j = 0; j < points.size(); ++j) {
       CAPTURE(i);
@@ -1458,6 +1467,8 @@ TEST_CASE("the project overloads take the right operands") {
                              core::mv<rga3, core::of_grade<4, 2>, double>>);
 }
 
+namespace {
+
 // The terms of the dot's kernel, one for each pair of blades whose product
 // has a scalar part, with that part as the coefficient, all on position 0
 // and only the first of them marked first.
@@ -1479,13 +1490,18 @@ scalar_terms_are(std::span<const std::array<std::int64_t, 3>> expected) {
   return true;
 }
 
+} // namespace
+
 // Reference: definition: the scalar part of e_i e_j is g_ij, so in R(3,0,0)
 //   the vectors give e1 e1, e2 e2, e3 e3 with 1 each, in conformal(3)
 //   e4 e5 gives e4 . e5 = -1, the bivectors e12 and e13 against each other
 //   give no scalar, and e1 against e2 gives none
 TEST_CASE("the dot's kernel keeps exactly the terms on the scalar") {
-  constexpr std::array<std::array<std::int64_t, 3>, 3> vectors{
-      {{0, 0, 1}, {1, 1, 1}, {2, 2, 1}}};
+  constexpr std::array vectors{
+      std::array<std::int64_t, 3>{0, 0, 1},
+      std::array<std::int64_t, 3>{1, 1, 1},
+      std::array<std::int64_t, 3>{2, 2, 1},
+  };
   static_assert(
       scalar_terms_are<r300, core::of_grade<3, 1>, core::of_grade<3, 1>>(
           vectors));
