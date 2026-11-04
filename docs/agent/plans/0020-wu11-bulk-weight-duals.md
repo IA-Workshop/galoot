@@ -357,4 +357,5 @@ Size M overall, as plan 0001 has it: about 2.1M to 2.9M tokens in all. This plan
 
 ## 10. Outcome
 
-Not started.
+- O3: yes, readings R14 and R15 accepted as recommended (owner answer, 2026-11-04, relayed by coordinator).
+- WU11b (2026-11-04): done on `feature/core-rounding` for the WU9 and WU10 operations (decision 0175); reviewed, delta review approved; the group for WU11a's operations waits for WU11a's merge.
