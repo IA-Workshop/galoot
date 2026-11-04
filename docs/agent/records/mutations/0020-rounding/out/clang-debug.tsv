@@ -1,0 +1,8 @@
+mutant	build_exit	build_failures	failed_tests
+products_rounded_through_float	0	-	core.rounding
+divide_multiplies_by_reciprocal	0	-	core.rounding
+tracked_sum_adds_no_rounding	0	-	support.tracked core.rounding
+margin_removed	0	-	support.tracked
+tracked_product_counts_the_larger	0	-	support.tracked
+exact_results_checked_by_tolerance	0	-	support.tracked
+negation_by_multiplication	0	-	core.rounding
