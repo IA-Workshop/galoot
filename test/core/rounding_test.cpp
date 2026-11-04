@@ -1,6 +1,8 @@
 // Tests of rounding in the core's operations over double: the four products
 // and their operators, the grade maps and the complements with ~ and !,
-// sums, differences, negation, scaling, part, and truncate.
+// sums, differences, negation, scaling, division, part, and truncate; and
+// the bulk, the weight, the four duals, the dot, the antidot, and the
+// projection.
 //
 // The structure constants are exact, so rounding enters only through the
 // scalar type. Each double result is compared, coefficient by coefficient,
@@ -17,14 +19,22 @@
 // exact value. The tracked run's own value must equal the reference
 // exactly.
 //
-// Inputs are seeded random p / 2^27 with |p| < 2^27: exact in double and in
-// the test rational, while a product of two needs up to 54 bits and so
-// rounds in double. Every reference value and magnitude stays below 2^7 in
-// these forms, so the rationals, with denominators of at most 2^54, never
-// leave std::int64_t. Sums would be exact on such inputs, so they take wide
-// inputs, p / 2^(53 + s) with |p| < 2^53 and s from 0 to 6, whose sums need
-// up to 60 bits. Each test reports the largest ratio of an error to its
-// bound gamma_K times the magnitude that it saw.
+// Inputs are seeded random values exact in double and in the test rational,
+// sized so that the operation rounds in double:
+//   p / 2^27, |p| < 2^27, for products, whose product of two needs up to 54
+//     bits;
+//   p / 2^(53 + s), |p| < 2^53, s from 0 to 6, for sums, which would be exact
+//     on the narrower inputs and here need up to 60 bits;
+//   p / 2^53, |p| < 2^53, for the bulk, the weight, and the duals of the
+//     random form, whose products by small integers would be exact on the
+//     narrower inputs;
+//   p / 2^18, |p| < 2^18, for the projection, whose products of three need
+//     up to 54 bits.
+// Every reference value and magnitude stays below 2^8, with denominators of
+// at most 2^54 (2^59 for sums), so the rationals stay within std::int64_t
+// with about one bit to spare; a value that did not fit would stop the test.
+// Each test reports the largest ratio of an error to its bound gamma_K times
+// the magnitude that it saw.
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -876,6 +886,8 @@ TEST_CASE("sums and differences round within their forward error bounds") {
       source, 200, "degenerate", out);
   check_sums<full_mv<random1, 3>, full_mv<random1, 3>>(source, 200, "random",
                                                        out);
+  // On inputs too narrow for their sums to round, every ratio would be 0.
+  CHECK(out.largest_ratio > 0.0);
   check_tally(out, "sums and differences");
 }
 
@@ -1007,6 +1019,9 @@ TEST_CASE("the bulk, the weight, and the duals round within their bounds") {
   check_duals<full_mv<random1, 3>>(source, 100, golden::exomorphisms::random_1,
                                    golden::complements::n3, "random", out,
                                    found);
+  // Every other form gives exact results, so the random form's results must
+  // round somewhere, or its inputs are too narrow to test the bound.
+  CHECK(out.largest_ratio > 0.0);
   CHECK(found);
   check_tally(out, "bulk, weight, duals");
 }
