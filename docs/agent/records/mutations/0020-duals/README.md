@@ -29,6 +29,9 @@ The mutants:
 | `<f>_checks_<g>` (10) | f checks another operation's coefficients: bulk and the bulk duals the weight's, weight and the weight duals the bulk's, dot the antidot's and the whole product's, antidot the dot's, project the bulk dual's |
 | `catch_alls_without_{algebra,scalar}_condition` | the three catch-alls lose one half of their constraint |
 | `<name>_layout_is_input` (9) | the layout name is the input's layout |
+| `project_antiwedge_order_swapped` | (a ∧ weight_dual(b)) ∨ b, with its layout (blind review F1) |
+| `kernel_check_any_held` | the kernel's check accepts when any kept coefficient fits (F2) |
+| `project_checks_first_operand` | project checks the weight dual of its first operand (F3) |
 
 ## Results
 
@@ -43,3 +46,7 @@ The mutants:
 One survivor, equivalent as plan 0020 section 6 expected: `antidot_right_complement_outside`. The right and the left complement of the scalar are both 𝟙 (the antiscalar's sign is +1 either way, since the scalar has grade 0), so right(dot(...)) and left(dot(...)) are the same value on the same layout.
 
 No kill comes from a warning made an error: every first error line in the records is a `static_assert` or a comparison in the test's own code, or a test's call that the header rejects with its message.
+
+## After the blind review
+
+The review's own run of nine mutants found three survivors, added above as the last three rows and run at `9bd09dd`, against the tests added there, on gcc-debug and clang-debug: each is killed on both. `project_antiwedge_order_swapped` by "a line projected onto the plane z = 2" at run time; `kernel_check_any_held` by `core.dual_narrow_scalar_dot_mixed_kernel` and `core.dual_narrow_scalar_antidot_mixed_kernel`; `project_checks_first_operand` by `core.dual_narrow_scalar_project_first_operand` and by the accept test "project checks the coefficients of its second operand only", which then stops compiling with project's message. So 48 mutants in all, 47 killed on both compilers, one equivalent survivor.

@@ -8,13 +8,13 @@ WU11a (plan 0020), measured by the WU11a implementer (Claude, agent, Opus 5.5). 
 
 | Function | GCC 16 | Clang 23 | Hand count |
 | --- | --- | --- | --- |
-| `dot` of two rigid(3) motors | 4 `mulsd`, 3 `addsd` | 4 `mulsd`, 3 `addsd` | 4 and 3 |
-| `antidot` of two rigid(3) motors | 4 `mulsd`, 3 `addsd` | 4 `mulsd`, 3 `addsd` | 4 and 3 |
-| `bulk` of a line | moves, 1 `xorpd` (the sign of e13) | moves, the sign of e13 flipped by an integer `xorq` | none |
-| `weight_dual` of a point | moves, 1 `xorpd` | moves, 1 `xorpd` | none |
-| `project` of a point onto a plane | 21 `mulsd`, 3 `addsd`, 8 `subsd` | 21 `mulsd`, 3 `addsd`, 8 `subsd` | 21 multiplications |
+| `dot` of two rigid(3) motors | 4 `mulsd`, 3 `addsd` | 2 `mulpd` (4 products), 3 `addsd` | 4 multiplications, 3 additions |
+| `antidot` of two rigid(3) motors | 4 `mulsd`, 3 `addsd` | 2 `mulpd` (4 products), 3 `addsd` | 4 and 3 |
+| `bulk` of a line | moves, 1 `xorpd` (the sign of e13) | moves, the sign of e13 flipped by an integer `xorq` | no arithmetic |
+| `weight_dual` of a point | moves, 1 `xorpd` | moves, 1 `xorps` | no arithmetic |
+| `project` of a point onto a plane | 11 `mulsd` and 5 `mulpd` (21 products), 2 `subsd` and 3 `subpd` (8 subtractions), 3 `addsd`, 3 `xorpd` | 21 `mulsd`, 8 `subsd`, 3 `addsd`, 1 `xorpd` | 21 multiplications |
 
-No function calls anything on either compiler; every kernel is inlined.
+The counts were taken from the committed `.s` files, counting each packed instruction once by name and giving the number of products it computes. (The first version of this table named every multiplication `mulsd`; the blind review recounted them.) No function calls anything on either compiler; every kernel is inlined.
 
 ## Limits (plan 0020 reading R10, criterion 8)
 

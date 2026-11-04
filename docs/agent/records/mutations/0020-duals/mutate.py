@@ -128,6 +128,16 @@ MUTANTS = {
     # The catch-alls of dot, antidot, and project.
     "catch_alls_without_algebra_condition": (H, [(CATCH_ALL, NO_ALGEBRA, [0, 1, 2])]),
     "catch_alls_without_scalar_condition": (H, [(CATCH_ALL, NO_SCALAR, [0, 1, 2])]),
+    # The three that survived the blind review's run (findings F1 to F3).
+    "project_antiwedge_order_swapped": (H, [
+        ("return antiwedge(b, wedge(a, weight_dual(b)));", "return antiwedge(wedge(a, weight_dual(b)), b);", None),
+        ("antiwedge_layout<Alg, B, wedge_layout<Alg, A, weight_dual_layout<Alg, B>>>;",
+         "antiwedge_layout<Alg, wedge_layout<Alg, A, weight_dual_layout<Alg, B>>, B>;", None)]),
+    "kernel_check_any_held": (H, [
+        ("    if (!holds_exactly<T>(t.coefficient)) {\n      return false;\n    }\n  }\n  return true;",
+         "    if (holds_exactly<T>(t.coefficient)) {\n      return true;\n    }\n  }\n  return N == 0;", None)]),
+    "project_checks_first_operand": (H, [(check_of("projection") + PROJECT_CHECK,
+        check_of("projection") + "detail::weight_coefficients_exact<Alg, A, T>;", None)]),
     # Each layout name returns the input's layout.
     "bulk_layout_is_input": (H, [("inline constexpr auto bulk_layout = left_complement_layout<\n    Alg, geometric_product_layout<Alg, S, detail::antiscalar_layout<Alg>>>;",
                                    "inline constexpr auto bulk_layout = S;", None)]),
