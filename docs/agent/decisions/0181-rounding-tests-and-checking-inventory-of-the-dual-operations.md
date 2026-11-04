@@ -1,4 +1,4 @@
-# 0176 Rounding tests and checking-mode inventory for the bulk, the weight, the duals, the dot, the antidot, and the projection
+# 0181 Rounding tests and checking-mode inventory for the bulk, the weight, the duals, the dot, the antidot, and the projection
 
 - Status: accepted (extends decision 0175, which is merged and stays as recorded; the owner's answer to plan 0020 question O3, "yes", 2026-11-04, relayed by the coordinator, covers these operations too)
 - Date: 2026-11-04

@@ -1,6 +1,6 @@
 # WU11b's last group: rounding tests of the dual operations, mutants and observed ratios
 
-Revision: `feature/core-rounding-wu11` at `c32c619`, from `develop` at `535c91e` (WU11a merged). Toolchain: g++ 16.2.1 and clang++ 23.1.4, on ds-001. Decision 0176 holds the design and the inventory rows; decision 0175 the check; the first group's records are in `../0020-rounding/`.
+Revision: `feature/core-rounding-wu11` at `c32c619`, from `develop` at `535c91e` (WU11a merged). Toolchain: g++ 16.2.1 and clang++ 23.1.4, on ds-001. Decision 0181 holds the design and the inventory rows; decision 0175 the check; the first group's records are in `../0020-rounding/`.
 
 ## Mutants
 
