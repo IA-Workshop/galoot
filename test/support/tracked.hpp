@@ -142,10 +142,12 @@ static_assert(FLT_EVAL_METHOD == 0,
 /// The unit roundoff of double, 2^-53.
 inline constexpr double unit_roundoff = 0x1p-53;
 
-/// The number of roundings the bound check adds to K, so that the check,
-/// itself computed in double, never rejects a result within the true bound.
+/// The number of roundings the bound check adds to K for a result with two
+/// or more roundings (one rounding is checked by equality, below), so that
+/// the check, itself computed in double, never rejects a result within the
+/// true bound.
 ///
-/// Derivation. Let e be the exact value, M the magnitude, K >= 1 the count,
+/// Derivation. Let e be the exact value, M the magnitude, K >= 2 the count,
 /// and d the double result, so |d - e| <= gamma_K M. The check computes
 ///   e' = fl(e) and M' = fl(M), each rounded to nearest once, so
 ///     |e' - e| <= u |e| <= u M (Higham, Theorem 2.2; |e| <= M) and
@@ -210,7 +212,7 @@ inline constexpr int rounding_margin = 2;
   return rational{significand, power_of_two(-power)};
 }
 
-/// The tolerance of a result with `roundings` K >= 1 and the magnitude
+/// The tolerance of a result with `roundings` K >= 2 and the magnitude
 /// `magnitude`: fl(fl(gamma_(K + margin)) fl(magnitude)), as derived above.
 [[nodiscard]] inline double rounding_tolerance(int roundings,
                                                rational magnitude) {
@@ -219,26 +221,9 @@ inline constexpr int rounding_margin = 2;
   return gamma * nearest_double(magnitude);
 }
 
-/// Whether the double d is within the forward error bound of the exact value
-/// `exact`, for a computation whose tracked run gave the count `roundings`
-/// and the magnitude `magnitude`. With no rounding, d must be the exact
-/// value itself; otherwise fl(|d - fl(exact)|) is at most
-/// rounding_tolerance. The exact value comes from a reference independent
-/// of the computation, so the check also catches a wrong value.
-[[nodiscard]] inline bool within_rounding_bound(double d, rational exact,
-                                                int roundings,
-                                                rational magnitude) {
-  if (roundings == 0) {
-    return exact_rational(d) == exact;
-  }
-  const double nearest = nearest_double(exact);
-  return std::abs(d - nearest) <= rounding_tolerance(roundings, magnitude);
-}
-
 /// The ratio of the exact error |d - exact| to the bound gamma_K magnitude,
-/// for reporting how close results come to the bound: at most 1 for a
-/// result within it. Computed in double, so the ratio itself is rounded;
-/// zero when the error is zero.
+/// computed in double: at most ratio_limit for a result within the bound;
+/// zero when the error is zero. Requires roundings >= 1.
 [[nodiscard]] inline double bound_ratio(double d, rational exact, int roundings,
                                         rational magnitude) {
   const rational difference = exact_rational(d) - exact;
@@ -249,6 +234,52 @@ inline constexpr int rounding_margin = 2;
   const double gamma = (k * unit_roundoff) / (1.0 - (k * unit_roundoff));
   return std::abs(nearest_double(difference)) /
          (gamma * nearest_double(magnitude));
+}
+
+/// The largest value bound_ratio returns for a result within its bound,
+/// 1 + 6u = 1 + 3 2^-52.
+///
+/// Derivation. For d within the bound the exact ratio r = |d - e| /
+/// (gamma_K M) is at most 1. bound_ratio forms the exact difference d - e
+/// as a rational and then rounds five times: converting the difference to
+/// double, the division that forms gamma_K (k u and 1 - k u are exact, as
+/// for the margin), converting M, the product gamma_K M, and the final
+/// division. Each multiplies or divides r by one factor (1 + delta) with
+/// |delta| <= u, so the computed ratio is r (1 + theta_5) with
+/// |theta_5| <= gamma_5 (Higham, Lemma 3.1), at most 1 + gamma_5.
+// gamma_5 = 5u / (1 - 5u) = 5u + 25u^2 / (1 - 5u) < 6u, and the doubles just
+// above 1 are 1 + 2u, 1 + 4u, 1 + 6u, so 1 + 6u is the smallest double at or
+// above 1 + gamma_5, and a computed ratio of a result within the bound never
+// exceeds it. A result whose exact ratio exceeds (1 + 6u) / (1 - gamma_5),
+// about 1 + 11u, is rejected.
+inline constexpr double ratio_limit = 1.0 + (6 * unit_roundoff);
+
+/// Whether the double d is within the forward error bound of the exact value
+/// `exact`, for a computation whose tracked run gave the count `roundings`
+/// and the magnitude `magnitude`. The exact value comes from a reference
+/// independent of the computation, so the check also catches a wrong value.
+///
+/// K = 0: no operation rounded, so d must be the exact value itself.
+/// K = 1: every operand of the one rounded operation was exact (a value of
+/// depth 0 is an input, an integer, a copy, or a negation of one), and IEEE
+/// 754 rounds +, -, and * correctly, so d must be the double nearest the
+/// exact value, ties to even; a negation or a copy after it keeps that.
+/// K >= 2: both fl(|d - fl(exact)|) <= rounding_tolerance, and
+/// bound_ratio <= ratio_limit, which measures the error from the exact
+/// value and so admits no error that the margin's distance from fl(exact)
+/// would.
+[[nodiscard]] inline bool within_rounding_bound(double d, rational exact,
+                                                int roundings,
+                                                rational magnitude) {
+  if (roundings == 0) {
+    return exact_rational(d) == exact;
+  }
+  const double nearest = nearest_double(exact);
+  if (roundings == 1) {
+    return d == nearest;
+  }
+  return std::abs(d - nearest) <= rounding_tolerance(roundings, magnitude) &&
+         bound_ratio(d, exact, roundings, magnitude) <= ratio_limit;
 }
 
 } // namespace test_support

@@ -96,45 +96,73 @@ TEST_CASE("conversions between rationals and doubles round to nearest") {
         rational{test_support::power_of_two(53) + 2});
 }
 
-// Reference: proof: with one rounding and the exact value 1 + 2^-53 of
-//   magnitude 1 + 2^-53, the double 1 + 2^-52 is 2^-53 from it, within
-//   gamma_1 times the magnitude, while the nearest double to the exact value
-//   is 1, 2^-52 away, so a check without its margin rejects it, and the
-//   check accepts errors up to fl(gamma_3) from the nearest double and
-//   rejects the next double beyond
-TEST_CASE("the bound check accepts a result within the bound") {
-  constexpr std::int64_t two_53 = test_support::power_of_two(53);
-  const rational e{two_53 + 1, two_53};
-  CHECK(test_support::within_rounding_bound(1.0 + 0x1p-52, e, 1, e));
-  CHECK(test_support::within_rounding_bound(1.0, e, 1, e));
-  CHECK(test_support::within_rounding_bound(1.0 - (3 * u), e, 1, e));
-  CHECK_FALSE(test_support::within_rounding_bound(1.0 - (4 * u), e, 1, e));
-  CHECK_FALSE(
-      test_support::within_rounding_bound(1.0 + (2 * 0x1p-52), e, 1, e));
+// Reference: proof: one rounding of exact operands is correctly rounded in
+//   IEEE 754, so with one rounding only the double nearest the exact value
+//   is accepted, ties to even: 1 for 1 + 2^-53 and 1 + 2^-52 for
+//   1 + 3 2^-54, and not the other neighbor, though it is within gamma_1
+//   times the magnitude
+TEST_CASE("with one rounding the check accepts only the nearest double") {
+  const std::int64_t two_53 = test_support::power_of_two(53);
+  const std::int64_t two_54 = test_support::power_of_two(54);
+  const rational tie{two_53 + 1, two_53};
+  CHECK(test_support::within_rounding_bound(1.0, tie, 1, tie));
+  CHECK_FALSE(test_support::within_rounding_bound(1.0 + (2 * u), tie, 1, tie));
+  CHECK(test_support::within_rounding_bound(-1.0, -tie, 1, tie));
 
-  // The ratio of the error to gamma_1 times the magnitude is just below 1.
-  const double ratio = test_support::bound_ratio(1.0 + 0x1p-52, e, 1, e);
-  CHECK(ratio <= 1.0);
-  CHECK(ratio > 0.999);
+  const rational above{two_54 + 3, two_54};
+  CHECK(test_support::within_rounding_bound(1.0 + (2 * u), above, 1, above));
+  CHECK_FALSE(test_support::within_rounding_bound(1.0, above, 1, above));
 }
 
-// Reference: proof: the tolerance is fl(fl(gamma_(K+2)) fl(M)), so a result
-//   twice the tolerance away is rejected for any K, and with no rounding
-//   only the exact value is accepted, not even the next double
+// Reference: proof: with K = 3 and the exact value and magnitude
+//   e = 1 + 2^-53, the double 1 + 4u is 3u from e, within gamma_3 e, but 4u
+//   from fl(e) = 1, beyond fl(gamma_3) fl(e), so a check without its margin
+//   rejects it, while 1 - 4u is 5u from e, beyond the bound, though within the
+//   margin's tolerance of fl(e), and the ratio of its error to the bound
+//   rejects it
+TEST_CASE("with several roundings the check admits exactly the bound") {
+  const std::int64_t two_53 = test_support::power_of_two(53);
+  const rational e{two_53 + 1, two_53};
+
+  CHECK(test_support::within_rounding_bound(1.0 + (4 * u), e, 3, e));
+  CHECK(test_support::within_rounding_bound(1.0 - (2 * u), e, 3, e));
+  const double ratio = test_support::bound_ratio(1.0 + (4 * u), e, 3, e);
+  CHECK(ratio <= 1.0);
+  CHECK(ratio > 0.999);
+
+  const double outside = 1.0 - (4 * u);
+  CHECK(std::abs(outside - 1.0) <= test_support::rounding_tolerance(3, e));
+  CHECK(test_support::bound_ratio(outside, e, 3, e) >
+        test_support::ratio_limit);
+  CHECK_FALSE(test_support::within_rounding_bound(outside, e, 3, e));
+  CHECK_FALSE(test_support::within_rounding_bound(1.0 + (8 * u), e, 3, e));
+}
+
+// Reference: proof: for e = 5/8 and magnitude 7/4, where doubles are u
+//   apart, an error of (K - 1) u is within gamma_K times 7/4 and accepted, an
+//   error of 2 K u is beyond it, though within the margin's tolerance, and
+//   is rejected, as is twice the tolerance, and with one rounding only 5/8 is
+//   accepted, and with no rounding only the exact value, not even the next
+//   double
 TEST_CASE("the bound check rejects a result beyond the bound") {
   const rational e{5, 8};
   const rational m{7, 4};
-  for (int k = 1; k <= 8; ++k) {
+  for (int k = 2; k <= 8; ++k) {
     CAPTURE(k);
     const double tolerance = test_support::rounding_tolerance(k, m);
-    CHECK(tolerance > 0.0);
-    CHECK(
-        test_support::within_rounding_bound(0.625 + (tolerance / 2), e, k, m));
+    CHECK(test_support::within_rounding_bound(0.625 + ((k - 1) * u), e, k, m));
+    CHECK(test_support::within_rounding_bound(0.625 - ((k - 1) * u), e, k, m));
+    CHECK(std::abs(0.625 + (2 * k * u) - 0.625) <= tolerance);
+    CHECK_FALSE(
+        test_support::within_rounding_bound(0.625 + (2 * k * u), e, k, m));
     CHECK_FALSE(
         test_support::within_rounding_bound(0.625 + (2 * tolerance), e, k, m));
     CHECK_FALSE(
         test_support::within_rounding_bound(0.625 - (2 * tolerance), e, k, m));
   }
+  CHECK(test_support::within_rounding_bound(0.625, e, 1, m));
+  CHECK_FALSE(
+      test_support::within_rounding_bound(std::nextafter(0.625, 1.0), e, 1, m));
   CHECK(test_support::within_rounding_bound(0.625, e, 0, m));
   CHECK_FALSE(
       test_support::within_rounding_bound(std::nextafter(0.625, 1.0), e, 0, m));
