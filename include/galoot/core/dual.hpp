@@ -70,6 +70,27 @@
 // definition, the dot and the antidot compute one coefficient, and the duals
 // and the projection drop nothing.
 //
+// Compile cost: each operation is a composition of the products, the reverse,
+// and the complements, so it costs what its parts cost, and the smallest of
+// their limits on constant evaluation bounds it. Typed layouts such as a
+// point, a line, a plane, or a motor are far below them. Measured on GCC 16
+// and Clang 23 with libstdc++, at the default limits, the same with and
+// without libstdc++'s assertions, for full<n> multivectors of R(n,0,0): the
+// bulk, the weight, and the four duals build up to full<7> on Clang, where
+// full<8> is past the reverse's limit, and up to full<9>, the largest tried,
+// on GCC; the dot, the antidot, and the projection build up to full<5> on
+// Clang and full<6> on GCC, the limits of the geometric product's and the
+// wedge's plans. Every operation builds for full<5> of conformal(3). In a
+// dense form of five generators, where every pair of generators is coupled,
+// the dot and the antidot of two full<5> multivectors do not build on Clang;
+// GCC builds them. A failure there is reported inside the plan's generation,
+// on Clang with the note "constexpr evaluation hit maximum step limit" and on
+// GCC as an operation count over the limit (without optimization, sometimes as
+// a libstdc++ assertion that "is not a constant expression"), followed by
+// errors that do not name the operation. The weight, the weight duals, the
+// antidot, and the projection pass through the complements, whose grades grow
+// with n, so their compile cost grows with n even when x uses few generators.
+//
 // The names bulk, weight, and dot are common words. A variable of one of
 // these names in scope stops an unqualified call of the function, as for any
 // function found by argument-dependent lookup; write galoot::core::bulk(x).
