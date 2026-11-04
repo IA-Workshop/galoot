@@ -99,6 +99,20 @@ struct wide_null {
       {0, 0, 0, 0},
   });
 };
+// Two generators of square 100.
+struct wide {
+  static constexpr auto value = core::from_gram({
+      {100, 0},
+      {0, 100},
+  });
+};
+// Two generators of squares 200 and 1.
+struct uneven {
+  static constexpr auto value = core::from_gram({
+      {200, 0},
+      {0, 1},
+  });
+};
 
 inline constexpr auto point_layout = core::blades<rga3, "e1 e2 e3 e4">;
 inline constexpr auto line_layout =
@@ -1312,6 +1326,33 @@ TEST_CASE("the dot and antidot accept a scalar that holds their own "
   CHECK(core::get<"e1234">(core::antidot(b, b)) == 100);
 }
 
+// Reference: independent value: by hand in diag(200, 1), the dot of two
+//   values on e2 has the one coefficient e2 . e2 = 1, which std::int8_t
+//   holds, and the antidot of two values on e1 reads the dot of their right
+//   complements, e2, so it is a b e12, while the dot of values on e1 and
+//   e2, whose kernel holds 200 beside 1, is rejected
+TEST_CASE("the dot and antidot accept a scalar that holds every coefficient "
+          "they keep") {
+  using E1 = core::mv<uneven, core::blades<uneven, "e1">, std::int8_t>;
+  using E2 = core::mv<uneven, core::blades<uneven, "e2">, std::int8_t>;
+  CHECK(core::get<"1">(core::dot(E2{3}, E2{5})) == 15);
+  CHECK(core::get<"e12">(core::antidot(E1{3}, E1{5})) == 15);
+}
+
+// Reference: independent value: by hand in diag(100, 100), the projection
+//   of a on 1 onto b on e12 is e12 b v (a ^ weight_dual(b e12)), and the
+//   weight dual of e12 is G right(e12) = G 1 = 1, so the result is a b^2 on
+//   the scalar, which std::int8_t holds, since only the coefficients of the
+//   weight dual of the second operand are checked, and not those of the
+//   first, 10000 for the weight dual of 1
+TEST_CASE("project checks the coefficients of its second operand only") {
+  using Scalar = core::mv<wide, core::blades<wide, "1">, std::int8_t>;
+  using Bivector = core::mv<wide, core::blades<wide, "e12">, std::int8_t>;
+  const auto r = core::project(Scalar{3}, Bivector{2});
+  static_assert(std::same_as<std::remove_cvref_t<decltype(r)>, Scalar>);
+  CHECK(core::get<"1">(r) == 12);
+}
+
 // Reference: independent value: in conformal(3), the round point
 //   p + e4 + (p^2 + r^2)/2 e5 has P . P = -r^2, as Lengyel's dot products
 //   page gives, since e4 . e5 = -1, worked by hand for p = (1, 2, 3) and
@@ -1358,6 +1399,18 @@ TEST_CASE("a point projected onto the plane z = 2") {
   const Plane g{0, 0, 1, -2};
   static_assert(std::same_as<decltype(core::project(p, g)), Point>);
   CHECK(core::project(p, g) == Point{1, 1, 2, 1});
+}
+
+// Reference: independent value: by hand in rigid(3), the line through
+//   (1, 0, 0) with direction (1, 2, 3) has moment (1, 0, 0) x (1, 2, 3) =
+//   (0, -3, 2), and projected onto the plane z = 2 it is the line through
+//   the projections (1, 0, 2) and (2, 2, 2) of two of its points, with
+//   direction (1, 2, 0) and moment (1, 0, 2) x (1, 2, 0) = (-4, 2, 2), while
+//   the antiwedge with its operands the other way round gives the negation
+TEST_CASE("a line projected onto the plane z = 2") {
+  const Line l{1, 2, 3, 0, -3, 2};
+  const Plane g{0, 0, 1, -2};
+  CHECK(Line{core::project(l, g)} == Line{1, 2, 0, -4, 2, 2});
 }
 
 // Reference: independent value: by hand in rigid(3), a point projected

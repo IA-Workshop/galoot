@@ -1630,11 +1630,17 @@ set(dual_internal_names "apply:" "geometric_product:" left_complement
 # that the scalar type cannot hold fails to compile with one error, the
 # message of the operation as written. Each source picks a layout on which
 # the operation's own coefficients overflow std::int8_t while those of the
-# other operations that a wrong check could read instead do not.
+# other operations that a wrong check could read instead do not. An optional
+# third argument names a further case of the same function, with its own
+# source, core.dual_narrow_scalar_<function>_<case>.
 function(dual_rejects_narrow_scalar function noun)
-  galoot_add_compile_fail_test(NAME dual_narrow_scalar_${function}
+  set(name ${function})
+  if(ARGC GREATER 2)
+    set(name ${function}_${ARGV2})
+  endif()
+  galoot_add_compile_fail_test(NAME dual_narrow_scalar_${name}
     MODULE core COMPONENT dual
-    SOURCE core/dual_narrow_scalar_${function}_fail.cpp
+    SOURCE core/dual_narrow_scalar_${name}_fail.cpp
     MESSAGE "${function}: the scalar type cannot hold one of the ${noun}'s exact coefficients${semicolon} use a scalar type that holds larger integers exactly"
     ONE_ERROR FORBID_ON_FIRST_ERROR ${dual_internal_names})
 endfunction()
@@ -1647,6 +1653,11 @@ dual_rejects_narrow_scalar(left_weight_dual "left weight dual")
 dual_rejects_narrow_scalar(dot "dot")
 dual_rejects_narrow_scalar(antidot "antidot")
 dual_rejects_narrow_scalar(project "projection")
+# Kept terms of which one is held and another is not; and a projection whose
+# second operand overflows while its first does not.
+dual_rejects_narrow_scalar(dot "dot" mixed_kernel)
+dual_rejects_narrow_scalar(antidot "antidot" mixed_kernel)
+dual_rejects_narrow_scalar(project "projection" first_operand)
 
 # core.dual_mixed_<cause>_<function>: a dot, an antidot, or a projection of
 # operands from two algebras or with two scalar types fails to compile with
