@@ -381,7 +381,9 @@ Commits, in the order of section 4. W2 was not amended, so the test author commi
 | | `4720980` | golden comments (math-expert review, minor) |
 | | `69d6dcc` | the measured limits in `dual.hpp`'s comment |
 | | `505737e`, `48172c4` | clang-tidy fixes: the antiscalar's layout; the dual tests (listed for review) |
-| 12 | the records commit | decisions 0171 to 0173, records, this outcome |
+| 12 | `da16711` | decisions 0171 to 0173, records, this outcome |
+| | `6c47bba` | the kernel test's marker kind (listed for review) |
+| | `e3ed0ea` and the next commit | run rows; the final runs below |
 
 The test author's `75596d4` (run-log rows) was empty when cherry-picked: the union merge of `runs.tsv` had already brought its rows with `e6d40aa`. It was skipped; all 324 of the test author's run rows are in the branch's log.
 
@@ -394,7 +396,8 @@ Departures and readings (C20):
 5. The S7 assertions of the dot's kernel are in `dual_test.cpp` (`6837785`), written by the implementer, not in the header, so that no includer of `core.hpp` evaluates a plan for them.
 6. The limits search, the assembly probe, and the diagnostics sizes ran against headers of `6837785` (limits and assembly, from a scratch copy) or `69d6dcc` (diagnostics); the later header commits change comments and the way the antiscalar's layout is built, nothing a probe measures. Their run rows read `-dirty`, since the worktree held uncommitted records (and, during the limit search, a mutant run's edit of `dual.hpp`, which the scratch copy did not see).
 7. The mutants ran before `505737e` and `48172c4` and were not rerun (records README).
-8. The plan file's status line and this outcome are edited on this branch; WU11b may edit the same file, so whichever merges second merges `develop` first (W7).
+8. `6837785` gave its test a `// Reference:` marker of kind "definition", which `tests.reference_markers` does not accept, so that check failed from `6837785` to `6c47bba`, which fixes it. The first full-suite run found it (`e3ed0ea` records those runs).
+9. The plan file's status line and this outcome are edited on this branch; WU11b may edit the same file, so whichever merges second merges `develop` first (W7).
 
 Evidence:
 
@@ -408,5 +411,7 @@ Evidence:
 - Limits (same record, criterion 8): the six unary operations up to `full<7>` on Clang and `full<9>` on GCC, the three binary ones up to `full<5>` and `full<6>`, the same with and without libstdc++'s assertions; everything builds for `full<5>` of conformal(3); the dot and the antidot of `full<5>` in the dense five-generator form fail on Clang only. Stated in `dual.hpp`. `dual_test.cpp` and `dual_identities_test.cpp` build and pass under `clang-measure` (audit B1's configuration) and `gcc-measure`.
 - W10 and P2 (pinned, three repeats): a unit that includes only `core.hpp` +7.6 M (+0.8%) on GCC and +6.9 M (+0.7%) on Clang; `smoke_test.cpp` +0.7% on both. `dual_test.cpp` 38.1 G and 35.7 G instructions; `dual_identities_test.cpp` 137.3 G and 153.3 G (about half of `identities_test.cpp`; not labeled `slow`).
 - Growth at fixed use, four rigid(3) objects from n = 4 to 16: the bulk +1.5% (GCC) and +8.4% (Clang); the weight +12.4% and +72.0%; the weight dual +13.8% and +76.9%; the antidot +77.9% and +386.0%; the projection +10.1% and +45.6%. The operations through the complements grow as the antiproduct does (decision 0141); the antidot most. Reported under P2; blocks nothing.
+
+- Final runs: every preset from new, empty build trees at `e3ed0ea` (the final revision of the build inputs is `6c47bba`; `e3ed0ea` adds run rows only), with a clean tree: the run rows read `e3ed0eab8d56` without `-dirty`. Configure, build, and test each exited 0 with no FAILED build step: gcc-debug and gcc-release 330 tests, gcc-asan 322, clang-debug, clang-release, clang-asan, and lint 332, all passing (develop had 301, 293, and 303: the 26 `core.dual` tests and the 3 `tools.expect_output_forbid_first_*` tests are new). `clang-measure` (optimized, without libstdc++'s assertions; audit B1): built with `-k 0`, only `core_product_test` and `core_identities_test` fail to build, the known B1 limit of the geometric antiproduct of `full<5>` in conformal(3), which WU11a does not change; 322 of 324 tests pass, the two not run being `core.product` and `core.identities`; `ctest -L core.dual` there passes all 26. The trace gate, `clang-format --dry-run --Werror` on every changed header and test source, and `tools/runlog check` exit 0. The commit after `e3ed0ea` records these results and the run rows, and changes nothing else.
 
 Open, for the owner or later units: plan departure 5 (W7's subfeature branch form cannot exist beside its feature branch); audit owner item 7 (the 16 `*_layout` names); a direct generator of the antiexomorphism, if the antidot's growth with n is ever a measured problem; decision 0080's copy step of `compile.tsv` at the merge; the math-expert's knowledge-base note draft (`bulk-dual-by-reverse-and-antiscalar.md`), not added, since the brief gave no permission to write there.
