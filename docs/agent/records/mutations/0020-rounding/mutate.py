@@ -49,6 +49,37 @@ RUN_PRODUCT = """template <const auto& Kernel, std::size_t R, class T, std::size
           std::size_t KY, std::size_t... K>
 constexpr std::array<T, R> run_product("""
 
+# For the nudge mutants, from the blind review: after every addition or
+# subtraction of the product and map kernels, at run time over double, a
+# result above 2^-9 in magnitude is moved N doubles away from zero.
+NUDGE = """#include <cmath>
+namespace galoot::core::detail {
+template <class T> constexpr T review_nudge(T v, int n) {
+  if constexpr (std::is_same_v<T, double>) {
+    if (!std::is_constant_evaluated()) {
+      if (v > 0x1p-9 || v < -0x1p-9) {
+        for (int i = 0; i < n; ++i) {
+          v = std::nextafter(v, v < 0 ? -1e300 : 1e300);
+        }
+      }
+    }
+  }
+  return v;
+}
+}
+"""
+
+
+def nudge(n):
+    return ("include/galoot/core/mv.hpp", [
+        ("#include <galoot/core/assert.hpp>",
+         NUDGE + "#include <galoot/core/assert.hpp>", None),
+        ("out = static_cast<T>(out + value);",
+         f"out = review_nudge(static_cast<T>(out + value), {n});", None),
+        ("out = static_cast<T>(out - value);",
+         f"out = review_nudge(static_cast<T>(out - value), {n});", None)])
+
+
 # name: (file, [(old, new, occurrences)]). occurrences lists which
 # occurrences of old, counted from 0, are replaced; None means old occurs
 # exactly once.
@@ -81,6 +112,18 @@ MUTANTS = {
     "negation_by_multiplication": ("include/galoot/core/mv.hpp", [(
         "      out = static_cast<T>(-value);",
         "      out = static_cast<T>(static_cast<T>(C) * value);", None)]),
+    # From the blind review: one and two doubles of extra error after each
+    # sum in the kernels. One survived the check as first written.
+    "kernel_sums_nudged_one_ulp": nudge(1),
+    "kernel_sums_nudged_two_ulps": nudge(2),
+    # Added with the review's fixes: a result of one rounding checked by the
+    # margin's tolerance instead of equality with the nearest double, and a
+    # result of several checked without the ratio of its exact error.
+    "one_rounding_checked_by_tolerance": ("test/support/tracked.hpp", [(
+        "  if (roundings == 1) {\n    return d == nearest;\n  }\n", "", None)]),
+    "ratio_check_removed": ("test/support/tracked.hpp", [(
+        " &&\n         bound_ratio(d, exact, roundings, magnitude) <= ratio_limit;",
+        ";", None)]),
 }
 
 

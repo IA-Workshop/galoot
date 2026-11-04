@@ -4,5 +4,9 @@ divide_multiplies_by_reciprocal	0	-	core.rounding
 tracked_sum_adds_no_rounding	0	-	support.tracked core.rounding
 margin_removed	0	-	support.tracked
 tracked_product_counts_the_larger	0	-	support.tracked
-exact_results_checked_by_tolerance	0	-	support.tracked
+exact_results_checked_by_tolerance	0	-	-
 negation_by_multiplication	0	-	core.rounding
+kernel_sums_nudged_one_ulp	0	-	core.rounding
+kernel_sums_nudged_two_ulps	0	-	core.rounding
+one_rounding_checked_by_tolerance	0	-	support.tracked
+ratio_check_removed	0	-	support.tracked

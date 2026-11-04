@@ -32,7 +32,7 @@ The check's margin, the step from "d is within γ_K M of e" to a comparison comp
 
 ## Checked numerically
 
-`core.rounding` compares 225,080 coefficients of double results with their exact values at seed 0 (and the same count at seeds 1, 2, 3, and 20261104), all within the bound. The largest observed ratio of \|d − e\| to γ_K M, per family, is in the WU11b records (`records/mutations/0020-rounding/README.md`); none exceeds 1.
+Before the blind review, `core.rounding` compared 225,080 coefficients of double results with their exact values at seed 0 (and the same count at seeds 1, 2, 3, and 20261104), all within the bound. The largest observed ratio of \|d − e\| to γ_K M, per family, is in the WU11b records (`records/mutations/0020-rounding/README.md`); none exceeds 1. After the review it compares 262,920 per run and checks each family's largest computed ratio against 1 + 6u, a limit derived from Lemma 3.1 in decision 0175.
 
 ## Not verified
 
