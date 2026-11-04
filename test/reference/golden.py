@@ -9,9 +9,10 @@ rigid geometric algebra (rigidgeometricalgebra.org). Where a convention is
 stated both as a definition and as a closed formula, a table, or a worked
 example, the script computes both and stops if they differ: the complements,
 grade signs, oriented names, antiscalars, wedge-basis products, conformal
-change of basis, and result order are written only when two routes agree. The
-diagonal and rigid signatures have no second route; their squares are written
-from the definition as clifford_reference.py states it.
+change of basis, result order, and metric exomorphisms are written only when
+two routes agree. The diagonal and rigid signatures have no second route;
+their squares are written from the definition as clifford_reference.py
+states it.
 
 Usage, with the interpreter isolated as for every reference script:
 
@@ -285,6 +286,71 @@ def gp_table(name, g):
     return n, int(det), products
 
 
+def gram_minor(g, rows, cols):
+    """det g[A, B]: the determinant of the rows A and columns B of g, with
+    clifford_reference.det; the empty minor is 1."""
+    return ref.det([[g[r][c] for c in cols] for r in rows])
+
+
+def exomorphism(name, g, n, right, left, signs):
+    """The metric exomorphism G of the form g on every blade: G e_A is the
+    sum over the blades B of the grade of A of det g[A, B] e_B, which on
+    vectors is G e_i = sum_j g_ij e_j and on a wedge of vectors is the wedge
+    of their images.
+
+    A second route gives every entry: the scalar part of e_A reverse(e_B),
+    from clifford_reference.py's product table, is the Gram determinant
+    det g[A, B] when A and B have one grade and zero across grades. The
+    script stops if the two differ anywhere. Then, with the antiexomorphism
+    composed as left(G right(u)) from this script's complements, both G of
+    the antiexomorphism and the antiexomorphism of G are det g times the
+    identity on every blade."""
+    alg = ref.Algebra(g)
+    table = alg.table()
+    size = 1 << n
+    images = {}
+    for a in range(size):
+        rows = ref.indices(a)
+        image = {}
+        for cols in itertools.combinations(range(n), len(rows)):
+            minor = gram_minor(g, rows, cols)
+            if minor != 0:
+                image[sum(1 << c for c in cols)] = minor
+        images[a] = image
+        for b in range(size):
+            scalar_part = table[(a, b)].get(0, Fraction(0)) * signs[b][0]
+            agree(scalar_part, image.get(b, Fraction(0)),
+                  f"G of {ref.blade_name(a)} on {ref.blade_name(b)} in "
+                  f"{name}: Gram minor against the scalar part of e_A ~e_B")
+
+    def apply(images_of, x):
+        out = {}
+        for m, c in x.items():
+            for t, d in images_of[m].items():
+                out[t] = out.get(t, 0) + c * d
+        return ref.clean(out)
+
+    def complement(table_of, x):
+        return {table_of[m][0]: c * table_of[m][1] for m, c in x.items()}
+
+    anti = {a: complement(left, apply(images, complement(right, unit(a))))
+            for a in range(size)}
+    det = ref.det(g)
+    for a in range(size):
+        identity = ref.clean({a: det})
+        agree(apply(images, anti[a]), identity,
+              f"G of the antiexomorphism of {ref.blade_name(a)} in {name}")
+        agree(apply(anti, images[a]), identity,
+              f"the antiexomorphism of G of {ref.blade_name(a)} in {name}")
+    return [(a, canonical_terms(images[a])) for a in range(size)]
+
+
+def image_row(a, terms, n, width):
+    padded = terms + [(0, 0)] * (width - len(terms))
+    body = ", ".join(f"{{{c}, {mask_literal(m, n)}}}" for c, m in padded)
+    return f"{{{mask_literal(a, n)}, {len(terms)}, {{{{{body}}}}}}}"
+
+
 def product_row(a, b, terms, n, width):
     padded = terms + [(0, 0)] * (width - len(terms))
     body = ", ".join(f"{{{c}, {mask_literal(m, n)}}}" for c, m in padded)
@@ -490,6 +556,14 @@ struct complement_pair {
   mask blade;
   signed_blade right;
   signed_blade left;
+};
+
+/// The image of a blade under a linear map: its first `size` terms, ordered
+/// by grade and then by index list; the remaining terms are {0, 0}.
+struct blade_image {
+  mask blade;
+  std::size_t size;
+  std::array<term, @IMAGE_TERMS@> terms;
 };"""
 
 
@@ -501,7 +575,22 @@ def generate():
     width = max(len(terms) for _, _, terms in wedge_products)
     for _, _, _, _, _, products in gp_tables:
         width = max(width, max(len(terms) for _, _, terms in products))
-    out = HEADER_START.replace("@PRODUCT_TERMS@", str(width)).splitlines()
+
+    tables = {}
+    for n in SIGN_TABLE_SIZES:
+        right, left = complements(n)
+        if n == 4:
+            check_complements_against_rigid_3_table(right, left)
+        tables[n] = (right, left, grade_signs(n, right, left))
+
+    # G of every form whose product table is written, with as many terms per
+    # image as the longest one.
+    exomorphisms = [(name, n, exomorphism(title, g, n, *tables[n]))
+                    for name, title, g, n, _, _ in gp_tables]
+    image_width = max(len(terms) for _, _, images in exomorphisms
+                      for _, terms in images)
+    out = (HEADER_START.replace("@PRODUCT_TERMS@", str(width))
+           .replace("@IMAGE_TERMS@", str(image_width)).splitlines())
 
     open_namespace(out, "blade_names",
                    "bit i - 1 of a blade mask stands for e_i",
@@ -625,13 +714,6 @@ def generate():
                    [mask_literal(m, n) for m in result_order(n)])
     close_namespace(out, "result_order")
 
-    tables = {}
-    for n in SIGN_TABLE_SIZES:
-        right, left = complements(n)
-        if n == 4:
-            check_complements_against_rigid_3_table(right, left)
-        tables[n] = (right, left, grade_signs(n, right, left))
-
     open_namespace(out, "grade_signs",
                    "the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it",
                    "The reverse multiplies a blade of grade k by "
@@ -658,6 +740,24 @@ def generate():
                     f"{{{mask_literal(left[m][0], n)}, {left[m][1]}}}}}"
                     for m in range(1 << n)])
     close_namespace(out, "complements")
+
+    open_namespace(out, "exomorphisms",
+                   "the metric exomorphism sends e_A to the sum of "
+                   "det g[A, B] e_B",
+                   "The metric exomorphism G sends each blade e_A to the sum, "
+                   "over the blades e_B of its grade, of the Gram minor "
+                   "det g[A, B] times e_B: it applies g to a vector, and to a "
+                   "wedge of vectors it gives the wedge of their images. For the five forms of gp_tables, indexed by mask. "
+                   "Each entry was computed from the Gram minors and checked "
+                   "against a second route, the scalar part of e_A ~e_B in "
+                   "the product table, and G was checked to compose with the "
+                   "antiexomorphism left(G right(u)) to det g times the "
+                   "identity in either order.")
+    for name, n, images in exomorphisms:
+        emit_array(out, "blade_image", name,
+                   [image_row(a, terms, n, image_width)
+                    for a, terms in images])
+    close_namespace(out, "exomorphisms")
 
     out += ["", "} // namespace golden", "", "// clang-format on",
             "#endif // GALOOT_TEST_REFERENCE_GOLDEN_HPP"]

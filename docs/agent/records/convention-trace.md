@@ -38,6 +38,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 3.1 | u ^ right(u) = antiscalar and left(u) ^ u = antiscalar | yes |
 | 3.1 | the left complement of the right complement is the identity | yes |
 | 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | no |
+| 3.2 | the metric exomorphism sends e_A to the sum of det g[A, B] e_B | no |
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | no |
 | 3.4 | in a degenerate metric the double bulk dual is zero | no |
 | 4.1 | the wedge of two blades that share a generator is zero | yes |
