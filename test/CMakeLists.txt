@@ -843,7 +843,7 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/rational.hpp support/scalar_faults.hpp)
+    FILES support/rational.hpp support/scalar_faults.hpp support/tracked.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -892,6 +892,20 @@ foreach(operation IN ITEMS add multiply)
     MESSAGE "${rational_does_not_fit}"
     REQUIRE rational_failed)
 endforeach()
+
+# support.tracked: the tracking scalar's rules for counting roundings and
+# magnitudes, the conversions between rationals and doubles, and the forward
+# error bound check accepting results within the bound and rejecting results
+# beyond it.
+galoot_add_test(MODULE support COMPONENT tracked)
+target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
+
+# core.rounding: every product, map, sum, scaling, and copy over double
+# within its forward error bound of the exact value from the golden tables,
+# with the bound taken from a run over the tracking scalar.
+galoot_add_test(MODULE core COMPONENT rounding)
+target_link_libraries(core_rounding_test PRIVATE galoot_test_support
+  galoot_golden)
 
 # core.mv: the multivector type, its scalar concepts, construction,
 # equality, and the checks of its layout, over the five scalar types it must

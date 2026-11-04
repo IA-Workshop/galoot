@@ -1,6 +1,6 @@
 # 0020 WU11: bulk, weight, duals, dot, antidot, and M3's rounding tests
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started. WU11a implemented on `feature/core-duals` 2026-11-04, ready for the blind review (section 10).
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU11b merged 2026-11-04. WU11a implemented on `feature/core-duals` 2026-11-04, blind review approved with non-blocking findings, fixes in, `develop` merged in (section 10).
 - Branches, from `develop` at `344a0ff` or later (section 1, departure 1):
   - WU11a: `feature/core-duals`, worktree `.claude/worktrees/core-duals`. The test author works on `feature/core-duals-tests`, worktree `.claude/worktrees/core-duals-tests`, branched from `feature/core-duals` at its first commit (section 4, "Commit order and W2"; departure 5 explains the name).
   - WU11b: `feature/core-rounding`, worktree `.claude/worktrees/core-rounding`. It changes only test files and can run beside WU11a. Its last group waits for WU11a's merge.
@@ -356,6 +356,9 @@ Recorded in `docs/agent/records/agent-cost.tsv` as each agent finishes. For comp
 Size M overall, as plan 0001 has it: about 2.1M to 2.9M tokens in all. This planner's own cost is recorded by the coordinator from the harness report.
 
 ## 10. Outcome
+
+- O3: yes, readings R14 and R15 accepted as recommended (owner answer, 2026-11-04, relayed by coordinator).
+- WU11b (2026-11-04): done on `feature/core-rounding` for the WU9 and WU10 operations (decision 0175); reviewed, delta review approved; the group for WU11a's operations waits for WU11a's merge.
 
 ### WU11a
 
