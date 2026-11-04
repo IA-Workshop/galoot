@@ -1614,6 +1614,13 @@ set_tests_properties(tools.expect_output_forbid_first_accepts
 galoot_add_test(MODULE core COMPONENT dual)
 target_link_libraries(core_dual_test PRIVATE galoot_golden galoot_test_support)
 
+# core.dual_identities: the identities that relate the bulk, the weight, the
+# duals, the dot, and the antidot to each other and to the metric, over
+# many signatures. A program of its own, so that a change to the tests of
+# dual_test.cpp does not rebuild it; it also carries the label core.dual.
+galoot_add_test(MODULE core COMPONENT dual_identities)
+set_property(TEST core.dual_identities APPEND PROPERTY LABELS core.dual)
+
 # The names of the machinery under the operations, which the first error
 # line of a rejection must not show: the user wrote the operation, not these.
 set(dual_internal_names "apply:" "geometric_product:" left_complement
