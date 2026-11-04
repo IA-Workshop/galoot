@@ -1,6 +1,6 @@
 # 0020 WU11: bulk, weight, duals, dot, antidot, and M3's rounding tests
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started.
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not started. WU11a implemented on `feature/core-duals` 2026-11-04, ready for the blind review (section 10).
 - Branches, from `develop` at `344a0ff` or later (section 1, departure 1):
   - WU11a: `feature/core-duals`, worktree `.claude/worktrees/core-duals`. The test author works on `feature/core-duals-tests`, worktree `.claude/worktrees/core-duals-tests`, branched from `feature/core-duals` at its first commit (section 4, "Commit order and W2"; departure 5 explains the name).
   - WU11b: `feature/core-rounding`, worktree `.claude/worktrees/core-rounding`. It changes only test files and can run beside WU11a. Its last group waits for WU11a's merge.
@@ -357,4 +357,56 @@ Size M overall, as plan 0001 has it: about 2.1M to 2.9M tokens in all. This plan
 
 ## 10. Outcome
 
-Not started.
+### WU11a
+
+Implemented on `feature/core-duals` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, on `feature/core-duals-tests`; proofs for decision 0172 and a review of the golden routes: Claude, agent, Opus 5.5, math-expert role). The owner answered O1 to O4 on 2026-11-04, "take all recommendations" (decision 0174), so `project` (commits 8 and 9) and CONVENTIONS version 1.9 are in. Not reviewed yet; not merged.
+
+Commits, in the order of section 4. W2 was not amended, so the test author committed each group on `feature/core-duals-tests` and each was cherry-picked with `-x` immediately before the code it judges; each such commit is the single failing commit that W2 allows, and its message says so.
+
+| Step | Commit | What |
+| --- | --- | --- |
+| 1 | `3f60402` | golden `exomorphisms` (test author; `feature/core-duals` fast-forwarded to it) |
+| 2 | `c766fc4` (from `87074e5`) | tests of the bulk and the weight, and `FORBID_FIRST` / `FORBID_ON_FIRST_ERROR` |
+| 3 | `b3dd471` | `dual.hpp` with the bulk and the weight; `core.hpp`; the header set |
+| 4 | `111a59c` (from `07a95a2`) | tests of the four duals |
+| 5 | `82cbec1` | the four duals |
+| 6 | `ae239b9` (from `ee2301d`) | tests of the dot and the antidot |
+| 7 | `b6ea20f` | the dot, the antidot, the scalar-part kernel, the rejecting function |
+| 8 | `9f7b25f` (from `e6d40aa`) | tests of `project` |
+| 9 | `75c8c04` | `project` |
+| 10 | `863edc8` (from `fba38db`) | the identities over the signature set |
+| | `6837785` | the kernel's static_asserts (the implementer's own test, listed for review) |
+| | `cab40c0` | CONVENTIONS 1.9 and decision 0174 |
+| 11 | `63995c5` | trace rows |
+| | `4720980` | golden comments (math-expert review, minor) |
+| | `69d6dcc` | the measured limits in `dual.hpp`'s comment |
+| | `505737e`, `48172c4` | clang-tidy fixes: the antiscalar's layout; the dual tests (listed for review) |
+| 12 | the records commit | decisions 0171 to 0173, records, this outcome |
+
+The test author's `75596d4` (run-log rows) was empty when cherry-picked: the union merge of `runs.tsv` had already brought its rows with `e6d40aa`. It was skipped; all 324 of the test author's run rows are in the branch's log.
+
+Departures and readings (C20):
+
+1. The test author changed shared test infrastructure outside the `core.dual` block (`c766fc4`): `FORBID_FIRST` in `test/expect_output.cmake` and `FORBID_ON_FIRST_ERROR` in `cmake/galoot_testing.cmake`, with three tests `tools.expect_output_forbid_first_*`, because no existing check could forbid a name on the first error line only, which R11 asks. This is build-expert ground; existing tests do not use it.
+2. Eight `core.dual_compare_<function>` compile-fail tests (and one for `project`) pin criterion 6's "Clang's first line names `bulk_layout<...>`"; their required literal is matched anywhere in the output, not only on the first line.
+3. `bulk(x)` is written `left_complement(geometric_product(reverse(x), 𝟙))` in place, not `left_complement(bulk_dual(x))` as R4's table has it, so that commit 3 does not depend on commit 5; the composition is the same.
+4. The message nouns of R11's "likewise" are the test author's: "the bulk's", "the weight's", "the bulk dual's", "the weight dual's", "the left bulk dual's", "the left weight dual's", "the dot's", "the antidot's", "the projection's".
+5. The S7 assertions of the dot's kernel are in `dual_test.cpp` (`6837785`), written by the implementer, not in the header, so that no includer of `core.hpp` evaluates a plan for them.
+6. The limits search, the assembly probe, and the diagnostics sizes ran against headers of `6837785` (limits and assembly, from a scratch copy) or `69d6dcc` (diagnostics); the later header commits change comments and the way the antiscalar's layout is built, nothing a probe measures. Their run rows read `-dirty`, since the worktree held uncommitted records (and, during the limit search, a mutant run's edit of `dual.hpp`, which the scratch copy did not see).
+7. The mutants ran before `505737e` and `48172c4` and were not rerun (records README).
+8. The plan file's status line and this outcome are edited on this branch; WU11b may edit the same file, so whichever merges second merges `develop` first (W7).
+
+Evidence:
+
+- Verification: the bulk, the weight, and the four duals of every blade of the five golden forms and the oriented rigid(3) blades against golden G and golden complements; the dot and the antidot of every blade pair of those forms against Σ a_A G_AB b_B and Σ a_A 𝔾_AB b_B; the diagonal products of squares in R(1,1,0), R(2,1,1), and R(1,3,0); layouts against layouts written from the definition, with accepting and rejecting static_asserts for each layout name; the dual-sign test of section 8 at the odd grades of n = 4 (bulk_dual of a point is the plane (x, y, z, 0), left_bulk_dual (−x, −y, −z, 0)); double duals zero by value in rigid(3), R(0,0,3), R(2,0,2), and the degenerate non-diagonal form, and (−1)^(gr·ag) det(g) x elsewhere; e12 • e12 = +1 in R(3,0,0); the projection of (1, 1, 7) onto z = 2 and onto rational unit planes; the identities of criterion 4 over the signature set, seeded and exact, with sparse sets at n = 8, 12, and 16. All pass on every preset (below).
+- Proofs (decision 0172): the identities behind the compositions, from the definitions, for every symmetric form over a field of characteristic 0, by the math-expert, checked by `records/spikes/dual-identities/check.py` (17,878 exact checks on seven forms and golden.hpp, all passing). They close one gap in R4's sketch (the non-diagonal case of x 𝟙 = x ⌋ 𝟙).
+- Golden routes: reviewed by the math-expert; no blocking or major finding, two minor comment findings fixed in `4720980`.
+- Validation (V8): the rigid(3) split, 𝔾 = left G right = right G left, weight = −bulk in conformal(3), P • P = −r² for a round point, and the bulk dual of the real sphere, against research note 0005; all pass. Not validated: the non-diagonal bulk and weight beyond conformal(3), and the Terathon side of the dual-sign disagreement.
+- Mutants (`records/mutations/0020-duals/README.md`): 45 on gcc-debug and clang-debug; 44 killed on both, each by a test; one equivalent survivor, `antidot_right_complement_outside` (right(1) = left(1) = 𝟙), as section 6 expected.
+- Diagnostics (`records/diagnostics/wu11a-messages.md`): each of the 15 rejections gives one error with its message on the first error line on both compilers, with no `apply:`, `geometric_product:`, `left_complement`, `product_plan`, or `detail::` there; Clang's first line for a mismatched comparison names the operation's layout.
+- Run code (P4, `records/performance/duals-cost/README.md`): the dot and the antidot of two motors 4 multiplications and 3 additions on both compilers; the bulk of a line and the weight dual of a point no arithmetic; the projection of a point onto a plane 21 multiplications; no calls.
+- Limits (same record, criterion 8): the six unary operations up to `full<7>` on Clang and `full<9>` on GCC, the three binary ones up to `full<5>` and `full<6>`, the same with and without libstdc++'s assertions; everything builds for `full<5>` of conformal(3); the dot and the antidot of `full<5>` in the dense five-generator form fail on Clang only. Stated in `dual.hpp`. `dual_test.cpp` and `dual_identities_test.cpp` build and pass under `clang-measure` (audit B1's configuration) and `gcc-measure`.
+- W10 and P2 (pinned, three repeats): a unit that includes only `core.hpp` +7.6 M (+0.8%) on GCC and +6.9 M (+0.7%) on Clang; `smoke_test.cpp` +0.7% on both. `dual_test.cpp` 38.1 G and 35.7 G instructions; `dual_identities_test.cpp` 137.3 G and 153.3 G (about half of `identities_test.cpp`; not labeled `slow`).
+- Growth at fixed use, four rigid(3) objects from n = 4 to 16: the bulk +1.5% (GCC) and +8.4% (Clang); the weight +12.4% and +72.0%; the weight dual +13.8% and +76.9%; the antidot +77.9% and +386.0%; the projection +10.1% and +45.6%. The operations through the complements grow as the antiproduct does (decision 0141); the antidot most. Reported under P2; blocks nothing.
+
+Open, for the owner or later units: plan departure 5 (W7's subfeature branch form cannot exist beside its feature branch); audit owner item 7 (the 16 `*_layout` names); a direct generator of the antiexomorphism, if the antidot's growth with n is ever a measured problem; decision 0080's copy step of `compile.tsv` at the merge; the math-expert's knowledge-base note draft (`bulk-dual-by-reverse-and-antiscalar.md`), not added, since the brief gave no permission to write there.

@@ -99,3 +99,6 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-02	plan-0019	WU10b blind reviewer	opus	288691	67	1305	reported by harness as subagent_tokens; backfilled by the coordinator
 2026-11-02	plan-0019	WU10b delta reviewer	opus	214136	67	1071	reported by harness as subagent_tokens; backfilled by the coordinator
 2026-11-02	audit-post-wu10	post-WU10 auditor	opus	330564	129	1261	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-04	plan-0020	WU11a test author (doctest-expert role; golden exomorphisms and test groups 2, 4, 6, 10)	opus	441472	117	2978	reported by harness as subagent_tokens
+2026-11-04	plan-0020	WU11a test author, resumed for the project tests (group 8)	opus	473450	14	406	reported by harness as subagent_tokens for the resumed run; whether it includes the first run's tokens is not stated
+2026-11-04	plan-0020	WU11a math-expert (proofs for decision 0172, review of the golden routes)	opus	193582	37	881	reported by harness as subagent_tokens

@@ -1,0 +1,47 @@
+after: 69d6dcc871ba; before: c86cb58; 3 repeats pinned to CPU 4; instructions retired on that core, mean and spread in M; wall time mean in s; peak memory max in KiB
+gcc suites/smoke/before: 1142.7 M (spread 0.2), 0.146 s, 92628 KiB
+gcc suites/smoke/after: 1150.5 M (spread 0.2), 0.141 s, 92628 KiB
+gcc suites/core_only/before: 945.3 M (spread 0.2), 0.124 s, 81972 KiB
+gcc suites/core_only/after: 952.9 M (spread 0.3), 0.122 s, 82312 KiB
+gcc suites/dual/after: 38067.8 M (spread 27.0), 3.123 s, 468900 KiB
+gcc suites/dual_identities/after: 137299.4 M (spread 58.2), 9.252 s, 779588 KiB
+gcc growth/bulk/n4: 1817.0 M (spread 0.5), 0.198 s, 108860 KiB; use 711.4 M
+gcc growth/weight/n4: 2091.7 M (spread 0.8), 0.225 s, 113172 KiB; use 986.1 M
+gcc growth/weight_dual/n4: 1997.5 M (spread 0.2), 0.219 s, 110920 KiB; use 892.0 M
+gcc growth/antidot/n4: 2061.4 M (spread 0.9), 0.220 s, 112948 KiB; use 955.9 M
+gcc growth/project/n4: 2431.7 M (spread 0.5), 0.249 s, 117972 KiB; use 1326.2 M
+gcc growth/baseline/n4: 1105.5 M (spread 0.2), 0.128 s, 88700 KiB
+gcc growth/bulk/n16: 1841.7 M (spread 0.7), 0.199 s, 108712 KiB; use 721.9 M
+gcc growth/weight/n16: 2228.5 M (spread 0.8), 0.223 s, 113320 KiB; use 1108.8 M
+gcc growth/weight_dual/n16: 2135.1 M (spread 0.7), 0.219 s, 112916 KiB; use 1015.4 M
+gcc growth/antidot/n16: 2819.8 M (spread 1.8), 0.247 s, 117212 KiB; use 1700.1 M
+gcc growth/project/n16: 2579.5 M (spread 0.9), 0.251 s, 117832 KiB; use 1459.8 M
+gcc growth/baseline/n16: 1119.7 M (spread 0.2), 0.130 s, 88808 KiB
+gcc growth of bulk from n = 4 to 16: +1.5%
+gcc growth of weight from n = 4 to 16: +12.4%
+gcc growth of weight_dual from n = 4 to 16: +13.8%
+gcc growth of antidot from n = 4 to 16: +77.9%
+gcc growth of project from n = 4 to 16: +10.1%
+clang suites/smoke/before: 1057.3 M (spread 1.8), 0.140 s, 130344 KiB
+clang suites/smoke/after: 1064.7 M (spread 2.6), 0.146 s, 130304 KiB
+clang suites/core_only/before: 956.4 M (spread 1.0), 0.134 s, 115852 KiB
+clang suites/core_only/after: 963.3 M (spread 1.1), 0.129 s, 116088 KiB
+clang suites/dual/after: 35713.4 M (spread 69.7), 2.715 s, 380768 KiB
+clang suites/dual_identities/after: 153318.9 M (spread 176.1), 9.304 s, 497540 KiB
+clang growth/bulk/n4: 1719.1 M (spread 2.0), 0.207 s, 140732 KiB; use 676.1 M
+clang growth/weight/n4: 1905.4 M (spread 4.6), 0.222 s, 142168 KiB; use 862.4 M
+clang growth/weight_dual/n4: 1846.4 M (spread 3.5), 0.215 s, 141424 KiB; use 803.4 M
+clang growth/antidot/n4: 2114.4 M (spread 2.9), 0.229 s, 140264 KiB; use 1071.4 M
+clang growth/project/n4: 2150.2 M (spread 3.7), 0.241 s, 143256 KiB; use 1107.2 M
+clang growth/baseline/n4: 1043.0 M (spread 1.7), 0.146 s, 126960 KiB
+clang growth/bulk/n16: 1789.7 M (spread 2.8), 0.207 s, 140704 KiB; use 732.7 M
+clang growth/weight/n16: 2540.5 M (spread 7.4), 0.254 s, 142040 KiB; use 1483.6 M
+clang growth/weight_dual/n16: 2478.6 M (spread 2.5), 0.249 s, 141748 KiB; use 1421.6 M
+clang growth/antidot/n16: 6264.1 M (spread 105.4), 0.435 s, 140412 KiB; use 5207.1 M
+clang growth/project/n16: 2669.2 M (spread 14.0), 0.263 s, 143292 KiB; use 1612.2 M
+clang growth/baseline/n16: 1057.0 M (spread 1.4), 0.146 s, 126848 KiB
+clang growth of bulk from n = 4 to 16: +8.4%
+clang growth of weight from n = 4 to 16: +72.0%
+clang growth of weight_dual from n = 4 to 16: +76.9%
+clang growth of antidot from n = 4 to 16: +386.0%
+clang growth of project from n = 4 to 16: +45.6%

@@ -1,0 +1,46 @@
+mutant	build_exit	build_failures	failed_tests
+bulk_dual_uses_left_complement	0	-	core.dual core.dual_identities
+bulk_dual_omits_reverse	0	-	core.dual core.dual_identities
+bulk_dual_antiscalar_first	0	-	core.dual core.dual_identities
+weight_dual_is_bulk_dual	1	dual: test/core/dual_test.cpp:949:12: error: static assertion failed	core.dual core.dual_identities
+weight_calls_bulk	1	dual: test/core/dual_test.cpp:708:57: error: no match for ‘operator==’ (operand types are ‘const galoot::core::blade_set<3>’ and ‘const galoot::core::blade_set<1>’)	core.dual core.dual_identities
+weight_right_complement_outside	0	-	core.dual core.dual_identities
+left_weight_dual_uses_right_complement	0	-	core.dual core.dual_identities
+dot_omits_reverse	0	-	core.dual core.dual_identities
+kernel_keeps_antiscalar_terms	1	dual: test/core/dual_test.cpp:1169:22: error: static assertion failed	core.dual core.dual_identities core.dual_narrow_scalar_dot core.dual_narrow_scalar_antidot
+kernel_keeps_every_term	1	dual: test/core/dual_test.cpp:1242:74: error: static assertion failed	core.dual core.dual_identities
+kernel_adds_first_term_to_zero	1	dual: test/core/dual_test.cpp:1490:73: error: static assertion failed	core.dual
+antidot_without_complements	1	dual: test/core/dual_test.cpp:1246:59: error: static assertion failed	core.dual core.dual_identities
+antidot_right_complement_outside	0	-	-
+project_operands_swapped	1	dual: test/core/dual_test.cpp:1355:22: error: static assertion failed	-
+project_uses_bulk_dual	0	-	core.dual
+bulk_check_dropped	0	-	core.dual_narrow_scalar_bulk
+bulk_checks_weight	0	-	core.dual_narrow_scalar_bulk
+weight_check_dropped	0	-	core.dual_narrow_scalar_weight
+weight_checks_bulk	0	-	core.dual_narrow_scalar_weight
+bulk_dual_check_dropped	0	-	core.dual_narrow_scalar_bulk_dual
+bulk_dual_checks_weight	0	-	core.dual_narrow_scalar_bulk_dual
+weight_dual_check_dropped	0	-	core.dual_narrow_scalar_weight_dual
+weight_dual_checks_bulk	0	-	core.dual_narrow_scalar_weight_dual
+left_bulk_dual_check_dropped	0	-	core.dual_narrow_scalar_left_bulk_dual
+left_bulk_dual_checks_weight	0	-	core.dual_narrow_scalar_left_bulk_dual
+left_weight_dual_check_dropped	0	-	core.dual_narrow_scalar_left_weight_dual
+left_weight_dual_checks_bulk	0	-	core.dual_narrow_scalar_left_weight_dual
+dot_check_dropped	0	-	core.dual_narrow_scalar_dot
+dot_checks_antidot	0	-	core.dual_narrow_scalar_dot
+dot_checks_whole_product	1	dual: include/galoot/core/dual.hpp:491:17: error: static assertion failed: dot: the scalar type cannot hold one of the dot's exact coefficients; use a scalar type that holds larger integers exactly	-
+antidot_check_dropped	0	-	core.dual_narrow_scalar_antidot
+antidot_checks_dot	0	-	core.dual_narrow_scalar_antidot
+project_check_dropped	0	-	core.dual_narrow_scalar_project
+project_checks_bulk_dual	0	-	core.dual_narrow_scalar_project
+catch_alls_without_algebra_condition	1	dual: test/core/dual_test.cpp:1333:17: error: static assertion failed	core.dual_mixed_algebras_dot core.dual_mixed_algebras_antidot core.dual_mixed_algebras_project
+catch_alls_without_scalar_condition	1	dual: test/core/dual_test.cpp:1332:17: error: static assertion failed	core.dual_mixed_scalars_dot core.dual_mixed_scalars_antidot core.dual_mixed_scalars_project
+bulk_layout_is_input	1	dual: test/core/dual_test.cpp:707:55: error: no match for ‘operator==’ (operand types are ‘const galoot::core::blade_set<4>’ and ‘const galoot::core::blade_set<3>’) | dual_identities: include/galoot/core/dual.hpp:346:27: error: could not convert ‘galoot::core::left_complement<{anonymous}::form<metric<1>()>, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{1, 1}}}}, long int>(galoot::core::geometric_product<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Typ	core.dual_compare_bulk core.dual_compare_weight core.dual_compare_weight_dual core.dual_compare_left_bulk_dual core.dual_compare_left_weight_dual core.dual_compare_project
+weight_layout_is_input	1	dual: test/core/dual_test.cpp:708:57: error: no match for ‘operator==’ (operand types are ‘const galoot::core::blade_set<4>’ and ‘const galoot::core::blade_set<1>’) | dual_identities: include/galoot/core/dual.hpp:370:27: error: could not convert ‘galoot::core::left_complement<{anonymous}::form<metric<1>()>, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{0, 1}}}}, long int>(galoot::core::bulk<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_bl	core.dual_compare_weight core.dual_compare_left_weight_dual
+bulk_dual_layout_is_input	1	dual: test/core/dual_test.cpp:945:12: error: static assertion failed | dual_identities: include/galoot/core/dual.hpp:396:29: error: could not convert ‘galoot::core::geometric_product<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_blade{0, 1}, oriented_blade{1, 1}}}}, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{1, 1}}}}, long int>(galoot::core:	core.dual_compare_bulk_dual
+weight_dual_layout_is_input	1	dual: test/core/dual_test.cpp:949:12: error: static assertion failed | dual_identities: include/galoot/core/dual.hpp:418:16: error: could not convert ‘galoot::core::bulk<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_blade{0, 1}, oriented_blade{1, 1}}}}, long int>(galoot::core::right_complement<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade	core.dual_compare_weight_dual core.dual_compare_project
+left_bulk_dual_layout_is_input	1	dual: test/core/dual_test.cpp:990:65: error: no match for ‘operator==’ (operand types are ‘const galoot::core::blade_set<4>’ and ‘const galoot::core::blade_set<3>’) | dual_identities: include/galoot/core/dual.hpp:441:27: error: could not convert ‘galoot::core::left_complement<{anonymous}::form<metric<1>()>, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{0, 1}}}}, long int>(galoot::core::bulk<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_bl	core.dual_compare_left_bulk_dual
+left_weight_dual_layout_is_input	1	dual: test/core/dual_test.cpp:994:67: error: no match for ‘operator==’ (operand types are ‘const galoot::core::blade_set<4>’ and ‘const galoot::core::blade_set<1>’) | dual_identities: include/galoot/core/dual.hpp:463:27: error: could not convert ‘galoot::core::left_complement<{anonymous}::form<metric<1>()>, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{1, 1}}}}, long int>(galoot::core::weight<{anonymous}::form<metric<1>()>, blade_set<2>{std::array<oriented_blade, 2>{std::__array_traits<oriented_blade, 2>::_Type{oriented_	core.dual_compare_left_weight_dual
+dot_layout_is_input	1	dual: test/core/dual_test.cpp:1169:22: error: static assertion failed	core.dual_identities core.dual_compare_dot core.dual_compare_antidot
+antidot_layout_is_input	1	dual: test/core/dual_test.cpp:1170:22: error: static assertion failed | dual_identities: include/galoot/core/dual.hpp:540:27: error: could not convert ‘galoot::core::left_complement<{anonymous}::form<metric<1>{std::array<std::array<int, 1>, 1>{std::__array_traits<std::array<int, 1>, 1>::_Type{std::array<int, 1>{std::__array_traits<int, 1>::_Type{1}}}}}>, blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{0, 1}}}}, long int>(galoot::	core.dual_identities core.dual_compare_antidot
+project_layout_is_input	1	dual: test/core/dual_test.cpp:1428:71: error: static assertion failed	core.dual_compare_project

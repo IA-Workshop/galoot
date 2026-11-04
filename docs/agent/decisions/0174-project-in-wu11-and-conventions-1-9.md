@@ -38,7 +38,7 @@ The owner took every recommendation:
 
 ## Consequences
 
-- CONVENTIONS 4.3 is pinned at M3: the trace rows "a point projected onto a unitized plane has weight +1" is implemented and tested.
+- CONVENTIONS 4.3 is pinned at M3: its trace row, "a point projected onto a unitized plane has weight +1", is implemented and tested.
 - The trace table gains the WU11a rows of plan 0020 section 2.
 - WU13's plan proposes the 4.3 text that defines `antiproject`.
 - Plan 0020 departure 5 (W7's `feature/<name>/<part>` form cannot be created beside `feature/<name>`) remains with the owner; it is not part of this decision.
