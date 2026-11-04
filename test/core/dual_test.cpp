@@ -1458,6 +1458,48 @@ TEST_CASE("the project overloads take the right operands") {
                              core::mv<rga3, core::of_grade<4, 2>, double>>);
 }
 
+// The terms of the dot's kernel, one for each pair of blades whose product
+// has a scalar part, with that part as the coefficient, all on position 0
+// and only the first of them marked first.
+template <class Alg, core::blade_set A, core::blade_set B>
+constexpr bool
+scalar_terms_are(std::span<const std::array<std::int64_t, 3>> expected) {
+  constexpr const auto& kernel = core::detail::scalar_part_kernel<Alg, A, B>;
+  if (kernel.size() != expected.size()) {
+    return false;
+  }
+  for (std::size_t k = 0; k < kernel.size(); ++k) {
+    const auto& t = kernel[k];
+    if (t.a != static_cast<std::size_t>(expected[k][0]) ||
+        t.b != static_cast<std::size_t>(expected[k][1]) ||
+        t.coefficient != expected[k][2] || t.out != 0 || t.first != (k == 0)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Reference: definition: the scalar part of e_i e_j is g_ij, so in R(3,0,0)
+//   the vectors give e1 e1, e2 e2, e3 e3 with 1 each, in conformal(3)
+//   e4 e5 gives e4 . e5 = -1, the bivectors e12 and e13 against each other
+//   give no scalar, and e1 against e2 gives none
+TEST_CASE("the dot's kernel keeps exactly the terms on the scalar") {
+  constexpr std::array<std::array<std::int64_t, 3>, 3> vectors{
+      {{0, 0, 1}, {1, 1, 1}, {2, 2, 1}}};
+  static_assert(
+      scalar_terms_are<r300, core::of_grade<3, 1>, core::of_grade<3, 1>>(
+          vectors));
+
+  constexpr std::array<std::array<std::int64_t, 3>, 1> null_pair{{{0, 0, -1}}};
+  static_assert(scalar_terms_are<cga3, core::blades<cga3, "e4">,
+                                 core::blades<cga3, "e5">>(null_pair));
+
+  static_assert(scalar_terms_are<r300, core::blades<r300, "e12">,
+                                 core::blades<r300, "e13">>({}));
+  static_assert(scalar_terms_are<r300, core::blades<r300, "e1">,
+                                 core::blades<r300, "e2">>({}));
+}
+
 // A scope that sees galoot::core's names by a using-directive, as a user's
 // code may, with types of its own: one with no dot, antidot, or project and
 // one with its own. The library's catch-alls must leave both alone.
