@@ -1632,6 +1632,10 @@ function(dual_rejects_narrow_scalar function noun)
 endfunction()
 dual_rejects_narrow_scalar(bulk "bulk")
 dual_rejects_narrow_scalar(weight "weight")
+dual_rejects_narrow_scalar(bulk_dual "bulk dual")
+dual_rejects_narrow_scalar(weight_dual "weight dual")
+dual_rejects_narrow_scalar(left_bulk_dual "left bulk dual")
+dual_rejects_narrow_scalar(left_weight_dual "left weight dual")
 
 # core.dual_compare_<function>: comparing a result with a value of another
 # layout fails to compile; Clang names the result's layout by the
@@ -1655,3 +1659,7 @@ function(dual_rejects_comparison function)
 endfunction()
 dual_rejects_comparison(bulk)
 dual_rejects_comparison(weight)
+dual_rejects_comparison(bulk_dual)
+dual_rejects_comparison(weight_dual)
+dual_rejects_comparison(left_bulk_dual)
+dual_rejects_comparison(left_weight_dual)

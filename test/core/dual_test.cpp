@@ -1,9 +1,12 @@
-// Tests of galoot/core/dual.hpp: the bulk and the weight of a multivector.
+// Tests of galoot/core/dual.hpp: the bulk and the weight of a multivector,
+// and its four duals.
 //
 // The bulk applies the metric exomorphism G, which sends a blade e_A to the
 // sum over the blades e_B of its grade of the Gram minor det g[A, B] times
-// e_B, and the weight applies the antiexomorphism left(G right(u)). The
-// expected values are composed in the test from the reference's table of G
+// e_B, and the weight applies the antiexomorphism left(G right(u)). The bulk
+// dual is the right complement of the bulk and the weight dual that of the
+// weight; the left duals take the left complement instead. The expected
+// values are composed in the test from the reference's table of G
 // and its tables of complements, or from the squares of a diagonal form, or
 // worked out by hand from those definitions. A result holds the canonical
 // blades the operation reaches, each with orientation +1, in order of grade
@@ -352,11 +355,152 @@ std::string difference(const X& x, const Y& y) {
   return "";
 }
 
+// The four duals of every blade of X: right(G x), right(left(G right(x))),
+// left(G x), and left(left(G right(x))), composed from the tables.
+template <class X>
+int dual_mismatches(std::span<const golden::blade_image> g,
+                    std::span<const golden::complement_pair> complements) {
+  if (!tables_in_place(g, complements)) {
+    return failure_if(true, "a table entry is out of its place");
+  }
+  const std::size_t size = g.size();
+  const auto bulk = [&](const by_mask& x) { return exomorphism_of(g, x); };
+  const auto weight = [&](const by_mask& x) {
+    return left_of(complements, exomorphism_of(g, right_of(complements, x)));
+  };
+  return map_mismatches<X>(
+             "bulk_dual", size, [](const X& x) { return core::bulk_dual(x); },
+             [&](const by_mask& x) { return right_of(complements, bulk(x)); }) +
+         map_mismatches<X>(
+             "weight_dual", size,
+             [](const X& x) { return core::weight_dual(x); },
+             [&](const by_mask& x) {
+               return right_of(complements, weight(x));
+             }) +
+         map_mismatches<X>(
+             "left_bulk_dual", size,
+             [](const X& x) { return core::left_bulk_dual(x); },
+             [&](const by_mask& x) { return left_of(complements, bulk(x)); }) +
+         map_mismatches<X>(
+             "left_weight_dual", size,
+             [](const X& x) { return core::left_weight_dual(x); },
+             [&](const by_mask& x) { return left_of(complements, weight(x)); });
+}
+
+// (-1)^(gr ag) for the blade of `mask` in an algebra of n generators: the
+// sign that turns the right complement of the blade into its left one.
+int complement_parity(core::mask_t mask, std::size_t n) {
+  const int k = std::popcount(mask);
+  const int m = static_cast<int>(n) - k;
+  return (k * m) % 2 == 0 ? 1 : -1;
+}
+
+// x with each coefficient multiplied by `factor` and by complement_parity of
+// its blade.
+template <class X>
+X by_complement_parity(X x, std::int64_t factor = 1) {
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    x.coefficients.at(k) *=
+        factor * complement_parity(X::layout.blades.at(k).mask,
+                                   generators<typename X::algebra_type>);
+  }
+  return x;
+}
+
+// The number of pairs of basis blades s e_A and t e_B of one grade in the
+// layout of X for which a ^ d(b) differs from c (a . b) times the antiscalar,
+// for the four duals d: c is 1 for the right duals and (-1)^(gr ag) for the
+// left ones, and a . b is s t G_AB for the bulk duals and s t times the
+// antiexomorphism's entry for the weight duals, composed from the tables.
+// Pairs of different grades are skipped.
+template <class X>
+int wedge_dual_mismatches(
+    std::span<const golden::blade_image> g,
+    std::span<const golden::complement_pair> complements) {
+  if (!tables_in_place(g, complements)) {
+    return failure_if(true, "a table entry is out of its place");
+  }
+  const std::size_t size = g.size();
+  const core::mask_t antiscalar = static_cast<core::mask_t>(size - 1);
+  int mismatches = 0;
+  for (std::size_t i = 0; i < X::component_count; ++i) {
+    for (std::size_t j = 0; j < X::component_count; ++j) {
+      const core::oriented_blade a = X::layout.blades.at(i);
+      const core::oriented_blade b = X::layout.blades.at(j);
+      if (std::popcount(a.mask) != std::popcount(b.mask)) {
+        continue;
+      }
+      X x{};
+      X y{};
+      x.coefficients.at(i) = 1;
+      y.coefficients.at(j) = 1;
+      by_mask unit(size);
+      unit.at(b.mask) = b.sign;
+      const by_mask bulk_b = exomorphism_of(g, unit);
+      const by_mask weight_b =
+          left_of(complements, exomorphism_of(g, right_of(complements, unit)));
+      const std::int64_t dot = a.sign * bulk_b.at(a.mask);
+      const std::int64_t antidot = a.sign * weight_b.at(a.mask);
+      const std::int64_t parity =
+          complement_parity(a.mask, generators<typename X::algebra_type>);
+      const std::string pair = "(" + blade_name(a.mask, a.sign) + ", " +
+                               blade_name(b.mask, b.sign) + ")";
+      const auto check = [&](const char* op, const auto& got,
+                             std::int64_t want) {
+        const std::int64_t on = value_on(got, antiscalar);
+        mismatches +=
+            failure_if(on != want, std::string("a ^ ") + op + "(b) for " +
+                                       pair + " is " + std::to_string(on) +
+                                       ", not " + std::to_string(want));
+      };
+      check("bulk_dual", core::wedge(x, core::bulk_dual(y)), dot);
+      check("weight_dual", core::wedge(x, core::weight_dual(y)), antidot);
+      check("left_bulk_dual", core::wedge(x, core::left_bulk_dual(y)),
+            parity * dot);
+      check("left_weight_dual", core::wedge(x, core::left_weight_dual(y)),
+            parity * antidot);
+    }
+  }
+  return mismatches;
+}
+
+// The double duals of random values of X: zero when det g is zero, and
+// otherwise (-1)^(gr ag) det(g) x, which follows from right(G right(G u)) =
+// right(right(left(G right(G u)))) and G composed with the antiexomorphism
+// being det g times the identity, and likewise for the other three duals.
+template <class X>
+void check_double_duals(std::mt19937_64& source, std::int64_t det,
+                        const std::string& form) {
+  INFO("form: ", form);
+  for (int k = 0; k < 4; ++k) {
+    const X x = random_integers<X>(source);
+    const X want = by_complement_parity(x, det);
+    CHECK(difference(core::bulk_dual(core::bulk_dual(x)), want) == "");
+    CHECK(difference(core::weight_dual(core::weight_dual(x)), want) == "");
+    CHECK(difference(core::left_bulk_dual(core::left_bulk_dual(x)), want) ==
+          "");
+    CHECK(difference(core::left_weight_dual(core::left_weight_dual(x)), want) ==
+          "");
+  }
+}
+
 template <class Alg>
 concept has_bulk_layout = requires { core::bulk_layout<Alg, core::full<2>>; };
 template <class Alg>
 concept has_weight_layout =
     requires { core::weight_layout<Alg, core::full<2>>; };
+template <class Alg>
+concept has_bulk_dual_layout =
+    requires { core::bulk_dual_layout<Alg, core::full<2>>; };
+template <class Alg>
+concept has_weight_dual_layout =
+    requires { core::weight_dual_layout<Alg, core::full<2>>; };
+template <class Alg>
+concept has_left_bulk_dual_layout =
+    requires { core::left_bulk_dual_layout<Alg, core::full<2>>; };
+template <class Alg>
+concept has_left_weight_dual_layout =
+    requires { core::left_weight_dual_layout<Alg, core::full<2>>; };
 
 } // namespace
 
@@ -612,4 +756,248 @@ TEST_CASE("bulk and weight in degenerate diagonal forms") {
   const Full x{1, 2, 3, 4, 5, 6, 7, 8};
   CHECK(core::bulk(x) == Scalar{1});
   CHECK(core::weight(x) == Top{8});
+}
+
+// Reference: independent value: for every blade of rigid(3), conformal(2),
+//   conformal(3), the degenerate form [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and
+//   random form 1, whose Gram matrices satisfy e_i e_j + e_j e_i = 2 g_ij, the
+//   bulk dual is right(G x) and the weight dual right(left(G right(x))),
+//   and the left duals take the left complement in place of the outer right
+//   one, where the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B and the complements satisfy u ^ right(u) = antiscalar
+//   and left(u) ^ u = antiscalar, each result on the canonical blades it
+//   reaches
+TEST_CASE("the four duals of each basis blade are composed from G") {
+  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
+  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
+  REQUIRE(degenerate3::value.gram == golden::gp_tables::degenerate_3_gram);
+  REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
+  CHECK(dual_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::rigid_3, golden::complements::n4) == 0);
+  CHECK(dual_mismatches<core::mv<cga2, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::conformal_2, golden::complements::n4) == 0);
+  CHECK(dual_mismatches<core::mv<cga3, core::full<5>, std::int64_t>>(
+            golden::exomorphisms::conformal_3, golden::complements::n5) == 0);
+  CHECK(dual_mismatches<core::mv<degenerate3, core::full<3>, std::int64_t>>(
+            golden::exomorphisms::degenerate_3, golden::complements::n3) == 0);
+  CHECK(dual_mismatches<core::mv<random1, core::full<3>, std::int64_t>>(
+            golden::exomorphisms::random_1, golden::complements::n3) == 0);
+}
+
+// Reference: independent value: the same for every blade of rigid(3) stored
+//   under its oriented names, where an oriented name lists generators in the
+//   order of their product, with G, since the metric exomorphism sends e_A
+//   to the sum of det g[A, B] e_B, and the complements, which satisfy
+//   u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
+TEST_CASE("the duals of oriented blades carry their orientations") {
+  const auto& names = golden::oriented_names::rigid_3;
+  REQUIRE(names.size() == Oriented::component_count);
+  for (std::size_t k = 0; k < names.size(); ++k) {
+    CAPTURE(names.at(k).name);
+    REQUIRE(Oriented::layout.blades.at(k).mask == names.at(k).blade.blade);
+    REQUIRE(Oriented::layout.blades.at(k).sign == names.at(k).blade.sign);
+  }
+  CHECK(dual_mismatches<Oriented>(golden::exomorphisms::rigid_3,
+                                  golden::complements::n4) == 0);
+}
+
+// Reference: proof: for every pair of blades a and b of equal grade of
+//   rigid(3), of rigid(3) under its oriented names, and of conformal(2),
+//   whose Gram matrices satisfy e_i e_j + e_j e_i = 2 g_ij,
+//   a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade, and
+//   a ^ weight_dual(b) is the antidot times the antiscalar, with a . b the
+//   entry of G, since the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B, and the antidot the entry of left(G right(u)), composed
+//   with the complements, which satisfy u ^ right(u) = antiscalar and
+//   left(u) ^ u = antiscalar, never with the library's dot, and the left
+//   duals are the right duals times (-1)^(gr ag), so at the odd grades of
+//   n = 4 the left duals give the negation, the sign that tells them apart
+TEST_CASE("a wedged with the dual of b is the dot times the antiscalar") {
+  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
+  CHECK(wedge_dual_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::rigid_3, golden::complements::n4) == 0);
+  CHECK(wedge_dual_mismatches<Oriented>(golden::exomorphisms::rigid_3,
+                                        golden::complements::n4) == 0);
+  CHECK(wedge_dual_mismatches<core::mv<cga2, core::full<4>, std::int64_t>>(
+            golden::exomorphisms::conformal_2, golden::complements::n4) == 0);
+}
+
+// Reference: independent value: by hand in rigid(3), from right(e1) = e234,
+//   right(e2) = -e134, right(e3) = e124, and right(e4) = -e123, the bulk dual
+//   of the point x e1 + y e2 + z e3 + w e4 read as a plane is (x, y, z, 0),
+//   the left bulk dual is (-x, -y, -z, 0), since the left complement of a
+//   vector is the negated right one when n = 4, the weight dual is
+//   (0, 0, 0, w), and the left weight dual (0, 0, 0, -w), so the right and
+//   left duals differ in sign, the bulk dual differs from the weight dual,
+//   and right(G x) differs from G right(x), which is (0, 0, 0, w)
+TEST_CASE("the duals of a point are planes with the dual-sign convention") {
+  const Point p{2, 3, 5, 7};
+  static_assert(
+      std::same_as<
+          decltype(core::bulk_dual(p)),
+          core::mv<rga3, core::blades<rga3, "e124 e134 e234">, std::int64_t>>);
+  static_assert(
+      std::same_as<decltype(core::weight_dual(p)),
+                   core::mv<rga3, core::blades<rga3, "e123">, std::int64_t>>);
+  CHECK(Plane{core::bulk_dual(p)} == Plane{2, 3, 5, 0});
+  CHECK(Plane{core::left_bulk_dual(p)} == Plane{-2, -3, -5, 0});
+  CHECK(Plane{core::weight_dual(p)} == Plane{0, 0, 0, 7});
+  CHECK(Plane{core::left_weight_dual(p)} == Plane{0, 0, 0, -7});
+  CHECK(Plane{core::bulk(core::right_complement(p))} == Plane{0, 0, 0, 7});
+}
+
+// Reference: independent value: by hand in rigid(3), a line with direction
+//   (1, 2, 3) on e41 e42 e43 and moment (4, 5, 6) on e23 e31 e12 has bulk
+//   dual 4 e14 + 5 e24 + 6 e34, from right(e23) = e14, right(e13) = -e24, and
+//   right(e12) = e34, which reads as the line with direction (-4, -5, -6) and
+//   no moment, and weight dual -1 e23 + 2 e13 - 3 e12, from right(e14) = e23,
+//   right(e24) = -e13, and right(e34) = e12, the line with moment
+//   (-1, -2, -3) and no direction, and the left duals of a line are the same,
+//   since gr ag = 4 is even, a plane with normal (2, 3, 5) and offset 7 has
+//   bulk dual -7 e4 and weight dual -2 e1 - 3 e2 - 5 e3
+TEST_CASE("the duals of a line and a plane by hand") {
+  const Line l{1, 2, 3, 4, 5, 6};
+  CHECK(Line{core::bulk_dual(l)} == Line{-4, -5, -6, 0, 0, 0});
+  CHECK(Line{core::weight_dual(l)} == Line{0, 0, 0, -1, -2, -3});
+  CHECK(Line{core::left_bulk_dual(l)} == Line{-4, -5, -6, 0, 0, 0});
+  CHECK(Line{core::left_weight_dual(l)} == Line{0, 0, 0, -1, -2, -3});
+  const Plane g{2, 3, 5, 7};
+  CHECK(Point{core::bulk_dual(g)} == Point{0, 0, 0, -7});
+  CHECK(Point{core::weight_dual(g)} == Point{-2, -3, -5, 0});
+}
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   the duals of a point are on the canonical complements of its bulk and
+//   weight, e124 e134 e234 for the bulk duals and e123 for the weight duals,
+//   and those of a line on e14 e24 e34 and e12 e13 e23, each with sign +1 in
+//   order of grade and then of index list, and the layout names give the
+//   same sets and take only an algebra
+TEST_CASE("the dual layout names are the canonical sets of rigid(3)") {
+  constexpr auto point_bulk_dual = core::blades<rga3, "e124 e134 e234">;
+  constexpr auto point_weight_dual = core::blades<rga3, "e123">;
+  constexpr auto line_bulk_dual = core::blades<rga3, "e14 e24 e34">;
+  constexpr auto line_weight_dual = core::blades<rga3, "e12 e13 e23">;
+  static_assert(core::bulk_dual_layout<rga3, point_layout> == point_bulk_dual);
+  static_assert(core::left_bulk_dual_layout<rga3, point_layout> ==
+                point_bulk_dual);
+  static_assert(core::weight_dual_layout<rga3, point_layout> ==
+                point_weight_dual);
+  static_assert(core::left_weight_dual_layout<rga3, point_layout> ==
+                point_weight_dual);
+  static_assert(core::bulk_dual_layout<rga3, line_layout> == line_bulk_dual);
+  static_assert(core::left_bulk_dual_layout<rga3, line_layout> ==
+                line_bulk_dual);
+  static_assert(core::weight_dual_layout<rga3, line_layout> ==
+                line_weight_dual);
+  static_assert(core::left_weight_dual_layout<rga3, line_layout> ==
+                line_weight_dual);
+  static_assert(has_bulk_dual_layout<rga3>);
+  static_assert(has_weight_dual_layout<rga3>);
+  static_assert(has_left_bulk_dual_layout<rga3>);
+  static_assert(has_left_weight_dual_layout<rga3>);
+  static_assert(!has_bulk_dual_layout<int>);
+  static_assert(!has_weight_dual_layout<int>);
+  static_assert(!has_left_bulk_dual_layout<int>);
+  static_assert(!has_left_weight_dual_layout<int>);
+
+  static_assert(
+      std::same_as<decltype(core::bulk_dual(Line{})),
+                   core::mv<rga3, core::bulk_dual_layout<rga3, line_layout>,
+                            std::int64_t>>);
+  static_assert(
+      std::same_as<decltype(core::weight_dual(Line{})),
+                   core::mv<rga3, core::weight_dual_layout<rga3, line_layout>,
+                            std::int64_t>>);
+  static_assert(std::same_as<
+                decltype(core::left_bulk_dual(Point{})),
+                core::mv<rga3, core::left_bulk_dual_layout<rga3, point_layout>,
+                         std::int64_t>>);
+  static_assert(
+      std::same_as<
+          decltype(core::left_weight_dual(Point{})),
+          core::mv<rga3, core::left_weight_dual_layout<rga3, point_layout>,
+                   std::int64_t>>);
+  CHECK(core::bulk_dual_layout<rga3, point_layout>.size() == 3);
+}
+
+// Reference: identity: the left duals are the right duals times
+//   (-1)^(gr ag), since the left complement of a blade is (-1)^(gr ag) times
+//   its right complement, on random integer multivectors of every blade of
+//   rigid(3), conformal(2), and conformal(3) and of rigid(3) under its
+//   oriented names
+TEST_CASE("the left duals are the right duals times a sign by grade") {
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
+  const auto check = [&]<class X>(std::type_identity<X>) {
+    for (int k = 0; k < 4; ++k) {
+      const X x = random_integers<X>(source);
+      const auto b = core::bulk_dual(x);
+      const auto w = core::weight_dual(x);
+      CHECK(difference(core::left_bulk_dual(x), by_complement_parity(b)) == "");
+      CHECK(difference(core::left_weight_dual(x), by_complement_parity(w)) ==
+            "");
+    }
+  };
+  check(std::type_identity<core::mv<rga3, core::full<4>, std::int64_t>>{});
+  check(std::type_identity<core::mv<cga2, core::full<4>, std::int64_t>>{});
+  check(std::type_identity<core::mv<cga3, core::full<5>, std::int64_t>>{});
+  check(std::type_identity<Oriented>{});
+}
+
+// Reference: identity: in a degenerate metric the double bulk dual is zero,
+//   and so is every double dual, by value, on random integer multivectors of
+//   every blade of rigid(3), R(0,0,3), R(2,0,2), and the degenerate form
+//   [[0, 1, 0], [1, 0, 0], [0, 0, 0]], where det g = 0, and in rigid(3) the
+//   double bulk dual has no blade at all, since G drops every blade with e4
+//   and the bulk dual of a blade without e4 has e4, in R(3,0,0), R(1,3,0),
+//   conformal(2), conformal(3), and random form 1 each double dual is
+//   (-1)^(gr ag) det(g) x instead, with det g 1, -1, and the determinants of
+//   the Gram matrices, which satisfy e_i e_j + e_j e_i = 2 g_ij
+TEST_CASE("the double duals are zero exactly when the metric is degenerate") {
+  using R = core::mv<rga3, core::full<4>, std::int64_t>;
+  static_assert(
+      decltype(core::bulk_dual(core::bulk_dual(R{})))::component_count == 0);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
+  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
+  REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
+  REQUIRE(golden::gp_tables::rigid_3_det == 0);
+  REQUIRE(golden::gp_tables::degenerate_3_det == 0);
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
+  check_double_duals<R>(source, 0, "rigid(3)");
+  check_double_duals<core::mv<r003, core::full<3>, std::int64_t>>(source, 0,
+                                                                  "R(0,0,3)");
+  check_double_duals<core::mv<r202, core::full<4>, std::int64_t>>(source, 0,
+                                                                  "R(2,0,2)");
+  check_double_duals<core::mv<degenerate3, core::full<3>, std::int64_t>>(
+      source, 0, "degenerate");
+  check_double_duals<core::mv<r300, core::full<3>, std::int64_t>>(source, 1,
+                                                                  "R(3,0,0)");
+  check_double_duals<core::mv<r130, core::full<4>, std::int64_t>>(source, -1,
+                                                                  "R(1,3,0)");
+  check_double_duals<core::mv<cga2, core::full<4>, std::int64_t>>(
+      source, golden::gp_tables::conformal_2_det, "conformal(2)");
+  check_double_duals<core::mv<cga3, core::full<5>, std::int64_t>>(
+      source, golden::gp_tables::conformal_3_det, "conformal(3)");
+  check_double_duals<core::mv<random1, core::full<3>, std::int64_t>>(
+      source, golden::gp_tables::random_1_det, "random form 1");
+}
+
+// Reference: independent value: in conformal(3), the bulk dual of the real
+//   sphere with center p and radius r, -e1234 + p_x e4235 + p_y e4315 +
+//   p_z e4125 - (p^2 - r^2)/2 e3215 as Lengyel's sphere page writes it, is
+//   -(p + e4 + (p^2 - r^2)/2 e5), a round point with r^2 negated, as
+//   Lengyel's round point page relates it, worked by hand for p = (1, 2, 3)
+//   and r^2 = 4, where (p^2 - r^2)/2 = 5
+TEST_CASE("the bulk dual of a conformal sphere is a round point") {
+  using Sphere =
+      core::mv<cga3, core::blades<cga3, "e1234 e4235 e4315 e4125 e3215">,
+               std::int64_t>;
+  using Vector = core::mv<cga3, core::of_grade<5, 1>, std::int64_t>;
+  const Sphere s{-1, 1, 2, 3, -5};
+  CHECK(Vector{core::bulk_dual(s)} == Vector{-1, -2, -3, -1, -5});
 }
