@@ -1,8 +1,9 @@
 #ifndef GALOOT_CORE_DUAL_HPP
 #define GALOOT_CORE_DUAL_HPP
 
-// The bulk and the weight of a multivector and its duals, in the sense of
-// Lengyel's rigid and conformal geometric algebra:
+// The bulk and the weight of a multivector, its duals, and the dot and the
+// antidot of two multivectors, in the sense of Lengyel's rigid and conformal
+// geometric algebra:
 //
 //   struct rga3 {
 //     static constexpr auto value = galoot::core::rigid<3>();
@@ -17,6 +18,8 @@
 //   auto b = galoot::core::bulk(p);  // e1 e2 e3: 1, 2, 3
 //   auto w = galoot::core::weight(p);  // e4: 1
 //   Plane g{galoot::core::bulk_dual(p)};  // the plane (1, 2, 3, 0)
+//   auto d = galoot::core::dot(p, p);  // the scalar 14
+//   double pp = galoot::core::get<"1">(d);
 //
 // The metric exomorphism G sends a blade e_A to the sum over the blades e_B
 // of its grade of det g[A, B] e_B, the Gram determinant of the generators of
@@ -32,11 +35,13 @@
 //   weight_dual(x)       right(weight(x)), which is G right(x)
 //   left_bulk_dual(x)    left(G x)
 //   left_weight_dual(x)  left(weight(x))
+//   dot(a, b)            the sum of a_A G_AB b_B, on the scalar
+//   antidot(a, b)        the sum of a_A (left G right)_AB b_B, times 𝟙
 //
 // In rigid(3), where e1, e2, e3 square to 1 and e4 to 0, the bulk is the part
 // without e4 and the weight the part with it, so bulk(x) + weight(x) is x,
-// and a ∧ bulk_dual(b) is the dot of a and b times 𝟙 for a and b of one
-// grade. In other metrics the bulk and the weight need not split x:
+// and a ∧ bulk_dual(b) is dot(a, b) times 𝟙 for a and b of one grade. In
+// other metrics the bulk and the weight need not split x:
 //
 // - where no generator squares to 0, as in R(n,0,0), both keep every blade;
 // - in conformal(3), with e4 and e5 null and e4 · e5 = -1, the weight is the
@@ -54,18 +59,27 @@
 // with orientation +1, in order of grade and then of index list, as for a
 // product. bulk of a rigid(3) line holds e12, e13, e23, where the line's
 // moment on e31 appears negated on e13; Line{bulk(l)} reads it back under the
-// line's orientations. Each result type is mv<Alg, bulk_layout<Alg, S>, T>, and
+// line's orientations. The dot holds the scalar when its two operands share a
+// grade on which G is not zero and no blade otherwise, so dot(point, line) is
+// a value of an empty layout, and the type says it is zero; the antidot holds
+// 𝟙 likewise. Each result type is mv<Alg, bulk_layout<Alg, S>, T>, and
 // likewise for the other operations.
 //
 // Nothing here checks anything: the bulk and the weight drop blades by
-// definition, and the duals drop nothing.
+// definition, the dot and the antidot compute one coefficient, and the duals
+// drop nothing.
 //
-// The names bulk and weight are common words. A variable of one of
+// The names bulk, weight, and dot are common words. A variable of one of
 // these names in scope stops an unqualified call of the function, as for any
 // function found by argument-dependent lookup; write galoot::core::bulk(x).
 // C++26's std::execution::bulk is a function object, so under
 // `using namespace std::execution` an unqualified bulk(x) finds it and does
 // not compile.
+
+#include <array>
+#include <cstddef>
+#include <type_traits>
+#include <utility>
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -92,6 +106,76 @@ template <metric_like Alg, ring_scalar T>
       static_cast<T>(coefficient_type{1})};
 }
 
+// The number of terms of the geometric product of A and B that land on the
+// scalar.
+template <metric_like Alg, blade_set A, blade_set B>
+[[nodiscard]] consteval std::size_t scalar_term_count() {
+  constexpr const auto& plan =
+      product_plan<BinaryOperation::geometric_product, Alg, A, B>;
+  std::size_t count = 0;
+  for (const typed_term& t : plan.terms) {
+    count += plan.result.blades[t.out].mask == 0 ? 1 : 0;
+  }
+  return count;
+}
+
+// The terms of the geometric product of A and B that land on the scalar,
+// written onto position 0 of a result of one blade: the plan of the product
+// with a mask on its outputs. Applied to a and reverse(b), they compute the
+// scalar part of a b~ and nothing else.
+template <metric_like Alg, blade_set A, blade_set B>
+[[nodiscard]] consteval auto make_scalar_part_kernel() {
+  constexpr const auto& plan =
+      product_plan<BinaryOperation::geometric_product, Alg, A, B>;
+  std::array<kernel_term, scalar_term_count<Alg, A, B>()> terms{};
+  std::size_t k = 0;
+  for (const typed_term& t : plan.terms) {
+    if (plan.result.blades[t.out].mask == 0) {
+      terms[k] = {
+          .a = t.a,
+          .b = t.b,
+          .out = 0,
+          .coefficient = t.coefficient,
+          .first = false,
+      };
+      ++k;
+    }
+  }
+  mark_first_terms<1>(terms);
+  return terms;
+}
+
+template <metric_like Alg, blade_set A, blade_set B>
+// clang-tidy reads the operation, once substituted, as a C-style cast of its
+// value, which the source does not have.
+// NOLINTNEXTLINE(modernize-avoid-c-style-cast)
+inline constexpr auto scalar_part_kernel = make_scalar_part_kernel<Alg, A, B>();
+
+// The scalar alone when some term of the product of A and B lands on it, and
+// no blade otherwise.
+template <metric_like Alg, blade_set A, blade_set B>
+[[nodiscard]] consteval auto make_scalar_part_layout() {
+  if constexpr (scalar_term_count<Alg, A, B>() == 0) {
+    return blade_set<0>{};
+  } else {
+    return blade_set<1>{{{{.mask = 0, .sign = 1}}}};
+  }
+}
+
+// Whether every coefficient of the terms converts to T exactly, as far as
+// std::numeric_limits<T> tells.
+template <class T, std::size_t N>
+[[nodiscard]] constexpr bool
+kernel_held_exactly(const std::array<kernel_term, N>& terms) noexcept {
+  // NOLINTNEXTLINE(readability-use-anyofallof): avoids <algorithm> here.
+  for (const kernel_term& t : terms) {
+    if (!holds_exactly<T>(t.coefficient)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // Whether T holds every exact coefficient of the bulk of a multivector on S:
 // those of the geometric product of S with the antiscalar.
 template <metric_like Alg, blade_set S, class T>
@@ -104,6 +188,54 @@ inline constexpr bool bulk_coefficients_exact =
 template <metric_like Alg, blade_set S, class T>
 inline constexpr bool weight_coefficients_exact = bulk_coefficients_exact<
     Alg, unary_map<UnaryOperation::right_complement, Alg, S>.result, T>;
+
+/// The ways a binary operation of this header is written, so that a message
+/// names the operation as the user wrote it.
+// An int, so that a compiler prints its values and not a byte.
+// NOLINTNEXTLINE(performance-enum-size)
+enum class DualSpelling {
+  dot_function,
+  antidot_function,
+};
+
+/// The only error of a dot or an antidot of mismatched operands: the message
+/// names the operation and the cause. Each condition compares the two algebras
+/// or the two scalar types themselves, so that the compiler prints them. Its
+/// result type is that of the first operand, so that a variable initialized
+/// from the call adds no second error.
+template <DualSpelling Spelling, class X, class Y>
+constexpr std::remove_cvref_t<X> reject_dual_operands() {
+  using R = std::remove_cvref_t<X>;
+  using S = std::remove_cvref_t<Y>;
+  using enum DualSpelling;
+  if constexpr (!std::is_same_v<typename R::algebra_type,
+                                typename S::algebra_type>) {
+    if constexpr (Spelling == dot_function) {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "dot: the operands are in different algebras; give both types the "
+          "same algebra tag");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "antidot: the operands are in different algebras; give both types "
+          "the same algebra tag");
+    }
+  } else {
+    if constexpr (Spelling == dot_function) {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "dot: the operands have different scalar types; give both types "
+          "the same scalar type");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "antidot: the operands have different scalar types; give both "
+          "types the same scalar type");
+    }
+  }
+  return R{};
+}
 
 } // namespace detail
 
@@ -151,6 +283,21 @@ inline constexpr auto left_bulk_dual_layout =
 template <metric_like Alg, blade_set S>
 inline constexpr auto left_weight_dual_layout =
     left_complement_layout<Alg, weight_layout<Alg, S>>;
+
+/// The layout of dot(a, b) for a on the layout A and b on the layout B: the
+/// scalar alone when the metric pairs some blade of A with some blade of B,
+/// and no blade otherwise. Two rigid(3) points give the scalar; a point and
+/// a line give the empty layout.
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto dot_layout = detail::make_scalar_part_layout<Alg, A, B>();
+
+/// The layout of antidot(a, b): the antiscalar alone when the
+/// antiexomorphism pairs some blade of A with some blade of B, and no blade
+/// otherwise. Two rigid(3) points give e1234.
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto antidot_layout =
+    left_complement_layout<Alg, dot_layout<Alg, right_complement_layout<Alg, A>,
+                                           right_complement_layout<Alg, B>>>;
 
 // NOLINTEND(modernize-avoid-c-style-cast)
 
@@ -214,8 +361,8 @@ weight(const mv<Alg, S, T>& x) {
 /// with the antiscalar, x~ 𝟙, which equals right(G x) in every metric. On
 /// bulk_dual_layout<Alg, S>. In rigid(3) the bulk dual of the point
 /// (x, y, z, w) is the plane (x, y, z, 0), and a ∧ bulk_dual(b) is
-/// the dot of a and b times 𝟙 for a and b of one grade. Applied twice it gives
-/// x times (-1)^(gr ag) det g, so zero in a degenerate metric. Never checks.
+/// dot(a, b) times 𝟙 for a and b of one grade. Applied twice it gives x
+/// times (-1)^(gr ag) det g, so zero in a degenerate metric. Never checks.
 ///
 /// Requires: as for bulk, with the message naming bulk_dual.
 template <metric_like Alg, blade_set S, ring_scalar T>
@@ -299,6 +446,93 @@ left_weight_dual(const mv<Alg, S, T>& x) {
   } else {
     return {};
   }
+}
+
+/// The dot a • b, the sum of a_A G_AB b_B over the blades of a and b, on the
+/// scalar: the scalar part of a b~, the geometric product of a with the
+/// reverse of b, computed from the terms of that product that land on the
+/// scalar and no others. Blades of different grades contribute nothing. This
+/// is Lengyel's dot: in a Euclidean metric e12 • e12 is +1, where the scalar
+/// part of e12 e12, which many libraries call the scalar or inner product,
+/// is -1. dot(x, x) is the squared bulk norm of x. Never checks.
+///
+/// Requires: a and b have the same algebra and the same scalar type, and the
+/// scalar holds every exact coefficient of the terms the dot keeps, as for
+/// bulk; otherwise the call is rejected at compile time with a message
+/// that names dot. A scalar that holds those but not every coefficient of
+/// the whole product is accepted.
+/// Guarantees: on dot_layout<Alg, A, B>, the scalar or no blade. The first
+/// term is assigned, not added to zero, so a lone term of -0.0 gives -0.0.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, dot_layout<Alg, A, B>, T>
+dot(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
+  constexpr const auto& kernel = detail::scalar_part_kernel<Alg, A, B>;
+  constexpr bool scalar_holds_every_coefficient_of_the_dot =
+      detail::kernel_held_exactly<T>(kernel);
+  static_assert(scalar_holds_every_coefficient_of_the_dot,
+                "dot: the scalar type cannot hold one of the dot's exact "
+                "coefficients; use a scalar type that holds larger integers "
+                "exactly");
+
+  mv<Alg, dot_layout<Alg, A, B>, T> out;
+  if constexpr (scalar_holds_every_coefficient_of_the_dot) {
+    out.coefficients =
+        detail::run_product<detail::scalar_part_kernel<Alg, A, B>,
+                            dot_layout<Alg, A, B>.size()>(
+            a.coefficients, reverse(b).coefficients,
+            std::make_index_sequence<kernel.size()>{});
+  }
+  return out;
+}
+
+/// Rejects a dot whose operands are not in one algebra with one scalar type,
+/// with one error that names the cause. Because it exists, a
+/// requires-expression that asks whether such a call is valid is told yes;
+/// ask the operand types instead. It takes only multivectors, so a dot of a
+/// multivector and a number is not a valid call, and another type's own dot
+/// is left alone.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> dot(const X& /*a*/, const Y& /*b*/) {
+  return detail::reject_dual_operands<detail::DualSpelling::dot_function, X,
+                                      Y>();
+}
+
+/// The antidot a ∘ b, the sum of a_A (left G right)_AB b_B over the blades
+/// of a and b, times the antiscalar 𝟙: computed as
+/// left(dot(right(a), right(b))), since the right complement is a signed
+/// permutation of the blades whose inverse is the left complement.
+/// antidot(x, x) is the squared weight norm of x times 𝟙; for a rigid(3)
+/// point it is w² 𝟙. Never checks.
+///
+/// Requires: as for dot, with the message naming antidot; the check reads
+/// only the terms the dot of the complements keeps.
+/// Guarantees: on antidot_layout<Alg, A, B>, the antiscalar or no blade.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, antidot_layout<Alg, A, B>, T>
+antidot(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
+  constexpr bool scalar_holds_every_coefficient_of_the_antidot =
+      detail::kernel_held_exactly<T>(
+          detail::scalar_part_kernel<Alg, right_complement_layout<Alg, A>,
+                                     right_complement_layout<Alg, B>>);
+  static_assert(scalar_holds_every_coefficient_of_the_antidot,
+                "antidot: the scalar type cannot hold one of the antidot's "
+                "exact coefficients; use a scalar type that holds larger "
+                "integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_antidot) {
+    return left_complement(dot(right_complement(a), right_complement(b)));
+  } else {
+    return {};
+  }
+}
+
+/// Rejects an antidot whose operands are not in one algebra with one scalar
+/// type, as for dot: a requires-expression is told yes.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> antidot(const X& /*a*/, const Y& /*b*/) {
+  return detail::reject_dual_operands<detail::DualSpelling::antidot_function, X,
+                                      Y>();
 }
 
 } // namespace galoot::core
