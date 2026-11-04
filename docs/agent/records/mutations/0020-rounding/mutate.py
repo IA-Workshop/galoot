@@ -124,6 +124,19 @@ MUTANTS = {
     "ratio_check_removed": ("test/support/tracked.hpp", [(
         " &&\n         bound_ratio(d, exact, roundings, magnitude) <= ratio_limit;",
         ";", None)]),
+    # From the delta review: the ratio limit at 1 and at 1 + 64u, and the
+    # margin check removed, which the ratio check now implies for K >= 2.
+    "ratio_limit_one": ("test/support/tracked.hpp", [(
+        "inline constexpr double ratio_limit = 1.0 + (4 * unit_roundoff);",
+        "inline constexpr double ratio_limit = 1.0;", None)]),
+    "ratio_limit_64u": ("test/support/tracked.hpp", [(
+        "inline constexpr double ratio_limit = 1.0 + (4 * unit_roundoff);",
+        "inline constexpr double ratio_limit = 1.0 + (64 * unit_roundoff);",
+        None)]),
+    "margin_check_removed": ("test/support/tracked.hpp", [(
+        "return std::abs(d - nearest) <= rounding_tolerance(roundings, magnitude) &&\n"
+        "         bound_ratio(",
+        "return bound_ratio(", None)]),
 }
 
 

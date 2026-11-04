@@ -358,4 +358,4 @@ Size M overall, as plan 0001 has it: about 2.1M to 2.9M tokens in all. This plan
 ## 10. Outcome
 
 - O3: yes, readings R14 and R15 accepted as recommended (owner answer, 2026-11-04, relayed by coordinator).
-- WU11b, in progress on `feature/core-rounding` (2026-11-04): the tracking scalar, `core.rounding` for the WU9, WU10a, and WU10b operations, research note 0020, decision 0175 (margin of two roundings instead of R15's four, one rounding checked by equality, a ratio limit of 1 + 6u, the checking-mode inventory), and the mutation records are done; blind review blocked on F1, fixed. Next: the group for WU11a's operations after WU11a merges, then the delta review and the merge.
+- WU11b (2026-11-04): done on `feature/core-rounding` for the WU9 and WU10 operations (decision 0175); reviewed, delta review approved; the group for WU11a's operations waits for WU11a's merge.
