@@ -7,11 +7,15 @@
 // with the exact value composed from the reference tables, within a forward
 // error bound fixed before the result is seen. The bound comes from running
 // the same call over test_support::tracked, whose values carry the exact
-// result, its magnitude, and its count of roundings K (support/tracked.hpp);
-// the double result must then lie within gamma_(K+2) of the magnitude of the
-// exact value, and an operation with no rounding, such as a sign map or a
-// copy, must give the exact value. The tracked run's own value must equal
-// the reference exactly.
+// result, the magnitude M of the same computation on absolute values, and
+// the count of roundings K (support/tracked.hpp). The double result must
+// then lie within gamma_K M of the exact value: checked as the ratio of the
+// exact error to gamma_K M, and also, with a margin of two roundings for
+// the check's own arithmetic, as the distance from the double nearest the
+// exact value. A result of one rounding must be that nearest double, and an
+// operation with no rounding, such as a sign map or a copy, must give the
+// exact value. The tracked run's own value must equal the reference
+// exactly.
 //
 // Inputs are seeded random p / 2^27 with |p| < 2^27: exact in double and in
 // the test rational, while a product of two needs up to 54 bits and so
@@ -222,7 +226,8 @@ void compare(const R& d, const RT& t, const std::vector<rational>& expected,
                text(e) +
                std::format(" with K = {} and magnitude ", tk.roundings) +
                text(tk.magnitude));
-    } else if (tk.roundings > 0) {
+    }
+    if (tk.roundings > 0) {
       const double ratio =
           test_support::bound_ratio(dk, e, tk.roundings, tk.magnitude);
       out.largest_ratio = std::max(out.largest_ratio, ratio);
@@ -252,6 +257,7 @@ void check_tally(const tally& t, const std::string& family) {
   CHECK(t.outside_bound == 0);
   CHECK(t.rounded == 0);
   CHECK(t.missing_blades == 0);
+  CHECK(t.largest_ratio <= test_support::ratio_limit);
 }
 
 // Draws `samples` pairs of the types X and Y, applies `op` over double and
@@ -570,8 +576,9 @@ TEST_CASE("the products round within their forward error bounds") {
 //   a v b = left(right(a) ^ right(b)), composed from the product tables,
 //   which satisfy e_i e_j + e_j e_i = 2 g_ij, and the complement tables,
 //   which satisfy u ^ right(u) = antiscalar and left(u) ^ u = antiscalar,
-//   with the geometric antiproduct of conformal(3) taken of vectors and
-//   4-vectors with bivectors and trivectors rather than of every blade
+//   with the geometric antiproduct of conformal(3) taken on pairs of grade
+//   sets that together reach every pair of grades rather than on two full
+//   multivectors
 TEST_CASE("the antiproducts round within their forward error bounds") {
   INFO("seed: ", doctest::getContextOptions()->rand_seed);
   std::mt19937_64 source = seeded_source();
@@ -592,15 +599,43 @@ TEST_CASE("the antiproducts round within their forward error bounds") {
   check_antiproducts<full_mv<cga3, 5>, full_mv<cga3, 5>, false>(
       source, 40, golden::gp_tables::conformal_3, golden::complements::n5,
       "conformal(3)", out, found);
-  using Odd =
+  // The geometric antiproduct of two full<5> values of conformal(3) needs
+  // more constant-evaluation steps than Clang allows by default when
+  // libstdc++'s assertions are off, so it is taken on pairs of grade sets
+  // that together reach every pair of grades.
+  using C5 = full_mv<cga3, 5>;
+  using Ends =
+      core::mv<cga3, core::merge<core::of_grade<5, 0>, core::of_grade<5, 5>>,
+               double>;
+  using OneFour =
       core::mv<cga3, core::merge<core::of_grade<5, 1>, core::of_grade<5, 4>>,
                double>;
-  using Middle =
+  using TwoThree =
       core::mv<cga3, core::merge<core::of_grade<5, 2>, core::of_grade<5, 3>>,
                double>;
-  check_antiproducts<Odd, Middle>(
-      source, 40, golden::gp_tables::conformal_3, golden::complements::n5,
-      "conformal(3) grades 1 and 4 with 2 and 3", out, found);
+  constexpr auto even_grades =
+      core::merge<core::merge<core::of_grade<5, 0>, core::of_grade<5, 2>>,
+                  core::of_grade<5, 4>>;
+  constexpr auto odd_grades =
+      core::merge<core::merge<core::of_grade<5, 1>, core::of_grade<5, 3>>,
+                  core::of_grade<5, 5>>;
+  using Even = core::mv<cga3, even_grades, double>;
+  using Odd = core::mv<cga3, odd_grades, double>;
+  const std::span<const golden::product> c3 = golden::gp_tables::conformal_3;
+  const std::span<const golden::complement_pair> n5 = golden::complements::n5;
+  check_antiproducts<OneFour, TwoThree>(
+      source, 40, c3, n5, "conformal(3) grades 1 and 4 with 2 and 3", out,
+      found);
+  check_antiproducts<Ends, C5>(
+      source, 40, c3, n5, "conformal(3) grades 0 and 5 with all", out, found);
+  check_antiproducts<C5, Ends>(
+      source, 40, c3, n5, "conformal(3) all with grades 0 and 5", out, found);
+  check_antiproducts<Even, Even>(
+      source, 40, c3, n5, "conformal(3) even with even grades", out, found);
+  check_antiproducts<Odd, Odd>(source, 40, c3, n5,
+                               "conformal(3) odd with odd grades", out, found);
+  check_antiproducts<Even, Odd>(
+      source, 40, c3, n5, "conformal(3) even with odd grades", out, found);
   check_antiproducts<full_mv<degenerate3, 3>, full_mv<degenerate3, 3>>(
       source, 200, golden::gp_tables::degenerate_3, golden::complements::n3,
       "degenerate", out, found);
@@ -657,6 +692,10 @@ TEST_CASE("sums and differences round within their forward error bounds") {
   using Bivector = core::mv<cga3, core::of_grade<5, 2>, double>;
   check_sums<Vector, Bivector>(source, 200, "conformal(3) vector and bivector",
                                out);
+  check_sums<full_mv<cga2, 4>, full_mv<cga2, 4>>(source, 200, "conformal(2)",
+                                                 out);
+  check_sums<full_mv<degenerate3, 3>, full_mv<degenerate3, 3>>(
+      source, 200, "degenerate", out);
   check_sums<full_mv<random1, 3>, full_mv<random1, 3>>(source, 200, "random",
                                                        out);
   check_tally(out, "sums and differences");
@@ -672,6 +711,12 @@ TEST_CASE("negation, part, and truncate are exact over double") {
   check_copies<Motor, line_layout>(source, 200, "rigid(3) motor to line", out);
   check_copies<full_mv<rga3, 4>, plane_layout>(source, 200, "rigid(3) to plane",
                                                out);
+  check_copies<full_mv<cga2, 4>, core::of_grade<4, 1>>(
+      source, 200, "conformal(2) to vectors", out);
+  check_copies<full_mv<degenerate3, 3>, core::of_grade<3, 2>>(
+      source, 200, "degenerate to bivectors", out);
+  check_copies<full_mv<random1, 3>, core::of_grade<3, 1>>(
+      source, 200, "random to vectors", out);
   check_copies<full_mv<cga3, 5>, core::of_grade<5, 2>>(
       source, 200, "conformal(3) to bivectors", out);
   check_tally(out, "negation, part, truncate");
@@ -707,7 +752,10 @@ TEST_CASE("scaling and division round each coefficient once") {
   };
   check_scaling.operator()<full_mv<rga3, 4>>(200);
   check_scaling.operator()<Motor>(200);
+  check_scaling.operator()<full_mv<cga2, 4>>(200);
   check_scaling.operator()<full_mv<cga3, 5>>(200);
+  check_scaling.operator()<full_mv<degenerate3, 3>>(200);
+  check_scaling.operator()<full_mv<random1, 3>>(200);
   CHECK(compared > 0);
   CHECK(differences == 0);
 
