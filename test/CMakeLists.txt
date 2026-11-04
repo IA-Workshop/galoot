@@ -900,6 +900,13 @@ endforeach()
 galoot_add_test(MODULE support COMPONENT tracked)
 target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
 
+# core.rounding: every product, map, sum, scaling, and copy over double
+# within its forward error bound of the exact value from the golden tables,
+# with the bound taken from a run over the tracking scalar.
+galoot_add_test(MODULE core COMPONENT rounding)
+target_link_libraries(core_rounding_test PRIVATE galoot_test_support
+  galoot_golden)
+
 # core.mv: the multivector type, its scalar concepts, construction,
 # equality, and the checks of its layout, over the five scalar types it must
 # serve, the test rational among them.
