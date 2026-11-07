@@ -102,3 +102,7 @@ The bound takes V and x as exact. A V that carries rounding error from its own c
 ## Record of the process
 
 This record, with the derivation, was committed before the test author's rounding tests were written or run, and before the check was implemented. The probe of the additive underflow term above is a scratch computation in exact rationals (Python `fractions`), not reproducible as committed (V10); its role is to show that option 1 fails, which the argument above shows independently.
+
+## Addendum, 2026-11-07: what the check does with rounded versors (plan 0021 criterion 5)
+
+Measured after the check was implemented (`records/spikes/transform-rounding/`, at the headers of `c2af6a8`, seed 20261107, 10,000 cases per family, identical on GCC 16 and Clang 23): for conformal(3) vectors moved by versors composed in double from random flat planes, the check fires in 11 cases of 10,000 for two planes and 15 for three, with dropped parts at most 3.76 times their tolerance. It never fired for versors of general hyperplanes, for a single exact plane, for conformal(3) bivectors, or for the rigid(3) controls, whose largest ratios stayed below 0.4. On exact versors the tests' largest ratios of |d| to its tolerance were 0.089 over double and 0.151 over float (`core.transform_rounding`, seed 0). This is the information O6 asked for; the ruling stands (keep the check for version 1, revisit in M6). A sampled claim (V9), not a bound.

@@ -33,7 +33,8 @@ double draw(std::mt19937_64& source) {
   return (static_cast<double>(source() >> 11) * 0x1p-53 * 2.0) - 1.0;
 }
 
-template <class M> M random_mv(std::mt19937_64& source) {
+template <class M>
+M random_mv(std::mt19937_64& source) {
   M m;
   for (double& c : m.coefficients) {
     c = draw(source);

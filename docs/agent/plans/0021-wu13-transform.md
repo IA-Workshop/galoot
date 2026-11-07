@@ -339,3 +339,46 @@ Evidence:
 Resolution of the blind review's findings (2026-11-07): 1, the CONVENTIONS status line and revision row name the two passages that await the owner (decision 0176 addendum); 2, departure 16; 3, the first stage's restriction pinned by a degenerate case (`f57800a`; decision 0178 addendum), and the reviewer's mutant `first_keeps_all` now dies on both compilers; 4, the counting script committed (`records/performance/transform-cost/counts.py`); 5, the message (`9fe1d3d`; decision 0179 addendum: the reviewer's text holds a quote character, and no fix after a semicolon fits); 6, "about" in the header example (`34cd05d`); 7, the published sources of 3.3 and 3.4 (decision 0177 addendum); 8, trace rows for 4.4's λ^(k−1) relation and mirror-times-λ fact and 4.3's line onto a point; 9, `asm.cpp` formatted, its assembly unchanged. The commits listed for review are `f57800a` (the implementer's test) and `9fe1d3d` (the header and the tests' expected message together).
 
 Open, for the owner or later units: item 1 above (the 4.4 sentence and the 2.1 clauses); WU13b (the rounding check, decision 0180); `transform_identities_test.cpp` is now the largest unit of the suite (402 G instructions on GCC), not labeled `slow`; Clang's out-of-line kernels (departure 10), which a `[[gnu::always_inline]]` or a different kernel split could address if measured to matter; the math-expert's draft knowledge-base note on versor sandwiches in the antiproduct algebra, not written, since the brief gave no permission to write there.
+
+### WU13b
+
+Implemented on `feature/core-transform--rounding`, branched from `feature/core-transform` at `01835b7` after WU13a's review was resolved (implementer, and the derivation of decision 0180: Claude, agent, Opus 5.5, numerical-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role with numerical-expert judgement, on `feature/core-transform--rounding--tests`, branched at `0ba8f51`). Not reviewed yet (W5); not merged.
+
+Commits, in the order of section 4:
+
+| Step | Commit | What |
+| --- | --- | --- |
+| | `bf62954` | WU13a review follow-up: transform's comment says that the exact check's message also comes for a versor when x's layout holds only some blades of a grade, and that the cure is every blade of its grades (comment only) |
+| | `c906ac2` | WU13a review follow-up: the exact check's message is 42 characters, not 43 (a correction appended to decision 0179, and the count in departure 5 above) |
+| 1 | `0ba8f51` | decision 0180, the derivation, before any rounding test was written or run; research note 0020's addendum (Higham (2.8) and monotonicity, pp. 56-57) |
+| 2 | `a4e43af` (from `d2902da`) | the rounding tests: the single failing commit W2 allows, its message says so |
+| 3 | `c2af6a8` | the rounding check in `transform.hpp` |
+| 4 | `ce5449a`, `47b3bfc`, `a8bbe97` (from `9db9a95`), `c6e1f3c`, and this commit | the mutation script; mutants, characterization, the 4.5 trace row, decision 0175's addendum; the test author's run-log rows; the cost script; costs, decision 0180's addendum, agent cost, this outcome |
+| | `cb04901` | a clang-tidy suppression in the margin guard (comment only, listed for review) |
+
+Departures and readings (C20):
+
+1. **The tests branch is `feature/core-transform--rounding--tests`**, as decision 0188 and this plan name it; the coordinator's brief wrote `feature/core-transform--tests-rounding` while citing decision 0188, which governs.
+2. **No claim line on `develop`** (section 4, WU13b step 0): the coordinator's brief forbids touching `develop`. This plan, committed to `develop`, already claims both parts.
+3. **Decision 0180**, the number this plan reserved and which was still free, not the next number after the highest (0193).
+4. **The underflow term and the margin differ from R9's sketch** (decision 0180): R9's additive "K times denorm_min" is unsound, since a later factor scales an underflowed product's error (a probe in exact rationals exceeds it by a factor of about 900); the check adds λ, the smallest normal number, after every rounded product in the magnitude instead. The margin is one rounding, γ_(K+1), not the planner's γ_(2K+2).
+5. **A padded magnitude that overflows fails the check**, a choice the owner has not ruled on (O7 covers a non-finite dropped part); decision 0180 weighs it.
+6. **`transform.hpp` stops with `#error` under `-ffast-math` in a checking build** (STYLE S15; decision 0180), which the plan did not list; `core.transform_fast_math` pins it.
+7. **Criterion 1's inputs are p / 2^18 for double and p / 2^9 for float**, not p · 2^−27: the transform is cubic, and 2^−81 denominators overflow the test rational (the test author's sizing, as decision 0181 sized the projection's). Criterion 2 is built in R(4,0,0), not conformal(3). The underflow case's coefficients were found by a scratch search of the test author's, not committed; the test checks the property it relies on (a dropped coefficient nonzero and beyond γ_K M).
+8. **`c2af6a8`'s message says gcc-debug 389 of 389**; the preset selects 388 (389 counted the run-log check, which presets leave out). Not amended.
+9. **The gcc output of the characterization** came from a second, untimed run of the same binary with the same arguments (its README says so).
+10. **Not run as a mutant:** "the check reads the kept coefficients", which does not compile in the header (the README of the mutants says why).
+11. **Unexplained:** why rounded versors of flat planes trip the check in conformal(3) and those of general hyperplanes did not (characterization below). **Not profiled:** the cause of checking mode's run cost.
+
+Evidence:
+
+- Verification (V1 kinds 1 and 3): the derivation in decision 0180 (Lemmas A to C, from Higham's (2.8), Lemmas 3.1 and 3.3, and monotonicity, read under V9 in research note 0020 and its addendum). `core.transform_rounding` checks, over double and float, on 16 families of seeded exact inputs (rigid(3) point, line, and plane by the motor and both flectors; a non-diagonal form; conformal(2); conformal(3) with exact antiproducts of one to three hyperplanes), every dropped coefficient against `tracked`: the core's K equals the oracle's, γ_K M ≤ tol < γ_(K+2) M exactly (the margin pinned from both sides), |d| ≤ tol, |d| ≤ γ_K M, and `transform` returns the unchecked coefficients bit for bit; also products that underflow, a hand case in R(4,0,0) (K = 3, tol = 2 fl(γ_4)), constant evaluations, and the scalars covered. The checking-mode programs abort with the message for a non-versor over double and float, a dropped part ten times its tolerance, a NaN, an infinity, and an overflowing magnitude, and not at a tenth of the tolerance or for underflowing products; the constant-evaluation and `-ffast-math` tests pass. Largest ratios at seed 0: |d| / tol 0.089 (double) and 0.151 (float), |d| / (γ_K M) 0.098 and 0.181; underflow 0.111.
+- Validation (V8): not applicable beyond verification; the bound is a theorem about this computation, and its tightness was observed, not validated against an outside referent.
+- Mutants (`records/mutations/0021-transform-rounding/`): 17, each on gcc-debug and clang-debug, with the same outcome on both: 16 killed by a test, one equivalent survivor, the guard of the margin's hypothesis.
+- Characterization (`records/spikes/transform-rounding/`, criterion 5, O6): 10,000 seeded cases per family, identical on both compilers; the check fires for 11 (two flat planes) and 15 (three) conformal(3) vectors, at most 3.76 times the tolerance, and never in the other six families.
+- Cost (`records/performance/transform-rounding-cost/`, pinned, three repeats): +0.3% (GCC) and +0.4% (Clang) instructions for an includer of `core.hpp`; `transform_test.cpp` unchanged within its spread; `transform_rounding_test.cpp` 47.8 G and 33.5 G, the same in both checking modes; checking mode's run cost 10.7× (GCC) and 9.4× (Clang) the instructions of an unchecked run and about 27× its wall time.
+- Final runs, every preset from new, empty build trees at `c6e1f3c` (build inputs final at `cb04901`), with a clean tree: configure, build, and test each exited 0 with no failed build step: gcc-debug and gcc-release 388 tests, gcc-asan 380, clang-debug, clang-release, clang-asan, and lint 390, clang-measure 382, all passing. Twenty-three tests are new, each labeled `core.transform` and `core.rounding`. The trace gate, `conventions_check.py`, `tools/runlog check`, and `clang-format --dry-run --Werror` on the changed C++ sources exit 0. The job pool read 23 of 23 slots free before and after each heavy run.
+
+Listed for review (W9): `a4e43af` (the tests, the test author's); `c2af6a8` (the check); `cb04901` (a suppression comment); `bf62954` (a comment). The implementer judged no test of its own; no existing test or expected value changed.
+
+Open, for the reviewer or the owner: departure 5 (overflow fails); checking mode's run cost, which computing the γ factors at compile time and unrolling the magnitude kernel would likely cut (inferred); the flat-plane characterization, for M6; WU13a's open items above.
