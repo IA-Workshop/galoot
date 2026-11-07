@@ -1,0 +1,5 @@
+# started on Sat Nov  7 12:43:49 2026
+
+0,,cpu_core/assists.fp/u,761362160,90.00,,
+4851966174,,cpu_core/cycles/u,761334775,90.00,,
+21892224632,,cpu_core/instructions/u,760655962,90.00,,
