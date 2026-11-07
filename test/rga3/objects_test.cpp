@@ -17,6 +17,7 @@
 // e431, e412, e321, the orders of Lengyel's Motor and Flector pages. A motor
 // Q moves x to Q ⟇ x ⟇ antireverse(Q), and a flector F to
 // -F ⟇ x^ ⟇ antireverse(F), where x^ is the grade involution of x.
+#include <algorithm>
 #include <array>
 #include <bit>
 #include <concepts>
@@ -47,46 +48,56 @@ struct named_blade {
 // The layouts of the five objects, each blade as the mask of its generators
 // (bit i - 1 for e_i) and the sign that takes the canonical blade, whose
 // indices increase, to the named one: e41 = e4 e1 = -e1 e4.
-inline constexpr std::array<named_blade, 4> point_names{{
-    {"e1", {0b0001, 1}},
-    {"e2", {0b0010, 1}},
-    {"e3", {0b0100, 1}},
-    {"e4", {0b1000, 1}},
-}};
-inline constexpr std::array<named_blade, 6> line_names{{
-    {"e41", {0b1001, -1}},
-    {"e42", {0b1010, -1}},
-    {"e43", {0b1100, -1}},
-    {"e23", {0b0110, 1}},
-    {"e31", {0b0101, -1}},
-    {"e12", {0b0011, 1}},
-}};
-inline constexpr std::array<named_blade, 4> plane_names{{
-    {"e423", {0b1110, 1}},
-    {"e431", {0b1101, -1}},
-    {"e412", {0b1011, 1}},
-    {"e321", {0b0111, -1}},
-}};
-inline constexpr std::array<named_blade, 8> motor_names{{
-    {"e41", {0b1001, -1}},
-    {"e42", {0b1010, -1}},
-    {"e43", {0b1100, -1}},
-    {"e1234", {0b1111, 1}},
-    {"e23", {0b0110, 1}},
-    {"e31", {0b0101, -1}},
-    {"e12", {0b0011, 1}},
-    {"1", {0b0000, 1}},
-}};
-inline constexpr std::array<named_blade, 8> flector_names{{
-    {"e1", {0b0001, 1}},
-    {"e2", {0b0010, 1}},
-    {"e3", {0b0100, 1}},
-    {"e4", {0b1000, 1}},
-    {"e423", {0b1110, 1}},
-    {"e431", {0b1101, -1}},
-    {"e412", {0b1011, 1}},
-    {"e321", {0b0111, -1}},
-}};
+inline constexpr std::array<named_blade, 4> point_names{
+    {
+        {.name = "e1", .blade = {.mask = 0b0001, .sign = 1}},
+        {.name = "e2", .blade = {.mask = 0b0010, .sign = 1}},
+        {.name = "e3", .blade = {.mask = 0b0100, .sign = 1}},
+        {.name = "e4", .blade = {.mask = 0b1000, .sign = 1}},
+    },
+};
+inline constexpr std::array<named_blade, 6> line_names{
+    {
+        {.name = "e41", .blade = {.mask = 0b1001, .sign = -1}},
+        {.name = "e42", .blade = {.mask = 0b1010, .sign = -1}},
+        {.name = "e43", .blade = {.mask = 0b1100, .sign = -1}},
+        {.name = "e23", .blade = {.mask = 0b0110, .sign = 1}},
+        {.name = "e31", .blade = {.mask = 0b0101, .sign = -1}},
+        {.name = "e12", .blade = {.mask = 0b0011, .sign = 1}},
+    },
+};
+inline constexpr std::array<named_blade, 4> plane_names{
+    {
+        {.name = "e423", .blade = {.mask = 0b1110, .sign = 1}},
+        {.name = "e431", .blade = {.mask = 0b1101, .sign = -1}},
+        {.name = "e412", .blade = {.mask = 0b1011, .sign = 1}},
+        {.name = "e321", .blade = {.mask = 0b0111, .sign = -1}},
+    },
+};
+inline constexpr std::array<named_blade, 8> motor_names{
+    {
+        {.name = "e41", .blade = {.mask = 0b1001, .sign = -1}},
+        {.name = "e42", .blade = {.mask = 0b1010, .sign = -1}},
+        {.name = "e43", .blade = {.mask = 0b1100, .sign = -1}},
+        {.name = "e1234", .blade = {.mask = 0b1111, .sign = 1}},
+        {.name = "e23", .blade = {.mask = 0b0110, .sign = 1}},
+        {.name = "e31", .blade = {.mask = 0b0101, .sign = -1}},
+        {.name = "e12", .blade = {.mask = 0b0011, .sign = 1}},
+        {.name = "1", .blade = {.mask = 0b0000, .sign = 1}},
+    },
+};
+inline constexpr std::array<named_blade, 8> flector_names{
+    {
+        {.name = "e1", .blade = {.mask = 0b0001, .sign = 1}},
+        {.name = "e2", .blade = {.mask = 0b0010, .sign = 1}},
+        {.name = "e3", .blade = {.mask = 0b0100, .sign = 1}},
+        {.name = "e4", .blade = {.mask = 0b1000, .sign = 1}},
+        {.name = "e423", .blade = {.mask = 0b1110, .sign = 1}},
+        {.name = "e431", .blade = {.mask = 0b1101, .sign = -1}},
+        {.name = "e412", .blade = {.mask = 0b1011, .sign = 1}},
+        {.name = "e321", .blade = {.mask = 0b0111, .sign = -1}},
+    },
+};
 
 // The blade set of a list of named blades, in the order listed.
 template <std::size_t K>
@@ -106,22 +117,20 @@ blade_named(const std::array<golden::oriented_name, N>& table,
             std::string_view name) {
   for (const golden::oriented_name& entry : table) {
     if (entry.name == name) {
-      return {entry.blade.blade, entry.blade.sign};
+      return {.mask = entry.blade.blade, .sign = entry.blade.sign};
     }
   }
-  return {0, 0};
+  return {.mask = 0, .sign = 0};
 }
 
 // Whether every blade of the layout of X has a grade of this parity, 0 for
 // even and 1 for odd.
 template <class X>
 constexpr bool all_of_parity(unsigned parity) {
-  for (const core::oriented_blade& blade : X::layout.blades) {
-    if (static_cast<unsigned>(std::popcount(blade.mask)) % 2 != parity) {
-      return false;
-    }
-  }
-  return true;
+  return std::ranges::all_of(
+      X::layout.blades, [parity](const core::oriented_blade& blade) {
+        return static_cast<unsigned>(std::popcount(blade.mask)) % 2 == parity;
+      });
 }
 
 // A value used as a template argument, read back.
@@ -369,9 +378,10 @@ TEST_CASE_TEMPLATE("the rga3 Plane p ^ q ^ r of points counterclockwise "
   constexpr Point z{T{0}, T{0}, T{1}, T{1}};
   static_assert(Plane{(o ^ x) ^ y} == Plane{T{0}, T{0}, T{1}, T{0}});
   static_assert(Plane{(o ^ y) ^ x} == Plane{T{0}, T{0}, T{-1}, T{0}});
-  static_assert(
-      Plane{(Point{T{0}, T{0}, T{2}, T{1}} ^ Point{T{1}, T{0}, T{2}, T{1}}) ^
-            Point{T{0}, T{1}, T{2}, T{1}}} == Plane{T{0}, T{0}, T{1}, T{-2}});
+  constexpr Point o2{T{0}, T{0}, T{2}, T{1}};
+  constexpr Point x2{T{1}, T{0}, T{2}, T{1}};
+  constexpr Point y2{T{0}, T{1}, T{2}, T{1}};
+  static_assert(Plane{(o2 ^ x2) ^ y2} == Plane{T{0}, T{0}, T{1}, T{-2}});
   static_assert(Plane{(x ^ y) ^ z} == Plane{T{1}, T{1}, T{1}, T{-1}});
   CHECK(Plane{(x ^ y) ^ z} == Plane{T{1}, T{1}, T{1}, T{-1}});
 }
