@@ -1825,3 +1825,70 @@ galoot_add_compile_fail_test(NAME compose_compare
   SOURCE core/compose_compare_fail.cpp
   MESSAGE "${dual_compare_message}" ${compose_compare_require}
   ONE_ERROR FORBID_ON_FIRST_ERROR product_plan "detail::")
+
+# A versor of both parities given to transform.
+transform_rejects(transform mixed_parity "transform: the versor holds blades of both parities, even and odd antigrade${semicolon} a versor is even, as a motor, or odd, as a flector")
+# An exact coefficient that std::int8_t cannot hold in the first of the two
+# antiproducts transform composes, and in the second: a check of one alone
+# accepts the other case.
+set(transform_narrow_scalar "transform: the scalar type cannot hold one of the transform's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+transform_rejects(transform narrow_scalar_first_plan
+  "${transform_narrow_scalar}")
+transform_rejects(transform narrow_scalar_second_plan
+  "${transform_narrow_scalar}")
+transform_rejects(transform mixed_algebras "transform: ${transform_algebras}"
+  FORBID "different scalar types")
+transform_rejects(transform mixed_scalars "transform: ${transform_scalars}"
+  FORBID "different algebras")
+
+# core.transform_consteval_nonzero_<case>: a transform that drops a
+# coefficient that is not zero ends a constant evaluation, whatever the
+# checking mode, and the diagnostic shows the message on the echoed line.
+set(transform_dropped "transform: the result leaves the blades of x")
+foreach(case IN ITEMS consteval_nonzero consteval_nonzero_rational)
+  galoot_add_compile_fail_test(NAME transform_${case}
+    MODULE core COMPONENT transform
+    SOURCE core/transform_${case}_fail.cpp
+    MESSAGE "${transform_dropped}"
+    REQUIRE assertion_failed
+    FORBID "truncate:")
+endforeach()
+
+# core.transform_<mode>_<case>: one program built in each checking mode
+# (core/transform_assert_fail.cpp). With checking on, a transform that drops
+# a coefficient that is not zero aborts with the message over each exact
+# scalar; with checking off it keeps the scalar 2. Over a scalar whose ==
+# records its operands, checking compares exactly the dropped coefficients,
+# each once with zero, and no checking compares nothing. In rigid(3), where
+# what transform drops is zero, neither mode aborts. The programs take the
+# core's headers directly, so that the preset's mode does not reach them.
+foreach(mode IN ITEMS 1 0)
+  add_executable(core_transform_mode_${mode} core/transform_assert_fail.cpp)
+  target_include_directories(core_transform_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(core_transform_mode_${mode} PRIVATE
+    galoot_test_support)
+  target_compile_features(core_transform_mode_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(core_transform_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+foreach(scalar IN ITEMS int64 rational)
+  add_test(NAME core.transform_nonzero_${scalar}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${transform_dropped} ("
+      -- $<TARGET_FILE:core_transform_mode_1> ${scalar})
+  add_test(NAME core.transform_unchecked_${scalar}
+    COMMAND core_transform_mode_0 ${scalar})
+  set_tests_properties(core.transform_nonzero_${scalar}
+    core.transform_unchecked_${scalar}
+    PROPERTIES LABELS "core;core.transform")
+endforeach()
+foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
+  add_test(NAME core.transform_checking_${case}
+    COMMAND core_transform_mode_1 ${case})
+  add_test(NAME core.transform_unchecked_${case}
+    COMMAND core_transform_mode_0 ${case})
+  set_tests_properties(core.transform_checking_${case}
+    core.transform_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform")
+endforeach()
