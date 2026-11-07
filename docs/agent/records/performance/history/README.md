@@ -1,6 +1,6 @@
 # The performance history
 
-The distilled run log (P7, P13; decision 0170, proposed; plan 0017). `tools/runlog` writes and checks everything here except `toolchain.tsv`, which is written by hand. Once merged into `develop`, every file is only appended to, so the union merge rule of `.gitattributes` keeps it whole. (Before the first merge, the first era's row in `eras.tsv` was corrected twice on its branch, in `a3f0a60` and `227d2c8`.)
+The distilled run log (P7, P13; decision 0170, ratified by decision 0162 item 3; plan 0017). `tools/runlog` writes and checks everything here except `toolchain.tsv`, which is written by hand. Once merged into `develop`, every file is only appended to, so the union merge rule of `.gitattributes` keeps it whole. (Before the first merge, the first era's row in `eras.tsv` was corrected twice on its branch, in `a3f0a60` and `227d2c8`.)
 
 ## Files
 

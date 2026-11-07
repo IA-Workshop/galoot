@@ -1,6 +1,6 @@
 # 0020 WU11: bulk, weight, duals, dot, antidot, and M3's rounding tests
 
-- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). WU11b merged 2026-11-04. WU11a implemented on `feature/core-duals` 2026-11-04, blind review approved with non-blocking findings, fixes in, `develop` merged in (section 10).
+- Status: planned 2026-11-02 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Closed 2026-11-07: WU11b merged 2026-11-04 (`7244cb3`), WU11a merged 2026-11-04 (`535c91e`), WU11b's last group merged 2026-11-04 (`b504aa7`); M3 accepted by the owner on 2026-11-07 (decision 0182). Outcome in section 10.
 - Branches, from `develop` at `344a0ff` or later (section 1, departure 1):
   - WU11a: `feature/core-duals`, worktree `.claude/worktrees/core-duals`. The test author works on `feature/core-duals-tests`, worktree `.claude/worktrees/core-duals-tests`, branched from `feature/core-duals` at its first commit (section 4, "Commit order and W2"; departure 5 explains the name).
   - WU11b: `feature/core-rounding`, worktree `.claude/worktrees/core-rounding`. It changes only test files and can run beside WU11a. Its last group waits for WU11a's merge.
@@ -362,7 +362,7 @@ Size M overall, as plan 0001 has it: about 2.1M to 2.9M tokens in all. This plan
 
 ### WU11a
 
-Implemented on `feature/core-duals` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, on `feature/core-duals-tests`; proofs for decision 0172 and a review of the golden routes: Claude, agent, Opus 5.5, math-expert role). The owner answered O1 to O4 on 2026-11-04, "take all recommendations" (decision 0174), so `project` (commits 8 and 9) and CONVENTIONS version 1.9 are in. Not reviewed yet; not merged.
+Implemented on `feature/core-duals` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, on `feature/core-duals-tests`; proofs for decision 0172 and a review of the golden routes: Claude, agent, Opus 5.5, math-expert role). The owner answered O1 to O4 on 2026-11-04, "take all recommendations" (decision 0174), so `project` (commits 8 and 9) and CONVENTIONS version 1.9 are in. Reviewed and merged (below).
 
 Commits, in the order of section 4. W2 was not amended, so the test author committed each group on `feature/core-duals-tests` and each was cherry-picked with `-x` immediately before the code it judges; each such commit is the single failing commit that W2 allows, and its message says so.
 
@@ -424,3 +424,12 @@ Merge of `develop` (`7244cb3`, WU11b) into the branch, `2ac4efc`: the only confl
 Question for the owner (review F4): CONVENTIONS 3.2 carries "(Confirmed, with the diagonal case Checked)", but `conventions_check.py` checks only the mask filters of rigid(3), so "Checked" overstates for the diagonal case in general (the factor by which 1.9's new sentence multiplies each blade is checked by the C++ tests, not by the script). Either relabel the diagonal case, or extend `conventions_check.py` to diagonal forms with squares other than 0 and 1. Not changed here, since the label is ratified text.
 
 Open, for the owner or later units: plan departure 5 (W7's subfeature branch form cannot exist beside its feature branch); audit owner item 7 (the 16 `*_layout` names); a direct generator of the antiexomorphism, if the antidot's growth with n is ever a measured problem; decision 0080's copy step of `compile.tsv` at the merge; the math-expert's knowledge-base note draft (`bulk-dual-by-reverse-and-antiscalar.md`), not added, since the brief gave no permission to write there.
+
+### Closing, 2026-11-07
+
+- Merges into `develop`: WU11b `7244cb3` (from `feature/core-rounding` at `9709333`), WU11a `535c91e` (from `feature/core-duals`, checked at `2ac4efc`), and WU11b's last group `b504aa7` (from `feature/core-rounding-wu11`, checked at `7360013`). Review records: `records/reviews/2026-11-04-wu11b-review.md` (review and delta review), `2026-11-04-wu11a-core-duals.md`, `2026-11-04-wu11b-dual-rounding-review.md`; each is the implementer's summary, and the reviewers' own reports were not preserved (M3 gate MA1).
+- The three merge messages do not carry P13's line (selection, configurations, outcome, wall time); the facts are in the branch commits `7bffc56`, `e5ac623`, and `b52cffa` (M3 gate m1). At `9709333` the sanitizer and release presets ran only `core.rounding|support.tracked` (m2); the later merges and the M3 gate ran the full matrix.
+- `f4d85f8` (a comment of `dual.hpp`, F6) merged with no delta review; decision 0183 now allows that for a comment-only change the review record lists.
+- M3 accepted by the owner on 2026-11-07 (`records/gates/2026-11-04-M3.md`, decision 0182). The owner's rulings close this plan's open items: departure 5, subfeature branch names (decision 0188); the 16 `*_layout` names are public interface (0187); O4, the return types of `dot` and `antidot`, confirmed (0191); review F4, `conventions_check.py` extended in WU13a's step 1 (0190); W2 not amended, this plan's commit order the standing practice (0185); B1 (0184).
+- Agent cost: the figures the coordinator held are in `agent-cost.tsv` (backfilled 2026-11-07); this planner's cost was not recorded. Against section 9's estimate of 2.1M to 2.9M tokens, the recorded WU11 agents total about 2.5M tokens, or 3.0M if the test author's resumed figure does not include its first run, and the comparison is incomplete (the planner is missing).
+- Still open for later units: a direct generator of the antiexomorphism, if the antidot's growth with n is ever a measured problem; the math-expert's knowledge-base note draft, not added.

@@ -13,3 +13,7 @@ A test author wrote the tests from the plan and the references, then a separate 
 - Declare the run in the plan's departures before it happens, and list the range in the review request.
 - A stand-in header in the scratchpad lets the test author prove the tests are well formed and kill scratch mutants, but that evidence is not reproducible as committed, so the implementer re-runs the mutants on the real code.
 - The owner has not yet ruled whether W2 may cover a run of test commits; until then each such run is a declared departure.
+
+## Addendum, 2026-11-07
+
+The owner ruled: W2 is not amended. WU11a's mechanics, where the test author commits each group on a tests branch and the implementer cherry-picks it with `-x` immediately before the code it judges, so that each cherry-picked commit is the single failing commit W2 allows, are the standing practice (decision 0185).

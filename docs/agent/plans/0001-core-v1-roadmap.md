@@ -188,3 +188,7 @@ The decision records of WU0 are written (0001 to 0017). Remaining in M0: ratify 
 ## Addendum, 2026-11-01: after the M0 and M1 gate
 
 Decision 0094 closed M0 and M1. WU5 (exact rational) moved from M1 to M5, ahead of WU12 (the change of basis). Section 11 above is stale: the next unit is the build-lane change, then M2 (WU6 `blade_product` and the plan, WU7 plans, WU8 `mv`).
+
+## Addendum, 2026-11-07: after the M2 and M3 gates
+
+M2 was accepted by the owner on 2026-11-02 (decision 0163). M3 (operation layer: WU9, WU10, WU11) was accepted by the owner on 2026-11-07 with the auditor's recommendations, with B1, MA1, and MA2 of the gate report stated (`records/gates/2026-11-04-M3.md`, decision 0182). The owner decisions of M3 are recorded in decisions 0182 to 0192: the operation inventory and the sixteen `*_layout` names are public interface (0187), and `dot` and `antidot` return multivectors (0191). Next: the fix of B1 (0184) and the split of `identities_test.cpp` (0189), then WU13 (plan 0021) in M4.

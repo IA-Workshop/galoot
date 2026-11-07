@@ -29,3 +29,7 @@
 | F8 (information) | `double d = dot(p, q)` and `get<"1">(dot(point, line))` give generic diagnostics. | None. |
 | F9 | Add a lesson: run `tests.reference_markers` whenever a test marker is added. | Lesson 0069. |
 | F10 | Merge notes. | Followed at the merge of `develop` into the branch (plan 0020, outcome). |
+
+## Addendum, 2026-11-07: the reviewer's own report
+
+The reviewer's own report was not preserved in the repository, so this record stays the implementer's summary of it (M3 gate finding MA1). What it says the reviewer checked or found is as relayed, not the reviewer's text. From now on a reviewer's report is committed as the reviewer wrote it (decision 0182).
