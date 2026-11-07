@@ -22,6 +22,7 @@
 #include <span>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include <galoot/core/bits.hpp>
@@ -143,8 +144,8 @@ std::string blade_name(core::mask_t mask, int sign = 1) {
 // coefficient times the orientation of the blade in the layout, or zero when
 // the layout lacks the blade.
 template <class X>
-typename X::scalar_type value_on(const X& x, core::mask_t mask) {
-  using T = typename X::scalar_type;
+X::scalar_type value_on(const X& x, core::mask_t mask) {
+  using T = X::scalar_type;
   for (std::size_t k = 0; k < X::component_count; ++k) {
     const core::oriented_blade blade = X::layout.blades.at(k);
     if (blade.mask == mask) {
@@ -300,12 +301,12 @@ std::string layout_difference(const std::vector<bool>& reached) {
 // the test rational, fractions p/q with p from -9 to 9 and q from 1 to 4.
 template <class X>
 X random_value(std::mt19937_64& source) {
-  using T = typename X::scalar_type;
+  using T = X::scalar_type;
   std::uniform_int_distribution<std::int64_t> digit(-9, 9);
-  std::uniform_int_distribution<std::int64_t> denominator(1, 4);
   X x{};
   for (auto& c : x.coefficients) {
     if constexpr (std::same_as<T, rational>) {
+      std::uniform_int_distribution<std::int64_t> denominator(1, 4);
       c = rational{digit(source), denominator(source)};
     } else {
       c = T{digit(source)};
@@ -547,7 +548,7 @@ using Flector = core::mv<rga3, flector_layout, rational>;
 // involution, from its definition.
 template <class X>
 X antigrade_involution_of(X x) {
-  using T = typename X::scalar_type;
+  using T = X::scalar_type;
   for (std::size_t k = 0; k < X::component_count; ++k) {
     const auto antigrade =
         generators<typename X::algebra_type> -
@@ -579,7 +580,7 @@ by_mask<T> sandwich_of(std::span<const golden::product> table,
                        std::span<const golden::complement_pair> complements,
                        std::span<const golden::blade_signs> signs, bool odd,
                        const by_mask<T>& v, by_mask<T> x) {
-  const std::size_t n = static_cast<std::size_t>(std::countr_zero(x.size()));
+  const auto n = static_cast<std::size_t>(std::countr_zero(x.size()));
   if (odd) {
     for (core::mask_t m = 0; m < x.size(); ++m) {
       const std::size_t antigrade =
@@ -1046,7 +1047,8 @@ TEST_CASE("a conformal motor of two planes moves a round point") {
 TEST_CASE("transform(x, V) has the blade set of x") {
   using CanonicalMotor = core::mv<rga3, even_blades_of_4<rga3>, rational>;
   using CanonicalFlector = core::mv<rga3, odd_blades_of_4<rga3>, rational>;
-  using Empty = core::mv<rga3, core::blade_set<0>{}, rational>;
+  constexpr core::blade_set<0> no_blades{};
+  using Empty = core::mv<rga3, no_blades, rational>;
   const auto check = [&]<class X>(std::type_identity<X>) {
     static_assert(std::same_as<decltype(core::transform(X{}, Motor{})), X>);
     static_assert(std::same_as<decltype(core::transform(X{}, Flector{})), X>);
@@ -1082,7 +1084,7 @@ TEST_CASE("transform(x, V) has the blade set of x") {
 //   rational
 TEST_CASE("transform drops only zeros in rigid(3)") {
   const auto filled = []<class X>(std::type_identity<X>) {
-    using T = typename X::scalar_type;
+    using T = X::scalar_type;
     X x{};
     for (std::size_t k = 0; k < X::component_count; ++k) {
       x.coefficients.at(k) = T{static_cast<std::int64_t>(k) + 1};
@@ -1263,17 +1265,53 @@ constexpr bool well_formed(const std::array<core::detail::kernel_term, N>& k) {
 //   and on a motor or a flector 48 and 48, all kept, none dropped
 TEST_CASE("the transform's kernels keep the terms that reach x's blades") {
   static_assert(counts_of<rga3, motor_layout, point_layout>() ==
-                kernel_counts{20, 20, 28, 20, 4});
+                kernel_counts{
+                    .first_kept = 20,
+                    .first_all = 20,
+                    .second_kept = 28,
+                    .second_dropped = 20,
+                    .dropped_blades = 4,
+                });
   static_assert(counts_of<rga3, flector_layout, point_layout>() ==
-                kernel_counts{20, 20, 28, 20, 4});
+                kernel_counts{
+                    .first_kept = 20,
+                    .first_all = 20,
+                    .second_kept = 28,
+                    .second_dropped = 20,
+                    .dropped_blades = 4,
+                });
   static_assert(counts_of<rga3, motor_layout, line_layout>() ==
-                kernel_counts{36, 36, 36, 12, 2});
+                kernel_counts{
+                    .first_kept = 36,
+                    .first_all = 36,
+                    .second_kept = 36,
+                    .second_dropped = 12,
+                    .dropped_blades = 2,
+                });
   static_assert(counts_of<rga3, motor_layout, plane_layout>() ==
-                kernel_counts{28, 28, 20, 28, 4});
+                kernel_counts{
+                    .first_kept = 28,
+                    .first_all = 28,
+                    .second_kept = 20,
+                    .second_dropped = 28,
+                    .dropped_blades = 4,
+                });
   static_assert(counts_of<rga3, flector_layout, motor_layout>() ==
-                kernel_counts{48, 48, 48, 0, 0});
+                kernel_counts{
+                    .first_kept = 48,
+                    .first_all = 48,
+                    .second_kept = 48,
+                    .second_dropped = 0,
+                    .dropped_blades = 0,
+                });
   static_assert(counts_of<rga3, motor_layout, flector_layout>() !=
-                kernel_counts{48, 48, 48, 0, 4});
+                kernel_counts{
+                    .first_kept = 48,
+                    .first_all = 48,
+                    .second_kept = 48,
+                    .second_dropped = 0,
+                    .dropped_blades = 4,
+                });
 
   using core::detail::first_kernel;
   using core::detail::sandwich_middle_layout;

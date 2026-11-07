@@ -1809,9 +1809,9 @@ TEST_CASE("antiproject checks the coefficients of its second operand only") {
   using Scalar = core::mv<wide, core::blades<wide, "1">, std::int8_t>;
   using Bivector = core::mv<wide, core::blades<wide, "e12">, std::int8_t>;
   const auto r = core::antiproject(Scalar{3}, Bivector{2});
-  static_assert(
-      std::same_as<std::remove_cvref_t<decltype(r)>,
-                   core::mv<wide, core::blade_set<0>{}, std::int8_t>>);
+  constexpr core::blade_set<0> no_blades{};
+  static_assert(std::same_as<std::remove_cvref_t<decltype(r)>,
+                             core::mv<wide, no_blades, std::int8_t>>);
   CHECK(r.coefficients.empty());
 }
 

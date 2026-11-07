@@ -165,7 +165,7 @@ auto random_versor(std::mt19937_64& source) {
 // whether that product has no other part.
 template <class V>
 std::pair<rational, bool> lambda_of(const V& v) {
-  using Alg = typename V::algebra_type;
+  using Alg = V::algebra_type;
   const auto w = core::geometric_antiproduct(v, core::antireverse(v));
   const core::mask_t antiscalar =
       (core::mask_t{1} << generators<Alg>)-core::mask_t{1};
@@ -188,7 +188,7 @@ std::pair<rational, bool> lambda_of(const V& v) {
 template <std::size_t K, class V>
 void check_outermorphism_at(std::mt19937_64& source, const V& v,
                             const rational& lambda) {
-  using Alg = typename V::algebra_type;
+  using Alg = V::algebra_type;
   using A = core::mv<Alg, core::of_grade<generators<Alg>, 1>, rational>;
   CAPTURE(K);
   std::array<A, K> a{};
@@ -214,7 +214,7 @@ void check_outermorphism_at(std::mt19937_64& source, const V& v,
 // of grade K.
 template <std::size_t K, class W, class V>
 void check_composition_at(std::mt19937_64& source, const W& w, const V& v) {
-  using Alg = typename V::algebra_type;
+  using Alg = V::algebra_type;
   using X = core::mv<Alg, core::of_grade<generators<Alg>, K>, rational>;
   CAPTURE(K);
   const X x = random_small<X>(source);

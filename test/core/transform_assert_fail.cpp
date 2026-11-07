@@ -165,7 +165,7 @@ bool compares_the_dropped(std::int64_t s) {
 // x of the layout of X with the coefficients s, 2 s, 3 s, ... in order.
 template <class X>
 constexpr X filled(std::int64_t s) {
-  using T = typename X::scalar_type;
+  using T = X::scalar_type;
   X x{};
   for (std::size_t k = 0; k < X::component_count; ++k) {
     x.coefficients[k] = T(s * (static_cast<std::int64_t>(k) + 1));
