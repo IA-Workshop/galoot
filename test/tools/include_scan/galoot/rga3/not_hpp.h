@@ -1,0 +1,4 @@
+#ifndef GALOOT_RGA3_NOT_HPP_H
+#define GALOOT_RGA3_NOT_HPP_H
+
+#endif // GALOOT_RGA3_NOT_HPP_H

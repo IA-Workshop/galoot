@@ -1,0 +1,6 @@
+#ifndef GALOOT_RGA3_NONSTANDARD_HPP
+#define GALOOT_RGA3_NONSTANDARD_HPP
+
+#include <vector_math.h>
+
+#endif // GALOOT_RGA3_NONSTANDARD_HPP

@@ -124,3 +124,14 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-07	plan-0023	WU16 planner	opus	318312	69	979	harness subagent_tokens
 2026-11-07	note-0022	O6 flat-plane rounding researcher	opus	270581	77	1567	harness subagent_tokens
 2026-11-07	audit-wu9	WU9 merge auditor	opus	230968	83	747	harness subagent_tokens
+2026-11-07	plan-0023	WU16 math-expert (step 1: note 0023, conventions_check, rigid_motions.py, golden namespaces)	opus	328000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 step-2 implementer (CONVENTIONS 1.12, decision 0197, trace rows)	opus	105000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 1 (objects)	opus	220000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 build lane and objects implementer (step 4, build-expert judgement)	opus	188000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 2 (motions, compile-fail tests)	opus	188000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 step-6 implementer (motions.hpp, fifth catch-all, mutants)	opus	199000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 numerical-expert (rotation tolerance, records/rotation-tolerance)	opus	135000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 README and its check implementer (step 8)	opus	137000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 3 (V8 cases, geometric rotation test)	opus	not recorded	not recorded	not recorded	token figure not relayed to the implementer
+2026-11-07	plan-0023	WU16 coordinator	opus	not recorded	not recorded	not recorded	not known when this row was written; the coordinator adds it from the harness report
+2026-11-07	plan-0023	WU16 steps 9-10 implementer (trace rows, lint fixes, records, outcome)	opus	not recorded	not recorded	not recorded	this agent's own cost; the coordinator adds it from the harness report

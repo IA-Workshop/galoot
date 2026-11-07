@@ -185,11 +185,14 @@ add_test(NAME core.bare_compile
 # no cycle, guards named from paths, and snake_case names.
 add_test(NAME core.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
-    ${PROJECT_SOURCE_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include core)
 set_tests_properties(core.bare_compile core.include_scan PROPERTIES
   LABELS "core;core.headers")
 
-# tools.include_scan_rejects: the scan reports each fixture's defect.
+# tools.include_scan_rejects: the scan reports each fixture's defect, in the
+# core and in the rga3 model, and nothing about the fixtures that include
+# what their module may: galoot/rga3.hpp, galoot/rga3/uses_core.hpp, and
+# galoot/core.hpp.
 set(fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/include_scan)
 add_test(NAME tools.include_scan_rejects
   COMMAND ${expect_output} 1 ONLY "."
@@ -200,6 +203,12 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
     "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
     "galoot/core/not_hpp.h: not a .hpp header"
+    "galoot/core/includes_model.hpp:4: <galoot/rga3/uses_core.hpp> belongs to the rga3 model, which the core may not include"
+    "galoot/rga3/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header, a core header, or an rga3 header"
+    "galoot/rga3/cycle_a.hpp: include cycle: galoot/rga3/cycle_a.hpp -> galoot/rga3/cycle_b.hpp -> galoot/rga3/cycle_a.hpp"
+    "galoot/rga3/wrong_guard.hpp:1: include guard should be GALOOT_RGA3_WRONG_GUARD_HPP"
+    "galoot/rga3/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/rga3/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
@@ -1290,12 +1299,13 @@ function(galoot_expected_findings file out)
   set(${out} ${lines} PARENT_SCOPE)
 endfunction()
 
-# tests.citations: no build file, header, test, script, or generated file
-# points the reader to a project document, a numbered rule, or a project
-# record in place of the reason itself, because a reader of the code has none
-# of them. The file of patterns and the fixtures that hold such text on
-# purpose are skipped. tools.test_references_citations_* show that the check
-# rejects each pattern and passes text that only resembles one.
+# tests.citations: no build file, header, test, script, generated file, or
+# README points the reader to a project document, a numbered rule, or a
+# project record in place of the reason itself, because a reader of the code
+# or of the README has none of them. The file of patterns and the fixtures
+# that hold such text on purpose are skipped. tools.test_references_citations_*
+# show that the check rejects each pattern and passes text that only resembles
+# one.
 add_test(NAME tests.citations
   COMMAND ${test_references} citations
     --exclude ${PROJECT_SOURCE_DIR}/tools/citation_patterns.txt
@@ -1306,6 +1316,7 @@ add_test(NAME tests.citations
     --exclude ${reference_fixtures}/citations_bad
     --exclude ${reference_fixtures}/citations_bad.expected
     ${PROJECT_SOURCE_DIR}/include/galoot ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_SOURCE_DIR}/README.md
     ${PROJECT_SOURCE_DIR}/test ${PROJECT_SOURCE_DIR}/tools
     ${PROJECT_SOURCE_DIR}/CMakeLists.txt ${PROJECT_SOURCE_DIR}/CMakePresets.json
     ${PROJECT_SOURCE_DIR}/.clang-format ${PROJECT_SOURCE_DIR}/.clang-tidy)
@@ -2039,3 +2050,161 @@ target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
+
+# rga3.objects: the model's layouts against the oriented names written in the
+# test, its types, and the facts of rigid(3) on them, against hand values and
+# the golden values.
+galoot_add_test(MODULE rga3 COMPONENT objects)
+target_link_libraries(rga3_objects_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# rga3.bare_compile: the model, like the core, works with no build system and
+# no options beyond the language edition.
+add_test(NAME rga3.bare_compile
+  COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors
+    -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
+    ${CMAKE_CURRENT_SOURCE_DIR}/rga3/bare_user.cpp)
+
+# rga3.include_scan: the model includes only standard, core, and model
+# headers, with no cycle, guards named from paths, and snake_case names.
+add_test(NAME rga3.include_scan
+  COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
+    ${PROJECT_SOURCE_DIR}/include rga3)
+set_tests_properties(rga3.bare_compile rga3.include_scan PROPERTIES
+  LABELS "rga3;rga3.headers")
+
+# rga3.readme_example_<n>: the n-th cpp block of README.md, extracted into
+# the build tree at configure time, builds with the test flags and runs to
+# exit 0, printing what its "// prints:" comments say. rga3.readme_has_example
+# reads the README itself and fails when it has no cpp block, so that a lost
+# fence cannot pass; a malformed README extracts no example and fails it too.
+set(readme ${PROJECT_SOURCE_DIR}/README.md)
+set(readme_examples
+  ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/readme_examples.py)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${readme}
+  ${PROJECT_SOURCE_DIR}/tools/readme_examples.py)
+execute_process(
+  COMMAND ${readme_examples} extract ${readme} ${CMAKE_CURRENT_BINARY_DIR}/readme
+  OUTPUT_VARIABLE readme_sources ERROR_VARIABLE readme_defect
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(readme_defect)
+  message(WARNING "README.md: no example extracted: ${readme_defect}")
+endif()
+string(REPLACE "\n" ";" readme_sources "${readme_sources}")
+add_test(NAME rga3.readme_has_example
+  COMMAND ${readme_examples} check ${readme})
+set(readme_tests rga3.readme_has_example)
+foreach(source IN LISTS readme_sources)
+  cmake_path(GET source STEM example)
+  add_executable(rga3_readme_${example} ${source})
+  target_link_libraries(rga3_readme_${example} PRIVATE galoot::rga3)
+  # An example's main may let std::format_error from std::println escape, as
+  # a user's would; a try block around it would only hide what it shows.
+  if(CMAKE_CXX_CLANG_TIDY)
+    set_target_properties(rga3_readme_${example} PROPERTIES CXX_CLANG_TIDY
+      "${CMAKE_CXX_CLANG_TIDY};--checks=-bugprone-exception-escape")
+  endif()
+  add_test(NAME rga3.readme_${example} COMMAND ${readme_examples} run
+    ${source} $<TARGET_FILE:rga3_readme_${example}>)
+  list(APPEND readme_tests rga3.readme_${example})
+endforeach()
+set_tests_properties(${readme_tests} PROPERTIES LABELS "rga3;rga3.readme")
+
+# tools.readme_examples_*: the README check fails on a README with no cpp
+# block, on a C++ block marked c++, and on a fence never closed; a run fails
+# when the program exits nonzero or prints other than its "// prints:" lines.
+set(readme_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/readme_examples)
+add_test(NAME tools.readme_examples_rejects_no_block
+  COMMAND ${expect_output} 1 "no_block.md: no ```cpp block"
+    -- ${readme_examples} check ${readme_fixtures}/no_block.md)
+add_test(NAME tools.readme_examples_rejects_other_name
+  COMMAND ${expect_output} 1 "other_name.md:3: the block is marked c++"
+    -- ${readme_examples} check ${readme_fixtures}/other_name.md)
+add_test(NAME tools.readme_examples_rejects_unclosed
+  COMMAND ${expect_output} 1 "unclosed.md:5: the fence opened here is never"
+    -- ${readme_examples} check ${readme_fixtures}/unclosed.md)
+add_test(NAME tools.readme_examples_rejects_exit
+  COMMAND ${expect_output} 1 "the program exited 1, not 0"
+    -- ${readme_examples} run ${readme_fixtures}/prints.txt
+      ${CMAKE_COMMAND} -E false)
+add_test(NAME tools.readme_examples_rejects_output
+  COMMAND ${expect_output} 1 "but its // prints: comments say"
+    -- ${readme_examples} run ${readme_fixtures}/prints.txt
+      ${CMAKE_COMMAND} -E echo "other text")
+add_test(NAME tools.readme_examples_accepts_output
+  COMMAND ${expect_output} 0 "first line"
+    -- ${readme_examples} run ${readme_fixtures}/prints.txt
+      ${CMAKE_COMMAND} -E echo "first line")
+set_tests_properties(tools.readme_examples_rejects_no_block
+  tools.readme_examples_rejects_other_name
+  tools.readme_examples_rejects_unclosed tools.readme_examples_rejects_exit
+  tools.readme_examples_rejects_output tools.readme_examples_accepts_output
+  PROPERTIES LABELS "tools;tools.readme_examples")
+
+# rga3.motions: translation and rotation against hand values, the
+# reference's rotations, and the formula of the rotor written out in the
+# test.
+galoot_add_test(MODULE rga3 COMPONENT motions)
+target_link_libraries(rga3_motions_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# rga3.point_groups: the 32 crystallographic point groups, generated from
+# their rational generators by compose over the test rational, counted, and
+# matched one to one with the reference's matrices.
+galoot_add_test(MODULE rga3 COMPONENT point_groups)
+target_link_libraries(rga3_point_groups_test PRIVATE galoot::rga3
+  galoot_golden galoot_test_support)
+
+# rga3.chains: seeded chains of three to six joint motors, composed, against
+# the reference's products of 4 by 4 matrices.
+galoot_add_test(MODULE rga3 COMPONENT chains)
+target_link_libraries(rga3_chains_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# rga3.incidence: joins, meets, and incidences of points, lines, and planes
+# against the reference's values, exact zeros included.
+galoot_add_test(MODULE rga3 COMPONENT incidence)
+target_link_libraries(rga3_incidence_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# Each misuse of rotation and translation is one error with its message, and
+# the line a reader sees first names no internal name.
+function(motions_rejects case message)
+  galoot_add_compile_fail_test(NAME ${case} MODULE rga3 COMPONENT motions
+    SOURCE rga3/${case}_fail.cpp MESSAGE "${message}" ONE_ERROR ${ARGN}
+    FORBID_ON_FIRST_ERROR "detail::" "apply:")
+endfunction()
+set(rotation_no_sin "rotation: sin and cos of the angle do not give values of this scalar type, which is not a floating type${semicolon} use Line<double> or Line<float>, or build the Motor from its coefficients, the line times sin(theta/2) and cos(theta/2) on e1234")
+set(rotation_not_line "rotation: the axis is not an rga3 Line${semicolon} give a Line<T>, and convert a join such as p ^ q with Line<T>{p ^ q}")
+set(rotation_angle_type "rotation: the angle is not of the line's scalar type, the second of the two types shown${semicolon} give it in radians as that type, as std::numbers::pi / 2 over double or std::numbers::pi_v<float> / 2 over float")
+set(translation_integer "translation: halving d would truncate in an integer scalar type${semicolon} use a floating or exact rational scalar type")
+set(translation_mixed "translation: dx, dy, and dz are not all of one scalar type, the types shown${semicolon} give all three the same type, as translation(1.0, 0.0, 2.0) over double")
+# The compilers print the two types of a failed std::is_same_v in their own
+# words: the angle's first, or the first two of dx, dy, dz that differ.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(rotation_int_for_double "‘int’ is not the same as ‘double’")
+  set(rotation_double_for_float "‘double’ is not the same as ‘float’")
+  set(translation_double_and_int "‘double’ is not the same as ‘int’")
+else()
+  set(rotation_int_for_double "due to requirement 'std::is_same_v<int, double>'")
+  set(rotation_double_for_float
+    "due to requirement 'std::is_same_v<double, float>'")
+  set(translation_double_and_int
+    "due to requirement 'std::is_same_v<double, int>'")
+endif()
+motions_rejects(rotation_integer_scalar "${rotation_no_sin}")
+motions_rejects(rotation_rational_scalar "${rotation_no_sin}")
+# An axis of the wrong type is named by what it should be, so the first line
+# does not spell its type by blade masks.
+motions_rejects(rotation_axis_point "${rotation_not_line}"
+  FORBID_ON_FIRST_ERROR "blade_set")
+motions_rejects(rotation_axis_join "${rotation_not_line}"
+  FORBID_ON_FIRST_ERROR "blade_set")
+motions_rejects(rotation_angle_int "${rotation_angle_type}"
+  REQUIRE "${rotation_int_for_double}")
+motions_rejects(rotation_angle_double_for_float "${rotation_angle_type}"
+  REQUIRE "${rotation_double_for_float}")
+motions_rejects(translation_int "${translation_integer}")
+motions_rejects(translation_int64 "${translation_integer}")
+motions_rejects(translation_mixed "${translation_mixed}"
+  REQUIRE "${translation_double_and_int}")

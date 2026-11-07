@@ -1,0 +1,16 @@
+gcc	includer/core_only/before	inst 913.6 M (range 1.3 M)	wall 0.13 s	rss 74 MiB
+gcc	includer/core_only/after	inst 913.6 M (range 0.4 M)	wall 0.12 s	rss 74 MiB
+gcc	includer/rga3_only/after	inst 1,396.0 M (range 0.1 M)	wall 0.16 s	rss 95 MiB
+gcc	test/rga3_objects/after	inst 12,016.9 M (range 7.6 M)	wall 0.88 s	rss 270 MiB
+gcc	test/rga3_motions/after	inst 12,720.3 M (range 2.4 M)	wall 1.14 s	rss 338 MiB
+gcc	test/rga3_point_groups/after	inst 11,216.2 M (range 6.5 M)	wall 1.02 s	rss 319 MiB
+gcc	test/rga3_chains/after	inst 4,136.0 M (range 3.3 M)	wall 0.36 s	rss 157 MiB
+gcc	test/rga3_incidence/after	inst 4,118.9 M (range 4.1 M)	wall 0.37 s	rss 157 MiB
+clang	includer/core_only/before	inst 974.0 M (range 1.0 M)	wall 0.14 s	rss 114 MiB
+clang	includer/core_only/after	inst 972.6 M (range 0.5 M)	wall 0.15 s	rss 114 MiB
+clang	includer/rga3_only/after	inst 1,357.0 M (range 3.3 M)	wall 0.18 s	rss 122 MiB
+clang	test/rga3_objects/after	inst 11,100.8 M (range 33.5 M)	wall 0.83 s	rss 197 MiB
+clang	test/rga3_motions/after	inst 9,984.1 M (range 9.4 M)	wall 0.94 s	rss 274 MiB
+clang	test/rga3_point_groups/after	inst 10,134.5 M (range 36.4 M)	wall 0.89 s	rss 259 MiB
+clang	test/rga3_chains/after	inst 4,041.0 M (range 2.7 M)	wall 0.34 s	rss 165 MiB
+clang	test/rga3_incidence/after	inst 3,641.5 M (range 5.2 M)	wall 0.34 s	rss 167 MiB
