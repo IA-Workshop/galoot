@@ -82,16 +82,17 @@
 // full<8> is past the reverse's limit, and up to full<9>, the largest tried,
 // on GCC; the dot, the antidot, and the projection build up to full<5> on
 // Clang and full<6> on GCC, the limits of the geometric product's and the
-// wedge's plans. Every operation builds for full<5> of conformal(3). In a
-// dense form of five generators, where every pair of generators is coupled,
-// the dot and the antidot of two full<5> multivectors do not build on Clang;
-// GCC builds them. A failure there is reported inside the plan's generation,
-// on Clang with the note "constexpr evaluation hit maximum step limit" and on
-// GCC as an operation count over the limit (without optimization, sometimes as
-// a libstdc++ assertion that "is not a constant expression"), followed by
-// errors that do not name the operation. The weight, the weight duals, the
-// antidot, and the projection pass through the complements, whose grades grow
-// with n, so their compile cost grows with n even when x uses few generators.
+// wedge's plans, and the antiprojection the same. Every operation builds for
+// full<5> of conformal(3). In a dense form of five generators, where every pair
+// of generators is coupled, the dot and the antidot of two full<5> multivectors
+// do not build on Clang; GCC builds them. A failure there is reported inside
+// the plan's generation, on Clang with the note "constexpr evaluation hit
+// maximum step limit" and on GCC as an operation count over the limit (without
+// optimization, sometimes as a libstdc++ assertion that "is not a constant
+// expression"), followed by errors that do not name the operation. The weight,
+// the weight duals, the antidot, and the projection pass through the
+// complements, whose grades grow with n, so their compile cost grows with n
+// even when x uses few generators.
 //
 // The names bulk, weight, and dot are common words. A variable of one of
 // these names in scope stops an unqualified call of the function, as for any
