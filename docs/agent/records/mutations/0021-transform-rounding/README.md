@@ -30,3 +30,20 @@ Run by the WU13b implementer (Claude, agent, Opus 5.5) at `ce5449a` (the script'
 **Equivalent survivor:** `margin_hypothesis_removed`, the `static_assert` that (K + 1)(2K + 1)u < 1 for every dropped coefficient. No transform that builds comes near it (decision 0180: the largest K is about 130 at n = 6, and the limit is 2,895 for float), so no test can make it fire; it states the derivation's hypothesis in the code.
 
 Notes. Plan 0021's "K undercounted by one for the second stage" is `k_undercounted_second_stage`, one rounding fewer for each second-stage term. The test author's other form of "a NaN passes", `!(|d| > tol) && tol <= max`, survives against its stand-in and is equivalent by its argument: the padded magnitude bounds every computed value, so a NaN dropped coefficient brings a NaN or infinite tolerance, which `tol <= max` rejects (not checked here). A mutant that checks the kept coefficients in place of the dropped ones does not compile in the header, since the two arrays differ in size, so a build failure would not be a test's kill; it was not run here (the test author ran a form of it against its stand-in).
+
+## After the blind review
+
+The review (`records/reviews/2026-11-07-wu13b-review.md`) ran 15 mutants of its own; two survived as test gaps (`size_signed`, `middle_magnitude_restricted`). After the fixes (`e188522`, tests `fbd8a11`), the script was extended and every mutant ran again at `f3c6b23`, gcc-debug and then clang-debug, in this worktree. `out/*.tsv` now hold these runs; the rows of the first run are in the history of this directory. `margin_hypothesis_removed` is gone: the guard became `transform_rounding_checked`, which decides whether a transform is checked, and its mutants now die.
+
+22 mutants, each on gcc-debug and clang-debug, with the same outcome on both: 21 killed by a test, one equivalent survivor. The 16 mutants of the first run die as before (the hand case's `static_assert`s, now at `transform_rounding_test.cpp:865` and `:874`, and the same CTest tests, plus the new float and negative cases where they apply). The new ones:
+
+| Mutant | Killed by (both compilers) |
+| --- | --- |
+| `size_signed` (the check compares d, not \|d\|; the reviewer's survivor) | `core.transform_rounding_consteval_negative_double`, `_float`, `core.transform_rounding_checking_negative_double`, `_float` |
+| `magnitude_middle_restricted` (the magnitude's first stage restricted to the terms the kept outputs read; the reviewer's `middle_magnitude_restricted`) | `core.transform_rounding` (the degenerate form with e1 · e2 = 1, V on e1, e2, e3, e123, x on e123: tolerance below γ_K M) |
+| `finite_math_error_removed` | `core.transform_finite_math_only` |
+| `fast_math_error_removed` (now: the `-ffast-math` branch removed, so `-ffast-math` reaches the `-ffinite-math-only` error) | `core.transform_fast_math`, which forbids the other error's text |
+| `checked_ignores_margin` | the test's `static_assert(!transform_rounding_checked<rga3, motor_layout, point_layout, coarse>)` (`transform_rounding_test.cpp:1175`), for the test-only scalar of 8 significand bits |
+| `margin_holds_always` | the same |
+
+**Equivalent survivor:** `padding_lambda`, the padding λ of the first version in place of λ/u. Both paddings are sound (decision 0180's addendum, item 3); they differ in run time and in the tolerance's floor below about K λ W, which no test pins, since no requirement fixes either.

@@ -1,18 +1,23 @@
 mutant	build_exit	build_failures	failed_tests
-tolerance_halved	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
-tolerance_zero	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	core.transform_rounding_checking_tenth core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
-margin_0	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
-margin_2	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
-k_undercounted_second_stage	1	transform_rounding: test/core/transform_rounding_test.cpp:733:74: error: static assertion failed	-
+tolerance_halved	1	transform_rounding: test/core/transform_rounding_test.cpp:874:24: error: static assertion failed	-
+tolerance_zero	1	transform_rounding: test/core/transform_rounding_test.cpp:874:24: error: static assertion failed	core.transform_rounding_checking_tenth core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+margin_0	1	transform_rounding: test/core/transform_rounding_test.cpp:874:24: error: static assertion failed	-
+margin_2	1	transform_rounding: test/core/transform_rounding_test.cpp:874:24: error: static assertion failed	-
+k_undercounted_second_stage	1	transform_rounding: test/core/transform_rounding_test.cpp:865:74: error: static assertion failed	-
 k_coefficient_product_uncounted	0	-	core.transform_rounding
-k_first_term_counted	1	transform_rounding: test/core/transform_rounding_test.cpp:733:74: error: static assertion failed	core.transform_rounding
+k_first_term_counted	1	transform_rounding: test/core/transform_rounding_test.cpp:865:74: error: static assertion failed	core.transform_rounding
 magnitude_from_computed_middle	0	-	core.transform_rounding
 padding_removed	1	transform_rounding: include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’	core.transform_rounding core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+padding_lambda	0	-	-
+magnitude_middle_restricted	0	-	core.transform_rounding
 magnitude_coefficient_ignored	0	-	core.transform_rounding
-nan_dropped_passes	0	-	core.transform_rounding_checking_nan
-tolerance_finite_removed	0	-	core.transform_rounding_checking_infinite core.transform_rounding_checking_overflow
-rounding_check_removed	0	-	core.transform_rounding_consteval_double core.transform_rounding_consteval_float core.transform_rounding_checking_not_a_versor_double core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_ten_times core.transform_rounding_checking_nan core.transform_rounding_checking_infinite core.transform_rounding_checking_overflow
-float_unchecked	0	-	core.transform_rounding_consteval_float core.transform_rounding_checking_not_a_versor_float
+nan_dropped_passes	0	-	core.transform_rounding_checking_nan core.transform_rounding_checking_nan_float
+tolerance_finite_removed	0	-	core.transform_rounding_checking_infinite core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow core.transform_rounding_checking_overflow_float
+size_signed	0	-	core.transform_rounding_consteval_negative_double core.transform_rounding_consteval_negative_float core.transform_rounding_checking_negative_double core.transform_rounding_checking_negative_float
+rounding_check_removed	0	-	core.transform_rounding_consteval_double core.transform_rounding_consteval_float core.transform_rounding_consteval_negative_double core.transform_rounding_consteval_negative_float core.transform_rounding_checking_not_a_versor_double core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_negative_double core.transform_rounding_checking_negative_float core.transform_rounding_checking_ten_times core.transform_rounding_checking_ten_times_float core.transform_rounding_checking_nan core.transform_rounding_checking_nan_float core.transform_rounding_checking_infinite core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow core.transform_rounding_checking_overflow_float
+float_unchecked	0	-	core.transform_rounding_consteval_float core.transform_rounding_consteval_negative_float core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_negative_float core.transform_rounding_checking_ten_times_float core.transform_rounding_checking_nan_float core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow_float
 exact_check_removed	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded
 fast_math_error_removed	0	-	core.transform_fast_math
-margin_hypothesis_removed	0	-	-
+finite_math_error_removed	0	-	core.transform_finite_math_only
+checked_ignores_margin	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed	-
+margin_holds_always	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed	-
