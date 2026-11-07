@@ -1299,12 +1299,13 @@ function(galoot_expected_findings file out)
   set(${out} ${lines} PARENT_SCOPE)
 endfunction()
 
-# tests.citations: no build file, header, test, script, or generated file
-# points the reader to a project document, a numbered rule, or a project
-# record in place of the reason itself, because a reader of the code has none
-# of them. The file of patterns and the fixtures that hold such text on
-# purpose are skipped. tools.test_references_citations_* show that the check
-# rejects each pattern and passes text that only resembles one.
+# tests.citations: no build file, header, test, script, generated file, or
+# README points the reader to a project document, a numbered rule, or a
+# project record in place of the reason itself, because a reader of the code
+# or of the README has none of them. The file of patterns and the fixtures
+# that hold such text on purpose are skipped. tools.test_references_citations_*
+# show that the check rejects each pattern and passes text that only resembles
+# one.
 add_test(NAME tests.citations
   COMMAND ${test_references} citations
     --exclude ${PROJECT_SOURCE_DIR}/tools/citation_patterns.txt
@@ -1315,6 +1316,7 @@ add_test(NAME tests.citations
     --exclude ${reference_fixtures}/citations_bad
     --exclude ${reference_fixtures}/citations_bad.expected
     ${PROJECT_SOURCE_DIR}/include/galoot ${PROJECT_SOURCE_DIR}/cmake
+    ${PROJECT_SOURCE_DIR}/README.md
     ${PROJECT_SOURCE_DIR}/test ${PROJECT_SOURCE_DIR}/tools
     ${PROJECT_SOURCE_DIR}/CMakeLists.txt ${PROJECT_SOURCE_DIR}/CMakePresets.json
     ${PROJECT_SOURCE_DIR}/.clang-format ${PROJECT_SOURCE_DIR}/.clang-tidy)
