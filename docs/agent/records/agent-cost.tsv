@@ -112,3 +112,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-04	plan-0021	WU13 planner (plan 0021)	opus	321632	61	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; backfilled by the records clerk 2026-11-07
 2026-11-04	logician-mut	logician rerun	opus	113408	46	660	reported by harness, as relayed by the coordinator; its subject is not recorded in this repository (a detached worktree logician-mut at c86cb58 exists); date inferred from the worktree; backfilled by the records clerk 2026-11-07
 2026-11-04	gate-m3	M3 auditor	opus	288076	84	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; backfilled by the records clerk 2026-11-07
+2026-11-07	plan-0021	WU13a math-expert (conventions_check, spike, decision 0177, note 0021)	opus	310671	60	1633	reported by harness as subagent_tokens
+2026-11-07	plan-0021	WU13a test author (doctest-expert)	opus	464208	138	3348	reported by harness as subagent_tokens
