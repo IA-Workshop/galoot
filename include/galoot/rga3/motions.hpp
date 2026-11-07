@@ -55,16 +55,17 @@ template <std::floating_point T>
 }
 
 /// Rejects a rotation about a line whose scalar type is not a floating type,
-/// such as an integer or an exact rational, with one error: the angle needs
-/// std::sin and std::cos. Because it exists, a requires-expression that asks
-/// whether such a call is valid is told yes; ask std::floating_point of the
-/// scalar type instead.
+/// such as an integer or an exact rational, with one error: the sine and
+/// cosine of the angle are not values of that type. Because it exists, a
+/// requires-expression that asks whether such a call is valid is told yes;
+/// ask std::floating_point of the scalar type instead.
 template <class T, class S>
   requires(!std::floating_point<T>)
 Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
   static_assert(std::floating_point<T>,
-                "rotation: the angle needs std::sin and std::cos, which this "
-                "scalar type lacks; build the Motor from its coefficients, the "
+                "rotation: sin and cos of the angle do not give values of this "
+                "scalar type, which is not a floating type; use Line<double> "
+                "or Line<float>, or build the Motor from its coefficients, the "
                 "line times sin(theta/2) and cos(theta/2) on e1234");
   return Motor<T>{};
 }
@@ -78,21 +79,24 @@ template <std::floating_point T, class S>
 Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
   static_assert(std::is_same_v<S, T>,
                 "rotation: the angle is not of the line's scalar type, the "
-                "second of the two types shown; convert it to that type "
-                "first, as 0.5 over double or 0.5f over float");
+                "second of the two types shown; give it in radians as that "
+                "type, as std::numbers::pi / 2 over double or "
+                "std::numbers::pi_v<float> / 2 over float");
   return Motor<T>{};
 }
 
 /// Rejects a rotation about a multivector that is not an rga3 Line, such as
-/// a Point or the join p ^ q, whose layout is the wedge's, with one error. A
+/// a Point or the join p ^ q, whose layout is the wedge's, with one error.
+/// The assertion has no condition, so that the error line does not print
+/// the axis's type, which the compilers spell by its blade masks. A
 /// requires-expression that asks whether such a call is valid is told yes
 /// for any multivector; it is told no for an axis that is not a multivector.
 template <core::multivector X, class S>
   requires(!std::same_as<X, Line<typename X::scalar_type>>)
 Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
-  static_assert(std::is_same_v<X, Line<typename X::scalar_type>>,
-                "rotation: the axis must be an rga3 Line; convert a join "
-                "such as p ^ q with Line<T>{p ^ q}");
+  static_assert(false, "rotation: the axis is not an rga3 Line; give a "
+                       "Line<T>, and convert a join such as p ^ q with "
+                       "Line<T>{p ^ q}");
   return Motor<typename X::scalar_type>{};
 }
 
