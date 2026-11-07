@@ -54,7 +54,11 @@ MIDDLE = ("  const auto middle =\n"
           "          first_kernel<Alg, V, X, true>, abs_v, absolute_values(x));\n")
 FAST_MATH = ("#if defined(__FAST_MATH__) && GALOOT_CHECKING == 1\n"
              "#error \"transform: checking mode needs IEEE 754 arithmetic, not -ffast-math\"\n"
-             "#endif\n")
+             "#elif")
+FINITE_MATH = ("#error \"transform: checking mode needs NaN and infinity, not -ffinite-math-only\"\n")
+PADDING = ("  constexpr T padding =\n"
+           "      std::numeric_limits<T>::min() / (std::numeric_limits<T>::epsilon() / 2);\n")
+MAGNITUDE_MIDDLE = "          first_kernel<Alg, V, X, true>, abs_v, absolute_values(x));"
 
 MUTANTS = {
     # The tolerance.
@@ -68,17 +72,24 @@ MUTANTS = {
     "k_first_term_counted": (T, [("      out[t.out] = term;\n", "      out[t.out] = term + 1;\n", None)]),
     # The magnitude.
     "magnitude_from_computed_middle": (T, [(MIDDLE, "  const auto middle =\n      absolute_values(transform_middle<Alg, V, X, true>(v, x));\n", None)]),
-    "padding_removed": (T, [("  constexpr T padding = std::numeric_limits<T>::min();", "  constexpr T padding = T{};", None)]),
+    "padding_removed": (T, [(PADDING, "  constexpr T padding = T{};\n", None)]),
+    # The padding before the review, lambda in place of lambda / u: as sound,
+    # and slower; no test can tell the two apart.
+    "padding_lambda": (T, [(PADDING, "  constexpr T padding = std::numeric_limits<T>::min();\n", None)]),
+    "magnitude_middle_restricted": (T, [(MAGNITUDE_MIDDLE, "          first_kernel<Alg, V, X, false>, abs_v, absolute_values(x));", None)]),
     "magnitude_coefficient_ignored": (T, [("      term = static_cast<T>(static_cast<T>(c * term) + padding);", "      term = static_cast<T>(static_cast<T>(T{1} * term) + padding + (c * T{0}));", None)]),
     # The comparison.
     "nan_dropped_passes": (T, [(LOOP, LOOP.replace("  for (std::size_t j = 0; j < D; ++j) {\n", "  for (std::size_t j = 0; j < D; ++j) {\n    if (dropped[j] != dropped[j]) {\n      continue;\n    }\n"), None)]),
     "tolerance_finite_removed": (T, [(WITHIN, "    const bool within = size <= tolerances[j];\n", None)]),
+    "size_signed": (T, [(LOOP, LOOP.replace("dropped[j] < T{} ? static_cast<T>(-dropped[j]) : dropped[j]", "dropped[j]"), None)]),
     "rounding_check_removed": (T, [(ROUNDED_CALL, "          static_cast<void>(dropped);\n", None)]),
-    "float_unchecked": (T, [("                  detail::rounding_checked_scalar<T>) {", "                  (detail::rounding_checked_scalar<T> && !std::is_same_v<T, float>)) {", None)]),
+    "float_unchecked": (T, [("                  detail::transform_rounding_checked<Alg, V, X, T>) {", "                  (detail::transform_rounding_checked<Alg, V, X, T> && !std::is_same_v<T, float>)) {", None)]),
     "exact_check_removed": (T, [("          detail::check_transform_dropped(dropped);\n", "          static_cast<void>(dropped);\n", None)]),
-    "fast_math_error_removed": (T, [(FAST_MATH, "", None)]),
-    # The guard of the margin's hypothesis, which no transform that builds reaches.
-    "margin_hypothesis_removed": (T, [("  static_assert(margin_suffices,", "  static_assert(margin_suffices || true,", None)]),
+    "fast_math_error_removed": (T, [(FAST_MATH, "#if 0\n#elif", None)]),
+    "finite_math_error_removed": (T, [(FINITE_MATH, "", None)]),
+    # The margin's hypothesis, which decides whether a transform is checked.
+    "checked_ignores_margin": (T, [("      if (!margin_holds<T>(k)) {", "      if (!margin_holds<T>(k) && false) {", None)]),
+    "margin_holds_always": (T, [("  return digits >= 62 || product < (std::int64_t{1} << digits);", "  return digits >= 0 || product < (std::int64_t{1} << digits);", None)]),
 }
 
 

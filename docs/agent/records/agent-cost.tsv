@@ -115,3 +115,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-07	plan-0021	WU13a math-expert (conventions_check, spike, decision 0177, note 0021)	opus	310671	60	1633	reported by harness as subagent_tokens
 2026-11-07	plan-0021	WU13a test author (doctest-expert)	opus	464208	138	3348	reported by harness as subagent_tokens
 2026-11-07	plan-0021	WU13b test author (doctest-expert, numerical-expert judgement)	opus	351545	103	2628	reported by harness as subagent_tokens
+2026-11-07	plan-0021	WU13b test author, review round (two resumes: B1, N9, N5, N7 tests; the coarse fix)	opus	73968	46	891	harness reported 425513 subagent_tokens cumulative for the agent after both resumes; tokens here are that minus the first run's 351545 (inferred); tool calls and wall time as reported for the resumes
