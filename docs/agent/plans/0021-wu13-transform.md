@@ -382,3 +382,42 @@ Evidence:
 Listed for review (W9): `a4e43af` (the tests, the test author's); `c2af6a8` (the check); `cb04901` (a suppression comment); `bf62954` (a comment). The implementer judged no test of its own; no existing test or expected value changed.
 
 Open, for the reviewer or the owner: departure 5 (overflow fails); checking mode's run cost, which computing the γ factors at compile time and unrolling the magnitude kernel would likely cut (inferred); the flat-plane characterization, for M6; WU13a's open items above.
+
+#### After the blind review
+
+Reviewed (W5, `records/reviews/2026-11-07-wu13b-review.md`, cherry-picked as `817ebe3` and `1cda2b6`): block on one finding (B1), otherwise approve with non-blocking findings. Resolved on this branch, for a delta review:
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| B1, `-ffinite-math-only` | a checking build under it stops with its own error; compile test `core.transform_finite_math_only` | `fbd8a11` (test), `e188522`, `bc06e9e` (a clang-tidy fix of e188522's margin test, unsigned arithmetic) |
+| N9, surviving mutants `size_signed`, `middle_magnitude_restricted` | a non-versor that drops −2 (program, both scalars, and constant evaluations); the degenerate layout of `f57800a` in a rounding test; both mutants rerun and killed | `fbd8a11`, mutants below |
+| N5, `std::bfloat16_t` | a transform over a rounding scalar is checked only where the margin's hypothesis holds (`detail::transform_rounding_checked`), else not checked, in every mode; bfloat16 compiles again (GCC; Clang's libstdc++ setup has no `std::bfloat16_t`), and a test-only coarse scalar pins it on both compilers | `fbd8a11`, `e188522`, decision 0180 addendum item 2 |
+| N6, the message | the comment at the check names the four causes and the remedies; the text is in decision 0180's addendum | `e188522`, `f3c6b23` |
+| N1, rounded versors | the reviewer's rates in decision 0180's addendum and in both comments, with the remedy | `e188522`, `f3c6b23` |
+| N2, subnormal assists | padding λ/u adopted, Lemmas A to C re-derived (decision 0180 addendum item 3), the reviewer's simulation rerun with it (0 violations, seeds 7 and 11), mutants and suites rerun; cost re-measured and the README corrected | `e188522`, `f3c6b23`, and the records below |
+| N7 | notes below | |
+| N3, N4 | owner items, unchanged | |
+
+Departures and readings of the review round (C20):
+
+1. **N5 is narrower than CONVENTIONS 4.5's sentence** for coarse IEEE types: such a type is not checked where the margin's hypothesis fails. An owner item, with N3 and N4.
+2. **N2 trades sensitivity at the bottom of the range for speed**: the tolerance's absolute floor rises from about γ_K λ W to about K λ W (near 10^−306 in double), so the tests' underflow ratios fell from 0.111 to below 10^−6; `padding_lambda`, the old padding, survives as a mutant, since both are sound.
+3. **The test author's two commits were combined** into `fbd8a11` (from `bc0ff87` and its fix `61ba798`, both trailers kept): the first cherry-pick, `be53d19`, was local and unshared, and leaving it would have put two failing commits in a row (W2). That reset of an unshared commit is the only history rewrite.
+4. **The cherry-picked test commit changed an existing test of the test author's own**: `core.transform_fast_math` now forbids the `-ffinite-math-only` text.
+5. **The first full lint run after the fixes failed** (`bugprone-signed-bitwise` on `margin_holds`'s shift), so `bc06e9e` made it unsigned, with the same values; the two mutants of that function ran again there, and every preset ran again from empty trees at the final revision. The cost and the simulation ran against `e188522`'s header, which differs from the final one only in that compile-time comparison.
+6. **The clang-format check covers the change's 11 C++ sources**; the reviewer's probe files under `records/reviews/` are not formatted and are the reviewer's records, which this unit does not edit.
+7. **Not done:** the reviewer's `concept_not_exact` static_assert (not requested); `tenth` over float (cannot be made exact at a tenth of γ_K M in float, the test author's departure).
+
+N7 notes: criterion 3's "inputs near 1e-300" is met in intent by scaling V by 2^−360 and x by 2^−340 (about 10^−108 and 10^−103), which puts the second-stage products near 2^−1060; inputs near 10^−300 make every product zero. The run-time abort cases ran over double only before the review; `ten_times`, `nan`, `infinite`, `overflow`, and the new `negative` case now also run over float. `c2af6a8`'s "389" is 388 (departure 8).
+
+Evidence of the review round:
+
+- The mutants (`records/mutations/0021-transform-rounding/`): 22 at `f3c6b23`, each on gcc-debug and clang-debug with the same outcome, 21 killed by a test and one equivalent survivor, `padding_lambda`; the two margin mutants again at `bc06e9e`.
+- The padding λ/u (`records/spikes/transform-rounding/padding-simulation/`): the reviewer's simulation, rerun with it against kernels dumped from `e188522`'s header, equals the core bit for bit and finds |d − e| ≤ tol for every dropped coefficient of 6,600 inputs per seed in six regimes (seeds 7 and 11; largest ratio 0.318).
+- The cost (`records/performance/transform-rounding-cost/`, at `7912ea9`, header of `e188522`; `bc06e9e` changes only a compile-time comparison): checking mode 10.7× (GCC) and 9.4× (Clang) the instructions and about 6.7× the wall time of an unchecked transform, with 0 FP assists, against 26 to 28× before; includers of `core.hpp` +0.2% to +0.5%.
+- Ratios at seed 0: |d| / tol 0.089 (double) and 0.151 (float), unchanged; on underflowing inputs below 10^−6, from 0.111.
+- Final runs, every preset from new, empty build trees at `f056752` (build inputs final at `bc06e9e`), with a clean tree (rows `f056752f70f3`): gcc-debug and gcc-release 403 tests, gcc-asan 395, clang-debug, clang-release, clang-asan, and lint 405, clang-measure 397, all passing; 15 tests are new in the review round. The trace gate, `conventions_check.py`, `tools/runlog check`, and clang-format on the change's C++ sources exit 0. The job pool read 23 of 23 slots free before and after each heavy run.
+
+Listed for review (delta, W9): `fbd8a11` (the tests, the test author's); `e188522` and `bc06e9e` (the code). No test of the implementer's own and no expected value of an earlier test changed, except the test author's `core.transform_fast_math`, which now also forbids the `-ffinite-math-only` text.
+
+Open, for the owner: N3 (an overflowing magnitude fails), N4 (the breadth of the `-ffast-math` and `-ffinite-math-only` errors over all of `core.hpp` in a checking build), N5's reading (coarse IEEE types unchecked where the margin fails, narrower than CONVENTIONS 4.5's sentence), and O6 in the light of N1's chain rates.
