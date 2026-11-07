@@ -57,6 +57,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.4 | a single mirror maps each vector of the mirror to itself times lambda | yes |
 | 4.5 | truncate checks that the part it drops is zero | yes |
 | 4.5 | part never checks what it drops | yes |
+| 4.5 | transform checks a rounding scalar's dropped part against its forward error bound | yes |
 | 5.1 | a point x e1 + y e2 + z e3 + w e4 has weight w | no |
 | 5.2 | the line through unitized points p and q has direction q - p | no |
 | 5.3 | a point p lies on the plane g when p v g = 0 | no |

@@ -1,0 +1,18 @@
+mutant	build_exit	build_failures	failed_tests
+tolerance_halved	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
+tolerance_zero	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	core.transform_rounding_checking_tenth core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+margin_0	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
+margin_2	1	transform_rounding: test/core/transform_rounding_test.cpp:742:24: error: static assertion failed	-
+k_undercounted_second_stage	1	transform_rounding: test/core/transform_rounding_test.cpp:733:74: error: static assertion failed	-
+k_coefficient_product_uncounted	0	-	core.transform_rounding
+k_first_term_counted	1	transform_rounding: test/core/transform_rounding_test.cpp:733:74: error: static assertion failed	core.transform_rounding
+magnitude_from_computed_middle	0	-	core.transform_rounding
+padding_removed	1	transform_rounding: include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’	core.transform_rounding core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+magnitude_coefficient_ignored	0	-	core.transform_rounding
+nan_dropped_passes	0	-	core.transform_rounding_checking_nan
+tolerance_finite_removed	0	-	core.transform_rounding_checking_infinite core.transform_rounding_checking_overflow
+rounding_check_removed	0	-	core.transform_rounding_consteval_double core.transform_rounding_consteval_float core.transform_rounding_checking_not_a_versor_double core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_ten_times core.transform_rounding_checking_nan core.transform_rounding_checking_infinite core.transform_rounding_checking_overflow
+float_unchecked	0	-	core.transform_rounding_consteval_float core.transform_rounding_checking_not_a_versor_float
+exact_check_removed	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded
+fast_math_error_removed	0	-	core.transform_fast_math
+margin_hypothesis_removed	0	-	-

@@ -1,0 +1,9 @@
+family	cases	dropped	fired	largest_ratio
+cga3 vector, 1 plane	10000	100000	0	0.375806
+cga3 vector, 2 planes	10000	110000	11	3.0613
+cga3 vector, 3 planes	10000	110000	15	3.76297
+cga3 vector, 2 hyperplanes	10000	110000	0	0.285925
+cga3 vector, 3 hyperplanes	10000	110000	0	0.297879
+cga3 bivector, 2 planes	10000	60000	0	0.202679
+rga3 point, 2 planes	10000	40000	0	0.306358
+rga3 point, 3 planes	10000	40000	0	0.320554
