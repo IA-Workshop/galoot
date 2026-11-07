@@ -1,0 +1,24 @@
+mutant	build_exit	build_failures	failed_tests
+rotation_full_angle	0	-	rga3.motions
+rotation_negative_angle	0	-	rga3.motions
+rotation_sin_cos_swapped	0	-	rga3.motions
+rotation_layout	1	motions: test/rga3/motions_test.cpp:315:7: error: static assertion failed	rga3.motions
+rotation_any_scalar	0	-	rga3.rotation_integer_scalar rga3.rotation_rational_scalar
+translation_full_d	0	-	rga3.motions
+translation_negative_half_d	0	-	rga3.motions
+translation_d_permuted	0	-	rga3.motions
+translation_layout	1	motions: test/rga3/motions_test.cpp:169:15: error: no viable conversion from 'mv<[...], blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}, [...]>' to 'const mv<[...], blade_set<8>{{{{9, -1}, {10, -1}, {12, -1}, {15, 1}, {6, 1}, {5, -1}, {3, 1}, {0, 1}}}}, [...]>'	rga3.motions
+translation_accepts_integers	1	motions: test/rga3/motions_test.cpp:329:17: error: static assertion failed	rga3.motions rga3.translation_int rga3.translation_int64
+non_floating_catch_all_unconstrained	0	-	-
+angle_type_catch_all_unconstrained	0	-	-
+angle_type_catch_all_any_type	0	-	-
+axis_catch_all_unconstrained	0	-	-
+axis_catch_all_any_type	0	-	-
+integer_catch_all_any_type	1	motions: include/galoot/core/mv.hpp:526:17: error: static assertion failed due to requirement 'scalar_has_addition': mv: the scalar type has no addition; give it a + b, or use a number type such as double	-
+mixed_catch_all_unconstrained	0	-	-
+mixed_catch_all_any_type	1	motions: include/galoot/core/mv.hpp:526:17: error: static assertion failed due to requirement 'scalar_has_addition': mv: the scalar type has no addition; give it a + b, or use a number type such as double	-
+non_floating_catch_all_removed	1	motions: test/rga3/motions_test.cpp:317:17: error: static assertion failed	rga3.rotation_integer_scalar rga3.rotation_rational_scalar
+angle_type_catch_all_removed	1	motions: test/rga3/motions_test.cpp:320:17: error: static assertion failed	rga3.rotation_angle_int rga3.rotation_angle_double_for_float
+axis_catch_all_removed	1	motions: test/rga3/motions_test.cpp:319:17: error: static assertion failed	rga3.rotation_axis_point rga3.rotation_axis_join
+integer_catch_all_removed	1	motions: test/rga3/motions_test.cpp:329:17: error: static assertion failed	rga3.translation_int rga3.translation_int64
+mixed_catch_all_removed	0	-	rga3.translation_mixed
