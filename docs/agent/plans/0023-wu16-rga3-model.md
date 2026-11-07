@@ -296,10 +296,27 @@ The blind review of section 8 (`reviews/2026-11-07-wu16-review.md`, blind-review
 
 | Finding | Resolution | Commits |
 | --- | --- | --- |
-| 1, minor: this outcome stale (departures 6 and 7, "Not validated", "Open", and the W9 list) | Brought up to date: departure 6 records the 20 layout and alias mutants of `05c1fa9`, all killed on both compilers; departure 7 the lint fixes `bf630e7` and `613cab0`; departure 4 the merge of `records/rotation-tolerance` into `develop` (`141021a`) and into this branch (`038c81f`); "Not validated" and "Open" no longer list them; the W9 list adds `bf630e7`, `613cab0`, `05c1fa9`, the hci-resolution commits `2a2db45`, `62fd480`, `dd1f2a9`, `d128394`, `fad0c10`, and `f008617` | the commit that adds this section |
+| 1, minor: this outcome stale (departures 6 and 7, "Not validated", "Open", and the W9 list) | Brought up to date: departure 6 records the 20 layout and alias mutants of `05c1fa9`, all killed on both compilers; departure 7 the lint fixes `bf630e7` and `613cab0`; departure 4 the merge of `records/rotation-tolerance` into `develop` (`141021a`) and into this branch (`038c81f`); "Not validated" and "Open" no longer list them; the W9 list adds `bf630e7`, `613cab0`, `05c1fa9`, the hci-resolution commits `2a2db45`, `62fd480`, `dd1f2a9`, `d128394`, `fad0c10`, and `f008617` | `ebfe9ca` |
 | 2, minor: the meet signs of `rigid_motions.py` matched, not derived | Stated in `rigid_motions.py`'s docstring and as open item 5 of research note 0023: the signs of the line–plane, plane–plane, and three-plane meets were chosen to match the library's convention and are checked only up to scale by `planes_meet`, so a sign error shared by both routes would pass; the incidence zeros are unaffected, and the plane's orientation is pinned by `self_check`. No logic or golden value changed (`golden.py --check` matches) | `1ecd03f` |
 | 3, info: `objects.hpp`'s head comment lacks the `std::ranges` caveat | Added in the wording of `transform.hpp` and the README | `55316b9` |
 | 4, info: C13 holds by inspection only; the include scan checks includes, not the use of `core::detail` | Recorded, no code: a possible later check is a scan of the model headers (and of any later model) for the token `detail` qualified by `core`, run with the include scan. Not in this unit's scope (section 12) | none |
 
 The usability items the review lists as not met (S1's behavior, S2's core half, S3, GCC's long `mv` types) are the owner items of the hci reading's section above and of O2; nothing new.
+
+### Checks for the merge into `develop`
+
+Section 7's checks (P9), at `ebfe9ca`, the last commit that changes a build input or a checked file (later commits add run rows and this record only), after merging `develop` at `141021a` (already contained: nothing to merge), on a clean tree, each preset from a new, empty build tree, every run through `tools/timed` as `gate:<selection>`. The job pool read 23 of 23 slots free before and after each preset.
+
+| Preset | Full suite | Build, test wall (s) |
+| --- | --- | --- |
+| gcc-debug | 434 of 434 | 33.0, 7.0 |
+| gcc-release | 434 of 434 | 40.8, 6.7 |
+| clang-debug | 434 of 434 | 27.0, 4.5 |
+| clang-release | 434 of 434 | 45.3, 4.2 |
+| gcc-asan | 426 of 426 | 139.5, 3.9 |
+| clang-asan | 434 of 434 | 122.6, 4.2 |
+| lint | 434 of 434 (clang-tidy clean) | 161.0, 4.1 |
+| clang-measure | 426 of 426 | 46.8, 3.7 |
+
+The two counts of 426 are as `test/CMakeLists.txt` registers the tests: the eight `core.plan_cost_model` cases need `_GLIBCXX_ASSERTIONS`, which `clang-measure` does not define, and on GCC are registered only without the sanitizers, so `gcc-asan` lacks them. (The GCC and Clang sets of 434 differ too: `core.plan_evaluated_once` and `core.plan_map_evaluated_once` are Clang only, and two `bfloat16` cases of the transform rounding check GCC only.) `format-check` exit 0; the trace gate passes (items with no test: 6.1 to 6.4); `tools/runlog check` reports no removed row, so no prune. About 662 s of wall time in all. Deferred to the M4 gate: the compile-record copy of decision 0080.
 
