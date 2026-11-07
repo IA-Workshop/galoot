@@ -35,10 +35,15 @@ namespace galoot::rga3 {
 /// 0.5f over float.
 ///
 /// Requires: T is a floating type, since the coefficients need std::sin and
-/// std::cos. l is assumed to be unitized (its direction has length 1) and to
-/// be a line (its direction and moment are orthogonal); neither is checked.
-/// If either fails, the result is not a unitized motor, and transform by it
-/// does not correct that: it scales or distorts what it moves.
+/// std::cos. l must be unitized, its direction (the coefficients on e41,
+/// e42, e43) of length 1, and must be a line, its direction and moment
+/// orthogonal; neither is checked. A join p ^ q of unitized points has the
+/// direction q - p, so divide its six coefficients by the length of q - p
+/// before the call. About a line whose direction has another length L, the
+/// result is not a unitized motor: it turns by 2 atan(L tan(theta/2)) in
+/// place of theta, about the same line, and multiplies the weight of what it
+/// moves by L^2 sin^2(theta/2) + cos^2(theta/2); transform does not correct
+/// either. About an l that is not a line, it distorts what it moves.
 ///
 /// Evaluated at run time only. std::sin and std::cos are not usable in a
 /// constant expression on every compiler, so this function is not constexpr;
