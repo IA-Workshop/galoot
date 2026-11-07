@@ -185,11 +185,14 @@ add_test(NAME core.bare_compile
 # no cycle, guards named from paths, and snake_case names.
 add_test(NAME core.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
-    ${PROJECT_SOURCE_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include core)
 set_tests_properties(core.bare_compile core.include_scan PROPERTIES
   LABELS "core;core.headers")
 
-# tools.include_scan_rejects: the scan reports each fixture's defect.
+# tools.include_scan_rejects: the scan reports each fixture's defect, in the
+# core and in the rga3 model, and nothing about the fixtures that include
+# what their module may: galoot/rga3.hpp, galoot/rga3/uses_core.hpp, and
+# galoot/core.hpp.
 set(fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/include_scan)
 add_test(NAME tools.include_scan_rejects
   COMMAND ${expect_output} 1 ONLY "."
@@ -200,6 +203,12 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
     "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
     "galoot/core/not_hpp.h: not a .hpp header"
+    "galoot/core/includes_model.hpp:4: <galoot/rga3/uses_core.hpp> belongs to the rga3 model, which the core may not include"
+    "galoot/rga3/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header, a core header, or an rga3 header"
+    "galoot/rga3/cycle_a.hpp: include cycle: galoot/rga3/cycle_a.hpp -> galoot/rga3/cycle_b.hpp -> galoot/rga3/cycle_a.hpp"
+    "galoot/rga3/wrong_guard.hpp:1: include guard should be GALOOT_RGA3_WRONG_GUARD_HPP"
+    "galoot/rga3/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/rga3/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
@@ -2053,5 +2062,11 @@ add_test(NAME rga3.bare_compile
   COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors
     -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
     ${CMAKE_CURRENT_SOURCE_DIR}/rga3/bare_user.cpp)
-set_tests_properties(rga3.bare_compile PROPERTIES
+
+# rga3.include_scan: the model includes only standard, core, and model
+# headers, with no cycle, guards named from paths, and snake_case names.
+add_test(NAME rga3.include_scan
+  COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
+    ${PROJECT_SOURCE_DIR}/include rga3)
+set_tests_properties(rga3.bare_compile rga3.include_scan PROPERTIES
   LABELS "rga3;rga3.headers")
