@@ -223,12 +223,14 @@ TEST_CASE("an rga3 rotor Motor turns as the reference's right-handed rigid "
   using Point = rga3::Point<rational>;
   using Motor = rga3::Motor<rational>;
   const rational o{0};
-  const std::array<Point, 4> points{{
-      {rational{1}, rational{-2}, rational{3}, rational{1}},
-      {rational{1, 2}, rational{1, 3}, rational{-1}, rational{2}},
-      {o, o, o, rational{1}},
-      {rational{2}, o, rational{-1}, o},
-  }};
+  const std::array<Point, 4> points{
+      {
+          {rational{1}, rational{-2}, rational{3}, rational{1}},
+          {rational{1, 2}, rational{1, 3}, rational{-1}, rational{2}},
+          {o, o, o, rational{1}},
+          {rational{2}, o, rational{-1}, o},
+      },
+  };
   std::size_t off_origin = 0;
   for (std::size_t i = 0; i < golden::rigid_rotations::rotations.size(); ++i) {
     CAPTURE(i);
@@ -269,16 +271,19 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
   using Motor = rga3::Motor<T>;
   static_assert(std::same_as<decltype(rga3::rotation(Line{}, T{})), Motor>);
 
-  constexpr std::array<std::array<double, 6>, 6> axes{{
-      {1, 0, 0, 0, 0, 0},
-      {0, 1, 0, 0, 0, 0},
-      {0, 0, 1, 0, 0, 0},
-      {0, 0, 1, 0, -1, 0},
-      {0.6, 0.8, 0, 0, 0, 1.5},
-      {0, -0.6, -0.8, 0, 1.6, -1.2},
-  }};
-  constexpr std::array<double, 8> angles{0.0, 0.5,    -1.25, 3.0,
-                                         7.5, -100.0, 0.001, 3.14159265358979};
+  constexpr std::array<std::array<double, 6>, 6> axes{
+      {
+          {1, 0, 0, 0, 0, 0},
+          {0, 1, 0, 0, 0, 0},
+          {0, 0, 1, 0, 0, 0},
+          {0, 0, 1, 0, -1, 0},
+          {0.6, 0.8, 0, 0, 0, 1.5},
+          {0, -0.6, -0.8, 0, 1.6, -1.2},
+      },
+  };
+  constexpr std::array<double, 8> angles{
+      0.0, 0.5, -1.25, 3.0, 7.5, -100.0, 0.001, std::numbers::pi,
+  };
   for (std::size_t a = 0; a < axes.size(); ++a) {
     CAPTURE(a);
     std::array<T, 6> v{};
@@ -291,8 +296,9 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
       INFO(std::format("theta = {}", theta));
       const T s = std::sin(theta / T{2});
       const T c = std::cos(theta / T{2});
-      const Motor expected{v[0] * s, v[1] * s, v[2] * s, c,
-                           v[3] * s, v[4] * s, v[5] * s, T{0}};
+      const Motor expected{
+          v[0] * s, v[1] * s, v[2] * s, c, v[3] * s, v[4] * s, v[5] * s, T{0},
+      };
       CHECK(bits_of(rga3::rotation(l, theta)) == bits_of(expected));
     }
   }
