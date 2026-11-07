@@ -13,9 +13,9 @@
 // needs std::sin and std::cos, so its exact turns are checked on rotors
 // written by their coefficients from rational half-angle sines and cosines,
 // and rotation itself is checked against the same formula evaluated in the
-// test. Its accuracy as a turn by theta in floating point is not tested
-// here: that needs a bound that includes the C library's error for sin and
-// cos.
+// test. Its accuracy as a turn by theta in floating point is checked for a
+// quarter turn about the z axis, within a bound that includes the C
+// library's error for sin and cos.
 #include <array>
 #include <bit>
 #include <cmath>
@@ -23,6 +23,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <format>
+#include <limits>
+#include <numbers>
 #include <type_traits>
 
 #include <galoot/rga3.hpp>
@@ -293,6 +295,71 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
                            v[3] * s, v[4] * s, v[5] * s, T{0}};
       CHECK(bits_of(rga3::rotation(l, theta)) == bits_of(expected));
     }
+  }
+}
+
+// The tolerance of each coefficient of a quarter turn of (1, 0, 0, 1) about
+// the z axis by rotation(l, theta), in units of u = epsilon / 2, the unit
+// roundoff of float or double. With phi = theta / 2, the motor holds
+// s^ = fl(sin phi) on e43 and c^ = fl(cos phi) on e1234; their errors are
+// |a|, |b| <= k u with k = 9, the error in ulps above which the GNU C
+// Library's test suite reports sin and cos as wrong (its manual, "Errors in
+// Math Functions"; a stated ceiling, not a proved bound), and an ulp of a
+// value in [1/2, 1) is u. Then, with s = sin phi and c = cos phi,
+//   E1 = |a| (2|s| + |a|) + |b| (2|c| + |b|)
+//      bounds the errors of c^2 - s^2 against cos theta and of c^2 + s^2
+//      against 1, the motor's lack of unit norm;
+//   E2 = 2 (|s| |b| + |c| |a| + |a| |b|) bounds that of 2 s^ c^ against
+//      sin theta;
+// and since s + c <= sqrt 2, E1, E2 <= 2 sqrt(2) k u + 2 k^2 u^2. transform's
+// forward error bound is gamma_K = K u / (1 - K u) times the magnitude of
+// each coefficient, at most 1 + E1 here, with K = 12 roundings on e1, e2, e3
+// and 5 on e4. The angle passed is theta = fl(pi/2), and with
+// delta = |pi/2 - theta|, |cos theta| <= delta and 1 - sin theta <=
+// delta^2 / 2. So the result differs from (0, 1, 0, 1) by at most
+//   tol_0 = gamma_12 (1 + E1) + E1 + delta        on e1
+//   tol_1 = gamma_12 (1 + E1) + E2 + delta^2 / 2  on e2
+//   tol_2 = 0                                     on e3, whose terms are all 0
+//   tol_3 = gamma_5 (1 + E1) + E1                 on e4
+// which are 38.01, 37.46, 0, and 30.46 u in double (delta = 0.5515 u) and
+// 38.19, 37.46, 0, and 30.46 u in float (delta = 0.7334 u), rounded up to
+// the integers below. The comparisons add no rounding: the differences from
+// 0 are exact, those from 1 exact by Sterbenz's lemma, since the
+// coefficients lie in [1/2, 2], and an integer times u is exact.
+namespace {
+constexpr std::array<int, 4> quarter_turn_tolerance_in_u{39, 38, 0, 31};
+} // namespace
+
+// Reference: independent value: by hand, a quarter turn counterclockwise
+//   about the z axis, seen from +z, takes (1, 0, 0) to (0, 1, 0), so
+//   rotation(l, theta) with l the z axis, 1 on e43, and theta = pi/2 moves
+//   the point (1, 0, 0, 1) to (0, 1, 0, 1) over float and double, each
+//   coefficient within its tolerance: the error bound of transform for the
+//   motor it is given, gamma_K = K u / (1 - K u) times each coefficient's
+//   magnitude, with K = 12 on e1, e2, e3 and 5 on e4, plus the error of the
+//   motor's sine and cosine at k = 9 ulps, the ceiling the GNU C Library
+//   states for its sin and cos, and the gap between pi/2 and the angle that
+//   float or double holds: 39 u, 38 u, 0, and 31 u on e1, e2, e3, e4, for
+//   the unit roundoff u, fixed before the test was first run
+TEST_CASE_TEMPLATE("rotation(l, pi/2) about the z axis turns (1, 0, 0, 1) to "
+                   "(0, 1, 0, 1) within its error bound",
+                   T, float, double) {
+  using Point = rga3::Point<T>;
+  using Line = rga3::Line<T>;
+  constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
+  const T theta = std::numbers::pi_v<T> / T{2};
+  INFO(std::format("theta = {}", theta));
+  const Line z_axis{T{0}, T{0}, T{1}, T{0}, T{0}, T{0}};
+  const Point moved = core::transform(Point{T{1}, T{0}, T{0}, T{1}},
+                                      rga3::rotation(z_axis, theta));
+  constexpr std::array<T, 4> expected{T{0}, T{1}, T{0}, T{1}};
+  for (std::size_t j = 0; j < expected.size(); ++j) {
+    CAPTURE(j);
+    const T coefficient = moved.coefficients.at(j);
+    const T tolerance = static_cast<T>(quarter_turn_tolerance_in_u.at(j)) * u;
+    INFO(std::format("coefficient = {}, tolerance = {}", coefficient,
+                     tolerance));
+    CHECK(std::abs(coefficient - expected.at(j)) <= tolerance);
   }
 }
 

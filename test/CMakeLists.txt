@@ -2148,6 +2148,25 @@ galoot_add_test(MODULE rga3 COMPONENT motions)
 target_link_libraries(rga3_motions_test PRIVATE galoot::rga3 galoot_golden
   galoot_test_support)
 
+# rga3.point_groups: the 32 crystallographic point groups, generated from
+# their rational generators by compose over the test rational, counted, and
+# matched one to one with the reference's matrices.
+galoot_add_test(MODULE rga3 COMPONENT point_groups)
+target_link_libraries(rga3_point_groups_test PRIVATE galoot::rga3
+  galoot_golden galoot_test_support)
+
+# rga3.chains: seeded chains of three to six joint motors, composed, against
+# the reference's products of 4 by 4 matrices.
+galoot_add_test(MODULE rga3 COMPONENT chains)
+target_link_libraries(rga3_chains_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# rga3.incidence: joins, meets, and incidences of points, lines, and planes
+# against the reference's values, exact zeros included.
+galoot_add_test(MODULE rga3 COMPONENT incidence)
+target_link_libraries(rga3_incidence_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
 # Each misuse of rotation and translation is one error with its message, and
 # the line a reader sees first names no internal name.
 function(motions_rejects case message)
