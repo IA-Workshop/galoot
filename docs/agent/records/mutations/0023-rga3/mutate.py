@@ -1,12 +1,17 @@
 #!/usr/bin/env -S python3 -I
-"""Mutation runs for rotation and translation (galoot/rga3/motions.hpp).
+"""Mutation runs for the rga3 model: rotation and translation
+(galoot/rga3/motions.hpp), and the layouts and aliases of the objects
+(galoot/rga3/objects.hpp).
 
   mutate.py <preset> [mutant...]
 
-Applies one mutant at a time to motions.hpp, builds rga3_motions_test with
-ninja's -k 0, runs every test labeled rga3.motions (the program and every
-compile-fail test of the label), and restores the header. Every build and
-test goes through tools/timed with the selection mutant:<name>.
+Applies one mutant at a time to its header and restores the header after.
+A mutant of motions.hpp builds rga3_motions_test with ninja's -k 0 and runs
+every test labeled rga3.motions (the program and every compile-fail test of
+the label). A mutant of objects.hpp, which every rga3 program includes,
+builds every rga3 program with -k 0 and runs every test whose label starts
+with rga3. Every build and test goes through tools/timed with the selection
+mutant:<name>.
 
 A mutant is killed when a test fails: a program that does not compile
 because of an error in the test's own code (a static_assert of the test, or
@@ -30,10 +35,16 @@ import sys
 ROOT = pathlib.Path(subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True,
     check=True).stdout.strip())
-HEADER = ROOT / "include/galoot/rga3/motions.hpp"
+MOTIONS = ROOT / "include/galoot/rga3/motions.hpp"
+OBJECTS = ROOT / "include/galoot/rga3/objects.hpp"
 OUT = pathlib.Path(__file__).resolve().parent / "out"
-TARGETS = ["rga3_motions_test"]
-LABELS = r"^rga3\.motions$"
+MOTIONS_TARGETS = ["rga3_motions_test"]
+MOTIONS_LABELS = r"^rga3\.motions$"
+OBJECTS_TARGETS = ["rga3_objects_test", "rga3_motions_test",
+                   "rga3_point_groups_test", "rga3_chains_test",
+                   "rga3_incidence_test", "rga3_readme_example_1",
+                   "rga3_readme_example_2"]
+OBJECTS_LABELS = r"^rga3"
 
 # A layout other than the motor's, the core's grade order, for the mutants
 # of the return type.
@@ -86,6 +97,61 @@ MUTANTS = {
 }
 
 
+# A layout of objects.hpp given other blades.
+def layout(name, old, new):
+    head = f"inline constexpr auto {name}_layout =\n    core::blades<algebra, "
+    return [(f'{head}"{old}">;', f'{head}"{new}">;')]
+
+
+# An alias of objects.hpp given another layout or scalar.
+def alias(name, layout_name, scalar):
+    return [(f"using {name} = core::mv<algebra, {name.lower()}_layout, T>;",
+             f"using {name} = core::mv<algebra, {layout_name}_layout, {scalar}>;")]
+
+
+LINE = "e41 e42 e43 e23 e31 e12"
+PLANE = "e423 e431 e412 e321"
+MOTOR = "e41 e42 e43 e1234 e23 e31 e12 1"
+FLECTOR = "e1 e2 e3 e4 e423 e431 e412 e321"
+
+OBJECT_MUTANTS = {
+    # One blade's orientation flipped. A point's blades are the generators
+    # themselves, which have one name each, so the point has no such mutant.
+    "line_e14_for_e41": layout("line", LINE, LINE.replace("e41", "e14")),
+    "line_e13_for_e31": layout("line", LINE, LINE.replace("e31", "e13")),
+    "plane_e123_for_e321": layout("plane", PLANE, PLANE.replace("e321", "e123")),
+    "plane_e134_for_e431": layout("plane", PLANE, PLANE.replace("e431", "e134")),
+    "motor_e14_for_e41": layout("motor", MOTOR, MOTOR.replace("e41", "e14")),
+    "motor_e13_for_e31": layout("motor", MOTOR, MOTOR.replace("e31", "e13")),
+    "flector_e123_for_e321": layout("flector", FLECTOR, FLECTOR.replace("e321", "e123")),
+    "flector_e134_for_e431": layout("flector", FLECTOR, FLECTOR.replace("e431", "e134")),
+    # Blades moved.
+    "motor_1_e1234_swapped": layout("motor", MOTOR, "e41 e42 e43 1 e23 e31 e12 e1234"),
+    "motor_halves_swapped": layout("motor", MOTOR, "e23 e31 e12 1 e41 e42 e43 e1234"),
+    "flector_halves_swapped": layout("flector", FLECTOR, "e423 e431 e412 e321 e1 e2 e3 e4"),
+    # Each alias with its scalar fixed to double.
+    "point_alias_double": alias("Point", "point", "double"),
+    "line_alias_double": alias("Line", "line", "double"),
+    "plane_alias_double": alias("Plane", "plane", "double"),
+    "motor_alias_double": alias("Motor", "motor", "double"),
+    "flector_alias_double": alias("Flector", "flector", "double"),
+    # Each alias on the layout of another type of the same size.
+    "point_alias_on_plane_layout": alias("Point", "plane", "T"),
+    "plane_alias_on_point_layout": alias("Plane", "point", "T"),
+    "motor_alias_on_flector_layout": alias("Motor", "flector", "T"),
+    "flector_alias_on_motor_layout": alias("Flector", "motor", "T"),
+}
+for _name in OBJECT_MUTANTS:
+    assert _name not in MUTANTS, _name
+
+
+def suite(name):
+    """The header, targets, and labels of a mutant."""
+    if name in OBJECT_MUTANTS:
+        return OBJECTS, OBJECT_MUTANTS[name], OBJECTS_TARGETS, OBJECTS_LABELS
+    return MOTIONS, MUTANTS[name], MOTIONS_TARGETS, MOTIONS_LABELS
+
+
 def mutate(text, old, new):
     parts = text.split(old)
     if len(parts) != 2:
@@ -118,19 +184,20 @@ def failed_builds(output):
 
 
 def run(preset, name):
-    original = HEADER.read_text()
+    header, edits, targets, labels = suite(name)
+    original = header.read_text()
     text = original
-    for old, new in MUTANTS[name]:
+    for old, new in edits:
         text = mutate(text, old, new)
-    HEADER.write_text(text)
+    header.write_text(text)
     try:
         build = timed("build", preset, f"mutant:{name}",
-                      ["ninja", "-C", f"build/{preset}", "-k", "0", *TARGETS])
+                      ["ninja", "-C", f"build/{preset}", "-k", "0", *targets])
         tests = timed("test", preset, f"mutant:{name}",
                       ["ctest", "--test-dir", f"build/{preset}", "-L",
-                       LABELS])
+                       labels])
     finally:
-        HEADER.write_text(original)
+        header.write_text(original)
     failed = re.findall(r"^\s*\d+ - (\S+) \(", tests.stdout, re.MULTILINE)
     return [name, str(build.returncode),
             " | ".join(failed_builds(build.stdout)) or "-",
@@ -141,7 +208,7 @@ def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     preset = sys.argv[1]
-    names = sys.argv[2:] or list(MUTANTS)
+    names = sys.argv[2:] or [*MUTANTS, *OBJECT_MUTANTS]
     OUT.mkdir(exist_ok=True)
     record = OUT / f"{preset}.tsv"
     # A run of some mutants replaces their rows and keeps the others.
@@ -153,13 +220,15 @@ def main():
         rows[name] = run(preset, name)
         print("\t".join(rows[name]), flush=True)
     header = ["mutant", "build_exit", "build_failures", "failed_tests"]
-    ordered = [rows[name] for name in MUTANTS if name in rows]
+    ordered = [rows[name] for name in [*MUTANTS, *OBJECT_MUTANTS]
+               if name in rows]
     with open(record, "w", encoding="utf-8") as f:
         f.write("".join("\t".join(r) + "\n" for r in [header, *ordered]))
 
-    # Rebuild the unmutated program, so that the tree matches the header.
+    # Rebuild the unmutated programs, so that the tree matches the headers.
+    targets = sorted({t for name in names for t in suite(name)[2]})
     rebuilt = timed("build", preset, "mutant:restore",
-                    ["ninja", "-C", f"build/{preset}", *TARGETS])
+                    ["ninja", "-C", f"build/{preset}", *targets])
     if rebuilt.returncode != 0:
         sys.exit("the restored header does not build")
 

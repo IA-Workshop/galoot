@@ -1,12 +1,14 @@
-# Mutants of rotation and translation (WU16)
+# Mutants of the rga3 model (WU16)
+
+## Mutants of rotation and translation
 
 Plan 0023 section 6, the mutants that concern `include/galoot/rga3/motions.hpp`. `mutate.py` applies one mutant at a time to the header, builds `rga3_motions_test` with `ninja -k 0`, runs every test labeled `rga3.motions` (the program and the nine compile-fail tests), and restores the header. Results: `out/gcc-debug.tsv` and `out/clang-debug.tsv` (mutant, build exit, each failed build with its first error line, the failed tests); every build and test is a `mutant:<name>` row in `runs.tsv`.
 
 Run by the WU16 implementer (Claude, agent, Opus 5.5) in `.claude/worktrees/rga3`, one preset after the other, so no two runs edited the header at once. All 23 ran at `61c6b17` (the header of `d44ec64`). Eight survived on both compilers; six of them are equivalent (below), and the other two, `integer_catch_all_any_type` and `mixed_catch_all_any_type`, were killed after `62ef7b9` added three requires-probes to the overload test case. Those two were run again with that edit in the tree before it was committed, unchanged, as `62ef7b9`; their rows replace the first ones.
 
-The layout mutants of the objects (flipped blades, motor and flector halves swapped) belong to the objects header and its tests, not to this record.
+The layout and alias mutants of `include/galoot/rga3/objects.hpp` are in the second half of this record, [Mutants of the objects](#mutants-of-the-objects-wu16).
 
-## Result
+### Result
 
 23 mutants, each on gcc-debug and clang-debug: 17 killed on both compilers, each by a test, and six equivalent survivors.
 
@@ -37,3 +39,27 @@ The layout mutants of the objects (flipped blades, motor and flector halves swap
 - `axis_catch_all_any_type`: for a non-multivector X, `typename X::scalar_type` in the result type is a substitution failure, so the overload is not viable, as before; `!can_call_rotation<double, double>` holds either way.
 
 Both compilers agree with this reading: every compile-fail test still gave its one message. So the requires-clauses do not change overload resolution. They are kept because each states the case its catch-all rejects, and the result does not then rest on the ordering rules above.
+
+## Mutants of the objects (WU16)
+
+Plan 0023 section 6, the mutants that concern `include/galoot/rga3/objects.hpp`: each layout with one blade's orientation flipped, the motor layout with 1 and e1234 swapped and with its halves swapped, the flector layout with its halves swapped, and each alias with its scalar fixed to double or with the layout of another type of the same size. Every rga3 program includes the header, so `mutate.py` builds all seven (`rga3_objects_test`, `_motions_test`, `_point_groups_test`, `_chains_test`, `_incidence_test`, `rga3_readme_example_1`, `_2`) with `ninja -k 0` and runs every test whose label starts with `rga3`. The rows follow the motions rows in `out/gcc-debug.tsv` and `out/clang-debug.tsv`; the motions rows were not run again.
+
+Run by a WU16 implementer (Claude, agent, Opus 5.5) at `613cab0`, whose `objects.hpp` is that of `554d3ba`, gcc-debug and then clang-debug. A point has no flipped-blade mutant: its blades are the generators, which have one name each.
+
+### Result
+
+20 mutants, each on gcc-debug and clang-debug: all 20 killed on both compilers, each by a test, and none by a warning (no build failure names a `-W` flag). Every first error line is a static_assert of a test, a call in a test's own code that has no overload, or a static_assert of the core that a test's conversion or product reaches.
+
+| Mutant | Killed by (both compilers) |
+| --- | --- |
+| `line_e14_for_e41`, `line_e13_for_e31` | the layout static_asserts of `objects_test.cpp` (`line_layout == set_of(line_names)`); `rga3.motions`, `rga3.incidence` |
+| `plane_e123_for_e321`, `plane_e134_for_e431` | the layout static_asserts; the static_assert of README example 2; `rga3.incidence` |
+| `motor_e14_for_e41` | the layout static_asserts; `rga3.motions`, `rga3.point_groups`, `rga3.chains` |
+| `motor_e13_for_e31` | the layout static_asserts; `rga3.motions`, `rga3.readme_example_1` |
+| `flector_e123_for_e321` | the layout static_asserts only: no run-time test fails |
+| `flector_e134_for_e431`, `flector_halves_swapped` | the layout static_asserts; `rga3.point_groups` |
+| `motor_1_e1234_swapped`, `motor_halves_swapped` | the layout static_asserts; `rga3.motions`, `rga3.point_groups`, `rga3.chains`, `rga3.readme_example_1` |
+| `point_alias_double`, `line_alias_double`, `plane_alias_double`, `motor_alias_double`, `flector_alias_double` | calls with no overload in the tests over `std::int64_t`, `int`, and the test rational (a braced construction from those scalars, or a product of mixed scalars); for Motor also the `scalar_type` static_assert of `objects_test.cpp`, and for Flector the static_asserts on what compose converts to; `line_alias_double` also fails the four rotation compile-fail tests (`rga3.rotation_integer_scalar`, `_rational_scalar`, `_angle_int`, `_angle_double_for_float`) |
+| `point_alias_on_plane_layout`, `plane_alias_on_point_layout`, `motor_alias_on_flector_layout`, `flector_alias_on_motor_layout` | the static_asserts of `objects_test.cpp` that each alias is the multivector on its own layout; the core's lossy-conversion static_assert reached from the tests' conversions (`Line{p ^ q}` and the like); for all but `plane_alias_on_point_layout` also run-time tests (`rga3.motions`, `rga3.point_groups`, `rga3.chains`, `rga3.bare_compile`) |
+
+`flector_e123_for_e321` fails no run-time test because the one program whose checks reach a flector's offset does not build: `objects_test.cpp` reflects (5, 7, -1) in the mirror with offset -2 on e321, which the flipped blade would move, but its layout static_assert stops the build first. The other programs use flectors through point groups, whose mirrors pass through the origin, so their offset is zero and the flip leaves them unchanged. The mutant is killed by a test either way; it is not a gap.
