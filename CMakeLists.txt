@@ -40,6 +40,7 @@ add_library(galoot::rga3 ALIAS galoot_rga3)
 target_sources(galoot_rga3 INTERFACE
   FILE_SET HEADERS BASE_DIRS include FILES
     include/galoot/rga3.hpp
+    include/galoot/rga3/motions.hpp
     include/galoot/rga3/objects.hpp)
 target_link_libraries(galoot_rga3 INTERFACE galoot_core)
 
