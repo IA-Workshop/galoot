@@ -301,11 +301,12 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
 //   type that is not a built-in integer, each returning a Motor of that
 //   scalar type, a rotation over an integer or exact scalar, about an axis
 //   that is not a Line, or with an angle of another type, and a translation
-//   over integers, each reach a function whose only effect is its error
-//   message, so a requires-expression that asks whether such a call is valid
-//   is told yes, as the library documents, while a number is no axis, and
-//   rotation is found by an unqualified call, since its Line argument names
-//   the model's namespace, and translation, whose arguments are plain
+//   over integers or over scalars of two types, each reach a function whose
+//   only effect is its error message, so a requires-expression that asks
+//   whether such a call is valid is told yes, as the library documents,
+//   while a number is no axis and a pointer is no scalar of a translation,
+//   and rotation is found by an unqualified call, since its Line argument
+//   names the model's namespace, and translation, whose arguments are plain
 //   scalars, only by a qualified one
 TEST_CASE("the rotation and translation overloads take the right arguments") {
   using std::int64_t;
@@ -328,6 +329,9 @@ TEST_CASE("the rotation and translation overloads take the right arguments") {
                              rga3::Motor<rational>>);
   static_assert(can_call_translation<int, int, int>);
   static_assert(can_call_translation<int64_t, int64_t, int64_t>);
+  static_assert(can_call_translation<double, int, double>);
+  static_assert(!can_call_translation<const char*, const char*, const char*>);
+  static_assert(!can_call_translation<const char*, int, int>);
 
   static_assert(finds_rotation<rga3::Line<double>, double>);
   static_assert(!finds_translation<double, double, double>);
