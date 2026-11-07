@@ -1284,6 +1284,7 @@ def generate():
                     for a, terms in images])
     close_namespace(out, "exomorphisms")
 
+    rm.self_check()
     incidences = rigid_incidences()
     open_namespace(out, "rigid_lines",
                    "the line p ^ q has direction w_p q - w_q p and moment "
