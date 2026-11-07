@@ -1327,3 +1327,25 @@ TEST_CASE("the transform's kernels keep the terms that reach x's blades") {
   static_assert(
       !well_formed<3>(second_kernel<rga3, motor_layout, point_layout, true>));
 }
+
+// Reference: independent value: by hand, in the degenerate form with
+//   e1 . e2 = 1 and every other product of generators 0, for V on e1, e2,
+//   e3, e123 and x on e123, the antiscalar, which is the identity of the
+//   antiproduct. V ⟇ x has one term for each blade of V, 4 in all, and its
+//   middle blades are V's. The second stage reaches x's blade e123 from a
+//   middle blade m and a blade v of V only when right(m) right(v) has a
+//   scalar part, and among the bivectors e23, e13 (up to sign), and e12,
+//   which are the right complements of e1, e2, and e3, only e12 e12 has
+//   one, g12 g21 - g11 g22 = 1. So the kept terms read only the middle
+//   blades e3 and e123, and the first stage keeps 2 of its 4 terms
+TEST_CASE("the first stage keeps only the terms that the kept terms read") {
+  constexpr auto scalar_blade_of_3 = core::blades<degenerate3, "e123">;
+  static_assert(core::detail::first_kernel<degenerate3,
+                                           even_blades_of_3<degenerate3>,
+                                           scalar_blade_of_3, false>
+                    .size() == 2);
+  static_assert(core::detail::first_kernel<degenerate3,
+                                           even_blades_of_3<degenerate3>,
+                                           scalar_blade_of_3, true>
+                    .size() == 4);
+}
