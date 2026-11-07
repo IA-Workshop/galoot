@@ -1892,3 +1892,13 @@ foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
     core.transform_unchecked_${case}
     PROPERTIES LABELS "core;core.transform")
 endforeach()
+
+# core.transform_identities: the outermorphism and composition identities of
+# transform over many signatures. A program of its own, so that a change to
+# the tests of transform_test.cpp does not rebuild it; it also carries the
+# label core.transform.
+galoot_add_test(MODULE core COMPONENT transform_identities)
+target_link_libraries(core_transform_identities_test PRIVATE
+  galoot_test_support)
+set_property(TEST core.transform_identities APPEND PROPERTY LABELS
+  core.transform)
