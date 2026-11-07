@@ -35,6 +35,20 @@
 
 namespace galoot_test::identities {
 
+// The identities a test case checks.
+enum class Identity : std::uint8_t {
+  de_morgan,
+  antiproduct_laws,
+  product_rules,
+};
+
+// The checks have internal linkage, as they would in a single source, so
+// that the compiler may inline each one into the one function that calls
+// it and drop its own copy. With external linkage, GCC spent half again as
+// many instructions compiling these sources at -O1 with the sanitizers.
+// NOLINTNEXTLINE(misc-anonymous-namespace-in-header): one copy per source
+namespace {
+
 namespace core = galoot::core;
 
 // An algebra whose metric is the value G.
@@ -253,13 +267,6 @@ template <auto G>
 using sparse_b_mv =
     core::mv<form<G>, sparse_b<generators<form<G>>>, std::int64_t>;
 
-// The identities a test case checks.
-enum class Identity : std::uint8_t {
-  de_morgan,
-  antiproduct_laws,
-  product_rules,
-};
-
 // One identity on random a of A<G> and b of B<G>, for each form G of the
 // list in its order.
 template <template <auto> class A, template <auto> class B, auto... G>
@@ -277,6 +284,8 @@ void check_each(Identity identity, forms<G...> /*list*/,
     return;
   }
 }
+
+} // namespace
 
 // Each group checks an identity over its forms, on the layouts its source
 // states, drawing from source in the order of its forms.

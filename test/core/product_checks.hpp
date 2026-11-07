@@ -28,6 +28,12 @@
 
 namespace galoot_test::products {
 
+// The algebras and the checks have internal linkage, as they would in a
+// single source, so that the compiler may inline each check into the
+// function that calls it and drop its own copy.
+// NOLINTNEXTLINE(misc-anonymous-namespace-in-header): one copy per source
+namespace {
+
 namespace core = galoot::core;
 
 struct rga3 {
@@ -197,6 +203,8 @@ int antiproduct_mismatches(
   }
   return mismatches;
 }
+
+} // namespace
 
 } // namespace galoot_test::products
 
