@@ -68,11 +68,11 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | yes |
 | 5.4 | a chain of joint motors moves points as its product of 4x4 matrices | no |
 | 5.5 | the translator t_x e23 + t_y e31 + t_z e12 + antiscalar moves points by 2t | yes |
-| 5.5 | the rotor l sin(phi) + antiscalar cos(phi) turns by 2 phi about l | no |
+| 5.5 | the rotor l sin(phi) + antiscalar cos(phi) turns by 2 phi about l | yes |
 | 5.6 | a reflected point keeps a positive weight | yes |
 | 5.6 | the 32 crystal classes close under compose with their published orders | no |
-| 5.7 | rotation(l, theta) turns by theta | no |
-| 5.7 | translation(dx, dy, dz) moves points by d = (dx, dy, dz) | no |
+| 5.7 | rotation(l, theta) turns by theta | yes |
+| 5.7 | translation(dx, dy, dz) moves points by d = (dx, dy, dz) | yes |
 | 5.8 | a motor is stored on e41, e42, e43, e1234, e23, e31, e12, 1 in that order | yes |
 | 5.8 | a flector is stored on e1, e2, e3, e4, e423, e431, e412, e321 in that order | yes |
 | 5.8 | the antiproduct of two motors or two flectors is a motor, and of a motor and a flector a flector | yes |
