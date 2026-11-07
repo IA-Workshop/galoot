@@ -575,6 +575,439 @@ def check_odd_sign(rng):
     return found
 
 
+# The coordinates of the rigid objects of rigid(3), in Lengyel's oriented
+# names and in the order of his published formulas. A motor is a weight
+# (r_x, r_y, r_z, r_w) and a bulk (u_x, u_y, u_z, u_w); a flector is a point
+# and a plane.
+POINT_NAMES = ("e1", "e2", "e3", "e4")
+LINE_NAMES = ("e41", "e42", "e43", "e23", "e31", "e12")
+PLANE_NAMES = ("e423", "e431", "e412", "e321")
+MOTOR_NAMES = ("e41", "e42", "e43", "e1234", "e23", "e31", "e12", "1")
+FLECTOR_NAMES = ("e1", "e2", "e3", "e4", "e423", "e431", "e412", "e321")
+
+# Sines and cosines of half angles with rational values, from Pythagorean
+# triples; the last turns by more than a half turn.
+HALF_ANGLES = tuple((Fraction(s), Fraction(c)) for s, c in (
+    ("3/5", "4/5"), ("5/13", "12/13"), ("8/17", "15/17"), ("7/25", "24/25"),
+    ("4/5", "-3/5")))
+
+
+def on_names(names, values):
+    return add(*(blade(n, v) for n, v in zip(names, values)))
+
+
+def cross(a, b):
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]]
+
+
+def translator(d):
+    """The motor that moves by d: half of d on e23, e31, e12, plus the
+    antiscalar."""
+    return add(on_names(("e23", "e31", "e12"), [Fraction(x, 2) for x in d]),
+               blade("e1234"))
+
+
+def rotor(line, s, c):
+    """line sin(phi) + antiscalar cos(phi), given s = sin(phi) and
+    c = cos(phi); it turns by 2 phi about the line."""
+    return add(scale(line, s), blade("e1234", c))
+
+
+def rigid_transform(v, x):
+    """The transform of x by a versor of rigid(3): V v x v antireverse(V) for
+    an even V, and -V v x^ v antireverse(V) for an odd one."""
+    parities = {popcount(m) & 1 for m in v}
+    if len(parities) != 1:
+        raise ValueError("a versor has blades of one parity")
+    if parities == {0}:
+        return sandwich(v, x)
+    return scale(sandwich(v, involute(x)), -1)
+
+
+def rigid_affine(v):
+    """The 3 by 4 matrix [R | t] of the rigid motion of a versor V with
+    V v antireverse(V) = lambda antiscalar, lambda > 0: column j < 3 is the
+    image of the direction e_(j+1) and column 3 the image of the origin, each
+    divided by lambda."""
+    lam = antigp(v, antireverse(v))
+    if set(lam) != {FULL} or lam[FULL] <= 0:
+        raise ValueError("V v antireverse(V) is not a positive antiscalar")
+    images = [coeffs(rigid_transform(v, blade(n)), POINT_NAMES)
+              for n in POINT_NAMES]
+    for j, image in enumerate(images):
+        if image[3] != (lam[FULL] if j == 3 else 0):
+            raise ValueError("a versor moved the weight of a point")
+    return [[images[j][i] / lam[FULL] for j in range(4)] for i in range(3)]
+
+
+def normalized(v):
+    """V divided by its first nonzero coefficient in order of mask, so that
+    the versors of one motion, which differ by a nonzero factor, become one."""
+    first = v[min(v)]
+    return clean({m: c / first for m, c in v.items()})
+
+
+def versor_closure(generators):
+    """Every product of the generators under the antiproduct, each normalized,
+    with the antiscalar as the identity."""
+    identity = normalized(blade("e1234"))
+    found = {tuple(sorted(identity.items())): identity}
+    frontier = [identity]
+    while frontier:
+        new = []
+        for x in frontier:
+            for g in generators:
+                y = normalized(antigp(x, g))
+                key = tuple(sorted(y.items()))
+                if key not in found:
+                    found[key] = y
+                    new.append(y)
+        frontier = new
+    return list(found.values())
+
+
+def check_motor_flector_layouts(rng):
+    """The motor layout holds exactly the blades of even grade and the
+    flector layout those of odd grade, so the antiproduct of two motors or two
+    flectors is on the motor layout and that of a motor and a flector, in
+    either order, is on the flector layout. Checked on random coefficients,
+    not only on versors."""
+    motor_masks = {parse(n)[0] for n in MOTOR_NAMES}
+    flector_masks = {parse(n)[0] for n in FLECTOR_NAMES}
+    check(motor_masks == {m for m in range(1 << N) if popcount(m) % 2 == 0},
+          "the motor layout is the blades of even grade")
+    check(flector_masks == {m for m in range(1 << N) if popcount(m) % 2},
+          "the flector layout is the blades of odd grade")
+
+    def draw(names):
+        return on_names(names, [Fraction(rng.randint(-9, 9), rng.randint(1, 5))
+                                for _ in names])
+
+    pairs = ((MOTOR_NAMES, MOTOR_NAMES, motor_masks),
+             (FLECTOR_NAMES, FLECTOR_NAMES, motor_masks),
+             (MOTOR_NAMES, FLECTOR_NAMES, flector_masks),
+             (FLECTOR_NAMES, MOTOR_NAMES, flector_masks))
+    for a_names, b_names, result in pairs:
+        for _ in range(TRIALS // 4):
+            product = antigp(draw(a_names), draw(b_names))
+            check(set(product) <= result,
+                  f"antiproduct of {a_names[0]}... and {b_names[0]}... "
+                  f"stays on its layout")
+
+
+def check_line_moment(rng):
+    """For points p and q of weights w_p and w_q, p ^ q has direction
+    w_p q - w_q p on e41, e42, e43 and moment p x q on e23, e31, e12."""
+    for _ in range(TRIALS):
+        p = [Fraction(rng.randint(-9, 9), rng.randint(1, 5)) for _ in range(4)]
+        q = [Fraction(rng.randint(-9, 9), rng.randint(1, 5)) for _ in range(4)]
+        line = coeffs(wedge(point(*p), point(*q)), LINE_NAMES)
+        check(line[:3] == [p[3] * q[i] - q[3] * p[i] for i in range(3)],
+              "line direction w_p q - w_q p")
+        check(line[3:] == cross(p[:3], q[:3]), "line moment p x q")
+
+
+def check_incidence(rng):
+    """Joins and meets of points, lines, and planes in coordinates, each a
+    polynomial identity checked on random rationals: the plane through three
+    unitized points, a line meeting a plane, two planes meeting in a line,
+    three planes meeting in a point, and the scalar meet of two lines."""
+    def draw(k):
+        return [Fraction(rng.randint(-9, 9), rng.randint(1, 5))
+                for _ in range(k)]
+
+    def dot3(a, b):
+        return sum(x * y for x, y in zip(a, b))
+
+    for _ in range(TRIALS):
+        p, q, r = (point(*draw(3)) for _ in range(3))
+        pc, qc, rc = (coeffs(x, POINT_NAMES) for x in (p, q, r))
+        n = cross([qc[i] - pc[i] for i in range(3)],
+                  [rc[i] - pc[i] for i in range(3)])
+        check(coeffs(wedge(wedge(p, q), r), PLANE_NAMES) ==
+              n + [-dot3(n, pc)],
+              "the plane p ^ q ^ r of unitized points is (n, -n . p) with "
+              "n = (q - p) x (r - p)")
+
+        g, h, k = (draw(4) for _ in range(3))
+        gv, hv, kv = (on_names(PLANE_NAMES, x) for x in (g, h, k))
+        v = [qc[i] - pc[i] for i in range(3)]
+        m = cross(pc[:3], qc[:3])
+        meet = coeffs(antiwedge(wedge(p, q), gv), POINT_NAMES)
+        check(meet == [a + g[3] * b for a, b in zip(cross(m, g[:3]), v)] +
+              [-dot3(v, g[:3])],
+              "the line p ^ q meets the plane g in (m x g_n + g_w v, "
+              "-v . g_n)")
+        line = coeffs(antiwedge(gv, hv), LINE_NAMES)
+        check(line[:3] == cross(h[:3], g[:3]),
+              "g v h has direction h_n x g_n")
+        check(line[3:] == [h[3] * g[i] - g[3] * h[i] for i in range(3)],
+              "g v h has moment h_w g_n - g_w h_n")
+        three = coeffs(antiwedge(antiwedge(gv, hv), kv), POINT_NAMES)
+        check(three == [determinant([g, h, k, [Fraction(int(i == j))
+                                               for i in range(4)]])
+                        for j in range(4)],
+              "(g v h) v k is the point with coordinates det[g; h; k; e_j]")
+        check(all(dot3(x, three) == 0 for x in (g, h, k)),
+              "(g v h) v k lies on g, h, and k")
+        a, b = (draw(4) for _ in range(2))
+        check(antiwedge(wedge(p, q), wedge(point(*a), point(*b))) ==
+              clean({0: determinant([pc, qc, a, b])}),
+              "(p ^ q) v (a ^ b) = det[p; q; a; b]")
+
+
+def check_translation(rng):
+    """translation(d) is half of d on e23, e31, e12 plus the antiscalar. It
+    moves points by d, leaves a direction (a vector of weight 0) and the
+    direction of a line unchanged, and is unitized for every d."""
+    for _ in range(TRIALS // 4):
+        d = [Fraction(rng.randint(-9, 9), rng.randint(1, 5)) for _ in range(3)]
+        t = translator(d)
+        check(antigp(t, antireverse(t)) == blade("e1234"),
+              "a translator is unitized")
+        p = [Fraction(rng.randint(-9, 9), rng.randint(1, 5)) for _ in range(3)]
+        check(coeffs(sandwich(t, point(*p)), POINT_NAMES) ==
+              [p[i] + d[i] for i in range(3)] + [1],
+              "translation(d) moves points by d")
+        direction = point(*p, w=0)
+        check(sandwich(t, direction) == direction,
+              "translation(d) leaves a direction unchanged")
+        line = wedge(point(*p), random_point(rng))
+        check(coeffs(sandwich(t, line), LINE_NAMES)[:3] ==
+              coeffs(line, LINE_NAMES)[:3],
+              "translation(d) leaves the direction of a line unchanged")
+    moved = coeffs(sandwich(translator((2, 4, -6)), point(1, 2, 3)),
+                   POINT_NAMES)
+    check(moved == [3, 6, -3, 1],
+          "translation (2, 4, -6) moves (1, 2, 3, 1) to (3, 6, -3, 1)")
+
+
+def rotation_matrices(c2, s2):
+    """The right-handed rotations by the angle with cosine c2 and sine s2
+    about x, y, and z, which turn counterclockwise seen from the tip of the
+    axis."""
+    return {"e41": [[1, 0, 0], [0, c2, -s2], [0, s2, c2]],
+            "e42": [[c2, 0, s2], [0, 1, 0], [-s2, 0, c2]],
+            "e43": [[c2, -s2, 0], [s2, c2, 0], [0, 0, 1]]}
+
+
+def check_rotation(rng):
+    """rotation(l, theta) is l sin(theta/2) + antiscalar cos(theta/2). With
+    s and c the sine and cosine of a rational half angle, it turns points about
+    the x, y, and z axes as the right-handed rotation matrices whose cosine
+    is c^2 - s^2 and sine 2sc, and about a line through a point a as
+    a + R(p - a). The rotor is unitized."""
+    for s, c in HALF_ANGLES:
+        matrices = rotation_matrices(c * c - s * s, 2 * s * c)
+        for axis, matrix in matrices.items():
+            r = rotor(blade(axis), s, c)
+            check(antigp(r, antireverse(r)) == blade("e1234"),
+                  "a rotor of a unitized line is unitized")
+            for _ in range(TRIALS // 50):
+                p = [Fraction(rng.randint(-9, 9), rng.randint(1, 5))
+                     for _ in range(3)]
+                turned = coeffs(sandwich(r, point(*p)), POINT_NAMES)
+                check(turned == [sum(matrix[i][j] * p[j] for j in range(3))
+                                 for i in range(3)] + [1],
+                      f"rotation about {axis} turns as the right-handed "
+                      f"matrix")
+        # About the line through a = (1, 2, 0) with direction z, so that
+        # the line is a ^ (a + e3), with moment a x e3 = (2, -1, 0).
+        a = [Fraction(1), Fraction(2), Fraction(0)]
+        line = wedge(point(*a), point(a[0], a[1], a[2] + 1))
+        check(coeffs(line, LINE_NAMES) == [0, 0, 1, 2, -1, 0],
+              "the line through (1, 2, 0) along z")
+        r = rotor(line, s, c)
+        for _ in range(TRIALS // 50):
+            p = [Fraction(rng.randint(-9, 9), rng.randint(1, 5))
+                 for _ in range(3)]
+            rel = [p[i] - a[i] for i in range(3)]
+            turned = coeffs(sandwich(r, point(*p)), POINT_NAMES)
+            check(turned == [a[i] + sum(matrices["e43"][i][j] * rel[j]
+                                        for j in range(3))
+                             for i in range(3)] + [1],
+                  "rotation about a line off the origin turns about it")
+    # The scaled rotor 3 e43 + 4 antiscalar, with lambda = 25, turns
+    # (1, 0, 0, 1) into 25 (7/25, 24/25, 0, 1).
+    check(coeffs(sandwich(add(blade("e43", 3), blade("e1234", 4)),
+                          point(1, 0, 0)), POINT_NAMES) == [7, 24, 0, 25],
+          "3 e43 + 4 antiscalar turns (1, 0, 0, 1) into (7, 24, 0, 25)")
+
+
+def joint_motor(theta, d, a, alpha):
+    """The motor of one joint, Rz(theta) Tz(d) Tx(a) Rx(alpha) as a product
+    of matrices acting on column points, so Rx(alpha) applies first. Each
+    angle is given as the sine and cosine of its half."""
+    rz = rotor(blade("e43"), *theta)
+    rx = rotor(blade("e41"), *alpha)
+    return antigp(antigp(antigp(rz, translator((0, 0, d))),
+                         translator((a, 0, 0))), rx)
+
+
+def check_joint_chain(rng):
+    """A chain of four joints, each Rz(theta) Tz(d) Tx(a) Rx(alpha) with
+    rational half angles, composes to a unitized motor that moves lines and
+    planes as the points that span them, and applying the joints one at a
+    time from the last to the first equals one transform by the product."""
+    for _ in range(TRIALS // 20):
+        joints = [(rng.choice(HALF_ANGLES), Fraction(rng.randint(-6, 6)),
+                   Fraction(rng.randint(-6, 6)), rng.choice(HALF_ANGLES))
+                  for _ in range(4)]
+        motors = [joint_motor(*j) for j in joints]
+        chain = motors[0]
+        for q in motors[1:]:
+            chain = antigp(chain, q)
+        check(antigp(chain, antireverse(chain)) == blade("e1234"),
+              "a chain of unitized joints is unitized")
+        check(set(chain) <= {parse(n)[0] for n in MOTOR_NAMES},
+              "a chain of joints is on the motor layout")
+        p, q, r = (random_point(rng) for _ in range(3))
+        tp, tq, tr = (sandwich(chain, x) for x in (p, q, r))
+        check(sandwich(chain, wedge(p, q)) == wedge(tp, tq),
+              "a chain moves a line as the points that span it")
+        check(sandwich(chain, wedge(wedge(p, q), r)) ==
+              wedge(wedge(tp, tq), tr),
+              "a chain moves a plane as the points that span it")
+        stepwise = p
+        for q_ in reversed(motors):
+            stepwise = sandwich(q_, stepwise)
+        check(stepwise == tp, "the joints apply from the last to the first")
+
+
+def check_motor_and_flector_pages(rng):
+    """The formulas of the Motor and Flector pages of Lengyel's rigid
+    geometric algebra wiki (rigidgeometricalgebra.org), recomputed from the
+    definitions: the layouts' geometric constraint; the motors built from two
+    planes, two lines, and two points; the Motor page's transformation rows,
+    factorization, and matrix; and the Flector page's factorization and
+    matrix, and e4 as the inversion through the origin. The Flector page's
+    rows for points, lines, and planes use the single-sign transform and are
+    checked by check_versors and recorded as a disagreement, so they are not
+    repeated here."""
+    def draw(k):
+        return [Fraction(rng.randint(-9, 9), rng.randint(1, 5))
+                for _ in range(k)]
+
+    def dot3(a, b):
+        return sum(x * y for x, y in zip(a, b))
+
+    def lin(*terms):
+        return [sum(k * v[i] for k, v in terms) for i in range(3)]
+
+    for _ in range(TRIALS // 4):
+        planes = [on_names(PLANE_NAMES, draw(4)) for _ in range(3)]
+        q = coeffs(antigp(planes[0], planes[1]), MOTOR_NAMES)
+        f = coeffs(antigp(antigp(planes[0], planes[1]), planes[2]),
+                   FLECTOR_NAMES)
+        check(sum(q[i] * q[i + 4] for i in range(4)) == 0,
+              "a motor meets the geometric constraint")
+        check(sum(f[i] * f[i + 4] for i in range(4)) == 0,
+              "a flector meets the geometric constraint")
+
+        g, h = draw(4), draw(4)
+        gx, gy, gz, gw = g
+        hx, hy, hz, hw = h
+        check(coeffs(antigp(on_names(PLANE_NAMES, h),
+                            antireverse(on_names(PLANE_NAMES, g))),
+                     MOTOR_NAMES) ==
+              [gy * hz - gz * hy, gz * hx - gx * hz, gx * hy - gy * hx,
+               gx * hx + gy * hy + gz * hz, hx * gw - gx * hw,
+               hy * gw - gy * hw, hz * gw - gz * hw, 0],
+              "Motor page: h v antireverse(g)")
+        k = coeffs(wedge(random_point(rng), random_point(rng)), LINE_NAMES)
+        l = coeffs(wedge(random_point(rng), random_point(rng)), LINE_NAMES)
+        kvx, kvy, kvz, kmx, kmy, kmz = k
+        lvx, lvy, lvz, lmx, lmy, lmz = l
+        check(coeffs(antigp(on_names(LINE_NAMES, l),
+                            antireverse(on_names(LINE_NAMES, k))),
+                     MOTOR_NAMES) ==
+              [lvz * kvy - lvy * kvz, lvx * kvz - lvz * kvx,
+               lvy * kvx - lvx * kvy, lvx * kvx + lvy * kvy + lvz * kvz,
+               lvz * kmy - lvy * kmz + lmz * kvy - lmy * kvz,
+               lvx * kmz - lvz * kmx + lmx * kvz - lmz * kvx,
+               lvy * kmx - lvx * kmy + lmy * kvx - lmx * kvy,
+               lvx * kmx + lvy * kmy + lvz * kmz + lmx * kvx + lmy * kvy
+               + lmz * kvz],
+              "Motor page: l v antireverse(k)")
+        p, p2 = draw(4), draw(4)
+        check(coeffs(antigp(point(*p2), antireverse(point(*p))),
+                     MOTOR_NAMES) ==
+              [0, 0, 0, p[3] * p2[3]] +
+              [p2[i] * p[3] - p[i] * p2[3] for i in range(3)] + [0],
+              "Motor page: q v antireverse(p)")
+
+        # A unitized motor with every component nonzero, and a unitized
+        # flector made from it.
+        s1, c1 = rng.choice(HALF_ANGLES)
+        s2, c2 = rng.choice(HALF_ANGLES)
+        motor = antigp(antigp(translator(draw(3)),
+                              rotor(blade("e41"), s1, c1)),
+                       rotor(blade("e42"), s2, c2))
+        vx, vy, vz, vw, mx, my, mz, mw = coeffs(motor, MOTOR_NAMES)
+        v, m = [vx, vy, vz], [mx, my, mz]
+        x = draw(4)
+        moved = coeffs(sandwich(motor, point(*x)), POINT_NAMES)
+        a = lin((1, cross(v, x[:3])), (x[3], m))
+        check(moved == lin((1, x[:3]), (2 * vw, a), (2, cross(v, a)),
+                           (-2 * mw * x[3], v)) + [x[3]],
+              "Motor page: the point row")
+        lv, lm = l[:3], l[3:]
+        a, b, c = cross(v, lv), cross(v, lm), cross(m, lv)
+        bc = lin((1, b), (1, c))
+        check(coeffs(sandwich(motor, on_names(LINE_NAMES, l)), LINE_NAMES) ==
+              lin((1, lv), (2 * vw, a), (2, cross(v, a))) +
+              lin((1, lm), (2 * mw, a), (2 * vw, bc), (2, cross(v, bc)),
+                  (2, cross(m, a))),
+              "Motor page: the line row")
+        a = cross(v, g[:3])
+        check(coeffs(sandwich(motor, on_names(PLANE_NAMES, g)), PLANE_NAMES) ==
+              lin((1, g[:3]), (2 * vw, a), (2, cross(v, a))) +
+              [gw + 2 * (dot3(lin((1, cross(m, g[:3])), (mw, g[:3])), v)
+                         - vw * dot3(m, g[:3]))],
+              "Motor page: the plane row")
+        t = antigp(motor, antireverse(on_names(MOTOR_NAMES[:4],
+                                               [vx, vy, vz, vw])))
+        check(t == translator([2 * (vy * mz - vz * my + mx * vw - vx * mw),
+                               2 * (vz * mx - vx * mz + my * vw - vy * mw),
+                               2 * (vx * my - vy * mx + mz * vw - vz * mw)]),
+              "Motor page: the factor T = Q v antireverse(R)")
+        matrix = [[1 - 2 * (vy * vy + vz * vz), 2 * vx * vy - 2 * vz * vw,
+                   2 * vz * vx + 2 * vy * vw,
+                   2 * (vy * mz - vz * my) + 2 * (vw * mx - vx * mw)],
+                  [2 * vx * vy + 2 * vz * vw, 1 - 2 * (vz * vz + vx * vx),
+                   2 * vy * vz - 2 * vx * vw,
+                   2 * (vz * mx - vx * mz) + 2 * (vw * my - vy * mw)],
+                  [2 * vz * vx - 2 * vy * vw, 2 * vy * vz + 2 * vx * vw,
+                   1 - 2 * (vx * vx + vy * vy),
+                   2 * (vx * my - vy * mx) + 2 * (vw * mz - vz * mw)]]
+        check(rigid_affine(motor) == matrix, "Motor page: the matrix A + B")
+
+        flector = antigp(motor, blade("e412"))
+        px, py, pz, pw, fx, fy, fz, fw = coeffs(flector, FLECTOR_NAMES)
+        check(antigp(flector, antireverse(flector)) == blade("e1234"),
+              "a motor times a unitized plane is a unitized flector")
+        plane = on_names(PLANE_NAMES, [fx, fy, fz, fw])
+        check(coeffs(antigp(flector, antireverse(plane)), MOTOR_NAMES) ==
+              [-fx * pw, -fy * pw, -fz * pw, 1 - pw * pw, fy * pz - fz * py,
+               fz * px - fx * pz, fx * py - fy * px, 0],
+              "Flector page: the factor F v antireverse(g), unscaled")
+        matrix = [[2 * (fy * fy + fz * fz) - 1, -2 * fx * fy + 2 * fz * pw,
+                   -2 * fz * fx - 2 * fy * pw,
+                   2 * (px * pw - fx * fw) + 2 * (fy * pz - fz * py)],
+                  [-2 * fx * fy - 2 * fz * pw, 2 * (fz * fz + fx * fx) - 1,
+                   -2 * fy * fz + 2 * fx * pw,
+                   2 * (py * pw - fy * fw) + 2 * (fz * px - fx * pz)],
+                  [-2 * fz * fx + 2 * fy * pw, -2 * fy * fz - 2 * fx * pw,
+                   2 * (fx * fx + fy * fy) - 1,
+                   2 * (pz * pw - fz * fw) + 2 * (fx * py - fy * px)]]
+        check(rigid_affine(flector) == matrix,
+              "Flector page: the matrix A + B, which keeps the weight")
+    check(rigid_affine(blade("e4")) ==
+          [[-1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0]],
+          "Flector page: e4 is the inversion through the origin")
+
+
 def check_conformal_basis():
     # Diagonal R(4,1,0) has e4^2 = +1, e5^2 = -1. The null basis of
     # conformal(3) is origin = (e5 - e4)/2 and infinity = e5 + e4.
@@ -600,6 +1033,13 @@ def main():
     check_bulk_weight_diagonal()
     check_antiprojection(rng)
     signs = check_odd_sign(rng)
+    check_motor_flector_layouts(rng)
+    check_line_moment(rng)
+    check_incidence(rng)
+    check_translation(rng)
+    check_rotation(rng)
+    check_joint_chain(rng)
+    check_motor_and_flector_pages(rng)
     print("sign s of a mirror V acting as s V v x^ v antireverse(V), found "
           "by the outermorphism property: " +
           ", ".join(f"{name} (n = {len(ODD_SIGN_FORMS[name])}) "
