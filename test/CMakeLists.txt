@@ -1901,12 +1901,12 @@ target_link_libraries(core_transform_rounding_test PRIVATE
 set_tests_properties(core.transform_rounding PROPERTIES
   LABELS "core;core.transform;core.rounding")
 
-# core.transform_rounding_consteval_<scalar>: over double and float, a
-# transform that drops a coefficient far above its rounding error ends a
-# constant evaluation, whatever the checking mode, with the rounding check's
-# message on the echoed line and not the exact check's.
+# core.transform_rounding_consteval_<case>: over double and float, a
+# transform that drops a coefficient far above its rounding error, positive
+# or negative, ends a constant evaluation, whatever the checking mode, with
+# the rounding check's message on the echoed line and not the exact check's.
 set(transform_rounded "transform: v is not a versor on x within rounding")
-foreach(scalar IN ITEMS double float)
+foreach(scalar IN ITEMS double float negative_double negative_float)
   galoot_add_compile_fail_test(NAME transform_rounding_consteval_${scalar}
     MODULE core COMPONENT transform
     SOURCE core/transform_rounding_consteval_${scalar}_fail.cpp
@@ -1935,8 +1935,9 @@ foreach(mode IN ITEMS 1 0)
   target_compile_definitions(core_transform_rounding_mode_${mode} PRIVATE
     GALOOT_CHECKING=${mode})
 endforeach()
-foreach(case IN ITEMS not_a_versor_double not_a_versor_float ten_times nan
-    infinite overflow)
+foreach(case IN ITEMS not_a_versor_double not_a_versor_float negative_double
+    negative_float ten_times ten_times_float nan nan_float infinite
+    infinite_float overflow overflow_float)
   add_test(NAME core.transform_rounding_checking_${case}
     COMMAND ${expect_output} "Subprocess aborted"
       "galoot: assertion failed: ${transform_rounded} ("
@@ -1959,33 +1960,50 @@ endforeach()
 
 # core.transform_fast_math: in a checking build, transform.hpp stops
 # compilation under -ffast-math, which reassociates and may flush subnormal
-# numbers to zero, so that the rounding check could reject a correct result;
-# core.transform_without_fast_math: the same source compiles without it. The
-# compiler runs as galoot_add_compile_fail_test runs it, with the option
-# added.
+# numbers to zero, so that the rounding check could reject a correct result,
+# with its own message and not the one for -ffinite-math-only, which
+# -ffast-math implies; core.transform_finite_math_only: it stops under
+# -ffinite-math-only alone, which lets the compiler assume that no value is
+# a NaN or an infinity, so that the check could pass one, with that
+# option's message; core.transform_without_fast_math: the same source
+# compiles without either. The compiler runs as galoot_add_compile_fail_test
+# runs it, with the option added.
 set(transform_fast_math
   "transform: checking mode needs IEEE 754 arithmetic, not -ffast-math")
+set(transform_finite_math_only
+  "transform: checking mode needs NaN and infinity, not -ffinite-math-only")
 set(transform_fast_math_source
   ${CMAKE_CURRENT_SOURCE_DIR}/core/transform_fast_math_fail.cpp)
 galoot_check_literals_outside_path(core.transform_fast_math
-  "${transform_fast_math_source}" "${transform_fast_math}")
+  "${transform_fast_math_source}" "${transform_fast_math}"
+  "${transform_finite_math_only}")
 galoot_compile_command(transform_fast_math_compile)
 add_test(NAME core.transform_fast_math
   COMMAND ${expect_output} 1 "${transform_fast_math}"
+    FORBID "${transform_finite_math_only}"
     -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
       -ffast-math -o core_transform_fast_math.o
       -c ${transform_fast_math_source}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND_EXPAND_LISTS)
+add_test(NAME core.transform_finite_math_only
+  COMMAND ${expect_output} 1 "${transform_finite_math_only}"
+    FORBID "${transform_fast_math}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -ffinite-math-only -o core_transform_finite_math_only.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
 add_test(NAME core.transform_without_fast_math
-  COMMAND ${expect_output} 0 FORBID "${transform_fast_math}"
+  COMMAND ${expect_output} 0
+    FORBID "${transform_fast_math}" "${transform_finite_math_only}"
     -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
       -o core_transform_without_fast_math.o
       -c ${transform_fast_math_source}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND_EXPAND_LISTS)
 set_tests_properties(core.transform_fast_math
-  core.transform_without_fast_math
+  core.transform_finite_math_only core.transform_without_fast_math
   PROPERTIES LABELS "core;core.transform;core.rounding")
 
 # core.transform_identities: the outermorphism and composition identities of

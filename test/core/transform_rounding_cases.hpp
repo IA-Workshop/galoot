@@ -80,25 +80,45 @@ template <class T>
   return Pair<T>{s, s};
 }
 
+/// In R(4,0,0), 1 - e1234 times s: with x = 1 on the scalar,
+/// V ⟇ x ⟇ antireverse(V) = 2 s^2 - 2 s^2 e1234 by the same products, so it
+/// drops -2 s^2, whose size is far above any rounding.
+template <class T>
+[[nodiscard]] constexpr Pair<T> negative_not_a_versor(T s) {
+  return Pair<T>{s, -s};
+}
+
+/// The binary exponent of a in the perturbed versor below: 2^25 for double,
+/// and 2^8 for float, so that a^2 - m^2 and the sums of the dropped part
+/// stay within the scalar's significand.
+template <class T>
+inline constexpr int perturbed_versor_exponent = 25;
+template <>
+inline constexpr int perturbed_versor_exponent<float> = 8;
+
 /// In R(4,0,0), the versor a (1 + e12 + e13 + e14 + e23 + e24 + e34 + e1234)
-/// with a = 2^25, whose V ⟇ antireverse(V) is 8 a^2 e1234, perturbed by m on
-/// e12 and by -m on e34. On x = 1 on the scalar, the part transform drops on
-/// e1234 is a sum of eight products of the coefficients of complementary
-/// blades, a^2 each but for (a + m)(a - m) = a^2 - m^2, with signs that
-/// cancel for the versor: 2 m^2 against a magnitude of 8 a^2, with
+/// with a = 2^25 (2^8 for float), whose V ⟇ antireverse(V) is 8 a^2 e1234,
+/// perturbed by m on e12 and by -m on e34. On x = 1 on the scalar, the part
+/// transform drops on e1234 is a sum of eight products of the coefficients of
+/// complementary blades, a^2 each but for (a + m)(a - m) = a^2 - m^2, with
+/// signs that cancel for the versor: 2 m^2 against a magnitude of 8 a^2, with
 /// K = 9 roundings.
 template <class T>
 [[nodiscard]] constexpr Even<T> perturbed_versor(T m) {
-  const T a = power_of_two<T>(25);
+  const T a = power_of_two<T>(perturbed_versor_exponent<T>);
   return Even<T>{a, a + m, a, a, a, a, a - m, a};
 }
 
 /// The perturbation m of the case whose dropped part is at least ten times
-/// gamma_(K+2) M, so at least ten times any tolerance of the check.
-inline constexpr double ten_times_perturbation = 16.0;
+/// gamma_(K+2) M, so at least ten times any tolerance of the check: 16 for
+/// double and 2 for float.
+template <class T>
+inline constexpr T ten_times_perturbation = T{16};
+template <>
+inline constexpr float ten_times_perturbation<float> = 2.0F;
 
-/// The perturbation m of the case whose dropped part is at most a tenth of
-/// gamma_K M, so at most a tenth of any tolerance of the check.
+/// The perturbation m of the case over double whose dropped part is at most
+/// a tenth of gamma_K M, so at most a tenth of any tolerance of the check.
 inline constexpr double tenth_perturbation = 0.5;
 
 /// In R(4,0,0), the versor c (1 + e12 + e34 + e1234), whose

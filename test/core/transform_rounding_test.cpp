@@ -62,6 +62,8 @@
 #include <format>
 #include <limits>
 #include <random>
+// std::float16_t and std::bfloat16_t, where the implementation has them.
+#include <stdfloat> // IWYU pragma: keep
 #include <string>
 #include <type_traits>
 
@@ -102,6 +104,17 @@ struct random1 {
       {2, 0, -3},
       {0, 1, -3},
       {-3, -3, -2},
+  });
+};
+
+// The degenerate form with e1 . e2 = 1 and every other product of
+// generators 0, where the terms of a transform that reach the dropped blades
+// read middle blades that the kept terms do not.
+struct degenerate3 {
+  static constexpr auto value = core::from_gram({
+      {0, 1, 0},
+      {1, 0, 0},
+      {0, 0, 0},
   });
 };
 
@@ -578,6 +591,65 @@ void versor_family(std::mt19937_64& source, int samples, scaling s,
   }
 }
 
+// samples of V on VL and x on XL, any values, whose dropped part need not
+// be zero: the bound gamma_K M holds for the error of any computed value,
+// so the core's count must equal tracked's and the tolerance lie in
+// [gamma_K M, gamma_(K+2) M) for each dropped coefficient.
+template <class T, class Alg, core::blade_set VL, core::blade_set XL>
+void tolerance_family(std::mt19937_64& source, int samples,
+                      const std::string& what, tally& out) {
+  constexpr int b = factor_bits<T>;
+  constexpr int precision = std::numeric_limits<T>::digits;
+  constexpr const auto& roundings =
+      core::detail::transform_dropped_roundings<Alg, VL, XL>;
+  for (int i = 0; i < samples; ++i) {
+    const auto v = draw_values<VL.size()>(source, b, b);
+    const auto x = draw_values<XL.size()>(source, b, b);
+    std::array<T, VL.size()> vd{};
+    std::array<T, XL.size()> xd{};
+    std::array<tracked, VL.size()> vt{};
+    std::array<tracked, XL.size()> xt{};
+    for (std::size_t k = 0; k < VL.size(); ++k) {
+      vd.at(k) = exactly<T>(v.at(k), out);
+      vt.at(k) = tracked::input(v.at(k));
+    }
+    for (std::size_t k = 0; k < XL.size(); ++k) {
+      xd.at(k) = exactly<T>(x.at(k), out);
+      xt.at(k) = tracked::input(x.at(k));
+    }
+    const auto exact = core::detail::transform_outer<Alg, VL, XL, false>(
+        core::detail::transform_middle<Alg, VL, XL, true>(vt, xt), vt);
+    const auto tolerances =
+        core::detail::transform_dropped_tolerances<Alg, VL, XL>(vd, xd);
+    for (std::size_t j = 0; j < exact.size(); ++j) {
+      const tracked& e = exact.at(j);
+      const auto tol = static_cast<double>(tolerances.at(j));
+      const std::string where =
+          std::format("{}, dropped coefficient {}", what, j);
+      ++out.coefficients;
+      if (roundings.at(j) != e.roundings) {
+        out.note(where + std::format(": the core counts {} roundings, the "
+                                     "tracked run {}",
+                                     roundings.at(j), e.roundings));
+      }
+      if (!gamma_at_most(e.roundings, precision, e.magnitude, tol)) {
+        out.note(where +
+                 std::format(": the tolerance {} is below gamma_{} M, M = ",
+                             tol, e.roundings) +
+                 text(e.magnitude));
+      }
+      if (e.magnitude != rational{} &&
+          !below_gamma(tol, e.roundings + 2, precision, e.magnitude)) {
+        out.note(where +
+                 std::format(": the tolerance {} is not below gamma_{} M, "
+                             "M = ",
+                             tol, e.roundings + 2) +
+                 text(e.magnitude));
+      }
+    }
+  }
+}
+
 // Every family over T, with the underflow exponents s.
 template <class T>
 void run_families(std::mt19937_64& source, int samples, scaling s, tally& out) {
@@ -632,7 +704,67 @@ void report_underflow(const tally& t, const std::string& family) {
                       t.largest_to_tolerance));
 }
 
+// A scalar that computes in float but whose numeric_limits describe an
+// IEEE 754 binary type of 8 bits that rounds to nearest, as bfloat16 is, so
+// that a test of the margin's condition does not depend on whether the
+// standard library provides std::bfloat16_t. It converts from any
+// arithmetic value and has the arithmetic and comparisons of float, in
+// constant evaluations too.
+struct coarse {
+  float value = 0.0F;
+
+  constexpr coarse() = default;
+  template <class A>
+    requires std::is_arithmetic_v<A>
+  // Converts as float does, so that mixed arithmetic reads as for float.
+  // NOLINTNEXTLINE(*-explicit-constructor)
+  constexpr coarse(A v) : value(static_cast<float>(v)) {}
+
+  [[maybe_unused]] friend constexpr coarse operator+(coarse a, coarse b) {
+    return a.value + b.value;
+  }
+  [[maybe_unused]] friend constexpr coarse operator-(coarse a, coarse b) {
+    return a.value - b.value;
+  }
+  [[maybe_unused]] friend constexpr coarse operator*(coarse a, coarse b) {
+    return a.value * b.value;
+  }
+  [[maybe_unused]] friend constexpr coarse operator/(coarse a, coarse b) {
+    return a.value / b.value;
+  }
+  [[maybe_unused]] friend constexpr coarse operator-(coarse a) {
+    return -a.value;
+  }
+  friend constexpr bool operator==(coarse a, coarse b) = default;
+  [[maybe_unused]] friend constexpr auto operator<=>(coarse a,
+                                                     coarse b) = default;
+};
+
 } // namespace
+
+/// coarse is described as an IEEE 754 binary type of 8 significant bits,
+/// with float's range.
+template <>
+struct std::numeric_limits<coarse> {
+  [[maybe_unused]] static constexpr bool is_specialized = true;
+  [[maybe_unused]] static constexpr bool is_signed = true;
+  [[maybe_unused]] static constexpr bool is_integer = false;
+  [[maybe_unused]] static constexpr bool is_exact = false;
+  [[maybe_unused]] static constexpr bool is_iec559 = true;
+  [[maybe_unused]] static constexpr int radix = 2;
+  [[maybe_unused]] static constexpr int digits = 8;
+  [[maybe_unused]] static constexpr std::float_round_style round_style =
+      std::round_to_nearest;
+  [[maybe_unused]] static constexpr coarse epsilon() noexcept {
+    return 0x1p-7F;
+  }
+  [[maybe_unused]] static constexpr coarse min() noexcept {
+    return std::numeric_limits<float>::min();
+  }
+  [[maybe_unused]] static constexpr coarse max() noexcept {
+    return std::numeric_limits<float>::max();
+  }
+};
 
 // Reference: proof: transform checks a rounding scalar's dropped part
 //   against its forward error bound, where the dropped part of a versor is
@@ -763,13 +895,14 @@ TEST_CASE("the count and the tolerance of a transform in R(4,0,0) are those "
 // Reference: contract: the inputs of the program that runs transform in
 //   each checking mode are what its tests say, which are a perturbed versor
 //   whose dropped part is at least ten times gamma_(K+2) M, so above any
-//   tolerance of the check, and another whose dropped part is at most a
-//   tenth of gamma_K M, so below, the unperturbed one a versor, with
-//   V ⟇ antireverse(V) a nonzero multiple of e1234, a versor near the
-//   overflow threshold whose dropped coefficients are finite while a
-//   tolerance is infinite, a NaN and an infinite input that reach the
-//   dropped coefficient, and an underflowing motor and point that leave a
-//   dropped coefficient nonzero and beyond gamma_K M; independent value: K,
+//   tolerance of the check, over double and over float, and another whose
+//   dropped part is at most a tenth of gamma_K M, so below, the unperturbed
+//   one a versor, with V ⟇ antireverse(V) a nonzero multiple of e1234, a
+//   versor near the overflow threshold whose dropped coefficients are
+//   finite while a tolerance is infinite, a NaN and an infinite input that
+//   reach the dropped coefficient, a non-versor that drops -2, and an
+//   underflowing motor and point that leave a dropped coefficient nonzero
+//   and beyond gamma_K M; independent value: K,
 //   M, and the exact values from test_support::tracked, compared exactly
 TEST_CASE("the inputs of the checking program are as its tests say") {
   using cases::even_layout;
@@ -786,13 +919,13 @@ TEST_CASE("the inputs of the checking program are as its tests say") {
     tracked exact;
     double computed = 0.0;
   };
-  const auto perturbed = [](double m) {
+  const auto perturbed = []<class T>(T m) {
     CAPTURE(m);
-    const cases::Even<double> vd = cases::perturbed_versor(m);
+    const cases::Even<T> vd = cases::perturbed_versor(m);
     Even vt;
     for (std::size_t k = 0; k < even_layout.size(); ++k) {
-      vt.coefficients.at(k) =
-          tracked::input(rational_of(vd.coefficients.at(k)));
+      vt.coefficients.at(k) = tracked::input(
+          rational_of(static_cast<double>(vd.coefficients.at(k))));
     }
     const std::array<tracked, 1> xt{tracked::input(rational{1})};
     const auto exact =
@@ -803,17 +936,18 @@ TEST_CASE("the inputs of the checking program are as its tests say") {
     const auto dropped = core::detail::transform_outer<r400, even_layout,
                                                        scalar_layout, false>(
         core::detail::transform_middle<r400, even_layout, scalar_layout, true>(
-            vd.coefficients, std::array<double, 1>{1.0}),
+            vd.coefficients, std::array<T, 1>{T{1}}),
         vd.coefficients);
     for (std::size_t j = 0; j + 1 < exact.size(); ++j) {
       CHECK(exact.at(j).value == rational{});
     }
     return dropped_part{
         .exact = exact.back(),
-        .computed = std::abs(dropped.back()),
+        .computed = std::abs(static_cast<double>(dropped.back())),
     };
   };
   CHECK(perturbed(0.0).exact.value == rational{});
+  CHECK(perturbed(0.0F).exact.value == rational{});
   // V ⟇ antireverse(V) = lambda e1234 with lambda the sum of the squares of
   // the coefficients, exactly over std::int64_t, for the unperturbed versor
   // and for the pattern of the versor near overflow.
@@ -835,11 +969,17 @@ TEST_CASE("the inputs of the checking program are as its tests say") {
         8 * test_support::power_of_two(50));
   CHECK(antiscalar_multiple(
             cases::Even<std::int64_t>{1, 1, 0, 0, 0, 0, 1, 1}) == 4);
-  const dropped_part ten_times = perturbed(cases::ten_times_perturbation);
-  CAPTURE(ten_times.computed);
-  CAPTURE(ten_times.exact.roundings);
-  CHECK(compare_with_gamma(ten_times.computed, 1, ten_times.exact.roundings + 2,
-                           53, ten_times.exact.magnitude, 10) >= 0);
+  const auto check_ten_times = [&]<class T>(T m) {
+    const dropped_part ten_times = perturbed(m);
+    CAPTURE(ten_times.computed);
+    CAPTURE(ten_times.exact.roundings);
+    CHECK(compare_with_gamma(ten_times.computed, 1,
+                             ten_times.exact.roundings + 2,
+                             std::numeric_limits<T>::digits,
+                             ten_times.exact.magnitude, 10) >= 0);
+  };
+  check_ten_times(cases::ten_times_perturbation<double>);
+  check_ten_times(cases::ten_times_perturbation<float>);
   const dropped_part tenth = perturbed(cases::tenth_perturbation);
   CAPTURE(tenth.computed);
   CAPTURE(tenth.exact.roundings);
@@ -849,10 +989,11 @@ TEST_CASE("the inputs of the checking program are as its tests say") {
 
   // Near overflow: every dropped coefficient zero, so within its tolerance,
   // and one tolerance infinite, so that only the test of the tolerance
-  // itself rejects it.
-  {
-    const cases::Even<double> v = cases::near_overflow_versor<double>();
-    const std::array<double, 1> x{cases::near_overflow_scalar};
+  // itself rejects it. A NaN or an infinite coefficient of V reaches the
+  // dropped coefficient. 1 - e1234 drops -2 and keeps 2.
+  const auto check_non_finite = []<class T>(T /*scalar*/) {
+    const cases::Even<T> v = cases::near_overflow_versor<T>();
+    const std::array<T, 1> x{static_cast<T>(cases::near_overflow_scalar)};
     const auto dropped =
         core::detail::transform_outer<r400, even_layout, scalar_layout, false>(
             core::detail::transform_middle<r400, even_layout, scalar_layout,
@@ -863,27 +1004,38 @@ TEST_CASE("the inputs of the checking program are as its tests say") {
     bool some_infinite = false;
     for (std::size_t j = 0; j < dropped.size(); ++j) {
       CAPTURE(j);
-      CHECK(dropped.at(j) == 0.0);
+      CHECK(dropped.at(j) == T{});
       CHECK(std::abs(dropped.at(j)) <= tolerances.at(j));
       some_infinite = some_infinite || std::isinf(tolerances.at(j));
     }
     CHECK(some_infinite);
-  }
 
-  // A NaN or an infinite coefficient of V reaches the dropped coefficient.
-  for (const double bad : {
-           std::numeric_limits<double>::quiet_NaN(),
-           std::numeric_limits<double>::infinity(),
-       }) {
-    CAPTURE(bad);
-    const auto dropped = core::detail::transform_outer<r400, cases::pair_layout,
-                                                       scalar_layout, false>(
+    for (const T bad : {
+             std::numeric_limits<T>::quiet_NaN(),
+             std::numeric_limits<T>::infinity(),
+         }) {
+      CAPTURE(bad);
+      const std::array<T, 2> w{T{1}, bad};
+      const auto d = core::detail::transform_outer<r400, cases::pair_layout,
+                                                   scalar_layout, false>(
+          core::detail::transform_middle<r400, cases::pair_layout,
+                                         scalar_layout, true>(
+              w, std::array<T, 1>{T{1}}),
+          w);
+      CHECK(!std::isfinite(d[0]));
+    }
+
+    const auto negative = cases::negative_not_a_versor(T{1}).coefficients;
+    const auto middle =
         core::detail::transform_middle<r400, cases::pair_layout, scalar_layout,
-                                       true>(std::array<double, 2>{1.0, bad},
-                                             std::array<double, 1>{1.0}),
-        std::array<double, 2>{1.0, bad});
-    CHECK(!std::isfinite(dropped[0]));
-  }
+                                       true>(negative, std::array<T, 1>{T{1}});
+    CHECK(core::detail::transform_outer<r400, cases::pair_layout, scalar_layout,
+                                        false>(middle, negative)[0] == T{-2});
+    CHECK(core::detail::transform_outer<r400, cases::pair_layout, scalar_layout,
+                                        true>(middle, negative)[0] == T{2});
+  };
+  check_non_finite(0.0);
+  check_non_finite(0.0F);
 
   // Underflow: the motor and the point, each scaled, leave a dropped
   // coefficient nonzero and beyond gamma_K M, M scaled exactly from the
@@ -956,6 +1108,113 @@ TEST_CASE("transform passes its rounding check in a constant evaluation") {
                                           cases::underflow_motor<float>()));
   CHECK(tiny_float == core::transform(cases::tiny_point<float>(),
                                       cases::tiny_motor<float>()));
+}
+
+// Reference: proof: a computed value is within gamma_K M of its exact value
+//   for any input (Higham, Lemma 3.1), so the tolerance of every dropped
+//   coefficient is at least gamma_K M, with M over all the terms that reach
+//   it, also where those terms read middle blades that no kept term reads,
+//   as in the degenerate form with e1 . e2 = 1 and every other product of
+//   generators 0, for V on e1, e2, e3, e123 and x on e123, where the kept
+//   terms read only the middle blades e3 and e123; independent value: K
+//   and M from test_support::tracked over the same kernels, for seeded V
+//   and x, compared exactly
+TEST_CASE("transform's tolerance counts the middle blades that only the "
+          "dropped terms read") {
+  INFO("seed: ", doctest::getContextOptions()->rand_seed);
+  std::mt19937_64 source = seeded_source();
+  constexpr auto versor_layout = core::blades<degenerate3, "e1 e2 e3 e123">;
+  constexpr auto object_layout = core::blades<degenerate3, "e123">;
+  static_assert(core::detail::first_kernel<degenerate3, versor_layout,
+                                           object_layout, false>
+                    .size() == 2);
+  static_assert(core::detail::dropped_blade_count<degenerate3, versor_layout,
+                                                  object_layout>() > 0);
+  tally over_double;
+  tolerance_family<double, degenerate3, versor_layout, object_layout>(
+      source, 100, "degenerate form, double", over_double);
+  INFO("first problem over double: ", over_double.first_problem);
+  CHECK(over_double.coefficients > 0);
+  CHECK(over_double.problems == 0);
+  tally over_float;
+  tolerance_family<float, degenerate3, versor_layout, object_layout>(
+      source, 100, "degenerate form, float", over_float);
+  INFO("first problem over float: ", over_float.first_problem);
+  CHECK(over_float.coefficients > 0);
+  CHECK(over_float.problems == 0);
+}
+
+// Reference: proof: the margin of one rounding suffices for a dropped
+//   coefficient of K roundings when (K + 1)(2K + 1) u < 1, with u the unit
+//   roundoff, and the rigid(3) point moved by the motor has dropped
+//   coefficients of up to 12 roundings, so (K + 1)(2K + 1) u is at most
+//   325 / 2^53 for double, 325 / 2^24 for float, and 325 / 2^11 for
+//   std::float16_t, which are checked, and 325 / 2^8 for std::bfloat16_t
+//   and any other type of 8 significant bits, which are not checked, so
+//   that transform over them builds and runs, also in a constant
+//   evaluation, as for any other scalar it does not check
+TEST_CASE("transform checks a rounding scalar only where its margin "
+          "suffices") {
+  using core::detail::transform_rounding_checked;
+  static_assert(std::ranges::max(core::detail::transform_dropped_roundings<
+                                 rga3, motor_layout, point_layout>) == 12);
+  static_assert(
+      transform_rounding_checked<rga3, motor_layout, point_layout, double>);
+  static_assert(
+      transform_rounding_checked<rga3, motor_layout, point_layout, float>);
+  static_assert(!transform_rounding_checked<rga3, motor_layout, point_layout,
+                                            std::int64_t>);
+  static_assert(
+      !transform_rounding_checked<rga3, motor_layout, point_layout, tracked>);
+  CHECK(transform_rounding_checked<rga3, motor_layout, point_layout, double>);
+
+  // A scalar of 8 significant bits, as bfloat16 is, is not checked, and
+  // transform over it builds and keeps the unchecked coefficients.
+  static_assert(core::detail::rounding_checked_scalar<coarse>);
+  static_assert(
+      !transform_rounding_checked<rga3, motor_layout, point_layout, coarse>);
+  {
+    using Point = core::mv<rga3, point_layout, coarse>;
+    using Motor = core::mv<rga3, motor_layout, coarse>;
+    const auto c = [](float v) { return coarse{v}; };
+    const Point point{c(1.0F), c(2.0F), c(3.0F), c(1.0F)};
+    const Motor motor{c(0.0F), c(0.0F), c(1.0F),  c(1.0F),
+                      c(1.0F), c(2.0F), c(-1.0F), c(0.0F)};
+    CHECK(core::transform(point, motor).coefficients ==
+          core::detail::transform_outer<rga3, motor_layout, point_layout, true>(
+              core::detail::transform_middle<rga3, motor_layout, point_layout,
+                                             false>(motor.coefficients,
+                                                    point.coefficients),
+              motor.coefficients));
+  }
+#ifdef __STDCPP_FLOAT16_T__
+  static_assert(transform_rounding_checked<rga3, motor_layout, point_layout,
+                                           std::float16_t>);
+#endif
+#ifdef __STDCPP_BFLOAT16_T__
+  using B = std::bfloat16_t;
+  static_assert(
+      !transform_rounding_checked<rga3, motor_layout, point_layout, B>);
+  using Point = core::mv<rga3, point_layout, B>;
+  using Motor = core::mv<rga3, motor_layout, B>;
+  const auto point = [](B s) {
+    return Point{s, static_cast<B>(2) * s, static_cast<B>(3) * s, s};
+  };
+  const auto motor = [](B s) {
+    return Motor{B{}, B{}, s, s, s, static_cast<B>(2) * s, -s, B{}};
+  };
+  constexpr Point at_compile_time =
+      core::transform(point(static_cast<B>(1)), motor(static_cast<B>(1)));
+  const auto one = static_cast<B>(1);
+  const Point at_run_time = core::transform(point(one), motor(one));
+  CHECK(at_run_time == at_compile_time);
+  CHECK(at_run_time.coefficients ==
+        core::detail::transform_outer<rga3, motor_layout, point_layout, true>(
+            core::detail::transform_middle<rga3, motor_layout, point_layout,
+                                           false>(motor(one).coefficients,
+                                                  point(one).coefficients),
+            motor(one).coefficients));
+#endif
 }
 
 // Reference: contract: the rounding check covers a ring scalar whose
