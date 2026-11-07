@@ -38,3 +38,16 @@ Before the blind review, `core.rounding` compared 225,080 coefficients of double
 
 - The proofs of Lemmas 3.1 and 3.3 (Problems 3.1 and 3.4) were not read; the statements were.
 - The second edition's errata were not checked for these pages.
+
+## Addendum, 2026-11-07: the model with underflow, and monotonicity (WU13b)
+
+Read by Claude (agent, Opus 5.5), numerical-expert role, as implementer of WU13b (plan 0021), from the same local copy of Higham's second edition, at printed pages 56 and 57 (PDF pages 85 and 86), as rendered page images and as `pdftotext` output. This is the source itself. Decision 0180 rests on these statements.
+
+| Claim | Where | Status |
+| --- | --- | --- |
+| With underflow the model becomes fl(x op y) = (x op y)(1 + δ) + η, op = +, −, *, /, with \|δ\| ≤ u; with gradual underflow, as in IEEE arithmetic, \|η\| ≤ ½ β^(e_min − t) = λu, half the spacing of the subnormal numbers, λ the smallest positive normalized number | equation (2.8), p. 56 | Read |
+| Only one of δ and η is nonzero: δ if no underflow occurs, otherwise η | p. 57 | Read |
+| With gradual underflow, η = 0 may be taken for op = +, − | p. 57 (Problem 2.19, Hauser 1996: if fl(x ± y) underflows then fl(x ± y) = x ± y) | Read as a statement; the problem's solution was not read |
+| IEEE arithmetic is monotonic: fl(a op b) ≤ fl(c op d) whenever a op b ≤ c op d and neither overflows; "as is any correctly rounded arithmetic" | p. 56 | Read. The note above says monotonicity was not found as a numbered result in pages 38 to 41 and 61 to 67; it is stated here, in the notes of chapter 2 |
+
+The same model, with the bound 2^(e_min − p) on η and εη = 0, is in the knowledge base (`numerical-analysis/arithmetic-and-formats/floating-point-model.md`, after Ozaki et al. and Ogita, Rump, and Oishi); it agrees.
