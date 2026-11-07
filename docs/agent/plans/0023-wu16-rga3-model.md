@@ -219,3 +219,55 @@ Size M, as plan 0001 has it: about 1.6M to 2.5M tokens in all, less than WU13 (2
 ## 13. Outcome
 
 In progress. 2026-11-07: `feature/rga3` branched from `develop` at `88c9484` after the owner's rulings on O1 to O9 (decision 0196); step 1 (the math-expert) started on `feature/rga3--math`. Research note 0022 was taken by the flat-plane chain rounding note in the meantime, so this unit's research note is 0023, as section 1's record-number rule says.
+
+### Steps 1 to 10
+
+Implemented on `feature/rga3` (coordinator: Claude, agent, Opus 5.5; step 1: math-expert role on `feature/rga3--math`; tests: doctest-expert role on `feature/rga3--tests`, three groups; implementers in the cpp-expert role, with build-expert judgement for step 4 and hci-expert and build-expert judgement for step 8; R11's tolerance: numerical-expert role on `records/rotation-tolerance`; steps 9 and 10: an implementer, Claude, agent, Opus 5.5). Not reviewed yet (W5): the hci-expert reading and the blind review of section 8 come next. Not merged.
+
+Commits, in the order of section 4. Each test group was committed on `feature/rga3--tests` and cherry-picked with `-x`; groups 1 and 2 immediately before the code they judge, each the single failing commit W2 allows, its message saying so; group 3 judges existing code and passed when committed.
+
+| Step | Commit | What |
+| --- | --- | --- |
+| | `cfde578` | the branch point in this outcome |
+| 1 | `60f6e74` (merge of `feature/rga3--math`: `a00b8f7`, `09bff5b`, `7155eaa`, `48e7cd6`, `c475123`, `b4287de`) | `conventions_check.py`'s rigid checks; `rigid_motions.py`; seven golden namespaces; research note 0023 |
+| 2 | `1c8e350`, `691d645` | CONVENTIONS 1.12, decision 0197, trace rows at `no` |
+| | `ab72934` | the `rigid_planes` fact written with commas (a golden fact's text, regenerated) |
+| 3 | `8cedcaf` (from `0733aa6`) | test group 1, objects |
+| 4 | `9900399`, `88c32b3`, `3d8f5d8`, `e139baf`, `6400b3f`, `8d1f883` | `objects.hpp`, `rga3.hpp`, the target and header set, `rga3.bare_compile`; the include scan and fixtures; `README.md` in `tests.citations`; trace rows; the full gcc-debug suite at the build lane (412 of 412) |
+| 5 | `333769d` (from `330377a`) | test group 2, motions and eight compile-fail sources |
+| 6 | `9813525`, `d44ec64`, `bf3cbbb`, `61c6b17`, `62ef7b9`, `e6a5499`, `986e80d` | `motions.hpp` and the registration of the compile-fail tests; the fifth catch-all and its test; trace rows; the pointer probes; the mutants |
+| 7 | `79abffd`, `ffc4066` (from `b711850`, `ebb11ee`) | test group 3: point groups, chains, incidence, and R11's geometric test of `rotation` |
+| 8 | `b6d8d04`, `27ba27a`, `593b094` | the README; its extraction check |
+| 9 | `1b1fa1b` | the five rows of group 3 at `yes` |
+| 10 | `554d3ba` | the model headers export the core to include-cleaner (comments only) |
+| | `e18be9c` | `motions_test.cpp`: trailing commas and `std::numbers::pi`, as the lint preset asks (a test not judging its author's change) |
+| | `339e154`, `797c5c6`, `c799821`, `030dbb5`, `8fdabb1`, and this commit | the diagnostics record; run rows; the cost script, its results, and the compile rows; decisions 0198 to 0201; agent costs and this outcome |
+
+Departures from sections 1 to 10 (C20):
+
+1. **Record numbers.** Research note 0023, not 0022 (taken by the flat-plane chain rounding note); decisions 0197 to 0201, not from 0196 (0196 holds the owner's rulings). Section 1's record-number rule allows both.
+2. **Five messages, not four** (decision 0198): `translation` over scalars of two types gained a catch-all (`d44ec64`), written by the implementer and tested after it by the same author (`bf3cbbb`). `62ef7b9` adds probes that a pointer is no scalar of `translation`, which killed two surviving mutants. The texts differ from R6's drafts (`records/diagnostics/wu16-messages.md`).
+3. **5.8's wording** uses Lengyel's coefficient letters in place of O5's r, u, s, h (decision 0197 item 3); it awaits the owner's confirmation.
+4. **R11's test was written** (decision 0201), at k = 9 ulps, the only figure glibc 2.44's manual states; it is a testsuite ceiling, not a proved bound. The derivation is on `records/rotation-tolerance` (`3acd5d0`), not merged into `develop` or this branch.
+5. **Point-group orders and the chain form** rest on named substitutes (research note 0023, G1, G2, J1, J2): the International Tables and Denavit and Hartenberg's paper could not be read (HTTP 403).
+6. **Mutants: only `motions.hpp` has a committed record** (`records/mutations/0023-rga3/`, 23 mutants, 17 killed on both compilers by a test, 6 equivalent survivors). Section 6's layout mutants of `objects.hpp` were run by the test author against a scratch stand-in only (nine killed, `8cedcaf`'s message): not reproducible as committed (V10), and not run against the real header.
+7. **The lint preset fails on two test units** at `e18be9c`: building the rga3 targets under `lint` reports 69 findings in `objects_test.cpp` and 11 in `point_groups_test.cpp` (`modernize-use-designated-initializers`, `readability-trailing-comma`, `readability-use-anyofallof`, `performance-inefficient-vector-operation`), none from `misc-include-cleaner`. The model headers, the README examples, `motions_test.cpp`, `chains_test.cpp`, and `incidence_test.cpp` are clean. Not fixed in step 10, whose brief named only `motions_test.cpp`.
+8. **The README examples are exempt from `bugprone-exception-escape`** under `lint` (decision 0199): a user's `main` may let `std::format_error` escape.
+9. **The README** holds two examples (a composed motion over double and an exact join and meet at compile time over `int`) and checks their output through `// prints:` lines, more than R8 asked.
+10. **The full suites ran twice** in each debug configuration in step 10: the first compile record was refused by decision 0080's step because a later `ctest -L '^rga3'` had recompiled the compile-fail sources, so both trees were rebuilt from empty and the suite rerun before copying.
+11. **One trace-gate row** of step 9 is named `trace none convention-trace` where earlier rows say `check - trace-gate`.
+
+Evidence (V10):
+
+- **Verification** (V1 kinds 1 to 3): the layouts against masks and signs written in the tests from CONVENTIONS 1.6's names; 5.1 to 5.3 as `static_assert`s over `std::int64_t` and the test rational and against seeded golden joins and meets; 5.4 to 5.6 on the model's types; `translation` exactly over float, double, and the test rational; `rotation` bit for bit against l sin(θ/2) and cos(θ/2) over float and double; rotors with rational half angles against Rodrigues' matrices; the 32 point-group closures, four seeded chains of 3 to 6 joints, and eight cases each of eight incidence kinds, exactly, against values that `golden.py` writes only where the geometric route of `conventions_check.py` and the linear-algebra route of `rigid_motions.py` agree (seed 20261107). The quarter turn by `rotation` within its derived bound over float and double. Nine compile-fail tests, each one error with its message. All pass.
+- **Validation** (V8): the motor and flector layouts against Lengyel's Motor and Flector pages, read directly (note 0023, M1, F1); the point-group orders and the abelian, cyclic, centrosymmetric, enantiomorphic, and polar properties against Wikipedia's table of the 32 classes, a secondary substitute (G2, G3); the chain's product and closed form against a secondary account of the Denavit-Hartenberg matrix (J2). Passed.
+- **Not validated:** `rotation`'s accuracy beyond the one derived case (a quarter turn about z, from (1, 0, 0, 1)), and on any library but glibc 2.44 on x86-64 (k = 9 is that library's stated ceiling); the point-group orders against a primary table (the International Tables could not be read) and the chain against Denavit and Hartenberg's paper; the elements of the trigonal and hexagonal groups in the Tables' standard setting (the [111] setting is conjugate to it); the Terathon side of CONVENTIONS section 8 (C15, C16); the objects' layout mutants against the real header (departure 6).
+- **Zero core diff:** `git diff --stat develop...feature/rga3 -- include/galoot/core include/galoot/core.hpp` prints nothing at `8fdabb1` (`develop` at `88c9484`).
+- **Trace gate** at `1b1fa1b`: passes; 5.1, 5.2, 5.3, 5.4 to 5.8 all `yes`; the only items with no test are 6.1 to 6.4.
+- **Diagnostics** (`records/diagnostics/wu16-messages.md`, `wu16/sizes.tsv`): the five messages on the first error line on g++ 16.2.1 and clang++ 23.1.4, one error line per source; Clang prints a non-`Line` axis by its blade masks (up to 462 characters on the first line), GCC's longest line is its "required from" line (up to 1,091 characters).
+- **Build cost** (`records/performance/rga3-cost/`, pinned, three repeats, under the timing lock): an includer of `core.hpp` 913.6 M instructions before and after on GCC, 974.0 M and 972.6 M on Clang (the same text; the difference is inferred to come from the extracted tree's path); an includer of `rga3.hpp` 1,396.0 M and 1,357.0 M; the test units from 3.6 G (`incidence_test.cpp`, Clang) to 12.7 G (`motions_test.cpp`, GCC), each under 1.2 s and 340 MiB. `compile.tsv` holds the 301 and 303 rows of fresh gcc-debug and clang-debug builds at `c799821`.
+- **Final runs** of step 10, in new, empty gcc-debug and clang-debug trees at `c799821` (the build inputs last changed at `e18be9c`; later commits change records only), with a clean tree: build and the full suite, 434 of 434 on each; `ctest -L '^rga3'` 19 of 19; `tests.reference_markers`, `tests.golden_facts`, and `tests.citations` 3 of 3; `format-check` exit 0, on each. The lint preset on the rga3 targets only (departure 7). Not run here, left to the merge into `develop` (P9, section 7): gcc-release, clang-release, the sanitizer presets, the full `lint` preset, `clang-measure`'s full suite, `tools/runlog check`. The job pool read 23 of 23 slots free before and after each heavy run.
+
+Listed for review (W9): the cherry-picked tests `8cedcaf`, `333769d`, `79abffd` (which also adds R11's test to `motions_test.cpp` after the code it judges); code commits that also register or add tests, `9900399` (`rga3.bare_compile` and `bare_user.cpp`), `88c32b3` (the include-scan fixtures), `9813525` (the registration of group 2's compile-fail tests), `27ba27a` (the README check and its fixtures, after the README of `b6d8d04`); tests written after the code they judge by its author, `bf3cbbb` (of `d44ec64`) and `62ef7b9`; the golden fact's text, `ab72934`; and `e18be9c`, a style-only change to a test.
+
+Open, for the owner or the next step: the 5.8 wording (decision 0197 item 2); departure 7 (lint), departure 6 (the objects' layout mutants), and departure 4 (merging `records/rotation-tolerance`), before the blind review; the hci-expert reading and the blind review (section 8); WU15 before M4's gate (O1).
