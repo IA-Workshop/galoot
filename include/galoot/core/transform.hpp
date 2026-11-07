@@ -46,7 +46,8 @@
 //
 // The result has x's type, its layout and orientations: transform(line, V)
 // is a Line. The part of V ⟇ x ⟇ V̰ on other blades is dropped. For a versor
-// it is zero, and for an exact scalar transform checks that it is; see the
+// it is zero; in checking mode transform checks that it is, exactly for an
+// exact scalar and within its rounding error for float and double; see the
 // comment of transform.
 //
 // compose(Q2, Q1) is Q2 ⟇ Q1, the versor that applies Q1 first and then Q2.
@@ -84,6 +85,7 @@
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 #include <utility>
 
@@ -94,6 +96,14 @@
 #include <galoot/core/mv.hpp>
 #include <galoot/core/plan.hpp>
 #include <galoot/core/product.hpp>
+
+// The rounding check of transform assumes that each operation rounds once,
+// to nearest, with gradual underflow. -ffast-math reassociates sums, and
+// the startup code it links flushes subnormal numbers to zero, so the check
+// could then reject a correct result.
+#if defined(__FAST_MATH__) && GALOOT_CHECKING == 1
+#error "transform: checking mode needs IEEE 754 arithmetic, not -ffast-math"
+#endif
 
 namespace galoot::core {
 
@@ -396,6 +406,170 @@ constexpr void check_transform_dropped(const std::array<T, D>& dropped) {
   }
 }
 
+/// A scalar whose rounding transform checks: an IEEE 754 binary
+/// floating-point type that rounds to nearest, as its numeric_limits say,
+/// such as float and double.
+template <class T>
+concept rounding_checked_scalar =
+    ring_scalar<T> && std::numeric_limits<T>::is_iec559 &&
+    std::numeric_limits<T>::round_style == std::round_to_nearest;
+
+// The count of roundings of each of the R coefficients of a kernel's
+// result, from the counts of its operands' coefficients x and y. Each term
+// rounds its product after the counts of both factors, and rounds again when
+// its coefficient is not +1 or -1, since it then multiplies by it; the first
+// term of a result is assigned, and each later one is added or subtracted,
+// which rounds after the larger of the two counts.
+template <std::size_t R, std::size_t N, std::size_t KX, std::size_t KY>
+[[nodiscard]] consteval std::array<int, R>
+kernel_roundings(const std::array<kernel_term, N>& kernel,
+                 const std::array<int, KX>& x, const std::array<int, KY>& y) {
+  std::array<int, R> out{};
+  for (const kernel_term& t : kernel) {
+    int term = x[t.a] + y[t.b] + 1;
+    if (t.coefficient != 1 && t.coefficient != -1) {
+      ++term;
+    }
+    if (t.first) {
+      out[t.out] = term;
+    } else {
+      out[t.out] = (out[t.out] < term ? term : out[t.out]) + 1;
+    }
+  }
+  return out;
+}
+
+/// The count of roundings K of each coefficient that a transform of x on X
+/// by v on V drops, in the order of the dropped blades: the order of the
+/// second antiproduct's result, without X's blades. The inputs count none.
+// As for coefficients_exact.
+// NOLINTBEGIN(modernize-avoid-c-style-cast)
+template <metric_like Alg, blade_set V, blade_set X>
+inline constexpr std::array<int, dropped_blade_count<Alg, V, X>()>
+    transform_dropped_roundings =
+        kernel_roundings<dropped_blade_count<Alg, V, X>()>(
+            second_kernel<Alg, V, X, false>,
+            kernel_roundings<sandwich_middle_layout<Alg, V, X>.size()>(
+                first_kernel<Alg, V, X, true>, std::array<int, V.size()>{},
+                std::array<int, X.size()>{}),
+            std::array<int, V.size()>{});
+// NOLINTEND(modernize-avoid-c-style-cast)
+
+// The tolerance of a dropped coefficient d with K roundings is
+// fl(fl(gamma_(K+m)) P), where gamma_k = k u / (1 - k u), u is the unit
+// roundoff, m this margin, and P the padded magnitude computed below.
+// Derivation (Higham, Accuracy and Stability of Numerical Algorithms, 2nd
+// ed., SIAM, 2002: the model (2.8), with fl(a op b) = (a op b)(1 + δ) + η,
+// |δ| <= u, |η| <= λu, δη = 0, and η = 0 for + and -, pp. 56-57; Lemma 3.1
+// and Lemma 3.3, pp. 63 and 67):
+// - Run on |v| and |x| with |c| for each coefficient c, and with the
+//   smallest normal number λ added to every rounded product, the kernels
+//   give the exact padded magnitude P. By induction over the operations,
+//   |d - e| <= gamma_K P for the exact value e: a sum adds no η, and a
+//   product's |η| <= λu <= gamma_K λ, which its padding covers. For a versor
+//   e = 0.
+// - The computed magnitude rounds two times per product (the product and
+//   the padding's addition) and once per sum, at most 2K times on a path,
+//   each on nonnegative numbers at least λ (1 - u)^2, so it is at least
+//   (1 - u)^(2K) P; and fl(gamma_k) >= (1 - u) gamma_k, since k u and
+//   1 - k u are exact.
+// - (1 - u)^(2K+1) gamma_(K+1) >= gamma_K when (K + 1)(2K + 1) u < 1, by
+//   multiplying out, so margin 1 makes the exact product of the two computed
+//   factors at least gamma_K P >= |d|, and rounding to nearest, which is
+//   monotone, keeps |d| <= the computed tolerance. Margin 0 fails this,
+//   since both factors may round down.
+inline constexpr int transform_rounding_margin = 1;
+
+// The magnitudes of the R coefficients of a kernel's result, from the
+// magnitudes x and y of its operands' coefficients: each term is the product
+// of the two, plus λ, then, when its coefficient c is not +1 or -1, |c|
+// times that, plus λ, and the terms are summed in the kernel's order. λ,
+// the smallest normal number of T, covers the absolute error of a product
+// that underflows, as derived above.
+template <class T, std::size_t R, std::size_t N, std::size_t KX, std::size_t KY>
+[[nodiscard]] constexpr std::array<T, R>
+padded_magnitude(const std::array<kernel_term, N>& kernel,
+                 const std::array<T, KX>& x, const std::array<T, KY>& y) {
+  constexpr T padding = std::numeric_limits<T>::min();
+  std::array<T, R> out{};
+  for (const kernel_term& t : kernel) {
+    T term = static_cast<T>(static_cast<T>(x[t.a] * y[t.b]) + padding);
+    if (t.coefficient != 1 && t.coefficient != -1) {
+      const auto c =
+          static_cast<T>(t.coefficient < 0 ? -t.coefficient : t.coefficient);
+      term = static_cast<T>(static_cast<T>(c * term) + padding);
+    }
+    out[t.out] = t.first ? term : static_cast<T>(out[t.out] + term);
+  }
+  return out;
+}
+
+template <class T, std::size_t K>
+[[nodiscard]] constexpr std::array<T, K>
+absolute_values(const std::array<T, K>& a) {
+  std::array<T, K> out{};
+  for (std::size_t i = 0; i < K; ++i) {
+    out[i] = a[i] < T{} ? static_cast<T>(-a[i]) : a[i];
+  }
+  return out;
+}
+
+/// The tolerance of each coefficient that a transform of x on X by v on V
+/// drops, in the order of transform_dropped_roundings: fl(fl(gamma_(K+1)) P),
+/// with K the coefficient's count of roundings and P its padded magnitude,
+/// so that a coefficient a versor drops, zero but for rounding, is within it.
+template <metric_like Alg, blade_set V, blade_set X, rounding_checked_scalar T>
+[[nodiscard]] constexpr std::array<T, dropped_blade_count<Alg, V, X>()>
+transform_dropped_tolerances(const std::array<T, V.size()>& v,
+                             const std::array<T, X.size()>& x) {
+  constexpr std::size_t dropped = dropped_blade_count<Alg, V, X>();
+  constexpr const auto& roundings = transform_dropped_roundings<Alg, V, X>;
+  constexpr T u = std::numeric_limits<T>::epsilon() / 2;
+  constexpr bool margin_suffices = [] {
+    for (const int k : roundings) {
+      const auto count = static_cast<std::int64_t>(k);
+      if (static_cast<T>((count + 1) * ((2 * count) + 1)) * u >= T{1}) {
+        return false;
+      }
+    }
+    return true;
+  }();
+  static_assert(margin_suffices,
+                "transform: a dropped coefficient has too many roundings "
+                "for the margin of the rounding check");
+
+  const auto abs_v = absolute_values(v);
+  const auto middle =
+      padded_magnitude<T, sandwich_middle_layout<Alg, V, X>.size()>(
+          first_kernel<Alg, V, X, true>, abs_v, absolute_values(x));
+  const auto magnitude = padded_magnitude<T, dropped>(
+      second_kernel<Alg, V, X, false>, middle, abs_v);
+
+  std::array<T, dropped> tolerances{};
+  for (std::size_t j = 0; j < dropped; ++j) {
+    const auto k = static_cast<T>(roundings[j] + transform_rounding_margin);
+    const T gamma = static_cast<T>((k * u) / (T{1} - (k * u)));
+    tolerances[j] = static_cast<T>(gamma * magnitude[j]);
+  }
+  return tolerances;
+}
+
+// Checks that every coefficient a transform drops is within its tolerance,
+// one comparison each, and that the tolerance is finite: a NaN or an
+// infinite coefficient, or one whose magnitude overflows, cannot be
+// verified, and fails. The message is on the line of the check, which a
+// failed constant evaluation shows.
+template <rounding_checked_scalar T, std::size_t D>
+constexpr void check_transform_rounded(const std::array<T, D>& dropped,
+                                       const std::array<T, D>& tolerances) {
+  for (std::size_t j = 0; j < D; ++j) {
+    const T size = dropped[j] < T{} ? static_cast<T>(-dropped[j]) : dropped[j];
+    const bool within =
+        size <= tolerances[j] && tolerances[j] <= std::numeric_limits<T>::max();
+    GALOOT_ASSERT(within, "transform: v is not a versor on x within rounding");
+  }
+}
+
 } // namespace detail
 
 // clang-tidy reads the operation, once substituted, as a C-style cast of its
@@ -484,8 +658,30 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// GALOOT_CHECKING is 1, which then aborts with the message; it compares
 /// each dropped coefficient with zero once, after computing the terms that
 /// reach the dropped blades. With GALOOT_CHECKING 0 those terms are not
-/// computed at run time. For a scalar that is not exact, such as double or
-/// std::complex<double>, nothing is checked.
+/// computed at run time.
+///
+/// For an IEEE 754 binary floating-point scalar that rounds to nearest, as
+/// its numeric_limits say (float and double), it checks in the same modes
+/// that every dropped coefficient d is within the forward error bound of
+/// this operation: |d| <= fl(fl(gamma_(K+1)) P), where gamma_k =
+/// k u / (1 - k u) for the unit roundoff u, K is the number of roundings on
+/// d's path, and P the same computation on the absolute values of v and x
+/// with the absolute values of the terms' coefficients, the smallest normal
+/// number added after each product to cover a product that underflows. A
+/// coefficient that a versor drops is zero but for rounding, and within
+/// that bound. The bound takes v and x as exact: a v with rounding error of
+/// its own, from its construction, is only nearly a versor, and where what
+/// transform drops is zero only because v is a versor, as for the
+/// antiscalar part of a conformal(3) vector, that error can exceed the
+/// bound and the check aborts. In rigid(3), for the five layouts above,
+/// what transform drops is zero for every v of one parity, so it cannot.
+/// A NaN or infinite dropped coefficient, or one whose P overflows, fails
+/// the check. On failure the message is "transform: v is not a versor on x
+/// within rounding". The bound assumes that each operation rounds once to
+/// the scalar's own precision, to nearest, with gradual underflow; a build
+/// that flushes subnormal numbers to zero is outside it, and a checking
+/// build under -ffast-math does not compile. Other scalars that are not
+/// exact, such as std::complex<double>, are not checked.
 /// Guarantees: on x's layout; with an exact scalar the result is exact, and
 /// the result is the same with and without the check.
 template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
@@ -511,14 +707,22 @@ template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
   mv<Alg, X, T> out;
   if constexpr (versor_has_one_parity &&
                 scalar_holds_every_coefficient_of_the_transform) {
-    if constexpr (exact_scalar<T> && std::equality_comparable<T>) {
+    if constexpr ((exact_scalar<T> && std::equality_comparable<T>) ||
+                  detail::rounding_checked_scalar<T>) {
       if (detail::checking_now()) {
         const auto middle = detail::transform_middle<Alg, V, X, true>(
             v.coefficients, x.coefficients);
         out.coefficients =
             detail::transform_outer<Alg, V, X, true>(middle, v.coefficients);
-        detail::check_transform_dropped(
-            detail::transform_outer<Alg, V, X, false>(middle, v.coefficients));
+        const auto dropped =
+            detail::transform_outer<Alg, V, X, false>(middle, v.coefficients);
+        if constexpr (detail::rounding_checked_scalar<T>) {
+          detail::check_transform_rounded(
+              dropped, detail::transform_dropped_tolerances<Alg, V, X>(
+                           v.coefficients, x.coefficients));
+        } else {
+          detail::check_transform_dropped(dropped);
+        }
         return out;
       }
     }
