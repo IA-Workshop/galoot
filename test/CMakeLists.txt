@@ -2039,3 +2039,19 @@ target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
+
+# rga3.objects: the model's layouts against the oriented names written in the
+# test, its types, and the facts of rigid(3) on them, against hand values and
+# the golden values.
+galoot_add_test(MODULE rga3 COMPONENT objects)
+target_link_libraries(rga3_objects_test PRIVATE galoot::rga3 galoot_golden
+  galoot_test_support)
+
+# rga3.bare_compile: the model, like the core, works with no build system and
+# no options beyond the language edition.
+add_test(NAME rga3.bare_compile
+  COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors
+    -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
+    ${CMAKE_CURRENT_SOURCE_DIR}/rga3/bare_user.cpp)
+set_tests_properties(rga3.bare_compile PROPERTIES
+  LABELS "rga3;rga3.headers")

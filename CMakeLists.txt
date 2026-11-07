@@ -32,21 +32,40 @@ target_sources(galoot_core INTERFACE
     include/galoot/core/unary.hpp)
 target_compile_features(galoot_core INTERFACE cxx_std_23)
 
+# The rga3 model, the rigid geometric algebra of three dimensions. It is
+# headers alone, written on the core's public headers, and like the core its
+# interface carries no flags of Galoot's own builds.
+add_library(galoot_rga3 INTERFACE)
+add_library(galoot::rga3 ALIAS galoot_rga3)
+target_sources(galoot_rga3 INTERFACE
+  FILE_SET HEADERS BASE_DIRS include FILES
+    include/galoot/rga3.hpp
+    include/galoot/rga3/objects.hpp)
+target_link_libraries(galoot_rga3 INTERFACE galoot_core)
+
 if(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
-# Every header under include/galoot belongs to the header set above, which
-# the header checks compile one by one and the format check reads, so a
-# header left out of it is never checked on its own. Stop configuring if one
-# is missing; CONFIGURE_DEPENDS reconfigures when a header is added.
+# Every header under include/galoot belongs to a header set, the rga3
+# model's for galoot/rga3.hpp and the headers under galoot/rga3/, and the
+# core's for the rest. The header checks compile each set's headers one by
+# one and the format check reads both sets, so a header left out is never
+# checked on its own. Stop configuring if one is missing or in the other
+# set; CONFIGURE_DEPENDS reconfigures when a header is added.
 file(GLOB_RECURSE galoot_headers_on_disk CONFIGURE_DEPENDS
   RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/include/galoot/*.hpp)
-get_target_property(galoot_header_set galoot_core HEADER_SET)
 foreach(header IN LISTS galoot_headers_on_disk)
+  if(header MATCHES "^include/galoot/rga3(\\.hpp$|/)")
+    set(galoot_header_target galoot_rga3)
+  else()
+    set(galoot_header_target galoot_core)
+  endif()
+  get_target_property(galoot_header_set ${galoot_header_target} HEADER_SET)
   if(NOT ${PROJECT_SOURCE_DIR}/${header} IN_LIST galoot_header_set)
-    message(FATAL_ERROR "${header} is not in galoot_core's header set; add "
-      "it to the FILES of target_sources(galoot_core ...)")
+    message(FATAL_ERROR "${header} is not in ${galoot_header_target}'s "
+      "header set; add it to the FILES of "
+      "target_sources(${galoot_header_target} ...)")
   endif()
 endforeach()
 
@@ -105,11 +124,12 @@ endif()
 # Each header compiles on its own, so it includes what it uses: one generated
 # translation unit per header, built by all_verify_interface_header_sets and
 # not by all.
-set_property(TARGET galoot_core PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
+set_property(TARGET galoot_core galoot_rga3
+  PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 
-# Layout check over the core's headers and the test sources: clang-format
-# with the repository's .clang-format must leave them unchanged. It does not
-# compile. include/ext keeps its upstream layout.
+# Layout check over the headers of the core and the rga3 model and the test
+# sources: clang-format with the repository's .clang-format must leave them
+# unchanged. It does not compile. include/ext keeps its upstream layout.
 find_program(GALOOT_CLANG_FORMAT clang-format REQUIRED)
 # CONFIGURE_DEPENDS, so that a test source added later is checked without a
 # manual reconfigure.
@@ -117,7 +137,8 @@ file(GLOB_RECURSE galoot_test_sources CONFIGURE_DEPENDS
   ${PROJECT_SOURCE_DIR}/test/*.cpp ${PROJECT_SOURCE_DIR}/test/*.hpp)
 add_custom_target(format-check
   COMMAND ${GALOOT_CLANG_FORMAT} --dry-run -Werror
-    $<TARGET_PROPERTY:galoot_core,HEADER_SET> ${galoot_test_sources}
+    $<TARGET_PROPERTY:galoot_core,HEADER_SET>
+    $<TARGET_PROPERTY:galoot_rga3,HEADER_SET> ${galoot_test_sources}
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMAND_EXPAND_LISTS
   VERBATIM)
