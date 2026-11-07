@@ -475,13 +475,17 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// one parity and x a point, a line, a plane, a motor, or a flector, and in
 /// any algebra for a versor and an x of whole grades. A v that is not a
 /// versor may leave the blades of x, as v = 1 + 𝟙 does for the scalar in
-/// R(4,0,0). The check is a GALOOT_ASSERT in every constant evaluation,
-/// which then fails, and at run time when GALOOT_CHECKING is 1, which then
-/// aborts with the message; it compares each dropped coefficient with zero
-/// once, after computing the terms that reach the dropped blades. With
-/// GALOOT_CHECKING 0 those terms are not computed at run time. For a scalar
-/// that is not exact, such as double or std::complex<double>, nothing is
-/// checked.
+/// R(4,0,0). The message, "transform: v does not act as a versor on x",
+/// also comes for a versor when x's layout holds only some of the blades of
+/// a grade: in R(4,0,0), v = 1 + e12 + 2 e13 + 3 e14, with
+/// v ⟇ antireverse(v) = 15𝟙, moves x on e1 alone onto e2, e3, and e4 as
+/// well; give x every blade of its grades. The check is a GALOOT_ASSERT in
+/// every constant evaluation, which then fails, and at run time when
+/// GALOOT_CHECKING is 1, which then aborts with the message; it compares
+/// each dropped coefficient with zero once, after computing the terms that
+/// reach the dropped blades. With GALOOT_CHECKING 0 those terms are not
+/// computed at run time. For a scalar that is not exact, such as double or
+/// std::complex<double>, nothing is checked.
 /// Guarantees: on x's layout; with an exact scalar the result is exact, and
 /// the result is the same with and without the check.
 template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
