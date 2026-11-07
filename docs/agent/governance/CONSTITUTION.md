@@ -1,6 +1,6 @@
 # Galoot constitution
 
-Status: ratified by the owner on 2026-10-31 (decision 0002).
+Status: ratified by the owner on 2026-10-31 (decision 0002). C8 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decision 0186).
 
 This constitution states what Galoot is for and the rules that hold for all of its work. Four documents beside it add detail: [WORKFLOW.md](WORKFLOW.md) says how a change moves from idea to release, [VVUQ.md](VVUQ.md) says what counts as evidence that Galoot is correct, [PERFORMANCE.md](PERFORMANCE.md) says how Galoot's build, run, and development costs are measured and kept in proportion, and [STYLE.md](STYLE.md) sets the style of the C++ source. They may add requirements but never relax this one, and where they conflict with it, this document governs.
 
@@ -53,7 +53,7 @@ Structure constants, meaning the signs, phases, and coefficients of generated te
 
 ### C8 Nothing hidden
 
-An operation that discards components, changes representation, or assumes a property of its input, such as unit norm, states this in its name or interface. Lossy conversions happen only on explicit request. A checking mode verifies that whatever an operation discarded was zero. Throughout Galoot, including its build and tests, behavior is declared rather than left to defaults, inference, or the environment; where predicting an outcome needs a hidden rule, the rule is made visible in the code or the interface.
+An operation that discards components, changes representation, or assumes a property of its input, such as unit norm, states this in its name or interface. Lossy conversions happen only on explicit request. A checking mode verifies that whatever an operation assumed to be zero, and discarded, was zero. Throughout Galoot, including its build and tests, behavior is declared rather than left to defaults, inference, or the environment; where predicting an outcome needs a hidden rule, the rule is made visible in the code or the interface.
 
 ### C9 Errors in the terms of the algebra
 

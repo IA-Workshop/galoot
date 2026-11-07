@@ -19,3 +19,7 @@
 | --- | --- | --- |
 | L1 (low) | Nothing checks that the random form's duals actually round: if their inputs fell back to 27 bits, every ratio would be 0 and the tests would still pass; the mutant `test_random_inputs_narrow` survives. Add a check that some coefficient has a nonzero error (largest ratio above 0) for the random form's duals and, if cheap, for the first group's sums; kill the mutant on gcc-debug and clang-debug. | `f68975c`: both families check that their largest ratio is above 0. `test_random_inputs_narrow` and a matching `test_sums_inputs_narrow` are killed on gcc-debug and clang-debug (`records/mutations/0020-rounding-wu11/`). |
 | L2 (low) | The header comment of `rounding_test.cpp`, lines 1 to 27, should list every operation tested and the real input scales (p/2^27, p/2^(53+s), p/2^53 for the duals, p/2^18 for the projection) and the bound on the exact values (below 2^8, about one bit of headroom in std::int64_t). | `f68975c`. |
+
+## Addendum, 2026-11-07: the reviewer's own report
+
+The reviewer's own report was not preserved in the repository, so this record stays the implementer's summary of it (M3 gate finding MA1). What it says the reviewer checked or found is as relayed, not the reviewer's text. From now on a reviewer's report is committed as the reviewer wrote it (decision 0182).
