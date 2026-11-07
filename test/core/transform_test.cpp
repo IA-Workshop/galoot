@@ -1205,3 +1205,87 @@ TEST_CASE("transform leaves other types alone") {
 
 } // namespace user_code
 } // namespace
+
+namespace {
+
+// The term counts of the transform's kernels for V on the layout V and x on
+// the layout X: the first stage restricted and whole, the second stage onto
+// x's blades and onto the dropped blades, and the number of dropped blades.
+struct kernel_counts {
+  std::size_t first_kept;
+  std::size_t first_all;
+  std::size_t second_kept;
+  std::size_t second_dropped;
+  std::size_t dropped_blades;
+};
+
+template <class Alg, core::blade_set V, core::blade_set X>
+constexpr kernel_counts counts_of() {
+  return {
+      .first_kept = core::detail::first_kernel<Alg, V, X, false>.size(),
+      .first_all = core::detail::first_kernel<Alg, V, X, true>.size(),
+      .second_kept = core::detail::second_kernel<Alg, V, X, true>.size(),
+      .second_dropped = core::detail::second_kernel<Alg, V, X, false>.size(),
+      .dropped_blades = core::detail::dropped_blade_count<Alg, V, X>(),
+  };
+}
+
+constexpr bool operator==(const kernel_counts& a, const kernel_counts& b) {
+  return a.first_kept == b.first_kept && a.first_all == b.first_all &&
+         a.second_kept == b.second_kept &&
+         a.second_dropped == b.second_dropped &&
+         a.dropped_blades == b.dropped_blades;
+}
+
+// Whether every term of a kernel writes inside a result of R places, and
+// exactly the first term on each place reached is marked first.
+template <std::size_t R, std::size_t N>
+constexpr bool well_formed(const std::array<core::detail::kernel_term, N>& k) {
+  std::array<bool, R> seen{};
+  for (const auto& t : k) {
+    if (t.out >= R || t.first == seen[t.out]) {
+      return false;
+    }
+    seen[t.out] = true;
+  }
+  return true;
+}
+
+} // namespace
+
+// Reference: independent value: in rigid(3), blades A and B have a nonzero
+//   antiproduct exactly when A or B holds e4, the null generator, since
+//   their complements then share no null generator. Counting the pairs so,
+//   by a separate script, a motor or a flector on a point gives 20 terms of
+//   V ⟇ x and 48 of that with V, of which 28 reach the point's blades and
+//   read every middle blade, and 4 blades are dropped. On a line it gives 36
+//   and 48, 36 kept, 2 dropped, on a plane 28 and 48, 20 kept, 4 dropped,
+//   and on a motor or a flector 48 and 48, all kept, none dropped
+TEST_CASE("the transform's kernels keep the terms that reach x's blades") {
+  static_assert(counts_of<rga3, motor_layout, point_layout>() ==
+                kernel_counts{20, 20, 28, 20, 4});
+  static_assert(counts_of<rga3, flector_layout, point_layout>() ==
+                kernel_counts{20, 20, 28, 20, 4});
+  static_assert(counts_of<rga3, motor_layout, line_layout>() ==
+                kernel_counts{36, 36, 36, 12, 2});
+  static_assert(counts_of<rga3, motor_layout, plane_layout>() ==
+                kernel_counts{28, 28, 20, 28, 4});
+  static_assert(counts_of<rga3, flector_layout, motor_layout>() ==
+                kernel_counts{48, 48, 48, 0, 0});
+  static_assert(counts_of<rga3, motor_layout, flector_layout>() !=
+                kernel_counts{48, 48, 48, 0, 4});
+
+  using core::detail::first_kernel;
+  using core::detail::sandwich_middle_layout;
+  using core::detail::second_kernel;
+  static_assert(well_formed<point_layout.size()>(
+      second_kernel<rga3, motor_layout, point_layout, true>));
+  static_assert(
+      well_formed<4>(second_kernel<rga3, motor_layout, point_layout, false>));
+  static_assert(
+      well_formed<
+          sandwich_middle_layout<rga3, motor_layout, point_layout>.size()>(
+          first_kernel<rga3, motor_layout, point_layout, false>));
+  static_assert(
+      !well_formed<3>(second_kernel<rga3, motor_layout, point_layout, true>));
+}
