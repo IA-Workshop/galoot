@@ -526,6 +526,7 @@ transform_dropped_tolerances(const std::array<T, V.size()>& v,
   constexpr const auto& roundings = transform_dropped_roundings<Alg, V, X>;
   constexpr T u = std::numeric_limits<T>::epsilon() / 2;
   constexpr bool margin_suffices = [] {
+    // NOLINTNEXTLINE(readability-use-anyofallof): avoids <algorithm> here.
     for (const int k : roundings) {
       const auto count = static_cast<std::int64_t>(k);
       if (static_cast<T>((count + 1) * ((2 * count) + 1)) * u >= T{1}) {
