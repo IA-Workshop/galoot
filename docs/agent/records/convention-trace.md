@@ -47,15 +47,23 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.1 | the dot is a^T G b and the antidot a^T antiG b times the antiscalar | yes |
 | 4.2 | right(a ^ b) = right(a) v right(b) | yes |
 | 4.3 | a point projected onto a unitized plane has weight +1 | yes |
-| 4.4 | transform(x, V) has the blade set of x | no |
+| 4.3 | the antiprojection of a plane onto a unitized point is the plane through the point with the same normal | yes |
+| 4.3 | the antiprojection of a line onto a unitized point is the line through the point with the same direction | yes |
+| 4.4 | transform(x, V) has the blade set of x | yes |
+| 4.4 | the parity of a versor is the parity of the antigrades of its blades | yes |
+| 4.4 | an odd versor V transforms x as the negated antiproduct of V, the antigrade involution of x, and antireverse(V) | yes |
+| 4.4 | compose(Q2, Q1) applies Q1 first | yes |
+| 4.4 | the transform by V is lambda times an outermorphism | yes |
+| 4.4 | a single mirror maps each vector of the mirror to itself times lambda | yes |
 | 4.5 | truncate checks that the part it drops is zero | yes |
 | 4.5 | part never checks what it drops | yes |
+| 4.5 | transform checks a rounding scalar's dropped part against its forward error bound | yes |
 | 5.1 | a point x e1 + y e2 + z e3 + w e4 has weight w | no |
 | 5.2 | the line through unitized points p and q has direction q - p | no |
 | 5.3 | a point p lies on the plane g when p v g = 0 | no |
-| 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | no |
-| 5.5 | the translator t_x e23 + t_y e31 + t_z e12 + antiscalar moves points by 2t | no |
-| 5.6 | a reflected point keeps a positive weight | no |
+| 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | yes |
+| 5.5 | the translator t_x e23 + t_y e31 + t_z e12 + antiscalar moves points by 2t | yes |
+| 5.6 | a reflected point keeps a positive weight | yes |
 | 5.7 | rotation(l, theta) turns by theta | no |
 | 6.1 | the round point with center p and squared radius r^2 is p + e4 + (p^2 + r^2)/2 e5 | no |
 | 6.2 | a flat object is a rigid object wedged with e5 | no |

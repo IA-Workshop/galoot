@@ -1,0 +1,78 @@
+simulation equals the core on the probe inputs: 11 transforms
+violations of |d - e| <= tol: 0
+violations of gamma_K M + K denorm_min: 5240
+('cga3 flector vector', 'one huge') 2.25e+14
+('cga3 motor bivector', 'one huge') 1.71e+14
+('cga3 motor vector', 'one huge') 3.46e+14
+('cga3 plane vector', 'one huge') 9.01e+14
+('r400 even scalar', 'one huge') 5e+14
+('r400 even vector', 'one huge') 3.75e+14
+('ratio', 'cga3 flector vector', 'deep underflow') 1.19e-14
+('ratio', 'cga3 flector vector', 'mixed scales') 0.108
+('ratio', 'cga3 flector vector', 'near overflow') 0.157
+('ratio', 'cga3 flector vector', 'one huge') 3.37e-18
+('ratio', 'cga3 flector vector', 'ordinary') 0.0802
+('ratio', 'cga3 flector vector', 'underflow and zeros') 0.0618
+('ratio', 'cga3 motor bivector', 'deep underflow') 2.23e-12
+('ratio', 'cga3 motor bivector', 'mixed scales') 0.104
+('ratio', 'cga3 motor bivector', 'near overflow') 0.0889
+('ratio', 'cga3 motor bivector', 'one huge') 0.0218
+('ratio', 'cga3 motor bivector', 'ordinary') 0.0855
+('ratio', 'cga3 motor bivector', 'underflow and zeros') 0.0469
+('ratio', 'cga3 motor vector', 'deep underflow') 3.49e-15
+('ratio', 'cga3 motor vector', 'mixed scales') 0.111
+('ratio', 'cga3 motor vector', 'near overflow') 0.156
+('ratio', 'cga3 motor vector', 'one huge') 6.53e-18
+('ratio', 'cga3 motor vector', 'ordinary') 0.132
+('ratio', 'cga3 motor vector', 'underflow and zeros') 0.0525
+('ratio', 'cga3 plane vector', 'deep underflow') 1.58e-15
+('ratio', 'cga3 plane vector', 'mixed scales') 0.21
+('ratio', 'cga3 plane vector', 'near overflow') 0.272
+('ratio', 'cga3 plane vector', 'one huge') 1.81e-17
+('ratio', 'cga3 plane vector', 'ordinary') 0.293
+('ratio', 'cga3 plane vector', 'underflow and zeros') 5.3e-08
+('ratio', 'r400 even scalar', 'deep underflow') 4.62e-14
+('ratio', 'r400 even scalar', 'mixed scales') 0.156
+('ratio', 'r400 even scalar', 'near overflow') 0.265
+('ratio', 'r400 even scalar', 'one huge') 1.11e-17
+('ratio', 'r400 even scalar', 'ordinary') 0.188
+('ratio', 'r400 even scalar', 'underflow and zeros') 0.000389
+('ratio', 'r400 even vector', 'deep underflow') 1.37e-16
+('ratio', 'r400 even vector', 'mixed scales') 0.144
+('ratio', 'r400 even vector', 'near overflow') 0.154
+('ratio', 'r400 even vector', 'one huge') 6.13e-18
+('ratio', 'r400 even vector', 'ordinary') 0.128
+('ratio', 'r400 even vector', 'underflow and zeros') 0.0803
+('ratio', 'rga3 flector line', 'deep underflow') 1.85e-18
+('ratio', 'rga3 flector line', 'mixed scales') 0.179
+('ratio', 'rga3 flector line', 'near overflow') 0.173
+('ratio', 'rga3 flector line', 'one huge') 9.19e-18
+('ratio', 'rga3 flector line', 'ordinary') 0.194
+('ratio', 'rga3 flector line', 'underflow and zeros') 0.0501
+('ratio', 'rga3 flector point', 'mixed scales') 0.166
+('ratio', 'rga3 flector point', 'near overflow') 0.211
+('ratio', 'rga3 flector point', 'one huge') 1.81e-17
+('ratio', 'rga3 flector point', 'ordinary') 0.213
+('ratio', 'rga3 flector point', 'underflow and zeros') 6.21e-10
+('ratio', 'rga3 motor line', 'deep underflow') 1.85e-18
+('ratio', 'rga3 motor line', 'mixed scales') 0.124
+('ratio', 'rga3 motor line', 'near overflow') 0.174
+('ratio', 'rga3 motor line', 'one huge') 8.89e-18
+('ratio', 'rga3 motor line', 'ordinary') 0.192
+('ratio', 'rga3 motor line', 'underflow and zeros') 0.0242
+('ratio', 'rga3 motor plane', 'deep underflow') 1.39e-17
+('ratio', 'rga3 motor plane', 'mixed scales') 0.132
+('ratio', 'rga3 motor plane', 'near overflow') 0.236
+('ratio', 'rga3 motor plane', 'one huge') 8.41e-18
+('ratio', 'rga3 motor plane', 'ordinary') 0.205
+('ratio', 'rga3 motor plane', 'underflow and zeros') 0.0471
+('ratio', 'rga3 motor point', 'mixed scales') 0.193
+('ratio', 'rga3 motor point', 'near overflow') 0.233
+('ratio', 'rga3 motor point', 'one huge') 1.83e-17
+('ratio', 'rga3 motor point', 'ordinary') 0.23
+('ratio', 'rga3 motor point', 'underflow and zeros') 5.6e-13
+('rga3 flector line', 'one huge') 6.43e+14
+('rga3 flector point', 'one huge') 9.01e+14
+('rga3 motor line', 'one huge') 6.43e+14
+('rga3 motor plane', 'one huge') 6.43e+14
+('rga3 motor point', 'one huge') 9.01e+14

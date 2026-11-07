@@ -86,3 +86,15 @@ Evidence that exists: `core.mv_truncate_nonzero_<scalar>` and the `mv_part_check
 - The margin and its derivation were written into `test/support/tracked.hpp` before the first build and run of the tests (the first `core.rounding` run is the run-log row of 2026-11-04 12:55:23 UTC); the derivation rested on the text of Higham's pages read before that. The page images of Lemma 3.1 and Lemma 3.3 were read after the first runs, while writing research note 0020, and agree with the text read before. So the margin was fixed before any result was seen.
 - The K = 1 equality and the ratio limit were added after the blind review, when results had been seen. Neither rests on an observed ratio: both are derived above, and the limit is tighter than what was observed allowed for, not looser.
 - History of the branch was rewritten once while it was unshared: three commits (`9a6ca29`, `3aa9079`, `38ba916`) were folded into `c8f4c02` and `e36a905` with `git reset --soft`, to remove two commits on which `tests.reference_markers` failed. The final tree was the same. The run log holds 54 rows naming `3aa9079` (22 clean, 30 `-dirty`) and 2 naming `38ba916`; those commits are no longer on the branch, so those rows cannot be reproduced from its history (they survive only in the implementer's reflog). `38ba916` had the same tree as `e36a905`. No history was rewritten after the branch was reported for review.
+
+## Addendum, 2026-11-07: the inventory gains compose, transform, and antiproject (WU13)
+
+Plan 0021 asks this inventory to gain the operations of WU13 in an appended section, since a recorded decision is not rewritten. Recorded by Claude (agent, Opus 5.5), implementer of WU13b. What each does when `GALOOT_CHECKING` is 1 (and in every constant evaluation), on `feature/core-transform--rounding`:
+
+| Operation | Drops part of its value? | Check in checking mode |
+| --- | --- | --- |
+| `compose(Q2, Q1)` | No: `compose_layout` holds every blade of Q2 ⟇ Q1 | None at run time. At compile time, a `static_assert` that each operand has one parity, and that the scalar holds every exact coefficient of the plan |
+| `transform(x, V)` | Yes: the part of V ⟇ x ⟇ V̰ (with the odd sign and involution) on blades x's layout lacks | For an exact scalar with `==`, every dropped coefficient is zero (decision 0178 item 5). For a scalar whose `numeric_limits` give `is_iec559` and `round_to_nearest` (float, double), every dropped coefficient d is within fl(fl(γ_(K+1)) P), its count of roundings K and padded magnitude P, and is finite, and so is the tolerance (decision 0180). Other inexact scalars, none. At compile time, the parity and coefficient checks of decision 0178 items 3 and 6 |
+| `antiproject(a, b)` | No | None at run time; at compile time, the scalar holds the weight dual's coefficients, as for `project` |
+
+Evidence: `core.transform_nonzero_*`, `core.transform_checking_*`, and `core.transform_consteval_nonzero*` (exact); `core.transform_rounding`, `core.transform_rounding_checking_*`, `core.transform_rounding_consteval_*`, and `core.transform_fast_math` (rounding).

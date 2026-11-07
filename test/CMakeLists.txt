@@ -1749,3 +1749,293 @@ dual_rejects_comparison(left_weight_dual)
 dual_rejects_comparison(dot)
 dual_rejects_comparison(antidot)
 dual_rejects_comparison(project)
+
+# The antiprojection's rejections, as the projection's: a narrow scalar,
+# also where only the second operand's weight dual overflows; operands from
+# two algebras or with two scalar types; and a comparison with a value of
+# another layout.
+dual_rejects_narrow_scalar(antiproject "antiprojection")
+dual_rejects_narrow_scalar(antiproject "antiprojection" first_operand)
+foreach(function IN ITEMS antiproject)
+  galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_algebras_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_algebras}"
+    ONE_ERROR FORBID "different scalar types"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+  galoot_add_compile_fail_test(NAME dual_mixed_scalars_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_scalars_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_scalars}"
+    ONE_ERROR FORBID "different algebras"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+endforeach()
+dual_rejects_comparison(antiproject)
+
+# core.transform: compose and transform, against the reference's tables of
+# the products and the complements, and by hand in rigid(3) and other
+# forms.
+galoot_add_test(MODULE core COMPONENT transform)
+target_link_libraries(core_transform_test PRIVATE galoot_golden
+  galoot_test_support)
+
+# The names of the machinery under compose and transform, which the first
+# error line of a rejection must not show: the user wrote compose or
+# transform, not these.
+set(transform_internal_names "apply:" "geometric_antiproduct:" "a % b:"
+  product_plan "detail::" "truncate:")
+
+# core.<function>_<case>: a misuse of compose or transform fails to compile
+# with one error, the message of the function as written, from the source
+# core/<function>_<case>_fail.cpp. Further arguments go to the test.
+function(transform_rejects function case message)
+  galoot_add_compile_fail_test(NAME ${function}_${case}
+    MODULE core COMPONENT transform
+    SOURCE core/${function}_${case}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR ${ARGN}
+    FORBID_ON_FIRST_ERROR ${transform_internal_names})
+endfunction()
+
+# A versor of both parities, as either operand of compose.
+set(compose_mixed_parity "compose: an operand holds blades of both parities, even and odd antigrade${semicolon} compose versors that are each even or odd")
+transform_rejects(compose mixed_parity_first "${compose_mixed_parity}")
+transform_rejects(compose mixed_parity_second "${compose_mixed_parity}")
+# An exact coefficient of the composition that std::int8_t cannot hold.
+transform_rejects(compose narrow_scalar "compose: the scalar type cannot hold one of the composition's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+# Operands from two algebras or with two scalar types; the message names the
+# cause, and not the other one.
+set(transform_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
+set(transform_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
+transform_rejects(compose mixed_algebras "compose: ${transform_algebras}"
+  FORBID "different scalar types")
+transform_rejects(compose mixed_scalars "compose: ${transform_scalars}"
+  FORBID "different algebras")
+
+# core.compose_compare: comparing a composition with a value of another
+# layout fails to compile; Clang names the result's layout by its layout
+# name, and neither compiler shows the plan or detail names on its first
+# error line.
+set(compose_compare_require "")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(compose_compare_require REQUIRE "compose_layout<")
+endif()
+galoot_add_compile_fail_test(NAME compose_compare
+  MODULE core COMPONENT transform
+  SOURCE core/compose_compare_fail.cpp
+  MESSAGE "${dual_compare_message}" ${compose_compare_require}
+  ONE_ERROR FORBID_ON_FIRST_ERROR product_plan "detail::")
+
+# A versor of both parities given to transform.
+transform_rejects(transform mixed_parity "transform: the versor holds blades of both parities, even and odd antigrade${semicolon} a versor is even, as a motor, or odd, as a flector")
+# An exact coefficient that std::int8_t cannot hold in the first of the two
+# antiproducts transform composes, and in the second: a check of one alone
+# accepts the other case.
+set(transform_narrow_scalar "transform: the scalar type cannot hold one of the transform's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+transform_rejects(transform narrow_scalar_first_plan
+  "${transform_narrow_scalar}")
+transform_rejects(transform narrow_scalar_second_plan
+  "${transform_narrow_scalar}")
+transform_rejects(transform mixed_algebras "transform: ${transform_algebras}"
+  FORBID "different scalar types")
+transform_rejects(transform mixed_scalars "transform: ${transform_scalars}"
+  FORBID "different algebras")
+
+# core.transform_consteval_nonzero_<case>: a transform that drops a
+# coefficient that is not zero ends a constant evaluation, whatever the
+# checking mode, and the diagnostic shows the message on the echoed line.
+set(transform_dropped "transform: v does not act as a versor on x")
+foreach(case IN ITEMS consteval_nonzero consteval_nonzero_rational)
+  galoot_add_compile_fail_test(NAME transform_${case}
+    MODULE core COMPONENT transform
+    SOURCE core/transform_${case}_fail.cpp
+    MESSAGE "${transform_dropped}"
+    REQUIRE assertion_failed
+    FORBID "truncate:")
+endforeach()
+
+# core.transform_<mode>_<case>: one program built in each checking mode
+# (core/transform_assert_fail.cpp). With checking on, a transform that drops
+# a coefficient that is not zero aborts with the message over each exact
+# scalar; with checking off it keeps the scalar 2. Over a scalar whose ==
+# records its operands, checking compares exactly the dropped coefficients,
+# each once with zero, and no checking compares nothing. In rigid(3), where
+# what transform drops is zero, neither mode aborts. The programs take the
+# core's headers directly, so that the preset's mode does not reach them.
+foreach(mode IN ITEMS 1 0)
+  add_executable(core_transform_mode_${mode} core/transform_assert_fail.cpp)
+  target_include_directories(core_transform_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(core_transform_mode_${mode} PRIVATE
+    galoot_test_support)
+  target_compile_features(core_transform_mode_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(core_transform_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+foreach(scalar IN ITEMS int64 rational)
+  add_test(NAME core.transform_nonzero_${scalar}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${transform_dropped} ("
+      -- $<TARGET_FILE:core_transform_mode_1> ${scalar})
+  add_test(NAME core.transform_unchecked_${scalar}
+    COMMAND core_transform_mode_0 ${scalar})
+  set_tests_properties(core.transform_nonzero_${scalar}
+    core.transform_unchecked_${scalar}
+    PROPERTIES LABELS "core;core.transform")
+endforeach()
+foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
+  add_test(NAME core.transform_checking_${case}
+    COMMAND core_transform_mode_1 ${case})
+  add_test(NAME core.transform_unchecked_${case}
+    COMMAND core_transform_mode_0 ${case})
+  set_tests_properties(core.transform_checking_${case}
+    core.transform_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform")
+endforeach()
+
+# core.transform_rounding: the rounding check of transform over double and
+# float, against the tracking oracle.
+galoot_add_test(MODULE core COMPONENT transform_rounding)
+target_link_libraries(core_transform_rounding_test PRIVATE
+  galoot_test_support)
+set_tests_properties(core.transform_rounding PROPERTIES
+  LABELS "core;core.transform;core.rounding")
+
+# core.transform_rounding_consteval_<case>: over double and float, a
+# transform that drops a coefficient far above its rounding error, positive
+# or negative, ends a constant evaluation, whatever the checking mode, with
+# the rounding check's message on the echoed line and not the exact check's.
+set(transform_rounded "transform: v is not a versor on x within rounding")
+foreach(scalar IN ITEMS double float negative_double negative_float)
+  galoot_add_compile_fail_test(NAME transform_rounding_consteval_${scalar}
+    MODULE core COMPONENT transform
+    SOURCE core/transform_rounding_consteval_${scalar}_fail.cpp
+    MESSAGE "${transform_rounded}"
+    REQUIRE assertion_failed
+    FORBID "${transform_dropped}")
+  set_tests_properties(core.transform_rounding_consteval_${scalar}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+
+# core.transform_rounding_<mode>_<case>: one program built in each checking
+# mode (core/transform_rounding_assert_fail.cpp). With checking on, a
+# dropped part that is not rounding error, a NaN or an infinite one, or one
+# whose bound overflows aborts with the message; a dropped part within the
+# bound, also one whose products underflow, does not. With checking off,
+# nothing aborts, and the transform that is not a versor's keeps 2. The
+# programs take the core's headers directly, so that the preset's mode does
+# not reach them.
+foreach(mode IN ITEMS 1 0)
+  add_executable(core_transform_rounding_mode_${mode}
+    core/transform_rounding_assert_fail.cpp)
+  target_include_directories(core_transform_rounding_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_compile_features(core_transform_rounding_mode_${mode} PRIVATE
+    cxx_std_23)
+  target_compile_definitions(core_transform_rounding_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+foreach(case IN ITEMS not_a_versor_double not_a_versor_float negative_double
+    negative_float ten_times ten_times_float nan nan_float infinite
+    infinite_float overflow overflow_float)
+  add_test(NAME core.transform_rounding_checking_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${transform_rounded} ("
+      -- $<TARGET_FILE:core_transform_rounding_mode_1> ${case})
+  add_test(NAME core.transform_rounding_unchecked_${case}
+    COMMAND core_transform_rounding_mode_0 ${case})
+  set_tests_properties(core.transform_rounding_checking_${case}
+    core.transform_rounding_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+set(transform_rounding_unchecked_cases coarse_unchecked)
+# std::bfloat16_t, which libstdc++ provides with GCC and not with Clang.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND transform_rounding_unchecked_cases bfloat16_unchecked)
+endif()
+foreach(case IN ITEMS tenth underflow_double underflow_float
+    ${transform_rounding_unchecked_cases})
+  add_test(NAME core.transform_rounding_checking_${case}
+    COMMAND core_transform_rounding_mode_1 ${case})
+  add_test(NAME core.transform_rounding_unchecked_${case}
+    COMMAND core_transform_rounding_mode_0 ${case})
+  set_tests_properties(core.transform_rounding_checking_${case}
+    core.transform_rounding_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+
+# core.transform_fast_math: in a checking build, transform.hpp stops
+# compilation under -ffast-math, which reassociates and may flush subnormal
+# numbers to zero, so that the rounding check could reject a correct result,
+# with its own message and not the one for -ffinite-math-only, which
+# -ffast-math implies; core.transform_finite_math_only: it stops under
+# -ffinite-math-only alone, which lets the compiler assume that no value is
+# a NaN or an infinity, so that the check could pass one, with that
+# option's message; core.transform_without_fast_math: the same source
+# compiles without either. The compiler runs as galoot_add_compile_fail_test
+# runs it, with the option added.
+set(transform_fast_math
+  "transform: checking mode needs IEEE 754 arithmetic, not -ffast-math")
+set(transform_finite_math_only
+  "transform: checking mode needs NaN and infinity, not -ffinite-math-only")
+set(transform_fast_math_source
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/transform_fast_math_fail.cpp)
+galoot_check_literals_outside_path(core.transform_fast_math
+  "${transform_fast_math_source}" "${transform_fast_math}"
+  "${transform_finite_math_only}")
+galoot_compile_command(transform_fast_math_compile)
+add_test(NAME core.transform_fast_math
+  COMMAND ${expect_output} 1 "${transform_fast_math}"
+    FORBID "${transform_finite_math_only}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -ffast-math -o core_transform_fast_math.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
+add_test(NAME core.transform_finite_math_only
+  COMMAND ${expect_output} 1 "${transform_finite_math_only}"
+    FORBID "${transform_fast_math}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -ffinite-math-only -o core_transform_finite_math_only.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
+add_test(NAME core.transform_without_fast_math
+  COMMAND ${expect_output} 0
+    FORBID "${transform_fast_math}" "${transform_finite_math_only}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -o core_transform_without_fast_math.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
+# core.transform_unchecked_<option>: in an unchecked build, transform.hpp
+# compiles under -ffast-math and under -ffinite-math-only, with neither
+# error: only a checking build runs the rounding check at run time.
+set(transform_unchecked_source
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/transform_unchecked_fast_math.cpp)
+foreach(option IN ITEMS fast-math finite-math-only)
+  string(REPLACE "-" "_" name "${option}")
+  add_test(NAME core.transform_unchecked_${name}
+    COMMAND ${expect_output} 0
+      FORBID "${transform_fast_math}" "${transform_finite_math_only}"
+      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+        -f${option} -o core_transform_unchecked_${name}.o
+        -c ${transform_unchecked_source}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(core.transform_unchecked_${name}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+set_tests_properties(core.transform_fast_math
+  core.transform_finite_math_only core.transform_without_fast_math
+  PROPERTIES LABELS "core;core.transform;core.rounding")
+
+# core.transform_identities: the outermorphism and composition identities of
+# transform over many signatures. A program of its own, so that a change to
+# the tests of transform_test.cpp does not rebuild it; it also carries the
+# label core.transform.
+galoot_add_test(MODULE core COMPONENT transform_identities)
+target_link_libraries(core_transform_identities_test PRIVATE
+  galoot_test_support)
+set_property(TEST core.transform_identities APPEND PROPERTY LABELS
+  core.transform)

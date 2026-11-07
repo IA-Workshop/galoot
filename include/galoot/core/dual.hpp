@@ -1,9 +1,10 @@
 #ifndef GALOOT_CORE_DUAL_HPP
 #define GALOOT_CORE_DUAL_HPP
 
-// The bulk and the weight of a multivector, its duals, and the dot and the
-// antidot of two multivectors, in the sense of Lengyel's rigid and conformal
-// geometric algebra:
+// The bulk and the weight of a multivector, its duals, the dot and the
+// antidot of two multivectors, and the projection and the antiprojection of
+// one onto another, in the sense of Lengyel's rigid and conformal geometric
+// algebra:
 //
 //   struct rga3 {
 //     static constexpr auto value = galoot::core::rigid<3>();
@@ -38,6 +39,7 @@
 //   dot(a, b)            the sum of a_A G_AB b_B, on the scalar
 //   antidot(a, b)        the sum of a_A (left G right)_AB b_B, times 𝟙
 //   project(a, b)        antiwedge(b, wedge(a, weight_dual(b)))
+//   antiproject(a, b)    wedge(b, antiwedge(a, weight_dual(b)))
 //
 // In rigid(3), where e1, e2, e3 square to 1 and e4 to 0, the bulk is the part
 // without e4 and the weight the part with it, so bulk(x) + weight(x) is x,
@@ -68,7 +70,7 @@
 //
 // Nothing here checks anything: the bulk and the weight drop blades by
 // definition, the dot and the antidot compute one coefficient, and the duals
-// and the projection drop nothing.
+// and the projections drop nothing.
 //
 // Compile cost: each operation is a composition of the products, the reverse,
 // and the complements, so it costs what its parts cost, and the smallest of
@@ -80,16 +82,17 @@
 // full<8> is past the reverse's limit, and up to full<9>, the largest tried,
 // on GCC; the dot, the antidot, and the projection build up to full<5> on
 // Clang and full<6> on GCC, the limits of the geometric product's and the
-// wedge's plans. Every operation builds for full<5> of conformal(3). In a
-// dense form of five generators, where every pair of generators is coupled,
-// the dot and the antidot of two full<5> multivectors do not build on Clang;
-// GCC builds them. A failure there is reported inside the plan's generation,
-// on Clang with the note "constexpr evaluation hit maximum step limit" and on
-// GCC as an operation count over the limit (without optimization, sometimes as
-// a libstdc++ assertion that "is not a constant expression"), followed by
-// errors that do not name the operation. The weight, the weight duals, the
-// antidot, and the projection pass through the complements, whose grades grow
-// with n, so their compile cost grows with n even when x uses few generators.
+// wedge's plans, and the antiprojection the same. Every operation builds for
+// full<5> of conformal(3). In a dense form of five generators, where every pair
+// of generators is coupled, the dot and the antidot of two full<5> multivectors
+// do not build on Clang; GCC builds them. A failure there is reported inside
+// the plan's generation, on Clang with the note "constexpr evaluation hit
+// maximum step limit" and on GCC as an operation count over the limit (without
+// optimization, sometimes as a libstdc++ assertion that "is not a constant
+// expression"), followed by errors that do not name the operation. The weight,
+// the weight duals, the antidot, and the projection pass through the
+// complements, whose grades grow with n, so their compile cost grows with n
+// even when x uses few generators.
 //
 // The names bulk, weight, and dot are common words. A variable of one of
 // these names in scope stops an unqualified call of the function, as for any
@@ -226,6 +229,7 @@ enum class DualSpelling {
   dot_function,
   antidot_function,
   project_function,
+  antiproject_function,
 };
 
 /// The only error of a dot, an antidot, or a projection of mismatched
@@ -250,11 +254,16 @@ constexpr std::remove_cvref_t<X> reject_dual_operands() {
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "antidot: the operands are in different algebras; give both types "
           "the same algebra tag");
-    } else {
+    } else if constexpr (Spelling == project_function) {
       static_assert(
           std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
           "project: the operands are in different algebras; give both types "
           "the same algebra tag");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::algebra_type, typename S::algebra_type>,
+          "antiproject: the operands are in different algebras; give both "
+          "types the same algebra tag");
     }
   } else {
     if constexpr (Spelling == dot_function) {
@@ -267,10 +276,15 @@ constexpr std::remove_cvref_t<X> reject_dual_operands() {
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "antidot: the operands have different scalar types; give both "
           "types the same scalar type");
-    } else {
+    } else if constexpr (Spelling == project_function) {
       static_assert(
           std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
           "project: the operands have different scalar types; give both "
+          "types the same scalar type");
+    } else {
+      static_assert(
+          std::is_same_v<typename R::scalar_type, typename S::scalar_type>,
+          "antiproject: the operands have different scalar types; give both "
           "types the same scalar type");
     }
   }
@@ -345,6 +359,14 @@ inline constexpr auto antidot_layout =
 template <metric_like Alg, blade_set A, blade_set B>
 inline constexpr auto project_layout =
     antiwedge_layout<Alg, B, wedge_layout<Alg, A, weight_dual_layout<Alg, B>>>;
+
+/// The layout of antiproject(a, b) for a on the layout A and b on the layout
+/// B: the blades of the wedge of b with the antiwedge of a and the weight
+/// dual of b. A rigid(3) plane onto a point gives e123, e124, e134, and
+/// e234, the plane's blades in canonical order.
+template <metric_like Alg, blade_set A, blade_set B>
+inline constexpr auto antiproject_layout =
+    wedge_layout<Alg, B, antiwedge_layout<Alg, A, weight_dual_layout<Alg, B>>>;
 
 // NOLINTEND(modernize-avoid-c-style-cast)
 
@@ -619,6 +641,43 @@ template <class X, class Y>
 constexpr std::remove_cvref_t<X> project(const X& /*a*/, const Y& /*b*/) {
   return detail::reject_dual_operands<detail::DualSpelling::project_function, X,
                                       Y>();
+}
+
+/// The antiprojection of a onto b, b ∧ (a ∨ weight_dual(b)): the wedge of b
+/// with the antiwedge of a and the weight dual of b. In rigid(3) it carries
+/// a onto an object through b: a plane antiprojected onto a unitized point
+/// is the plane through the point with the same normal, and a line
+/// antiprojected onto a unitized point is the line through the point with
+/// the same direction. The object comes first, as in antiproject(plane,
+/// point). The result is not unitized: onto a point of weight w it is w²
+/// times the result onto the unitized point. Never checks.
+///
+/// Requires: as for project, with the message naming antiproject.
+/// Guarantees: on antiproject_layout<Alg, A, B>, canonical; read it back
+/// under a named layout, as Plane{antiproject(g, p)}.
+template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+[[nodiscard]] constexpr mv<Alg, antiproject_layout<Alg, A, B>, T>
+antiproject(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
+  constexpr bool scalar_holds_every_coefficient_of_the_antiprojection =
+      detail::weight_coefficients_exact<Alg, B, T>;
+  static_assert(scalar_holds_every_coefficient_of_the_antiprojection,
+                "antiproject: the scalar type cannot hold one of the "
+                "antiprojection's exact coefficients; use a scalar type that "
+                "holds larger integers exactly");
+  if constexpr (scalar_holds_every_coefficient_of_the_antiprojection) {
+    return wedge(b, antiwedge(a, weight_dual(b)));
+  } else {
+    return {};
+  }
+}
+
+/// Rejects an antiprojection whose operands are not in one algebra with one
+/// scalar type, as for dot: a requires-expression is told yes.
+template <class X, class Y>
+  requires detail::mismatched_operands<X, Y>
+constexpr std::remove_cvref_t<X> antiproject(const X& /*a*/, const Y& /*b*/) {
+  return detail::reject_dual_operands<
+      detail::DualSpelling::antiproject_function, X, Y>();
 }
 
 } // namespace galoot::core

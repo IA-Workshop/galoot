@@ -1,6 +1,6 @@
 // Tests of galoot/core/dual.hpp: the bulk and the weight of a multivector,
 // its four duals, the dot and the antidot of two multivectors, and the
-// projection of one onto another.
+// projection and the antiprojection of one onto another.
 //
 // The bulk applies the metric exomorphism G, which sends a blade e_A to the
 // sum over the blades e_B of its grade of the Gram minor det g[A, B] times
@@ -9,9 +9,10 @@
 // weight; the left duals take the left complement instead. The dot of a and
 // b is a^T G b on the scalar, and the antidot a^T antiG b on the antiscalar,
 // with antiG the antiexomorphism. The projection of a onto b is
-// b v (a ^ weight_dual(b)). The expected values are composed in the test
-// from the reference's table of G and its tables of complements, or from the
-// squares of a diagonal form, or worked out by hand from those definitions. A
+// b v (a ^ weight_dual(b)), and the antiprojection b ^ (a v weight_dual(b)).
+// The expected values are composed in the test from the reference's table of
+// G and its tables of complements and products, or from the squares of a
+// diagonal form, or worked out by hand from those definitions. A
 // result holds the canonical blades the operation reaches, each with
 // orientation +1, in order of grade and then of index list; the expected
 // layouts are written from that rule.
@@ -1522,6 +1523,321 @@ TEST_CASE("the project overloads take the right operands") {
 
 namespace {
 
+template <class X, class Y>
+concept can_call_antiproject = requires(X x, Y y) { core::antiproject(x, y); };
+template <class Alg>
+concept has_antiproject_layout =
+    requires { core::antiproject_layout<Alg, core::full<2>, core::full<2>>; };
+
+// Whether a product table of `size` blades holds, at the place
+// a * size + b, the product of the blades of the masks a and b.
+bool products_in_place(std::span<const golden::product> table,
+                       std::size_t size) {
+  if (table.size() != size * size) {
+    return false;
+  }
+  for (std::size_t k = 0; k < table.size(); ++k) {
+    if (table[k].a != k / size || table[k].b != k % size) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// The wedge x ^ y, composed from a product table: the wedge of the blades
+// e_A and e_B is the term of e_A e_B on the union of their generators when
+// they share none, and zero otherwise.
+by_mask wedge_of(std::span<const golden::product> table, const by_mask& x,
+                 const by_mask& y) {
+  const std::size_t size = x.size();
+  by_mask out(size);
+  for (core::mask_t a = 0; a < size; ++a) {
+    for (core::mask_t b = 0; b < size; ++b) {
+      if ((a & b) != 0 || x.at(a) == 0 || y.at(b) == 0) {
+        continue;
+      }
+      const golden::product& entry = table[(a * size) + b];
+      for (std::size_t k = 0; k < entry.size; ++k) {
+        if (entry.terms.at(k).blade == (a | b)) {
+          out.at(a | b) += x.at(a) * y.at(b) * entry.terms.at(k).coefficient;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+// The antiwedge x v y = left(right(x) ^ right(y)), composed from the tables.
+by_mask antiwedge_of(std::span<const golden::product> table,
+                     std::span<const golden::complement_pair> complements,
+                     const by_mask& x, const by_mask& y) {
+  return left_of(complements, wedge_of(table, right_of(complements, x),
+                                       right_of(complements, y)));
+}
+
+// The antiprojection of a onto b, b ^ (a v right(antiG b)), composed from
+// the tables: right(antiG b) = right(left(G right(b))) = G right(b).
+by_mask antiprojection_of(std::span<const golden::blade_image> g,
+                          std::span<const golden::product> table,
+                          std::span<const golden::complement_pair> complements,
+                          const by_mask& a, const by_mask& b) {
+  const by_mask weight_dual_of_b = exomorphism_of(g, right_of(complements, b));
+  return wedge_of(table, b,
+                  antiwedge_of(table, complements, a, weight_dual_of_b));
+}
+
+// The coefficients of x indexed by mask, one place for each blade of its
+// algebra.
+template <class X>
+by_mask masks_of(const X& x) {
+  by_mask out(std::size_t{1} << generators<typename X::algebra_type>);
+  for (core::mask_t m = 0; m < out.size(); ++m) {
+    out.at(m) = value_on(x, m);
+  }
+  return out;
+}
+
+// Empty when x holds `want` on every blade of its algebra, where a blade its
+// layout lacks holds zero; otherwise the first blade where they differ.
+template <class X>
+std::string difference_from(const X& x, const by_mask& want) {
+  for (core::mask_t m = 0; m < want.size(); ++m) {
+    if (value_on(x, m) != want.at(m)) {
+      return blade_name(m) + ": " + std::to_string(value_on(x, m)) + ", not " +
+             std::to_string(want.at(m));
+    }
+  }
+  return "";
+}
+
+// antiproject(a, b) against its composition from the tables, for random
+// integer a and b of the layout of X.
+template <class X>
+void check_antiprojections(std::mt19937_64& source,
+                           std::span<const golden::blade_image> g,
+                           std::span<const golden::product> table,
+                           std::span<const golden::complement_pair> complements,
+                           const std::string& form) {
+  INFO("form: ", form);
+  REQUIRE(tables_in_place(g, complements));
+  REQUIRE(products_in_place(table, complements.size()));
+  for (int k = 0; k < 6; ++k) {
+    CAPTURE(k);
+    const X a = random_integers<X>(source);
+    const X b = random_integers<X>(source);
+    const by_mask want =
+        antiprojection_of(g, table, complements, masks_of(a), masks_of(b));
+    CHECK(difference_from(core::antiproject(a, b), want) == "");
+  }
+}
+
+} // namespace
+
+// Reference: independent value: for random integer multivectors on every
+//   blade of rigid(3), conformal(2), conformal(3), the degenerate form
+//   [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and random form 1, and on every
+//   blade of rigid(3) under its oriented names, the antiprojection of a onto
+//   b is b ^ (a v weight_dual(b)), with the weight dual
+//   right(left(G right(b))) = G right(b), the wedge the term of the product
+//   on the union of two blades that share no generator, and the antiwedge
+//   left(right(a) ^ right(b)), all composed in the test from the reference's
+//   tables of G, where the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B, of the products of forms whose Gram matrices satisfy
+//   e_i e_j + e_j e_i = 2 g_ij, and of the complements, which satisfy
+//   u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
+TEST_CASE("the antiprojection is b ^ (a v weight_dual(b)) from the tables") {
+  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
+  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
+  REQUIRE(degenerate3::value.gram == golden::gp_tables::degenerate_3_gram);
+  REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 source(seed);
+  check_antiprojections<core::mv<rga3, core::full<4>, std::int64_t>>(
+      source, golden::exomorphisms::rigid_3, golden::gp_tables::rigid_3,
+      golden::complements::n4, "rigid(3)");
+  check_antiprojections<Oriented>(
+      source, golden::exomorphisms::rigid_3, golden::gp_tables::rigid_3,
+      golden::complements::n4, "rigid(3), oriented names");
+  check_antiprojections<core::mv<cga2, core::full<4>, std::int64_t>>(
+      source, golden::exomorphisms::conformal_2, golden::gp_tables::conformal_2,
+      golden::complements::n4, "conformal(2)");
+  check_antiprojections<core::mv<cga3, core::full<5>, std::int64_t>>(
+      source, golden::exomorphisms::conformal_3, golden::gp_tables::conformal_3,
+      golden::complements::n5, "conformal(3)");
+  check_antiprojections<core::mv<degenerate3, core::full<3>, std::int64_t>>(
+      source, golden::exomorphisms::degenerate_3,
+      golden::gp_tables::degenerate_3, golden::complements::n3,
+      "degenerate form");
+  check_antiprojections<core::mv<random1, core::full<3>, std::int64_t>>(
+      source, golden::exomorphisms::random_1, golden::gp_tables::random_1,
+      golden::complements::n3, "random form 1");
+}
+
+// Reference: independent value: by hand in rigid(3), the antiprojection of
+//   a plane onto a unitized point is the plane through the point with the
+//   same normal: p ^ (g v weight_dual(p)) is
+//   p_w^2 (g_x e423 + g_y e431 + g_z e412) - (g_x p_x + g_y p_y + g_z p_z)
+//   p_w e321, the formula of the rigid wiki's Projections page, recomputed
+//   from the definitions. The plane (1, 2, 3, 4) onto the point (5, 7, -1)
+//   with weight 1 gives (1, 2, 3, -16), since 5 + 14 - 3 = 16, and with
+//   weight 2 it gives (4, 8, 12, -32). The result holds the point, so
+//   p v result is zero, and antiprojecting it onto the unitized point again
+//   leaves it unchanged, and likewise for rational planes and points
+TEST_CASE("a plane antiprojected onto a unitized point passes through it") {
+  const Plane g{1, 2, 3, 4};
+  const Point p{5, 7, -1, 1};
+  static_assert(
+      std::same_as<decltype(core::antiproject(g, p)),
+                   core::mv<rga3, core::of_grade<4, 3>, std::int64_t>>);
+  CHECK(Plane{core::antiproject(g, p)} == Plane{1, 2, 3, -16});
+  CHECK(Plane{core::antiproject(g, Point{5, 7, -1, 2})} ==
+        Plane{4, 8, 12, -32});
+
+  using test_support::rational;
+  using P = core::mv<rga3, point_layout, rational>;
+  using G = core::mv<rga3, plane_layout, rational>;
+  const std::array planes{
+      std::array{rational{3, 5}, rational{4, 5}, rational{0}, rational{-2}},
+      std::array{rational{2}, rational{-1, 3}, rational{5, 2}, rational{7}},
+  };
+  const std::array points{
+      std::array{rational{1}, rational{2}, rational{3}},
+      std::array{rational{-7, 2}, rational{1, 3}, rational{5}},
+  };
+  for (std::size_t i = 0; i < planes.size(); ++i) {
+    for (std::size_t j = 0; j < points.size(); ++j) {
+      CAPTURE(i);
+      CAPTURE(j);
+      const auto& n = planes.at(i);
+      const auto& x = points.at(j);
+      const G plane{n.at(0), n.at(1), n.at(2), n.at(3)};
+      const P point{x.at(0), x.at(1), x.at(2), rational{1}};
+      const rational along =
+          (n.at(0) * x.at(0)) + (n.at(1) * x.at(1)) + (n.at(2) * x.at(2));
+      const G through{n.at(0), n.at(1), n.at(2), -along};
+      const G result{core::antiproject(plane, point)};
+      CHECK(result == through);
+      CHECK(core::get<"1">(core::antiwedge(point, result)) == rational{0});
+      CHECK(G{core::antiproject(result, point)} == result);
+    }
+  }
+}
+
+// Reference: independent value: by hand in rigid(3), the antiprojection of
+//   a line onto a unitized point is the line through the point with the same
+//   direction: p ^ (l v weight_dual(p)) has the direction p_w^2 l_v and the
+//   moment p_w (p x l_v), the Projections page's formula recomputed from the
+//   definitions. The line with direction (1, 2, 3) through (1, 0, 0), whose
+//   moment is (0, -3, 2), onto the point (5, 7, -1) gives the direction
+//   (1, 2, 3) and the moment (5, 7, -1) x (1, 2, 3) = (23, -16, 3), the line
+//   p ^ q of the point and q = (6, 9, 2), whose direction is q - p, so
+//   p ^ result is zero, and antiprojecting it onto p again leaves it unchanged
+TEST_CASE("a line antiprojected onto a unitized point passes through it") {
+  const Line l{1, 2, 3, 0, -3, 2};
+  const Point p{5, 7, -1, 1};
+  static_assert(
+      std::same_as<decltype(core::antiproject(l, p)),
+                   core::mv<rga3, core::of_grade<4, 2>, std::int64_t>>);
+  const Line result{core::antiproject(l, p)};
+  CHECK(result == Line{1, 2, 3, 23, -16, 3});
+  CHECK(result == Line{core::wedge(p, Point{6, 9, 2, 1})});
+  const auto through_p = core::wedge(p, result);
+  CHECK(through_p == decltype(through_p){});
+  CHECK(Line{core::antiproject(result, p)} == result);
+}
+
+// Reference: independent value: by hand in rigid(3), the antiprojection of a
+//   plane g onto a line l is l ^ (g v weight_dual(l)), which the Projections
+//   page gives as |l_v|^2 g_n - (g_n . l_v) l_v on e423 e431 e412 and
+//   g_x l_my l_vz - g_x l_mz l_vy + g_y l_mz l_vx - g_y l_mx l_vz +
+//   g_z l_mx l_vy - g_z l_my l_vx on e321, recomputed from the definitions:
+//   the plane (2, -1, 1, 3) onto the line with direction (1, 2, 3) and moment
+//   (0, -3, 2) gives (25, -20, 5, -25), which holds the line's points
+//   (1, 0, 0) and (2, 2, 3) and whose normal is orthogonal to its direction,
+//   and the plane y + z = 3 onto the x axis moved to y = 1 gives y + z = 1
+TEST_CASE("a plane antiprojected onto a line contains the line") {
+  const Line l{1, 2, 3, 0, -3, 2};
+  static_assert(
+      std::same_as<decltype(core::antiproject(Plane{}, l)),
+                   core::mv<rga3, core::of_grade<4, 3>, std::int64_t>>);
+  const Plane result{core::antiproject(Plane{2, -1, 1, 3}, l)};
+  CHECK(result == Plane{25, -20, 5, -25});
+  const auto meet = core::antiwedge(l, result);
+  CHECK(meet == decltype(meet){});
+  CHECK(Plane{core::antiproject(Plane{0, 1, 1, -3}, Line{1, 0, 0, 0, 0, -1})} ==
+        Plane{0, 1, 1, -1});
+}
+
+// Reference: independent value: by hand from the definitions in rigid(3),
+//   b ^ (a v weight_dual(b)) reaches the four trivectors for a plane onto a
+//   point or a line and the six bivectors for a line onto a point, since the
+//   weight dual of a point is on e123 and that of a line on e12 e13 e23, each
+//   with sign +1 in order of grade and then of index list, and the layout name
+//   gives the same sets and takes only an algebra
+TEST_CASE("the antiprojection layout name is the canonical set") {
+  static_assert(core::antiproject_layout<rga3, plane_layout, point_layout> ==
+                core::of_grade<4, 3>);
+  static_assert(core::antiproject_layout<rga3, line_layout, point_layout> ==
+                core::of_grade<4, 2>);
+  static_assert(core::antiproject_layout<rga3, plane_layout, line_layout> ==
+                core::of_grade<4, 3>);
+  static_assert(core::antiproject_layout<rga3, plane_layout, point_layout> !=
+                plane_layout);
+  static_assert(has_antiproject_layout<rga3>);
+  static_assert(!has_antiproject_layout<int>);
+  static_assert(
+      std::same_as<
+          decltype(core::antiproject(Plane{}, Point{})),
+          core::mv<rga3,
+                   core::antiproject_layout<rga3, plane_layout, point_layout>,
+                   std::int64_t>>);
+  static_assert(
+      !std::same_as<decltype(core::antiproject(Plane{}, Point{})), Plane>);
+  CHECK(core::antiproject_layout<rga3, line_layout, point_layout>.size() == 6);
+}
+
+// Reference: independent value: by hand in diag(100, 100), the weight dual
+//   of b on e12 is G right(e12) = G 1 = 1, which std::int8_t holds, while
+//   that of a on 1 would be G e12 = 10000 e12, which it does not, and only the
+//   coefficients of the second operand's weight dual are checked, so the
+//   antiprojection of a on 1 onto b on e12 is accepted. It is
+//   e12 ^ (1 v 1), and 1 v 1 = left(e12 ^ e12) reaches no blade, so the
+//   result has no blade
+TEST_CASE("antiproject checks the coefficients of its second operand only") {
+  using Scalar = core::mv<wide, core::blades<wide, "1">, std::int8_t>;
+  using Bivector = core::mv<wide, core::blades<wide, "e12">, std::int8_t>;
+  const auto r = core::antiproject(Scalar{3}, Bivector{2});
+  constexpr core::blade_set<0> no_blades{};
+  static_assert(std::same_as<std::remove_cvref_t<decltype(r)>,
+                             core::mv<wide, no_blades, std::int8_t>>);
+  CHECK(r.coefficients.empty());
+}
+
+// Reference: contract: an antiprojection of operands in two algebras or
+//   with two scalar types has the catch-all as its only candidate, and a
+//   requires-expression answers yes for it, as the library documents, while
+//   a valid call is not captured by it, since a plane antiprojected onto a
+//   point is on the canonical trivectors and not of the plane's type, and a
+//   multivector and a number have no antiprojection
+TEST_CASE("the antiproject overloads take the right operands") {
+  using G = core::mv<rga3, plane_layout, double>;
+  using P = core::mv<rga3, point_layout, double>;
+  using F = core::mv<rga3, point_layout, float>;
+  using C = core::mv<cga3, core::full<5>, double>;
+  static_assert(can_call_antiproject<G, P>);
+  static_assert(can_call_antiproject<G, F>);
+  static_assert(can_call_antiproject<G, C>);
+  static_assert(!can_call_antiproject<G, double>);
+  static_assert(!can_call_antiproject<double, P>);
+  static_assert(!std::same_as<decltype(core::antiproject(G{}, P{})), G>);
+  static_assert(std::same_as<decltype(core::antiproject(G{}, P{})),
+                             core::mv<rga3, core::of_grade<4, 3>, double>>);
+}
+
+namespace {
+
 // The terms of the dot's kernel, one for each pair of blades whose product
 // has a scalar part, with that part as the coefficient, all on position 0
 // and only the first of them marked first.
@@ -1615,6 +1931,28 @@ TEST_CASE("the dot, antidot, and project leave other types alone") {
   static_assert(std::same_as<decltype(project(gadget{}, gadget{})), int>);
   CHECK(project(gadget{}, gadget{}) == 3);
   static_assert(has_project<R, R>);
+}
+
+struct gizmo {
+  friend int antiproject(gizmo /*a*/, gizmo /*b*/) { return 4; }
+};
+
+template <class X, class Y>
+concept has_antiproject = requires(X x, Y y) { antiproject(x, y); };
+
+// Reference: contract: with galoot::core's names in scope by a
+//   using-directive, a type of the user's without an antiprojection still
+//   has none, a type with its own antiproject keeps it, a multivector with
+//   such a type has none, and two multivectors find the library's by an
+//   unqualified call
+TEST_CASE("antiproject leaves other types alone") {
+  using R = mv<rga3, full<4>, double>;
+  static_assert(!has_antiproject<widget, widget>);
+  static_assert(!has_antiproject<R, gizmo>);
+  static_assert(!has_antiproject<gizmo, R>);
+  static_assert(std::same_as<decltype(antiproject(gizmo{}, gizmo{})), int>);
+  CHECK(antiproject(gizmo{}, gizmo{}) == 4);
+  static_assert(has_antiproject<R, R>);
 }
 
 } // namespace user_code

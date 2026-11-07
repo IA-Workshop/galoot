@@ -1,0 +1,25 @@
+mutant	build_exit	build_failures	failed_tests
+tolerance_halved	1	transform_rounding: test/core/transform_rounding_test.cpp:874:17: error: static assertion failed due to requirement 'tol[0] == 2 * gamma_4'	-
+tolerance_zero	1	transform_rounding: test/core/transform_rounding_test.cpp:874:17: error: static assertion failed due to requirement 'tol[0] == 2 * gamma_4'	core.transform_rounding_checking_tenth core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+margin_0	1	transform_rounding: test/core/transform_rounding_test.cpp:874:17: error: static assertion failed due to requirement 'tol[0] == 2 * gamma_4'	-
+margin_2	1	transform_rounding: test/core/transform_rounding_test.cpp:874:17: error: static assertion failed due to requirement 'tol[0] == 2 * gamma_4'	-
+k_undercounted_second_stage	1	transform_rounding: test/core/transform_rounding_test.cpp:864:17: error: static assertion failed due to requirement 'core::detail::transform_dropped_roundings<transform_rounding_cases::r400, galoot::core::blade_set<2>{{{{0, 1}, {15, 1}}}}, galoot::core::blade_set<1>{{{{0, 1}}}}> == std::array<int, 1>{3}'	-
+k_coefficient_product_uncounted	0	-	core.transform_rounding
+k_first_term_counted	1	transform_rounding: test/core/transform_rounding_test.cpp:864:17: error: static assertion failed due to requirement 'core::detail::transform_dropped_roundings<transform_rounding_cases::r400, galoot::core::blade_set<2>{{{{0, 1}, {15, 1}}}}, galoot::core::blade_set<1>{{{{0, 1}}}}> == std::array<int, 1>{3}'	core.transform_rounding
+magnitude_from_computed_middle	0	-	core.transform_rounding
+padding_removed	1	transform_rounding: test/core/transform_rounding_test.cpp:1097:34: error: constexpr variable 'tiny' must be initialized by a constant expression	core.transform_rounding core.transform_rounding_checking_underflow_double core.transform_rounding_checking_underflow_float
+padding_lambda	0	-	-
+magnitude_middle_restricted	0	-	core.transform_rounding
+magnitude_coefficient_ignored	0	-	core.transform_rounding
+nan_dropped_passes	0	-	core.transform_rounding_checking_nan core.transform_rounding_checking_nan_float
+tolerance_finite_removed	0	-	core.transform_rounding_checking_infinite core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow core.transform_rounding_checking_overflow_float
+size_signed	0	-	core.transform_rounding_consteval_negative_double core.transform_rounding_consteval_negative_float core.transform_rounding_checking_negative_double core.transform_rounding_checking_negative_float
+rounding_check_removed	0	-	core.transform_rounding_consteval_double core.transform_rounding_consteval_float core.transform_rounding_consteval_negative_double core.transform_rounding_consteval_negative_float core.transform_rounding_checking_not_a_versor_double core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_negative_double core.transform_rounding_checking_negative_float core.transform_rounding_checking_ten_times core.transform_rounding_checking_ten_times_float core.transform_rounding_checking_nan core.transform_rounding_checking_nan_float core.transform_rounding_checking_infinite core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow core.transform_rounding_checking_overflow_float
+float_unchecked	0	-	core.transform_rounding_consteval_float core.transform_rounding_consteval_negative_float core.transform_rounding_checking_not_a_versor_float core.transform_rounding_checking_negative_float core.transform_rounding_checking_ten_times_float core.transform_rounding_checking_nan_float core.transform_rounding_checking_infinite_float core.transform_rounding_checking_overflow_float
+exact_check_removed	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded
+fast_math_error_removed	0	-	core.transform_fast_math
+finite_math_error_removed	0	-	core.transform_finite_math_only
+finite_math_guard_ignores_checking	0	-	core.transform_unchecked_fast_math core.transform_unchecked_finite_math_only
+gate_removed	0	-	core.transform_rounding_checking_coarse_unchecked
+checked_ignores_margin	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed due to requirement '!transform_rounding_checked<(anonymous namespace)::rga3, motor_layout, point_layout, (anonymous namespace)::coarse>'	-
+margin_holds_always	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed due to requirement '!transform_rounding_checked<(anonymous namespace)::rga3, motor_layout, point_layout, (anonymous namespace)::coarse>'	-
