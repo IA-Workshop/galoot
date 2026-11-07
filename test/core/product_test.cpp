@@ -9,15 +9,14 @@
 // antiproducts are composed from those tables and the complement tables of
 // the reference, as left(right(a) ⟑ right(b)) and left(right(a) ∧ right(b)).
 // The algebraic identities are checked on integer coefficients small enough
-// that every sum is exact.
+// that every sum is exact. The test cases that build an antiproduct of two
+// full multivectors of conformal(3) are in product_conformal3_test.cpp.
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
 #include <random>
 #include <span>
-#include <string>
 #include <type_traits>
-#include <vector>
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -27,46 +26,19 @@
 
 #include <doctest/doctest.h>
 
+#include "product_checks.hpp"
 #include <reference/golden.hpp>
 
 namespace {
 
 namespace core = galoot::core;
-
-struct rga3 {
-  static constexpr auto value = core::rigid<3>();
-};
-struct cga2 {
-  static constexpr auto value = core::conformal<2>();
-};
-struct cga3 {
-  static constexpr auto value = core::conformal<3>();
-};
-
-// The coefficient of the result on the blade with this mask, or zero when
-// the result's layout lacks it.
-template <class Type>
-std::int64_t value_on(const Type& r, core::mask_t mask) {
-  for (std::size_t k = 0; k < Type::component_count; ++k) {
-    const core::oriented_blade blade = Type::layout.blades.at(k);
-    if (blade.mask == mask) {
-      return blade.sign * r.coefficients.at(k);
-    }
-  }
-  return 0;
-}
-
-// The coefficient of the table's product on the blade with this mask.
-inline std::int64_t table_value(const golden::product& entry,
-                                core::mask_t mask) {
-  std::int64_t sum = 0;
-  for (std::size_t k = 0; k < entry.size; ++k) {
-    if (entry.terms.at(k).blade == mask) {
-      sum += entry.terms.at(k).coefficient;
-    }
-  }
-  return sum;
-}
+using galoot_test::products::antiproduct_mismatches;
+using galoot_test::products::cga2;
+using galoot_test::products::cga3;
+using galoot_test::products::random_integers;
+using galoot_test::products::rga3;
+using galoot_test::products::table_value;
+using galoot_test::products::value_on;
 
 // The number of blades, among all of them, on which the product or the wedge
 // of the basis blades at positions i and j differs from the table. The wedge
@@ -119,16 +91,6 @@ template <class X, class Y>
 concept can_call_geometric_product =
     requires(X x, Y y) { core::geometric_product(x, y); };
 
-template <class Type>
-Type random_integers(std::mt19937_64& source) {
-  std::uniform_int_distribution<std::int64_t> digit(-3, 3);
-  Type x{};
-  for (auto& c : x.coefficients) {
-    c = digit(source);
-  }
-  return x;
-}
-
 template <class X, class Y>
 concept can_antimultiply = requires(X x, Y y) { x % y; };
 template <class X, class Y>
@@ -138,146 +100,6 @@ concept can_call_geometric_antiproduct =
     requires(X x, Y y) { core::geometric_antiproduct(x, y); };
 template <class X, class Y>
 concept can_call_antiwedge = requires(X x, Y y) { core::antiwedge(x, y); };
-
-// The two forms of the reference tables beside rigid(3) and conformal(3): a
-// degenerate form that is not diagonal, and a seeded random form.
-struct degenerate3 {
-  static constexpr auto value = core::from_gram({
-      {0, 1, 0},
-      {1, 0, 0},
-      {0, 0, 0},
-  });
-};
-struct random1 {
-  static constexpr auto value = core::from_gram({
-      {2, 0, -3},
-      {0, 1, -3},
-      {-3, -3, -2},
-  });
-};
-
-// The name of a blade, e followed by the indices of its generators, or 1,
-// with a minus sign for an orientation of -1, so that a failure names the
-// blades it is about.
-std::string blade_name(core::mask_t mask, int sign = 1) {
-  std::string name = sign < 0 ? "-" : "";
-  if (mask == 0) {
-    return name + "1";
-  }
-  name += 'e';
-  for (unsigned i = 0; i < 32; ++i) {
-    if (((mask >> i) & 1U) != 0) {
-      name += std::to_string(i + 1);
-    }
-  }
-  return name;
-}
-
-// The coefficients, indexed by mask, of the geometric antiproduct and the
-// antiwedge of the canonical blades of the masks a and b, composed from
-// the tables alone: a ⟇ b = left(right(a) ⟑ right(b)) and
-// a ∨ b = left(right(a) ∧ right(b)), with right and left read from the
-// complement table and the product from the product table. The wedge of two
-// blades with no generator in common is the term of their product on the
-// union of their generators; any other wedge is zero. `found` is false when
-// a table does not hold an entry where its index says it does.
-struct composition {
-  std::vector<std::int64_t> antiproduct_on;
-  std::vector<std::int64_t> antiwedge_on;
-  bool found;
-};
-
-composition compose(std::span<const golden::product> table,
-                    std::span<const golden::complement_pair> complements,
-                    core::mask_t a, core::mask_t b) {
-  const std::size_t size = complements.size();
-  composition out{
-      .antiproduct_on = std::vector<std::int64_t>(size),
-      .antiwedge_on = std::vector<std::int64_t>(size),
-      .found = true,
-  };
-  const golden::signed_blade ra = complements[a].right;
-  const golden::signed_blade rb = complements[b].right;
-  const golden::product& entry = table[(ra.blade * size) + rb.blade];
-  out.found = complements[a].blade == a && complements[b].blade == b &&
-              entry.a == ra.blade && entry.b == rb.blade;
-  if (!out.found) {
-    return out;
-  }
-
-  const std::int64_t sign = std::int64_t{ra.sign} * rb.sign;
-  for (std::size_t k = 0; k < entry.size; ++k) {
-    const golden::term& t = entry.terms.at(k);
-    const golden::complement_pair& d = complements[t.blade];
-    out.found = out.found && d.blade == t.blade;
-    out.antiproduct_on.at(d.left.blade) += sign * t.coefficient * d.left.sign;
-  }
-  if ((ra.blade & rb.blade) == 0) {
-    const core::mask_t joined = ra.blade | rb.blade;
-    const golden::complement_pair& d = complements[joined];
-    out.antiwedge_on.at(d.left.blade) +=
-        sign * table_value(entry, joined) * d.left.sign;
-  }
-  return out;
-}
-
-// 1, with a failure that shows `what`, when `wrong`; otherwise 0.
-int failure_if(bool wrong, const std::string& what) {
-  if (wrong) {
-    FAIL_CHECK(what);
-    return 1;
-  }
-  return 0;
-}
-
-// The number of coefficients, over every pair of basis blades of the layout
-// of X and every blade of the algebra, on which geometric_antiproduct or
-// antiwedge differs from the composition of the tables. Each basis blade is
-// the blade of its place in the layout with its orientation there, so a
-// value of 1 at a place whose orientation is -1 is minus the canonical
-// blade. Each difference is reported with the blades it is about.
-template <class X>
-int antiproduct_mismatches(
-    std::span<const golden::product> table,
-    std::span<const golden::complement_pair> complements) {
-  int mismatches = 0;
-  for (std::size_t i = 0; i < X::component_count; ++i) {
-    for (std::size_t j = 0; j < X::component_count; ++j) {
-      const core::oriented_blade a = X::layout.blades.at(i);
-      const core::oriented_blade b = X::layout.blades.at(j);
-      X x{};
-      X y{};
-      x.coefficients.at(i) = 1;
-      y.coefficients.at(j) = 1;
-      const composition expected = compose(table, complements, a.mask, b.mask);
-      const std::string pair = "(" + blade_name(a.mask, a.sign) + ", " +
-                               blade_name(b.mask, b.sign) + ")";
-      if (!expected.found) {
-        mismatches += failure_if(true, "no table entry for " + pair);
-        continue;
-      }
-
-      const auto ap = core::geometric_antiproduct(x, y);
-      const auto aw = core::antiwedge(x, y);
-      const std::int64_t sign = std::int64_t{a.sign} * b.sign;
-      for (core::mask_t m = 0; m < complements.size(); ++m) {
-        const auto on = [&](const char* op, std::int64_t got,
-                            std::int64_t want) {
-          return op + pair + " on " + blade_name(m) + " is " +
-                 std::to_string(got) + ", not " + std::to_string(want);
-        };
-        const std::int64_t want_ap = sign * expected.antiproduct_on.at(m);
-        const std::int64_t want_aw = sign * expected.antiwedge_on.at(m);
-        mismatches +=
-            failure_if(value_on(ap, m) != want_ap,
-                       on("geometric_antiproduct", value_on(ap, m), want_ap));
-        mismatches += failure_if(value_on(aw, m) != want_aw,
-                                 on("antiwedge", value_on(aw, m), want_aw));
-      }
-    }
-  }
-  return mismatches;
-}
 
 } // namespace
 
@@ -476,35 +298,6 @@ TEST_CASE("the overloads take the right operands") {
   static_assert(!core::detail::same_scalar_v<R, F>);
 }
 
-// Reference: independent value: for every pair of basis blades of rigid(3),
-//   conformal(2), conformal(3), the degenerate form
-//   [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and random form 1, the geometric
-//   antiproduct left(right(a) ⟑ right(b)) and the
-//   antiwedge left(right(a) ∧ right(b)), composed in the test from the exact
-//   product tables, which satisfy e_i e_j + e_j e_i = 2 g_ij, and the
-//   complement tables, which satisfy u ^ right(u) = antiscalar and
-//   left(u) ^ u = antiscalar, covering odd and even n, where the two
-//   complements agree and differ, and forms that are not diagonal at both
-TEST_CASE("geometric_antiproduct and antiwedge of basis blades equal the "
-          "composition of the tables") {
-  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
-  REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
-  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
-  REQUIRE(degenerate3::value.gram == golden::gp_tables::degenerate_3_gram);
-  REQUIRE(random1::value.gram == golden::gp_tables::random_1_gram);
-  CHECK(antiproduct_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
-            golden::gp_tables::rigid_3, golden::complements::n4) == 0);
-  CHECK(antiproduct_mismatches<core::mv<cga2, core::full<4>, std::int64_t>>(
-            golden::gp_tables::conformal_2, golden::complements::n4) == 0);
-  CHECK(antiproduct_mismatches<core::mv<cga3, core::full<5>, std::int64_t>>(
-            golden::gp_tables::conformal_3, golden::complements::n5) == 0);
-  CHECK(antiproduct_mismatches<
-            core::mv<degenerate3, core::full<3>, std::int64_t>>(
-            golden::gp_tables::degenerate_3, golden::complements::n3) == 0);
-  CHECK(antiproduct_mismatches<core::mv<random1, core::full<3>, std::int64_t>>(
-            golden::gp_tables::random_1, golden::complements::n3) == 0);
-}
-
 // Reference: independent value: the same composition for every pair of the
 //   sixteen blades of rigid(3) stored under their oriented names, where an
 //   oriented name lists generators in the order of their product, so that a
@@ -666,29 +459,6 @@ TEST_CASE("the product layout names are the canonical sets of the blades") {
   static_assert(has_wedge_layout<rga3>);
   static_assert(!has_wedge_layout<int>);
   CHECK(core::wedge_layout<rga3, point, point>.size() == 6);
-}
-
-// Reference: identity: associativity of the geometric antiproduct and of the
-//   antiwedge on random integer multivectors of rigid(3) and conformal(3),
-//   whose sums are exact
-TEST_CASE("the antiproducts are associative") {
-  const unsigned seed = doctest::getContextOptions()->rand_seed;
-  INFO("seed: ", seed);
-  std::mt19937_64 source(seed);
-  using R = core::mv<rga3, core::full<4>, std::int64_t>;
-  using C = core::mv<cga3, core::full<5>, std::int64_t>;
-  for (int k = 0; k < 6; ++k) {
-    const R a = random_integers<R>(source);
-    const R b = random_integers<R>(source);
-    const R c = random_integers<R>(source);
-    CHECK(((a % b) % c) == (a % (b % c)));
-    CHECK(((a & b) & c) == (a & (b & c)));
-    const C d = random_integers<C>(source);
-    const C e = random_integers<C>(source);
-    const C f = random_integers<C>(source);
-    CHECK(((d % e) % f) == (d % (e % f)));
-    CHECK(((d & e) & f) == (d & (e & f)));
-  }
 }
 
 // Reference: identity: the antiscalar is e12...n with sign +1, and it is the
