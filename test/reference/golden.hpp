@@ -2581,10 +2581,10 @@ inline constexpr std::array<line_join, 8> joins = {{
 } // namespace rigid_lines
 
 // In rigid(3), the plane p ^ q ^ r through three points has the coefficients
-// det[e_j; p; q; r] on e423, e431, e412, e321, so that x v (p ^ q ^ r) =
-// det[x; p; q; r]. Seeded points of several weights; each plane was computed
+// det[e_j, p, q, r] on e423, e431, e412, e321, so that x v (p ^ q ^ r) =
+// det[x, p, q, r]. Seeded points of several weights; each plane was computed
 // by the wedge and by these determinants, which agree.
-// Fact: the plane p ^ q ^ r takes the value det[x; p; q; r] at a point x
+// Fact: the plane p ^ q ^ r takes the value det[x, p, q, r] at a point x
 namespace rigid_planes {
 inline constexpr std::array<plane_join, 8> joins = {{
     {

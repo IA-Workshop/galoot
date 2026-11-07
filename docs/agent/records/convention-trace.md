@@ -62,7 +62,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.2 | the line through unitized points p and q has direction q - p | no |
 | 5.2 | the line p ^ q has direction w_p q - w_q p and moment p x q | no |
 | 5.3 | a point p lies on the plane g when p v g = 0 | no |
-| 5.3 | the plane p ^ q ^ r takes the value det[x; p; q; r] at a point x | no |
+| 5.3 | the plane p ^ q ^ r takes the value det[x, p, q, r] at a point x | no |
 | 5.3 | the meets of lines and planes are the points and lines common to them | no |
 | 5.3 | p v g, p ^ l, and l v k are zero exactly when the objects are incident | no |
 | 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | yes |

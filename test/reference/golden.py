@@ -1299,11 +1299,11 @@ def generate():
     close_namespace(out, "rigid_lines")
 
     open_namespace(out, "rigid_planes",
-                   "the plane p ^ q ^ r takes the value det[x; p; q; r] at a "
+                   "the plane p ^ q ^ r takes the value det[x, p, q, r] at a "
                    "point x",
                    "In rigid(3), the plane p ^ q ^ r through three points has "
-                   "the coefficients det[e_j; p; q; r] on e423, e431, e412, "
-                   "e321, so that x v (p ^ q ^ r) = det[x; p; q; r]. Seeded "
+                   "the coefficients det[e_j, p, q, r] on e423, e431, e412, "
+                   "e321, so that x v (p ^ q ^ r) = det[x, p, q, r]. Seeded "
                    "points of several weights; each plane was computed by "
                    "the wedge and by these determinants, which agree.")
     emit_values(out, "plane_join", "joins", incidences["planes"])
