@@ -19,7 +19,7 @@ mixed_catch_all_unconstrained	0	-	-
 mixed_catch_all_any_type	1	motions: include/galoot/core/mv.hpp:526:17: error: static assertion failed: mv: the scalar type has no addition; give it a + b, or use a number type such as double	-
 non_floating_catch_all_removed	1	motions: test/rga3/motions_test.cpp:317:17: error: static assertion failed	rga3.rotation_integer_scalar rga3.rotation_rational_scalar
 angle_type_catch_all_removed	1	motions: test/rga3/motions_test.cpp:320:17: error: static assertion failed	rga3.rotation_angle_int rga3.rotation_angle_double_for_float
-axis_catch_all_removed	1	motions: test/rga3/motions_test.cpp:319:17: error: static assertion failed	rga3.rotation_axis_point rga3.rotation_axis_join
+axis_catch_all_removed	1	motions: test/rga3/motions_test.cpp:393:17: error: static assertion failed	rga3.rotation_axis_point rga3.rotation_axis_join
 integer_catch_all_removed	1	motions: test/rga3/motions_test.cpp:329:17: error: static assertion failed	rga3.translation_int rga3.translation_int64
 mixed_catch_all_removed	0	-	rga3.translation_mixed
 line_e14_for_e41	1	objects: test/rga3/objects_test.cpp:174:35: error: static assertion failed	rga3.motions rga3.incidence
