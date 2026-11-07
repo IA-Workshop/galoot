@@ -1771,3 +1771,57 @@ foreach(function IN ITEMS antiproject)
     FORBID_ON_FIRST_ERROR ${dual_internal_names})
 endforeach()
 dual_rejects_comparison(antiproject)
+
+# core.transform: compose and transform, against the reference's tables of
+# the products and the complements, and by hand in rigid(3) and other
+# forms.
+galoot_add_test(MODULE core COMPONENT transform)
+target_link_libraries(core_transform_test PRIVATE galoot_golden
+  galoot_test_support)
+
+# The names of the machinery under compose and transform, which the first
+# error line of a rejection must not show: the user wrote compose or
+# transform, not these.
+set(transform_internal_names "apply:" "geometric_antiproduct:" "a % b:"
+  product_plan "detail::" "truncate:")
+
+# core.<function>_<case>: a misuse of compose or transform fails to compile
+# with one error, the message of the function as written, from the source
+# core/<function>_<case>_fail.cpp. Further arguments go to the test.
+function(transform_rejects function case message)
+  galoot_add_compile_fail_test(NAME ${function}_${case}
+    MODULE core COMPONENT transform
+    SOURCE core/${function}_${case}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR ${ARGN}
+    FORBID_ON_FIRST_ERROR ${transform_internal_names})
+endfunction()
+
+# A versor of both parities, as either operand of compose.
+set(compose_mixed_parity "compose: an operand holds blades of both parities, even and odd antigrade${semicolon} compose versors that are each even or odd")
+transform_rejects(compose mixed_parity_first "${compose_mixed_parity}")
+transform_rejects(compose mixed_parity_second "${compose_mixed_parity}")
+# An exact coefficient of the composition that std::int8_t cannot hold.
+transform_rejects(compose narrow_scalar "compose: the scalar type cannot hold one of the composition's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+# Operands from two algebras or with two scalar types; the message names the
+# cause, and not the other one.
+set(transform_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
+set(transform_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
+transform_rejects(compose mixed_algebras "compose: ${transform_algebras}"
+  FORBID "different scalar types")
+transform_rejects(compose mixed_scalars "compose: ${transform_scalars}"
+  FORBID "different algebras")
+
+# core.compose_compare: comparing a composition with a value of another
+# layout fails to compile; Clang names the result's layout by its layout
+# name, and neither compiler shows the plan or detail names on its first
+# error line.
+set(compose_compare_require "")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(compose_compare_require REQUIRE "compose_layout<")
+endif()
+galoot_add_compile_fail_test(NAME compose_compare
+  MODULE core COMPONENT transform
+  SOURCE core/compose_compare_fail.cpp
+  MESSAGE "${dual_compare_message}" ${compose_compare_require}
+  ONE_ERROR FORBID_ON_FIRST_ERROR product_plan "detail::")
