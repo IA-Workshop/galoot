@@ -87,6 +87,11 @@ MUTANTS = {
     "exact_check_removed": (T, [("          detail::check_transform_dropped(dropped);\n", "          static_cast<void>(dropped);\n", None)]),
     "fast_math_error_removed": (T, [(FAST_MATH, "#if 0\n#elif", None)]),
     "finite_math_error_removed": (T, [(FINITE_MATH, "", None)]),
+    # The delta review's survivors: the -ffinite-math-only guard without its
+    # checking-mode condition; the outer gate of transform reverted alone, so
+    # that a coarse scalar gets the exact check.
+    "finite_math_guard_ignores_checking": (T, [("#elif defined(__FINITE_MATH_ONLY__) && __FINITE_MATH_ONLY__ == 1 &&            \\\n    GALOOT_CHECKING == 1\n", "#elif defined(__FINITE_MATH_ONLY__) && __FINITE_MATH_ONLY__ == 1\n", None)]),
+    "gate_removed": (T, [("                  detail::transform_rounding_checked<Alg, V, X, T>) {", "                  detail::rounding_checked_scalar<T>) {", None)]),
     # The margin's hypothesis, which decides whether a transform is checked.
     "checked_ignores_margin": (T, [("      if (!margin_holds<T>(k)) {", "      if (!margin_holds<T>(k) && false) {", None)]),
     "margin_holds_always": (T, [("  return digits >= 62 || product < (std::uint64_t{1} << digits);", "  return digits >= 0 || product < (std::uint64_t{1} << digits);", None)]),
