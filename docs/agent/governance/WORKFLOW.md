@@ -1,6 +1,6 @@
 # Galoot development workflow
 
-Status: ratified by the owner on 2026-11-01 (decision 0094). W5 amended on 2026-11-01, ratified by the owner: adopt the usability checklist (decision 0160). W5 and W7 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decisions 0183 and 0188).
+Status: ratified by the owner on 2026-11-01 (decision 0094). W5 amended on 2026-11-01, ratified by the owner: adopt the usability checklist (decision 0160). W5 and W7 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decisions 0183 and 0188). The `records/<name>` row of W7 was ratified on 2026-11-07 (decision 0196).
 
 This document says how a change to Galoot is planned, made, checked, reviewed, and recorded. It adds detail to the [constitution](CONSTITUTION.md), cited here as C1 to C20, and [VVUQ.md](VVUQ.md) defines the evidence each step refers to.
 
@@ -60,6 +60,9 @@ Every change is committed to version control with a message that says what chang
 | `feature/<name>--<part>` | A subfeature: one part of a feature, branched from its feature | Any contributor, agents included |
 | `feature/<name>--tests` | A test author's commits for `feature/<name>`, branched from it; never merged, its commits are cherry-picked into it (decision 0185) | Nobody |
 | `research/<name>`, `review/<name>`, `gate/<milestone>` | A research note or spike, a review record (W5), or a gate report and its records, branched from `develop` and merged into it | Any contributor, agents included |
+| `records/<name>` | Records only (plans, decisions, review and audit records, gate reports, handoffs, run rows), and the text of a governance change the owner has ratified; no change to `include/`, `test/`, `tools/`, `cmake/`, or the build files. Branched from `develop` and merged into it; a review record is branched from the revision it reviews, never merged, and its commits are cherry-picked into `develop` | Any contributor, agents included |
+
+A test author's branch and the branch of a review record are not merged; their commits are cherry-picked with `-x`.
 
 Merges into `develop`, feature, and subfeature branches need no authorization or action from the owner. A branch merges only into the branch it was made from, one merge at a time into the same branch. Before the merge, the parent's current state is merged into the branch and the checks of [PERFORMANCE.md](PERFORMANCE.md) P9 for that level pass on the result; a merge into `develop` also needs W5. A fix is made on a branch from the most upstream branch the defect affects and merged there, and each descendant branch receives it by merging its parent in. Feature and subfeature work is done in a git worktree of its own, one per branch, under `.claude/worktrees/` or beside the main checkout, so that workstreams running at the same time never share a checkout or build directory (P11). The main checkout stays on `develop`. A unit is claimed before work starts by committing its plan (W3), or for a unit without one a one-line entry in `docs/agent/plans/`, to `develop`, naming the unit and its branch. Units that run at the same time change different files and do not rely on each other's unfinished results, and a fix that would touch another active unit's files is reported rather than made.
 
