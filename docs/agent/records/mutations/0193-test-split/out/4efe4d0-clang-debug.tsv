@@ -1,0 +1,18 @@
+mutant	build_exit	build_failures	failed_tests
+reverse_calls_antireverse	0	-	core.unary core.identities
+grade_involution_calls_reverse	0	-	core.unary core.identities
+bang_calls_left_complement	0	-	core.unary
+reverse_returns_canonical_layout	1	unary: test/core/unary_test.cpp:419:17: error: static assertion failed	core.unary
+percent_calls_geometric_product	1	product: test/core/product_test.cpp:419:17: error: static assertion failed	core.identities core.product_narrow_scalar_percent core.product_narrow_scalar_on_scalars_percent
+antiwedge_uses_antiproduct_plan	1	product: test/core/product_test.cpp:337:7: error: static assertion failed	core.identities
+ampersand_calls_wedge	1	product: test/core/product_test.cpp:337:7: error: static assertion failed	core.identities
+antiproduct_operands_swapped	0	-	core.identities core.product
+check_dropped_geometric_product	0	-	core.product_narrow_scalar_geometric_product
+check_dropped_times	0	-	core.product_narrow_scalar_times
+check_dropped_geometric_antiproduct	0	-	core.product_narrow_scalar_geometric_antiproduct core.product_narrow_scalar_on_scalars_geometric_antiproduct
+check_dropped_percent	0	-	core.product_narrow_scalar_percent core.product_narrow_scalar_on_scalars_percent
+geometric_antiproduct_checks_product_coefficients	0	-	core.product_narrow_scalar_on_scalars_geometric_antiproduct
+percent_checks_product_coefficients	0	-	core.product_narrow_scalar_on_scalars_percent
+new_catch_alls_without_algebra	1	product: test/core/product_test.cpp:511:17: error: static assertion failed	core.product_mixed_algebras_geometric_antiproduct core.product_mixed_algebras_antiwedge core.product_mixed_algebras_percent core.product_mixed_algebras_ampersand
+new_catch_alls_without_scalar	1	product: test/core/product_test.cpp:510:17: error: static assertion failed	core.product_mixed_scalars_geometric_antiproduct core.product_mixed_scalars_antiwedge core.product_mixed_scalars_percent core.product_mixed_scalars_ampersand
+left_complement_sign_flipped_for_e12	1	unary: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_sparse: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_conformal3: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_up_to_three: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_six: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_five_diagonal: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_five_dense: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form | identities_four: include/galoot/core/plan.hpp:937:19: error: static assertion failed due to requirement '!defects.complement_sign': unary map: a complement's sign differs from its closed form	core.product
