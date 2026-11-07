@@ -89,7 +89,7 @@ MUTANTS = {
     "finite_math_error_removed": (T, [(FINITE_MATH, "", None)]),
     # The margin's hypothesis, which decides whether a transform is checked.
     "checked_ignores_margin": (T, [("      if (!margin_holds<T>(k)) {", "      if (!margin_holds<T>(k) && false) {", None)]),
-    "margin_holds_always": (T, [("  return digits >= 62 || product < (std::int64_t{1} << digits);", "  return digits >= 0 || product < (std::int64_t{1} << digits);", None)]),
+    "margin_holds_always": (T, [("  return digits >= 62 || product < (std::uint64_t{1} << digits);", "  return digits >= 0 || product < (std::uint64_t{1} << digits);", None)]),
 }
 
 

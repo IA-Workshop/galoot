@@ -531,10 +531,11 @@ absolute_values(const std::array<T, K>& a) {
 // integers, so that the test itself does not round.
 template <class T>
 [[nodiscard]] consteval bool margin_holds(int k) {
-  constexpr int digits = std::numeric_limits<T>::digits;
-  const auto count = static_cast<std::int64_t>(k);
-  const std::int64_t product = (count + 1) * ((2 * count) + 1);
-  return digits >= 62 || product < (std::int64_t{1} << digits);
+  constexpr auto digits =
+      static_cast<std::uint64_t>(std::numeric_limits<T>::digits);
+  const auto count = static_cast<std::uint64_t>(k);
+  const std::uint64_t product = (count + 1) * ((2 * count) + 1);
+  return digits >= 62 || product < (std::uint64_t{1} << digits);
 }
 
 /// Whether transform checks what it drops from x on X by v on V within its
