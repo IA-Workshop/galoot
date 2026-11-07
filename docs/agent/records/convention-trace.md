@@ -62,15 +62,15 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.2 | the line through unitized points p and q has direction q - p | yes |
 | 5.2 | the line p ^ q has direction w_p q - w_q p and moment p x q | yes |
 | 5.3 | a point p lies on the plane g when p v g = 0 | yes |
-| 5.3 | the plane p ^ q ^ r takes the value det[x, p, q, r] at a point x | no |
-| 5.3 | the meets of lines and planes are the points and lines common to them | no |
-| 5.3 | p v g, p ^ l, and l v k are zero exactly when the objects are incident | no |
+| 5.3 | the plane p ^ q ^ r takes the value det[x, p, q, r] at a point x | yes |
+| 5.3 | the meets of lines and planes are the points and lines common to them | yes |
+| 5.3 | p v g, p ^ l, and l v k are zero exactly when the objects are incident | yes |
 | 5.4 | applying Q1 and then Q2 is one transform by geometric_antiproduct(Q2, Q1) | yes |
-| 5.4 | a chain of joint motors moves points as its product of 4x4 matrices | no |
+| 5.4 | a chain of joint motors moves points as its product of 4x4 matrices | yes |
 | 5.5 | the translator t_x e23 + t_y e31 + t_z e12 + antiscalar moves points by 2t | yes |
 | 5.5 | the rotor l sin(phi) + antiscalar cos(phi) turns by 2 phi about l | yes |
 | 5.6 | a reflected point keeps a positive weight | yes |
-| 5.6 | the 32 crystal classes close under compose with their published orders | no |
+| 5.6 | the 32 crystal classes close under compose with their published orders | yes |
 | 5.7 | rotation(l, theta) turns by theta | yes |
 | 5.7 | translation(dx, dy, dz) moves points by d = (dx, dy, dz) | yes |
 | 5.8 | a motor is stored on e41, e42, e43, e1234, e23, e31, e12, 1 in that order | yes |
