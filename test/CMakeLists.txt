@@ -1393,6 +1393,19 @@ set_tests_properties(
 galoot_add_test(MODULE core COMPONENT unary)
 target_link_libraries(core_unary_test PRIVATE galoot_golden)
 
+# The sources that build the geometric antiproduct or the antiwedge of two
+# full<5> multivectors of conformal(3) compile with Clang's limit on the steps
+# of one constant evaluation raised from its default of 1,048,576 to
+# 1,200,000. That plan takes about 950,000 steps while libstdc++'s
+# assertions are on and about 1,092,000 without them, so at the default only
+# the configurations with the assertions would build these cases; at the
+# raised limit every configuration builds them, and none skips them. GCC
+# builds them at its own defaults.
+set(full_conformal3_steps
+  "$<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=1200000>")
+set_source_files_properties(core/product_conformal3_test.cpp
+  PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
+
 # core.identities: the De Morgan laws, the associativity of the
 # antiproducts, and the product rules of the involutions, through the public
 # functions and operators over many signatures. It tests product.hpp and
@@ -1405,8 +1418,11 @@ set_property(TEST core.identities APPEND PROPERTY LABELS core.product
   core.unary slow)
 
 # core.product: the geometric product, the wedge, and their antiproducts, as
-# functions and as the operators * ^ % &, against the reference tables.
+# functions and as the operators * ^ % &, against the reference tables. The
+# test cases that need the raised step limit above are in a source of their
+# own, so that the others build at the compiler's defaults.
 galoot_add_test(MODULE core COMPONENT product)
+target_sources(core_product_test PRIVATE core/product_conformal3_test.cpp)
 target_link_libraries(core_product_test PRIVATE galoot_test_support
   galoot_golden)
 
