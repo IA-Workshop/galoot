@@ -1,0 +1,16 @@
+gcc	suites/smoke/before	inst 1,153.3 M (range 0.3 M)	wall 0.15 s	rss 90 MiB
+gcc	suites/smoke/after	inst 1,160.3 M (range 0.1 M)	wall 0.14 s	rss 90 MiB
+gcc	suites/core_only/before	inst 955.5 M (range 0.2 M)	wall 0.12 s	rss 80 MiB
+gcc	suites/core_only/after	inst 963.2 M (range 0.2 M)	wall 0.12 s	rss 80 MiB
+gcc	suites/dual/before	inst 38,539.4 M (range 40.5 M)	wall 3.12 s	rss 488 MiB
+gcc	suites/dual/after	inst 46,996.1 M (range 8.7 M)	wall 3.66 s	rss 491 MiB
+gcc	suites/transform/after	inst 125,113.0 M (range 96.7 M)	wall 8.00 s	rss 911 MiB
+gcc	suites/transform_identities/after	inst 402,250.9 M (range 16.1 M)	wall 25.74 s	rss 2,439 MiB
+clang	suites/smoke/before	inst 1,065.2 M (range 1.7 M)	wall 0.15 s	rss 127 MiB
+clang	suites/smoke/after	inst 1,073.7 M (range 0.6 M)	wall 0.15 s	rss 127 MiB
+clang	suites/core_only/before	inst 965.1 M (range 2.4 M)	wall 0.14 s	rss 113 MiB
+clang	suites/core_only/after	inst 973.0 M (range 0.3 M)	wall 0.14 s	rss 114 MiB
+clang	suites/dual/before	inst 35,999.8 M (range 47.3 M)	wall 2.75 s	rss 375 MiB
+clang	suites/dual/after	inst 43,261.6 M (range 57.4 M)	wall 3.19 s	rss 395 MiB
+clang	suites/transform/after	inst 111,725.5 M (range 282.3 M)	wall 6.95 s	rss 506 MiB
+clang	suites/transform_identities/after	inst 365,622.3 M (range 1,292.7 M)	wall 22.73 s	rss 1,207 MiB
