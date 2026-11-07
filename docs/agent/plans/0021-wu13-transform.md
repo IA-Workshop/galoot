@@ -1,6 +1,6 @@
 # 0021 WU13: compose, transform, antiproject, and the rounding check of the transform
 
-- Status: planned 2026-11-04 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, hci-expert, and numerical-expert judgement; implementers and reviewers to be named by the coordinator at branching). Claimed by this commit. The owner answered O1 to O8 and departure 7 on 2026-11-07, "proceed with recommendations", with three changes to the 1.10 text (decision 0192); M3 is accepted (decision 0182), so WU13a may branch.
+- Status: planned 2026-11-04 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, hci-expert, and numerical-expert judgement; implementers and reviewers to be named by the coordinator at branching). Claimed by this commit. The owner answered O1 to O8 and departure 7 on 2026-11-07, "proceed with recommendations", with three changes to the 1.10 text (decision 0192); M3 is accepted (decision 0182), so WU13a may branch. WU13a implemented on `feature/core-transform`, 2026-11-07, ready for its blind review (section 11); WU13b not started.
 - Branches, from `develop` at `535c91e` or later, after the M3 gate's acceptance (O1), named by W7 as amended (decision 0188):
   - WU13a: `feature/core-transform`, worktree `.claude/worktrees/core-transform`. The test author works on `feature/core-transform--tests`, worktree `.claude/worktrees/core-transform--tests`, branched from `feature/core-transform` at its first commit. The coordinator also created `feature/core-transform--math`, worktree `.claude/worktrees/core-transform--math`, for step 1.
   - WU13b: `feature/core-transform--rounding`, worktree `.claude/worktrees/core-transform--rounding`, branched from `feature/core-transform` after WU13a's review is resolved, and merged back into it. Its test author works on `feature/core-transform--rounding--tests`, worktree `.claude/worktrees/core-transform--rounding--tests`. Only `feature/core-transform` merges into `develop`, after both parts are reviewed (departure 4, O8).
@@ -279,3 +279,60 @@ Size M overall, as plan 0001 has it, at the upper end: about 2.6M to 3.6M tokens
 
 - In rigid(2), the probe's rotor 3 e3 + 4 e123 turns (1, 0) to (7/25, −24/25): clockwise in the e1, e2 plane. A future rga2 model fixes its own sense of rotation in its section of CONVENTIONS; WU13 makes no claim about it.
 - The restricted kernel's counts (48 multiplications for a point under a motor) are the baseline that M7's collected plans are compared against (Spike E).
+
+## 11. Outcome
+
+### WU13a
+
+Implemented on `feature/core-transform` (implementer and coordinator: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, on `feature/core-transform--tests`; step 1, decision 0177 and research note 0021: Claude, agent, Opus 5.5, math-expert role, on `feature/core-transform--math`). Ready for the W5 blind review, with the usability checklist; not reviewed, not merged. WU13b has not started.
+
+Commits, in the order of section 4. Each test group was committed on `feature/core-transform--tests` and cherry-picked with `-x` immediately before the code it judges (decision 0185); each such commit is the single failing commit that W2 allows, and its message says so. The math-expert's commits were cherry-picked the same way.
+
+| Step | Commit | What |
+| --- | --- | --- |
+| 1 | `3126146`, `89dcf2d`, `0fb27bd`, `48e090a` (from `db1a349`, `8f82ba5`, `dcb182a`, `960bdb4`) | `conventions_check.py`'s new checks; `records/spikes/transform-parity/`; research note 0021; decision 0177 |
+| | `62c3f8d` | merge of `develop` (`51c18de`: M3 acceptance records, the test split, the B1 fix) |
+| 2 | `549cdc8` | CONVENTIONS 1.10, decision 0176, the new trace rows set to `no` |
+| 3 | `ddf4968` (from `9dbace5`) | tests of `antiproject` |
+| 4 | `dc3fdd8` | `antiproject` and `antiproject_layout` in `dual.hpp` |
+| 5 | `51436cf`, `371e8ff` (from `090dd32`, `8583fe3`) | tests of `compose` and the parity trait; the test author's fix of the reference markers of groups 1 and 2 |
+| 6 | `7dba23f` | `transform.hpp` with `compose`, `compose_layout`, the parity trait; `core.hpp`; the header set |
+| 7 | `e4d39d2` (from `ee2002c`) | tests of `transform` |
+| 8 | `79eb30e` | `transform`, its kernels, the exact check |
+| 9 | `7671e76` (from `558f8cd`) | the identities over the signature set (`transform_identities_test.cpp`), passing when committed |
+| | `1ca4508` | the kernels' static_asserts (the implementer's own test, listed for review) |
+| 10 | `914c28d` | trace rows of 4.3, 4.4, and 5.4 to 5.6 set to `yes` |
+| | `b21650b` | the measured limits in the comments of `transform.hpp` and `dual.hpp` |
+| | `f9ad5bc`, `1217145` | clang-tidy fixes: the header's second-stage kernel; the tests (listed for review: no check or expected value changes) |
+| 11 | `f2d8322`, `8fcd06c`, and this commit | decisions 0178 and 0179, diagnostics, agent costs; mutants, run code, limits, build cost; this outcome and the final runs |
+
+Departures and readings (C20):
+
+1. **4.4 wording (decision 0176 item 3).** The committed 4.4 says that the transform of a versor with V ⟇ V̰ = λ𝟙 satisfies λ^(k−1) T(a1 ∧ … ∧ ak) = T(a1) ∧ … ∧ T(ak), and is the outermorphism of V's action on vectors when λ = 1, where O2's ratified sentence said it "is the outermorphism" without the factor. Decision 0177 (theorem 4) shows O2's sentence holds only for λ = 1, and needs the hypothesis that an antiproduct of hyperplanes meets. The owner is asked to confirm the corrected sentence; no value or code depends on it.
+2. **The odd sign is Checked for n = 3, 4, and 5**, not "n = 3 and n = 4" as O2 proposed: the math-expert's check covers rigid(4) and R(5,0,0) too.
+3. **Plan 0021 R10's "for every n and every form where V ⟇ V̰ is a nonzero multiple of 𝟙" is false as stated** (decision 0177, 3.4: R(6,0,0), V = 1 + 𝟙). The theorem holds under hypothesis (H), which antiproducts of hyperplanes meet in every n, and which is automatic for n ≤ 4 and for n = 5 when the form has rank at least 2. `transform.hpp`'s comment states the result for versors, antiproducts of hyperplanes.
+4. **Branch names (decision 0188).** `feature/core-transform--tests` and `feature/core-transform--math` in place of the plan's `feature/core-transform-tests`; the math-expert worked on its own branch rather than on the tests branch, so the two agents ran at once without sharing a worktree.
+5. **The exact check's message** is "transform: the result leaves the blades of x", shorter than R11's proposal, so that it fits on the line of `GALOOT_ASSERT(` (decision 0179).
+6. **The narrow-scalar check of `transform` reads both whole plans**, not only the restricted kernels' terms (decision 0178): checking mode computes every term, so a scalar accepted unchecked must hold them too.
+7. **The kernels' S7 assertions are in `transform_test.cpp`, written by the implementer** (`1ca4508`), not by the test author, as WU11a did for the dot's kernel.
+8. **The conformal(3) round point's expected value is computed in `transform_test.cpp`** from CONVENTIONS 6.1 and the moved center, not in `conventions_check.py` as criterion 3 says (the test author's departure 3); its planes use 6.2's layout, which 6.2 labels Study.
+9. **The dense five-generator identities are reduced** to versors of at most two hyperplanes and grades up to 3 (the test author's departure 5): with the full set, Clang 23 hits its step limit. They build and pass under `clang-measure` with the real kernels.
+10. **Criterion 10 on Clang:** Clang 23 keeps each `transform` out of line behind the probe's tail jump, and in `transform(line, motor)` calls the first stage's kernel; `compose` of two motors is a tail jump to its kernel, with 49 multiplications counted against 48 terms (not explained). GCC inlines everything and calls nothing. The multiplication counts equal the restricted counts on both compilers.
+11. **No hci-expert or cpp-expert agent was spawned**: the implementer did the cpp-expert work; the messages were written by the test author under decisions 0166 and 0173, and the usability checklist is the blind reviewer's.
+12. **The test author's `558f8cd` message** says "24 forms"; the file has 22. Not amended (no rewriting of history).
+13. **Mutants:** 29 ran at `1ca4508` and 6 at `f2d8322` (records README); between them the header changed only in comments and in a clang-tidy rewrite that keeps every term.
+14. **The math-expert lost four run-log rows** of intermediate runs (its departure 3) and timed some exploratory runs into a scratch log only.
+15. **The job pool** was not running when this unit started; another agent's build started it a minute later (it was running when status was next read). This unit started nothing.
+
+Evidence:
+
+- Verification (V1 kinds 1 to 3): `transform` and `compose` against the sandwich and the antiproduct composed in the test from golden product and complement tables, on the five golden forms and the oriented rigid(3) layouts, exactly over the test rational; `antiproject` against b ∧ (a ∨ right(𝔾 b)) from golden G on the same forms; the rigid(3) hand values of criterion 2 (the rotor of R13 over the test rational and `std::int64_t`, 4φ, the translator, the flector distinguishing test, lines and planes as the points that span them, the composition order); the odd-n tests in rigid(2) and R(3,0,0); the conformal(3) motor on a round point; types and layouts; the parity trait; the exact check in both modes and by a scalar that records its comparisons; the identities of criterion 4 over 22 forms of two to five generators and sparse cases at n = 8, seeded and exact. Proofs: decision 0177, checked by `records/spikes/transform-parity/check.py` (1720 exact checks, seed 20261107, all passing). `conventions_check.py`: "all convention checks passed (seed 20261031)".
+- Validation (V8): the antiprojection against the Projections page, read directly and recomputed (research note 0021: nine formulas agree as polynomial identities in rigid(3); one erratum, not used). The rigid(3) values of 5.4 to 5.6 equal those CONVENTIONS marks Confirmed from research note 0005, but were not recomputed against the note in this unit. Not validated: odd n and the non-diagonal forms (no published table read), and the Terathon side of the flector disagreement (C15, C16).
+- Mutants (`records/mutations/0021-transform/README.md`): 35, each on gcc-debug and clang-debug; 34 killed on both by a test; one equivalent survivor, `compose_checks_reversed_plan`.
+- Diagnostics (`records/diagnostics/wu13a-messages.md`): each of the 17 compile-fail sources (the 11 rejections of R11, the extra narrow-scalar and parity variants, the two comparisons, the two constant-evaluation checks) gives one error line with its message, on both compilers.
+- Run code (`records/performance/transform-cost/`): `transform` of a point by a motor or a flector 48 multiplications, of a line 72, of a plane 48, `compose` of two motors 48 (49 on Clang), the restricted counts; calls as in departure 10.
+- Limits (same record): `transform` up to n = 5 on Clang and 6 on GCC, `compose` up to 5 and 7, `antiproject` up to 5 and 6, all for conformal(3); the dense five-generator form fails on Clang for `transform` and `compose`. Stated in the headers.
+- W10 (same record, pinned, three repeats): an includer of `core.hpp` +7.7 M instructions (+0.8%) on GCC and +7.9 M (+0.8%) on Clang; `smoke_test.cpp` +0.6% and +0.8%; `dual_test.cpp` +21.9% and +20.2%; `transform_test.cpp` 125.1 G and 111.7 G; `transform_identities_test.cpp` 402.3 G (25.7 s, 2.4 GB) and 365.6 G (22.7 s, 1.2 GB).
+- Final runs: every preset from new, empty build trees at `8fcd06c` (the final revision of the build inputs is `1217145`; later commits change records only), with a clean tree: the run rows read `8fcd06c4034d` without `-dirty`. Configure, build, and test each exited 0 with no FAILED build step: gcc-debug and gcc-release 365 tests, gcc-asan 357, clang-debug, clang-release, clang-asan, and lint 367, all passing; `clang-measure`, its full suite (decision 0184), 359 of 359. Thirty tests are new (25 labeled `core.transform`, 5 in `core.dual`). The trace gate, `tools/runlog check`, and `clang-format --dry-run --Werror` on the 25 changed C++ sources exit 0. The job pool read 23 of 23 slots free before and after.
+
+Open, for the owner or later units: item 1 above (the 4.4 sentence); WU13b (the rounding check, decision 0180); `transform_identities_test.cpp` is now the largest unit of the suite (402 G instructions on GCC), not labeled `slow`; Clang's out-of-line kernels (departure 10), which a `[[gnu::always_inline]]` or a different kernel split could address if measured to matter; the math-expert's draft knowledge-base note on versor sandwiches in the antiproduct algebra, not written, since the brief gave no permission to write there.
