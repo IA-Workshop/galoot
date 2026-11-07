@@ -1948,7 +1948,13 @@ foreach(case IN ITEMS not_a_versor_double not_a_versor_float negative_double
     core.transform_rounding_unchecked_${case}
     PROPERTIES LABELS "core;core.transform;core.rounding")
 endforeach()
-foreach(case IN ITEMS tenth underflow_double underflow_float)
+set(transform_rounding_unchecked_cases coarse_unchecked)
+# std::bfloat16_t, which libstdc++ provides with GCC and not with Clang.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND transform_rounding_unchecked_cases bfloat16_unchecked)
+endif()
+foreach(case IN ITEMS tenth underflow_double underflow_float
+    ${transform_rounding_unchecked_cases})
   add_test(NAME core.transform_rounding_checking_${case}
     COMMAND core_transform_rounding_mode_1 ${case})
   add_test(NAME core.transform_rounding_unchecked_${case}
@@ -2002,6 +2008,24 @@ add_test(NAME core.transform_without_fast_math
       -c ${transform_fast_math_source}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND_EXPAND_LISTS)
+# core.transform_unchecked_<option>: in an unchecked build, transform.hpp
+# compiles under -ffast-math and under -ffinite-math-only, with neither
+# error: only a checking build runs the rounding check at run time.
+set(transform_unchecked_source
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/transform_unchecked_fast_math.cpp)
+foreach(option IN ITEMS fast-math finite-math-only)
+  string(REPLACE "-" "_" name "${option}")
+  add_test(NAME core.transform_unchecked_${name}
+    COMMAND ${expect_output} 0
+      FORBID "${transform_fast_math}" "${transform_finite_math_only}"
+      -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+        -f${option} -o core_transform_unchecked_${name}.o
+        -c ${transform_unchecked_source}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(core.transform_unchecked_${name}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
 set_tests_properties(core.transform_fast_math
   core.transform_finite_math_only core.transform_without_fast_math
   PROPERTIES LABELS "core;core.transform;core.rounding")

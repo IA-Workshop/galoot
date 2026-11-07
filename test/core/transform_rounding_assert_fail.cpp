@@ -42,6 +42,16 @@
 //             products fall below the smallest normal number; what a motor
 //             drops from a point is zero for every motor, and the check
 //             allows for underflow, so it must not abort
+//   coarse_unchecked
+//   bfloat16_unchecked
+//             seeded random rigid(3) motors and points over a scalar whose
+//             numeric_limits describe 8 significant bits, the test scalar
+//             coarse and std::bfloat16_t (where the implementation has it),
+//             too coarse for the margin of the rounding check, so that
+//             transform checks nothing for it: it must not abort in either
+//             mode, though the rounded computation leaves some dropped
+//             coefficients nonzero, which an exact check would reject; the
+//             program requires that some are
 //
 // The inputs are multiplied by a value read at run time, so no call is
 // evaluated at compile time. A usage error, or a kept coefficient that is
@@ -50,7 +60,10 @@
 #include <cstddef>
 #include <cstdio>
 #include <limits>
+#include <random>
 #include <span>
+// std::bfloat16_t, where the implementation has it.
+#include <stdfloat> // IWYU pragma: keep
 #include <string_view>
 
 #include <galoot/core/transform.hpp>
@@ -116,6 +129,52 @@ bool runs_underflow(T s) {
   return true;
 }
 
+// Seeded random motors and points over S, each coefficient s times a value
+// drawn from [-1, 1) in float, transformed; returns whether some dropped
+// coefficient, computed by the same kernels, is nonzero, so that the case
+// shows transform does not compare what it drops with zero.
+template <class S>
+bool runs_unchecked(float s) {
+  constexpr unsigned seed = 20261107;
+  // A fixed seed, so that the case is the same in every run and a failure
+  // can be reproduced.
+  // NOLINTNEXTLINE(bugprone-random-generator-seed)
+  std::mt19937_64 source(seed);
+  std::uniform_real_distribution<float> value(-1.0F, 1.0F);
+  int nonzero = 0;
+  for (int i = 0; i < 1000; ++i) {
+    cases::Motor<S> v;
+    cases::Point<S> x;
+    for (S& c : v.coefficients) {
+      c = static_cast<S>(value(source) * s);
+    }
+    for (S& c : x.coefficients) {
+      c = static_cast<S>(value(source) * s);
+    }
+    const auto dropped =
+        core::detail::transform_outer<cases::rga3, cases::motor_layout,
+                                      cases::point_layout, false>(
+            core::detail::transform_middle<cases::rga3, cases::motor_layout,
+                                           cases::point_layout, true>(
+                v.coefficients, x.coefficients),
+            v.coefficients);
+    for (const S& d : dropped) {
+      nonzero += d == S{} ? 0 : 1;
+    }
+    const cases::Point<S> kept = core::transform(x, v);
+    static_cast<void>(kept);
+  }
+  if (nonzero == 0) {
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,modernize-use-std-print)
+    std::fprintf(stderr,
+                 "transform_rounding_assert_fail: no dropped coefficient "
+                 "rounded to nonzero, seed %u\n",
+                 seed);
+    return false;
+  }
+  return true;
+}
+
 // The case named `which` over T, with s = 1 read at run time; returns
 // whether it kept what it should, and sets `known` when the name is a case.
 template <class T>
@@ -156,7 +215,8 @@ int main(int argc, char** argv) {
   if (args.size() != 2) {
     std::fputs("usage: transform_rounding_assert_fail <case>[_double|_float]"
                ", <case> one of not_a_versor, negative, ten_times, tenth, "
-               "nan, infinite, overflow, underflow\n",
+               "nan, infinite, overflow, underflow; or coarse_unchecked, "
+               "bfloat16_unchecked\n",
                stderr);
     return 2;
   }
@@ -165,6 +225,14 @@ int main(int argc, char** argv) {
   const auto s = static_cast<double>(args.size() - 1);
   const auto sf = static_cast<float>(args.size() - 1);
   std::string_view which = args[1];
+  if (which == "coarse_unchecked") {
+    return runs_unchecked<cases::coarse>(sf) ? 0 : 1;
+  }
+#ifdef __STDCPP_BFLOAT16_T__
+  if (which == "bfloat16_unchecked") {
+    return runs_unchecked<std::bfloat16_t>(sf) ? 0 : 1;
+  }
+#endif
   bool over_float = false;
   if (which.ends_with("_float")) {
     over_float = true;

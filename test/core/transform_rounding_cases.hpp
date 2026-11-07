@@ -14,6 +14,7 @@
 // of Numerical Algorithms, 2nd ed., SIAM, 2002, Lemma 3.1).
 
 #include <limits>
+#include <type_traits>
 
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
@@ -198,6 +199,64 @@ template <class T>
   return x;
 }
 
+/// A scalar that computes in float but whose numeric_limits describe an
+/// IEEE 754 binary type of 8 bits that rounds to nearest, as bfloat16 is, so
+/// that a test of the margin's condition does not depend on whether the
+/// standard library provides std::bfloat16_t: for the rigid(3) point moved
+/// by the motor, whose dropped coefficients have up to 12 roundings,
+/// (K + 1)(2K + 1) u = 325 / 2^8 > 1, so transform does not check it. It
+/// converts from any arithmetic value and has the arithmetic and
+/// comparisons of float, in constant evaluations too.
+struct coarse {
+  float value = 0.0F;
+
+  constexpr coarse() = default;
+  template <class A>
+    requires std::is_arithmetic_v<A>
+  // Converts as float does, so that mixed arithmetic reads as for float.
+  // NOLINTNEXTLINE(*-explicit-constructor)
+  constexpr coarse(A v) : value(static_cast<float>(v)) {}
+
+  friend constexpr coarse operator+(coarse a, coarse b) {
+    return a.value + b.value;
+  }
+  friend constexpr coarse operator-(coarse a, coarse b) {
+    return a.value - b.value;
+  }
+  friend constexpr coarse operator*(coarse a, coarse b) {
+    return a.value * b.value;
+  }
+  friend constexpr coarse operator/(coarse a, coarse b) {
+    return a.value / b.value;
+  }
+  friend constexpr coarse operator-(coarse a) { return -a.value; }
+  friend constexpr bool operator==(coarse a, coarse b) = default;
+  friend constexpr auto operator<=>(coarse a, coarse b) = default;
+};
+
 } // namespace transform_rounding_cases
+
+/// coarse is described as an IEEE 754 binary type of 8 significant bits,
+/// with float's range.
+template <>
+struct std::numeric_limits<transform_rounding_cases::coarse> {
+  static constexpr bool is_specialized = true;
+  static constexpr bool is_signed = true;
+  static constexpr bool is_integer = false;
+  static constexpr bool is_exact = false;
+  static constexpr bool is_iec559 = true;
+  static constexpr int radix = 2;
+  static constexpr int digits = 8;
+  static constexpr std::float_round_style round_style = std::round_to_nearest;
+  static constexpr transform_rounding_cases::coarse epsilon() noexcept {
+    return 0x1p-7F;
+  }
+  static constexpr transform_rounding_cases::coarse min() noexcept {
+    return std::numeric_limits<float>::min();
+  }
+  static constexpr transform_rounding_cases::coarse max() noexcept {
+    return std::numeric_limits<float>::max();
+  }
+};
 
 #endif // GALOOT_TEST_CORE_TRANSFORM_ROUNDING_CASES_HPP

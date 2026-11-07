@@ -704,67 +704,7 @@ void report_underflow(const tally& t, const std::string& family) {
                       t.largest_to_tolerance));
 }
 
-// A scalar that computes in float but whose numeric_limits describe an
-// IEEE 754 binary type of 8 bits that rounds to nearest, as bfloat16 is, so
-// that a test of the margin's condition does not depend on whether the
-// standard library provides std::bfloat16_t. It converts from any
-// arithmetic value and has the arithmetic and comparisons of float, in
-// constant evaluations too.
-struct coarse {
-  float value = 0.0F;
-
-  constexpr coarse() = default;
-  template <class A>
-    requires std::is_arithmetic_v<A>
-  // Converts as float does, so that mixed arithmetic reads as for float.
-  // NOLINTNEXTLINE(*-explicit-constructor)
-  constexpr coarse(A v) : value(static_cast<float>(v)) {}
-
-  [[maybe_unused]] friend constexpr coarse operator+(coarse a, coarse b) {
-    return a.value + b.value;
-  }
-  [[maybe_unused]] friend constexpr coarse operator-(coarse a, coarse b) {
-    return a.value - b.value;
-  }
-  [[maybe_unused]] friend constexpr coarse operator*(coarse a, coarse b) {
-    return a.value * b.value;
-  }
-  [[maybe_unused]] friend constexpr coarse operator/(coarse a, coarse b) {
-    return a.value / b.value;
-  }
-  [[maybe_unused]] friend constexpr coarse operator-(coarse a) {
-    return -a.value;
-  }
-  friend constexpr bool operator==(coarse a, coarse b) = default;
-  [[maybe_unused]] friend constexpr auto operator<=>(coarse a,
-                                                     coarse b) = default;
-};
-
 } // namespace
-
-/// coarse is described as an IEEE 754 binary type of 8 significant bits,
-/// with float's range.
-template <>
-struct std::numeric_limits<coarse> {
-  [[maybe_unused]] static constexpr bool is_specialized = true;
-  [[maybe_unused]] static constexpr bool is_signed = true;
-  [[maybe_unused]] static constexpr bool is_integer = false;
-  [[maybe_unused]] static constexpr bool is_exact = false;
-  [[maybe_unused]] static constexpr bool is_iec559 = true;
-  [[maybe_unused]] static constexpr int radix = 2;
-  [[maybe_unused]] static constexpr int digits = 8;
-  [[maybe_unused]] static constexpr std::float_round_style round_style =
-      std::round_to_nearest;
-  [[maybe_unused]] static constexpr coarse epsilon() noexcept {
-    return 0x1p-7F;
-  }
-  [[maybe_unused]] static constexpr coarse min() noexcept {
-    return std::numeric_limits<float>::min();
-  }
-  [[maybe_unused]] static constexpr coarse max() noexcept {
-    return std::numeric_limits<float>::max();
-  }
-};
 
 // Reference: proof: transform checks a rounding scalar's dropped part
 //   against its forward error bound, where the dropped part of a versor is
@@ -1170,13 +1110,13 @@ TEST_CASE("transform checks a rounding scalar only where its margin "
 
   // A scalar of 8 significant bits, as bfloat16 is, is not checked, and
   // transform over it builds and keeps the unchecked coefficients.
-  static_assert(core::detail::rounding_checked_scalar<coarse>);
-  static_assert(
-      !transform_rounding_checked<rga3, motor_layout, point_layout, coarse>);
+  static_assert(core::detail::rounding_checked_scalar<cases::coarse>);
+  static_assert(!transform_rounding_checked<rga3, motor_layout, point_layout,
+                                            cases::coarse>);
   {
-    using Point = core::mv<rga3, point_layout, coarse>;
-    using Motor = core::mv<rga3, motor_layout, coarse>;
-    const auto c = [](float v) { return coarse{v}; };
+    using Point = core::mv<rga3, point_layout, cases::coarse>;
+    using Motor = core::mv<rga3, motor_layout, cases::coarse>;
+    const auto c = [](float v) { return cases::coarse{v}; };
     const Point point{c(1.0F), c(2.0F), c(3.0F), c(1.0F)};
     const Motor motor{c(0.0F), c(0.0F), c(1.0F),  c(1.0F),
                       c(1.0F), c(2.0F), c(-1.0F), c(0.0F)};
