@@ -23,6 +23,11 @@
 // meets, transform moves an object by a motor or a flector, and compose
 // chains motions. A result whose layout is not one of the model's, such as
 // p ^ q, converts to the named type explicitly (Line{p ^ q}).
+//
+// Under `using namespace std::ranges` or `using namespace std::views`, an
+// unqualified transform(x, v) finds the function object std::ranges::transform
+// or std::views::transform, which turns off argument-dependent lookup, so it
+// does not compile; write galoot::core::transform(x, v).
 
 #include <concepts>
 
