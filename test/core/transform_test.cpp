@@ -370,9 +370,11 @@ concept has_compose_layout =
 //   form [[0, 1, 0], [1, 0, 0], [0, 0, 0]], and random form 1, and of the
 //   rigid(3) motor and flector under their oriented names, compose(Q2, Q1)
 //   is the geometric antiproduct Q2 ⟇ Q1 = left(right(Q2) ⟑ right(Q1)),
-//   composed in the test from the reference's tables of the products and the
-//   complements, on the canonical set of the blades it reaches, each with
-//   sign +1, by grade and then index list
+//   composed in the test from the reference's tables of the products of
+//   forms whose Gram matrices satisfy e_i e_j + e_j e_i = 2 g_ij and of the
+//   complements, which satisfy u ^ right(u) = antiscalar and
+//   left(u) ^ u = antiscalar, on the canonical set of the blades it reaches,
+//   each with sign +1, by grade and then index list
 TEST_CASE("compose is the geometric antiproduct of the tables") {
   REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
   REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
@@ -406,11 +408,11 @@ TEST_CASE("compose is the geometric antiproduct of the tables") {
 // Reference: independent value: by hand from the definitions in rigid(3),
 //   the antiproduct of two even layouts reaches the even blades and that of
 //   an even and an odd layout the odd blades, since antigrades add modulo 2
-//   under ⟇; so compose of two motors holds 1, the six bivectors, and e1234,
-//   and of a motor and a flector the four vectors and the four trivectors,
-//   each with sign +1 in order of grade and then of index list, which are
-//   not the motor's or the flector's oriented layouts; the layout name is
-//   that of the geometric antiproduct and takes only an algebra
+//   under ⟇, and so compose of two motors holds 1, the six bivectors, and
+//   e1234, and of a motor and a flector the four vectors and the four
+//   trivectors, each with sign +1 in order of grade and then of index list,
+//   which are not the motor's or the flector's oriented layouts, and the layout
+//   name is that of the geometric antiproduct and takes only an algebra
 TEST_CASE("compose_layout is the canonical set of the antiproduct") {
   using Motor = core::mv<rga3, motor_layout, std::int64_t>;
   using Flector = core::mv<rga3, flector_layout, std::int64_t>;
@@ -438,13 +440,13 @@ TEST_CASE("compose_layout is the canonical set of the antiproduct") {
   CHECK(core::compose_layout<rga3, motor_layout, motor_layout>.size() == 8);
 }
 
-// Reference: definition: the parity of a versor is the parity of the
-//   antigrades of its blades: even when every blade has an even antigrade
-//   n - k, odd when every one has an odd antigrade, and mixed otherwise, so
-//   that an empty layout is even. In rigid(2), with n = 3, the vectors and
-//   e123 are even and the scalar and the bivectors odd, the opposite of the
-//   parity of their grades; in rigid(3), with n = 4, the two parities agree;
-//   in conformal(3), with n = 5, the vectors are even
+// Reference: independent value: by hand, the parity of a versor is the
+//   parity of the antigrades of its blades: even when every blade has an
+//   even antigrade n - k, odd when every one has an odd antigrade, and mixed
+//   otherwise, so that an empty layout is even. In rigid(2), with n = 3, the
+//   vectors and e123 are even and the scalar and the bivectors odd, the
+//   opposite of the parity of their grades. In rigid(3), with n = 4, the two
+//   parities agree, and in conformal(3), with n = 5, the vectors are even
 TEST_CASE("the parity of a versor is the parity of the antigrades of its "
           "blades") {
   using core::detail::antigrade_parity;

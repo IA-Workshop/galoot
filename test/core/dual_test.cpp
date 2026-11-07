@@ -1641,7 +1641,10 @@ void check_antiprojections(std::mt19937_64& source,
 //   right(left(G right(b))) = G right(b), the wedge the term of the product
 //   on the union of two blades that share no generator, and the antiwedge
 //   left(right(a) ^ right(b)), all composed in the test from the reference's
-//   tables of G, the products, and the complements
+//   tables of G, where the metric exomorphism sends e_A to the sum of
+//   det g[A, B] e_B, of the products of forms whose Gram matrices satisfy
+//   e_i e_j + e_j e_i = 2 g_ij, and of the complements, which satisfy
+//   u ^ right(u) = antiscalar and left(u) ^ u = antiscalar
 TEST_CASE("the antiprojection is b ^ (a v weight_dual(b)) from the tables") {
   REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
   REQUIRE(cga2::value.gram == golden::gp_tables::conformal_2_gram);
@@ -1681,7 +1684,7 @@ TEST_CASE("the antiprojection is b ^ (a v weight_dual(b)) from the tables") {
 //   with weight 1 gives (1, 2, 3, -16), since 5 + 14 - 3 = 16, and with
 //   weight 2 it gives (4, 8, 12, -32). The result holds the point, so
 //   p v result is zero, and antiprojecting it onto the unitized point again
-//   leaves it unchanged; likewise for rational planes and points
+//   leaves it unchanged, and likewise for rational planes and points
 TEST_CASE("a plane antiprojected onto a unitized point passes through it") {
   const Plane g{1, 2, 3, 4};
   const Point p{5, 7, -1, 1};
@@ -1730,7 +1733,7 @@ TEST_CASE("a plane antiprojected onto a unitized point passes through it") {
 //   moment is (0, -3, 2), onto the point (5, 7, -1) gives the direction
 //   (1, 2, 3) and the moment (5, 7, -1) x (1, 2, 3) = (23, -16, 3), the line
 //   p ^ q of the point and q = (6, 9, 2), whose direction is q - p, so
-//   p ^ result is zero; antiprojecting it onto p again leaves it unchanged
+//   p ^ result is zero, and antiprojecting it onto p again leaves it unchanged
 TEST_CASE("a line antiprojected onto a unitized point passes through it") {
   const Line l{1, 2, 3, 0, -3, 2};
   const Point p{5, 7, -1, 1};
@@ -1771,7 +1774,7 @@ TEST_CASE("a plane antiprojected onto a line contains the line") {
 //   b ^ (a v weight_dual(b)) reaches the four trivectors for a plane onto a
 //   point or a line and the six bivectors for a line onto a point, since the
 //   weight dual of a point is on e123 and that of a line on e12 e13 e23, each
-//   with sign +1 in order of grade and then of index list; the layout name
+//   with sign +1 in order of grade and then of index list, and the layout name
 //   gives the same sets and takes only an algebra
 TEST_CASE("the antiprojection layout name is the canonical set") {
   static_assert(core::antiproject_layout<rga3, plane_layout, point_layout> ==
@@ -1797,7 +1800,7 @@ TEST_CASE("the antiprojection layout name is the canonical set") {
 
 // Reference: independent value: by hand in diag(100, 100), the weight dual
 //   of b on e12 is G right(e12) = G 1 = 1, which std::int8_t holds, while
-//   that of a on 1 would be G e12 = 10000 e12, which it does not; only the
+//   that of a on 1 would be G e12 = 10000 e12, which it does not, and only the
 //   coefficients of the second operand's weight dual are checked, so the
 //   antiprojection of a on 1 onto b on e12 is accepted. It is
 //   e12 ^ (1 v 1), and 1 v 1 = left(e12 ^ e12) reaches no blade, so the
