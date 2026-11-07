@@ -218,4 +218,4 @@ Size M, as plan 0001 has it: about 1.6M to 2.5M tokens in all, less than WU13 (2
 
 ## 13. Outcome
 
-Not started.
+In progress. 2026-11-07: `feature/rga3` branched from `develop` at `88c9484` after the owner's rulings on O1 to O9 (decision 0196); step 1 (the math-expert) started on `feature/rga3--math`. Research note 0022 was taken by the flat-plane chain rounding note in the meantime, so this unit's research note is 0023, as section 1's record-number rule says.
