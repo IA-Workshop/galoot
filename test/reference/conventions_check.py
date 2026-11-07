@@ -20,6 +20,7 @@ SQUARES, and FULL for the enclosed block only.
 
 import contextlib
 import itertools
+import math
 import random
 import sys
 from fractions import Fraction
@@ -665,6 +666,38 @@ def versor_closure(generators):
                     new.append(y)
         frontier = new
     return list(found.values())
+
+
+# cot^2(pi / n) for the turns by 2 pi / n that a crystal allows: the rotor
+# of such a turn has the half angle pi / n.
+CRYSTAL_HALF_TURNS = {2: Fraction(0), 3: Fraction(1, 3), 4: Fraction(1),
+                      6: Fraction(3)}
+
+
+def crystal_versor(generator):
+    """A versor, up to a positive factor, of one generator of a point group.
+    ("rotation", axis, n) turns by 2 pi / n about the line through the
+    origin along axis: the rotor axis sin(pi/n) / |axis| + antiscalar
+    cos(pi/n), scaled to axis + r antiscalar on e41, e42, e43 with
+    r = |axis| cot(pi/n), which must be rational. ("rotoinversion", axis, n)
+    is that rotor times e4, ("mirror", normal) is the plane through the
+    origin with that normal, and ("inversion",) is e4, the origin."""
+    kind = generator[0]
+    if kind == "inversion":
+        return blade("e4")
+    if kind == "mirror":
+        return on_names(PLANE_NAMES, list(generator[1]) + [0])
+    axis = [Fraction(x) for x in generator[1]]
+    r2 = sum(x * x for x in axis) * CRYSTAL_HALF_TURNS[generator[2]]
+    r = Fraction(math.isqrt(r2.numerator), math.isqrt(r2.denominator))
+    if r * r != r2:
+        raise ValueError(f"|axis| cot(pi/n) is irrational for {generator}")
+    turn = add(on_names(("e41", "e42", "e43"), axis), blade("e1234", r))
+    if kind == "rotation":
+        return turn
+    if kind == "rotoinversion":
+        return antigp(turn, blade("e4"))
+    raise ValueError(f"unknown generator {kind}")
 
 
 def check_motor_flector_layouts(rng):
