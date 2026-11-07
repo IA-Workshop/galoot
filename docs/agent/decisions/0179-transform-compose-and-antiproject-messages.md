@@ -30,3 +30,7 @@ Each condition of a `static_assert` is a named `bool` (`versor_has_one_parity`, 
 
 - Measured sizes, both compilers, in `records/diagnostics/wu13a-messages.md`: every rejection gives one error line, with the message on it.
 - The narrow-scalar tests of `transform` have two cases, one whose large coefficient is only in the first plan and one only in the second, so that a check of one plan alone fails a test.
+
+## Addendum, 2026-11-07: the exact check's message names the cause (review finding 5)
+
+After the blind review, the exact check's message is "transform: v does not act as a versor on x" (43 characters) in place of "transform: the result leaves the blades of x", which named only the symptom. The reviewer suggested "transform: v is not a versor on x's blades"; it holds a quote character, which a GALOOT_ASSERT message must not (assert.hpp). No fix after a semicolon fits the 48 characters, so the usability checklist's "the fix after a semicolon" is not met for this message; the comment of transform says when it fires and what it means. The tests' expected text (`transform_dropped` in `test/CMakeLists.txt`) changed with the header in one commit.

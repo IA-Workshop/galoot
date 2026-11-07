@@ -48,3 +48,16 @@ Run by the WU13a implementer (Claude, agent, Opus 5.5) in two detached worktrees
 **Equivalent survivor:** `compose_checks_reversed_plan` (the narrow-scalar check reads the plan of Q1 ⟇ Q2 in place of Q2 ⟇ Q1). For basis blades, e_B ⟑ e_A is ± the reverse of e_A ⟑ e_B, since the reverse of a product is the product of the reverses in the other order, and the reverse only changes signs; through the complements the same holds for the antiproduct. So the two plans have the same coefficients up to sign, and holds_exactly reads only magnitudes (|c|), so the checks agree on every scalar type.
 
 Not run as mutants: plan section 6's "the second stage keeps every term" and "transform drops nothing and returns the plan's layout". The first changes no value (the extra terms are dropped afterwards) and only the cost, which the kernel test's term counts and the assembly counts (`records/performance/transform-cost/`) pin; the second changes the result type, which every `decltype` static_assert of `transform_test.cpp` rejects by construction.
+
+## After the blind review
+
+At `34cd05d`, in the detached worktree `core-transform--mutants`:
+
+- The reviewer's surviving mutant `first_keeps_all` (the restricted first stage keeps every term), run with the reviewer's script (`records/reviews/2026-11-07-wu13a-review/mut.py`), is now killed on both compilers by the degenerate case added to the kernel test (`transform_test.cpp`, "the first stage keeps only the terms that the kept terms read"): its static_assert fails on gcc-debug and clang-debug. Its rows are below rather than in the reviewer's `mutants.tsv`, which stays as the reviewer left it:
+
+  | Mutant | Preset | Build exit | First failed build | Failed tests |
+  | --- | --- | --- | --- | --- |
+  | `first_keeps_all` | gcc-debug | 1 | `transform_test.cpp:1346`: static assertion failed | - |
+  | `first_keeps_all` | clang-debug | 1 | `transform_test.cpp:1343`: static assertion failed (the first kernel's size) | - |
+
+- `exact_check_truncate_message` ran again, since the message it replaces changed (`9fe1d3d`); it is killed as before, by the constant-evaluation and abort-message tests, on both compilers (`out/*.tsv`).
