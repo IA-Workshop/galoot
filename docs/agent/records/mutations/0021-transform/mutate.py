@@ -107,7 +107,7 @@ MUTANTS = {
     "exact_check_removed": (T, [(CHECK_CALL, "", None)]),
     "exact_check_reads_kept": (T, [(CHECK_CALL, "        detail::check_transform_dropped(out.coefficients);\n", None)]),
     "exact_check_twice": (T, [(CHECK_CALL, CHECK_CALL + CHECK_CALL, None)]),
-    "exact_check_truncate_message": (T, [('"transform: the result leaves the blades of x"',
+    "exact_check_truncate_message": (T, [('"transform: v does not act as a versor on x"',
                                           '"truncate: a dropped coefficient is not zero"', None)]),
     # The compile-time checks of transform and compose.
     "transform_parity_check_removed": (T, [("detail::antigrade_parity<Alg, V> != detail::Parity::mixed;", "true;", None)]),

@@ -1844,7 +1844,7 @@ transform_rejects(transform mixed_scalars "transform: ${transform_scalars}"
 # core.transform_consteval_nonzero_<case>: a transform that drops a
 # coefficient that is not zero ends a constant evaluation, whatever the
 # checking mode, and the diagnostic shows the message on the echoed line.
-set(transform_dropped "transform: the result leaves the blades of x")
+set(transform_dropped "transform: v does not act as a versor on x")
 foreach(case IN ITEMS consteval_nonzero consteval_nonzero_rational)
   galoot_add_compile_fail_test(NAME transform_${case}
     MODULE core COMPONENT transform

@@ -392,7 +392,7 @@ template <metric_like Alg, blade_set V, blade_set X, bool Kept, class T,
 template <class T, std::size_t D>
 constexpr void check_transform_dropped(const std::array<T, D>& dropped) {
   for (const T& d : dropped) {
-    GALOOT_ASSERT(d == T{}, "transform: the result leaves the blades of x");
+    GALOOT_ASSERT(d == T{}, "transform: v does not act as a versor on x");
   }
 }
 
