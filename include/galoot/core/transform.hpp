@@ -251,9 +251,8 @@ template <metric_like Alg, blade_set V>
 [[nodiscard]] consteval coefficient_type second_stage_sign(std::size_t b) {
   constexpr std::size_t n =
       std::remove_cvref_t<decltype(Alg::value)>::generator_count;
-  const int odd = antigrade_parity<Alg, V> == Parity::odd ? -1 : 1;
-  return static_cast<coefficient_type>(antireverse_sign(V.blades[b].mask, n) *
-                                       odd);
+  const coefficient_type odd = antigrade_parity<Alg, V> == Parity::odd ? -1 : 1;
+  return odd * antireverse_sign(V.blades[b].mask, n);
 }
 
 // The terms of the second stage, (V ⟇ x) ⟇ V̰ with the odd sign, that reach
@@ -271,19 +270,16 @@ template <metric_like Alg, blade_set V, blade_set X, bool Kept>
     if (kept_output<Alg, V, X>(t.out) != Kept) {
       continue;
     }
-    std::size_t out = 0;
-    coefficient_type sign = second_stage_sign<Alg, V>(t.b);
-    if constexpr (Kept) {
-      out = position_of(X, second.result.blades[t.out].mask);
-      sign *= X.blades[out].sign;
-    } else {
-      out = dropped_places[t.out];
-    }
+    const std::size_t out =
+        Kept ? position_of(X, second.result.blades[t.out].mask)
+             : dropped_places[t.out];
+    const coefficient_type orientation = Kept ? X.blades[out].sign : 1;
     terms[k] = {
         .a = t.a,
         .b = t.b,
         .out = out,
-        .coefficient = sign * t.coefficient,
+        .coefficient =
+            orientation * second_stage_sign<Alg, V>(t.b) * t.coefficient,
         .first = false,
     };
     ++k;
