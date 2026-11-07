@@ -26,7 +26,7 @@
 
 #include <concepts>
 
-#include <galoot/core.hpp>
+#include <galoot/core.hpp> // IWYU pragma: export
 
 namespace galoot::rga3 {
 

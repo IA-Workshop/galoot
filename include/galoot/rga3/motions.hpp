@@ -22,7 +22,7 @@
 #include <concepts>
 #include <type_traits>
 
-#include <galoot/core.hpp>
+#include <galoot/core.hpp> // IWYU pragma: export
 #include <galoot/rga3/objects.hpp>
 
 namespace galoot::rga3 {
