@@ -4,7 +4,7 @@ WU13a (plan 0021), measured by the WU13a implementer (Claude, agent, Opus 5.5). 
 
 ## Run code (plan 0021 criterion 10, PERFORMANCE P4)
 
-`asm/asm.cpp`, one function per operation, compiled with `-std=c++23 -O2 -ffp-contract=off -DGALOOT_CHECKING=0 -Iinclude -S` against the headers of `1ca4508` (later header commits change comments only); outputs `asm/asm.gcc.s` and `asm/asm.clang.s`; rows `asm:transform:gcc` and `asm:transform:clang` in `runs.tsv`. Products count a `mulpd` as two.
+`asm/asm.cpp`, one function per operation, compiled with `-std=c++23 -O2 -ffp-contract=off -DGALOOT_CHECKING=0 -Iinclude -S` against the headers of `1ca4508`, and again, with `asm.cpp` reformatted by clang-format, against those of `34cd05d`, which gave the same `.s` files byte for byte; outputs `asm/asm.gcc.s` and `asm/asm.clang.s`; rows `asm:transform:gcc` and `asm:transform:clang` in `runs.tsv`. Products count a `mulpd` as two. The hand counts are those of `counts.py`, which counts the nonzero pairs of each stage in rigid(3) by its own rule and is the reference of the kernel test's counts in `transform_test.cpp`.
 
 | Function | GCC 16: products (instructions) | Clang 23: products (instructions) | Hand count (the kernels' terms) |
 | --- | --- | --- | --- |
