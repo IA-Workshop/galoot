@@ -15,6 +15,15 @@ orthogonal matrix, a cosine and sine on the unit circle) and raises
 ValueError otherwise. Run it with `python3 -I test/reference/rigid_motions.py`
 to check its own constructions; it prints one line and exits nonzero on a
 failure.
+
+The two routes are not independent in every respect. The overall signs of
+line_meets_plane, planes_meet, and three_planes_meet were chosen to match the
+library's convention, not derived from it, and planes_meet checks itself only
+up to scale. So the agreement of the two routes confirms these meets only up
+to sign: a sign error shared by both would go unnoticed. The incidence zeros
+do not depend on these signs. The orientation of plane_through is the
+exception: self_check pins it to counterclockwise points about +z giving the
+normal +z.
 """
 
 import itertools
