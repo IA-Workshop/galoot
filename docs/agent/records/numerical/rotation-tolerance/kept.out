@@ -1,0 +1,70 @@
+--- (s,c)=(1,0) x=e1
+x=e1 coef 0: value -1/1 magnitude 1/1 K 12
+x=e1 coef 1: value 0/1 magnitude 0/1 K 12
+x=e1 coef 2: value 0/1 magnitude 0/1 K 12
+x=e1 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(0,1) x=e1
+x=e1 coef 0: value 1/1 magnitude 1/1 K 12
+x=e1 coef 1: value 0/1 magnitude 0/1 K 12
+x=e1 coef 2: value 0/1 magnitude 0/1 K 12
+x=e1 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,1) x=e1
+x=e1 coef 0: value 0/1 magnitude 2/1 K 12
+x=e1 coef 1: value 2/1 magnitude 2/1 K 12
+x=e1 coef 2: value 0/1 magnitude 0/1 K 12
+x=e1 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,0) x=e2
+x=e2 coef 0: value 0/1 magnitude 0/1 K 12
+x=e2 coef 1: value -1/1 magnitude 1/1 K 12
+x=e2 coef 2: value 0/1 magnitude 0/1 K 12
+x=e2 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(0,1) x=e2
+x=e2 coef 0: value 0/1 magnitude 0/1 K 12
+x=e2 coef 1: value 1/1 magnitude 1/1 K 12
+x=e2 coef 2: value 0/1 magnitude 0/1 K 12
+x=e2 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,1) x=e2
+x=e2 coef 0: value -2/1 magnitude 2/1 K 12
+x=e2 coef 1: value 0/1 magnitude 2/1 K 12
+x=e2 coef 2: value 0/1 magnitude 0/1 K 12
+x=e2 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,0) x=e3
+x=e3 coef 0: value 0/1 magnitude 0/1 K 12
+x=e3 coef 1: value 0/1 magnitude 0/1 K 12
+x=e3 coef 2: value 1/1 magnitude 1/1 K 12
+x=e3 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(0,1) x=e3
+x=e3 coef 0: value 0/1 magnitude 0/1 K 12
+x=e3 coef 1: value 0/1 magnitude 0/1 K 12
+x=e3 coef 2: value 1/1 magnitude 1/1 K 12
+x=e3 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,1) x=e3
+x=e3 coef 0: value 0/1 magnitude 0/1 K 12
+x=e3 coef 1: value 0/1 magnitude 0/1 K 12
+x=e3 coef 2: value 2/1 magnitude 2/1 K 12
+x=e3 coef 3: value 0/1 magnitude 0/1 K 5
+--- (s,c)=(1,0) x=e4
+x=e4 coef 0: value 0/1 magnitude 0/1 K 12
+x=e4 coef 1: value 0/1 magnitude 0/1 K 12
+x=e4 coef 2: value 0/1 magnitude 0/1 K 12
+x=e4 coef 3: value 1/1 magnitude 1/1 K 5
+--- (s,c)=(0,1) x=e4
+x=e4 coef 0: value 0/1 magnitude 0/1 K 12
+x=e4 coef 1: value 0/1 magnitude 0/1 K 12
+x=e4 coef 2: value 0/1 magnitude 0/1 K 12
+x=e4 coef 3: value 1/1 magnitude 1/1 K 5
+--- (s,c)=(1,1) x=e4
+x=e4 coef 0: value 0/1 magnitude 0/1 K 12
+x=e4 coef 1: value 0/1 magnitude 0/1 K 12
+x=e4 coef 2: value 0/1 magnitude 0/1 K 12
+x=e4 coef 3: value 2/1 magnitude 2/1 K 5
+--- (s,c)=(3/5,4/5) x=(1,0,0,1)
+3/5,4/5 coef 0: value 7/25 magnitude 1/1 K 12
+3/5,4/5 coef 1: value 24/25 magnitude 24/25 K 12
+3/5,4/5 coef 2: value 0/1 magnitude 0/1 K 12
+3/5,4/5 coef 3: value 1/1 magnitude 1/1 K 5
+--- (s,c)=(1,1) x=(1,0,0,1)
+1,1 coef 0: value 0/1 magnitude 2/1 K 12
+1,1 coef 1: value 2/1 magnitude 2/1 K 12
+1,1 coef 2: value 0/1 magnitude 0/1 K 12
+1,1 coef 3: value 2/1 magnitude 2/1 K 5
