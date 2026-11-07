@@ -72,6 +72,10 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.6 | a reflected point keeps a positive weight | yes |
 | 5.6 | the 32 crystal classes close under compose with their published orders | no |
 | 5.7 | rotation(l, theta) turns by theta | no |
+| 5.7 | translation(dx, dy, dz) moves points by d = (dx, dy, dz) | no |
+| 5.8 | a motor is stored on e41, e42, e43, e1234, e23, e31, e12, 1 in that order | no |
+| 5.8 | a flector is stored on e1, e2, e3, e4, e423, e431, e412, e321 in that order | no |
+| 5.8 | the antiproduct of two motors or two flectors is a motor, and of a motor and a flector a flector | no |
 | 6.1 | the round point with center p and squared radius r^2 is p + e4 + (p^2 + r^2)/2 e5 | no |
 | 6.2 | a flat object is a rigid object wedged with e5 | no |
 | 6.3 | the round bulk has neither e4 nor e5 | no |
