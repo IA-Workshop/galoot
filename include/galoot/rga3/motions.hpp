@@ -104,7 +104,8 @@ Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
 /// Requires: T is not a built-in integer type, since halving d would
 /// truncate there, and T has division. Over a floating type the halves are
 /// exact unless a component is subnormal; over an exact rational type they
-/// are exact. dx, dy, and dz have one type.
+/// are exact. dx, dy, and dz have one type; a mix, such as
+/// translation(1.0, 0, 2), is rejected.
 ///
 /// The arguments are plain scalars, which name no namespace of the model, so
 /// an unqualified call does not find this function: write
@@ -127,6 +128,20 @@ Motor<T> translation(T /*dx*/, T /*dy*/, T /*dz*/) {
                 "translation: halving d would truncate in an integer scalar "
                 "type; use a floating or exact rational scalar type");
   return Motor<T>{};
+}
+
+/// Rejects a translation whose three scalars are not all of one type, such
+/// as translation(1.0, 0, 2), with one error. A requires-expression that asks
+/// whether such a call is valid is told yes for any three ring scalars; ask
+/// whether their types are the same instead.
+template <core::ring_scalar X, core::ring_scalar Y, core::ring_scalar Z>
+  requires(!(std::same_as<X, Y> && std::same_as<Y, Z>))
+Motor<X> translation(const X& /*dx*/, const Y& /*dy*/, const Z& /*dz*/) {
+  static_assert(std::is_same_v<X, Y> && std::is_same_v<Y, Z>,
+                "translation: dx, dy, and dz are not all of one scalar type, "
+                "the types shown; give all three the same type, as "
+                "translation(1.0, 0.0, 2.0) over double");
+  return Motor<X>{};
 }
 
 } // namespace galoot::rga3
