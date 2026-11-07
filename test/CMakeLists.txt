@@ -2091,15 +2091,19 @@ set(rotation_no_sin "rotation: the angle needs std::sin and std::cos, which this
 set(rotation_not_line "rotation: the axis must be an rga3 Line${semicolon} convert a join such as p ^ q with Line<T>{p ^ q}")
 set(rotation_angle_type "rotation: the angle is not of the line's scalar type, the second of the two types shown${semicolon} convert it to that type first, as 0.5 over double or 0.5f over float")
 set(translation_integer "translation: halving d would truncate in an integer scalar type${semicolon} use a floating or exact rational scalar type")
+set(translation_mixed "translation: dx, dy, and dz are not all of one scalar type, the types shown${semicolon} give all three the same type, as translation(1.0, 0.0, 2.0) over double")
 # The compilers print the two types of a failed std::is_same_v in their own
-# words, the angle's first.
+# words: the angle's first, or the first two of dx, dy, dz that differ.
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(rotation_int_for_double "‘int’ is not the same as ‘double’")
   set(rotation_double_for_float "‘double’ is not the same as ‘float’")
+  set(translation_double_and_int "‘double’ is not the same as ‘int’")
 else()
   set(rotation_int_for_double "due to requirement 'std::is_same_v<int, double>'")
   set(rotation_double_for_float
     "due to requirement 'std::is_same_v<double, float>'")
+  set(translation_double_and_int
+    "due to requirement 'std::is_same_v<double, int>'")
 endif()
 motions_rejects(rotation_integer_scalar "${rotation_no_sin}")
 motions_rejects(rotation_rational_scalar "${rotation_no_sin}")
@@ -2111,3 +2115,5 @@ motions_rejects(rotation_angle_double_for_float "${rotation_angle_type}"
   REQUIRE "${rotation_double_for_float}")
 motions_rejects(translation_int "${translation_integer}")
 motions_rejects(translation_int64 "${translation_integer}")
+motions_rejects(translation_mixed "${translation_mixed}"
+  REQUIRE "${translation_double_and_int}")
