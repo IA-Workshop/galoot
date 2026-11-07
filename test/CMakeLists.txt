@@ -1749,3 +1749,25 @@ dual_rejects_comparison(left_weight_dual)
 dual_rejects_comparison(dot)
 dual_rejects_comparison(antidot)
 dual_rejects_comparison(project)
+
+# The antiprojection's rejections, as the projection's: a narrow scalar,
+# also where only the second operand's weight dual overflows; operands from
+# two algebras or with two scalar types; and a comparison with a value of
+# another layout.
+dual_rejects_narrow_scalar(antiproject "antiprojection")
+dual_rejects_narrow_scalar(antiproject "antiprojection" first_operand)
+foreach(function IN ITEMS antiproject)
+  galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_algebras_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_algebras}"
+    ONE_ERROR FORBID "different scalar types"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+  galoot_add_compile_fail_test(NAME dual_mixed_scalars_${function}
+    MODULE core COMPONENT dual
+    SOURCE core/dual_mixed_scalars_${function}_fail.cpp
+    MESSAGE "${function}: ${dual_scalars}"
+    ONE_ERROR FORBID "different algebras"
+    FORBID_ON_FIRST_ERROR ${dual_internal_names})
+endforeach()
+dual_rejects_comparison(antiproject)
