@@ -34,3 +34,7 @@ Each condition of a `static_assert` is a named `bool` (`versor_has_one_parity`, 
 ## Addendum, 2026-11-07: the exact check's message names the cause (review finding 5)
 
 After the blind review, the exact check's message is "transform: v does not act as a versor on x" (43 characters) in place of "transform: the result leaves the blades of x", which named only the symptom. The reviewer suggested "transform: v is not a versor on x's blades"; it holds a quote character, which a GALOOT_ASSERT message must not (assert.hpp). No fix after a semicolon fits the 48 characters, so the usability checklist's "the fix after a semicolon" is not met for this message; the comment of transform says when it fires and what it means. The tests' expected text (`transform_dropped` in `test/CMakeLists.txt`) changed with the header in one commit.
+
+## Correction, 2026-11-07: the message is 42 characters
+
+The addendum above, and the message of commit `9fe1d3d`, give the message "transform: v does not act as a versor on x" as 43 characters. It is 42. The conclusion stands: it fits the 48 characters on the line of `GALOOT_ASSERT(`. History is not rewritten; this correction is the record.
