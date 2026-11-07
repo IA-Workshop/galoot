@@ -47,3 +47,5 @@ The review (`records/reviews/2026-11-07-wu13b-review.md`) ran 15 mutants of its 
 | `margin_holds_always` | the same |
 
 **Equivalent survivor:** `padding_lambda`, the padding λ of the first version in place of λ/u. Both paddings are sound (decision 0180's addendum, item 3); they differ in run time and in the tolerance's floor below about K λ W, which no test pins, since no requirement fixes either.
+
+`bc06e9e` then made `margin_holds` compare in unsigned integers (clang-tidy), with the same values. `margin_holds_always`, whose anchor that line is, and `checked_ignores_margin` ran again at `bc06e9e` on both compilers and die as before, by the same `static_assert`. The other mutants touch no line that changed.
