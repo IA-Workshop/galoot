@@ -494,9 +494,13 @@ inline constexpr int transform_rounding_margin = 1;
 // times that, plus τ, and the terms are summed in the kernel's order. The
 // padding τ covers the absolute error of a product that underflows, as
 // derived above, for any τ >= λ, the smallest normal number of T. It is
-// λ / u, a power of two (2^-969 for double), so that a padded value times
-// an input of magnitude u or more stays normal: a product that falls below
-// λ costs far more time on many processors.
+// λ / u, a power of two (2^-969 for double, 2^-102 for float), so that a
+// padded value times an input of magnitude u or more stays normal: a
+// product that falls below λ costs far more time on many processors. The
+// price is a floor under every tolerance, about K λ W for W the number of
+// padded products on the path: a dropped part below it is not seen. That is
+// near 10^-306 in double and 10^-36 in float, where a gross non-versor goes
+// unseen once v and x are both below about 2^-41.
 template <class T, std::size_t R, std::size_t N, std::size_t KX, std::size_t KY>
 [[nodiscard]] constexpr std::array<T, R>
 padded_magnitude(const std::array<kernel_term, N>& kernel,
@@ -717,7 +721,11 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// with the absolute values of the terms' coefficients, a small padding
 /// (the smallest normal number divided by u) added after each product to
 /// cover a product that underflows. A coefficient that a versor drops is
-/// zero but for rounding, and within that bound. Such a type too coarse for
+/// zero but for rounding, and within that bound. The padding puts a floor
+/// under the bound, near 10^-306 in double and 10^-36 in float: a dropped
+/// part below it is not seen, so in float the check of a non-versor whose v
+/// and x are both below about 2^-41 (4.5e-13), or of a 1% error in a
+/// conformal(3) motor below about 2^-35, is lost. Such a type too coarse for
 /// the bound's margin, (K + 1)(2K + 1) u < 1 for every dropped coefficient,
 /// as std::bfloat16_t is for most transforms, is not checked.
 ///
