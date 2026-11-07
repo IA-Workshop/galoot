@@ -46,11 +46,14 @@ Preconditions that the types cannot express are checked at run time when
 
 ## An example
 
-Points are written as (x, y, z, w), and a point of weight w = 1 sits at
-(x, y, z). The wedge operator `^` joins two points into the line through
-them. `rotation` and `translation` build motors, `compose` chains two of
-them, and `transform` moves an object by the result. `get<"e1">` reads the
-coefficient on a named blade.
+Points are written as (x, y, z, w), as in homogeneous coordinates: a point
+of weight w = 1 sits at (x, y, z), and (2, 4, 6, 2) is the same point as
+(1, 2, 3, 1). The blades are named by their generators: e1, e2, and e3 are
+the axes, and e4 is the projective one, which many texts call e0. The wedge
+operator `^` joins two points into the line through them. `rotation` and
+`translation` build motors, `compose` chains two of them, and `transform`
+moves an object by the result. `get<"e1">` reads the coefficient on a named
+blade.
 
 ```cpp
 #include <numbers>
@@ -71,8 +74,12 @@ int main() {
   const Point up{0, 0, 1, 1};
   const Line z_axis{origin ^ up};
 
-  // A quarter turn about the z axis, then a move by (1, 2, 3).
-  // compose(second, first) chains them into one motor.
+  // A quarter turn about the z axis, then a move by (1, 2, 3). rotation
+  // needs an axis whose direction has length 1, as the z axis's (0, 0, 1)
+  // does here. compose(second, first) chains the two into one motor; like
+  // the join, its result has a layout of its own and converts to a Motor
+  // with braces, so const Motor motion = core::compose(move, turn); would
+  // not compile.
   const Motor turn = rga3::rotation(z_axis, std::numbers::pi / 2);
   const Motor move = rga3::translation(1.0, 2.0, 3.0);
   const Motor motion{core::compose(move, turn)};
@@ -91,12 +98,26 @@ unqualified, by argument-dependent lookup, but `translation` takes plain
 numbers and must be qualified, and an unqualified `transform` in a scope
 with `using namespace std::ranges` finds `std::ranges::transform` instead.
 
+`rotation` does not check its axis. The line p ^ q through two points of
+weight 1 has the direction q - p, so unless p and q are 1 apart, divide the
+line's six coefficients by the length of q - p before the call. About a
+direction of another length L, the motor turns by 2 atan(L tan(θ/2)) in
+place of θ and multiplies the weight of what it moves by
+L² sin²(θ/2) + cos²(θ/2): an axis of length 2 makes a quarter turn into a
+turn of about 127 degrees.
+
 Over an integer scalar type every result is exact, and the same operations
-run at compile time. The meet `&` intersects a line and a plane:
+run at compile time. The meet `&` intersects a line and a plane.
+`translation` and `rotation` reject an integer scalar type with a message,
+since halving a distance or taking a sine would lose the exact result, so
+the motors below are written by their eight coefficients. Those are, in
+order, the coefficients on e41, e42, e43, e1234, e23, e31, e12, and 1, and
+they hold half of each distance and angle:
 
 ```cpp
 #include <galoot/rga3.hpp>
 
+namespace core = galoot::core;
 namespace rga3 = galoot::rga3;
 
 constexpr rga3::Point<int> p{1, 0, 0, 1};
@@ -114,12 +135,19 @@ constexpr rga3::Plane<int> plane{0, 1, 0, -1};
 constexpr rga3::Point<int> hit{line & plane};
 static_assert(hit == rga3::Point<int>{-2, -2, 0, -2});
 
+// Half of (2, 4, 6) on e23, e31, e12, and 1 on e1234: a move by (2, 4, 6).
+constexpr rga3::Motor<int> move{0, 0, 0, 1, 1, 2, 3, 0};
+static_assert(core::transform(p, move) == rga3::Point<int>{3, 4, 6, 1});
+
+// The z axis's direction (0, 0, 1) times sin 45 degrees on e41, e42, e43,
+// and cos 45 degrees on e1234, both multiplied by the square root of 2 to
+// make them integers: a quarter turn about the z axis. A motor multiplied
+// by s multiplies the weight of what it moves by s squared, here 2.
+constexpr rga3::Motor<int> turn{0, 0, 1, 1, 0, 0, 0, 0};
+static_assert(core::transform(p, turn) == rga3::Point<int>{0, 2, 0, 2});
+
 int main() {}
 ```
-
-`translation` and `rotation` reject an integer scalar type with a message,
-since halving a distance or taking a sine would lose the exact result; build
-such a motor from its coefficients instead.
 
 Each `cpp` block of this README is compiled and run as one of Galoot's
 tests, with both compilers, so the examples stay correct as the library
