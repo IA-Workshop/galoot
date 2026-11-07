@@ -120,3 +120,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-07	plan-0021	WU13a blind reviewer (review and delta)	opus	348923	104	1800	harness subagent_tokens, cumulative
 2026-11-07	plan-0021	WU13b implementer and coordinator	opus	556775	294	12511	harness subagent_tokens, cumulative over four runs
 2026-11-07	plan-0021	WU13b blind reviewer (review and delta)	opus	395238	156	2148	harness subagent_tokens, cumulative
+2026-11-07	plan-0022	WU15 planner	opus	326931	79	952	harness subagent_tokens
+2026-11-07	plan-0023	WU16 planner	opus	318312	69	979	harness subagent_tokens
+2026-11-07	note-0022	O6 flat-plane rounding researcher	opus	270581	77	1567	harness subagent_tokens
+2026-11-07	audit-wu9	WU9 merge auditor	opus	230968	83	747	harness subagent_tokens
