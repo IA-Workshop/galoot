@@ -19,7 +19,7 @@
 //   Motor move{0, 0, 0, 1, 1, 2, -1, 0};     // a translation by (2, 4, -2)
 //   Motor both{galoot::core::compose(move, turn)};  // turn, then move
 //   Point p{1, 0, 0, 1};
-//   Point q = galoot::core::transform(p, both);  // (2.28, 4.96, -2, 1)
+//   Point q = galoot::core::transform(p, both);  // about (2.28, 4.96, -2, 1)
 //
 // The parity of a versor is the parity of the antigrades n - k of its
 // blades, where n is the number of generators and k a blade's grade: a
