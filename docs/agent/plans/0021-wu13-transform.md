@@ -421,3 +421,23 @@ Evidence of the review round:
 Listed for review (delta, W9): `fbd8a11` (the tests, the test author's); `e188522` and `bc06e9e` (the code). No test of the implementer's own and no expected value of an earlier test changed, except the test author's `core.transform_fast_math`, which now also forbids the `-ffinite-math-only` text.
 
 Open, for the owner: N3 (an overflowing magnitude fails), N4 (the breadth of the `-ffast-math` and `-ffinite-math-only` errors over all of `core.hpp` in a checking build), N5's reading (coarse IEEE types unchecked where the margin fails, narrower than CONVENTIONS 4.5's sentence), and O6 in the light of N1's chain rates.
+
+#### After the delta review
+
+The delta review (`records/reviews/2026-11-07-wu13b-delta-review.md`, cherry-picked as `e0f945a` and `328ecde`) approved `c98eee2` with three non-blocking findings and a note, resolved here:
+
+- D1: the float floor of the padded tolerance (a gross non-versor seen down to inputs of about 2^−41, a 1% error in a conformal(3) motor about 2^−35, a dropped part below about 10^−36) in the comments beside `padded_magnitude` and of `transform` (`9686cc5`, comment only) and in decision 0180's second addendum (`42a2d65`).
+- D2: the pool readings above are restated as they were (`42a2d65`).
+- D3: the test author's `coarse_unchecked` and, on GCC, `bfloat16_unchecked` program cases, 1,000 random rigid(3) transforms over a coarse scalar with dropped parts that round to nonzero, which must not abort in a checking build (`d064984`, from `8c96c16`; it judges existing code and passes on it). The reviewer's `gate_removed` dies on both compilers.
+- The note: compile tests that an unchecked build compiles under `-ffast-math` and `-ffinite-math-only` (`d064984`); `finite_math_guard_ignores_checking` dies on both compilers.
+- The cost README notes that its wall-time ratio includes start-up and that the per-call slowdown is about 9.5× by cycles; decision 0180's second addendum records the practice of combining a test author's failing test commit with its fix, proposed as standing practice.
+
+Departures and readings of this round (C20):
+
+1. **The final suites' run rows read `7384dc65ee1c-dirty`**: the mutation script had rewritten two rows of its own results (`out/*.tsv`) before the suites started. The uncommitted files were records only; every build input was that of `7384dc6`. The suites were not repeated for a clean label (P10).
+2. **gcc-release, clang-release, the sanitizer presets, and lint were not rerun**: this round changed the header in comments only (`9686cc5`), and the tests; they ran at `f056752`, whose code is the same.
+3. **The test author reported the pool's two lost slots as happening during its own mutant runs**; the pool already read 21 of 23 before this round's runs, as the readings above show, so the cause and time stay unknown. The pool was not restarted.
+
+Evidence of this round: the two mutants above, killed on both compilers (24 mutants in all: 23 killed, one equivalent survivor). Full suites from new, empty build trees at `7384dc6`: gcc-debug and clang-debug 409 tests, clang-measure 401, all passing (new: `coarse_unchecked` in two modes and two compile tests on both compilers, and `bfloat16_unchecked` in two modes on GCC only, so six on GCC and four on Clang). The trace gate, `conventions_check.py`, `tools/runlog check`, and clang-format on the change's C++ sources pass. The job pool read 21 of 23 slots free, 2 lost, before and after.
+
+Listed for review (W9): `d064984` (the tests, the test author's); `9686cc5` (a comment).

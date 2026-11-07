@@ -19,5 +19,7 @@ float_unchecked	0	-	core.transform_rounding_consteval_float core.transform_round
 exact_check_removed	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded
 fast_math_error_removed	0	-	core.transform_fast_math
 finite_math_error_removed	0	-	core.transform_finite_math_only
+finite_math_guard_ignores_checking	0	-	core.transform_unchecked_fast_math core.transform_unchecked_finite_math_only
+gate_removed	0	-	core.transform_rounding_checking_coarse_unchecked
 checked_ignores_margin	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed due to requirement '!transform_rounding_checked<(anonymous namespace)::rga3, motor_layout, point_layout, (anonymous namespace)::coarse>'	-
 margin_holds_always	1	transform_rounding: test/core/transform_rounding_test.cpp:1175:7: error: static assertion failed due to requirement '!transform_rounding_checked<(anonymous namespace)::rga3, motor_layout, point_layout, (anonymous namespace)::coarse>'	-

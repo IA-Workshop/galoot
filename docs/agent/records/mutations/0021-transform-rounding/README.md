@@ -49,3 +49,14 @@ The review (`records/reviews/2026-11-07-wu13b-review.md`) ran 15 mutants of its 
 **Equivalent survivor:** `padding_lambda`, the padding λ of the first version in place of λ/u. Both paddings are sound (decision 0180's addendum, item 3); they differ in run time and in the tolerance's floor below about K λ W, which no test pins, since no requirement fixes either.
 
 `bc06e9e` then made `margin_holds` compare in unsigned integers (clang-tidy), with the same values. `margin_holds_always`, whose anchor that line is, and `checked_ignores_margin` ran again at `bc06e9e` on both compilers and die as before, by the same `static_assert`. The other mutants touch no line that changed.
+
+## After the delta review
+
+The delta review (`records/reviews/2026-11-07-wu13b-delta-review.md`) found two survivors among its own mutants. After the test author's tests `d064984` (from `8c96c16`), both ran at `7384dc6` on gcc-debug and clang-debug with this script:
+
+| Mutant | Killed by |
+| --- | --- |
+| `gate_removed` (the outer gate of `transform` reverted to `rounding_checked_scalar` alone, so that a coarse scalar gets the exact zero check) | `core.transform_rounding_checking_coarse_unchecked` on both compilers, and `_bfloat16_unchecked` on GCC (Clang's libstdc++ setup has no `std::bfloat16_t`) |
+| `finite_math_guard_ignores_checking` (the `-ffinite-math-only` guard without `GALOOT_CHECKING == 1`) | `core.transform_unchecked_fast_math`, `core.transform_unchecked_finite_math_only`, on both compilers |
+
+So 24 mutants in all: 23 killed by a test, and `padding_lambda` an equivalent survivor.
