@@ -271,3 +271,21 @@ Evidence (V10):
 Listed for review (W9): the cherry-picked tests `8cedcaf`, `333769d`, `79abffd` (which also adds R11's test to `motions_test.cpp` after the code it judges); code commits that also register or add tests, `9900399` (`rga3.bare_compile` and `bare_user.cpp`), `88c32b3` (the include-scan fixtures), `9813525` (the registration of group 2's compile-fail tests), `27ba27a` (the README check and its fixtures, after the README of `b6d8d04`); tests written after the code they judge by its author, `bf3cbbb` (of `d44ec64`) and `62ef7b9`; the golden fact's text, `ab72934`; and `e18be9c`, a style-only change to a test.
 
 Open, for the owner or the next step: the 5.8 wording (decision 0197 item 2); departure 7 (lint), departure 6 (the objects' layout mutants), and departure 4 (merging `records/rotation-tolerance`), before the blind review; the hci-expert reading and the blind review (section 8); WU15 before M4's gate (O1).
+
+### The hci-expert reading and its fixes
+
+The hci-expert reading of section 8 (`reviews/2026-11-07-wu16-hci-reading.md`, cherry-picked as `e0d260b` from `records/review-wu16-hci`) found nothing blocking: seven findings to act on (S1 to S7), three of them owner questions, and seven that could wait (C1 to C7). Resolved on `feature/rga3` by an implementer (Claude, agent, Opus 5.5, cpp-expert and hci-expert judgement):
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| S5, S6, S7: three of `rotation`'s messages | Reworded as the reading proposed; the axis catch-all asserts `false` with no condition, so Clang's first line falls from 462 to 180 characters; its two tests also forbid `blade_set` on the first error line. One error, message on the first error line, on both compilers | `2a2db45` (tests, failing alone), `62fd480`, `9b792a4` (the diagnostics record) |
+| S1, documentation half | `rotation`'s comment and the README say the axis needs a direction of length 1, how to unitize a join, and what a direction of length L does (a turn by 2 atan(L tan(θ/2)), weights times L² sin²(θ/2) + cos²(θ/2), checked numerically) | `d128394`, `fad0c10` |
+| S2, README half; S4 | The README explains homogeneous points, e4 as the generator often called e0, the braces of `Motor{compose(a, b)}`, and the order and halves of a motor's coefficients, with two integer motors checked by `static_assert` in example 2 | `fad0c10` |
+
+Also: `mutate.py` made executable (`dd1f2a9`); the three axis mutants run again on both presets after the assertion lost its condition, with the same results (`f2fca74`).
+
+Not resolved, for the owner: S1's behavior (normalize the axis in `rotation`, or keep the documented precondition); S2's core half (whether `compose` of two operands of one layout returns that layout); S3 (`transform(motor, point)` compiles and returns a motor; the reading's fix is documentation, held back with S1 and S2). Not done, could wait: C1 to C7.
+
+Listed for review (W9): `2a2db45`, the changed literals of the six rotation compile-fail tests and the new `blade_set` guard, committed before the header change; `fad0c10`, which adds two `static_assert`s to README example 2, a compiled test, in the same commit as the text they illustrate.
+
+Checks at `9b792a4`, on gcc-debug and clang-debug: build, `ctest -L '^rga3'` 19 of 19, `tests.*` 5 of 5, `format-check`; the trace gate passes; the lint preset on the rga3 targets passes. The job pool read 23 of 23 slots free before and after.
