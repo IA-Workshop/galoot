@@ -2174,9 +2174,9 @@ function(motions_rejects case message)
     SOURCE rga3/${case}_fail.cpp MESSAGE "${message}" ONE_ERROR ${ARGN}
     FORBID_ON_FIRST_ERROR "detail::" "apply:")
 endfunction()
-set(rotation_no_sin "rotation: the angle needs std::sin and std::cos, which this scalar type lacks${semicolon} build the Motor from its coefficients, the line times sin(theta/2) and cos(theta/2) on e1234")
-set(rotation_not_line "rotation: the axis must be an rga3 Line${semicolon} convert a join such as p ^ q with Line<T>{p ^ q}")
-set(rotation_angle_type "rotation: the angle is not of the line's scalar type, the second of the two types shown${semicolon} convert it to that type first, as 0.5 over double or 0.5f over float")
+set(rotation_no_sin "rotation: sin and cos of the angle do not give values of this scalar type, which is not a floating type${semicolon} use Line<double> or Line<float>, or build the Motor from its coefficients, the line times sin(theta/2) and cos(theta/2) on e1234")
+set(rotation_not_line "rotation: the axis is not an rga3 Line${semicolon} give a Line<T>, and convert a join such as p ^ q with Line<T>{p ^ q}")
+set(rotation_angle_type "rotation: the angle is not of the line's scalar type, the second of the two types shown${semicolon} give it in radians as that type, as std::numbers::pi / 2 over double or std::numbers::pi_v<float> / 2 over float")
 set(translation_integer "translation: halving d would truncate in an integer scalar type${semicolon} use a floating or exact rational scalar type")
 set(translation_mixed "translation: dx, dy, and dz are not all of one scalar type, the types shown${semicolon} give all three the same type, as translation(1.0, 0.0, 2.0) over double")
 # The compilers print the two types of a failed std::is_same_v in their own
@@ -2194,8 +2194,12 @@ else()
 endif()
 motions_rejects(rotation_integer_scalar "${rotation_no_sin}")
 motions_rejects(rotation_rational_scalar "${rotation_no_sin}")
-motions_rejects(rotation_axis_point "${rotation_not_line}")
-motions_rejects(rotation_axis_join "${rotation_not_line}")
+# An axis of the wrong type is named by what it should be, so the first line
+# does not spell its type by blade masks.
+motions_rejects(rotation_axis_point "${rotation_not_line}"
+  FORBID_ON_FIRST_ERROR "blade_set")
+motions_rejects(rotation_axis_join "${rotation_not_line}"
+  FORBID_ON_FIRST_ERROR "blade_set")
 motions_rejects(rotation_angle_int "${rotation_angle_type}"
   REQUIRE "${rotation_int_for_double}")
 motions_rejects(rotation_angle_double_for_float "${rotation_angle_type}"
