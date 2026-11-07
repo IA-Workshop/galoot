@@ -1893,6 +1893,101 @@ foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
     PROPERTIES LABELS "core;core.transform")
 endforeach()
 
+# core.transform_rounding: the rounding check of transform over double and
+# float, against the tracking oracle.
+galoot_add_test(MODULE core COMPONENT transform_rounding)
+target_link_libraries(core_transform_rounding_test PRIVATE
+  galoot_test_support)
+set_tests_properties(core.transform_rounding PROPERTIES
+  LABELS "core;core.transform;core.rounding")
+
+# core.transform_rounding_consteval_<scalar>: over double and float, a
+# transform that drops a coefficient far above its rounding error ends a
+# constant evaluation, whatever the checking mode, with the rounding check's
+# message on the echoed line and not the exact check's.
+set(transform_rounded "transform: v is not a versor on x within rounding")
+foreach(scalar IN ITEMS double float)
+  galoot_add_compile_fail_test(NAME transform_rounding_consteval_${scalar}
+    MODULE core COMPONENT transform
+    SOURCE core/transform_rounding_consteval_${scalar}_fail.cpp
+    MESSAGE "${transform_rounded}"
+    REQUIRE assertion_failed
+    FORBID "${transform_dropped}")
+  set_tests_properties(core.transform_rounding_consteval_${scalar}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+
+# core.transform_rounding_<mode>_<case>: one program built in each checking
+# mode (core/transform_rounding_assert_fail.cpp). With checking on, a
+# dropped part that is not rounding error, a NaN or an infinite one, or one
+# whose bound overflows aborts with the message; a dropped part within the
+# bound, also one whose products underflow, does not. With checking off,
+# nothing aborts, and the transform that is not a versor's keeps 2. The
+# programs take the core's headers directly, so that the preset's mode does
+# not reach them.
+foreach(mode IN ITEMS 1 0)
+  add_executable(core_transform_rounding_mode_${mode}
+    core/transform_rounding_assert_fail.cpp)
+  target_include_directories(core_transform_rounding_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_compile_features(core_transform_rounding_mode_${mode} PRIVATE
+    cxx_std_23)
+  target_compile_definitions(core_transform_rounding_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+foreach(case IN ITEMS not_a_versor_double not_a_versor_float ten_times nan
+    infinite overflow)
+  add_test(NAME core.transform_rounding_checking_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${transform_rounded} ("
+      -- $<TARGET_FILE:core_transform_rounding_mode_1> ${case})
+  add_test(NAME core.transform_rounding_unchecked_${case}
+    COMMAND core_transform_rounding_mode_0 ${case})
+  set_tests_properties(core.transform_rounding_checking_${case}
+    core.transform_rounding_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+foreach(case IN ITEMS tenth underflow_double underflow_float)
+  add_test(NAME core.transform_rounding_checking_${case}
+    COMMAND core_transform_rounding_mode_1 ${case})
+  add_test(NAME core.transform_rounding_unchecked_${case}
+    COMMAND core_transform_rounding_mode_0 ${case})
+  set_tests_properties(core.transform_rounding_checking_${case}
+    core.transform_rounding_unchecked_${case}
+    PROPERTIES LABELS "core;core.transform;core.rounding")
+endforeach()
+
+# core.transform_fast_math: in a checking build, transform.hpp stops
+# compilation under -ffast-math, which reassociates and may flush subnormal
+# numbers to zero, so that the rounding check could reject a correct result;
+# core.transform_without_fast_math: the same source compiles without it. The
+# compiler runs as galoot_add_compile_fail_test runs it, with the option
+# added.
+set(transform_fast_math
+  "transform: checking mode needs IEEE 754 arithmetic, not -ffast-math")
+set(transform_fast_math_source
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/transform_fast_math_fail.cpp)
+galoot_check_literals_outside_path(core.transform_fast_math
+  "${transform_fast_math_source}" "${transform_fast_math}")
+galoot_compile_command(transform_fast_math_compile)
+add_test(NAME core.transform_fast_math
+  COMMAND ${expect_output} 1 "${transform_fast_math}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -ffast-math -o core_transform_fast_math.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
+add_test(NAME core.transform_without_fast_math
+  COMMAND ${expect_output} 0 FORBID "${transform_fast_math}"
+    -- ${CMAKE_CXX_COMPILER_LAUNCHER} ${transform_fast_math_compile}
+      -o core_transform_without_fast_math.o
+      -c ${transform_fast_math_source}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND_EXPAND_LISTS)
+set_tests_properties(core.transform_fast_math
+  core.transform_without_fast_math
+  PROPERTIES LABELS "core;core.transform;core.rounding")
+
 # core.transform_identities: the outermorphism and composition identities of
 # transform over many signatures. A program of its own, so that a change to
 # the tests of transform_test.cpp does not rebuild it; it also carries the
