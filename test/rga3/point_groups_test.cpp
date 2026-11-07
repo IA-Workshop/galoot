@@ -48,7 +48,7 @@ rational scalar(const golden::rational& v) {
 }
 
 element element_of(const golden::versor& v) {
-  element e{v.odd, {}};
+  element e{.odd = v.odd, .coefficients = {}};
   for (std::size_t i = 0; i < e.coefficients.size(); ++i) {
     e.coefficients.at(i) = scalar(v.coefficients.at(i));
   }
@@ -69,18 +69,19 @@ Flector flector_of(const element& e) {
 // the four compositions of a motor and a flector.
 element composed(const element& x, const element& g) {
   if (!x.odd && !g.odd) {
-    return {false, Motor{core::compose(motor_of(x), motor_of(g))}.coefficients};
+    const Motor y{core::compose(motor_of(x), motor_of(g))};
+    return {.odd = false, .coefficients = y.coefficients};
   }
   if (!x.odd && g.odd) {
-    return {true,
-            Flector{core::compose(motor_of(x), flector_of(g))}.coefficients};
+    const Flector y{core::compose(motor_of(x), flector_of(g))};
+    return {.odd = true, .coefficients = y.coefficients};
   }
   if (x.odd && !g.odd) {
-    return {true,
-            Flector{core::compose(flector_of(x), motor_of(g))}.coefficients};
+    const Flector y{core::compose(flector_of(x), motor_of(g))};
+    return {.odd = true, .coefficients = y.coefficients};
   }
-  return {false,
-          Motor{core::compose(flector_of(x), flector_of(g))}.coefficients};
+  const Motor y{core::compose(flector_of(x), flector_of(g))};
+  return {.odd = false, .coefficients = y.coefficients};
 }
 
 // e divided by its first nonzero coefficient on the canonical blades, taken
@@ -95,7 +96,7 @@ element normalized(const element& e) {
       const rational& c = e.coefficients.at(i);
       if (blades.at(i).mask == mask && !(c == rational{0})) {
         const rational divisor = c * rational{blades.at(i).sign};
-        element out{e.odd, {}};
+        element out{.odd = e.odd, .coefficients = {}};
         for (std::size_t j = 0; j < out.coefficients.size(); ++j) {
           out.coefficients.at(j) = e.coefficients.at(j) / divisor;
         }
@@ -143,12 +144,14 @@ Point moved(const Point& x, const element& e) {
 bool acts_as(const element& e, const golden::matrix3& m) {
   const rational o{0};
   const rational one{1};
-  const std::array<Point, 4> points{{
-      {one, o, o, one},
-      {o, one, o, one},
-      {o, o, one, one},
-      {one, rational{2}, rational{3}, one},
-  }};
+  const std::array<Point, 4> points{
+      {
+          {one, o, o, one},
+          {o, one, o, one},
+          {o, o, one, one},
+          {one, rational{2}, rational{3}, one},
+      },
+  };
   for (const Point& p : points) {
     const Point image = moved(p, e);
     const auto& x = p.coefficients;
@@ -197,6 +200,7 @@ TEST_CASE("the closure of each crystal class's rga3 generators under compose "
     REQUIRE(group.first + group.order <= golden::point_groups::elements.size());
 
     std::vector<element> generators;
+    generators.reserve(group.generator_count);
     for (std::size_t k = 0; k < group.generator_count; ++k) {
       generators.push_back(element_of(group.generators.at(k)));
     }
