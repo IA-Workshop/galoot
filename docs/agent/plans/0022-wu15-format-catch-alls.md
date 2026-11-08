@@ -307,6 +307,6 @@ The checks of section 7, from new empty trees at `649b0c4`, on a clean tree:
 
 A first run at `0753412` failed only the lint build, on clang-tidy's `readability-use-concise-preprocessor-directives` at L5's `#if defined(__GLIBCXX__)`. It is now `#ifdef`, and the whole gate ran again from empty trees. That failed lint build left the job pool with 2 of its 23 slots lost. The pool was not restarted.
 
-W10 stands as measured before the review. The code in `include/` has not changed since `a335b7f`.
+W10 stands as plan 0022 recorded it. `include/` has not changed since the reviewed tip, `c9445cd`.
 
 Next: the merge into `develop`, by the coordinator.
