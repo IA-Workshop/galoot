@@ -2208,3 +2208,38 @@ motions_rejects(translation_int "${translation_integer}")
 motions_rejects(translation_int64 "${translation_integer}")
 motions_rejects(translation_mixed "${translation_mixed}"
   REQUIRE "${translation_double_and_int}")
+
+# rga3.rotation_checking_<case> and rga3.rotation_unchecked_<case>: one
+# program built in each checking mode (rga3/rotation_assert_fail.cpp). With
+# checking on, an axis whose direction has a computed length of zero or
+# infinity aborts with the message, over double and float; with checking
+# off the same axes give the non-finite or zero coefficients the header
+# states. A direction of length 2 is accepted in both modes. The programs
+# take the headers directly, so that the preset's mode does not reach them.
+set(rotation_direction
+  "rotation: the direction of the axis must have a finite nonzero length")
+foreach(mode IN ITEMS 1 0)
+  add_executable(rga3_rotation_mode_${mode} rga3/rotation_assert_fail.cpp)
+  target_include_directories(rga3_rotation_mode_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_compile_features(rga3_rotation_mode_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(rga3_rotation_mode_${mode} PRIVATE
+    GALOOT_CHECKING=${mode})
+endforeach()
+set(rotation_mode_tests)
+foreach(case IN ITEMS zero zero_float underflow overflow)
+  add_test(NAME rga3.rotation_checking_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "galoot: assertion failed: ${rotation_direction} (" motions.hpp:
+      -- $<TARGET_FILE:rga3_rotation_mode_1> ${case})
+  list(APPEND rotation_mode_tests rga3.rotation_checking_${case})
+endforeach()
+add_test(NAME rga3.rotation_checking_length_2
+  COMMAND rga3_rotation_mode_1 length_2)
+foreach(case IN ITEMS zero zero_float underflow overflow length_2)
+  add_test(NAME rga3.rotation_unchecked_${case}
+    COMMAND rga3_rotation_mode_0 ${case})
+  list(APPEND rotation_mode_tests rga3.rotation_unchecked_${case})
+endforeach()
+set_tests_properties(${rotation_mode_tests} rga3.rotation_checking_length_2
+  PROPERTIES LABELS "rga3;rga3.motions")
