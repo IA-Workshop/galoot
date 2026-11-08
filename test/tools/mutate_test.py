@@ -566,6 +566,30 @@ def rows_in_spec_order(repo):
           [r.get("mutant") for r in rows], ["first", "second"])
 
 
+def killers_sorted(repo):
+    """The killers are the failed tests' names sorted, then the locations
+    sorted, so that a row does not depend on the order in which CTest lists
+    tests or Ninja finishes objects. CTest numbers check before
+    catch_all_fail, which sorts first."""
+    write_spec(repo, "killers", LIB_SELECTION, [
+        mutant("two_tests", TWICE_WRONG_AT_RUN_TIME + MESSAGE_CHANGED),
+        mutant("two_objects", TWICE_WRONG_AT_COMPILE_TIME + [
+            edit("constexpr T halve(T x)", "constexpr T halve_renamed(T x)")]),
+    ])
+    result = repo.mutate("killers")
+    check("killers: exit", result.returncode, 0)
+    check_restored(repo, "killers")
+    for preset in PRESETS:
+        _, rows = repo.output("killers", preset)
+        by_name = {r.get("mutant"): r for r in rows}
+        check(f"killers {preset}: two tests",
+              by_name.get("two_tests", {}).get("killers"),
+              "catch_all_fail check")
+        check(f"killers {preset}: two objects",
+              by_name.get("two_objects", {}).get("killers"),
+              f"{CHECK}:{FIRST_ASSERT} {USES}:{HALVE_CALL}")
+
+
 def restore_between_files(repo):
     """A mutant whose build fails is restored before the next one, which
     edits another file and must get the row it gets alone: built against a
@@ -727,8 +751,8 @@ def main(tools, directory):
         print(f"setup: {error}")
         return 1
     for case in (refusals, failing_baselines, main_run,
-                 rows_in_spec_order, restore_between_files, library_guard,
-                 runtime_mode, check_mode, stopped_early):
+                 rows_in_spec_order, killers_sorted, restore_between_files,
+                 library_guard, runtime_mode, check_mode, stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
