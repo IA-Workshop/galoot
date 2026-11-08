@@ -1550,7 +1550,9 @@ target_link_libraries(core_product_test PRIVATE galoot_test_support
 
 # core.product_mixed_<cause>_<spelling>: a product or an antiproduct of
 # operands from two algebras or with two scalar types fails to compile with
-# one error, the message of the product as written.
+# one error, the message of the product as written. The wedge's message is a
+# part of the antiwedge's, which would pass the test too, so the wedge's tests
+# also forbid the antiwedge's message of the same cause.
 set(product_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(product_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
 foreach(spelling IN ITEMS geometric_product wedge times caret
@@ -1566,16 +1568,22 @@ foreach(spelling IN ITEMS geometric_product wedge times caret
   else()
     set(written "${spelling}")
   endif()
+  set(twin_algebras "")
+  set(twin_scalars "")
+  if(spelling STREQUAL "wedge")
+    set(twin_algebras "antiwedge: ${product_algebras}")
+    set(twin_scalars "antiwedge: ${product_scalars}")
+  endif()
   galoot_add_compile_fail_test(NAME product_mixed_algebras_${spelling}
     MODULE core COMPONENT product
     SOURCE core/product_mixed_algebras_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_algebras}"
-    ONE_ERROR FORBID "different scalar types")
+    ONE_ERROR FORBID "different scalar types" ${twin_algebras})
   galoot_add_compile_fail_test(NAME product_mixed_scalars_${spelling}
     MODULE core COMPONENT product
     SOURCE core/product_mixed_scalars_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_scalars}"
-    ONE_ERROR FORBID "different algebras")
+    ONE_ERROR FORBID "different algebras" ${twin_scalars})
 endforeach()
 
 # core.product_narrow_scalar_<spelling>: a product with an exact coefficient
@@ -1842,21 +1850,30 @@ dual_rejects_narrow_scalar(project "projection" first_operand)
 
 # core.dual_mixed_<cause>_<function>: a dot, an antidot, or a projection of
 # operands from two algebras or with two scalar types fails to compile with
-# one error, the message of the function, which names the cause.
+# one error, the message of the function, which names the cause. The
+# messages of dot and project are parts of those of antidot and antiproject,
+# which would pass their tests too, so those tests also forbid the longer
+# message of the same cause.
 set(dual_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(dual_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
 foreach(function IN ITEMS dot antidot project)
+  set(twin_algebras "")
+  set(twin_scalars "")
+  if(NOT function STREQUAL "antidot")
+    set(twin_algebras "anti${function}: ${dual_algebras}")
+    set(twin_scalars "anti${function}: ${dual_scalars}")
+  endif()
   galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
     MODULE core COMPONENT dual
     SOURCE core/dual_mixed_algebras_${function}_fail.cpp
     MESSAGE "${function}: ${dual_algebras}"
-    ONE_ERROR FORBID "different scalar types"
+    ONE_ERROR FORBID "different scalar types" ${twin_algebras}
     FORBID_ON_FIRST_ERROR ${dual_internal_names})
   galoot_add_compile_fail_test(NAME dual_mixed_scalars_${function}
     MODULE core COMPONENT dual
     SOURCE core/dual_mixed_scalars_${function}_fail.cpp
     MESSAGE "${function}: ${dual_scalars}"
-    ONE_ERROR FORBID "different algebras"
+    ONE_ERROR FORBID "different algebras" ${twin_scalars}
     FORBID_ON_FIRST_ERROR ${dual_internal_names})
 endforeach()
 
