@@ -323,8 +323,9 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds (l / |v|) sin(theta/2) + "
 //   line (0, 0, 5, 0, -5, 0), of length 5; contract: rotation(l, theta) turns
 //   by theta about a line whose direction has any positive length, by
 //   building the rotor of l divided by the length of its direction, so each
-//   gives the motor of the unitized line, (0, 0, 1, 0, 0, 0) or
-//   (0, 0, 1, 0, -1, 0); over float and double, dividing by a power of 2
+//   gives the motor of the unitized line, its six coefficients divided by
+//   the length, (0, 0, 1, 0, 0, 0) or (0, 0, 1, 0, -1, 0) with the signs of
+//   the join's zeros kept; over float and double, dividing by a power of 2
 //   and multiplying back is exact, so the lengths 2 and 4 give that motor
 //   bit for bit, while for the length 5 the sine on e43 and e31 is
 //   5 fl(fl(sin(theta/2)) / 5), within 2u of fl(sin(theta/2)) when its
@@ -339,14 +340,25 @@ TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
   constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
   const Point origin{T{0}, T{0}, T{0}, T{1}};
   const Point on_x{T{1}, T{0}, T{0}, T{1}};
-  const Line z_axis{T{0}, T{0}, T{1}, T{0}, T{0}, T{0}};
-  const Line off_axis{T{0}, T{0}, T{1}, T{0}, T{-1}, T{0}};
   const Line z_axis_2{origin ^ Point{T{0}, T{0}, T{2}, T{1}}};
   const Line off_axis_4{on_x ^ Point{T{1}, T{0}, T{4}, T{1}}};
   const Line off_axis_5{on_x ^ Point{T{1}, T{0}, T{5}, T{1}}};
   REQUIRE(z_axis_2 == Line{T{0}, T{0}, T{2}, T{0}, T{0}, T{0}});
   REQUIRE(off_axis_4 == Line{T{0}, T{0}, T{4}, T{0}, T{-4}, T{0}});
   REQUIRE(off_axis_5 == Line{T{0}, T{0}, T{5}, T{0}, T{-5}, T{0}});
+
+  // Each line divided by its length, exactly: the zeros keep their signs.
+  const auto unitized = [](const Line& l, T length) {
+    const auto& c = l.coefficients;
+    return Line{c[0] / length, c[1] / length, c[2] / length,
+                c[3] / length, c[4] / length, c[5] / length};
+  };
+  const Line z_axis = unitized(z_axis_2, T{2});
+  const Line off_axis = unitized(off_axis_4, T{4});
+  const Line off_axis_1 = unitized(off_axis_5, T{5});
+  REQUIRE(z_axis == Line{T{0}, T{0}, T{1}, T{0}, T{0}, T{0}});
+  REQUIRE(off_axis == Line{T{0}, T{0}, T{1}, T{0}, T{-1}, T{0}});
+  REQUIRE(off_axis_1 == off_axis);
 
   // Angles whose half has a sine of magnitude in [1/2, 1).
   constexpr std::array<double, 6> angles{
@@ -361,7 +373,7 @@ TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
           bits_of(rga3::rotation(off_axis, theta)));
 
     // The length 5: the sine on e43 and e31 within 2u, the rest bit for bit.
-    const Motor unit = rga3::rotation(off_axis, theta);
+    const Motor unit = rga3::rotation(off_axis_1, theta);
     const Motor five = rga3::rotation(off_axis_5, theta);
     const T sine = unit.coefficients[2];
     INFO(std::format("sine on e43 = {}", sine));
