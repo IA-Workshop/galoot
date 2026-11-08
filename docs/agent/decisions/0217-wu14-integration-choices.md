@@ -3,6 +3,7 @@
 - Status: recorded. The implementer's choices in plan 0029 parts C2 and C3, open to the blind review and to the owner (C18). The owner's rulings they rest on are decision 0216.
 - Date: 2026-11-08
 - Recorded by: Claude (agent, Opus 5.5), implementer of plan 0029 parts C1 to C3
+- Corrected: 2026-11-08, before the review: item 11's open items are done (the test author's commits cherry-picked from `feature/core-identities--tests2`, recorded in the mutation README's section "The seed failures fixed, and the test-quality items folded in"); `squares_doubled`'s failure of `core.transform_identities` was that test's rational overflowing, not a kill, and under the bounded draws `squares_doubled` and `gap_squares_doubled` are declared equivalent for that suite alone.
 - Number: 0217, the next free number on every branch when recorded.
 - Bears on: `test/CMakeLists.txt`, `records/convention-trace.md`, CONVENTIONS 1.16, `records/diagnostics/misuse-catalogue.md`, `records/mutations/0029-identities/`, `records/performance/wu14-identities-cost/`
 
@@ -22,7 +23,7 @@ Part B's eleven test commits were cherry-picked into `feature/core-identities` i
 8. **The seed campaign** runs the four identity programs (`core_identities_test`, `core_dual_identities_test`, `core_transform_identities_test`, `core_identities_rounding_test`) with `--rand-seed=1` to `50` on gcc-debug, each through `tools/timed` into the campaign's own log.
 9. **The scan's old mutants** (`records/mutations/0022-format/scan_mutants.py`, judged by the removed `--self-test`) are ported to `catalogue.toml` for `tools/mutate`; the script is removed and 0022's README says where they went.
 10. **Mutants added after a run, each confirmed before it counts.** The branch point killed `gap_null_pair_wedge_sign`, so `gap_mixed_nulls_wedge_sign`, a fault only the drawn forms can show, was added to `identities.toml` and run at the branch point (it survived) before the tip. `new_cases.toml` holds four mutants written so that every case part B added kills one (criterion 12's first clause); it runs at the tip only. The second worktree that ran `identities.toml` and `new_cases.toml` at the tip shares no build tree with the unit's.
-11. **Not done in C3: the parts of the test-quality unit that O4 folded in** (the bits and blade-set mutation specs, the two warning-only blade_product mutants rewritten, the flector plane hand value and the even-sign mutant). The coordinator's brief for C3 named the DoD-14 faults, the gap mutants, and the scan's mutants; these stay open for the unit before its review (owner item).
+11. **The parts of the test-quality unit that O4 folded in, not done in C3** (the bits and blade-set mutation specs, the two warning-only blade_product mutants rewritten, the flector plane hand value and the even-sign mutant). The coordinator's brief for C3 named the DoD-14 faults, the gap mutants, and the scan's mutants; these stayed open after C3, and were then done by the test author before the review: `bits.toml`, `blade_set.toml`, `blade_product_rewrites.toml`, the plane case "the rga3 Flector e412 reflects the plane (0, 0, 1, -1) to (0, 0, 1, 1)" with `flector.toml`, and the seed fix with `transform_bound.toml` (the mutation README's section "The seed failures fixed, and the test-quality items folded in").
 
 ## Options weighed
 

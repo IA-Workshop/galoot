@@ -41,7 +41,7 @@ Cases of `test/core/identities_test.cpp` are named by a short tag: AP "the produ
 | u★★ = 0 exactly when degenerate | "the double duals are zero exactly when the metric is degenerate" (`dual_test.cpp`) | DD | not in BP | not in FR |
 | Pseudoscalar square (DoD-16) | "The pseudoscalar squares to (-1)^(n(n-1)/2) det g" (`blade_product_test.cpp`) | not needed | not needed | not needed |
 | The bulk and weight in diagonal and conformal forms (3.2) | "bulk and weight in a diagonal form are the products of squares" (`dual_test.cpp`) | "the bulk and the weight in diagonal and conformal forms" (`dual_identities_test.cpp`), every diagonal form of up to six, K7, K8, K6, conformal(1) to conformal(4) | not needed | not needed |
-| Transforms are λ times an outermorphism and compose | "transform is the sandwich of the tables" (`transform_test.cpp`) | "versors of hyperplanes act as outermorphisms and compose over ..." (`transform_identities_test.cpp`: forms of two to five, a dense form, R(8,0,0), rigid(7)) | not in BP | FR (composition) |
+| Transforms are λ times an outermorphism and compose | "transform is the sandwich of the tables" (`transform_test.cpp`) | "versors of hyperplanes act as outermorphisms and compose over ..." (`transform_identities_test.cpp`: forms of two to five, a dense form, R(8,0,0), rigid(7)), and "... compose at the seeds that once overflowed the test rational" at seven fixed seeds | not in BP | FR (composition) |
 | Change of basis is an algebra isomorphism and round-trips | WU12 | WU12 | WU12 | WU12 |
 | Diagonal and null-basis results agree | WU12 | WU12 | WU12 | WU12 |
 | Test-side rational LDLᵀ for the random forms (plan 0001 section 5) | WU12 | WU12 | WU12 | WU12 |
