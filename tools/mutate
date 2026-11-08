@@ -72,6 +72,7 @@ from pathlib import Path
 
 COLUMNS = ["mutant", "preset", "revision", "verdict", "expected", "killers",
            "build_failures", "not_run", "failed_cases", "leaks", "problems"]
+RUN_LOG = "docs/agent/records/performance/runs.tsv"
 RUNTIME_KEYS = frozenset({"file", "anchor", "replacement", "count"})
 FAILED = re.compile(r"^FAILED: (?:\[code=\d+\] )?(.*?)\s*$")
 END_OF_JOB = re.compile(r"^(FAILED: |\[\d+/\d+\] |ninja: )")
@@ -363,10 +364,14 @@ class Run:
         self.files = {m["file"] for m in mutants} | (
             {t["file"] for t in spec["runtime"]} if runtime else set())
         self.originals = {}
+        # The outputs and the run log, which every timed run appends to, do
+        # not make the tree a different revision.
         out = os.path.relpath(self.out, ROOT) + "/"
+        logs = {RUN_LOG, os.path.relpath(os.environ.get("TIMED_LOG", "/"),
+                                         ROOT)}
         dirty = [line for line in git("status", "--porcelain",
                                       "--untracked-files=no").splitlines()
-                 if not line[3:].startswith(out)]
+                 if not line[3:].startswith(out) and line[3:] not in logs]
         self.revision = git("rev-parse", "--short=12", "HEAD").strip() + (
             "+dirty" if dirty else "")
         self.problems = []
