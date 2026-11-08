@@ -1168,7 +1168,7 @@ endforeach()
 # derived from one, fails with one error that names the cause, on a first
 # error line that spells no layout by its masks. When both differ, the
 # algebra is told.
-set(mv_other_scalar "mv: the source has another scalar type${semicolon} a conversion between layouts keeps the scalar type, so convert the coefficients one by one")
+set(mv_other_scalar "mv: the source has another scalar type, and a conversion keeps the scalar type${semicolon} convert each coefficient to the target's scalar type and build the target from those values")
 set(mv_other_algebra "mv: the source is in another algebra${semicolon} a conversion between layouts keeps the algebra, so give both types the same algebra tag")
 set(mv_conversion_internal_names "detail::" "component<" "blade_set<")
 foreach(case IN ITEMS brace paren cast auto layout lossy one_blade derived)
