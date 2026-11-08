@@ -6,7 +6,7 @@
 // half of each, since the rotor l sin(phi) + e1234 cos(phi) turns by 2 phi
 // about the unitized line l and the translator tx e23 + ty e31 + tz e12 +
 // e1234 moves points by 2t; these functions take theta and d and store
-// theta/2 and d/2:
+// theta/2 and d/2, and rotation unitizes the line it is given:
 //
 //   namespace rga3 = galoot::rga3;
 //   rga3::Line<double> z_axis{0, 0, 1, 0, 0, 0};
@@ -23,37 +23,72 @@
 #include <type_traits>
 
 #include <galoot/core.hpp> // IWYU pragma: export
+#include <galoot/core/assert.hpp>
 #include <galoot/rga3/objects.hpp>
 
 namespace galoot::rga3 {
 
 /// The rotor that turns by the angle theta, in radians, about the line l:
-/// l sin(theta/2) + e1234 cos(theta/2), with the half angle in the
-/// coefficients. The turn is counterclockwise when seen from the tip of l's
-/// direction, so a positive theta about (0, 0, 1) takes the x axis toward
-/// the y axis. theta has the line's scalar type exactly: 0.5 over double,
-/// 0.5f over float.
+/// (l / |v|) sin(theta/2) + e1234 cos(theta/2), with v the direction of l
+/// (its coefficients on e41, e42, e43) and the half angle in the
+/// coefficients. Dividing all six coefficients of l by |v| unitizes the
+/// line, so the result is a unitized motor, up to rounding, for a direction
+/// of any positive length. So the join of two points needs no division by
+/// its length; it has a layout of its own, the wedge's, and is passed
+/// converted, as Line{p ^ q}. The turn is counterclockwise when seen from
+/// the tip of l's direction, so a positive theta about (0, 0, 1) takes the x
+/// axis toward the y axis. theta has the line's scalar type exactly: 0.5
+/// over double, 0.5f over float.
 ///
-/// Requires: T is a floating type, since the coefficients need std::sin and
-/// std::cos. l must be unitized, its direction (the coefficients on e41,
-/// e42, e43) of length 1, and must be a line, its direction and moment
-/// orthogonal; neither is checked. A join p ^ q of unitized points has the
-/// direction q - p, so divide its six coefficients by the length of q - p
-/// before the call. About a line whose direction has another length L, the
-/// result is not a unitized motor: it turns by 2 atan(L tan(theta/2)) in
-/// place of theta, about the same line, and multiplies the weight of what it
-/// moves by L^2 sin^2(theta/2) + cos^2(theta/2); transform does not correct
-/// either. About an l that is not a line, it distorts what it moves.
+/// Cost: besides std::sin, std::cos, and halving theta, one std::sqrt, one
+/// division, by the length, nine multiplications, and two additions; with
+/// GALOOT_CHECKING 1, also the std::isnormal test of the length and a branch.
+///
+/// Requires: T is a floating type, since the coefficients need std::sin,
+/// std::cos, and std::sqrt. l must be a line, its direction and moment
+/// orthogonal (v . m = 0, as every join of two points is); this is not
+/// checked, and about an l that is not a line the result distorts what it
+/// moves. The length of the direction must lie between about 1e-150 and
+/// 1e150 in double, or 1e-18 and 1e18 in float, so that the sum of its
+/// squares neither underflows nor overflows. A computed length that is zero
+/// or not finite, as for the zero direction of p ^ p or one whose squares
+/// underflow to zero or overflow, is checked by GALOOT_ASSERT at run time
+/// when GALOOT_CHECKING is 1, which then aborts with the message. With
+/// GALOOT_CHECKING 0 the length is not tested, and an optimizing build drops
+/// the check; without optimization a call and a branch remain. A zero
+/// direction then gives infinite or NaN coefficients on the line's blades,
+/// and one whose squares overflow a motor holding only cos(theta/2) on
+/// e1234. These are not failure values, and rotation returns a plain Motor
+/// rather than a std::optional on purpose: a zero direction is a misuse for
+/// the check to report, not an outcome for the caller to handle, and an
+/// optional result would change the return type of this function, while no
+/// other function of the library returns one. A length whose squares fall
+/// among the subnormal numbers passes the check and loses accuracy; no test
+/// covers that case.
+///
+/// Rounding: when the computed length is a power of 2, as for (0, 0, 1) or
+/// (0, 0, 2), the result is bit for bit the rotor of l divided by that
+/// length; otherwise the square root and the division add a rounding each,
+/// so for a direction of length 1 not along an axis the result may differ in
+/// the last bit from l sin(theta/2) + e1234 cos(theta/2).
 ///
 /// Evaluated at run time only. std::sin and std::cos are not usable in a
 /// constant expression on every compiler, so this function is not constexpr;
 /// for a motor in a constant expression, write its coefficients.
 template <std::floating_point T>
 [[nodiscard]] inline Motor<T> rotation(const Line<T>& l, T theta) {
-  const T half = theta / T{2};
-  const T s = std::sin(half);
-  const T c = std::cos(half);
   const auto& v = l.coefficients;
+  const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));
+  // A square root is never subnormal, so a length that is not normal is
+  // zero, infinite, or NaN.
+  GALOOT_ASSERT(std::isnormal(length), "rotation: the direction of the axis "
+                                       "must have a finite nonzero length");
+
+  // The sine divided by the length, so that the six products below hold the
+  // unitized line times sin(theta/2) with one division.
+  const T half = theta / T{2};
+  const T s = std::sin(half) / length;
+  const T c = std::cos(half);
   return Motor<T>{
       v[0] * s, v[1] * s, v[2] * s, c, v[3] * s, v[4] * s, v[5] * s, T{0},
   };
@@ -71,7 +106,7 @@ Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
                 "rotation: sin and cos of the angle do not give values of this "
                 "scalar type, which is not a floating type; use Line<double> "
                 "or Line<float>, or build the Motor from its coefficients, the "
-                "line times sin(theta/2) and cos(theta/2) on e1234");
+                "unitized line times sin(theta/2) and cos(theta/2) on e1234");
   return Motor<T>{};
 }
 
