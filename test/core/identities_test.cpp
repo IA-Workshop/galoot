@@ -68,3 +68,16 @@ TEST_CASE("the antiproducts are associative over many forms") {
 TEST_CASE("the involutions follow their product rules over many forms") {
   check_every_group(Identity::product_rules);
 }
+
+// Reference: identity: the geometric product and the wedge are associative,
+//   (a ⟑ b) ⟑ c = a ⟑ (b ⟑ c) and (a ^ b) ^ c = a ^ (b ^ c), and the scalar
+//   1 is the identity of the geometric product on both sides,
+//   1 ⟑ a = a ⟑ 1 = a, since a Clifford algebra is an associative algebra
+//   with unit, on random integer multivectors of every blade for each form
+//   of up to four generators and R(4,1,0), R(4,0,1), and conformal(3), on
+//   vectors for two dense random forms of five, on vectors and bivectors for
+//   six, and on sparse sets for 8, 12, and 16
+TEST_CASE("the products are associative with the scalar 1 as identity over "
+          "many forms") {
+  check_every_group(Identity::product_laws);
+}

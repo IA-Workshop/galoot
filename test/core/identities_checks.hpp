@@ -40,6 +40,7 @@ enum class Identity : std::uint8_t {
   de_morgan,
   antiproduct_laws,
   product_rules,
+  product_laws,
 };
 
 // The checks have internal linkage, as they would in a single source, so
@@ -181,6 +182,16 @@ auto antiscalar() {
   return one;
 }
 
+// The scalar 1 of the algebra of X, on the layout that holds it alone.
+template <class X>
+auto scalar_one() {
+  using Alg = X::algebra_type;
+  constexpr core::blade_set<1> layout{{{{.mask = 0, .sign = 1}}}};
+  core::mv<Alg, layout, std::int64_t> one{};
+  one.coefficients.at(0) = 1;
+  return one;
+}
+
 // The number of random triples each identity is checked on, in each form.
 inline constexpr int samples = 3;
 
@@ -226,6 +237,26 @@ void check_antiproduct_laws(std::mt19937_64& source) {
     CHECK(difference((a & b) & c, a & (b & c)) == "");
     CHECK(difference(one % a, a) == "");
     CHECK(difference(b % one, b) == "");
+  }
+}
+
+// Associativity of the geometric product and of the wedge on random a, c of
+// A and b of B, and the scalar 1 as the identity of the geometric product on
+// both sides of a and of b.
+template <class A, class B>
+void check_product_laws(std::mt19937_64& source) {
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  const auto one = scalar_one<A>();
+  for (int k = 0; k < samples; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    const A c = random_integers<A>(source);
+    CHECK(difference((a * b) * c, a * (b * c)) == "");
+    CHECK(difference((a ^ b) ^ c, a ^ (b ^ c)) == "");
+    CHECK(difference(one * a, a) == "");
+    CHECK(difference(a * one, a) == "");
+    CHECK(difference(one * b, b) == "");
+    CHECK(difference(b * one, b) == "");
   }
 }
 
@@ -281,6 +312,9 @@ void check_each(Identity identity, forms<G...> /*list*/,
     return;
   case Identity::product_rules:
     (check_product_rules<A<G>, B<G>>(source), ...);
+    return;
+  case Identity::product_laws:
+    (check_product_laws<A<G>, B<G>>(source), ...);
     return;
   }
 }
