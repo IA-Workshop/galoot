@@ -575,11 +575,17 @@ def main(argv):
             counts = session.preset(preset)
             summary.append(f"{preset}: " + ", ".join(
                 f"{n} {verdict}" for verdict, n in counts.items()))
-    finally:
+    except BaseException:
+        # Stopped early: restore, rebuild what was started, and say if a
+        # rebuild failed, since the summary below is not reached.
         session.restore()
+        known = len(session.problems)
         for preset in session.started:
             if preset not in session.rebuilt:
                 session.rebuild(preset)
+        for problem in session.problems[known:]:
+            print(problem, file=sys.stderr)
+        raise
     print("\n".join(summary + session.problems))
     return 1 if session.problems else 0
 
