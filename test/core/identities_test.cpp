@@ -39,7 +39,9 @@ void check_every_group(Identity identity) {
 //   multivectors of every blade for each form of up to four generators and
 //   R(4,1,0), R(4,0,1), and conformal(3), on bivectors for two dense random
 //   forms of five, on vectors and bivectors for six, and on sparse sets for
-//   8, 12, and 16
+//   8, 12, and 16,
+//   and on every blade for R(0,3,2) and R(0,2,3) and on vectors and bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
 TEST_CASE("the De Morgan laws hold on multivectors over many forms") {
   check_every_group(Identity::de_morgan);
 }
@@ -50,7 +52,9 @@ TEST_CASE("the De Morgan laws hold on multivectors over many forms") {
 //   integer multivectors of every blade for each form of up to four
 //   generators and R(4,1,0), R(4,0,1), and conformal(3), on vectors for two
 //   dense random forms of five, on vectors and bivectors for six, and on
-//   sparse sets for 8, 12, and 16
+//   sparse sets for 8, 12, and 16,
+//   and on every blade for R(0,3,2) and R(0,2,3) and on vectors and bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
 TEST_CASE("the antiproducts are associative over many forms") {
   check_every_group(Identity::antiproduct_laws);
 }
@@ -64,7 +68,9 @@ TEST_CASE("the antiproducts are associative over many forms") {
 //   random integer multivectors of every blade for each form of up to four
 //   generators and R(4,1,0), R(4,0,1), and conformal(3), on bivectors for
 //   two dense random forms of five, on vectors and bivectors for six, and on
-//   sparse sets for 8, 12, and 16
+//   sparse sets for 8, 12, and 16,
+//   and on every blade for R(0,3,2) and R(0,2,3) and on vectors and bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
 TEST_CASE("the involutions follow their product rules over many forms") {
   check_every_group(Identity::product_rules);
 }
@@ -76,7 +82,9 @@ TEST_CASE("the involutions follow their product rules over many forms") {
 //   with unit, on random integer multivectors of every blade for each form
 //   of up to four generators and R(4,1,0), R(4,0,1), and conformal(3), on
 //   vectors for two dense random forms of five, on vectors and bivectors for
-//   six, and on sparse sets for 8, 12, and 16
+//   six, and on sparse sets for 8, 12, and 16,
+//   and on every blade for R(0,3,2) and R(0,2,3) and on vectors and bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
 TEST_CASE("the products are associative with the scalar 1 as identity over "
           "many forms") {
   check_every_group(Identity::product_laws);
@@ -108,6 +116,8 @@ TEST_CASE("vectors anticommute to twice their inner product over many forms") {
 //   blade for each form of up to four generators and R(4,1,0), R(4,0,1),
 //   and conformal(3), on bivectors for two dense random forms of five, on
 //   vectors and bivectors for six, and on sparse sets for 8, 12, and 16,
+//   and on every blade for R(0,3,2) and R(0,2,3) and on vectors and bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random,
 //   where the forms of odd n tell the sign (-1)^n apart
 TEST_CASE("the involutions follow their antiproduct rules over many forms") {
   check_every_group(Identity::antiproduct_rules);

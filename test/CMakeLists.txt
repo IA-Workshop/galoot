@@ -1536,7 +1536,9 @@ target_sources(core_identities_test PRIVATE
   core/identities_conformal3_test.cpp
   core/identities_five_dense_test.cpp
   core/identities_six_test.cpp
-  core/identities_sparse_test.cpp)
+  core/identities_sparse_test.cpp
+  core/identities_five_drawn_test.cpp
+  core/identities_six_drawn_test.cpp)
 set_property(TEST core.identities APPEND PROPERTY LABELS core.product
   core.unary slow)
 
