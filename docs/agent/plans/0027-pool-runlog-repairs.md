@@ -39,3 +39,21 @@ Evidence. Before the code: `tools.runlog` failed only in case 14 (2.97 s) and `t
 P9's checks for a merge into `develop`, from new empty trees at `05dffcb` (selection `gate:all`, `cmake --workflow`), all exit 0: gcc-debug 494 tests (50.1 s), gcc-release 494 (61.0 s), gcc-asan 486 (157.4 s), clang-debug 494 (47.0 s), clang-release 494 (65.2 s), clang-asan 494 (143.4 s), lint 494 (179.4 s), clang-measure 486 (67.0 s); `tools.jobpool` took 16.8 to 18.1 s in each. `format-check` (1.3 s), the trace gate (0.2 s; 6.1 to 6.4 without a test, as on `develop`), and `tools/runlog check` (2.6 s) exit 0. The rows from gcc-release on carry `05dffcbb0ac8-dirty`: this section was being written in the tracked plan file while they ran; no file that a build or test reads changed. `develop` had not moved since the claim, so no merge of the parent was needed.
 
 Not done, listed: the slot total is still read from the unit's description text (note 0016 section 4 item 7; the review's J4 third point). The automatic tests do not reproduce the race between the count and the top-up, which leaves a surplus until a later poll by design.
+
+## State after the blind review (2026-11-08)
+
+The blind review (`records/reviews/2026-11-08-pool-runlog-review.md`, cherry-picked with `-x` as `9d76bb9`) approved with findings M1, M2, L3 to L6, and I7. The coordinator's resolutions, done by the implementer (Claude, agent, Opus 5.5):
+
+| Commit | What | Finding | Kind (W9) |
+| --- | --- | --- | --- |
+| `bd45823` | cherry-picked with `-x` from `df00fb4` on the tests branch (after merging this branch into it): `tools.jobpool` gains a pool on a FIFO path through a symlinked directory and a copy of the tool whose count of clients fails; the lost-slot check takes every token; label `slow`. Fails until `34d5af3`, as its message says | M1, M2, L4, L6 | test, before the code it judges |
+| `8489cd2` | `no_clients`: only a count of exactly 0 is no client, at the poll and at the last count before an idle stop | M1 | code, needs a delta review |
+| `34d5af3` | the FIFO path is resolved with `realpath -m` before any use | M2 | code, needs a delta review |
+| `b99bc7d` | the top-up race stated in the comment of `balance`; the drain reports what it read; `status` reports the service's idle time and says when the FIFO is missing | L3, I7 | code |
+| `d920335` | P9 and the PERFORMANCE status line reverted to `develop`'s text | L5 | governance text restored |
+
+- **L5.** The message of `ba67851` calls the P9 wording "the owner's accepted recommendation". That overstates it: the owner accepted documenting the label, not this wording. The wording is reverted in `d920335`, and the label's command stays documented in the comment of `tools.runlog_check` and in `tools/runlog`'s usage text. History is not rewritten.
+- **L3, the known race.** A client that opens the FIFO between the count of clients and the top-up, and takes tokens, leaves up to n surplus tokens once it returns them. They stay until the next poll with no client. No test covers it. The review's suggested fix, topping up only while the FIFO is moved aside, was not taken.
+- **L4.** No test preset excludes `slow`; only `runlog` is excluded. So `tools.jobpool` still runs in every preset's full suite (P9). A P8 selection that leaves out `slow` skips it unless the change touches `tools/jobpool`, as P9's rule for slow tests says.
+- **I7.** A client that starts during the one-second window while the FIFO is moved aside gets ENOENT, and `tools/timed` refuses with exit 2 in that window; this replaces the double pool. An `ensure` from an older checkout still starts the old code. Neither is changed.
+- The tests before the fixes: four checks of the two new cases failed on the branch's tool (27.7 s), and the lost-slot check now fails on `develop`'s tool as well. After them, `tools.jobpool` passes (29.2 s). Every pool was a private unit. From this round on, the shared pool's status is read only with the main checkout's `tools/jobpool`.
