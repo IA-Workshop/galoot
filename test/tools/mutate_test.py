@@ -751,11 +751,17 @@ def check_mode(repo):
 
 
 def stopped_early(repo):
-    """SIGTERM while a mutant is applied, after its program was deleted:
-    the driver exits 143 with the files as committed and the selection's
-    programs built again, so that no later CTest run finds one missing.
-    Last of the cases, since the build the signal cuts short may still be
-    finishing when the driver exits."""
+    """SIGTERM, then SIGINT, while a mutant is applied, after its program was
+    deleted: the driver exits 128 plus the signal's number with the files as
+    committed and the selection's programs built again, so that no later
+    CTest run finds one missing. Last of the cases, since the build the
+    signal cuts short may still be finishing when the driver exits."""
+    for number in (signal.SIGTERM, signal.SIGINT):
+        stop_once(repo, number)
+
+
+def stop_once(repo, number):
+    name = signal.Signals(number).name
     write_spec(repo, "stop", LIB_SELECTION,
                [mutant(f"stop_{n}", TWICE_WRONG_AT_COMPILE_TIME)
                 for n in range(8)])
@@ -769,15 +775,34 @@ def stopped_early(repo):
     deadline = time.monotonic() + 120
     while process.poll() is None and time.monotonic() < deadline:
         if repo.read(LIB) != committed and not os.path.exists(deleted):
-            process.send_signal(signal.SIGTERM)
+            process.send_signal(number)
             signalled = True
             break
         time.sleep(0.005)
     status = process.wait(timeout=300)
-    check("stopped: signalled while a mutant was applied", signalled, True)
-    check("stopped: exit", status, 128 + signal.SIGTERM)
-    check_restored(repo, "stopped")
-    check_rebuilt(repo, "stopped", ["gcc-debug"])
+    check(f"{name}: signalled while a mutant was applied", signalled, True)
+    check(f"{name}: exit", status, 128 + number)
+    check_restored(repo, name)
+    check_rebuilt(repo, name, ["gcc-debug"])
+
+
+def failed_rebuild_reported(repo):
+    """A run that stops early still rebuilds, and says so when the rebuild
+    fails: with uses_test.cpp broken in a commit, the baseline does not
+    build, the run is refused, and the rebuild that follows fails as well,
+    which stderr must name. The commit is then undone by another."""
+    committed = fixture_text(USES)
+    repo.write(USES, committed + "this is not C++\n")
+    repo.commit("break uses_test.cpp", USES)
+    write_spec(repo, "broken_build", LIB_SELECTION,
+               [mutant("after_broken_build", TWICE_WRONG_AT_RUN_TIME)])
+    result = repo.mutate("broken_build", "--preset", "gcc-debug")
+    check("broken build: exit", result.returncode, 2)
+    check("broken build: the failed rebuild is named on stderr",
+          "the restored files do not build" in result.stderr, True)
+    repo.write(USES, committed)
+    repo.commit("mend uses_test.cpp", USES)
+    check_restored(repo, "broken build")
 
 
 def main(tools, directory):
@@ -790,7 +815,7 @@ def main(tools, directory):
     for case in (refusals, failing_baselines, main_run,
                  rows_in_spec_order, killers_sorted, ctest_without_failures,
                  restore_between_files, library_guard, runtime_mode,
-                 check_mode, stopped_early):
+                 check_mode, failed_rebuild_reported, stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
