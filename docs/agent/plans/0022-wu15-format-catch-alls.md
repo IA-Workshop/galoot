@@ -234,22 +234,42 @@ Size S, as plan 0001 has it, at its upper end: about 1.2M to 1.7M tokens without
 
 ## 14. Outcome
 
-In progress (2026-11-08). Parts 1 and 2 are done on `feature/core-format`; part 3 has not started; nothing is merged into `develop`.
+In progress (2026-11-08). Parts 1 to 3 and step 4's records are done on `feature/core-format`. The hci reading (optional), the blind review, and the merge remain; nothing is merged into `develop`.
 
 Done:
-- Part 1: `records/diagnostics/catalogue/scan.py` (with fixtures and `--self-test`), `records/diagnostics/misuse-catalogue.md`, and the scan's output. Of 143 messages, 123 are pinned on both compilers; the remaining 20 are maintainer guards or self-checks of generated plans, each with its reason. The one user-facing message without a test, `GALOOT_CHECKING must be 0 or 1`, got `core.assert_checking_value`.
-- Part 2: `include/galoot/core/format.hpp`, with T2a (`core.format`, `core.format_outside_core`) and T2b (14 `core.format_*` compile-fail tests), each cherry-picked with `-x` right before the code it judges; the `mv.hpp` comment; CONVENTIONS 7.2 and the STYLE S7 sentence as drafts; and the four 7.2 trace rows, now `yes`.
-- Checks: gcc-debug and clang-debug, `-L 'core\.format|core\.headers'`, 18 of 18 each; a targeted lint build (the core's header checks, both format test programs, format-check); the trace gate. Each rejection gives one error line on both compilers.
+- **Part 1: the misuse catalogue.**
+  - `records/diagnostics/catalogue/scan.py`, with fixtures and `--self-test`, and `records/diagnostics/misuse-catalogue.md`, ratified (decision 0205).
+  - `GALOOT_CHECKING must be 0 or 1` got `core.assert_checking_value`.
+  - Regenerated after part 3: 153 messages, 133 pinned on both compilers, and 20 internal ones listed with reasons.
+- **Part 2: `format.hpp`** (decision 0204).
+  - The header, the `mv.hpp` comment, and the CONVENTIONS 7.2 and STYLE S7 drafts.
+  - The four 7.2 trace rows, now `yes`.
+  - Tests T2a (`core.format`, `core.format_outside_core`) and T2b (14 compile-fail tests).
+- **Part 3: the catch-alls** (decision 0206).
+  - `mv`'s rejecting constructor for another algebra or scalar type; `linear.hpp`'s four sums of a multivector and a number; `blades` constrained by `std::destructible` with two messages.
+  - Tests T3a-1 (15), T3a-2 (11), and T3b (4, two of them existing tests with changed expectations), each cherry-picked with `-x` right before its code.
+- **Step 4: the records.**
+  - Mutants (`records/mutations/0022-format/`): 37 header mutants on gcc-debug and clang-debug, all killed but one equivalent survivor; nine mutants of the scan, all killed.
+  - Diagnostics, `records/diagnostics/wu15-messages.md`: case 1 went from 114 lines to 11 on GCC and from 43 to 10 on Clang; case 6 from 47 to 10 and from 19 to 9.
+  - W10, `records/performance/format-cost/`: an includer of `core.hpp` +0.04% on GCC and +0.16% on Clang; formatting one point costs 14.2 G instructions on GCC and 7.2 G on Clang.
+  - The test author's costs, in `agent-cost.tsv`.
+
+Checks at the end of part 3:
+- gcc-debug and clang-debug, the full suite, 479 of 479 each.
+- A targeted lint build: the core and rga3 header checks, the mv, linear, blade_set, and format test programs, and format-check. It found two `misc-const-correctness` findings in the test author's accept test, which are now suppressed with their reason.
+- The trace gate and `tools/runlog check`.
+- `clang-format` on the changed sources of `include/` and `test/`. The probe sources under `docs/agent/records` are not formatted.
 
 Departures:
-- The scan reads CTest's JSON listing of a configured tree for each compiler, not `test/CMakeLists.txt` (R1). The listing has variables, loops, and compiler branches already resolved. Section 6's "`${semicolon}` not translated" mutant becomes "character 1 not read as `;`".
-- Criterion 2 uses one layout per grade, with signs alternating, not one layout per blade. It still covers all 2044 oriented blades, each with both signs.
-- `ONE_ERROR` does not catch a message printed twice. One error per case was checked by hand compiles, not by a test.
+- Those of parts 1 and 2 still hold:
+  - the scan reads CTest's JSON listing, accepted;
+  - criterion 2 uses one layout per grade;
+  - `ONE_ERROR` cannot see a message printed twice, so one error per case was shown by the diagnostics runs, which count error lines.
+- Each test group's commit also holds the expected values it changes (W9, listed in the commit messages), so that each group is a single failing commit.
+- The full lint preset (`all`) and the release, asan, and clang-measure presets were not run; they are for the merge.
 
-Readings the tests now pin:
-- a scalar stored with orientation -1 prints as `-1`;
-- tag names may be separated by runs of spaces;
-- a `names` member that does not convert to `std::string_view` is not read;
-- an empty `names` list is valid.
-
-Next: the owner confirms the 7.2 and S7 wording and ratifies the catalogue (O3). Then part 3 (T3a, the catch-alls in `mv.hpp` and `linear.hpp`, T3b with the `blades` change), the catalogue regenerated, and step 4's records: section 6's mutation scripts under `records/mutations/0022-format/`, `wu15-messages.md`, W10, the decisions, and the costs. Then the hci reading, the blind review, and the merge.
+Next:
+- the owner confirms the 7.2 and S7 wording;
+- the optional hci reading;
+- the W5 blind review with the usability checklist, fixes, and a delta review;
+- the merge checks of section 7.
