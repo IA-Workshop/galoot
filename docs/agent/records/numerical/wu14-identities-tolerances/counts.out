@@ -1,0 +1,224 @@
+conformal(3) (h.h).(h.h) on bivector
+  samples 100 coefficients 1000 disagree 0
+  K left 42..43 right 42..42
+  max tol/u 1.374e+08  max tol/(u max|e|) 1.823e+04
+  exact values needing >53 bits: 0 of 1000
+  max bits: magnitude numerator 50, magnitude denominator 2^30, value denominator 2^30
+  (K_L, K_R) pairs: (42,42)x900 (43,42)x100
+conformal(3) (h.h).(h.h) on bivector x 2^-42
+  samples 300 coefficients 3000 disagree 0
+  K left 42..43 right 42..42
+  max tol/u 7.946e+07  max tol/(u max|e|) 1.844e+04
+  exact values needing >53 bits: 258 of 3000
+  max bits: magnitude numerator 61, magnitude denominator 2^42, value denominator 2^42
+  (K_L, K_R) pairs: (42,42)x2700 (43,42)x300
+conformal(3) (h.h).(h.h) on vector
+  samples 100 coefficients 500 disagree 0
+  K left 37..40 right 32..32
+  max tol/u 3.034e+07  max tol/(u max|e|) 1.598e+04
+  exact values needing >53 bits: 0 of 500
+  max bits: magnitude numerator 48, magnitude denominator 2^30, value denominator 2^30
+  (K_L, K_R) pairs: (37,32)x200 (39,32)x100 (40,32)x200
+conformal(3) (h.h).(h.h) on vector x 2^-42
+  samples 300 coefficients 1500 disagree 0
+  K left 37..40 right 32..32
+  max tol/u 4.016e+07  max tol/(u max|e|) 2.946e+04
+  exact values needing >53 bits: 89 of 1500
+  max bits: magnitude numerator 60, magnitude denominator 2^42, value denominator 2^42
+  (K_L, K_R) pairs: (37,32)x600 (39,32)x300 (40,32)x600
+conformal(3) full (a%b)%c vs a%(b%c)
+  samples 40 coefficients 1280 disagree 0
+  K left 64..64 right 64..64
+  max tol/u 2.626e+04  max tol/(u max|e|) 2196
+  exact values needing >53 bits: 1038 of 1280
+  max bits: magnitude numerator 62, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (64,64)x1280
+conformal(3) full (a*b)*c vs a*(b*c)
+  samples 40 coefficients 1280 disagree 0
+  K left 64..64 right 64..64
+  max tol/u 2.626e+04  max tol/(u max|e|) 2146
+  exact values needing >53 bits: 1026 of 1280
+  max bits: magnitude numerator 62, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (64,64)x1280
+conformal(3) full 2^-17 (a%b)%c vs a%(b%c)
+  samples 200 coefficients 6400 disagree 0
+  K left 64..64 right 64..64
+  max tol/u 2.869e+04  max tol/(u max|e|) 2345
+  exact values needing >53 bits: 1931 of 6400
+  max bits: magnitude numerator 59, magnitude denominator 2^51, value denominator 2^51
+  (K_L, K_R) pairs: (64,64)x6400
+conformal(3) full 2^-17 (a*b)*c vs a*(b*c)
+  samples 200 coefficients 6400 disagree 0
+  K left 64..64 right 64..64
+  max tol/u 2.869e+04  max tol/(u max|e|) 4402
+  exact values needing >53 bits: 1821 of 6400
+  max bits: magnitude numerator 59, magnitude denominator 2^51, value denominator 2^51
+  (K_L, K_R) pairs: (64,64)x6400
+conformal(3) full left(a%b) vs left(a)*left(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 32..32 right 32..32
+  max tol/u 767.6  max tol/(u max|e|) 231.3
+  exact values needing >53 bits: 728 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (32,32)x1280
+conformal(3) full left(a&b) vs left(a)^left(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 1..32 right 1..32
+  max tol/u 671.5  max tol/(u max|e|) 381
+  exact values needing >53 bits: 376 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x40 (2,2)x200 (4,4)x400 (8,8)x400 (16,16)x200 (32,32)x40
+conformal(3) full left(a*b) vs left(a)%left(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 32..32 right 32..32
+  max tol/u 767.6  max tol/(u max|e|) 198.7
+  exact values needing >53 bits: 699 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (32,32)x1280
+conformal(3) full left(a^b) vs left(a)&left(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 1..32 right 1..32
+  max tol/u 671.5  max tol/(u max|e|) 397.2
+  exact values needing >53 bits: 372 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x40 (2,2)x200 (4,4)x400 (8,8)x400 (16,16)x200 (32,32)x40
+conformal(3) full right(a%b) vs right(a)*right(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 32..32 right 32..32
+  max tol/u 767.6  max tol/(u max|e|) 231.3
+  exact values needing >53 bits: 728 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (32,32)x1280
+conformal(3) full right(a&b) vs right(a)^right(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 1..32 right 1..32
+  max tol/u 671.5  max tol/(u max|e|) 381
+  exact values needing >53 bits: 376 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x40 (2,2)x200 (4,4)x400 (8,8)x400 (16,16)x200 (32,32)x40
+conformal(3) full right(a*b) vs right(a)%right(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 32..32 right 32..32
+  max tol/u 767.6  max tol/(u max|e|) 198.7
+  exact values needing >53 bits: 699 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (32,32)x1280
+conformal(3) full right(a^b) vs right(a)&right(b)
+  samples 40 coefficients 1280 disagree 0
+  K left 1..32 right 1..32
+  max tol/u 671.5  max tol/(u max|e|) 397.2
+  exact values needing >53 bits: 372 of 1280
+  max bits: magnitude numerator 58, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x40 (2,2)x200 (4,4)x400 (8,8)x400 (16,16)x200 (32,32)x40
+rigid(3) flector.flector on point
+  samples 200 coefficients 800 disagree 0
+  K left 13..24 right 10..24
+  max tol/u 2383  max tol/(u max|e|) 1136
+  exact values needing >53 bits: 173 of 800
+  max bits: magnitude numerator 60, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (13,10)x200 (24,24)x600
+rigid(3) flector.motor on line
+  samples 200 coefficients 1200 disagree 0
+  K left 15..26 right 14..27
+  max tol/u 5661  max tol/(u max|e|) 2451
+  exact values needing >53 bits: 301 of 1200
+  max bits: magnitude numerator 61, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (15,14)x600 (26,27)x600
+rigid(3) full (a%b)%c vs a%(b%c)
+  samples 200 coefficients 3200 disagree 0
+  K left 16..32 right 16..29
+  max tol/u 2977  max tol/(u max|e|) 734.8
+  exact values needing >53 bits: 1846 of 3200
+  max bits: magnitude numerator 60, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (16,16)x1600 (32,29)x1600
+rigid(3) full (a*b)*c vs a*(b*c)
+  samples 200 coefficients 3200 disagree 0
+  K left 16..29 right 16..32
+  max tol/u 2900  max tol/(u max|e|) 1068
+  exact values needing >53 bits: 1867 of 3200
+  max bits: magnitude numerator 60, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (16,16)x1600 (29,32)x1600
+rigid(3) full left(a%b) vs left(a)*left(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 8..16 right 8..16
+  max tol/u 227.4  max tol/(u max|e|) 115.8
+  exact values needing >53 bits: 1379 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (8,8)x1600 (16,16)x1600
+rigid(3) full left(a&b) vs left(a)^left(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 1..16 right 1..16
+  max tol/u 227.4  max tol/(u max|e|) 226.2
+  exact values needing >53 bits: 811 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x200 (2,2)x800 (4,4)x1200 (8,8)x800 (16,16)x200
+rigid(3) full left(a*b) vs left(a)%left(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 8..16 right 8..16
+  max tol/u 227.4  max tol/(u max|e|) 195.1
+  exact values needing >53 bits: 1421 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (8,8)x1600 (16,16)x1600
+rigid(3) full left(a^b) vs left(a)&left(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 1..16 right 1..16
+  max tol/u 227.4  max tol/(u max|e|) 192
+  exact values needing >53 bits: 795 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x200 (2,2)x800 (4,4)x1200 (8,8)x800 (16,16)x200
+rigid(3) full right(a%b) vs right(a)*right(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 8..16 right 8..16
+  max tol/u 227.4  max tol/(u max|e|) 115.8
+  exact values needing >53 bits: 1379 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (8,8)x1600 (16,16)x1600
+rigid(3) full right(a&b) vs right(a)^right(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 1..16 right 1..16
+  max tol/u 227.4  max tol/(u max|e|) 226.2
+  exact values needing >53 bits: 811 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x200 (2,2)x800 (4,4)x1200 (8,8)x800 (16,16)x200
+rigid(3) full right(a*b) vs right(a)%right(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 8..16 right 8..16
+  max tol/u 227.4  max tol/(u max|e|) 195.1
+  exact values needing >53 bits: 1421 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (8,8)x1600 (16,16)x1600
+rigid(3) full right(a^b) vs right(a)&right(b)
+  samples 200 coefficients 3200 disagree 0
+  K left 1..16 right 1..16
+  max tol/u 227.4  max tol/(u max|e|) 192
+  exact values needing >53 bits: 795 of 3200
+  max bits: magnitude numerator 57, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (1,1)x200 (2,2)x800 (4,4)x1200 (8,8)x800 (16,16)x200
+rigid(3) motor.flector on point
+  samples 200 coefficients 800 disagree 0
+  K left 13..24 right 10..24
+  max tol/u 3529  max tol/(u max|e|) 1166
+  exact values needing >53 bits: 207 of 800
+  max bits: magnitude numerator 61, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (13,10)x200 (24,24)x600
+rigid(3) motor.motor on line
+  samples 200 coefficients 1200 disagree 0
+  K left 15..26 right 14..28
+  max tol/u 5719  max tol/(u max|e|) 1853
+  exact values needing >53 bits: 352 of 1200
+  max bits: magnitude numerator 61, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (15,14)x600 (26,28)x600
+rigid(3) motor.motor on plane
+  samples 200 coefficients 800 disagree 0
+  K left 15..24 right 14..24
+  max tol/u 4251  max tol/(u max|e|) 1371
+  exact values needing >53 bits: 190 of 800
+  max bits: magnitude numerator 61, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (15,14)x600 (24,24)x200
+rigid(3) motor.motor on point
+  samples 200 coefficients 800 disagree 0
+  K left 13..24 right 10..24
+  max tol/u 3066  max tol/(u max|e|) 992.7
+  exact values needing >53 bits: 192 of 800
+  max bits: magnitude numerator 60, magnitude denominator 2^54, value denominator 2^54
+  (K_L, K_R) pairs: (13,10)x200 (24,24)x600

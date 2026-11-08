@@ -1,0 +1,39 @@
+start rigid(3) full (a*b)*c vs a*(b*c)
+start rigid(3) full (a%b)%c vs a%(b%c)
+start conformal(3) full (a*b)*c vs a*(b*c)
+start conformal(3) full (a%b)%c vs a%(b%c)
+start conformal(3) full 2^-17 (a*b)*c vs a*(b*c)
+start conformal(3) full 2^-17 (a%b)%c vs a%(b%c)
+start rigid(3) full right(a*b) vs right(a)%right(b)
+start rigid(3) full right(a^b) vs right(a)&right(b)
+start rigid(3) full left(a*b) vs left(a)%left(b)
+start rigid(3) full left(a^b) vs left(a)&left(b)
+start rigid(3) full right(a%b) vs right(a)*right(b)
+start rigid(3) full right(a&b) vs right(a)^right(b)
+start rigid(3) full left(a%b) vs left(a)*left(b)
+start rigid(3) full left(a&b) vs left(a)^left(b)
+start conformal(3) full right(a*b) vs right(a)%right(b)
+start conformal(3) full right(a^b) vs right(a)&right(b)
+start conformal(3) full left(a*b) vs left(a)%left(b)
+start conformal(3) full left(a^b) vs left(a)&left(b)
+start conformal(3) full right(a%b) vs right(a)*right(b)
+start conformal(3) full right(a&b) vs right(a)^right(b)
+start conformal(3) full left(a%b) vs left(a)*left(b)
+start conformal(3) full left(a&b) vs left(a)^left(b)
+start rigid(3) motor.motor on point
+start rigid(3) motor.motor on line
+start rigid(3) motor.motor on plane
+start rigid(3) flector.flector on point
+start rigid(3) motor.flector on point
+start rigid(3) flector.motor on line
+compose magnitude bits 5 (den 1)
+compose magnitude bits 6 (den 1)
+start conformal(3) (h.h).(h.h) on vector
+compose magnitude bits 7 (den 1)
+compose magnitude bits 8 (den 1)
+start conformal(3) (h.h).(h.h) on vector x 2^-42
+compose magnitude bits 6 (den 1)
+compose magnitude bits 7 (den 1)
+start conformal(3) (h.h).(h.h) on bivector x 2^-42
+compose magnitude bits 8 (den 1)
+start conformal(3) (h.h).(h.h) on bivector
