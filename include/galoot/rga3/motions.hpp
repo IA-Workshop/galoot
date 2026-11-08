@@ -23,6 +23,7 @@
 #include <type_traits>
 
 #include <galoot/core.hpp> // IWYU pragma: export
+#include <galoot/core/assert.hpp>
 #include <galoot/rga3/objects.hpp>
 
 namespace galoot::rga3 {
@@ -44,10 +45,15 @@ namespace galoot::rga3 {
 /// checked, and about an l that is not a line the result distorts what it
 /// moves. The length of the direction must lie between about 1e-150 and
 /// 1e150 in double, or 1e-18 and 1e18 in float, so that the sum of its
-/// squares neither underflows nor overflows; this is not checked either. A
-/// zero direction gives infinite or NaN coefficients on the line's blades,
-/// and one whose squares overflow gives a motor holding only cos(theta/2)
-/// on e1234.
+/// squares neither underflows nor overflows. A computed length that is zero
+/// or not finite, as for the zero direction of p ^ p or one whose squares
+/// underflow to zero or overflow, is checked by GALOOT_ASSERT at run time
+/// when GALOOT_CHECKING is 1, which then aborts with the message. With
+/// GALOOT_CHECKING 0 it is not checked and costs nothing: a zero direction
+/// then gives infinite or NaN coefficients on the line's blades, and one
+/// whose squares overflow a motor holding only cos(theta/2) on e1234. A
+/// length whose squares fall among the subnormal numbers is not caught and
+/// loses accuracy.
 ///
 /// Rounding: when the computed length is a power of 2, as for (0, 0, 1) or
 /// (0, 0, 2), the result is bit for bit the rotor of l divided by that
@@ -62,6 +68,10 @@ template <std::floating_point T>
 [[nodiscard]] inline Motor<T> rotation(const Line<T>& l, T theta) {
   const auto& v = l.coefficients;
   const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));
+  // A square root is never subnormal, so a length that is not normal is
+  // zero, infinite, or NaN.
+  GALOOT_ASSERT(std::isnormal(length), "rotation: the direction of the axis "
+                                       "must have a finite nonzero length");
 
   // The sine divided by the length, so that the six products below hold the
   // unitized line times sin(theta/2) with one division.
