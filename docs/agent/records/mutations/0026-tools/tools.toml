@@ -107,7 +107,7 @@ name = "mutate_warning_kills"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = "            if kind in (\"assert\", \"test\")]))", replacement = "            if kind in (\"assert\", \"test\", \"warning\")]))" },
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\", \"test\", \"warning\")})" },
 ]
 expect = "killed"
 
@@ -117,7 +117,7 @@ name = "mutate_invalid_kills"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = "            if kind in (\"assert\", \"test\")]))", replacement = "            if kind in (\"assert\", \"test\", \"invalid\")]))" },
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\", \"test\", \"invalid\")})" },
 ]
 expect = "killed"
 
@@ -127,7 +127,7 @@ name = "mutate_test_class_ignored"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = "            if kind in (\"assert\", \"test\")]))", replacement = "            if kind in (\"assert\",)]))" },
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\",)})" },
 ]
 expect = "killed"
 
@@ -213,6 +213,44 @@ edits = [
         finally:
             if status == 0:
                 self.write(mutant["file"], self.base[mutant["file"]])''' },
+]
+expect = "killed"
+
+# No rebuild when a run stops early.
+[[mutant]]
+name = "mutate_no_rebuild_after_early_stop"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+            if preset not in session.rebuilt:
+                session.rebuild(preset)''', replacement = "            pass" },
+]
+expect = "killed"
+
+# The killers in the order CTest and Ninja report them.
+[[mutant]]
+name = "mutate_killers_in_report_order"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        killers = sorted(set(failed)) + sorted(
+            {where for _, kind, _, where in failures
+             if kind in ("assert", "test")})''', replacement = '''
+        killers = list(dict.fromkeys(failed + [
+            where for _, kind, _, where in failures
+             if kind in ("assert", "test")]))''' },
+]
+expect = "killed"
+
+# CTest's exit status ignored.
+[[mutant]]
+name = "mutate_ctest_status_ignored"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "        ctest_failed = status != 0 and not failed", replacement = "        ctest_failed = False" },
 ]
 expect = "killed"
 
