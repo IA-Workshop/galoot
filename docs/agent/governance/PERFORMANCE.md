@@ -1,6 +1,6 @@
 # Galoot performance
 
-Status: ratified by the owner on 2026-10-31 (decision 0002). P5 amended on 2026-11-01, ratified by the owner: proceed as recommended (decision 0161). P7, P8, P9, and P13 amended on 2026-11-02, ratified by the owner (decision 0170, ratified by decision 0162 item 3). P9 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decision 0184). P9's sentence on the `runlog` label amended on 2026-11-08, ratified by the owner: accept the review's recommendations (decision 0215 item 10).
+Status: ratified by the owner on 2026-10-31 (decision 0002). P5 amended on 2026-11-01, ratified by the owner: proceed as recommended (decision 0161). P7, P8, P9, and P13 amended on 2026-11-02, ratified by the owner (decision 0170, ratified by decision 0162 item 3). P9 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decision 0184).
 
 This document says how Galoot's costs are measured and kept in proportion to their use. It adds detail to C6, C12, and C14 of the [constitution](CONSTITUTION.md) and to V15 of [VVUQ.md](VVUQ.md), and it sets the scope of the test runs that [WORKFLOW.md](WORKFLOW.md) asks for.
 
@@ -73,7 +73,7 @@ Each merge runs the checks for the scope it integrates. A lower level never runs
 | Merge into `develop` | The full suite on each supported compiler, one of them under the sanitizers of STYLE S5, the full suite under `clang-measure`, and the mechanical style checks (W5) |
 | Release | The full suite in every supported configuration, the benchmarks, and an update of the performance history (W13) |
 
-A merge that changes a log under `docs/agent/records/performance/` runs `tools/runlog check` on the merged tree before the merge is committed, once for the merge and not in each configuration, and `tools/runlog prune` when the check reports removed rows. The CTest test `tools.runlog_check` carries the label `runlog` and is left out of the presets' runs, so a test preset selects nothing by that label; it runs from a build tree with `ctest --test-dir <tree> -L '^runlog$'`.
+A merge that changes a log under `docs/agent/records/performance/` runs `tools/runlog check` on the merged tree before the merge is committed, once for the merge and not in each configuration, and `tools/runlog prune` when the check reports removed rows. The CTest test `tools.runlog_check` carries the label `runlog` and is left out of the presets' runs.
 
 A test long enough to slow the edit and test cycle carries the label `slow`. It runs before a commit only when the change touches the component it tests, and otherwise from the next merge level up. Deferral moves a check to a later merge; it never omits one.
 
