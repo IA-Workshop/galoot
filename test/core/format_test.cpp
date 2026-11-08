@@ -564,8 +564,12 @@ TEST_CASE("A scalar whose formatter takes std::format_context& prints "
           "inside a multivector") {
   // std::formattable tries a formatter with a context whose iterator is
   // left unspecified. libstdc++'s is not std::format_context's, so ratio
-  // is not std::formattable there, though std::format prints it.
+  // is not std::formattable there, though std::format prints it. That is a
+  // fact of libstdc++, the library these tests are built with, so it is
+  // checked only there; elsewhere the test still checks the printed texts.
+#if defined(__GLIBCXX__)
   static_assert(!std::formattable<ratio, char>);
+#endif
   REQUIRE(std::format("{}", ratio{.num = -3, .den = 4}) == "-3/4");
 
   const ratio half{.num = 1, .den = 2};
