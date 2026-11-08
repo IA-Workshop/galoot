@@ -245,4 +245,9 @@ Size M, as plan 0001 has it: about 1.2M to 1.9M tokens with O4 and O7 taken. Mac
 
 ## 18. Outcome
 
-Not started. To be written by the unit: departures, skipped checks, and ambiguities first (C20); then the commits (W9), each criterion of section 4 with its evidence, the V10 status, the merge checks, run times and the pool, agent cost, and the open items for the owner.
+In progress (2026-11-08). Parts A, N, B, C1, C2, and C3 are done on `feature/core-identities`; the blind review (section 12) has not started, and the unit is not merged. The full outcome is written after the review. Status for a later session (W3):
+
+- Done: part C1 (`tools/catalogue`, `tools.catalogue`, `tests.messages_pinned`, criterion 10's FORBIDs); part C2 (part B's eleven commits cherry-picked in order, the labels, nine trace rows, CONVENTIONS 1.16, the catalogue regenerated over `include/galoot/`, the coverage table `records/mutations/0029-identities/coverage.md`, decision 0217); part C3 (DoD-14's faults, the gap mutants, the new cases' mutants, and the scan's mutants, in `records/mutations/0029-identities/README.md`; the seed campaign there; the pinned compile costs in `records/performance/wu14-identities-cost/`; `core.identities` under gcc-asan, 3.4 s).
+- Found by the seed campaign: `core_transform_identities_test` aborts on 7 of seeds 1 to 50, its test rational overflowing `std::int64_t` (a test limit, reported; not fixed here).
+- Open: the parts of the test-quality unit that O4 folded in (decision 0217 item 11); the seed failures; the criterion 12 readings of decision 0217 item 6 and the README.
+- Next step: the blind review of section 12, of the diff from `develop` (the unit left it at `da5d91a`) to the tip.
