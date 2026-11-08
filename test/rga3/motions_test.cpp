@@ -304,7 +304,8 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds (l / |v|) sin(theta/2) + "
     for (const double angle : angles) {
       const T theta = static_cast<T>(angle);
       INFO(std::format("theta = {}", theta));
-      const T length = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2]);
+      const T length =
+          std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));
       const T s = std::sin(theta / T{2}) / length;
       const T c = std::cos(theta / T{2});
       const Motor expected{
@@ -350,8 +351,10 @@ TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
   // Each line divided by its length, exactly: the zeros keep their signs.
   const auto unitized = [](const Line& l, T length) {
     const auto& c = l.coefficients;
-    return Line{c[0] / length, c[1] / length, c[2] / length,
-                c[3] / length, c[4] / length, c[5] / length};
+    return Line{
+        c[0] / length, c[1] / length, c[2] / length,
+        c[3] / length, c[4] / length, c[5] / length,
+    };
   };
   const Line z_axis = unitized(z_axis_2, T{2});
   const Line off_axis = unitized(off_axis_4, T{4});
@@ -500,8 +503,8 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about a z axis of length 2 or 5 turns "
   constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
   const T theta = std::numbers::pi_v<T> / T{2};
   INFO(std::format("theta = {}", theta));
-  const Line z_axis_2{Point{T{0}, T{0}, T{0}, T{1}} ^
-                      Point{T{0}, T{0}, T{2}, T{1}}};
+  const Point origin{T{0}, T{0}, T{0}, T{1}};
+  const Line z_axis_2{origin ^ Point{T{0}, T{0}, T{2}, T{1}}};
   const Line z_axis_5{T{0}, T{0}, T{5}, T{0}, T{0}, T{0}};
   REQUIRE(z_axis_2 == Line{T{0}, T{0}, T{2}, T{0}, T{0}, T{0}});
 
