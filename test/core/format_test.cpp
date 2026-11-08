@@ -129,6 +129,27 @@ struct plain_number {
   }
 };
 
+// A ring scalar whose std::formatter, below, is written for
+// std::format_context alone, as most formatters are written: a fraction,
+// kept unreduced, that prints as 1/2.
+struct ratio {
+  std::int64_t num = 0;
+  std::int64_t den = 1;
+
+  [[maybe_unused]] friend constexpr ratio operator+(ratio a, ratio b) noexcept {
+    return {.num = (a.num * b.den) + (b.num * a.den), .den = a.den * b.den};
+  }
+  [[maybe_unused]] friend constexpr ratio operator-(ratio a, ratio b) noexcept {
+    return {.num = (a.num * b.den) - (b.num * a.den), .den = a.den * b.den};
+  }
+  [[maybe_unused]] friend constexpr ratio operator*(ratio a, ratio b) noexcept {
+    return {.num = a.num * b.num, .den = a.den * b.den};
+  }
+  [[maybe_unused]] friend constexpr ratio operator-(ratio a) noexcept {
+    return {.num = -a.num, .den = a.den};
+  }
+};
+
 // Classes derived from a line, as a model might declare a named type: the
 // first is given the formatter of its base, below; the second is not.
 struct NamedLine : Line<std::int64_t> {
@@ -145,6 +166,24 @@ struct UnformattedLine : Line<std::int64_t> {
 template <>
 struct std::formatter<NamedLine, char>
     : std::formatter<Line<std::int64_t>, char> {};
+
+// The formatter of ratio, with parse and format on the standard library's
+// context types rather than templates on them. It takes no specification.
+template <>
+struct std::formatter<ratio, char> {
+  constexpr std::format_parse_context::iterator
+  parse(std::format_parse_context& context) {
+    if (context.begin() != context.end() && *context.begin() != '}') {
+      throw std::format_error{"ratio takes no format specification"};
+    }
+    return context.begin();
+  }
+
+  std::format_context::iterator format(const ratio& r,
+                                       std::format_context& context) const {
+    return std::format_to(context.out(), "{}/{}", r.num, r.den);
+  }
+};
 
 namespace {
 
@@ -510,6 +549,28 @@ TEST_CASE("std::formattable answers yes for a multivector over char, also "
   static_assert(!std::formattable<plain_number, char>);
   static_assert(std::formattable<Line<plain_number>, char>);
   CHECK(std::formattable<Line<plain_number>, char>);
+}
+
+// Reference: contract: a scalar with an enabled std::formatter prints, also
+//   when that formatter's parse and format take std::format_parse_context&
+//   and std::format_context& rather than any context; independent value:
+//   the texts written out, each coefficient as the scalar's formatter
+//   writes it alone
+TEST_CASE("A scalar whose formatter takes std::format_context& prints "
+          "inside a multivector") {
+  // std::formattable tries a formatter with a context whose iterator is
+  // left unspecified. libstdc++'s is not std::format_context's, so ratio
+  // is not std::formattable there, though std::format prints it.
+  static_assert(!std::formattable<ratio, char>);
+  REQUIRE(std::format("{}", ratio{.num = -3, .den = 4}) == "-3/4");
+
+  const Point<ratio> p{ratio{.num = 1, .den = 2}, ratio{.num = -3, .den = 4},
+                       ratio{}, ratio{.num = 1, .den = 1}};
+  CHECK(std::format("{}", p) == "{e1: 1/2, e2: -3/4, e3: 0/1, e4: 1/1}");
+
+  std::string written;
+  std::format_to(std::back_inserter(written), "p = {}.", p);
+  CHECK(written == "p = {e1: 1/2, e2: -3/4, e3: 0/1, e4: 1/1}.");
 }
 
 // Reference: contract: a formatter specialization matches one type exactly,
