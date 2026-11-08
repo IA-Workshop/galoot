@@ -1,0 +1,403 @@
+#!/usr/bin/env -S python3 -I
+"""Map every message of a header tree to the tests that require it.
+
+Usage, from the root of a checkout:
+  tools/catalogue report <include root> <name>=<listing>...
+                  [--check <catalogue.md>] [--ctest <ctest>]
+  tools/catalogue pinned <include root> <listing> <internal list>
+                  [--ctest <ctest>]
+
+A message is the literal of a `static_assert`, the message argument of a
+`GALOOT_ASSERT`, or the text of an `#error`, in the .hpp files anywhere
+under the include root, such as include/galoot. Adjacent string literals
+are joined, as the compiler joins them. A place is the header's path from
+the root and the line of the assertion, as core/bits.hpp:41.
+
+A listing is CTest's JSON listing of a configured build tree: a file that
+`ctest --show-only=json-v1` wrote, or the build tree itself, which is then
+read with `<ctest> --test-dir <tree> --show-only=json-v1` (ctest from PATH
+unless --ctest names it). The listing holds each test's command with every
+variable, loop, and compiler branch already resolved. A test requires a
+literal when it runs test/expect_output.cmake and the literal is one that
+script requires (not the ONLY pattern, not a FORBID or FORBID_FIRST
+literal); a test marked WILL_FAIL requires nothing, since it passes when a
+literal is missing. expect_output.cmake receives a `;` as the character 1,
+so that character is read as `;`. The prefix that the run-time handler
+prints before a GALOOT_ASSERT message is removed.
+
+A literal pins a message when one holds the other as a substring and that is
+true of no other message, so that the test fails if that message is lost.
+When several messages match, a literal that holds one or more of them whole
+pins the longest of those: "dot: the operands ..." is also a part of
+"antidot: the operands ...", and a test that requires the first exactly pins
+it. A literal that is only a part of several messages pins none.
+
+report: one Markdown row per message with its places and the tests that pin
+it in each listing, then the messages each listing does not pin, then the
+assertions without a message. With --check, every test name written in
+backquotes in the catalogue must be a test of every listing, and the names
+that are not are printed. Exit 1 if --check finds such a name, else 0; an
+unpinned message is reported, not an error.
+
+pinned: the internal list names the messages that no test needs to pin, in
+blocks separated by blank lines, each a line "reason: " and the reason, then
+the messages it covers, one per line; a line starting with # is a comment.
+Prints one line for each message that no test of the listing pins and the
+list leaves out, each entry of the list that no header holds, and each entry
+that a test pins. Exit 1 if it prints any, else 0 after a count.
+
+Exit 2 when refused: a wrong command line, an unreadable file, a malformed
+internal list, or a ctest that fails.
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+ASSERT_PREFIX = "galoot: assertion failed: "
+REASON = "reason: "
+STRING = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
+CALL = re.compile(r"\b(static_assert|GALOOT_ASSERT)\s*\(")
+ERROR_DIRECTIVE = re.compile(r'^[ \t]*#[ \t]*error[ \t]+"((?:[^"\\]|\\.)*)"',
+                             re.MULTILINE)
+TEST_NAME = re.compile(r"`((?:core|rga3|tests|tools|support)\.[A-Za-z0-9_]+)`")
+
+
+class Refused(Exception):
+    pass
+
+
+def unescape(text):
+    return text.replace('\\"', '"').replace("\\\\", "\\")
+
+
+def strip_comments(code):
+    """Blank // and /* */ comments, keeping string literals and offsets."""
+    out = []
+    i = 0
+    while i < len(code):
+        if code.startswith("//", i):
+            end = code.find("\n", i)
+            end = len(code) if end == -1 else end
+            out.append(" " * (end - i))
+            i = end
+        elif code.startswith("/*", i):
+            end = code.find("*/", i) + 2
+            out.append(re.sub(r"[^\n]", " ", code[i:end]))
+            i = end
+        elif code[i] == '"':
+            match = STRING.match(code, i)
+            end = match.end() if match else i + 1
+            out.append(code[i:end])
+            i = end
+        elif code[i] == "'":
+            end = code.find("'", i + 2 if code[i + 1] == "\\" else i + 1) + 1
+            out.append(code[i:end])
+            i = end
+        else:
+            out.append(code[i])
+            i += 1
+    return "".join(out)
+
+
+def closing(code, start):
+    """The index just past the ) that closes the ( before start."""
+    depth = 1
+    i = start
+    while depth:
+        if code[i] == '"':
+            i = STRING.match(code, i).end()
+            continue
+        depth += {"(": 1, ")": -1}.get(code[i], 0)
+        i += 1
+    return i
+
+
+def message_of(arguments):
+    """The joined literals at the end of an argument list, or None."""
+    matches = list(STRING.finditer(arguments))
+    if not matches:
+        return None
+    run = [matches[-1]]
+    for match in reversed(matches[:-1]):
+        if arguments[match.end():run[0].start()].strip():
+            break
+        run.insert(0, match)
+    if arguments[run[-1].end():].strip(" \t\n)"):
+        return None
+    return "".join(unescape(m.group(1)) for m in run)
+
+
+def headers(root):
+    """The .hpp files under root, as sorted paths from it with / between."""
+    found = []
+    for directory, _, files in os.walk(root):
+        for name in files:
+            if name.endswith(".hpp"):
+                path = os.path.relpath(os.path.join(directory, name), root)
+                found.append(path.replace(os.sep, "/"))
+    return sorted(found)
+
+
+def read_messages(root):
+    """{message: [(header, line), ...]}, and the places of assertions
+    without a message, each in the order of header and line."""
+    messages = {}
+    silent = []
+    for name in headers(root):
+        with open(os.path.join(root, name), encoding="utf-8") as f:
+            code = f.read()
+        bare = strip_comments(code)
+        for match in CALL.finditer(bare):
+            line = bare.count("\n", 0, match.start()) + 1
+            text_start = bare.rfind("\n", 0, match.start()) + 1
+            if bare[text_start:match.start()].lstrip().startswith("#define"):
+                continue
+            end = closing(bare, match.end())
+            message = message_of(bare[match.end():end - 1])
+            if message is None:
+                silent.append((name, line))
+            else:
+                messages.setdefault(message, []).append((name, line))
+        for match in ERROR_DIRECTIVE.finditer(bare):
+            line = bare.count("\n", 0, match.start()) + 1
+            messages.setdefault(unescape(match.group(1)), []).append(
+                (name, line))
+    for places in messages.values():
+        places.sort()
+    return messages, sorted(silent)
+
+
+def places_text(places):
+    return ", ".join(f"{name}:{line}" for name, line in places)
+
+
+def required_literals(test):
+    """The literals a test requires of its output, or [] if none."""
+    command = test.get("command") or []
+    properties = {p["name"]: p["value"] for p in test.get("properties", [])}
+    if properties.get("WILL_FAIL"):
+        return []
+    if len(command) < 5 or not command[2].endswith("expect_output.cmake"):
+        return []
+    literals = []
+    mode = "require"
+    i = 5  # cmake -P <script> -- <result>
+    while i < len(command) and command[i] != "--":
+        argument = command[i]
+        if argument == "ONLY":
+            i += 2
+            continue
+        if argument in ("FORBID", "FORBID_FIRST"):
+            mode = "forbid"
+        elif mode == "require":
+            literals.append(argument.replace("\x01", ";"))
+        i += 1
+    return literals
+
+
+def pins(literal, messages):
+    """The one message the literal pins, or None."""
+    if literal.startswith(ASSERT_PREFIX):
+        literal = literal[len(ASSERT_PREFIX):]
+    if not literal:
+        return None
+    found = [m for m in messages if literal in m or m in literal]
+    if len(found) == 1:
+        return found[0]
+    # "dot: ..." is also inside "antidot: ...": a literal that equals one
+    # message, or holds it whole, pins the longest such message.
+    whole = [m for m in found if m in literal]
+    return max(whole, key=len) if whole else None
+
+
+def read_listing(path, ctest):
+    """The tests of a listing file, or of a build tree through ctest."""
+    if os.path.isdir(path):
+        command = [ctest, "--test-dir", path, "--show-only=json-v1"]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
+        except OSError as error:
+            raise Refused(f"cannot run {ctest}: {error}") from error
+        if result.returncode != 0:
+            raise Refused(f"{' '.join(command)} exited {result.returncode}: "
+                          f"{result.stderr.strip()}")
+        text = result.stdout
+    else:
+        try:
+            with open(path, encoding="utf-8") as f:
+                text = f.read()
+        except OSError as error:
+            raise Refused(f"cannot read {path}: {error}") from error
+    try:
+        return json.loads(text)["tests"]
+    except (ValueError, KeyError, TypeError) as error:
+        raise Refused(f"{path}: not a CTest JSON listing: {error}") from error
+
+
+def scan(messages, listings):
+    """{message: {listing name: set of test names}}."""
+    pinned = {m: {name: set() for name, _ in listings} for m in messages}
+    for name, tests in listings:
+        for test in tests:
+            for literal in required_literals(test):
+                message = pins(literal, messages)
+                if message is not None:
+                    pinned[message][name].add(test["name"])
+    return pinned
+
+
+def in_order(messages):
+    return sorted(messages, key=lambda m: messages[m][0])
+
+
+def report(messages, pinned, silent, names):
+    lines = ["| Message | Places | " + " | ".join(names) + " |",
+             "| --- | --- | " + " | ".join("---" for _ in names) + " |"]
+    for message in in_order(messages):
+        cells = []
+        for name in names:
+            tests = sorted(pinned[message][name])
+            cells.append(", ".join(f"`{t}`" for t in tests) or "none")
+        text = message.replace("|", "\\|")
+        lines.append(f"| {text} | {places_text(messages[message])} | "
+                     + " | ".join(cells) + " |")
+    for name in names:
+        missing = [m for m in in_order(messages) if not pinned[m][name]]
+        lines.append("")
+        lines.append(f"Not pinned in {name}: {len(missing)} of "
+                     f"{len(messages)} messages")
+        for message in missing:
+            lines.append(f"- {places_text(messages[message])}: {message}")
+    lines.append("")
+    lines.append(f"Assertions without a message: {len(silent)}")
+    lines.append("- " + places_text(silent))
+    return "\n".join(lines)
+
+
+def check(catalogue, listings):
+    try:
+        with open(catalogue, encoding="utf-8") as f:
+            written = sorted(set(TEST_NAME.findall(f.read())))
+    except OSError as error:
+        raise Refused(f"cannot read {catalogue}: {error}") from error
+    absent = []
+    for name, tests in listings:
+        known = {t["name"] for t in tests}
+        absent += [f"{name}: {t}" for t in written if t not in known]
+    return written, absent
+
+
+def read_internal(path):
+    """[message, ...] of the internal list, in its order."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().split("\n")
+    except OSError as error:
+        raise Refused(f"cannot read {path}: {error}") from error
+    entries = []
+    seen = set()
+    block = None  # the line of the block's reason, once one has started
+    covered = 0
+    for number, line in enumerate(lines + [""], start=1):
+        if line.startswith("#"):
+            continue
+        if not line.strip():
+            if block is not None and not covered:
+                raise Refused(f"{path}:{block}: a reason with no message "
+                              f"under it")
+            block = None
+            continue
+        if block is None:
+            if not line.startswith(REASON) or not line[len(REASON):].strip():
+                raise Refused(f'{path}:{number}: a block must start with '
+                              f'"{REASON}" and the reason')
+            block = number
+            covered = 0
+            continue
+        if line in seen:
+            raise Refused(f"{path}:{number}: listed twice: {line}")
+        seen.add(line)
+        entries.append(line)
+        covered += 1
+    return entries
+
+
+def pinned_check(messages, pinned, internal):
+    """The findings, one line each, and the count of pinned messages."""
+    tests = {m: sorted(pinned[m]["listing"]) for m in messages}
+    listed = set(internal)
+    findings = [f"not pinned by a test and not listed as internal: "
+                f"{places_text(messages[m])}: {m}"
+                for m in in_order(messages)
+                if not tests[m] and m not in listed]
+    for entry in internal:
+        if entry not in messages:
+            findings.append(f"listed as internal but in no header: {entry}")
+        elif tests[entry]:
+            findings.append(f"listed as internal but pinned by "
+                            f"{', '.join(tests[entry])}: {entry}")
+    return findings, sum(1 for m in messages if tests[m])
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(prog="tools/catalogue", usage=__doc__)
+    commands = parser.add_subparsers(dest="command", required=True)
+    each = commands.add_parser("report")
+    each.add_argument("root")
+    each.add_argument("listings", nargs="+")
+    each.add_argument("--check")
+    each.add_argument("--ctest", default="ctest")
+    every = commands.add_parser("pinned")
+    every.add_argument("root")
+    every.add_argument("listing")
+    every.add_argument("internal")
+    every.add_argument("--ctest", default="ctest")
+    arguments = parser.parse_args(argv)
+    if not os.path.isdir(arguments.root):
+        raise Refused(f"{arguments.root} is not a directory")
+    messages, silent = read_messages(arguments.root)
+
+    if arguments.command == "pinned":
+        internal = read_internal(arguments.internal)
+        tests = read_listing(arguments.listing, arguments.ctest)
+        pinned = scan(messages, [("listing", tests)])
+        findings, count = pinned_check(messages, pinned, internal)
+        for finding in findings:
+            print(finding)
+        if findings:
+            return 1
+        print(f"{len(messages)} messages: {count} pinned by a test, "
+              f"{len(messages) - count} listed as internal")
+        return 0
+
+    listings = []
+    for argument in arguments.listings:
+        name, separator, path = argument.partition("=")
+        if not separator or not name or not path:
+            raise Refused(f"a listing is <name>=<file or build tree>, "
+                          f"not {argument}")
+        listings.append((name, read_listing(path, arguments.ctest)))
+    pinned = scan(messages, listings)
+    print(report(messages, pinned, silent, [n for n, _ in listings]))
+    if arguments.check is None:
+        return 0
+    written, absent = check(arguments.check, listings)
+    print("")
+    print(f"Test names in {os.path.basename(arguments.check)}: "
+          f"{len(written)}, absent from a listing: {len(absent)}")
+    for line in absent:
+        print(f"- {line}")
+    return 1 if absent else 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Refused as refusal:
+        print(f"tools/catalogue: {refusal}", file=sys.stderr)
+        sys.exit(2)
