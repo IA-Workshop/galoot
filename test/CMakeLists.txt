@@ -2070,6 +2070,41 @@ galoot_add_test(MODULE core COMPONENT format_outside_core)
 set_property(TEST core.format_outside_core APPEND PROPERTY LABELS
   core.format)
 
+# core.format_<case>: each misuse of the formatter fails to compile with one
+# error, its message, on the line a reader sees first, which names none of
+# the machinery of the formatter or of <format>. Each cause is tried as
+# return std::format("{}", x) and, for some, as auto s = std::format("{}", x)
+# or std::println("{}", x), which reach the formatter by other paths.
+function(format_rejects case message)
+  galoot_add_compile_fail_test(NAME format_${case}
+    MODULE core COMPONENT format
+    SOURCE core/format_${case}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR FORBID_ON_FIRST_ERROR "detail::" "__format" "basic_format_arg")
+endfunction()
+set(format_no_formatter "format: the scalar type has no std::formatter${semicolon} give it a std::formatter, as double has")
+set(format_wide_algebra "format: names such as e123 have one digit per index, so a multivector prints by name only for n up to 9${semicolon} format its coefficients instead")
+set(format_not_a_blade "format: an entry of the algebra tag's names is not a blade of the algebra${semicolon} write 1, or e and distinct indices from 1 to n, as in e41")
+set(format_named_twice "format: the algebra tag's names name one blade twice, perhaps in both orientations${semicolon} name each blade once")
+foreach(case IN ITEMS scalar_without_formatter scalar_without_formatter_auto
+    scalar_without_formatter_print)
+  format_rejects(${case} "${format_no_formatter}")
+endforeach()
+foreach(case IN ITEMS wide_algebra wide_algebra_auto)
+  format_rejects(${case} "${format_wide_algebra}")
+endforeach()
+# A name that is neither 1 nor e and indices, e with no index, a letter or a
+# 0 for an index, an index above n, and one generator twice.
+foreach(case IN ITEMS names_not_e names_not_e_auto names_bare_e
+    names_letter_index names_index_zero names_index_above_n
+    names_repeated_generator)
+  format_rejects(${case} "${format_not_a_blade}")
+endforeach()
+# One blade named twice, in one orientation and in both.
+foreach(case IN ITEMS names_twice names_twice_opposite)
+  format_rejects(${case} "${format_named_twice}")
+endforeach()
+
 # rga3.objects: the model's layouts against the oriented names written in the
 # test, its types, and the facts of rigid(3) on them, against hand values and
 # the golden values.
