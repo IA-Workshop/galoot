@@ -221,6 +221,68 @@ inline constexpr int rounding_margin = 2;
   return gamma * nearest_double(magnitude);
 }
 
+/// The number of roundings the identity check adds to each side's K, so
+/// that the check, itself computed in double, never rejects two results
+/// whose difference is within the sum of their bounds.
+///
+/// Derivation. Let l and r be double results of two computations whose
+/// exact values are both e, with counts K_l, K_r and magnitudes M_l, M_r, so
+/// that |l - e| <= gamma_(K_l) M_l and |r - e| <= gamma_(K_r) M_r, and by
+/// the triangle inequality through e,
+///   |l - r| <= gamma_(K_l) M_l + gamma_(K_r) M_r.
+/// The check computes, for each side X, g_X = fl(k u / (1 - k u)) with
+/// k = K_X + margin, where k u and 1 - k u are exact, as for the margin
+/// above, so g_X >= (1 - u) gamma_k; M'_X = fl(M_X) >= (1 - u) M_X; and
+/// t_X = fl(g_X M'_X) >= (1 - u)^3 gamma_k M_X. With margin 1,
+/// (1 - u)^3 gamma_(K+1) >= gamma_K whenever 3 (K + 1) u < 1: multiplied
+/// out by the positive denominators, the difference of the two sides is
+/// 1 - 3x + 3x^2 - (K + 1)(3K + 1) u^3 + K (K + 1) u^4 with x = (K + 1) u,
+// and 1 - 3x + 3x^2 >= 1/4 for every x while the cubic term is at most
+// 3 x^2 u. So t_l + t_r >= gamma_(K_l) M_l + gamma_(K_r) M_r >= |l - r| as
+// exact reals, and rounding to nearest is monotone, so fl(|l - r|) <= fl(t_l +
+// t_r). With margin 0 the factor (1 - u)^3 < 1 breaks the argument. The
+// comparison needs one rounding less than rounding_margin because it measures l
+// against r, both computed, rather than against fl(e), whose own rounding the
+// margin of two pays for. Assumes no underflow or overflow.
+inline constexpr int identity_margin = 1;
+
+/// The tolerance of the difference of two results whose exact values are
+/// equal, with counts K_l, K_r and magnitudes M_l, M_r:
+/// fl(t_l + t_r) with t_X = fl(fl(gamma_(K_X + identity_margin)) fl(M_X)),
+/// as derived above.
+[[nodiscard]] inline double identity_tolerance(int roundings_l,
+                                               rational magnitude_l,
+                                               int roundings_r,
+                                               rational magnitude_r) {
+  const auto part = [](int roundings, rational magnitude) {
+    const double k = roundings + identity_margin;
+    const double gamma = (k * unit_roundoff) / (1.0 - (k * unit_roundoff));
+    return gamma * nearest_double(magnitude);
+  };
+  return part(roundings_l, magnitude_l) + part(roundings_r, magnitude_r);
+}
+
+/// Whether two double results l and r of computations whose exact values
+/// are equal, with the counts and magnitudes of their tracked runs, differ
+/// by no more than the sum of their forward error bounds allows.
+///
+/// K_l <= 1 and K_r <= 1: each result is the double nearest the common
+/// exact value (with no rounding it is that value, a double; with one
+/// rounding of exact operands it is correctly rounded), so l must equal r.
+/// Otherwise fl(|l - r|) <= identity_tolerance. The check does not see an
+/// error common to both sides; within_rounding_bound on each side against
+/// the exact value does.
+[[nodiscard]] inline bool within_identity_bound(double l, int roundings_l,
+                                                rational magnitude_l, double r,
+                                                int roundings_r,
+                                                rational magnitude_r) {
+  if (roundings_l <= 1 && roundings_r <= 1) {
+    return l == r;
+  }
+  return std::abs(l - r) <=
+         identity_tolerance(roundings_l, magnitude_l, roundings_r, magnitude_r);
+}
+
 /// The ratio of the exact error |d - exact| to the bound gamma_K magnitude,
 /// computed in double: at most ratio_limit for a result within the bound;
 /// zero when the error is zero. Requires roundings >= 1.
