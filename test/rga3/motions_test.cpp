@@ -553,7 +553,7 @@ constexpr std::array<int, 5> half_turn_fifths_tolerance_in_u{0, 3, 5, 8, 10};
 // Reference: independent value: by hand, the line through (1, 0, 0) with
 //   direction (0, 3, 4) has moment (1, 0, 0) x (0, 3, 4) = (0, -4, 3), so it
 //   is (0, 3, 4, 0, -4, 3), and (1.5, -2, 0, 2, 1.5, 1/2) is a line, since
-//   v . m = 3 - 3 + 0 = 0; their directions have lengths 5 and 5/2, so
+//   v . m = 3 - 3 + 0 = 0, and their directions have lengths 5 and 5/2, so
 //   divided by them they are (0, 3, 4, 0, -4, 3) / 5 and
 //   (3, -4, 0, 4, 3, 1) / 5; contract: rotation(l, theta) builds
 //   (l / |v|) sin(theta/2) + antiscalar cos(theta/2), and sin(theta/2) is 1
