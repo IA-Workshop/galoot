@@ -1,0 +1,140 @@
+# The blind reviewer's own mutants of WU14's new tests (plan 0029 section 12),
+# written before any was run, judged at e248bf1 on gcc-debug.
+presets = ["gcc-debug"]
+
+[selection.transform]
+targets = [
+  "core_transform_test",
+  "core_transform_identities_test",
+  "core_identities_rounding_test",
+  "core_transform_mode_0",
+  "core_transform_mode_1",
+  "core_transform_rounding_test",
+  "core_transform_rounding_mode_0",
+  "core_transform_rounding_mode_1",
+]
+labels = '^core\.transform$'
+
+[selection.dual]
+targets = ["core_dual_test", "core_dual_identities_test"]
+labels = '^core\.dual$'
+
+[selection.identities]
+targets = ["core_identities_test"]
+labels = '^core\.identities$'
+
+[selection.rounding]
+targets = ["core_identities_rounding_test", "support_tracked_test"]
+labels = '^(core\.identities_rounding|support\.tracked)$'
+
+[selection.catalogue]
+targets = []
+labels = '^(tools|tests)\.catalogue$'
+
+# The transform's first stage folds the grade involution's sign, not the
+# antigrade involution's, into an odd versor's terms: wrong where n is odd.
+# For "a mirror maps every blade to the reference's image".
+[[mutant]]
+name = "first_stage_grade_not_antigrade"
+selection = "transform"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''        odd && antigrade(X.blades[t.b].mask, n) % 2 != 0 ? -1 : 1;''', replacement = '''        odd && (n - antigrade(X.blades[t.b].mask, n)) % 2 != 0 ? -1 : 1;''' }]
+expect = "killed"
+
+# left_bulk_dual computed with the right complement: equal where gr ag is
+# even, negated where it is odd. For the golden duals case in rigid(3).
+[[mutant]]
+name = "left_bulk_dual_right_complement"
+selection = "dual"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''    return left_complement(bulk(x));''', replacement = '''    return right_complement(bulk(x));''' }]
+expect = "killed"
+
+# The test's expected sign (-1)^n of the antiproduct rules dropped, in both
+# the random and the basis checks: a wrong expectation that the correct
+# library must fail at odd n.
+[[mutant]]
+name = "test_antiproduct_sign_dropped"
+selection = "identities"
+file = "test/core/identities_checks.hpp"
+edits = [{ anchor = '''      generators<typename A::algebra_type> % 2 == 0 ? 1 : -1;''', replacement = '''      1;''', count = 2 }]
+expect = "killed"
+
+# Every floating product times 1 + 2^-40, about 8,000 units of roundoff.
+[[mutant]]
+name = "floating_products_2e40"
+selection = "rounding"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''', replacement = '''       out[Kernel[K].out], nudged<T>(static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b]))),''' },
+  { anchor = '''template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''', replacement = '''template <class T> constexpr T nudged(T v) {
+  if constexpr (std::is_floating_point_v<T>) {
+    return v * (T(1) + T(0x1p-40));
+  } else {
+    return v;
+  }
+}
+
+template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''' },
+]
+expect = "killed"
+
+# Every floating product times 1 + 2^-48, 32 units of roundoff: how close
+# to the forward bound a systematic error must come to be seen.
+[[mutant]]
+name = "floating_products_2e48"
+selection = "rounding"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''', replacement = '''       out[Kernel[K].out], nudged<T>(static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b]))),''' },
+  { anchor = '''template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''', replacement = '''template <class T> constexpr T nudged(T v) {
+  if constexpr (std::is_floating_point_v<T>) {
+    return v * (T(1) + T(0x1p-48));
+  } else {
+    return v;
+  }
+}
+
+template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''' },
+]
+expect = "killed"
+
+# The identity tolerance counts only the left side's bound.
+[[mutant]]
+name = "identity_tolerance_left_only"
+selection = "rounding"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  return part(roundings_l, magnitude_l) + part(roundings_r, magnitude_r);''', replacement = '''  return part(roundings_l, magnitude_l) + 0 * part(roundings_r, magnitude_r);''' }]
+expect = "killed"
+
+# A literal that holds two messages whole pins the shorter, so a test of
+# "antidot: ..." would be counted for "dot: ...".
+[[mutant]]
+name = "catalogue_whole_pins_shortest"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    return max(whole, key=len) if whole else None''', replacement = '''    return min(whole, key=len) if whole else None''' }]
+expect = "killed"
+
+# The twin rule accepts a FORBID literal that the short message holds too.
+[[mutant]]
+name = "catalogue_twin_forbid_shared"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''                if not any(f in long and f not in short for f in forbidden):''', replacement = '''                if not any(f in long for f in forbidden):''' }]
+expect = "killed"
+
+# The skip of an assertion on a #define line dropped, so the definition of
+# GALOOT_ASSERT itself would count as an assertion.
+[[mutant]]
+name = "catalogue_define_not_skipped"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''            if bare[text_start:match.start()].lstrip().startswith("#define"):
+                continue
+''', replacement = '' }]
+expect = "killed"
