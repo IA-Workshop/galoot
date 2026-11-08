@@ -52,9 +52,11 @@ PY
 }
 
 # Writes back the tokens missing from $2 and drains any surplus, and prints
-# the change. Only right while no client holds the FIFO: a client that opens
-# it between the count of clients and this call, and takes tokens, leaves as
-# many surplus tokens once it gives them back, drained at a later poll.
+# the change made. Only right while no client holds the FIFO. A client that
+# opens it between the count of clients and this call, and takes tokens,
+# leaves as many surplus tokens once it gives them back, up to $2 of them;
+# they stay until the next poll that finds no client, which on a busy
+# machine can be a long time.
 balance() {
   python3 -I - "$1" "$2" <<'PY'
 import fcntl, os, struct, sys, termios
@@ -65,9 +67,9 @@ if change > 0:
     os.write(fd, b"+" * change)
 elif change < 0:
     try:
-        os.read(fd, -change)
+        change = -len(os.read(fd, -change))
     except BlockingIOError:
-        pass  # a client that just opened the FIFO took them
+        change = 0  # a client that just opened the FIFO took them
 print(change)
 PY
 }
@@ -207,6 +209,7 @@ case ${1:-} in
       --description="Galoot build job slots: $n slots" \
       -p ExecStopPost="/usr/bin/rm -f $fifo $fifo.stopping" \
       --setenv=JOBPOOL_IDLE_MINUTES="$idle" \
+      --setenv=JOBPOOL_IDLE_SECONDS="$idle_seconds" \
       --setenv=JOBPOOL_REPAIR=auto \
       "$(readlink -f "$0")" _serve "$fifo" "$n" "$idle_seconds" "$poll" || exit 1
     for _ in 1 2 3 4 5 6 7 8 9 10; do [[ -p $fifo ]] && break; sleep 0.2; done
@@ -233,11 +236,21 @@ case ${1:-} in
     running || { echo "not running"; exit 1; }
     environment=$(systemctl --user show "$unit.service" -p Environment --value)
     idle=$(sed -n 's/.*JOBPOOL_IDLE_MINUTES=\([0-9]*\).*/\1/p' <<<"$environment")
+    seconds=$(sed -n 's/.*JOBPOOL_IDLE_SECONDS=\([0-9]*\).*/\1/p' <<<"$environment")
+    seconds=${seconds:-$((${idle:-0} * 60))}
+    if [[ ! -p $fifo ]]; then
+      echo "running, but $fifo is missing: the pool is stopping, or was moved aside for a moment while it decides to"
+      exit 1
+    fi
     total=$(total_slots)
     free=$(free_slots)
     holding=$(clients)
     echo "running: $free of $total slots free at $fifo"
-    if [[ ${idle:-0} -gt 0 ]]; then echo "stops itself after ${idle} minutes without a client"; fi
+    if ((seconds > 0 && seconds % 60 == 0)); then
+      echo "stops itself after $((seconds / 60)) minutes without a client"
+    elif ((seconds > 0)); then
+      echo "stops itself after $seconds seconds without a client"
+    fi
     if [[ -n $holding ]]; then
       echo "clients: $(echo $holding)"
     elif [[ -n $total && $free -ne $total && $environment == *JOBPOOL_REPAIR=auto* ]]; then
