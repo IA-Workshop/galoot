@@ -41,7 +41,8 @@ namespace galoot::rga3 {
 /// over double, 0.5f over float.
 ///
 /// Cost: besides std::sin, std::cos, and halving theta, one std::sqrt, one
-/// division, by the length, nine multiplications, and two additions.
+/// division, by the length, nine multiplications, and two additions; with
+/// GALOOT_CHECKING 1, also the std::isnormal test of the length and a branch.
 ///
 /// Requires: T is a floating type, since the coefficients need std::sin,
 /// std::cos, and std::sqrt. l must be a line, its direction and moment
@@ -53,11 +54,17 @@ namespace galoot::rga3 {
 /// or not finite, as for the zero direction of p ^ p or one whose squares
 /// underflow to zero or overflow, is checked by GALOOT_ASSERT at run time
 /// when GALOOT_CHECKING is 1, which then aborts with the message. With
-/// GALOOT_CHECKING 0 it is not checked and costs nothing: a zero direction
-/// then gives infinite or NaN coefficients on the line's blades, and one
-/// whose squares overflow a motor holding only cos(theta/2) on e1234. A
-/// length whose squares fall among the subnormal numbers is not caught and
-/// loses accuracy.
+/// GALOOT_CHECKING 0 the length is not tested, and an optimizing build drops
+/// the check; without optimization a call and a branch remain. A zero
+/// direction then gives infinite or NaN coefficients on the line's blades,
+/// and one whose squares overflow a motor holding only cos(theta/2) on
+/// e1234. These are not failure values, and rotation returns a plain Motor
+/// rather than a std::optional on purpose: a zero direction is a misuse for
+/// the check to report, not an outcome for the caller to handle, and an
+/// optional result would change the return type of this function, while no
+/// other function of the library returns one. A length whose squares fall
+/// among the subnormal numbers passes the check and loses accuracy; no test
+/// covers that case.
 ///
 /// Rounding: when the computed length is a power of 2, as for (0, 0, 1) or
 /// (0, 0, 2), the result is bit for bit the rotor of l divided by that
