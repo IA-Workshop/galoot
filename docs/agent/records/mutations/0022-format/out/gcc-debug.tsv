@@ -1,0 +1,19 @@
+mutant	build_exit	build_failures	failed_tests
+minus_dropped	0	-	core.format
+tag_name_for_either_orientation	0	-	core.format
+tag_names_ignored	0	-	core.format
+canonical_index_order_reversed	0	-	core.format
+wide_algebra_printed	0	-	core.format_wide_algebra core.format_wide_algebra_auto
+zeros_skipped	0	-	core.format
+canonical_order_for_layout_order	0	-	core.format
+specification_not_forwarded	0	-	core.format
+colon_changed	0	-	core.format
+comma_changed	0	-	core.format
+empty_layout_writes_nothing	0	-	core.format
+scalar_rejection_removed	0	-	core.format_scalar_without_formatter core.format_scalar_without_formatter_auto core.format_scalar_without_formatter_print
+wide_rejection_removed	0	-	core.format_wide_algebra core.format_wide_algebra_auto
+not_a_blade_rejection_removed	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator
+named_twice_rejection_removed	0	-	core.format_names_twice core.format_names_twice_opposite
+scalar_and_wide_messages_swapped	0	-	core.format_scalar_without_formatter core.format_scalar_without_formatter_auto core.format_scalar_without_formatter_print core.format_wide_algebra core.format_wide_algebra_auto
+names_messages_swapped	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator core.format_names_twice core.format_names_twice_opposite
+names_checked_as_none	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator core.format_names_twice core.format_names_twice_opposite

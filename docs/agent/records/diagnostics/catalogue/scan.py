@@ -251,7 +251,7 @@ def self_test():
         "the directive": ["t.directive"],
         "eighth: cut short at run time": ["t.run_time_prefix"],
         "dot: nested": ["t.nested"],
-        "antidot: nested": [],
+        "antidot: nested": ["t.nested_long"],
     }
     failures = []
     for message in sorted(set(expected) | set(got)):

@@ -186,6 +186,20 @@
    "properties": []
   },
   {
+   "name": "t.nested_long",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "antidot: nested (",
+    "--",
+    "g++"
+   ],
+   "properties": []
+  },
+  {
    "name": "t.no_command",
    "properties": []
   }
