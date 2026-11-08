@@ -62,3 +62,51 @@ Each test case part B added kills at least one mutant on both presets. The produ
 - **`core_transform_identities_test` aborts on seeds 8, 23, 27, 37, 38, 39, and 43** (7 of 50, logs `seeds/core_transform_identities_test-<seed>.log`). Each abort is the test helper's exact rational overflowing `std::int64_t` ("rational: a result does not fit std::int64_t"). A backtrace at seed 8 places it in the outermorphism check at grade 4, λ³ T(a₁ ∧ a₂ ∧ a₃ ∧ a₄) = T(a₁) ∧ … ∧ T(a₄), over one of the test's random dense forms of four generators. That is a limit of the test's arithmetic, not a fault of the library: the test predates WU14, and seed 0, which every preset runs, does not reach it. Reported (W9); the fix belongs to the test's author.
 
 Run times on gcc-debug (median of 50): `core_identities_test` 16.3 s, `core_identities_rounding_test` 0.13 s, the other two under 0.05 s. Under gcc-asan (-O1), `core.identities` took 3.4 s, so its exhaustive loop stays in its source.
+
+## The seed failures fixed, and the test-quality items folded in
+
+Run on 2026-11-08 by Claude (agent, Opus 5.5, test author) on `feature/core-identities--tests2` from `f09007f`, each build and test through `tools/timed`. The test commits are `6abeef2` (the seven seeds as a case, failing on purpose), `a3aa7c7` (the bound), and `a1546f9` (the plane case); every mutant row below is at `a1546f9`, except seven rows of `transform_bound.toml` at `a3aa7c7`; the two revisions differ only in the plane case of `rga3.objects`.
+
+### The overflow of `core_transform_identities_test`
+
+- **Cause.** A backtrace at seed 8 places the abort in the wedge of the four images T(a₁) ∧ … ∧ T(a₄) for a versor of three hyperplanes over the random form of four generators (`[[-2, 0, -2, 2], [0, -2, -3, 3], [-2, -3, 1, 3], [2, 3, 3, 3]]`): a product of 4.6 × 10⁵ and 1.1 × 10¹⁶. Each side of that identity is a polynomial of degree 24 in the hyperplanes' entries and 4 in the vectors'.
+- **Measured.** `seeds/bounded/probe/`: a copy of the test at `f09007f` with the two bounds taken from macros, over a 128-bit copy of the test rational that records the most bits any value needs (`make_probe.py` says how to build and run it). Seeds 0 to 2000, gcc at `-O1`:
+
+  | Hyperplanes, vectors | Bits needed: least, median, most | Seeds needing more than 63 |
+  | --- | --- | --- |
+  | −2..2, −2..2 (the test at `f09007f`) | 47, 59, 76 | 400 of 2001; of seeds 1 to 50 exactly the campaign's seven; seed 0 needs 62 |
+  | −1..1, −2..2 (the fix) | 28, 40, 56 | none; seed 0 needs 37, the seven 32 to 43 |
+  | −1..1, −1..1 | 25, 37, 54 | none |
+
+  The probe's prediction for seeds 1 to 50 matches the campaign, which checks it against the real rational.
+- **Fix** (`a3aa7c7`): the hyperplanes are drawn from −1 to 1, the vectors and multivectors from −2 to 2 as before. Bounding only the hyperplanes removes 19 bits at the median, and leaves the vectors' range alone. The margin is 7 bits over 2001 seeds; it is a sample, not a bound (V9), and a seed past it would abort loudly, never pass wrongly, since the rational aborts rather than rounds.
+- **Regression seeds** (`6abeef2`): a second test case runs the identities at seeds 8, 23, 27, 37, 38, 39, and 43, whatever `--rand-seed` says. Under the new draws these seeds give other values than the ones that overflowed, so the case guards that the bound keeps them in range, not the old inputs; the old inputs cannot be run on a 63-bit rational at all. `6abeef2` fails ("rational: a result does not fit std::int64_t" in the new case); `a3aa7c7` passes.
+- **Campaign** (`seeds/bounded/`, `runs.tsv` a campaign log and `results.tsv`): `core_transform_identities_test --rand-seed=1` to `50` at `a3aa7c7` on gcc-debug, **all 50 pass**, two cases and about 10,700 assertions each, 0.38 s at most. The other three programs are unchanged since the first campaign and were not rerun (P10). No further failure was found.
+- **Kill power** (`transform_bound.toml`, judged by `core.transform_identities` alone, gcc-debug): of the nine mutants that suite killed at run time at `d5ffafd`, seven are still killed. The other two, `squares_doubled` and `gap_squares_doubled`, now survive and are declared equivalent: every square doubled is another metric, in which the transform identities hold. Their earlier "kill" was the overflow: the test at `f09007f` built against headers with that edit aborts at seed 0 on "rational: a result does not fit std::int64_t" after 948 passing assertions and none failed (a scratch build of `f09007f`'s test with `-DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN` against a copy of `include/` with the edit of `faults.toml`'s `squares_doubled`; the bounded test against the same headers passes). This is the cause the DoD-14 table above left "not traced": the transform suite's row for `squares_doubled` there, and its part in `gap_squares_doubled`'s branch-point kill, were the test's arithmetic limit, not evidence. Neither changes a verdict: the other killers listed in those rows remain.
+
+### The bits and blade-set specs
+
+- **`bits.toml`**: the 13 mutations of `docs/agent/snippets/bits_fault_injection.py`, anchors and replacements unchanged, judged by `core.bits` (targets `core_bits_test`, `core_bits_assert_fail`). **All 13 killed on gcc-debug and clang-debug, in default and `--runtime` mode** (`out/bits-*.tsv`). The run-time edits turn the nine `static_assert`s of `bits_test.cpp` into `static_assert(true || ...)`; that keeps `all_agree` in use, so the snippet's refusal on clang-debug in its run-time mode does not arise, and no leak was found.
+- **`blade_set.toml`**: the 35 mutations of `../0008-blade-set/mutate.py`, judged by `core.blade_set` (targets `core_blade_set_test`, `core_blade_set_name_assert`, and the compile-fail tests of the label). Four were re-anchored because the header no longer holds their text, each to the same fault (the comment above each says how): `merge_conflict`, `names_above_9_guard`, `index_sign_check`, `index_repeat_check`. One mutant was added, `binomial_larger` (below). Results (`out/blade_set-*.tsv`): **gcc-debug 35 killed and 1 equivalent; clang-debug 34 killed, 1 equivalent, 1 unjudged.**
+  - `zero_guard` (the guard of `full` and `of_grade` without its `N >= 1` clause) survived on both and is declared equivalent. The old driver's kill came from `core.blade_set_names_zero`; since `blades<Alg, "...">` takes an algebra tag, that test is rejected by its own message ("the algebra tag's metric has no generators") and never reaches the guard. `full<0>` and `of_grade<0, 0>` are well formed with or without the clause, so the `static_assert(N >= 1, ...)` gives the same single error. The clause has no observable effect today; that is noted, not changed (`include/` is outside this work).
+  - `binomial` (a count too small) is caught before any test runs: on gcc-debug by libstdc++'s bounds assertion in `std::array` (class assert, so the tool counts it killed, though no Galoot check is the killer), on clang-debug by the compiler's constant evaluation in `blade_set.hpp` (class invalid, so unjudged). The old driver counted any failed build. Its row stays as found.
+  - `binomial_larger`, added: a count one too large, so the set's size is wrong rather than overrun. Killed on both presets by the `static_assert` of `blade_set_test.cpp:584`.
+  - No `--runtime` mode: the test's `static_assert`s state type properties that no run-time check replaces.
+
+### The two warning-only blade_product mutants
+
+`blade_product_rewrites.toml`, with the selection and the four run-time edits of `../0011-blade-product/mutants.toml`:
+
+- `generator_scale_dropped_used`: `generator_scale_dropped` with `(static_cast<void>(scale), x.terms[k].coefficient)`, so no `-Wunused-parameter`. Killed by `core.blade_product` on both presets in both modes (the golden product tables, associativity, the antisymmetrized generators, the pseudoscalar's square).
+- `range_widest_shifted_mod`: `range_widest_shifted` with the shift count taken mod `mask_bits`, so no `-Wshift-count-overflow`. In the algebra of 32 generators the range check then shifts by 0, which is what the original shift by 32 does at run time on x86, and rejects every blade but the scalar. Killed on both presets: in default mode by the `static_assert` of `blade_product_test.cpp:834` (a test file, class assert), in `--runtime` mode by "blade_product accepts the generators of the widest algebra".
+
+Both are killed by a test; `0011-blade-product/mutants.toml` still holds the warning-only forms, recorded `unjudged`.
+
+### The flector plane hand value and the even-sign mutant
+
+- The case "the rga3 Flector e412 reflects the plane (0, 0, 1, -1) to (0, 0, 1, 1)" (`a1546f9`, `test/presets/rga3/objects_test.cpp`): the hand value of decision 0211 item 5, derived in its marker from CONVENTIONS 5.3 and 5.6, and the single-sign form's negation (0, 0, −1, −1). Passes on gcc-debug and clang-debug.
+- `flector.toml`, `odd_versor_even_sign`: the odd factor of the transform's second stage set to +1, so a flector acts as +F ⟇ x̂ ⟇ F̰. Killed by `rga3.objects` on both presets: in default mode by the point case's `static_assert` (`objects_test.cpp:541`); in `--runtime` mode, with the two flector `static_assert`s turned off, by three cases, the new plane case among them.
+
+### Checks at `fabe396`
+
+`core.transform_identities` and `rga3.objects` pass on gcc-debug and clang-debug; lint (clang-tidy) of `core_transform_identities_test` and `rga3_objects_test` and `format-check` pass; `-L '^tests\.'` (six tests) passes on both presets; the convention trace gate passes, its only items without a test 6.1 to 6.4. The job pool had 23 of 23 slots free before and after the mutation runs.
