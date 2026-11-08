@@ -1516,7 +1516,7 @@ target_link_libraries(core_unary_test PRIVATE galoot_golden)
 set(full_conformal3_steps
   "$<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=1200000>")
 set_source_files_properties(core/identities_conformal3_test.cpp
-  core/product_conformal3_test.cpp
+  core/product_conformal3_test.cpp core/identities_rounding_test.cpp
   PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
 
 # core.identities: the De Morgan laws, the associativity of the
@@ -1541,6 +1541,19 @@ target_sources(core_identities_test PRIVATE
   core/identities_six_drawn_test.cpp)
 set_property(TEST core.identities APPEND PROPERTY LABELS core.product
   core.unary slow)
+
+# core.identities_rounding: associativity of the geometric product and
+# antiproduct, the De Morgan laws, and the composition of transforms over
+# double in rigid(3) and conformal(3), each side within its forward error
+# bound and the two sides within the sum of their bounds, with the bounds
+# taken from a run over the tracking scalar. It builds the geometric
+# antiproduct of two full<5> multivectors of conformal(3), so it takes the
+# raised step limit above.
+galoot_add_test(MODULE core COMPONENT identities_rounding)
+target_link_libraries(core_identities_rounding_test PRIVATE
+  galoot_test_support)
+set_property(TEST core.identities_rounding APPEND PROPERTY LABELS
+  core.product core.unary core.transform core.rounding)
 
 # core.product: the geometric product, the wedge, and their antiproducts, as
 # functions and as the operators * ^ % &, against the reference tables. The
