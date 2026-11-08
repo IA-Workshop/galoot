@@ -2059,6 +2059,17 @@ target_link_libraries(core_transform_identities_test PRIVATE
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
 
+# core.format: the formatter of a multivector, against names worked out in
+# the test from each blade's mask and sign, and texts written out there.
+galoot_add_test(MODULE core COMPONENT format)
+
+# core.format_outside_core: core.hpp with <format> gives a multivector no
+# formatter. A program of its own, since format_test.cpp sees the
+# formatter; it also carries the label core.format.
+galoot_add_test(MODULE core COMPONENT format_outside_core)
+set_property(TEST core.format_outside_core APPEND PROPERTY LABELS
+  core.format)
+
 # rga3.objects: the model's layouts against the oriented names written in the
 # test, its types, and the facts of rigid(3) on them, against hand values and
 # the golden values.
