@@ -37,6 +37,10 @@ idle_default=30
 poll=${JOBPOOL_POLL_SECONDS:-30}
 idle_seconds=${JOBPOOL_IDLE_SECONDS:-}
 fifo=${JOBPOOL_FIFO:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jobserver.fifo}
+# Clients are found by the path their descriptor resolves to, so the FIFO is
+# named by its resolved path too: through a symbolic link, no client would
+# match, and the service would write back the slots they hold at every poll.
+fifo=$(realpath -m -- "$fifo")
 
 free_slots() {
   python3 -I - "$fifo" <<'PY'
