@@ -1,6 +1,7 @@
 // Names read in a type that is not an algebra tag: int carries no metric.
-// This file must not compile, and the diagnostic must name the constraint.
-// blades is used below; its failed constraint hides that use from the check.
+// This file must not compile, and the diagnostic must say that the tag is
+// not an algebra.
+// blades is used below; its failed check hides that use from the check.
 // NOLINTNEXTLINE(misc-include-cleaner)
 #include <galoot/core/blade_set.hpp>
 

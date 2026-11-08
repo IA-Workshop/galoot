@@ -481,8 +481,9 @@ concept holds_several_values =
 /// coefficient, exactly; with a floating scalar that is IEEE equality, so
 /// -0.0 equals +0.0 and a coefficient that is a NaN makes them unequal.
 /// Values of different layouts, algebras, or scalars do not compare. The
-/// type has no output operator or formatter; std::format("{}",
-/// x.coefficients) prints its coefficients.
+/// type has no output operator; galoot/core/format.hpp gives it a
+/// std::formatter that prints each coefficient with its blade's name, and
+/// std::format("{}", x.coefficients) prints the coefficients alone.
 template <metric_like Alg, blade_set Blades, std::destructible T>
 struct mv : detail::storage_of<Alg, Blades, T> {
 private:
@@ -615,6 +616,28 @@ public:
   constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
     static_assert(false, "mv: the conversion drops blades of its input; it "
                          "is lossy, so request it with truncate<Type>(x)");
+  }
+
+  /// Rejects, with one error, a conversion from a multivector of another
+  /// algebra or another scalar type, or from a class derived from one: a
+  /// conversion between layouts keeps both, so Motor{float_line} is an
+  /// error rather than a silent change of scalar. When both differ, the
+  /// algebra is named. Because this constructor exists,
+  /// std::is_constructible_v<Line, FloatLine> is true;
+  /// std::is_convertible_v<FloatLine, Line> is false.
+  template <metric_like OtherAlg, blade_set From, std::destructible U>
+    requires(!std::same_as<OtherAlg, Alg> || !std::same_as<U, T>)
+  constexpr explicit mv(const mv<OtherAlg, From, U>& /*source*/) {
+    if constexpr (!std::same_as<OtherAlg, Alg>) {
+      static_assert(false, "mv: the source is in another algebra; a "
+                           "conversion between layouts keeps the algebra, "
+                           "so give both types the same algebra tag");
+    } else {
+      static_assert(false, "mv: the source has another scalar type, and a "
+                           "conversion keeps the scalar type; convert each "
+                           "coefficient to the target's scalar type and "
+                           "build the target from those values");
+    }
   }
 
   /// Rejects any other number of values, other than none and a single

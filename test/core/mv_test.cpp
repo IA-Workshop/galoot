@@ -1927,7 +1927,9 @@ constexpr bool converts() {
 //   every pair of the rigid(3) layouts of a scalar, point, line, plane,
 //   motor, flector, and a line of the other orientations, where the target
 //   holds the source, and an implicit conversion between layouts does not
-//   compile
+//   compile; contract: a source of another scalar type or another algebra
+//   reaches a constructor of its own, which rejects it with a message, so
+//   generic code that probes the construction is told yes
 TEST_CASE_TEMPLATE("A conversion between layouts keeps every coefficient", T,
                    std::int64_t, rational, float, double,
                    std::complex<double>) {
@@ -1945,9 +1947,11 @@ TEST_CASE_TEMPLATE("A conversion between layouts keeps every coefficient", T,
 
   static_assert(!std::is_convertible_v<Line<T>, Motor<T>>);
   static_assert(!std::is_convertible_v<Point<T>, Flector<T>>);
-  static_assert(!std::is_constructible_v<Line<T>, Line<rational>> ||
+  static_assert(std::is_constructible_v<Line<T>, Line<rational>>);
+  static_assert(std::is_constructible_v<Point<T>, EuclideanPoint<T>>);
+  static_assert(!std::is_convertible_v<Line<rational>, Line<T>> ||
                 std::same_as<T, rational>);
-  static_assert(!std::is_constructible_v<Point<T>, EuclideanPoint<T>>);
+  static_assert(!std::is_convertible_v<EuclideanPoint<T>, Point<T>>);
 
   CHECK(converts<Motor<T>, Line<T>>());
   CHECK(converts<Flector<T>, Plane<T>>());
@@ -2295,6 +2299,54 @@ TEST_CASE("A class derived from a multivector copies and converts") {
   CHECK(Line<double>(derived) == copied);
 }
 
+namespace {
+
+// A class derived from a line over float, of the scalar type that the
+// constructor which rejects another scalar type takes.
+struct DerivedFloatLine : Line<float> {
+  using Line<float>::Line;
+};
+
+} // namespace
+
+// Reference: contract: a source of the same algebra and scalar type still
+//   reaches the copy and converting constructors, as a const value, a
+//   value that is not const, and a temporary, also of a class derived from
+//   a multivector, so the constructor that rejects another algebra or
+//   scalar type takes none of them, while one coefficient of a one-blade
+//   layout is still a coefficient, and the probes of a source of another
+//   scalar type answer alike for a class derived from one
+TEST_CASE("A source of one algebra and scalar type still converts") {
+  const Line<double> line{1, 2, 3, 4, 5, 6};
+  // Not const, so that a constructor taking a non-const source would be
+  // the one chosen.
+  // NOLINTNEXTLINE(misc-const-correctness)
+  Line<double> mutable_line{1, 2, 3, 4, 5, 6};
+  const Motor<double> expected{0, 1, 2, 3, 4, 5, 6, 0};
+  CHECK(Motor<double>{line} == expected);
+  CHECK(Motor<double>{mutable_line} == expected);
+  CHECK(Motor<double>(Line<double>{1, 2, 3, 4, 5, 6}) == expected);
+  CHECK(static_cast<Motor<double>>(mutable_line) == expected);
+  CHECK(Line<double>{mutable_line} == line);
+
+  // Not const, as above.
+  // NOLINTNEXTLINE(misc-const-correctness)
+  DerivedLine derived{1, 2, 3, 4, 5, 6};
+  CHECK(Line<double>{derived} == line);
+  CHECK(Line<double>(DerivedLine{1, 2, 3, 4, 5, 6}) == line);
+  CHECK(Motor<double>{derived} == expected);
+  CHECK(static_cast<Motor<double>>(derived) == expected);
+  const Line<double> copy = derived;
+  CHECK(copy == line);
+
+  static_assert(Scalar<double>{2.0} == Scalar<double>{2.0});
+  CHECK(Scalar<double>{2.0}.coefficients[0] == 2.0);
+
+  static_assert(std::is_constructible_v<Line<double>, DerivedFloatLine>);
+  static_assert(!std::is_convertible_v<DerivedFloatLine, Line<double>>);
+  static_assert(std::is_constructible_v<Line<float>, DerivedFloatLine>);
+}
+
 // Reference: contract: the helpers of conversion and of the coefficient
 //   check answer as their comments state: a class derived from an mv is
 //   taken as a multivector, an array or a complex number is no coefficient
@@ -2383,17 +2435,18 @@ TEST_CASE("A C array converts to no multivector implicitly") {
 
 // Reference: contract: generic code that probes a construction is told yes
 //   for each misuse that a constructor rejects with a message, a lossy
-//   conversion, a whole array of coefficients, and a wrong count, and no
-//   for an implicit conversion between layouts, or one from another
-//   algebra or scalar type, which no constructor takes
+//   conversion, a whole array of coefficients, a wrong count, and a source
+//   from another algebra or of another scalar type, and no for an implicit
+//   conversion, which no constructor takes, since each is explicit
 TEST_CASE("Probes of conversion answer as the constructors' comments say") {
   static_assert(std::is_constructible_v<Line<double>, Motor<double>>);
   static_assert(!std::is_convertible_v<Motor<double>, Line<double>>);
   static_assert(std::is_constructible_v<Point<double>, std::array<double, 4>>);
   static_assert(std::is_constructible_v<Line<double>, double, double, double>);
-  static_assert(
-      !std::is_constructible_v<Point<double>, EuclideanPoint<double>>);
-  static_assert(!std::is_constructible_v<Line<double>, Line<float>>);
+  static_assert(std::is_constructible_v<Point<double>, EuclideanPoint<double>>);
+  static_assert(std::is_constructible_v<Line<double>, Line<float>>);
+  static_assert(!std::is_convertible_v<EuclideanPoint<double>, Point<double>>);
+  static_assert(!std::is_convertible_v<Line<float>, Line<double>>);
   // An integer for a rational, whose constructor from it is explicit, is a
   // coefficient: one is a wrong count for a line, and a one-blade value
   // cannot be made from it implicitly.

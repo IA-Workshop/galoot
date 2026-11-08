@@ -1,6 +1,7 @@
 # 0022 WU15: `format.hpp`, the misuse catalogue, and the remaining catch-alls
 
 - Status: planned 2026-11-07 (planner: Claude, agent, Opus 5.5, planner role with cpp-expert and hci-expert judgement; implementers and reviewers to be named by the coordinator at branching). Not claimed until this plan reaches `develop` (W7); it was written on `records/plan-wu15`, branched from `develop` at `d68881f`. Nothing in section 4 starts before the owner answers the questions marked "owner" in section 10.
+- In progress from 2026-11-08: the owner answered section 10 in decision 0196 item 5 (O1 to O5 as recommended, O6 to O9 the defaults). Parts 1 and 2 on `feature/core-format`, branched from `develop` at `bd60589`; implementer Claude (agent, Opus 5.5, cpp-expert role, also the coordinator of parts 1 and 2); test author a separate Claude agent (Opus 5.5, doctest-expert role) on `feature/core-format--tests`. Part 3 waits for the coordinator.
 - Branches, named by W7 as amended (decision 0188): `feature/core-format`, worktree `.claude/worktrees/core-format`, from `develop` after this plan merges; the test author on `feature/core-format--tests`, worktree `.claude/worktrees/core-format--tests`, branched from `feature/core-format` at its first commit, never merged, its commits cherry-picked (decision 0185).
 - Decision numbers: the next free numbers when each record is written (at this commit the highest used is 0195). This plan reserves none, because two other planners may be writing at the same time (risk 6).
 - Source of scope: plan 0001 (section 3, "`format.hpp` outside the umbrella header"; WU15, "`format.hpp`; catch-all overloads with literal messages", size S, after WU8 and Spike C; M4; DoD-2, DoD-19, DoD-6); decision 0158 item 2 (WU8 writes the catch-alls of its own functions, the products' catch-alls belong to the units that add the products, and "WU15 keeps `format.hpp` and the review of the DoD-19 catalogue as a whole"); decision 0033 (form P, and "WU15 implements this form"); research note 0010 (Spike C); research note 0019, sections 6.9 and 6.10 ("print blades by their oriented names as the layout declares them"); decision 0153 item 2; the WU8a hci reading (F7, F9, F14) and the WU8b blind review (F10); decisions 0166, 0169, 0173, 0179 (message style); CONVENTIONS 1.1, 1.6, 1.7, 7.1.
@@ -233,4 +234,79 @@ Size S, as plan 0001 has it, at its upper end: about 1.2M to 1.7M tokens without
 
 ## 14. Outcome
 
-Not started.
+In progress (2026-11-08). Parts 1 to 3, step 4's records, the hci reading, and the blind review with its fixes are done on `feature/core-format`. The merge into `develop` remains.
+
+Done:
+- **Part 1: the misuse catalogue.**
+  - `records/diagnostics/catalogue/scan.py`, with fixtures and `--self-test`, and `records/diagnostics/misuse-catalogue.md`, ratified (decision 0205).
+  - `GALOOT_CHECKING must be 0 or 1` got `core.assert_checking_value`.
+  - Regenerated after part 3: 153 messages, 133 pinned on both compilers, and 20 internal ones listed with reasons.
+- **Part 2: `format.hpp`** (decision 0204).
+  - The header, the `mv.hpp` comment, and the CONVENTIONS 7.2 and STYLE S7 drafts.
+  - The four 7.2 trace rows, now `yes`.
+  - Tests T2a (`core.format`, `core.format_outside_core`) and T2b (14 compile-fail tests).
+- **Part 3: the catch-alls** (decision 0206).
+  - `mv`'s rejecting constructor for another algebra or scalar type; `linear.hpp`'s four sums of a multivector and a number; `blades` constrained by `std::destructible` with two messages.
+  - Tests T3a-1 (15), T3a-2 (11), and T3b (4, two of them existing tests with changed expectations), each cherry-picked with `-x` right before its code.
+- **Step 4: the records.**
+  - Mutants (`records/mutations/0022-format/`): 37 header mutants on gcc-debug and clang-debug, all killed but one equivalent survivor; nine mutants of the scan, all killed.
+  - Diagnostics, `records/diagnostics/wu15-messages.md`: case 1 went from 114 lines to 11 on GCC and from 43 to 10 on Clang; case 6 from 47 to 10 and from 19 to 9.
+  - W10, `records/performance/format-cost/`: an includer of `core.hpp` +0.04% on GCC and +0.16% on Clang; formatting one point costs 14.2 G instructions on GCC and 7.2 G on Clang.
+  - The test author's costs, in `agent-cost.tsv`.
+
+Checks at the end of part 3:
+- gcc-debug and clang-debug, the full suite, 479 of 479 each.
+- A targeted lint build: the core and rga3 header checks, the mv, linear, blade_set, and format test programs, and format-check. It found two `misc-const-correctness` findings in the test author's accept test, which are now suppressed with their reason.
+- The trace gate and `tools/runlog check`.
+- `clang-format` on the changed sources of `include/` and `test/`. The probe sources under `docs/agent/records` are not formatted.
+
+Departures:
+- Those of parts 1 and 2 still hold:
+  - the scan reads CTest's JSON listing, accepted;
+  - criterion 2 uses one layout per grade;
+  - `ONE_ERROR` cannot see a message printed twice, so one error per case was shown by the diagnostics runs, which count error lines.
+- Each test group's commit also holds the expected values it changes (W9, listed in the commit messages), so that each group is a single failing commit.
+- The full lint preset (`all`) and the release, asan, and clang-measure presets were not run; they are for the merge.
+
+The owner confirmed the 7.2 and S7 wording, the scan as a record tool, `blades`' two messages, and the equivalent survivor with its constraint on 2026-11-08 (decision 0207).
+
+### The hci reading and its resolution (2026-11-08)
+
+The hci-expert reading (`records/reviews/2026-11-08-wu15-hci-reading.md`, cherry-picked from `records/review-wu15-hci` with `-x`) found nothing blocking: three findings to act on (S1 to S3) and eight that could be (C1 to C8). The implementer (Claude, agent, Opus 5.5, cpp-expert and hci-expert judgement) resolved them as decision 0212 records:
+- **S1, a behavior change in `include/`.** `format.hpp` judges the scalar's formatter by `detail::has_formatter<T>`, `std::semiregular<std::formatter<T, char>>`, instead of `std::formattable<T, char>`, so a scalar whose formatter takes `std::format_context&` prints inside a multivector. The accept test came first, in a commit that fails alone (W2). The three scalar-without-formatter tests still give one error with the message on both compilers. It needs the W5 review, or a delta review if that review has already run.
+- **C1 to C4, four messages reworded:** `mv`'s scalar message, `blades`' tag message, the four sums with a number, and `format`'s name message. Each expected literal changed in a commit of its own before its header change, and each of those commits fails alone (W9). C3 also gives the spelling `mv<Alg, blades<Alg, "1">, T>{s}` in the comment.
+- **C5, C6, C8:** comment lines only. C5 adds no message, so decision 0204 item 4 stands.
+- **S3:** the README says how to print a value, and a third example, `rga3.readme_example_3`, prints a point.
+- **Not done here:** S2, the rga3 tag's names, which is outside WU15 and for the owner; and C7, a wording change to CONVENTIONS 7.2, proposed to the owner and not edited.
+- **Records:** the scan was regenerated at `ac2366c` (153 messages, 133 pinned on both compilers). The mutants affected were run again: every format mutant, the new `scalar_formatter_by_formattable`, and four part 3 mutants whose messages changed, 23 in all, each killed on both presets. `zeros_skipped` first failed to build on the new test's scalar, which has no `==`. That was a fault of the mutant; it was rewritten and run again.
+
+Checks after the resolution:
+- At `3358600`: gcc-debug and clang-debug, the full suite, 491 of 491 each.
+- A targeted lint of the core and rga3 header sets, the format, mv, linear, and blade_set test programs, README example 3, and format-check. It found four things:
+  - include-cleaner flagged the README example's `format.hpp` include, now marked `IWYU pragma: keep`;
+  - two `convert-member-functions-to-static` findings on the test formatter's `parse` and `format`, suppressed with the reason;
+  - clang-tidy 23's `readability-trailing-comma` reported the comma after an inline `ratio{}` in a braced list, which is not a trailing comma, so the values are now named. It is noted here as a likely false positive of the check.
+- After those fixes, at `47fe4fa`: the lint targets are clean, and `core.format` and the README tests pass on both presets, 26 of 26 each.
+- At `47fe4fa`: the trace gate, `tools/runlog check`, and `tests.citations`.
+- Not run: the release, asan, clang-measure, and full lint presets (for the merge); a second full suite after `47fe4fa`, whose two commits changed only `format_test.cpp` and `README.md`, both rerun.
+
+### The blind review and its resolution (2026-11-08)
+
+The W5 blind review (`records/reviews/2026-11-08-wu15-review.md`, Claude, agent, Opus 5.5, blind-reviewer role with the usability checklist, cherry-picked from `records/review-wu15` with `-x`, without its run rows) approved with non-blocking findings and included the delta review of `a335b7f`. The implementer (Claude, agent, Opus 5.5) resolved them:
+- **L1 and L2, test-only.** `core.linear_plus_number_rational` (a rational, a ring scalar that is not arithmetic) and `core.format_scalar_without_formatter_spec` (`{:.2f}` on a scalar without a formatter), each one error with its message on both compilers. The review's surviving mutants, `number_operand_arithmetic_only` and `parse_skip_removed`, are now in `mutate.py`; each is killed by its new test alone on gcc-debug and clang-debug. The code existed, so no commit fails and no delta review is needed.
+- **L3 and I1, records.** The scan was rerun at `7c07cc4` (153 messages, 133 pinned on both compilers, 20 internal, 170 catalogue test names, none missing). `misuse-catalogue.md` now quotes the current `blades` message, revision, and line numbers. `wu15-messages.md`'s after table was measured again with every `blades` source, and every count was unchanged.
+- **L5.** `format_test.cpp`'s `static_assert(!std::formattable<ratio, char>)` is guarded by `__GLIBCXX__`. It is unchanged on libstdc++, which both compilers use here.
+- **L4, left.** A scalar whose enabled formatter is broken gets the compiler's errors, and GCC's first line names `detail::no_scalar_formatter`. This is a user defect outside the catalogue, and none of the five broken formatters the review probed is admitted silently. A named member alias could keep `detail::` off that line. Recorded here for a later unit.
+- **The hci reading's C7**, applied to CONVENTIONS 1.14 at the coordinator's direction: 7.2 reads "by its canonical name (1.1; the scalar is 1, 1.5)", and the 1.14 revision row says so. 7.2's closing "(Proposed)" was kept. In this document it is the evidence label, a choice with no external source, as on 1.1, 1.2, and 1.7. It does not mark a pending ratification.
+- **Decision numbers.** `develop` recorded its own decision 0211, so this branch's 0211 became 0212, with every reference in the records updated, before `develop` was merged in. That merge brought records only.
+
+The checks of section 7, from new empty trees at `649b0c4`, on a clean tree:
+- the full suite passed on gcc-debug, gcc-release, clang-debug, clang-release, clang-asan, and lint, 492 of 492 each, and on gcc-asan and `clang-measure`, 484 of 484 each (the presets' own exclusions);
+- `format-check`, the trace gate, and `tools/runlog check` passed;
+- wall time about 695 s in all, in the `gate:*` rows of `runs.tsv`.
+
+A first run at `0753412` failed only the lint build, on clang-tidy's `readability-use-concise-preprocessor-directives` at L5's `#if defined(__GLIBCXX__)`. It is now `#ifdef`, and the whole gate ran again from empty trees. That failed lint build left the job pool with 2 of its 23 slots lost. The pool was not restarted.
+
+W10 stands as plan 0022 recorded it. `include/` has not changed since the reviewed tip, `c9445cd`.
+
+Next: the merge into `develop`, by the coordinator.

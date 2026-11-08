@@ -1,8 +1,8 @@
 // Names in an algebra with no generators. A tag whose metric has no
-// generators is not an algebra, so blades rejects it before any name is read,
-// and no message about e1 appears.
+// generators is not an algebra, so blades rejects it, with its own message,
+// before any name is read, and no message about e1 appears.
 // This file must not compile.
-// blades is used below; its failed constraint hides that use from the check.
+// blades is used below; its failed check hides that use from the check.
 // NOLINTNEXTLINE(misc-include-cleaner)
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>

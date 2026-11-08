@@ -88,6 +88,14 @@ galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 
+# core.assert_checking_value: a checking mode other than 0 or 1 stops the
+# compile with one error that says which values the mode takes.
+galoot_add_compile_fail_test(NAME assert_checking_value
+  MODULE core COMPONENT assert
+  SOURCE core/assert_checking_value_fail.cpp
+  MESSAGE "GALOOT_CHECKING must be 0 or 1"
+  ONE_ERROR)
+
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
 galoot_add_test(MODULE core COMPONENT bits)
@@ -366,21 +374,30 @@ blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
 blade_set_rejects(names_above_9
   "blades: names such as e123 have one digit per index, so they are read only for n up to 9, and a larger algebra takes masks"
   FORBID "${repeated_generator}")
-# blades takes an algebra tag, so a type that is not one, and a tag whose
-# metric has no generators, fail its metric_like constraint before a name is
-# read. The function that parses the names carries the concept's argument
-# too, so the tests forbid its name, which would point the user at internal
-# code.
-galoot_add_compile_fail_test(NAME blade_set_blades_not_metric_like
-  MODULE core COMPONENT blade_set
-  SOURCE core/blade_set_blades_not_metric_like_fail.cpp
-  MESSAGE "${not_metric_like}"
-  FORBID "make_blades")
+# blades takes an algebra tag, so a type that is not one (int, a class with
+# no member value, one whose value is no metric) and a tag whose metric has
+# no generators are rejected before a name is read, each with one error and
+# its message, on a first error line that names no internal code; the notes
+# below it may name the function that parses the names. A message's ; is
+# held as character 1, which expect_output.cmake reads as a ;.
+string(ASCII 1 semicolon)
+set(blades_not_an_algebra "blades: the tag is not an algebra${semicolon} an algebra tag holds its metric in a static constexpr member named value, as in struct rga3 { static constexpr auto value = rigid<3>()${semicolon} }")
+set(blades_no_generators "blades: the algebra tag's metric has no generators, and an algebra has at least one${semicolon} give the tag a metric such as rigid<3>()")
+foreach(case IN ITEMS blades_not_metric_like blades_tag_without_value
+    blades_value_not_metric)
+  galoot_add_compile_fail_test(NAME blade_set_${case}
+    MODULE core COMPONENT blade_set
+    SOURCE core/blade_set_${case}_fail.cpp
+    MESSAGE "${blades_not_an_algebra}"
+    ONE_ERROR FORBID "${blades_no_generators}"
+    FORBID_ON_FIRST_ERROR "detail::" "make_blades")
+endforeach()
 galoot_add_compile_fail_test(NAME blade_set_names_zero
   MODULE core COMPONENT blade_set
   SOURCE core/blade_set_names_zero_fail.cpp
-  MESSAGE "${not_metric_like}"
-  FORBID "make_blades" "${index_above_n}")
+  MESSAGE "${blades_no_generators}"
+  ONE_ERROR FORBID "${index_above_n}" "${blades_not_an_algebra}"
+  FORBID_ON_FIRST_ERROR "detail::" "make_blades")
 blade_set_rejects(full_zero "${no_generators}")
 blade_set_rejects(full_wide
   "blade_set: n is larger than the number of bits in a blade mask")
@@ -1145,6 +1162,25 @@ foreach(case IN ITEMS lossy lossless)
   mv_rejects(conversion_implicit_${case} "${implicit_conversion}" ONE_ERROR
     FORBID "${mv_lossy}" "${mv_count}")
 endforeach()
+# core.mv_other_<cause>_<case>: a multivector of another scalar type, or of
+# another algebra, given to a constructor, in each spelling, onto another
+# layout, also one that would drop blades, of one blade, or of a class
+# derived from one, fails with one error that names the cause, on a first
+# error line that spells no layout by its masks. When both differ, the
+# algebra is told.
+set(mv_other_scalar "mv: the source has another scalar type, and a conversion keeps the scalar type${semicolon} convert each coefficient to the target's scalar type and build the target from those values")
+set(mv_other_algebra "mv: the source is in another algebra${semicolon} a conversion between layouts keeps the algebra, so give both types the same algebra tag")
+set(mv_conversion_internal_names "detail::" "component<" "blade_set<")
+foreach(case IN ITEMS brace paren cast auto layout lossy one_blade derived)
+  mv_rejects(other_scalar_${case} "${mv_other_scalar}" ONE_ERROR
+    FORBID "${mv_other_algebra}" "${mv_lossy}" "${mv_count}"
+    FORBID_ON_FIRST_ERROR ${mv_conversion_internal_names})
+endforeach()
+foreach(case IN ITEMS brace paren cast auto layout derived and_scalar)
+  mv_rejects(other_algebra_${case} "${mv_other_algebra}" ONE_ERROR
+    FORBID "${mv_other_scalar}" "${mv_lossy}" "${mv_count}"
+    FORBID_ON_FIRST_ERROR ${mv_conversion_internal_names})
+endforeach()
 
 # core.mv_apply_inexact_<scalar>: a product whose plan has a coefficient
 # that the scalar type cannot hold exactly: -(2^24 + 1) in float, 32767^4 in
@@ -1544,6 +1580,35 @@ foreach(spelling IN ITEMS plus minus)
     SOURCE core/linear_mixed_scalars_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_scalars}"
     ONE_ERROR FORBID "different algebras")
+endforeach()
+
+# core.linear_<spelling>_number_<case>: a multivector and a number, on
+# either side, of the multivector's scalar type or another, also into auto
+# r, with a class derived from a multivector, and with a ring scalar that is
+# not an arithmetic type (the test rational), fail to compile with one
+# error, the message of the operation as written, on a first error line that
+# spells no layout by its masks.
+set(linear_number_plus "a + b: a multivector and a number have no sum${semicolon} make the number a multivector on the scalar blade 1 and add that")
+set(linear_number_minus "a - b: a multivector and a number have no difference${semicolon} make the number a multivector on the scalar blade 1 and subtract that")
+foreach(spelling IN ITEMS plus minus)
+  if(spelling STREQUAL "plus")
+    set(message "${linear_number_plus}")
+    set(other "${linear_number_minus}")
+    set(cases right left other_type left_other_type auto derived rational)
+  else()
+    set(message "${linear_number_minus}")
+    set(other "${linear_number_plus}")
+    set(cases right left other_type left_other_type derived)
+  endif()
+  foreach(case IN LISTS cases)
+    galoot_add_compile_fail_test(NAME linear_${spelling}_number_${case}
+      MODULE core COMPONENT linear
+      SOURCE core/linear_${spelling}_number_${case}_fail.cpp
+      MESSAGE "${message}"
+      ONE_ERROR FORBID "${other}" "different algebras" "different scalar types"
+        "the scalar is not of the multivector's scalar type"
+      FORBID_ON_FIRST_ERROR "detail::" "component<" "blade_set<")
+  endforeach()
 endforeach()
 
 # core.linear_<spelling>_<case>: a scalar of a type other than the
@@ -2050,6 +2115,54 @@ target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
+
+# core.format: the formatter of a multivector, against names worked out in
+# the test from each blade's mask and sign, and texts written out there.
+galoot_add_test(MODULE core COMPONENT format)
+
+# core.format_outside_core: core.hpp with <format> gives a multivector no
+# formatter. A program of its own, since format_test.cpp sees the
+# formatter; it also carries the label core.format.
+galoot_add_test(MODULE core COMPONENT format_outside_core)
+set_property(TEST core.format_outside_core APPEND PROPERTY LABELS
+  core.format)
+
+# core.format_<case>: each misuse of the formatter fails to compile with one
+# error, its message, on the line a reader sees first, which names none of
+# the machinery of the formatter or of <format>. Each cause is tried as
+# return std::format("{}", x) and, for some, as auto s = std::format("{}", x)
+# or std::println("{}", x), which reach the formatter by other paths. A
+# scalar without a formatter is also tried with a specification, {:.2f},
+# which parse must skip so that format gives the one error.
+function(format_rejects case message)
+  galoot_add_compile_fail_test(NAME format_${case}
+    MODULE core COMPONENT format
+    SOURCE core/format_${case}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR FORBID_ON_FIRST_ERROR "detail::" "__format" "basic_format_arg")
+endfunction()
+set(format_no_formatter "format: the scalar type has no std::formatter${semicolon} give it a std::formatter, as double has")
+set(format_wide_algebra "format: names such as e123 have one digit per index, so a multivector prints by name only for n up to 9${semicolon} format its coefficients instead")
+set(format_not_a_blade "format: an entry of the algebra tag's names is not a blade of the algebra${semicolon} write 1, or e and distinct indices from 1 to n, the number of generators, as in e41")
+set(format_named_twice "format: the algebra tag's names name one blade twice, perhaps in both orientations${semicolon} name each blade once")
+foreach(case IN ITEMS scalar_without_formatter scalar_without_formatter_auto
+    scalar_without_formatter_print scalar_without_formatter_spec)
+  format_rejects(${case} "${format_no_formatter}")
+endforeach()
+foreach(case IN ITEMS wide_algebra wide_algebra_auto)
+  format_rejects(${case} "${format_wide_algebra}")
+endforeach()
+# A name that is neither 1 nor e and indices, e with no index, a letter or a
+# 0 for an index, an index above n, and one generator twice.
+foreach(case IN ITEMS names_not_e names_not_e_auto names_bare_e
+    names_letter_index names_index_zero names_index_above_n
+    names_repeated_generator)
+  format_rejects(${case} "${format_not_a_blade}")
+endforeach()
+# One blade named twice, in one orientation and in both.
+foreach(case IN ITEMS names_twice names_twice_opposite)
+  format_rejects(${case} "${format_named_twice}")
+endforeach()
 
 # rga3.objects: the model's layouts against the oriented names written in the
 # test, its types, and the facts of rigid(3) on them, against hand values and

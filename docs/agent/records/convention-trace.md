@@ -91,3 +91,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 7.1 | a scalar s times a multivector, on either side, multiplies each coefficient by s | yes |
 | 7.1 | a / s divides each coefficient by s | yes |
 | 7.1 | the negation of a multivector negates each coefficient | yes |
+| 7.2 | format writes every component in the order of the layout | yes |
+| 7.2 | a blade the algebra tag names with the layout's orientation prints by that name | yes |
+| 7.2 | a blade stored with orientation -1 and no declared name prints as its canonical name preceded by - | yes |
+| 7.2 | a format specification applies to each coefficient | yes |

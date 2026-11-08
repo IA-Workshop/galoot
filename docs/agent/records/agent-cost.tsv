@@ -135,3 +135,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-07	plan-0023	WU16 test author, group 3 (V8 cases, geometric rotation test)	opus	not recorded	not recorded	not recorded	token figure not relayed to the implementer
 2026-11-07	plan-0023	WU16 coordinator	opus	not recorded	not recorded	not recorded	not known when this row was written; the coordinator adds it from the harness report
 2026-11-07	plan-0023	WU16 steps 9-10 implementer (trace rows, lint fixes, records, outcome)	opus	not recorded	not recorded	not recorded	this agent's own cost; the coordinator adds it from the harness report
+2026-11-08	plan-0022	WU15 test author, T2a and T2b (format tests)	opus	228564	76	1158	reported by harness as subagent_tokens
+2026-11-08	plan-0022	WU15 test author, part 1 gap test (resumed)	opus	238779	9	80	reported by harness as subagent_tokens for the resumed run; the figure may include the context carried from the first run
+2026-11-08	plan-0022	WU15 test author, T3a-1, T3a-2, T3b (resumed)	opus	325107	48	814	reported by harness as subagent_tokens for the resumed run; the figure may include the context carried from earlier runs
+2026-11-08	plan-0022	WU15 implementer and coordinator of parts 1 to 3 and the records	opus	not recorded	not recorded	not recorded	this agent's own cost; the coordinator adds it from the harness report
