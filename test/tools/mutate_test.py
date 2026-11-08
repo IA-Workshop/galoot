@@ -127,11 +127,11 @@ class Repo:
         except FileNotFoundError:
             return None
 
-    def mutate(self, spec_name, *args):
+    def mutate(self, spec_name, *args, env=None):
         return subprocess.run(
             [sys.executable, "-I", "tools/mutate", f"specs/{spec_name}.toml",
              *args], cwd=self.top, capture_output=True, text=True,
-            check=False, env=self.env)
+            check=False, env=env or self.env)
 
     def mutant_rows(self):
         """The run-log rows the driver's builds and tests wrote."""
@@ -590,6 +590,43 @@ def killers_sorted(repo):
               f"{CHECK}:{FIRST_ASSERT} {USES}:{HALVE_CALL}")
 
 
+# A ctest that, while the header holds the marker, fails every run other
+# than a listing at once, with no output: a CTest that stops before it
+# names any test, as when it cannot read its input.
+MUTED_CTEST = """#!/bin/sh
+case " $* " in
+  *" --show-only"*) ;;
+  *) if grep -q "mute ctest" {header}; then exit 3; fi ;;
+esac
+exec {ctest} "$@"
+"""
+
+
+def ctest_without_failures(repo):
+    """CTest failing without naming a failed test leaves the mutant
+    unjudged, never survived or killed."""
+    muted = repo.path("muted")
+    os.makedirs(muted, exist_ok=True)
+    wrapper = os.path.join(muted, "ctest")
+    with open(wrapper, "w", encoding="utf-8") as f:
+        f.write(MUTED_CTEST.format(header=repo.path(LIB),
+                                   ctest=shutil.which("ctest")))
+    os.chmod(wrapper, 0o755)
+    env = dict(repo.env, PATH=muted + os.pathsep + repo.env["PATH"])
+    write_spec(repo, "muted", LIB_SELECTION, [mutant("muted", [
+        edit("namespace lib {", "namespace lib { // mute ctest")])])
+    result = repo.mutate("muted", "--preset", "gcc-debug", env=env)
+    check("muted CTest: exit", result.returncode, 1)
+    check_restored(repo, "muted CTest")
+    check_rebuilt(repo, "muted CTest", ["gcc-debug"])
+    _, rows = repo.output("muted", "gcc-debug")
+    row = rows[0] if rows else {}
+    check("muted CTest: verdict", row.get("verdict"), "unjudged")
+    check("muted CTest: the problem named",
+          "CTest exited 3 without naming a failed test"
+          in cells(row.get("problems", "-")), True)
+
+
 def restore_between_files(repo):
     """A mutant whose build fails is restored before the next one, which
     edits another file and must get the row it gets alone: built against a
@@ -751,8 +788,9 @@ def main(tools, directory):
         print(f"setup: {error}")
         return 1
     for case in (refusals, failing_baselines, main_run,
-                 rows_in_spec_order, killers_sorted, restore_between_files,
-                 library_guard, runtime_mode, check_mode, stopped_early):
+                 rows_in_spec_order, killers_sorted, ctest_without_failures,
+                 restore_between_files, library_guard, runtime_mode,
+                 check_mode, stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
