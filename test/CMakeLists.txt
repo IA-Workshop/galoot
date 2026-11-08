@@ -861,13 +861,31 @@ set_tests_properties(tools.runlog PROPERTIES
 # union merge of a branch from before the era can bring them back. Skipped
 # outside a git checkout and in a clone that lacks the eras' commits. Its
 # own label, runlog, selects it alone, to run it once for a merge rather
-# than in every build preset.
+# than in every build preset. The test presets leave that label out, so it
+# runs from a build tree: ctest --test-dir <build tree> -L '^runlog$'.
 add_test(NAME tools.runlog_check
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/runlog check
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 set_tests_properties(tools.runlog_check PROPERTIES
   LABELS "tools;tools.runlog_check;runlog"
   SKIP_REGULAR_EXPRESSION "not inside a git checkout;is not in this clone's history")
+
+# tools.jobpool: the job pool's argument checks, the slots it writes back and
+# drains when no client holds it, and its idle stop, including a client that
+# opens the pool just as it decides to stop, a FIFO path through a symbolic
+# link, and a count of clients that fails. It runs pools of its own, under
+# their own unit names and with their FIFOs in the build tree, never the
+# machine's shared pool; skipped where there is no user service manager. It
+# waits for the pools' polls for about 25 seconds, so it is slow.
+add_test(NAME tools.jobpool
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/jobpool_test.py
+    ${PROJECT_SOURCE_DIR}/tools/jobpool
+    ${CMAKE_CURRENT_BINARY_DIR}/jobpool)
+set_tests_properties(tools.jobpool PROPERTIES
+  LABELS "tools;tools.jobpool;slow"
+  SKIP_RETURN_CODE 77
+  TIMEOUT 180)
 
 # The golden values that tests compare the library with. They come from the
 # reference scripts in test/reference/, never from the library, so this
