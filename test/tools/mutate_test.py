@@ -216,6 +216,8 @@ TWICE_SAME_VALUE = [edit("2 * x", "x + x")]
 MESSAGE_CHANGED = [edit('"twice: the argument must be an int"',
                         '"twice: wrong argument"')]
 EQUIVALENT = "x + x equals 2 * x for every int the tests use"
+SYNTAX_ERROR = [edit("return x << 1;", "return x << 1")]
+HALVE_EXPECTED_WRONG = [edit("lib::halve(ten) != 5", "lib::halve(ten) != 6")]
 
 # The main spec: one mutant of each kind, in this order.
 MAIN = [
@@ -233,7 +235,7 @@ MAIN = [
     mutant("wrong_killer", MESSAGE_CHANGED, killers=["uses"]),
     mutant("warning_only", [edit("  return x / 2;",
                                  "  T unused = x;\n  return x / 2;")]),
-    mutant("invalid", [edit("return x << 1;", "return x << 1")]),
+    mutant("invalid", SYNTAX_ERROR),
 ]
 MAIN_NAMES = [m["name"] for m in MAIN]
 
@@ -312,6 +314,9 @@ def expected_row(name, preset):
             build_failures=[(check_obj, "invalid", f"{LIB}:{RUNTIME_RETURN}:"),
                             (uses_obj, "invalid", f"{LIB}:{RUNTIME_RETURN}:")],
             not_run=["check", "uses"], problems=["unjudged"]),
+        # A run-time change of uses_test alone: its own check fails.
+        "uses_wrong": dict(verdict="killed", killers="uses",
+                           failed_cases=["halve at run time"]),
     }
     row = dict(mutant=name, preset=preset, expected="killed", killers="-",
                build_failures=[], not_run=[], failed_cases=[], leaks="-",
@@ -345,7 +350,7 @@ def check_restored(repo, case):
     """Every edited file is byte for byte as committed."""
     check(f"{case}: tracked files equal HEAD",
           repo.git("status", "--porcelain", "--untracked-files=no"), "")
-    for name in (LIB, CHECK):
+    for name in (LIB, CHECK, USES):
         with open(repo.path(name), "rb") as f:
             on_disk = f.read()
         committed = subprocess.run(
@@ -508,6 +513,29 @@ def main_run(repo):
           repo.read("specs/out/main-clang-debug.tsv"), clang_before)
 
 
+def restore_between_files(repo):
+    """A mutant whose build fails is restored before the next one, which
+    edits another file and must get the row it gets alone: built against a
+    header left broken, it would be unjudged instead of killed."""
+    names = ["invalid", "uses_wrong"]
+    write_spec(repo, "two_files", LIB_SELECTION,
+               [mutant("invalid", SYNTAX_ERROR),
+                mutant("uses_wrong", HALVE_EXPECTED_WRONG, file=USES,
+                       killers=["uses"])])
+    result = repo.mutate("two_files")
+    check("two files: exit", result.returncode, 1)
+    check_restored(repo, "two files")
+    check_rebuilt(repo, "two files")
+    for preset in PRESETS:
+        _, rows = repo.output("two_files", preset)
+        check(f"two files {preset}: rows", [r.get("mutant") for r in rows],
+              names)
+        by_name = {r.get("mutant"): r for r in rows}
+        for name in names:
+            check_row(f"two files {preset} {name}", by_name.get(name),
+                      expected_row(name, preset))
+
+
 def runtime_mode(repo):
     """--runtime turns off static_asserts of the test for the whole run."""
     assert_kill = mutant("assert_kill", TWICE_WRONG_AT_COMPILE_TIME)
@@ -600,8 +628,8 @@ def main(tools, directory):
     except (OSError, RuntimeError) as error:
         print(f"setup: {error}")
         return 1
-    for case in (refusals, failing_baselines, main_run, runtime_mode,
-                 check_mode):
+    for case in (refusals, failing_baselines, main_run,
+                 restore_between_files, runtime_mode, check_mode):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
