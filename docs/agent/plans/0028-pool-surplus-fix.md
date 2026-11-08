@@ -12,3 +12,56 @@
 5. **Checks.** `tools.*` and `tests.*` on gcc-debug and clang-debug, `format-check`, the trace gate, and `tools/runlog check`. The six build presets, lint, and clang-measure run only if a build input changes.
 
 The shared pool is never started, stopped, ensured, or opened by this unit. Agent cost: one implementer session.
+
+## State at the end of the implementer's session (2026-11-08)
+
+| Commit | What | Kind (W9) |
+| --- | --- | --- |
+| `33910af` | the evidence-tools review record, cherry-picked with `-x` from `dc2d1d9` (F1 is the source of this unit) | record |
+| `328a77b` | cherry-picked with `-x` from `950fad1` on the tests branch: `tools.jobpool` case `surplus_race`, and the CMake comment of the test. Fails until `6bc4674`, as its message says | test, before the code it judges |
+| `6bc4674` | `tools/jobpool`: the tokens are fixed only while the FIFO is moved aside and a second count finds no client | code |
+
+**The test.** A copy of the tool touches `<fifo>.counted` after each count of clients and then waits 0.5 s. In that window the test opens the FIFO and takes 2 of 4 tokens. It checks that nothing is written back while it holds them and that exactly 4 are free once it returns them, in three rounds. Then three Python clients open, take 1 or 2, hold, return, and close, for 10 s, while the test samples the free count every 20 ms. On `develop`'s tool every round fails (4 free while 2 are held, then 6 of 4) and the load sees a surplus (57.8 s, exit 1). With the fix the test passes (59.5 s). A mutant that moves the FIFO aside but skips the second count fails rounds and load (57.8 s). Without the marker and the half-second delay, the load alone did not reproduce the race in 20 s on `develop`'s tool, so the deterministic rounds are the proof; the load is a realism check. Real `ninja` and `ctest` were not run against the fix; the review's reproduction with them was on the old tool.
+
+**The designs weighed.**
+
+- *Fix only with the FIFO moved aside, after a second count* (chosen). With the FIFO aside, no process can open it by path. After the wait, which lets any open that resolved the old path finish, a count of 0 means no process holds it. Every token is then in the FIFO, and setting it to n is exact. The cost is an ENOENT window of 0.2 s, but only at polls with no client whose free count is off, that is, at a real loss or surplus or the race itself. `tools/timed` refuses with exit 2 in that window; a bare `ninja` would run without the pool.
+- *The same deficit on two consecutive polls with no client.* This only makes the race less likely. Continuous churn can repeat it, and real repairs wait a poll longer. Rejected: it proves nothing.
+- *Never write back while any client exists, with a count that cannot miss a just-opened FIFO.* No such count exists without moving the FIFO. A `/proc` scan is not atomic, and a FIFO has no open-count interface. Reading the free count before and after the count narrows the window, but a client that returns tokens while another takes the same number defeats it. Rejected.
+
+**The invariant.** Capacity is the free tokens plus those held by live clients. Assume, as for Ninja, CTest, and GNU Make clients, that a live process holding tokens holds the FIFO open.
+
+1. The service reads or writes tokens only inside `balance`.
+2. `balance` runs only while the FIFO is moved aside and a count after the wait has found no holder. Then no live process holds a token, and none can open the FIFO before it goes back.
+3. So `balance` sees the whole capacity, and leaves exactly n.
+4. Clients take and return only their own tokens, so outside `balance` capacity never grows.
+5. Hence capacity never exceeds n, and `balance` never reclaims a token a live client holds.
+
+Not covered:
+
+- A holder that forks a child that inherits the descriptor, then exits during the scan, after the child's entry was read. This is contrived, and the FIFO is opened with no inheritance by the clients in use here.
+- A process that keeps tokens after closing the FIFO.
+
+**Kept.** A failed count is a client (the existing `count_fails` and `last_count_fails` cases pass). The FIFO path is resolved (`symlinked` passes). The idle stop moves the FIFO aside with its 1 s wait (`idle_stop` passes).
+
+**Checks** at `4777e22`, from new empty trees with a clean tree (rows `4777e2206186`, selection `gate:all`). The CMake comment of `tools.jobpool` changed, so all eight presets ran, each its full suite, which holds `tools.*` and `tests.*`. All exit 0:
+
+| Preset | Tests | Wall time |
+| --- | --- | --- |
+| gcc-debug | 494 | 91.1 s |
+| gcc-release | 494 | 101.4 s |
+| gcc-asan | 486 | 210.8 s |
+| clang-debug | 494 | 87.3 s |
+| clang-release | 494 | 108.2 s |
+| clang-asan | 494 | 221.2 s |
+| lint | 494 | 236.6 s |
+| clang-measure | 486 | 112.5 s |
+
+`tools.jobpool` now takes 56.6 to 57.1 s in each preset. `format-check` (1.3 s), the trace gate (0.2 s), and `tools/runlog check` (2.6 s) exit 0. The shared pool was read only, with the main checkout's tool.
+
+Open for the owner:
+
+1. **The shared pool runs `develop`'s tool, with the race, until it restarts.** Once this merges, restart it when no agent builds: `cd /home/brianm/projects/utils/math-core/galoot && tools/jobpool status && tools/jobpool stop && tools/jobpool start 23`. Recommended. The alternative is waiting for an idle stop, which on a busy machine may not come.
+2. **`tools.jobpool` costs about a minute of mostly sleeping per preset run.** Options:
+   - (a) Keep it. Recommended: the race case is the only guard of the invariant.
+   - (b) Shorten the load phase, or drop it. The deterministic rounds are the proof.
