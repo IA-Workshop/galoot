@@ -169,8 +169,11 @@ struct std::formatter<NamedLine, char>
 
 // The formatter of ratio, with parse and format on the standard library's
 // context types rather than templates on them. It takes no specification.
+// parse and format stay members, as a formatter is usually written, though
+// neither reads the formatter's state.
 template <>
 struct std::formatter<ratio, char> {
+  // NOLINTBEGIN(readability-convert-member-functions-to-static)
   constexpr std::format_parse_context::iterator
   parse(std::format_parse_context& context) {
     if (context.begin() != context.end() && *context.begin() != '}') {
@@ -183,6 +186,7 @@ struct std::formatter<ratio, char> {
                                        std::format_context& context) const {
     return std::format_to(context.out(), "{}/{}", r.num, r.den);
   }
+  // NOLINTEND(readability-convert-member-functions-to-static)
 };
 
 namespace {
@@ -564,8 +568,11 @@ TEST_CASE("A scalar whose formatter takes std::format_context& prints "
   static_assert(!std::formattable<ratio, char>);
   REQUIRE(std::format("{}", ratio{.num = -3, .den = 4}) == "-3/4");
 
-  const Point<ratio> p{ratio{.num = 1, .den = 2}, ratio{.num = -3, .den = 4},
-                       ratio{}, ratio{.num = 1, .den = 1}};
+  const ratio half{.num = 1, .den = 2};
+  const ratio minus_three_quarters{.num = -3, .den = 4};
+  const ratio zero{};
+  const ratio one{.num = 1, .den = 1};
+  const Point<ratio> p{half, minus_three_quarters, zero, one};
   CHECK(std::format("{}", p) == "{e1: 1/2, e2: -3/4, e3: 0/1, e4: 1/1}");
 
   std::string written;
