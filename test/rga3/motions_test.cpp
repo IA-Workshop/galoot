@@ -1,6 +1,7 @@
 // Tests of the motions of the rga3 model, galoot/rga3.hpp: rotation(l,
-// theta), which builds the rotor l sin(theta/2) + antiscalar cos(theta/2),
-// and translation(dx, dy, dz), which builds half of d = (dx, dy, dz) on e23,
+// theta), which builds the rotor (l / |v|) sin(theta/2) + antiscalar
+// cos(theta/2), with |v| the length of the line's direction, and
+// translation(dx, dy, dz), which builds half of d = (dx, dy, dz) on e23,
 // e31, e12 plus the antiscalar. A motor is stored on e41, e42, e43, e1234,
 // e23, e31, e12, 1, the order of Lengyel's Motor page
 // (rigidgeometricalgebra.org), and moves x to Q ⟇ x ⟇ antireverse(Q).
@@ -14,8 +15,8 @@
 // written by their coefficients from rational half-angle sines and cosines,
 // and rotation itself is checked against the same formula evaluated in the
 // test. Its accuracy as a turn by theta in floating point is checked for a
-// quarter turn about the z axis, within a bound that includes the C
-// library's error for sin and cos.
+// quarter turn about the z axis, given with directions of length 1, 2, and
+// 5, within a bound that includes the C library's error for sin and cos.
 #include <array>
 #include <bit>
 #include <cmath>
@@ -26,6 +27,7 @@
 #include <limits>
 #include <numbers>
 #include <type_traits>
+#include <utility>
 
 #include <galoot/rga3.hpp>
 
@@ -253,25 +255,29 @@ TEST_CASE("an rga3 rotor Motor turns as the reference's right-handed rigid "
   CHECK(off_origin > 0);
 }
 
-// Reference: contract: rotation(l, theta) builds l sin(theta/2) + antiscalar
-//   cos(theta/2), the rotor l sin(phi) + antiscalar cos(phi) with
+// Reference: contract: rotation(l, theta) builds (l / |v|) sin(theta/2) +
+//   antiscalar cos(theta/2), with |v| the length of l's direction v, the
+//   rotor l sin(phi) + antiscalar cos(phi) of the unitized line with
 //   phi = theta/2, which turns by 2 phi about l, so rotation(l, theta) turns
 //   by theta: over float and double, with theta of the line's scalar type,
-//   it equals bit for bit the Motor holding l_i std::sin(theta/2) on e41,
-//   e42, e43, e23, e31, e12, std::cos(theta/2) on e1234, and 0 on 1, in the
-//   order of the motor's layout, for axes along x, y, and z, lines off the
-//   origin, angles of either sign, zero, and beyond a full turn, which pins
-//   the half angle, which of sine and cosine goes where, and the order,
-//   while the expected motor uses the same std::sin and std::cos, so this
-//   verifies the construction, not the accuracy of the C library
-TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
-                   "cos(theta/2) bit for bit",
+//   it equals bit for bit the Motor holding l_i (std::sin(theta/2) / |v|) on
+//   e41, e42, e43, e23, e31, e12, with |v| = std::sqrt((v_x v_x + v_y v_y) +
+//   v_z v_z), std::cos(theta/2) on e1234, and 0 on 1, in the order of the
+//   motor's layout, for axes along x, y, and z, lines off the origin,
+//   directions of length 1, 2, 5, and 5/2, angles of either sign, zero, and
+//   beyond a full turn, which pins the half angle, which of sine and cosine
+//   goes where, the order, and the division of all six coefficients by the
+//   direction's length, while the expected motor uses the same std::sin,
+//   std::cos, and std::sqrt, so this verifies the construction, not the
+//   accuracy of the C library
+TEST_CASE_TEMPLATE("rotation(l, theta) builds (l / |v|) sin(theta/2) + "
+                   "antiscalar cos(theta/2) bit for bit",
                    T, float, double) {
   using Line = rga3::Line<T>;
   using Motor = rga3::Motor<T>;
   static_assert(std::same_as<decltype(rga3::rotation(Line{}, T{})), Motor>);
 
-  constexpr std::array<std::array<double, 6>, 6> axes{
+  constexpr std::array<std::array<double, 6>, 10> axes{
       {
           {1, 0, 0, 0, 0, 0},
           {0, 1, 0, 0, 0, 0},
@@ -279,6 +285,10 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
           {0, 0, 1, 0, -1, 0},
           {0.6, 0.8, 0, 0, 0, 1.5},
           {0, -0.6, -0.8, 0, 1.6, -1.2},
+          {0, 0, 2, 0, -2, 0},
+          {0, 0, 5, 0, -5, 0},
+          {0, 3, 4, 0, 4, -3},
+          {1.5, -2, 0, 2, 1.5, 0.5},
       },
   };
   constexpr std::array<double, 8> angles{
@@ -294,12 +304,81 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds l sin(theta/2) + antiscalar "
     for (const double angle : angles) {
       const T theta = static_cast<T>(angle);
       INFO(std::format("theta = {}", theta));
-      const T s = std::sin(theta / T{2});
+      const T length = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2]);
+      const T s = std::sin(theta / T{2}) / length;
       const T c = std::cos(theta / T{2});
       const Motor expected{
           v[0] * s, v[1] * s, v[2] * s, c, v[3] * s, v[4] * s, v[5] * s, T{0},
       };
       CHECK(bits_of(rga3::rotation(l, theta)) == bits_of(expected));
+    }
+  }
+}
+
+// Reference: independent value: by hand, the join p ^ q of points of weight
+//   1 has direction q - p and moment p x q, so the join of (0, 0, 0) and
+//   (0, 0, 2) is the z axis (0, 0, 2, 0, 0, 0) with a direction of length 2,
+//   that of (1, 0, 0) and (1, 0, 4) the line (0, 0, 4, 0, -4, 0) through
+//   (1, 0, 0) along z, of length 4, and that of (1, 0, 0) and (1, 0, 5) the
+//   line (0, 0, 5, 0, -5, 0), of length 5; contract: rotation(l, theta) turns
+//   by theta about a line whose direction has any positive length, by
+//   building the rotor of l divided by the length of its direction, so each
+//   gives the motor of the unitized line, (0, 0, 1, 0, 0, 0) or
+//   (0, 0, 1, 0, -1, 0); over float and double, dividing by a power of 2
+//   and multiplying back is exact, so the lengths 2 and 4 give that motor
+//   bit for bit, while for the length 5 the sine on e43 and e31 is
+//   5 fl(fl(sin(theta/2)) / 5), within 2u of fl(sin(theta/2)) when its
+//   magnitude is in [1/2, 1), u the unit roundoff, and every other
+//   coefficient is the unitized line's bit for bit
+TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
+                   "length 2, 4, or 5 builds the motor of the unitized line",
+                   T, float, double) {
+  using Point = rga3::Point<T>;
+  using Line = rga3::Line<T>;
+  using Motor = rga3::Motor<T>;
+  constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
+  const Point origin{T{0}, T{0}, T{0}, T{1}};
+  const Point on_x{T{1}, T{0}, T{0}, T{1}};
+  const Line z_axis{T{0}, T{0}, T{1}, T{0}, T{0}, T{0}};
+  const Line off_axis{T{0}, T{0}, T{1}, T{0}, T{-1}, T{0}};
+  const Line z_axis_2{origin ^ Point{T{0}, T{0}, T{2}, T{1}}};
+  const Line off_axis_4{on_x ^ Point{T{1}, T{0}, T{4}, T{1}}};
+  const Line off_axis_5{on_x ^ Point{T{1}, T{0}, T{5}, T{1}}};
+  REQUIRE(z_axis_2 == Line{T{0}, T{0}, T{2}, T{0}, T{0}, T{0}});
+  REQUIRE(off_axis_4 == Line{T{0}, T{0}, T{4}, T{0}, T{-4}, T{0}});
+  REQUIRE(off_axis_5 == Line{T{0}, T{0}, T{5}, T{0}, T{-5}, T{0}});
+
+  // Angles whose half has a sine of magnitude in [1/2, 1).
+  constexpr std::array<double, 6> angles{
+      std::numbers::pi / 2, 1.2, 2.0, 3.0, -1.25, -2.5,
+  };
+  for (const double angle : angles) {
+    const T theta = static_cast<T>(angle);
+    INFO(std::format("theta = {}", theta));
+    CHECK(bits_of(rga3::rotation(z_axis_2, theta)) ==
+          bits_of(rga3::rotation(z_axis, theta)));
+    CHECK(bits_of(rga3::rotation(off_axis_4, theta)) ==
+          bits_of(rga3::rotation(off_axis, theta)));
+
+    // The length 5: the sine on e43 and e31 within 2u, the rest bit for bit.
+    const Motor unit = rga3::rotation(off_axis, theta);
+    const Motor five = rga3::rotation(off_axis_5, theta);
+    const T sine = unit.coefficients[2];
+    INFO(std::format("sine on e43 = {}", sine));
+    REQUIRE(std::abs(sine) >= T{1} / T{2});
+    REQUIRE(std::abs(sine) < T{1});
+    const auto unit_bits = bits_of(unit);
+    const auto five_bits = bits_of(five);
+    for (std::size_t i = 0; i < unit_bits.size(); ++i) {
+      CAPTURE(i);
+      if (i == 2 || i == 5) {
+        const T difference =
+            std::abs(five.coefficients.at(i) - unit.coefficients.at(i));
+        INFO(std::format("difference = {}", difference));
+        CHECK(difference <= T{2} * u);
+      } else {
+        CHECK(five_bits.at(i) == unit_bits.at(i));
+      }
     }
   }
 }
@@ -366,6 +445,74 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about the z axis turns (1, 0, 0, 1) to "
     INFO(std::format("coefficient = {}, tolerance = {}", coefficient,
                      tolerance));
     CHECK(std::abs(coefficient - expected.at(j)) <= tolerance);
+  }
+}
+
+// The tolerance of the same quarter turn about the z axis given with a
+// direction of length 5, (0, 0, 5, 0, 0, 0). rotation divides the stored
+// sine by the length: 25 and its square root are exact, and the sine it
+// stores is s' = fl(5 fl(s^ / 5)) = s^ (1 + e1)(1 + e2), |e1|, |e2| <= u, so
+// |s' - s^| < (2u + u^2) |s^|. With |s^| in [1/2, 1), where s^ is a
+// multiple of u and s' lies in (1/4, 1], whose values are multiples of
+// u / 2, the difference is at most 2u. The sine's error is then
+// |a| <= (k + 2) u in place of k u, the cosine's |b| <= k u as before, and
+// the same derivation gives 40.84, 40.28, 0, and 33.28 u in double and
+// 41.02, 40.28, 0, and 33.28 u in float, rounded up below. A direction of
+// length 2 gives the unit axis's motor bit for bit, since dividing by 2 and
+// multiplying back is exact, so it keeps the tolerances above.
+namespace {
+template <class T>
+constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u =
+    std::same_as<T, float> ? std::array<int, 4>{42, 41, 0, 34}
+                           : std::array<int, 4>{41, 41, 0, 34};
+} // namespace
+
+// Reference: independent value: by hand, a quarter turn counterclockwise
+//   about the z axis, seen from +z, takes (1, 0, 0) to (0, 1, 0), whatever
+//   the length of the direction the axis is given with, since rotation(l,
+//   theta) turns by theta about a line whose direction has any positive
+//   length, so rotation(l, theta) with l the join of (0, 0, 0) and
+//   (0, 0, 2), direction (0, 0, 2), or the line (0, 0, 5, 0, 0, 0), and
+//   theta = pi/2, moves the point (1, 0, 0, 1) to (0, 1, 0, 1) over float
+//   and double, each coefficient within its tolerance: for the length 2,
+//   that of the unit axis, 39 u, 38 u, 0, and 31 u on e1, e2, e3, e4, and
+//   for the length 5, with the error of dividing the sine by 5 and
+//   multiplying it back, 41 u, 41 u, 0, and 34 u in double and 42 u, 41 u,
+//   0, and 34 u in float, for the unit roundoff u, fixed before the test was
+//   first run
+TEST_CASE_TEMPLATE("rotation(l, pi/2) about a z axis of length 2 or 5 turns "
+                   "(1, 0, 0, 1) to (0, 1, 0, 1) within its error bound",
+                   T, float, double) {
+  using Point = rga3::Point<T>;
+  using Line = rga3::Line<T>;
+  constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
+  const T theta = std::numbers::pi_v<T> / T{2};
+  INFO(std::format("theta = {}", theta));
+  const Line z_axis_2{Point{T{0}, T{0}, T{0}, T{1}} ^
+                      Point{T{0}, T{0}, T{2}, T{1}}};
+  const Line z_axis_5{T{0}, T{0}, T{5}, T{0}, T{0}, T{0}};
+  REQUIRE(z_axis_2 == Line{T{0}, T{0}, T{2}, T{0}, T{0}, T{0}});
+
+  const std::array<std::pair<Line, std::array<int, 4>>, 2> cases{
+      {
+          {z_axis_2, quarter_turn_tolerance_in_u},
+          {z_axis_5, quarter_turn_length_5_tolerance_in_u<T>},
+      },
+  };
+  constexpr std::array<T, 4> expected{T{0}, T{1}, T{0}, T{1}};
+  for (std::size_t c = 0; c < cases.size(); ++c) {
+    CAPTURE(c);
+    const auto& [axis, tolerance_in_u] = cases.at(c);
+    const Point moved = core::transform(Point{T{1}, T{0}, T{0}, T{1}},
+                                        rga3::rotation(axis, theta));
+    for (std::size_t j = 0; j < expected.size(); ++j) {
+      CAPTURE(j);
+      const T coefficient = moved.coefficients.at(j);
+      const T tolerance = static_cast<T>(tolerance_in_u.at(j)) * u;
+      INFO(std::format("coefficient = {}, tolerance = {}", coefficient,
+                       tolerance));
+      CHECK(std::abs(coefficient - expected.at(j)) <= tolerance);
+    }
   }
 }
 
