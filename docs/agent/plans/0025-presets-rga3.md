@@ -109,3 +109,29 @@ Proposed for the next preset unit, not implemented here (C12, no such header exi
 1. In the root `CMakeLists.txt`, match `^include/galoot/presets/([a-z0-9_]+)(\.hpp$|/)` and take the target `galoot_presets_<name>` from the capture; stop configuring with a message naming the expected target when no such target exists, and refuse any other header under `include/galoot/presets/` that matches no preset.
 2. In `tools/include_scan.py`, derive the preset modules from the directories under `include/galoot/presets/` (each may include the core's headers and its own), and report a header under `include/galoot/presets/` that belongs to no module, with a rejecting fixture for each.
 3. Keep `format-check` reading the union of every header set, as it does now for two.
+
+### Merge checks at the closing revision (P9)
+
+`develop` is still at `42d7695`, which the branch contains, so merging it in changed nothing ("Already up to date") and made no commit. P9's merge checks ran at `88b8567`, on a clean tree but for the run log, each build preset from a new, empty build tree (the old one removed first), every run through `tools/timed` as `gate:<selection>`. The commit that records them changes only this plan and the run log, so the checks hold for it. The job pool read 23 of 23 slots free before and after each group of build presets.
+
+| Build preset | Full suite | Build, test wall (s) |
+| --- | --- | --- |
+| gcc-debug | 493 of 493 | 30.8, 7.3 |
+| gcc-release | 493 of 493 | 41.4, 7.4 |
+| clang-debug | 493 of 493 | 29.7, 5.2 |
+| clang-release | 493 of 493 | 48.8, 5.1 |
+| gcc-asan | 485 of 485 | 143.6, 4.5 |
+| clang-asan | 493 of 493 | 118.7, 5.2 |
+| lint | 493 of 493 (clang-tidy clean) | 165.2, 4.8 |
+| clang-measure | 485 of 485 | 44.7, 4.9 |
+
+`format-check` exit 0; the trace gate passes (items with no test: 6.1 to 6.4, as before); `tools/readme_examples.py check README.md` finds its three examples, and `tests.citations` with `rga3.readme_example_1` to `_3` passed again on gcc-debug as their own selection after the full suite; `tools/runlog check` reports no removed row, so no prune. Not run: the compile-record copy of decision 0080, deferred to the M4 gate as before.
+
+### Open for the owner (at the close)
+
+1. CONVENTIONS' "model" wording (line 14, and section 5's marker "Component: model (rga3)"), left for the next governance pass (review L4).
+2. The remaining uses of "preset" for a CMake configuration in `tools/`, `.claude/agents/`, and `include/galoot/core/assert.hpp` (decision 0213 item 9), left for the next governance and core pass.
+3. Decision 0211 item 1's "on the core's public interface only", and the comments of `CMakeLists.txt` and `presets/rga3.hpp` that say the preset is written on the core's public headers or interface, while `motions.hpp` includes `assert.hpp` (review L3): either they say "the core's headers", as S6 now does, or `assert.hpp` is declared public.
+4. The header-set rule and the include scan for a second preset (L6), proposed above for the next preset unit.
+
+Agent cost of the closing session: about 45 tool calls; token counts are not visible to the agent.
