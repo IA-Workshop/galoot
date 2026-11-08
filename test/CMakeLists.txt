@@ -1587,8 +1587,8 @@ endforeach()
 # r and with a class derived from a multivector, fail to compile with one
 # error, the message of the operation as written, on a first error line that
 # spells no layout by its masks.
-set(linear_number_plus "a + b: a multivector and a number have no sum${semicolon} make the number a multivector on the blade 1 and add that")
-set(linear_number_minus "a - b: a multivector and a number have no difference${semicolon} make the number a multivector on the blade 1 and subtract that")
+set(linear_number_plus "a + b: a multivector and a number have no sum${semicolon} make the number a multivector on the scalar blade 1 and add that")
+set(linear_number_minus "a - b: a multivector and a number have no difference${semicolon} make the number a multivector on the scalar blade 1 and subtract that")
 foreach(spelling IN ITEMS plus minus)
   if(spelling STREQUAL "plus")
     set(message "${linear_number_plus}")
