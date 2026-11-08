@@ -1,5 +1,5 @@
-#ifndef GALOOT_RGA3_OBJECTS_HPP
-#define GALOOT_RGA3_OBJECTS_HPP
+#ifndef GALOOT_PRESETS_RGA3_OBJECTS_HPP
+#define GALOOT_PRESETS_RGA3_OBJECTS_HPP
 
 // The objects of rigid(3), the rigid geometric algebra of three dimensions:
 // points, lines, and planes, and the motors and flectors that move them. The
@@ -8,8 +8,8 @@
 // (rigidgeometricalgebra.org), so the coefficients of its published formulas
 // copy over in the order and with the signs in which they are written:
 //
-//   using Point = galoot::rga3::Point<double>;
-//   using Line = galoot::rga3::Line<double>;
+//   using Point = galoot::presets::rga3::Point<double>;
+//   using Line = galoot::presets::rga3::Line<double>;
 //   Point p{0, 0, 0, 1};  // the origin
 //   Point q{1, 0, 0, 1};
 //   Line l{p ^ q};        // the x axis, from p to q: direction (1, 0, 0)
@@ -33,11 +33,12 @@
 
 #include <galoot/core.hpp> // IWYU pragma: export
 
-namespace galoot::rga3 {
+namespace galoot::presets::rga3 {
 
 /// The algebra of the model, rigid(3) = R(3, 0, 1): e1, e2, e3 are Euclidean
 /// and e4 is the null projective generator. Every type of the model is a
-/// multivector of this tag, so a diagnostic names it galoot::rga3::algebra.
+/// multivector of this tag, so a diagnostic names it
+/// galoot::presets::rga3::algebra.
 struct algebra {
   /// The metric of rigid(3).
   static constexpr auto value = core::rigid<3>();
@@ -127,6 +128,6 @@ using Motor = core::mv<algebra, motor_layout, T>;
 template <std::destructible T>
 using Flector = core::mv<algebra, flector_layout, T>;
 
-} // namespace galoot::rga3
+} // namespace galoot::presets::rga3
 
-#endif // GALOOT_RGA3_OBJECTS_HPP
+#endif // GALOOT_PRESETS_RGA3_OBJECTS_HPP

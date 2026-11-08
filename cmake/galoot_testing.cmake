@@ -11,15 +11,19 @@
 # build that drops every test case cannot pass as a success.
 set(GALOOT_ZERO_CASES_REGEX "test cases: +0 \\|")
 
-# galoot_add_test(MODULE <module> COMPONENT <component>)
+# galoot_add_test(MODULE <module> COMPONENT <component> [DIRECTORY <dir>])
 #
-# Builds test/<module>/<component>_test.cpp into the program
+# Builds test/<dir>/<component>_test.cpp into the program
 # <module>_<component>_test, linked to the doctest runner, and registers it as
-# the test <module>.<component>.
+# the test <module>.<component>. <dir> is <module> unless given, as for an
+# algebra preset, whose tests are under presets/<module>.
 function(galoot_add_test)
-  cmake_parse_arguments(PARSE_ARGV 0 arg "" "MODULE;COMPONENT" "")
+  cmake_parse_arguments(PARSE_ARGV 0 arg "" "MODULE;COMPONENT;DIRECTORY" "")
+  if(NOT arg_DIRECTORY)
+    set(arg_DIRECTORY ${arg_MODULE})
+  endif()
   set(program ${arg_MODULE}_${arg_COMPONENT}_test)
-  add_executable(${program} ${arg_MODULE}/${arg_COMPONENT}_test.cpp)
+  add_executable(${program} ${arg_DIRECTORY}/${arg_COMPONENT}_test.cpp)
   target_link_libraries(${program} PRIVATE galoot::core galoot_doctest_main)
   add_test(NAME ${arg_MODULE}.${arg_COMPONENT} COMMAND ${program})
   set_tests_properties(${arg_MODULE}.${arg_COMPONENT} PROPERTIES

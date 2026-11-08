@@ -199,8 +199,8 @@ set_tests_properties(core.bare_compile core.include_scan PROPERTIES
 
 # tools.include_scan_rejects: the scan reports each fixture's defect, in the
 # core and in the rga3 model, and nothing about the fixtures that include
-# what their module may: galoot/rga3.hpp, galoot/rga3/uses_core.hpp, and
-# galoot/core.hpp.
+# what their module may: galoot/presets/rga3.hpp,
+# galoot/presets/rga3/uses_core.hpp, and galoot/core.hpp.
 set(fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/include_scan)
 add_test(NAME tools.include_scan_rejects
   COMMAND ${expect_output} 1 ONLY "."
@@ -211,12 +211,12 @@ add_test(NAME tools.include_scan_rejects
     "galoot/core/include_next.hpp:4: #include_next depends on the order of the user's include paths"
     "galoot/core/computed.hpp:5: computed #include GALOOT_CORE_COMPUTED_TARGET cannot be checked"
     "galoot/core/not_hpp.h: not a .hpp header"
-    "galoot/core/includes_model.hpp:4: <galoot/rga3/uses_core.hpp> belongs to the rga3 model, which the core may not include"
-    "galoot/rga3/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header, a core header, or an rga3 header"
-    "galoot/rga3/cycle_a.hpp: include cycle: galoot/rga3/cycle_a.hpp -> galoot/rga3/cycle_b.hpp -> galoot/rga3/cycle_a.hpp"
-    "galoot/rga3/wrong_guard.hpp:1: include guard should be GALOOT_RGA3_WRONG_GUARD_HPP"
-    "galoot/rga3/Bad-Name.hpp: header name is not snake_case.hpp"
-    "galoot/rga3/not_hpp.h: not a .hpp header"
+    "galoot/core/includes_preset.hpp:4: <galoot/presets/rga3/uses_core.hpp> belongs to the rga3 model, which the core may not include"
+    "galoot/presets/rga3/nonstandard.hpp:4: <vector_math.h> is not a C++23 standard header, a core header, or an rga3 header"
+    "galoot/presets/rga3/cycle_a.hpp: include cycle: galoot/presets/rga3/cycle_a.hpp -> galoot/presets/rga3/cycle_b.hpp -> galoot/presets/rga3/cycle_a.hpp"
+    "galoot/presets/rga3/wrong_guard.hpp:1: include guard should be GALOOT_PRESETS_RGA3_WRONG_GUARD_HPP"
+    "galoot/presets/rga3/Bad-Name.hpp: header name is not snake_case.hpp"
+    "galoot/presets/rga3/not_hpp.h: not a .hpp header"
     -- ${Python3_EXECUTABLE} -I
       ${PROJECT_SOURCE_DIR}/tools/include_scan.py ${fixtures})
 set_tests_properties(tools.include_scan_rejects PROPERTIES
@@ -2167,22 +2167,22 @@ endforeach()
 # rga3.objects: the model's layouts against the oriented names written in the
 # test, its types, and the facts of rigid(3) on them, against hand values and
 # the golden values.
-galoot_add_test(MODULE rga3 COMPONENT objects)
-target_link_libraries(rga3_objects_test PRIVATE galoot::rga3 galoot_golden
-  galoot_test_support)
+galoot_add_test(MODULE rga3 COMPONENT objects DIRECTORY presets/rga3)
+target_link_libraries(rga3_objects_test PRIVATE galoot::presets::rga3
+  galoot_golden galoot_test_support)
 
 # rga3.bare_compile: the model, like the core, works with no build system and
 # no options beyond the language edition.
 add_test(NAME rga3.bare_compile
   COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors
     -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
-    ${CMAKE_CURRENT_SOURCE_DIR}/rga3/bare_user.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/presets/rga3/bare_user.cpp)
 
 # rga3.include_scan: the model includes only standard, core, and model
 # headers, with no cycle, guards named from paths, and snake_case names.
 add_test(NAME rga3.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
-    ${PROJECT_SOURCE_DIR}/include rga3)
+    ${PROJECT_SOURCE_DIR}/include presets/rga3)
 set_tests_properties(rga3.bare_compile rga3.include_scan PROPERTIES
   LABELS "rga3;rga3.headers")
 
@@ -2210,7 +2210,7 @@ set(readme_tests rga3.readme_has_example)
 foreach(source IN LISTS readme_sources)
   cmake_path(GET source STEM example)
   add_executable(rga3_readme_${example} ${source})
-  target_link_libraries(rga3_readme_${example} PRIVATE galoot::rga3)
+  target_link_libraries(rga3_readme_${example} PRIVATE galoot::presets::rga3)
   # An example's main may let std::format_error from std::println escape, as
   # a user's would; a try block around it would only hide what it shows.
   if(CMAKE_CXX_CLANG_TIDY)
@@ -2257,35 +2257,35 @@ set_tests_properties(tools.readme_examples_rejects_no_block
 # rga3.motions: translation and rotation against hand values, the
 # reference's rotations, and the formula of the rotor written out in the
 # test.
-galoot_add_test(MODULE rga3 COMPONENT motions)
-target_link_libraries(rga3_motions_test PRIVATE galoot::rga3 galoot_golden
-  galoot_test_support)
+galoot_add_test(MODULE rga3 COMPONENT motions DIRECTORY presets/rga3)
+target_link_libraries(rga3_motions_test PRIVATE galoot::presets::rga3
+  galoot_golden galoot_test_support)
 
 # rga3.point_groups: the 32 crystallographic point groups, generated from
 # their rational generators by compose over the test rational, counted, and
 # matched one to one with the reference's matrices.
-galoot_add_test(MODULE rga3 COMPONENT point_groups)
-target_link_libraries(rga3_point_groups_test PRIVATE galoot::rga3
+galoot_add_test(MODULE rga3 COMPONENT point_groups DIRECTORY presets/rga3)
+target_link_libraries(rga3_point_groups_test PRIVATE galoot::presets::rga3
   galoot_golden galoot_test_support)
 
 # rga3.chains: seeded chains of three to six joint motors, composed, against
 # the reference's products of 4 by 4 matrices.
-galoot_add_test(MODULE rga3 COMPONENT chains)
-target_link_libraries(rga3_chains_test PRIVATE galoot::rga3 galoot_golden
-  galoot_test_support)
+galoot_add_test(MODULE rga3 COMPONENT chains DIRECTORY presets/rga3)
+target_link_libraries(rga3_chains_test PRIVATE galoot::presets::rga3
+  galoot_golden galoot_test_support)
 
 # rga3.incidence: joins, meets, and incidences of points, lines, and planes
 # against the reference's values, exact zeros included.
-galoot_add_test(MODULE rga3 COMPONENT incidence)
-target_link_libraries(rga3_incidence_test PRIVATE galoot::rga3 galoot_golden
-  galoot_test_support)
+galoot_add_test(MODULE rga3 COMPONENT incidence DIRECTORY presets/rga3)
+target_link_libraries(rga3_incidence_test PRIVATE galoot::presets::rga3
+  galoot_golden galoot_test_support)
 
 # Each misuse of rotation and translation is one error with its message, and
 # the line a reader sees first names no internal name.
 function(motions_rejects case message)
   galoot_add_compile_fail_test(NAME ${case} MODULE rga3 COMPONENT motions
-    SOURCE rga3/${case}_fail.cpp MESSAGE "${message}" ONE_ERROR ${ARGN}
-    FORBID_ON_FIRST_ERROR "detail::" "apply:")
+    SOURCE presets/rga3/${case}_fail.cpp MESSAGE "${message}" ONE_ERROR
+    ${ARGN} FORBID_ON_FIRST_ERROR "detail::" "apply:")
 endfunction()
 set(rotation_no_sin "rotation: sin and cos of the angle do not give values of this scalar type, which is not a floating type${semicolon} use Line<double> or Line<float>, or build the Motor from its coefficients, the unitized line times sin(theta/2) and cos(theta/2) on e1234")
 set(rotation_not_line "rotation: the axis is not an rga3 Line${semicolon} give a Line<T>, and convert a join such as p ^ q with Line<T>{p ^ q}")
@@ -2323,16 +2323,18 @@ motions_rejects(translation_mixed "${translation_mixed}"
   REQUIRE "${translation_double_and_int}")
 
 # rga3.rotation_checking_<case> and rga3.rotation_unchecked_<case>: one
-# program built in each checking mode (rga3/rotation_assert_fail.cpp). With
-# checking on, an axis whose direction has a computed length of zero or
-# infinity aborts with the message, over double and float; with checking
-# off the same axes give the non-finite or zero coefficients the header
-# states. A direction of length 2 is accepted in both modes. The programs
-# take the headers directly, so that the preset's mode does not reach them.
+# program built in each checking mode
+# (presets/rga3/rotation_assert_fail.cpp). With checking on, an axis whose
+# direction has a computed length of zero or infinity aborts with the
+# message, over double and float; with checking off the same axes give the
+# non-finite or zero coefficients the header states. A direction of length 2
+# is accepted in both modes. The programs take the headers directly, so that
+# the preset's mode does not reach them.
 set(rotation_direction
   "rotation: the direction of the axis must have a finite nonzero length")
 foreach(mode IN ITEMS 1 0)
-  add_executable(rga3_rotation_mode_${mode} rga3/rotation_assert_fail.cpp)
+  add_executable(rga3_rotation_mode_${mode}
+    presets/rga3/rotation_assert_fail.cpp)
   target_include_directories(rga3_rotation_mode_${mode} PRIVATE
     ${PROJECT_SOURCE_DIR}/include)
   target_compile_features(rga3_rotation_mode_${mode} PRIVATE cxx_std_23)

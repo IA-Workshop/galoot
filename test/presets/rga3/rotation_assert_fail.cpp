@@ -32,12 +32,12 @@
 #include <span>
 #include <string_view>
 
-#include <galoot/rga3/motions.hpp>
-#include <galoot/rga3/objects.hpp>
+#include <galoot/presets/rga3/motions.hpp>
+#include <galoot/presets/rga3/objects.hpp>
 
 namespace {
 
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 
 // Whether every line coefficient of q, on e41, e42, e43, e23, e31, e12,
 // meets the predicate.

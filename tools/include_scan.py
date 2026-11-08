@@ -6,10 +6,10 @@ happens to provide the header.
 
 Usage: python3 -I tools/include_scan.py <include-root> [<module>...]
 
-Reads the headers of each module named, core or rga3, or of both when none
-is: galoot/<module>.hpp and every header under galoot/<module>/. Prints one
-line per finding, as <path>[:<line>]: <finding>, and exits 1 if there is
-any, else 0:
+Reads the headers of each module named, core or presets/rga3, or of both
+when none is: galoot/<module>.hpp and every header under galoot/<module>/.
+Prints one line per finding, as <path>[:<line>]: <finding>, and exits 1 if
+there is any, else 0:
 
 - an include that names neither a C++23 standard header nor an existing
   header of a module the including module may use: the core uses only its
@@ -66,8 +66,9 @@ NAME = re.compile(r"^[a-z][a-z0-9_]*\.hpp$")
 MODULES = {
     "core": ("the core", ("core",),
              "a C++23 standard header or a core header"),
-    "rga3": ("the rga3 model", ("core", "rga3"),
-             "a C++23 standard header, a core header, or an rga3 header"),
+    "presets/rga3": ("the rga3 model", ("core", "presets/rga3"),
+                     "a C++23 standard header, a core header, or an rga3 "
+                     "header"),
 }
 
 

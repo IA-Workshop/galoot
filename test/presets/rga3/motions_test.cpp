@@ -1,4 +1,4 @@
-// Tests of the motions of the rga3 model, galoot/rga3.hpp: rotation(l,
+// Tests of the motions of the rga3 model, galoot/presets/rga3.hpp: rotation(l,
 // theta), which builds the rotor (l / |v|) sin(theta/2) + antiscalar
 // cos(theta/2), with |v| the length of the line's direction, and
 // translation(dx, dy, dz), which builds half of d = (dx, dy, dz) on e23,
@@ -31,7 +31,7 @@
 #include <type_traits>
 #include <utility>
 
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 #include <doctest/doctest.h>
 
@@ -41,7 +41,7 @@
 namespace {
 
 namespace core = galoot::core;
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 using test_support::rational;
 
 // n / d as T: exact for the test rational, and for float and double when d

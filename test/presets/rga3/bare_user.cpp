@@ -3,13 +3,13 @@
 // -std=c++23 -pedantic-errors -I include. It joins two points into a line,
 // meets the line with a plane, and moves a point by a translator and a
 // rotor composed into one motor.
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 int main() {
-  using Point = galoot::rga3::Point<double>;
-  using Line = galoot::rga3::Line<double>;
-  using Plane = galoot::rga3::Plane<double>;
-  using Motor = galoot::rga3::Motor<double>;
+  using Point = galoot::presets::rga3::Point<double>;
+  using Line = galoot::presets::rga3::Line<double>;
+  using Plane = galoot::presets::rga3::Plane<double>;
+  using Motor = galoot::presets::rga3::Motor<double>;
 
   const Point p{0, 0, 0, 1};
   const Point q{0, 0, 1, 1};

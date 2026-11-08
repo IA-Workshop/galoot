@@ -25,16 +25,16 @@ Galoot is headers alone, so there is nothing to build. Add `include/` to
 your include path, compile as C++23, and include the model or the core:
 
 ```text
-#include <galoot/rga3.hpp>   // the rga3 model, and through it the core
+#include <galoot/presets/rga3.hpp>   // the rga3 model, and through it the core
 #include <galoot/core.hpp>   // the core alone
 ```
 
-With CMake, add the source tree and link the target you use, `galoot::rga3`
+With CMake, add the source tree and link the target you use, `galoot::presets::rga3`
 or `galoot::core`:
 
 ```text
 add_subdirectory(galoot)
-target_link_libraries(my_program PRIVATE galoot::rga3)
+target_link_libraries(my_program PRIVATE galoot::presets::rga3)
 ```
 
 Galoot is tested with GCC 16 and Clang 23, on Linux with libstdc++. It uses
@@ -59,11 +59,11 @@ blade.
 #include <numbers>
 #include <print>
 
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 int main() {
   namespace core = galoot::core;
-  namespace rga3 = galoot::rga3;
+  namespace rga3 = galoot::presets::rga3;
   using Point = rga3::Point<double>;
   using Line = rga3::Line<double>;
   using Motor = rga3::Motor<double>;
@@ -119,10 +119,10 @@ order, the coefficients on e41, e42, e43, e1234, e23, e31, e12, and 1, and
 they hold half of each distance and angle:
 
 ```cpp
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 namespace core = galoot::core;
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 
 constexpr rga3::Point<int> p{1, 0, 0, 1};
 constexpr rga3::Point<int> q{1, 2, 0, 1};
@@ -162,10 +162,10 @@ specification such as `{:.1f}` applies to each coefficient:
 #include <print>
 
 #include <galoot/core/format.hpp> // IWYU pragma: keep
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 int main() {
-  const galoot::rga3::Point<double> p{1, 3, 3, 1};
+  const galoot::presets::rga3::Point<double> p{1, 3, 3, 1};
   std::println("{}", p);
   // prints: {e1: 1, e2: 3, e3: 3, e4: 1}
   std::println("{:.1f}", p);

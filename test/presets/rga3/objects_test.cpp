@@ -1,8 +1,9 @@
-// Tests of the objects of the rga3 model, galoot/rga3.hpp: the algebra tag,
-// the layouts of a point, line, plane, motor, and flector, the alias
-// templates that name their types, and the facts of rigid(3) that those
-// types carry: the weight of a point, the direction and moment of a line,
-// the normal and offset of a plane, and how motors and flectors move them.
+// Tests of the objects of the rga3 model, galoot/presets/rga3.hpp: the
+// algebra tag, the layouts of a point, line, plane, motor, and flector, the
+// alias templates that name their types, and the facts of rigid(3) that
+// those types carry: the weight of a point, the direction and moment of a
+// line, the normal and offset of a plane, and how motors and flectors move
+// them.
 //
 // rigid(3) is R(3, 0, 1): e1, e2, e3 square to 1 and e4 to 0. Lengyel's
 // rigid geometric algebra (rigidgeometricalgebra.org) names each blade by
@@ -26,7 +27,7 @@
 #include <string_view>
 #include <type_traits>
 
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 #include <doctest/doctest.h>
 
@@ -36,7 +37,7 @@
 namespace {
 
 namespace core = galoot::core;
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 using test_support::rational;
 
 // An oriented blade of rigid(3) with the name it has in Lengyel's notation.

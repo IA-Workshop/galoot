@@ -13,7 +13,7 @@
 #include <array>
 #include <cstddef>
 
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 #include <doctest/doctest.h>
 
@@ -23,7 +23,7 @@
 namespace {
 
 namespace core = galoot::core;
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 using test_support::rational;
 using Point = rga3::Point<rational>;
 using Motor = rga3::Motor<rational>;

@@ -1,5 +1,5 @@
-#ifndef GALOOT_RGA3_MOTIONS_HPP
-#define GALOOT_RGA3_MOTIONS_HPP
+#ifndef GALOOT_PRESETS_RGA3_MOTIONS_HPP
+#define GALOOT_PRESETS_RGA3_MOTIONS_HPP
 
 // The motions of rigid(3) built from whole angles and distances: a rotation
 // about a line and a translation by a vector. A motor's coefficients hold
@@ -8,7 +8,7 @@
 // e1234 moves points by 2t; these functions take theta and d and store
 // theta/2 and d/2, and rotation unitizes the line it is given:
 //
-//   namespace rga3 = galoot::rga3;
+//   namespace rga3 = galoot::presets::rga3;
 //   rga3::Line<double> z_axis{0, 0, 1, 0, 0, 0};
 //   auto turn = rotation(z_axis, 1.5707963267948966);  // a quarter turn
 //   auto move = rga3::translation(1.0, 2.0, 3.0);
@@ -16,7 +16,8 @@
 //
 // rotation is found from any namespace by argument-dependent lookup, through
 // its Line argument. translation takes plain scalars, which name no
-// namespace of the model, so it must be called as galoot::rga3::translation.
+// namespace of the model, so it must be called as
+// galoot::presets::rga3::translation.
 
 #include <cmath>
 #include <concepts>
@@ -24,9 +25,9 @@
 
 #include <galoot/core.hpp> // IWYU pragma: export
 #include <galoot/core/assert.hpp>
-#include <galoot/rga3/objects.hpp>
+#include <galoot/presets/rga3/objects.hpp>
 
-namespace galoot::rga3 {
+namespace galoot::presets::rga3 {
 
 /// The rotor that turns by the angle theta, in radians, about the line l:
 /// (l / |v|) sin(theta/2) + e1234 cos(theta/2), with v the direction of l
@@ -153,7 +154,7 @@ Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
 ///
 /// The arguments are plain scalars, which name no namespace of the model, so
 /// an unqualified call does not find this function: write
-/// galoot::rga3::translation(dx, dy, dz).
+/// galoot::presets::rga3::translation(dx, dy, dz).
 template <core::ring_scalar T>
   requires(!std::integral<T>)
 [[nodiscard]] constexpr Motor<T> translation(T dx, T dy, T dz) {
@@ -188,6 +189,6 @@ Motor<X> translation(const X& /*dx*/, const Y& /*dy*/, const Z& /*dz*/) {
   return Motor<X>{};
 }
 
-} // namespace galoot::rga3
+} // namespace galoot::presets::rga3
 
-#endif // GALOOT_RGA3_MOTIONS_HPP
+#endif // GALOOT_PRESETS_RGA3_MOTIONS_HPP
