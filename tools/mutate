@@ -41,8 +41,9 @@ restored after each mutant and on SIGINT or SIGTERM; after a SIGKILL,
 `git status` shows any file left mutated.
 
 Each failed object is classified by its first error line: `warning` if it
-carries [-Werror, `assert` if it is a failed static assertion, `test` if it
-lies in a file under test/, else `invalid`. A mutant is killed if a test
+carries [-Werror, `assert` if it is a failed static assertion or a call
+to a function that is not constexpr (how a guard stops constant
+evaluation), `test` if it lies in a file under test/, else `invalid`. A mutant is killed if a test
 fails or an object fails as assert or test; else unjudged if an object
 failed (its tests never ran); else equivalent if the spec says so; else
 survived. Under --runtime, a failed static assertion in a file of the
@@ -78,6 +79,11 @@ FAILED = re.compile(r"^FAILED: (?:\[code=\d+\] )?(.*?)\s*$")
 END_OF_JOB = re.compile(r"^(FAILED: |\[\d+/\d+\] |ninja: )")
 LOCATION = re.compile(r"^(?P<path>[^\s:][^:]*):(?P<line>\d+):(?:\d+:)? "
                       r"(?:fatal )?error: ")
+# A failed check at compile time: a static assertion, or a guard that stops
+# constant evaluation by calling a function that is not constexpr, which GCC
+# reports at the call (quoting constexpr with ' or with typographic quotes).
+CHECK_FAILED = re.compile(
+    r"static assertion|static_assert|call to non-.?constexpr.? function")
 FAILED_TEST = re.compile(r"^\s*\d+ - (\S+) \(", re.MULTILINE)
 CMAKE_ARGUMENT = re.compile(
     r'"((?:[^"\\]|\\.)*)"|\[(=*)\[(.*?)\]\2\]|([^\s()"]+)')
@@ -344,7 +350,7 @@ def build_failures(output, tree, runtime_files):
         message = first.partition("error:")[2]
         if "[-Werror" in first:
             kind = "warning"
-        elif "static assertion" in message or "static_assert" in message:
+        elif CHECK_FAILED.search(message):
             kind = "assert"
         elif where and where.startswith("test/"):
             kind = "test"
