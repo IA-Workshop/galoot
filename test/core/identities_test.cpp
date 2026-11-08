@@ -130,7 +130,8 @@ TEST_CASE("the involutions follow their antiproduct rules over many forms") {
 //   converses and the product rules of the reverse, the antireverse, and the
 //   grade involution over the four products, with the sign (-1)^n over the
 //   antiproducts, on every triple the associativity of the geometric
-//   product, the wedge, the geometric antiproduct, and the antiwedge, on
+//   product, the wedge, the geometric antiproduct, and the antiwedge, so
+//   that both products and both antiproducts are associative, on
 //   every blade 1 and the antiscalar as the identities of the geometric
 //   product and antiproduct, and on every pair of generators
 //   e_i e_j + e_j e_i = 2 g_ij, each through mv with one coefficient 1 and
