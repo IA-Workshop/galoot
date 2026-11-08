@@ -465,8 +465,9 @@ TEST_CASE("Each product distributes over sums") {
 
 // Reference: contract: a sum or a difference of two multivectors that
 //   differ in algebra or in scalar type has the rejecting overload as its
-//   only candidate, so a requires-expression that asks whether it is valid
-//   answers yes, while a multivector and a number have no sum or difference
+//   only candidate, and so does a multivector and a number, on either
+//   side, so a requires-expression that asks whether either is valid
+//   answers yes
 TEST_CASE("The sum overloads take the right operands") {
   using R = core::mv<rga3, core::full<4>, double>;
   using F = core::mv<rga3, core::full<4>, float>;
@@ -478,12 +479,33 @@ TEST_CASE("The sum overloads take the right operands") {
   static_assert(can_add<R, C>);
   static_assert(can_subtract<R, F>);
   static_assert(can_subtract<C, R>);
-  static_assert(!can_add<R, double>);
-  static_assert(!can_add<double, R>);
-  static_assert(!can_subtract<R, int>);
-  static_assert(!can_subtract<int, R>);
+  static_assert(can_add<R, double>);
+  static_assert(can_add<double, R>);
+  static_assert(can_subtract<R, int>);
+  static_assert(can_subtract<int, R>);
   CHECK(can_add<R, F>);
-  CHECK_FALSE(can_add<R, double>);
+  CHECK(can_add<R, double>);
+}
+
+// Reference: contract: a sum or a difference of two multivectors of one
+//   algebra and scalar type, a one-blade value among them, is still the
+//   sum, which the overload that rejects a multivector and a number does
+//   not take, and scaling by a number is still scaling
+TEST_CASE("A sum of two multivectors and a scaling by a number still work") {
+  using L = Line<std::int64_t>;
+  using S = core::mv<rga3, core::blades<rga3, "1">, std::int64_t>;
+  const L l{1, 2, 3, 4, 5, 6};
+  CHECK((l + l) == L{2, 4, 6, 8, 10, 12});
+  CHECK((l - l) == L{});
+  const auto with_scalar = S{7} + l;
+  CHECK(core::get<"1">(with_scalar) == 7);
+  CHECK(core::get<"e23">(with_scalar) == 4);
+  CHECK(core::get<"1">(l - S{7}) == -7);
+  constexpr std::int64_t two = 2;
+  CHECK((two * l) == L{2, 4, 6, 8, 10, 12});
+  CHECK((l * two) == L{2, 4, 6, 8, 10, 12});
+  static_assert(std::same_as<decltype(l + l), L>);
+  static_assert(std::same_as<decltype(two * l), L>);
 }
 
 namespace {
@@ -540,6 +562,9 @@ TEST_CASE("The sum operators leave other types alone") {
   static_assert(!has_plus<R, widget>);
   static_assert(!has_minus<widget, R>);
   static_assert(!has_plus<R, gadget>);
+  static_assert(!has_minus<gadget, R>);
+  static_assert(!has_plus<widget, R>);
+  static_assert(!has_minus<R, std::string>);
   static_assert(std::same_as<decltype(gadget{} + gadget{}), int>);
   static_assert(std::same_as<decltype(gadget{} - gadget{}), int>);
   static_assert(

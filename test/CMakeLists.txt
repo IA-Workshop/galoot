@@ -1573,6 +1573,34 @@ foreach(spelling IN ITEMS plus minus)
     ONE_ERROR FORBID "different algebras")
 endforeach()
 
+# core.linear_<spelling>_number_<case>: a multivector and a number, on
+# either side, of the multivector's scalar type or another, also into auto
+# r and with a class derived from a multivector, fail to compile with one
+# error, the message of the operation as written, on a first error line that
+# spells no layout by its masks.
+set(linear_number_plus "a + b: a multivector and a number have no sum${semicolon} make the number a multivector on the blade 1 and add that")
+set(linear_number_minus "a - b: a multivector and a number have no difference${semicolon} make the number a multivector on the blade 1 and subtract that")
+foreach(spelling IN ITEMS plus minus)
+  if(spelling STREQUAL "plus")
+    set(message "${linear_number_plus}")
+    set(other "${linear_number_minus}")
+    set(cases right left other_type left_other_type auto derived)
+  else()
+    set(message "${linear_number_minus}")
+    set(other "${linear_number_plus}")
+    set(cases right left other_type left_other_type derived)
+  endif()
+  foreach(case IN LISTS cases)
+    galoot_add_compile_fail_test(NAME linear_${spelling}_number_${case}
+      MODULE core COMPONENT linear
+      SOURCE core/linear_${spelling}_number_${case}_fail.cpp
+      MESSAGE "${message}"
+      ONE_ERROR FORBID "${other}" "different algebras" "different scalar types"
+        "the scalar is not of the multivector's scalar type"
+      FORBID_ON_FIRST_ERROR "detail::" "component<" "blade_set<")
+  endforeach()
+endforeach()
+
 # core.linear_<spelling>_<case>: a scalar of a type other than the
 # multivector's scalar type fails to compile with one error, the message of
 # the operation as written. The condition compares the two types, so that
