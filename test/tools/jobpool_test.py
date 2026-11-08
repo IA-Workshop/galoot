@@ -120,10 +120,10 @@ class Client:
 
 
 class Pool:
-    def __init__(self, tool, directory, name, idle_seconds=None):
+    def __init__(self, tool, directory, name, idle_seconds=None, fifo=None):
         self.tool = tool
         self.unit = f"galoot-jobpool-test-{os.getpid()}-{name}"
-        self.fifo = os.path.join(directory, f"{name}.fifo")
+        self.fifo = fifo or os.path.join(directory, f"{name}.fifo")
         if (self.unit == SHARED_UNIT or self.fifo
                 == f"/run/user/{os.getuid()}/jobserver.fifo"):
             raise SystemExit("refusing to test the shared pool")
@@ -189,7 +189,9 @@ def repair(tool, directory):
 
         give_extra(pool.fifo, 2)
         check("surplus drained", wait_for(lambda: free(pool.fifo) == 3), True)
-        check("tokens taken and left", take_and_leave(pool.fifo, 2), 2)
+        # All of them, so that a surplus left undrained cannot hide a
+        # missing write-back.
+        check("tokens taken and left", take_and_leave(pool.fifo, 3), 3)
         check("lost slots written back",
               wait_for(lambda: free(pool.fifo) == 3), True)
 
@@ -213,6 +215,57 @@ def repair(tool, directory):
         check("stop exit", result.returncode, 0)
         check("stopped", wait_for(lambda: not pool.active()), True)
         check("FIFO removed by stop", os.path.exists(pool.fifo), False)
+    finally:
+        pool.remove()
+
+
+def symlinked(tool, directory):
+    """A pool whose FIFO path runs through a symbolic link finds its clients
+    all the same, so it never writes back the slots a client holds."""
+    real = os.path.join(directory, "real")
+    link = os.path.join(directory, "link")
+    os.makedirs(real)
+    os.symlink(real, link)
+    pool = Pool(tool, directory, "symlinked",
+                fifo=os.path.join(link, "pool.fifo"))
+    try:
+        check("start exit, symlinked",
+              pool.run("start", "3", "--idle", "0").returncode, 0)
+        holder = Client(pool.fifo, 3)
+        check("holder took all, symlinked", holder.ready()[0], 3)
+        time.sleep(3.5)
+        check("nothing written back while a client holds a symlinked pool",
+              free(pool.fifo), 0)
+        if f"clients: {holder.pid} (" not in pool.run("status").stdout:
+            failures.append("status names the client of a symlinked pool")
+        holder.leave()
+        check("lost slots written back, symlinked",
+              wait_for(lambda: free(pool.fifo) == 3), True)
+    finally:
+        pool.remove()
+
+
+def count_fails(tool, directory):
+    """When the pool cannot count its clients, it acts as if one held the
+    FIFO: it writes nothing back and does not stop itself. The case runs a
+    copy of the tool whose count always fails."""
+    source = open(tool, encoding="utf-8").read()
+    anchor = "count_clients() {\n"
+    check("anchor of the count", source.count(anchor), 1)
+    broken = os.path.join(directory, "jobpool-count-fails")
+    with open(broken, "w", encoding="utf-8") as f:
+        f.write(source.replace(anchor, "count_clients() { return 1; }\n"
+                               "unused_count_clients() {\n"))
+    os.chmod(broken, 0o755)
+    pool = Pool(broken, directory, "countfails", idle_seconds=2)
+    try:
+        check("start exit, count fails",
+              pool.run("start", "3", "--idle", "1").returncode, 0)
+        check("tokens taken and left, count fails",
+              take_and_leave(pool.fifo, 2), 2)
+        time.sleep(6)
+        check("nothing written back when the count fails", free(pool.fifo), 1)
+        check("no idle stop when the count fails", pool.active(), True)
     finally:
         pool.remove()
 
@@ -258,7 +311,7 @@ def main(tool, directory):
         return SKIPPED
     shutil.rmtree(directory, ignore_errors=True)
     os.makedirs(directory)
-    for case in (arguments, repair, idle_stop):
+    for case in (arguments, repair, symlinked, count_fails, idle_stop):
         try:
             case(tool, directory)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:

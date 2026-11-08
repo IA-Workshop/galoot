@@ -853,16 +853,18 @@ set_tests_properties(tools.runlog_check PROPERTIES
 
 # tools.jobpool: the job pool's argument checks, the slots it writes back and
 # drains when no client holds it, and its idle stop, including a client that
-# opens the pool just as it decides to stop. It runs a pool of its own, under
-# its own unit name and with its FIFO in the build tree, never the machine's
-# shared pool; skipped where there is no user service manager.
+# opens the pool just as it decides to stop, a FIFO path through a symbolic
+# link, and a count of clients that fails. It runs pools of its own, under
+# their own unit names and with their FIFOs in the build tree, never the
+# machine's shared pool; skipped where there is no user service manager. It
+# waits for the pools' polls for about 25 seconds, so it is slow.
 add_test(NAME tools.jobpool
   COMMAND ${Python3_EXECUTABLE} -I
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/jobpool_test.py
     ${PROJECT_SOURCE_DIR}/tools/jobpool
     ${CMAKE_CURRENT_BINARY_DIR}/jobpool)
 set_tests_properties(tools.jobpool PROPERTIES
-  LABELS "tools;tools.jobpool"
+  LABELS "tools;tools.jobpool;slow"
   SKIP_RETURN_CODE 77
   TIMEOUT 180)
 
