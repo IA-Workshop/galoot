@@ -164,6 +164,20 @@ add_test(NAME tests.compile_fail_flags_rejects
 set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
   PROPERTIES LABELS "tests;tests.compile_fail")
 
+# tests.messages_pinned: every message of include/galoot/ (a static_assert
+# literal, a GALOOT_ASSERT message, an #error text) is required by a test of
+# this build tree, or is in internal_messages.txt with the reason no user
+# reaches it. The test reads this tree's own listing, as ctest --show-only
+# gives it with no preset's filter, so a test that a preset leaves out of
+# its run still counts; it builds nothing.
+add_test(NAME tests.messages_pinned
+  COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/catalogue pinned
+    ${PROJECT_SOURCE_DIR}/include/galoot ${CMAKE_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/internal_messages.txt
+    --ctest ${CMAKE_CTEST_COMMAND})
+set_tests_properties(tests.messages_pinned PROPERTIES
+  LABELS "tests;tests.catalogue")
+
 # tools.compile_fail_literal_in_path_*: a compile-fail test whose required
 # literal occurs in its own source path stops configuring, since any compile
 # error would show the literal; one outside the path passes.
