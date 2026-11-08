@@ -19,8 +19,10 @@ and exits 1 if there is any.
 import json
 import os
 import shutil
+import signal
 import subprocess
 import sys
+import time
 
 FIXTURE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mutate")
 RUN_LOG = "docs/agent/records/performance/runs.tsv"
@@ -687,6 +689,36 @@ def check_mode(repo):
               expected)
 
 
+def stopped_early(repo):
+    """SIGTERM while a mutant is applied, after its program was deleted:
+    the driver exits 143 with the files as committed and the selection's
+    programs built again, so that no later CTest run finds one missing.
+    Last of the cases, since the build the signal cuts short may still be
+    finishing when the driver exits."""
+    write_spec(repo, "stop", LIB_SELECTION,
+               [mutant(f"stop_{n}", TWICE_WRONG_AT_COMPILE_TIME)
+                for n in range(8)])
+    committed = fixture_text(LIB)
+    deleted = os.path.join(repo.tree("gcc-debug"), "check_test")
+    process = subprocess.Popen(
+        [sys.executable, "-I", "tools/mutate", "specs/stop.toml",
+         "--preset", "gcc-debug"], cwd=repo.top, env=repo.env,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    signalled = False
+    deadline = time.monotonic() + 120
+    while process.poll() is None and time.monotonic() < deadline:
+        if repo.read(LIB) != committed and not os.path.exists(deleted):
+            process.send_signal(signal.SIGTERM)
+            signalled = True
+            break
+        time.sleep(0.005)
+    status = process.wait(timeout=300)
+    check("stopped: signalled while a mutant was applied", signalled, True)
+    check("stopped: exit", status, 128 + signal.SIGTERM)
+    check_restored(repo, "stopped")
+    check_rebuilt(repo, "stopped", ["gcc-debug"])
+
+
 def main(tools, directory):
     tools = os.path.realpath(tools)
     try:
@@ -696,7 +728,7 @@ def main(tools, directory):
         return 1
     for case in (refusals, failing_baselines, main_run,
                  rows_in_spec_order, restore_between_files, library_guard,
-                 runtime_mode, check_mode):
+                 runtime_mode, check_mode, stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
