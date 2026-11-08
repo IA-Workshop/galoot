@@ -68,18 +68,19 @@ int main() {
   using Line = rga3::Line<double>;
   using Motor = rga3::Motor<double>;
 
-  // The join of two points is the line through them, here the z axis. It
-  // has a layout of its own, which converts to a Line explicitly.
+  // The join of two points is the line through them, here the z axis, with
+  // the direction up - origin = (0, 0, 2). It has a layout of its own, which
+  // converts to a Line explicitly.
   const Point origin{0, 0, 0, 1};
-  const Point up{0, 0, 1, 1};
+  const Point up{0, 0, 2, 1};
   const Line z_axis{origin ^ up};
 
   // A quarter turn about the z axis, then a move by (1, 2, 3). rotation
-  // needs an axis whose direction has length 1, as the z axis's (0, 0, 1)
-  // does here. compose(second, first) chains the two into one motor; like
-  // the join, its result has a layout of its own and converts to a Motor
-  // with braces, so const Motor motion = core::compose(move, turn); would
-  // not compile.
+  // divides the axis by the length of its direction, so the distance
+  // between the two points does not change the turn. compose(second, first)
+  // chains the two into one motor; like the join, its result has a layout of
+  // its own and converts to a Motor with braces, so
+  // const Motor motion = core::compose(move, turn); would not compile.
   const Motor turn = rga3::rotation(z_axis, std::numbers::pi / 2);
   const Motor move = rga3::translation(1.0, 2.0, 3.0);
   const Motor motion{core::compose(move, turn)};
@@ -98,13 +99,12 @@ unqualified, by argument-dependent lookup, but `translation` takes plain
 numbers and must be qualified, and an unqualified `transform` in a scope
 with `using namespace std::ranges` finds `std::ranges::transform` instead.
 
-`rotation` does not check its axis. The line p ^ q through two points of
-weight 1 has the direction q - p, so unless p and q are 1 apart, divide the
-line's six coefficients by the length of q - p before the call. About a
-direction of another length L, the motor turns by 2 atan(L tan(θ/2)) in
-place of θ and multiplies the weight of what it moves by
-L² sin²(θ/2) + cos²(θ/2): an axis of length 2 makes a quarter turn into a
-turn of about 127 degrees.
+`rotation` divides its axis by the length of the axis's direction, so the
+line p ^ q through any two distinct points turns by θ, however far apart
+they are. The axis must be a line, its direction and moment orthogonal, as
+every join of two points is; a `Line` written by its six coefficients must
+meet this itself. Its direction must not be zero: the join p ^ p gives
+coefficients that are infinite or not a number. Neither is checked.
 
 Over an integer scalar type every result is exact, and the same operations
 run at compile time. The meet `&` intersects a line and a plane.
