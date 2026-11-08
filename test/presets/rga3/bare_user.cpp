@@ -1,4 +1,4 @@
-// A user of the rga3 model with no build system, who adds the headers to a
+// A user of the rga3 preset with no build system, who adds the headers to a
 // project and nothing else: rga3.bare_compile compiles this file with only
 // -std=c++23 -pedantic-errors -I include. It joins two points into a line,
 // meets the line with a plane, and moves a point by a translator and a

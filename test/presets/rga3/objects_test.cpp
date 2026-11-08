@@ -1,4 +1,4 @@
-// Tests of the objects of the rga3 model, galoot/presets/rga3.hpp: the
+// Tests of the objects of the rga3 preset, galoot/presets/rga3.hpp: the
 // algebra tag, the layouts of a point, line, plane, motor, and flector, the
 // alias templates that name their types, and the facts of rigid(3) that
 // those types carry: the weight of a point, the direction and moment of a
@@ -10,7 +10,7 @@
 // its generators in the order of their product, so e41 = -e14, e31 = -e13,
 // e423 = +e234, e431 = -e134, e412 = +e124, and e321 = -e123. The expected
 // layouts are written here from those names as masks and signs, never read
-// from the model, and the expected values are worked out by hand from the
+// from the preset, and the expected values are worked out by hand from the
 // definitions: a point (x, y, z, w) on e1, e2, e3, e4; a line with its
 // direction on e41, e42, e43 and its moment on e23, e31, e12; a plane with
 // its normal on e423, e431, e412 and its offset on e321; a motor on e41,
@@ -139,7 +139,7 @@ template <auto Value>
 constexpr auto as_template_argument = Value;
 
 // The reference's rationals as the test rational, and its points and lines
-// as the model's types over it.
+// as the preset's types over it.
 rational scalar(const golden::rational& v) {
   return rational{v.numerator, v.denominator};
 }
@@ -203,13 +203,13 @@ TEST_CASE("the rga3 layouts hold the oriented blades of their names") {
   check(flector_names);
 }
 
-// Reference: contract: the algebra tag of the model holds rigid(3), which
+// Reference: contract: the algebra tag of the preset holds rigid(3), which
 //   is R(3, 0, 1), and the types Point<T>, Line<T>, Plane<T>, Motor<T>, and
 //   Flector<T> are the multivectors of that algebra on the five layouts with
 //   the scalar T given, which has no default, so Point<float> and
 //   Point<double> are distinct types that both name their scalar and their
 //   algebra
-TEST_CASE("the rga3 types are multivectors of rigid(3) on the model's "
+TEST_CASE("the rga3 types are multivectors of rigid(3) on the preset's "
           "layouts") {
   static_assert(rga3::algebra::value == core::rigid<3>());
   static_assert(rga3::algebra::value == core::R<3, 0, 1>());

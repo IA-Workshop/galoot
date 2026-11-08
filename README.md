@@ -9,7 +9,9 @@ the same code runs in a constant expression and at run time, over any scalar
 type that has ring arithmetic: `int`, `float`, `double`, or a type of your
 own.
 
-On top of the core sits `rga3`, the rigid geometric algebra of three
+On top of the core sit the algebra presets, named algebras built on the
+core's public interface as you could build your own. The first, `rga3` in
+namespace `galoot::presets::rga3`, is the rigid geometric algebra of three
 dimensions, R(3, 0, 1). It names the objects of that algebra (`Point`,
 `Line`, `Plane`, and the `Motor` and `Flector` that move them) and stores
 them in the layouts of Eric Lengyel's rigid geometric algebra
@@ -22,15 +24,15 @@ Galoot is in early development, and its interface may still change.
 ## Using Galoot
 
 Galoot is headers alone, so there is nothing to build. Add `include/` to
-your include path, compile as C++23, and include the model or the core:
+your include path, compile as C++23, and include the preset or the core:
 
 ```text
-#include <galoot/presets/rga3.hpp>   // the rga3 model, and through it the core
-#include <galoot/core.hpp>   // the core alone
+#include <galoot/presets/rga3.hpp>   // the rga3 preset, and through it the core
+#include <galoot/core.hpp>           // the core alone
 ```
 
-With CMake, add the source tree and link the target you use, `galoot::presets::rga3`
-or `galoot::core`:
+With CMake, add the source tree and link the target you use,
+`galoot::presets::rga3` or `galoot::core`:
 
 ```text
 add_subdirectory(galoot)
@@ -154,7 +156,7 @@ int main() {}
 ```
 
 To print a value, include `<galoot/core/format.hpp>`, which neither
-`rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
+`presets/rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
 compile. A value then prints as each coefficient on its blade's name, and a
 specification such as `{:.1f}` applies to each coefficient:
 

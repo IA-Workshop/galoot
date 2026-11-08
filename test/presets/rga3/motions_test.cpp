@@ -1,4 +1,4 @@
-// Tests of the motions of the rga3 model, galoot/presets/rga3.hpp: rotation(l,
+// Tests of the motions of the rga3 preset, galoot/presets/rga3.hpp: rotation(l,
 // theta), which builds the rotor (l / |v|) sin(theta/2) + antiscalar
 // cos(theta/2), with |v| the length of the line's direction, and
 // translation(dx, dy, dz), which builds half of d = (dx, dy, dz) on e23,
@@ -56,7 +56,7 @@ T ratio(std::int64_t n, std::int64_t d = 1) {
 }
 
 // The reference's rationals as the test rational, and its points and lines
-// as the model's types over it.
+// as the preset's types over it.
 rational scalar(const golden::rational& v) {
   return rational{v.numerator, v.denominator};
 }
@@ -93,7 +93,7 @@ auto bits_of(const rga3::Motor<T>& q) {
 }
 
 // Whether rotation and translation accept these arguments, by a qualified
-// call, and whether an unqualified call finds them from outside the model's
+// call, and whether an unqualified call finds them from outside the preset's
 // namespace, by argument-dependent lookup.
 template <class L, class S>
 concept can_call_rotation = requires(L l, S s) { rga3::rotation(l, s); };
@@ -618,7 +618,7 @@ TEST_CASE_TEMPLATE("rotation(l, pi) about a line off the axes whose direction "
 //   whether such a call is valid is told yes, as the library documents,
 //   while a number is no axis and a pointer is no scalar of a translation,
 //   and rotation is found by an unqualified call, since its Line argument
-//   names the model's namespace, and translation, whose arguments are plain
+//   names the preset's namespace, and translation, whose arguments are plain
 //   scalars, only by a qualified one
 TEST_CASE("the rotation and translation overloads take the right arguments") {
   using std::int64_t;

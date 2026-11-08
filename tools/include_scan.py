@@ -1,6 +1,6 @@
-"""Check the headers of the core and the rga3 model for what they include
+"""Check the headers of the core and the rga3 preset for what they include
 and how they are named. The core must build from its headers alone, with
-nothing but the standard library, and the model from the standard library
+nothing but the standard library, and the preset from the standard library
 and the core's headers, so a stray include is a defect even when the machine
 happens to provide the header.
 
@@ -13,14 +13,14 @@ there is any, else 0:
 
 - an include that names neither a C++23 standard header nor an existing
   header of a module the including module may use: the core uses only its
-  own headers, and the model the core's and its own (quoted includes
+  own headers, and the preset the core's and its own (quoted includes
   resolve against the including file's directory);
 - an include of an existing header of a module that the including module may
-  not use, such as a core header that includes a model header;
+  not use, such as a core header that includes a preset header;
 - an #include_next, whose target depends on the order of the user's include
   paths, and a computed #include, whose target this scan cannot know;
 - a cycle among the headers of one module (no cycle can cross modules,
-  since the core includes no model header);
+  since the core includes no preset header);
 - an include guard not named from the path (galoot/core/bits.hpp has
   GALOOT_CORE_BITS_HPP), as an #ifndef and #define that open the file;
 - a header name that is not snake_case.hpp, and a file under
@@ -66,7 +66,7 @@ NAME = re.compile(r"^[a-z][a-z0-9_]*\.hpp$")
 MODULES = {
     "core": ("the core", ("core",),
              "a C++23 standard header or a core header"),
-    "presets/rga3": ("the rga3 model", ("core", "presets/rga3"),
+    "presets/rga3": ("the rga3 preset", ("core", "presets/rga3"),
                      "a C++23 standard header, a core header, or an rga3 "
                      "header"),
 }

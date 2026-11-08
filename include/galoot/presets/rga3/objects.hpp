@@ -21,7 +21,7 @@
 // The types are the core's multivectors, and every operation on them is the
 // core's, found by argument-dependent lookup: wedge (^) joins, antiwedge (&)
 // meets, transform moves an object by a motor or a flector, and compose
-// chains motions. A result whose layout is not one of the model's, such as
+// chains motions. A result whose layout is not one of the preset's, such as
 // p ^ q, converts to the named type explicitly (Line{p ^ q}).
 //
 // Under `using namespace std::ranges` or `using namespace std::views`, an
@@ -35,9 +35,9 @@
 
 namespace galoot::presets::rga3 {
 
-/// The algebra of the model, rigid(3) = R(3, 0, 1): e1, e2, e3 are Euclidean
-/// and e4 is the null projective generator. Every type of the model is a
-/// multivector of this tag, so a diagnostic names it
+/// The algebra of the preset, rigid(3) = R(3, 0, 1): e1, e2, e3 are
+/// Euclidean and e4 is the null projective generator. Every type of the
+/// preset is a multivector of this tag, so a diagnostic names it
 /// galoot::presets::rga3::algebra.
 struct algebra {
   /// The metric of rigid(3).

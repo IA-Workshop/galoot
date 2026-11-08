@@ -1,4 +1,4 @@
-// Tests of the rga3 model against chains of joint motions: each joint is a
+// Tests of the rga3 preset against chains of joint motions: each joint is a
 // turn about z, a move along z, a move along x, and a turn about x, built
 // as rga3 Motors and composed, and a chain of three to six joints moves
 // points as the product of the joints' 4 by 4 matrices, exactly over the

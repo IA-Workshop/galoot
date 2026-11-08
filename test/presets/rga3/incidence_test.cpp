@@ -1,4 +1,4 @@
-// Tests of the rga3 model against incidences of points, lines, and planes:
+// Tests of the rga3 preset against incidences of points, lines, and planes:
 // the planes that wedge (^) joins, the points and lines that antiwedge (&)
 // meets, and the scalars and planes that are zero exactly when two objects
 // are incident, each compared exactly over the test rational with values
@@ -10,7 +10,7 @@
 // with its normal (gx, gy, gz) on e423, e431, e412 and its offset gw on
 // e321, the orders of Lengyel's rigid geometric algebra
 // (rigidgeometricalgebra.org). A join or meet whose layout is not one of the
-// model's converts to the named type explicitly.
+// preset's converts to the named type explicitly.
 #include <cstddef>
 
 #include <galoot/presets/rga3.hpp>

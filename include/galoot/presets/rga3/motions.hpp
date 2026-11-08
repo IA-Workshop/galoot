@@ -16,7 +16,7 @@
 //
 // rotation is found from any namespace by argument-dependent lookup, through
 // its Line argument. translation takes plain scalars, which name no
-// namespace of the model, so it must be called as
+// namespace of the preset, so it must be called as
 // galoot::presets::rga3::translation.
 
 #include <cmath>
@@ -152,8 +152,8 @@ Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
 /// are exact. dx, dy, and dz have one type; a mix, such as
 /// translation(1.0, 0, 2), is rejected.
 ///
-/// The arguments are plain scalars, which name no namespace of the model, so
-/// an unqualified call does not find this function: write
+/// The arguments are plain scalars, which name no namespace of the preset,
+/// so an unqualified call does not find this function: write
 /// galoot::presets::rga3::translation(dx, dy, dz).
 template <core::ring_scalar T>
   requires(!std::integral<T>)

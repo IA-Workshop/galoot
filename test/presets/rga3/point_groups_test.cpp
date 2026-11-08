@@ -1,4 +1,4 @@
-// Tests of the rga3 model against the 32 crystallographic point groups: each
+// Tests of the rga3 preset against the 32 crystallographic point groups: each
 // group is generated at run time from its rational generators by compose,
 // over the test rational, and its elements are counted and matched one to
 // one with the reference's 3 by 3 matrices by how they move points.
