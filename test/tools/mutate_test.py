@@ -434,6 +434,27 @@ def refusals(repo):
     repo.write(LIB, committed)
     check_restored(repo, "dirty")
 
+    # Under --runtime the run-time edit's file must be clean too: refused,
+    # and its uncommitted edit kept.
+    committed = fixture_text(CHECK)
+    dirty = committed + "// an edit not yet committed\n"
+    repo.write(CHECK, dirty)
+    write_spec(repo, "dirty_runtime", LIB_SELECTION,
+               [mutant("m", TWICE_WRONG_AT_COMPILE_TIME)],
+               runtime=[{"file": CHECK, "anchor": "static_assert(lib::twice(",
+                         "replacement": "static_assert(true || lib::twice(",
+                         "count": 2}])
+    rows = len(repo.mutant_rows())
+    result = repo.mutate("dirty_runtime", "--runtime")
+    check("dirty run-time file: exit", result.returncode, 2)
+    check("dirty run-time file: the edit is kept", repo.read(CHECK), dirty)
+    check("dirty run-time file: no driver row in the run log",
+          len(repo.mutant_rows()), rows)
+    check("dirty run-time file: nothing built",
+          set(repo.program_times().values()), {None})
+    repo.write(CHECK, committed)
+    check_restored(repo, "dirty run-time file")
+
 
 def failing_baselines(repo):
     """A baseline that fails refuses with exit 2, and no mutant runs."""
@@ -527,6 +548,20 @@ def main_run(repo):
             check_row(f"rerun {name}", row, expected_row(name, "gcc-debug"))
     check("reruns: the clang-debug output is untouched",
           repo.read("specs/out/main-clang-debug.tsv"), clang_before)
+
+
+def rows_in_spec_order(repo):
+    """A run that adds a mutant missing from the output file puts its row in
+    spec order, not after the rows already there."""
+    write_spec(repo, "order", LIB_SELECTION,
+               [mutant("first", TWICE_WRONG_AT_RUN_TIME),
+                mutant("second", TWICE_SAME_VALUE)])
+    repo.mutate("order", "--preset", "gcc-debug", "second")
+    repo.mutate("order", "--preset", "gcc-debug", "first")
+    check_restored(repo, "order")
+    _, rows = repo.output("order", "gcc-debug")
+    check("order: rows in spec order after the later mutant ran first",
+          [r.get("mutant") for r in rows], ["first", "second"])
 
 
 def restore_between_files(repo):
@@ -660,8 +695,8 @@ def main(tools, directory):
         print(f"setup: {error}")
         return 1
     for case in (refusals, failing_baselines, main_run,
-                 restore_between_files, library_guard, runtime_mode,
-                 check_mode):
+                 rows_in_spec_order, restore_between_files, library_guard,
+                 runtime_mode, check_mode):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
