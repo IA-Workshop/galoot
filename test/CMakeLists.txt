@@ -2174,7 +2174,7 @@ function(motions_rejects case message)
     SOURCE rga3/${case}_fail.cpp MESSAGE "${message}" ONE_ERROR ${ARGN}
     FORBID_ON_FIRST_ERROR "detail::" "apply:")
 endfunction()
-set(rotation_no_sin "rotation: sin and cos of the angle do not give values of this scalar type, which is not a floating type${semicolon} use Line<double> or Line<float>, or build the Motor from its coefficients, the line times sin(theta/2) and cos(theta/2) on e1234")
+set(rotation_no_sin "rotation: sin and cos of the angle do not give values of this scalar type, which is not a floating type${semicolon} use Line<double> or Line<float>, or build the Motor from its coefficients, the unitized line times sin(theta/2) and cos(theta/2) on e1234")
 set(rotation_not_line "rotation: the axis is not an rga3 Line${semicolon} give a Line<T>, and convert a join such as p ^ q with Line<T>{p ^ q}")
 set(rotation_angle_type "rotation: the angle is not of the line's scalar type, the second of the two types shown${semicolon} give it in radians as that type, as std::numbers::pi / 2 over double or std::numbers::pi_v<float> / 2 over float")
 set(translation_integer "translation: halving d would truncate in an integer scalar type${semicolon} use a floating or exact rational scalar type")
