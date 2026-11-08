@@ -6,17 +6,20 @@ DoD-19 of plan 0001 asks for "a ratified misuse catalogue (mixed algebras, unkno
 
 ## How it was made and how to check it
 
-`catalogue/scan.py` reads every `static_assert` literal, `GALOOT_ASSERT` message, and `#error` text of `include/galoot/core/`, and the commands of every test in CTest's JSON listing of a configured tree (`ctest --show-only=json-v1`), one listing per compiler, and says which tests pin each message. Its rules are in its docstring; `python3 -I scan.py --self-test` runs it on the fixtures beside it, which fail if FORBID literals are counted, if a test marked WILL_FAIL is counted, if the character that stands for `;` is not read as `;`, if comments or the macro's own definition are read as assertions, or if a literal that is a part of several messages is counted for one. Its output at `7c07cc4` is `catalogue/scan-output.md`. With `--check misuse-catalogue.md`, it checks that every test named in backquotes here is a test of both listings.
+`tools/catalogue` (until plan 0029 part C1, the scan `catalogue/scan.py` in this directory, which read only `include/galoot/core/`) reads every `static_assert` literal, `GALOOT_ASSERT` message, and `#error` text of the headers under an include root, and the commands of every test in CTest's JSON listing of a configured tree (`ctest --show-only=json-v1`), one listing per compiler, and says which tests pin each message. Its rules are in its docstring. `tools.catalogue` tests it on the fixtures in `test/tools/catalogue/`: it fails if FORBID literals are counted, if a test marked WILL_FAIL is counted, if the character that stands for `;` is not read as `;`, if comments or the macro's own definition are read as assertions, if a literal that is a part of several messages is counted for one, if a header below the root is missed, or if the internal list's checks accept a missing message, a stale entry, or a pinned entry. Its output at `7c07cc4`, from the scan before the move, is `catalogue/scan-output.md`. With `--check misuse-catalogue.md`, it checks that every test named in backquotes here is a test of both listings; that step reads this record, so it stays a record step and is not a CTest.
 
-Commands, from the worktree root, after configuring `gcc-debug` and `clang-debug`:
+`tests.messages_pinned` runs in every build preset: `tools/catalogue pinned` over `include/galoot/` against its own tree's listing, failing on a message that no test pins and that `test/internal_messages.txt` leaves out, or on an entry of that list that no header holds or that a test pins. The list holds the messages of the last section below, with their reasons. Since it reads `include/galoot/`, the rga3 preset's six messages are in its count; this catalogue gains their section when it is next regenerated.
+
+Commands, from the worktree root, after configuring `gcc-debug` and `clang-debug` (a listing may be the build tree itself, which the tool reads with `ctest`, or a file that `ctest --show-only=json-v1` wrote):
 
 ```bash
-ctest --test-dir build/gcc-debug --show-only=json-v1 > gcc-debug.json
-ctest --test-dir build/clang-debug --show-only=json-v1 > clang-debug.json
-python3 -I docs/agent/records/diagnostics/catalogue/scan.py include/galoot/core \
-  gcc-debug=gcc-debug.json clang-debug=clang-debug.json \
+tools/catalogue report include/galoot \
+  gcc-debug=build/gcc-debug clang-debug=build/clang-debug \
   --check docs/agent/records/diagnostics/misuse-catalogue.md
+tools/catalogue pinned include/galoot build/gcc-debug test/internal_messages.txt
 ```
+
+The report names places by their path from the root (`core/bits.hpp:41`), where the scan at `7c07cc4` named them from `include/galoot/core/` (`bits.hpp:41`).
 
 Result at `7c07cc4`: 153 distinct messages; 133 pinned by at least one test in each listing, the same tests in both; 20 pinned by none, each listed below with its reason; one assertion without a message (`blade_set.hpp:86`, an internal invariant). Every compile-fail test runs in every preset, so each GCC preset and each Clang preset runs it; where the required text differs by compiler, the test's CMake chooses it by `CMAKE_CXX_COMPILER_ID`, and the row says so.
 
@@ -55,9 +58,11 @@ All pinned on both compilers; the full message of each is in `catalogue/scan-out
 | Formatting | a scalar without a `std::formatter`, also with a specification such as `{:.2f}`, an algebra of more than nine generators, a tag `names` entry that is not a blade, a blade named twice | `core.format_scalar_without_formatter`, `core.format_scalar_without_formatter_auto`, `core.format_scalar_without_formatter_print`, `core.format_scalar_without_formatter_spec`, `core.format_wide_algebra`, `core.format_wide_algebra_auto`, `core.format_names_not_e`, `core.format_names_bare_e`, `core.format_names_letter_index`, `core.format_names_index_zero`, `core.format_names_index_above_n`, `core.format_names_repeated_generator`, `core.format_names_twice`, `core.format_names_twice_opposite` |
 | Transform checks | a versor that does not act as one, exactly or within rounding; checking mode under `-ffast-math` or `-ffinite-math-only` | `core.transform_consteval_nonzero`, `core.transform_rounding_checking_infinite`, `core.transform_fast_math`, `core.transform_finite_math_only` |
 
-A test that requires "dot: ..." also passes on "antidot: ..." (and "wedge:" on "antiwedge:", "project:" on "antiproject:"), since the first is a part of the second. The scan counts such a literal for the message it equals; the misuse each source makes cannot produce the longer message, so no test is weakened by it, but a check that one message is not replaced by its longer twin would need a FORBID.
+A test that requires "dot: ..." also passes on "antidot: ..." (and "wedge:" on "antiwedge:", "project:" on "antiproject:"), since the first is a part of the second. The scan counts such a literal for the message it equals; the misuse each source makes cannot produce the longer message, so no test is weakened by it. Since plan 0029 part C1, the six tests of the short messages (`core.product_mixed_algebras_wedge`, `core.product_mixed_scalars_wedge`, `core.dual_mixed_algebras_dot`, `core.dual_mixed_scalars_dot`, `core.dual_mixed_algebras_project`, `core.dual_mixed_scalars_project`) also forbid the longer message of the same cause, so a short message replaced by its twin fails its test.
 
 ## Messages with no test, and why
+
+`test/internal_messages.txt` holds these messages with the same reasons, for `tests.messages_pinned`; a change to one changes the other.
 
 | Places | Message | Reason |
 | --- | --- | --- |
