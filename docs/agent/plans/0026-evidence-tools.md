@@ -369,4 +369,4 @@ The review (`records/reviews/2026-11-08-evidence-tools-review.md`, Opus 5.5, che
 
 - **The tools' mutants rerun** at `1775c22` on gcc-debug: all 33 killed (the 30 earlier and the three of m2 to m4), 6 min 56 s, the pool at 23 of 23 free before and after (`records/mutations/0026-tools/out/tools-gcc-debug.tsv`).
 
-- **Final merge checks**: P9 from new empty trees at the commit that records this section; the results are in the next records commit, which adds only their `gate:*` rows of `runs.tsv` and one line here.
+- **Final merge checks** at `b78c38d` (the merge of `develop` with plan 0028's claim), from new empty trees, clean tree, 11 `gate:*` rows at that revision with no dirty mark: gcc-debug, gcc-release, clang-debug, clang-release, clang-asan, lint 496 of 496; gcc-asan, clang-measure 488 of 488; `format-check`, the trace gate, and `tools/runlog check` pass; about 17 minutes (72, 100, 221, 67, 87, 168, 203, 84 s). The pool read 22 of 23 free before (another unit's slot) and 23 of 23 after. The commit after `b78c38d` adds only these rows and this line.
