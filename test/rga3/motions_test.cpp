@@ -567,6 +567,6 @@ TEST_CASE("the rotation and translation overloads take the right arguments") {
 
   static_assert(finds_rotation<rga3::Line<double>, double>);
   static_assert(!finds_translation<double, double, double>);
-  CHECK(rotation(rga3::Line<double>{}, 0.0) ==
+  CHECK(rotation(rga3::Line<double>{0, 0, 1, 0, 0, 0}, 0.0) ==
         rga3::Motor<double>{0, 0, 0, 1, 0, 0, 0, 0});
 }
