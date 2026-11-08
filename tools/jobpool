@@ -126,6 +126,16 @@ print(count)
 PY
 }
 
+# Succeeds only when the count of the clients of FIFO $1, leaving out pid $2
+# and its descendants, is exactly 0. A count that fails, or prints anything
+# else, is taken as a client, so the service neither writes back slots nor
+# stops itself on a count it could not make.
+no_clients() {
+  local count
+  count=$(count_clients "$1" "$2" 3>&-) || return 1
+  [[ $count == 0 ]]
+}
+
 # The service body: makes the FIFO, fills it with $2 tokens, and then polls
 # every $4 seconds. At each poll that finds no client (no process but this
 # one and its children holding the FIFO), it brings the FIFO back to $2
@@ -142,7 +152,7 @@ serve() {
   exec 3<>"$fifo"
   printf "%*s" "$n" "" | tr " " "+" >&3
   while sleep "$poll" 3>&-; do
-    if [[ $(count_clients "$fifo" $$ 3>&-) -gt 0 ]]; then
+    if ! no_clients "$fifo" $$; then
       quiet=$SECONDS
       continue
     fi
@@ -152,7 +162,7 @@ serve() {
     if ((idle > 0 && SECONDS - quiet >= idle)); then
       mv -- "$fifo" "$fifo.stopping"
       sleep 1 3>&-  # lets an open that found the old path complete
-      if [[ $(count_clients "$fifo.stopping" $$ 3>&-) -eq 0 ]]; then
+      if no_clients "$fifo.stopping" $$; then
         rm -f -- "$fifo.stopping"
         exit 0
       fi
