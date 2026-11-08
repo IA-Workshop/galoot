@@ -12,13 +12,15 @@ Run by the WU15 implementer (Claude, agent, Opus 5.5) in the worktree of `featur
 - the 18 format mutants at `ca81991`, whose format.hpp is that of `02a7580`, the final one;
 - the 19 part 3 mutants at `17c9baa`.
 
+After the hci reading, at `1d494bb` (the scalar's formatter judged by `std::semiregular`, and four messages reworded), the same implementer ran again on both presets every format mutant, a new one, `scalar_formatter_by_formattable`, which restores the `std::formattable` test, and the four part 3 mutants whose anchors or messages changed: `other_scalar_rejection_removed`, `other_source_messages_swapped`, `plus_and_minus_messages_swapped`, and `not_an_algebra_rejection_removed`. Their rows in `out/` are from that run; the other part 3 rows are from `17c9baa`. `zeros_skipped` first failed to build, because its `==` does not compile for the new test's scalar, `ratio`, which has none. That was a fault of the mutant, so it now skips zeros only for a scalar with `==`, and was run again on both presets.
+
 One format mutant, `canonical_index_order_reversed`, first failed to build through a dangling view in the mutant itself. That was a fault of the mutant, not a kill, so it was rewritten and run again on gcc-debug; clang-debug ran only the rewritten form.
 
 ## Result
 
 | Mutants | gcc-debug | clang-debug |
 | --- | --- | --- |
-| format.hpp (18) | 18 killed | 18 killed |
+| format.hpp (19) | 19 killed | 19 killed |
 | mv.hpp, linear.hpp, blade_set.hpp (19) | 18 killed, 1 equivalent | 18 killed, 1 equivalent |
 | scan.py (9) | 9 killed (Python) | — |
 
@@ -31,6 +33,7 @@ Format mutants and what killed them:
 | form (`zeros_skipped`, `canonical_order_for_layout_order`, `specification_not_forwarded`, `colon_changed`, `comma_changed`, `empty_layout_writes_nothing`) | `core.format` |
 | each rejection removed, and the two message swaps | the compile-fail tests of that rejection |
 | `names_checked_as_none` | every `core.format_names_*` test |
+| `scalar_formatter_by_formattable` | `core_format_test` fails to build: its accept test of a scalar whose formatter takes `std::format_context&` meets the rejection's message |
 
 Part 3 mutants and what killed them:
 

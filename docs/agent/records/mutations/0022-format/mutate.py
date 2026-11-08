@@ -81,7 +81,8 @@ MESSAGE_B = ('"format: names such as e123 have one digit per "\n'
              '                           "n up to 9; format its coefficients instead"')
 MESSAGE_C = ('"format: an entry of the algebra tag\'s names is "\n'
              '                           "not a blade of the algebra; write 1, or e and "\n'
-             '                           "distinct indices from 1 to n, as in e41"')
+             '                           "distinct indices from 1 to n, the number of "\n'
+             '                           "generators, as in e41"')
 MESSAGE_D = ('"format: the algebra tag\'s names name one blade "\n'
              '                           "twice, perhaps in both orientations; name each "\n'
              '                           "blade once"')
@@ -104,7 +105,9 @@ MUTANTS = {
     # Form.
     "zeros_skipped": (F, "format", [
         ("      for (const char c : std::string_view{i == 0 ? \"\" : \", \"}) {",
-         "      if (x.coefficients[i] == T{}) {\n        continue;\n      }\n"
+         "      if constexpr (std::equality_comparable<T>) {\n"
+         "        if (x.coefficients[i] == T{}) {\n          continue;\n        }\n"
+         "      }\n"
          "      for (const char c : std::string_view{i == 0 ? \"\" : \", \"}) {",
          None)]),
     "canonical_order_for_layout_order": (F, "format", [
@@ -135,6 +138,11 @@ MUTANTS = {
     "names_messages_swapped": (F, "format", [
         (MESSAGE_C, SWAP, None), (MESSAGE_D, MESSAGE_C, None),
         (SWAP, MESSAGE_D, None)]),
+    # The scalar's formatter judged by std::formattable again, which a
+    # formatter written for std::format_context alone fails.
+    "scalar_formatter_by_formattable": (F, "format", [
+        ("concept has_formatter = std::semiregular<std::formatter<T, char>>;",
+         "concept has_formatter = std::formattable<T, char>;", None)]),
     "names_checked_as_none": (F, "format", [
         ("    case NameError::no_names:\n      return TagNamesFault::none;\n"
          "    case NameError::repeated_blade:\n      return TagNamesFault::named_twice;\n"
@@ -148,7 +156,7 @@ L = "linear.hpp"
 B = "blade_set.hpp"
 OTHER = "requires(!std::same_as<OtherAlg, Alg> || !std::same_as<U, T>)"
 MV_ALGEBRA = ('"mv: the source is in another algebra; a "')
-MV_SCALAR = ('"mv: the source has another scalar type; a "')
+MV_SCALAR = ('"mv: the source has another scalar type, and a "')
 NUMBER = "concept number_operand = !multivector_or_derived<S> && ring_scalar<S>;"
 PLUS = '"a + b: a multivector and a number have no sum; make "'
 MINUS = '"a - b: a multivector and a number have no "'
@@ -191,17 +199,17 @@ MUTANTS.update({
         ("static_assert(false, " + MINUS, "static_cast<void>(" + MINUS, [1])]),
     "plus_and_minus_messages_swapped": (L, "linear", [
         ('"a + b: a multivector and a number have no sum; make "\n'
-         '                       "the number a multivector on the blade 1 and add "\n'
-         '                       "that"', SWAP, [0, 1]),
+         '                       "the number a multivector on the scalar blade 1 and "\n'
+         '                       "add that"', SWAP, [0, 1]),
         ('"a - b: a multivector and a number have no "\n'
          '                       "difference; make the number a multivector on the "\n'
-         '                       "blade 1 and subtract that"',
+         '                       "scalar blade 1 and subtract that"',
          '"a + b: a multivector and a number have no sum; make "\n'
-         '                       "the number a multivector on the blade 1 and add "\n'
-         '                       "that"', [0, 1]),
+         '                       "the number a multivector on the scalar blade 1 and "\n'
+         '                       "add that"', [0, 1]),
         (SWAP, '"a - b: a multivector and a number have no "\n'
                '                       "difference; make the number a multivector on the "\n'
-               '                       "blade 1 and subtract that"', [0, 1])]),
+               '                       "scalar blade 1 and subtract that"', [0, 1])]),
     # blades on a tag that is not an algebra.
     "blades_constrained_by_metric_like": (B, "blade_set", [
         (BLADES_HEAD, "template <metric_like Alg, detail::name_list Names>", None)]),
