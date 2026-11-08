@@ -40,6 +40,9 @@ namespace galoot::rga3 {
 /// axis toward the y axis. theta has the line's scalar type exactly: 0.5
 /// over double, 0.5f over float.
 ///
+/// Cost: besides std::sin, std::cos, and halving theta, one std::sqrt, one
+/// division, by the length, nine multiplications, and two additions.
+///
 /// Requires: T is a floating type, since the coefficients need std::sin,
 /// std::cos, and std::sqrt. l must be a line, its direction and moment
 /// orthogonal (v . m = 0, as every join of two points is); this is not
