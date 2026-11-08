@@ -71,10 +71,41 @@ Tests that judge this unit's own change, for the review request: `rga3.format` (
 
 `format-check` exit 0; the trace gate passes (items with no test: 6.1 to 6.4, as before); `tools/runlog check` reports no removed row, so no prune; `tools/include_scan.py include` reports nothing; `git diff develop -- include/galoot/core` is empty. Not run: the compile-record copy of decision 0080, deferred to the M4 gate as WU16 deferred it.
 
-### Open for the owner
+### Open for the owner (at `b9e6fb5`)
 
 1. The wording of the STYLE S6 draft and of CONVENTIONS 1.15 (decision 0213 items 7 and 8).
 2. The remaining uses of "preset" for a CMake configuration in `tools/`, the agent role files, and one comment of `include/galoot/core/assert.hpp` (decision 0213 item 9).
 3. Whether test names and labels stay `rga3.*` (decision 0213 item 3).
 
 Agent cost: one implementer session, about 140 tool calls; token counts are not visible to the agent.
+
+## Outcome, continued (2026-11-08, the closing session)
+
+### Blind review and its resolution (W5)
+
+The blind review (`records/reviews/2026-11-08-presets-rga3-review.md`, blind-reviewer role, Opus 5.5, of `b9e6fb5`) approves with six non-blocking findings. Its commit `f6b8b52` on `records/review-presets-rga3` is cherry-picked with `-x` as `0774ce8`; its scratch run rows are not carried over.
+
+| Finding | Resolution | Commit |
+| --- | --- | --- |
+| L1, decision 0213 item 6 counts ten names that differ from the canonical ones | Eight do (e41, e42, e43, e31, e423, e431, e412, e321); corrected, with a "Corrected" line in the record | `3c10234` |
+| L2, item 2 counts five rga3 programs with `DIRECTORY` | Six, `format` among them; corrected | `3c10234` |
+| L3, the S6 draft says "the core's public headers", but `motions.hpp` includes `assert.hpp` | The draft and its copy in item 7 say "the core's headers" | `8f2c532` |
+| L4, decision 0211 item 1 still prescribes `galoot/<model>/` | Decision 0213 now says it amends 0211 item 1, and 0211 carries a note; its rulings are not rewritten. CONVENTIONS' "model" wording (line 14 and section 5's "Component: model (rga3)") is left for the owner | `3c10234` |
+| L5, the README does not say why a join prints `e24: -2` where its Line prints `e42: 2` | One sentence after the printing example; no example changes; `tools/readme_examples.py check` passes | `0b889a4` |
+| L6, the header-set rule and the scan name only `presets/rga3` | Recorded below, with a proposed check; not implemented (C12) | this record |
+
+No code under `include/`, `test/`, `tools/`, or the build files changed after the review, so no delta review is needed (decision 0094); the README sentence is user prose, outside every example the checker compiles. Two comments still say the preset is written on "the core's public" headers or interface, `CMakeLists.txt`'s comment above `galoot_presets_rga3` and `presets/rga3.hpp`'s first comment, while `motions.hpp` includes `assert.hpp`; they are left as they are, as is decision 0211 item 1's "on the core's public interface only", for the owner to read with L3.
+
+### Owner's confirmations (2026-11-08)
+
+The owner answered "Continue as recommended", relayed by the coordinator: the STYLE S6 amendment, with "the core's headers", and CONVENTIONS 1.15 are confirmed, and their status lines, the 1.15 revision row, and decision 0213 no longer call them drafts (`84dd2c5`); test names and labels stay `rga3.*`; the record scripts keep their old paths until a rerun; CONVENTIONS' "model" wording and the remaining "preset" wording for build presets in `tools/`, `.claude/agents/`, and `include/galoot/core/assert.hpp` wait for the next governance and core pass.
+
+### A second preset and the header checks (L6)
+
+The root `CMakeLists.txt` assigns a header to `galoot_presets_rga3`'s header set only if its path matches `^include/galoot/presets/rga3(\.hpp$|/)`, and every other header under `include/galoot/` to `galoot_core`'s. `tools/include_scan.py`'s `MODULES` names `core` and `presets/rga3` only. So a future `include/galoot/presets/<other>.hpp`, or a header under `include/galoot/presets/<other>/`, falls into the core's header set until the check is extended: configuring stops with "not in galoot_core's header set", which points its author at the wrong target, and if the author adds it there, it is compiled and format-checked as a core header, and the include scan, which reads only its listed modules, reports nothing about it.
+
+Proposed for the next preset unit, not implemented here (C12, no such header exists):
+
+1. In the root `CMakeLists.txt`, match `^include/galoot/presets/([a-z0-9_]+)(\.hpp$|/)` and take the target `galoot_presets_<name>` from the capture; stop configuring with a message naming the expected target when no such target exists, and refuse any other header under `include/galoot/presets/` that matches no preset.
+2. In `tools/include_scan.py`, derive the preset modules from the directories under `include/galoot/presets/` (each may include the core's headers and its own), and report a header under `include/galoot/presets/` that belongs to no module, with a rejecting fixture for each.
+3. Keep `format-check` reading the union of every header set, as it does now for two.
