@@ -1153,6 +1153,25 @@ foreach(case IN ITEMS lossy lossless)
   mv_rejects(conversion_implicit_${case} "${implicit_conversion}" ONE_ERROR
     FORBID "${mv_lossy}" "${mv_count}")
 endforeach()
+# core.mv_other_<cause>_<case>: a multivector of another scalar type, or of
+# another algebra, given to a constructor, in each spelling, onto another
+# layout, also one that would drop blades, of one blade, or of a class
+# derived from one, fails with one error that names the cause, on a first
+# error line that spells no layout by its masks. When both differ, the
+# algebra is told.
+set(mv_other_scalar "mv: the source has another scalar type${semicolon} a conversion between layouts keeps the scalar type, so convert the coefficients one by one")
+set(mv_other_algebra "mv: the source is in another algebra${semicolon} a conversion between layouts keeps the algebra, so give both types the same algebra tag")
+set(mv_conversion_internal_names "detail::" "component<" "blade_set<")
+foreach(case IN ITEMS brace paren cast auto layout lossy one_blade derived)
+  mv_rejects(other_scalar_${case} "${mv_other_scalar}" ONE_ERROR
+    FORBID "${mv_other_algebra}" "${mv_lossy}" "${mv_count}"
+    FORBID_ON_FIRST_ERROR ${mv_conversion_internal_names})
+endforeach()
+foreach(case IN ITEMS brace paren cast auto layout derived and_scalar)
+  mv_rejects(other_algebra_${case} "${mv_other_algebra}" ONE_ERROR
+    FORBID "${mv_other_scalar}" "${mv_lossy}" "${mv_count}"
+    FORBID_ON_FIRST_ERROR ${mv_conversion_internal_names})
+endforeach()
 
 # core.mv_apply_inexact_<scalar>: a product whose plan has a coefficient
 # that the scalar type cannot hold exactly: -(2^24 + 1) in float, 32767^4 in
