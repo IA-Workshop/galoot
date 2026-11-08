@@ -255,6 +255,11 @@ def check_failures(case, failures_cell, expected):
     to the build tree, and the error line starts at the location with the
     repository root removed."""
     entries = [entry.partition(": ") for entry in cells(failures_cell)]
+    # Sorted, so that the row does not depend on which job Ninja finished
+    # first.
+    check(f"{case}: build failures in sorted order",
+          [entry for entry in cells(failures_cell)],
+          sorted(cells(failures_cell)))
     check(f"{case}: number of build failures", len(entries), len(expected))
     for obj, kind, where in expected:
         found = [(name, rest) for name, _, rest in entries
