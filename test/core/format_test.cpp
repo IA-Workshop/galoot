@@ -567,7 +567,7 @@ TEST_CASE("A scalar whose formatter takes std::format_context& prints "
   // is not std::formattable there, though std::format prints it. That is a
   // fact of libstdc++, the library these tests are built with, so it is
   // checked only there; elsewhere the test still checks the printed texts.
-#if defined(__GLIBCXX__)
+#ifdef __GLIBCXX__
   static_assert(!std::formattable<ratio, char>);
 #endif
   REQUIRE(std::format("{}", ratio{.num = -3, .den = 4}) == "-3/4");
