@@ -633,9 +633,10 @@ public:
                            "conversion between layouts keeps the algebra, "
                            "so give both types the same algebra tag");
     } else {
-      static_assert(false, "mv: the source has another scalar type; a "
-                           "conversion between layouts keeps the scalar "
-                           "type, so convert the coefficients one by one");
+      static_assert(false, "mv: the source has another scalar type, and a "
+                           "conversion keeps the scalar type; convert each "
+                           "coefficient to the target's scalar type and "
+                           "build the target from those values");
     }
   }
 
