@@ -559,9 +559,9 @@ consteval auto make_blades_of_tag() {
     return blade_set<0>{};
   } else {
     static_assert(false, "blades: the tag is not an algebra; an algebra tag "
-                         "holds its metric as static constexpr value, as in "
-                         "struct rga3 { static constexpr auto value = "
-                         "rigid<3>(); }");
+                         "holds its metric in a static constexpr member "
+                         "named value, as in struct rga3 { static constexpr "
+                         "auto value = rigid<3>(); }");
     return blade_set<0>{};
   }
 }
