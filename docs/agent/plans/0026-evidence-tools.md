@@ -370,3 +370,17 @@ The review (`records/reviews/2026-11-08-evidence-tools-review.md`, Opus 5.5, che
 - **The tools' mutants rerun** at `1775c22` on gcc-debug: all 33 killed (the 30 earlier and the three of m2 to m4), 6 min 56 s, the pool at 23 of 23 free before and after (`records/mutations/0026-tools/out/tools-gcc-debug.tsv`).
 
 - **Final merge checks** at `b78c38d` (the merge of `develop` with plan 0028's claim), from new empty trees, clean tree, 11 `gate:*` rows at that revision with no dirty mark: gcc-debug, gcc-release, clang-debug, clang-release, clang-asan, lint 496 of 496; gcc-asan, clang-measure 488 of 488; `format-check`, the trace gate, and `tools/runlog check` pass; about 17 minutes (72, 100, 221, 67, 87, 168, 203, 84 s). The pool read 22 of 23 free before (another unit's slot) and 23 of 23 after. The commit after `b78c38d` adds only these rows and this line.
+
+### After the delta review (2026-11-08)
+
+The delta review (`records/reviews/2026-11-08-evidence-tools-delta-review.md`, cherry-picked as `0048fd3`) approved with four nits:
+
+- **W2, a past departure of this unit (labelled for the owner's ruling):** `65632d0`, `2ca060b`, and `c1e5451`, three test commits that each failed, came in a row before the one fix `76c9e97` they judge, where W2 allows a single failing commit before the code. The owner will rule on whether to widen the rule; WORKFLOW is not edited. The fixes below use one failing commit per fix.
+- **n1:** a failed rebuild after an early stop is now named on stderr. Test `7243c04` (written by the implementer; it also tests SIGINT, n4), which failed before the fix `6598d9d`.
+- **n3:** build failures, failed cases, and leaks are sorted like the killers. Test `42ba98a` (implementer), which failed only when Ninja finished out of order, then the fix `a482524`.
+- **n2:** the usage text's exit-0 rule names every problem the code counts (`a482524`).
+- **n4:** SIGINT is tested (`7243c04`); the record's README says which signals are tested.
+- **The owner's ruling on timeouts:** a test that CTest names as timed out counts as killed, and a CTest run that fails without naming a test leaves the mutant unjudged; the usage text and the record's README say so (`a482524`).
+- The tools' mutants: no anchor's text changed; the two whose anchors lie in the rewritten block, `mutate_no_rebuild_after_early_stop` and `mutate_exit_always_0`, were rerun and are killed.
+
+- **Checks**: at the commit that records this section, from new empty gcc-debug and clang-debug trees; the results are in the next records commit, which adds only their rows and one line here.
