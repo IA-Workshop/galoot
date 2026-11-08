@@ -1,6 +1,6 @@
 # 0203 `rotation(l, theta)` normalizes its axis: CONVENTIONS 1.13 and the tests that judge it
 
-- Status: recorded. The behavior was ruled by the owner on 2026-11-08 ("Accept all recommendations", decision 0202 item 1, the hci reading's S1 option (a)). The wording of 5.7 below, the formula's form, and the handling of a zero direction are the implementer's, open to the delta review and to the owner, whose confirmation of 5.7's wording is asked (item 2).
+- Status: recorded. The behavior was ruled by the owner on 2026-11-08 ("Accept all recommendations", decision 0202 item 1, the hci reading's S1 option (a)). The wording of 5.7 below, the formula's form, and the handling of a zero direction are the implementer's, open to the delta review and to the owner, whose confirmation of 5.7's wording is asked (item 2). The owner confirmed 5.7's wording and ruled the zero direction on 2026-11-08 (decision 0210).
 - Date: 2026-11-08
 - Recorded by: Claude (agent, Opus 5.5), implementer of plan 0024
 - Bears on: CONVENTIONS 5.5, 5.7; decisions 0198 item 3, 0201, 0202 item 1; plan 0023 R4, R11; `records/numerical/rotation-tolerance.md`, `records/numerical/rotation-normalize-tolerance.md`; `records/reviews/2026-11-07-wu16-hci-reading.md` S1; VVUQ V12; WORKFLOW W9

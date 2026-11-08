@@ -37,3 +37,10 @@
 ## Outcome
 
 Approve, with L1 and L2 non-blocking, once the owner rules on D1. All of M1's assert part, L1 to L5, and the nit are resolved correctly.
+
+## Resolution (added by the implementer after the review)
+
+- **D1.** Ruled by the owner on 2026-11-08 ("confirmed the recommendations"): the checking-build assert stays and the result stays a plain `Motor`; the unchecked NaN is a ratified departure from S9's failure-value sentence, recorded in decision 0210 and stated in the `rotation` comment.
+- **L1.** The Cost line names the `std::isnormal` test and its branch in checking builds, and the unchecked sentence says an optimizing build drops the check while without optimization a call and a branch remain. Comment only.
+- **L2.** Reworded: such a length passes the check, and no test covers the case. Comment only; no test added.
+- These are changes to comments only, so they get no delta review (W5); decision 0210 lists them.
