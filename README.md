@@ -161,7 +161,7 @@ specification such as `{:.1f}` applies to each coefficient:
 ```cpp
 #include <print>
 
-#include <galoot/core/format.hpp>
+#include <galoot/core/format.hpp> // IWYU pragma: keep
 #include <galoot/rga3.hpp>
 
 int main() {
