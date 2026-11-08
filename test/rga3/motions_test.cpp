@@ -329,7 +329,7 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds (l / |v|) sin(theta/2) + "
 //   the join's zeros kept, and over float and double, dividing by a power of 2
 //   and multiplying back is exact, so the lengths 2 and 4 give that motor
 //   bit for bit, while for the length 5 the sine on e43 and e31 is
-//   5 fl(fl(sin(theta/2)) / 5), within 2u of fl(sin(theta/2)) when its
+//   5 fl(fl(sin(theta/2)) / 5), within u of fl(sin(theta/2)) when its
 //   magnitude is in [1/2, 1), u the unit roundoff, and every other
 //   coefficient is the unitized line's bit for bit
 TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
@@ -375,7 +375,7 @@ TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
     CHECK(bits_of(rga3::rotation(off_axis_4, theta)) ==
           bits_of(rga3::rotation(off_axis, theta)));
 
-    // The length 5: the sine on e43 and e31 within 2u, the rest bit for bit.
+    // The length 5: the sine on e43 and e31 within u, the rest bit for bit.
     const Motor unit = rga3::rotation(off_axis_1, theta);
     const Motor five = rga3::rotation(off_axis_5, theta);
     const T sine = unit.coefficients[2];
@@ -390,7 +390,7 @@ TEST_CASE_TEMPLATE("rotation(l, theta) about a line whose direction has "
         const T difference =
             std::abs(five.coefficients.at(i) - unit.coefficients.at(i));
         INFO(std::format("difference = {}", difference));
-        CHECK(difference <= T{2} * u);
+        CHECK(difference <= u);
       } else {
         CHECK(five_bits.at(i) == unit_bits.at(i));
       }
@@ -466,20 +466,20 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about the z axis turns (1, 0, 0, 1) to "
 // The tolerance of the same quarter turn about the z axis given with a
 // direction of length 5, (0, 0, 5, 0, 0, 0). rotation divides the stored
 // sine by the length: 25 and its square root are exact, and the sine it
-// stores is s' = fl(5 fl(s^ / 5)) = s^ (1 + e1)(1 + e2), |e1|, |e2| <= u, so
-// |s' - s^| < (2u + u^2) |s^|. With |s^| in [1/2, 1), where s^ is a
-// multiple of u and s' lies in (1/4, 1], whose values are multiples of
-// u / 2, the difference is at most 2u. The sine's error is then
-// |a| <= (k + 2) u in place of k u, the cosine's |b| <= k u as before, and
-// the same derivation gives 40.84, 40.28, 0, and 33.28 u in double and
-// 41.02, 40.28, 0, and 33.28 u in float, rounded up below. A direction of
+// stores is s' = fl(5 q) with q = fl(s^ / 5). For |s^| in [1/2, 1), q lies
+// in [1/16, 1/4), where float and double values are spaced at most u / 4,
+// so |5 q - s^| <= 5u / 8 and 5 q < 1. Rounding 5 q then moves it by at
+// most u / 2 when 5 q >= 1/2 and u / 4 below, and s' and s^ are multiples
+// of u in [1/2, 1] or of u / 2 below, so |s' - s^| <= u, as an exhaustive
+// run over every float in [1/2, 1) also finds. The sine's error is then
+// |a| <= (k + 1) u in place of k u, the cosine's |b| <= k u as before, and
+// the same derivation gives 39.42, 38.87, 0, and 31.87 u in double and
+// 39.60, 38.87, 0, and 31.87 u in float, rounded up below. A direction of
 // length 2 gives the unit axis's motor bit for bit, since dividing by 2 and
 // multiplying back is exact, so it keeps the tolerances above.
 namespace {
-template <class T>
-constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u =
-    std::same_as<T, float> ? std::array<int, 4>{42, 41, 0, 34}
-                           : std::array<int, 4>{41, 41, 0, 34};
+constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u{40, 39, 0,
+                                                                  32};
 } // namespace
 
 // Reference: independent value: by hand, a quarter turn counterclockwise
@@ -492,9 +492,8 @@ constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u =
 //   and double, each coefficient within its tolerance: for the length 2,
 //   that of the unit axis, 39 u, 38 u, 0, and 31 u on e1, e2, e3, e4, and
 //   for the length 5, with the error of dividing the sine by 5 and
-//   multiplying it back, 41 u, 41 u, 0, and 34 u in double and 42 u, 41 u,
-//   0, and 34 u in float, for the unit roundoff u, fixed before the test was
-//   first run
+//   multiplying it back, 40 u, 39 u, 0, and 32 u in float and double, for
+//   the unit roundoff u, fixed before the test first ran with them
 TEST_CASE_TEMPLATE("rotation(l, pi/2) about a z axis of length 2 or 5 turns "
                    "(1, 0, 0, 1) to (0, 1, 0, 1) within its error bound",
                    T, float, double) {
@@ -511,7 +510,7 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about a z axis of length 2 or 5 turns "
   const std::array<std::pair<Line, std::array<int, 4>>, 2> cases{
       {
           {z_axis_2, quarter_turn_tolerance_in_u},
-          {z_axis_5, quarter_turn_length_5_tolerance_in_u<T>},
+          {z_axis_5, quarter_turn_length_5_tolerance_in_u},
       },
   };
   constexpr std::array<T, 4> expected{T{0}, T{1}, T{0}, T{1}};
