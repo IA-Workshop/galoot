@@ -270,7 +270,26 @@ Departures:
 
 The owner confirmed the 7.2 and S7 wording, the scan as a record tool, `blades`' two messages, and the equivalent survivor with its constraint on 2026-11-08 (decision 0207).
 
+### The hci reading and its resolution (2026-11-08)
+
+The hci-expert reading (`records/reviews/2026-11-08-wu15-hci-reading.md`, cherry-picked from `records/review-wu15-hci` with `-x`) found nothing blocking: three findings to act on (S1 to S3) and eight that could be (C1 to C8). The implementer (Claude, agent, Opus 5.5, cpp-expert and hci-expert judgement) resolved them as decision 0211 records:
+- **S1, a behavior change in `include/`.** `format.hpp` judges the scalar's formatter by `detail::has_formatter<T>`, `std::semiregular<std::formatter<T, char>>`, instead of `std::formattable<T, char>`, so a scalar whose formatter takes `std::format_context&` prints inside a multivector. The accept test came first, in a commit that fails alone (W2). The three scalar-without-formatter tests still give one error with the message on both compilers. It needs the W5 review, or a delta review if that review has already run.
+- **C1 to C4, four messages reworded:** `mv`'s scalar message, `blades`' tag message, the four sums with a number, and `format`'s name message. Each expected literal changed in a commit of its own before its header change, and each of those commits fails alone (W9). C3 also gives the spelling `mv<Alg, blades<Alg, "1">, T>{s}` in the comment.
+- **C5, C6, C8:** comment lines only. C5 adds no message, so decision 0204 item 4 stands.
+- **S3:** the README says how to print a value, and a third example, `rga3.readme_example_3`, prints a point.
+- **Not done here:** S2, the rga3 tag's names, which is outside WU15 and for the owner; and C7, a wording change to CONVENTIONS 7.2, proposed to the owner and not edited.
+- **Records:** the scan was regenerated at `ac2366c` (153 messages, 133 pinned on both compilers). The mutants affected were run again: every format mutant, the new `scalar_formatter_by_formattable`, and four part 3 mutants whose messages changed, 23 in all, each killed on both presets. `zeros_skipped` first failed to build on the new test's scalar, which has no `==`. That was a fault of the mutant; it was rewritten and run again.
+
+Checks after the resolution:
+- At `3358600`: gcc-debug and clang-debug, the full suite, 491 of 491 each.
+- A targeted lint of the core and rga3 header sets, the format, mv, linear, and blade_set test programs, README example 3, and format-check. It found four things:
+  - include-cleaner flagged the README example's `format.hpp` include, now marked `IWYU pragma: keep`;
+  - two `convert-member-functions-to-static` findings on the test formatter's `parse` and `format`, suppressed with the reason;
+  - clang-tidy 23's `readability-trailing-comma` reported the comma after an inline `ratio{}` in a braced list, which is not a trailing comma, so the values are now named. It is noted here as a likely false positive of the check.
+- After those fixes, at `47fe4fa`: the lint targets are clean, and `core.format` and the README tests pass on both presets, 26 of 26 each.
+- At `47fe4fa`: the trace gate, `tools/runlog check`, and `tests.citations`.
+- Not run: the release, asan, clang-measure, and full lint presets (for the merge); a second full suite after `47fe4fa`, whose two commits changed only `format_test.cpp` and `README.md`, both rerun.
+
 Next:
-- the optional hci reading;
 - the W5 blind review with the usability checklist, fixes, and a delta review;
 - the merge checks of section 7.
