@@ -168,3 +168,6 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-08	plan-0026	test author (doctest-expert role), both test groups	opus	242234	61	1161	subagent_tokens as the harness reported them
 2026-11-08	plan-0026	test author (doctest-expert role), two added cases	opus	262830	15	231	subagent_tokens as the harness reported them for the resumed agent (may include the first session)
 2026-11-08	plan-0026	implementer and coordinator, parts A to G and P9	opus	not visible	about 190	not visible	tool calls counted by the agent, approximate
+2026-11-08	plan-0026	test author (doctest-expert role), tests of the review findings	opus	305959	29	614	subagent_tokens as the harness reported them for the resumed agent (may include earlier sessions)
+2026-11-08	plan-0026	blind reviewer	opus	not visible	not visible	not visible	launched by the session coordinator; figures not relayed to the implementer
+2026-11-08	plan-0026	implementer and coordinator, review fixes and final P9	opus	not visible	about 60	not visible	tool calls counted by the agent, approximate

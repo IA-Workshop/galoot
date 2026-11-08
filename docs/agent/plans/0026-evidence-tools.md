@@ -354,3 +354,19 @@ In `records/agent-cost.tsv`: the test author, 242,234 tokens and 61 tool calls (
 2. **Leaks at type-property `static_assert`s.** Options: leave the rule as it is (any failed static assertion in a run-time file is a leak, so these four always show); or let a mutant declare that only a compile-time check can kill it, which the tool then does not report as a leak. The first keeps the tool simple but makes the blade_product run-time mode exit 1 on every run; the second adds a key to the spec format. Recommendation: the second, a per-mutant `compile_time_only = true`, but only when a second spec needs it (C12); until then, the record lists the four.
 3. **The guard rule of departure 3.** Options: keep it (GCC and Clang agree; the library's compile-time checks count as the owner ruled for `static_assert`); or revert to the plan's words, under which GCC calls such mutants unjudged and Clang killed. Recommendation: keep it.
 4. **The diagnostics script `catalogue/scan.py`** stays for WU14, as ruled. No action.
+
+### After the blind review (2026-11-08)
+
+The review (`records/reviews/2026-11-08-evidence-tools-review.md`, Opus 5.5, cherry-picked as `af9bd41`) approved with non-blocking findings m1 to m4 and recorded F1, the job pool's surplus-token race.
+
+- **Owner rulings on the open items**, relayed by the coordinator: (1) the two warning-only blade_product mutants stay `unjudged` now and are rewritten in the later test-quality unit (the unit that writes the bits and blade-set specs), which lists them; (2) the type-property leaks at lines 515 to 518 stay under the current rule, and `compile_time_only` is added only when a second spec needs it; (3) the guard rule of decision 0214 item 5 stays.
+- **F1** is outside this unit: a separate unit is fixing `tools/jobpool`. The "32 of 23" of the first P9 was that race (the review traced it to the start of the clang-release workflow). It is not this unit's defect.
+- **m1**, five test gaps, by the test author: `70bdd01` (rows in spec order when a later run adds an earlier mutant; a dirty run-time edit file refused) and `7199d2d` (the read-back mode, the summary's mean and range from a counting `perf`, and the efficiency-core count in shared mode). Both pass against the tools as they were.
+- **m2 to m4**, tests first, each failing until `76c9e97`: `65632d0` (SIGTERM: files restored and the programs rebuilt), `2ca060b` (killers sorted), `c1e5451` (a CTest run failing without naming a test leaves the mutant unjudged, with the problem `CTest exited <n> without naming a failed test`). The fix `76c9e97`: a run that stops early rebuilds the targets of each preset it started; killers are sorted sets; CTest's status is read. These three test commits fail in a row before the one code commit they judge.
+- **The tools' mutants** follow the fix (`1775c22`), with three more for m2 to m4: see the rerun below.
+- The note on `2ed4d0d`'s message (departure 7) stands; history is not rewritten.
+- `tools.mutate` now takes 16 to 19 s here, and up to 55 s on a loaded machine by the test author's runs; it does not carry `slow`.
+
+- **The tools' mutants rerun** at `1775c22` on gcc-debug: all 33 killed (the 30 earlier and the three of m2 to m4), 6 min 56 s, the pool at 23 of 23 free before and after (`records/mutations/0026-tools/out/tools-gcc-debug.tsv`).
+
+- **Final merge checks**: P9 from new empty trees at the commit that records this section; the results are in the next records commit, which adds only their `gate:*` rows of `runs.tsv` and one line here.
