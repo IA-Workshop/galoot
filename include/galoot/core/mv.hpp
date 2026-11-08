@@ -481,8 +481,9 @@ concept holds_several_values =
 /// coefficient, exactly; with a floating scalar that is IEEE equality, so
 /// -0.0 equals +0.0 and a coefficient that is a NaN makes them unequal.
 /// Values of different layouts, algebras, or scalars do not compare. The
-/// type has no output operator or formatter; std::format("{}",
-/// x.coefficients) prints its coefficients.
+/// type has no output operator; galoot/core/format.hpp gives it a
+/// std::formatter that prints each coefficient with its blade's name, and
+/// std::format("{}", x.coefficients) prints the coefficients alone.
 template <metric_like Alg, blade_set Blades, std::destructible T>
 struct mv : detail::storage_of<Alg, Blades, T> {
 private:
