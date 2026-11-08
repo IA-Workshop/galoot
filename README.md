@@ -158,7 +158,9 @@ int main() {}
 To print a value, include `<galoot/core/format.hpp>`, which neither
 `presets/rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
 compile. A value then prints as each coefficient on its blade's name, and a
-specification such as `{:.1f}` applies to each coefficient:
+specification such as `{:.1f}` applies to each coefficient. The rga3 types
+print by the names their layouts are written with, so a line's direction
+is on e41, e42, e43, where e41 = -e14:
 
 ```cpp
 #include <print>
@@ -167,11 +169,15 @@ specification such as `{:.1f}` applies to each coefficient:
 #include <galoot/presets/rga3.hpp>
 
 int main() {
-  const galoot::presets::rga3::Point<double> p{1, 3, 3, 1};
+  namespace rga3 = galoot::presets::rga3;
+  const rga3::Point<double> p{1, 3, 3, 1};
   std::println("{}", p);
   // prints: {e1: 1, e2: 3, e3: 3, e4: 1}
   std::println("{:.1f}", p);
   // prints: {e1: 1.0, e2: 3.0, e3: 3.0, e4: 1.0}
+  const rga3::Line<double> z_axis{0, 0, 1, 0, 0, 0};
+  std::println("{}", z_axis);
+  // prints: {e41: 0, e42: 0, e43: 1, e23: 0, e31: 0, e12: 0}
 }
 ```
 

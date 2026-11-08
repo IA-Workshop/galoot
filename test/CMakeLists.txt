@@ -2172,6 +2172,11 @@ galoot_add_test(MODULE rga3 COMPONENT objects DIRECTORY presets/rga3)
 target_link_libraries(rga3_objects_test PRIVATE galoot::presets::rga3
   galoot_golden galoot_test_support)
 
+# rga3.format: each type of the preset prints by the names of its layout,
+# written out by hand in the test.
+galoot_add_test(MODULE rga3 COMPONENT format DIRECTORY presets/rga3)
+target_link_libraries(rga3_format_test PRIVATE galoot::presets::rga3)
+
 # rga3.bare_compile: the preset, like the core, works with no build system and
 # no options beyond the language edition.
 add_test(NAME rga3.bare_compile
