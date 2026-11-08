@@ -18,11 +18,13 @@
 // parallel.
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <random>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -40,6 +42,10 @@ enum class Identity : std::uint8_t {
   de_morgan,
   antiproduct_laws,
   product_rules,
+  product_laws,
+  defining_relation,
+  antiproduct_rules,
+  basis,
 };
 
 // The checks have internal linkage, as they would in a single source, so
@@ -181,6 +187,16 @@ auto antiscalar() {
   return one;
 }
 
+// The scalar 1 of the algebra of X, on the layout that holds it alone.
+template <class X>
+auto scalar_one() {
+  using Alg = X::algebra_type;
+  constexpr core::blade_set<1> layout{{{{.mask = 0, .sign = 1}}}};
+  core::mv<Alg, layout, std::int64_t> one{};
+  one.coefficients.at(0) = 1;
+  return one;
+}
+
 // The number of random triples each identity is checked on, in each form.
 inline constexpr int samples = 3;
 
@@ -229,6 +245,78 @@ void check_antiproduct_laws(std::mt19937_64& source) {
   }
 }
 
+// Associativity of the geometric product and of the wedge on random a, c of
+// A and b of B, and the scalar 1 as the identity of the geometric product on
+// both sides of a and of b.
+template <class A, class B>
+void check_product_laws(std::mt19937_64& source) {
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  const auto one = scalar_one<A>();
+  for (int k = 0; k < samples; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    const A c = random_integers<A>(source);
+    CHECK(difference((a * b) * c, a * (b * c)) == "");
+    CHECK(difference((a ^ b) ^ c, a ^ (b ^ c)) == "");
+    CHECK(difference(one * a, a) == "");
+    CHECK(difference(a * one, a) == "");
+    CHECK(difference(one * b, b) == "");
+    CHECK(difference(b * one, b) == "");
+  }
+}
+
+// The vectors of the algebra Alg.
+template <class Alg>
+using vectors_of =
+    core::mv<Alg, core::of_grade<generators<Alg>, 1>, std::int64_t>;
+
+// Empty when a ⟑ b + b ⟑ a is the scalar 2 a^T g b for vectors a and b,
+// with g the Gram matrix of the algebra read here from its value;
+// otherwise the first blade where it differs, with both values.
+template <class V>
+std::string anticommutator_difference(const V& a, const V& b) {
+  using Alg = V::algebra_type;
+  constexpr std::size_t n = generators<Alg>;
+  std::int64_t form = 0;
+  for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t j = 0; j < n; ++j) {
+      form += value_on(a, core::mask_t{1} << i) *
+              static_cast<std::int64_t>(Alg::value.gram.at(i).at(j)) *
+              value_on(b, core::mask_t{1} << j);
+    }
+  }
+  const auto ab = a * b;
+  const auto ba = b * a;
+  const auto report = [&](core::mask_t mask, std::int64_t want) {
+    return blade_name(mask) + ": " +
+           std::to_string(value_on(ab, mask) + value_on(ba, mask)) +
+           " against " + std::to_string(want);
+  };
+  if (value_on(ab, 0) + value_on(ba, 0) != 2 * form) {
+    return report(0, 2 * form);
+  }
+  for (const core::oriented_blade& blade : decltype(ab)::layout.blades) {
+    if (blade.mask != 0 &&
+        value_on(ab, blade.mask) + value_on(ba, blade.mask) != 0) {
+      return report(blade.mask, 0);
+    }
+  }
+  return "";
+}
+
+// The defining relation a ⟑ b + b ⟑ a = 2 a^T g b on random vectors a and b
+// of Alg.
+template <class Alg>
+void check_defining_relation(std::mt19937_64& source) {
+  using V = vectors_of<Alg>;
+  INFO("form: ", gram_text<Alg>());
+  for (int k = 0; k < samples; ++k) {
+    const V a = random_integers<V>(source);
+    const V b = random_integers<V>(source);
+    CHECK(anticommutator_difference(a, b) == "");
+  }
+}
+
 // The rules of the involutions over the products on random a of A and b of
 // B.
 template <class A, class B>
@@ -247,6 +335,281 @@ void check_product_rules(std::mt19937_64& source) {
     CHECK(difference(grade_involution(a * b),
                      grade_involution(a) * grade_involution(b)) == "");
   }
+}
+
+// x with every coefficient multiplied by sign.
+template <class X>
+X times(X x, std::int64_t sign) {
+  for (auto& c : x.coefficients) {
+    c *= sign;
+  }
+  return x;
+}
+
+// The antigrade involution of x, from its definition: a blade of grade k
+// has antigrade m = n - k and is multiplied by (-1)^m.
+template <class X>
+X antigrade_involution_of(X x) {
+  constexpr int n = static_cast<int>(generators<typename X::algebra_type>);
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    const int m = n - std::popcount(X::layout.blades.at(k).mask);
+    if (m % 2 != 0) {
+      x.coefficients.at(k) = -x.coefficients.at(k);
+    }
+  }
+  return x;
+}
+
+// The rules of the involutions over the antiproducts and the wedge that the
+// product rules leave out, on random a of A and b of B: the antireverse
+// reverses the antiwedge, the grade involution keeps the wedge, and it
+// keeps both antiproducts up to the sign (-1)^n. And the antigrade
+// involution x' is (-1)^n times the grade involution, and the complements
+// turn it into the grade involution: right(x') is the grade involution of
+// right(x), and likewise for left.
+template <class A, class B>
+void check_antiproduct_rules(std::mt19937_64& source) {
+  using core::antireverse;
+  using core::grade_involution;
+  using core::left_complement;
+  using core::right_complement;
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  constexpr std::int64_t sign =
+      generators<typename A::algebra_type> % 2 == 0 ? 1 : -1;
+  for (int k = 0; k < samples; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    CHECK(difference(antireverse(a & b), antireverse(b) & antireverse(a)) ==
+          "");
+    CHECK(difference(grade_involution(a ^ b),
+                     grade_involution(a) ^ grade_involution(b)) == "");
+    CHECK(difference(grade_involution(a % b),
+                     times(grade_involution(a) % grade_involution(b), sign)) ==
+          "");
+    CHECK(difference(grade_involution(a & b),
+                     times(grade_involution(a) & grade_involution(b), sign)) ==
+          "");
+    CHECK(difference(antigrade_involution_of(a),
+                     times(grade_involution(a), sign)) == "");
+    CHECK(difference(antigrade_involution_of(b),
+                     times(grade_involution(b), sign)) == "");
+    CHECK(difference(right_complement(antigrade_involution_of(a)),
+                     grade_involution(right_complement(a))) == "");
+    CHECK(difference(left_complement(antigrade_involution_of(a)),
+                     grade_involution(left_complement(a))) == "");
+  }
+}
+
+// The checks on basis blades. Each law is linear in each of its operands,
+// so it holds for all multivectors of the layouts when it holds on every
+// pair, or every triple, of their basis blades. These checks take the
+// operands of the random checks above with one coefficient 1 and the rest
+// zero, and compute the same expressions, so that they build no product,
+// map, or layout that those do not.
+
+// x of X with the coefficient 1 on the k-th blade of its layout and zero on
+// the others.
+template <class X>
+X unit(std::size_t k) {
+  X x{};
+  x.coefficients.at(k) = 1;
+  return x;
+}
+
+// The name of the k-th blade of the layout of X, with a minus sign for an
+// orientation of -1.
+template <class X>
+std::string unit_name(std::size_t k) {
+  const core::oriented_blade blade = X::layout.blades.at(k);
+  return (blade.sign < 0 ? "-" : "") + blade_name(blade.mask);
+}
+
+// 1, with a failure that names the law and the blades it fails on, when
+// `found` is not empty; otherwise 0.
+inline int failure(const std::string& law, const std::string& blades,
+                   const std::string& found) {
+  if (found.empty()) {
+    return 0;
+  }
+  const std::string message = law + " on " + blades + ": " + found;
+  FAIL_CHECK(message);
+  return 1;
+}
+
+// The De Morgan laws and their converses, the product rules, and the
+// antiproduct rules on every pair of basis blades a of A and b of B.
+template <class A, class B>
+void check_basis_pairs() {
+  using core::antireverse;
+  using core::grade_involution;
+  using core::left_complement;
+  using core::reverse;
+  using core::right_complement;
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  constexpr std::int64_t sign =
+      generators<typename A::algebra_type> % 2 == 0 ? 1 : -1;
+  int failures = 0;
+  for (std::size_t i = 0; i < A::component_count; ++i) {
+    for (std::size_t j = 0; j < B::component_count; ++j) {
+      const A a = unit<A>(i);
+      const B b = unit<B>(j);
+      const std::string on = unit_name<A>(i) + " and " + unit_name<B>(j);
+      failures +=
+          failure("right(a ⟑ b) = right(a) ⟇ right(b)", on,
+                  difference(right_complement(core::geometric_product(a, b)),
+                             right_complement(a) % right_complement(b)));
+      failures +=
+          failure("right(a ^ b) = right(a) v right(b)", on,
+                  difference(right_complement(core::wedge(a, b)),
+                             right_complement(a) & right_complement(b)));
+      failures += failure("left(a ⟑ b) = left(a) ⟇ left(b)", on,
+                          difference(left_complement(a * b),
+                                     left_complement(a) % left_complement(b)));
+      failures += failure("left(a ^ b) = left(a) v left(b)", on,
+                          difference(left_complement(a ^ b),
+                                     left_complement(a) & left_complement(b)));
+      failures += failure(
+          "right(a ⟇ b) = right(a) ⟑ right(b)", on,
+          difference(right_complement(core::geometric_antiproduct(a, b)),
+                     right_complement(a) * right_complement(b)));
+      failures +=
+          failure("right(a v b) = right(a) ^ right(b)", on,
+                  difference(right_complement(core::antiwedge(a, b)),
+                             right_complement(a) ^ right_complement(b)));
+      failures += failure("left(a ⟇ b) = left(a) ⟑ left(b)", on,
+                          difference(left_complement(a % b),
+                                     left_complement(a) * left_complement(b)));
+      failures += failure("left(a v b) = left(a) ^ left(b)", on,
+                          difference(left_complement(a & b),
+                                     left_complement(a) ^ left_complement(b)));
+      failures += failure("reverse(a ⟑ b) = reverse(b) ⟑ reverse(a)", on,
+                          difference(reverse(a * b), reverse(b) * reverse(a)));
+      failures += failure("reverse(a ^ b) = reverse(b) ^ reverse(a)", on,
+                          difference(reverse(a ^ b), reverse(b) ^ reverse(a)));
+      failures += failure(
+          "antireverse(a ⟇ b) = antireverse(b) ⟇ antireverse(a)", on,
+          difference(antireverse(a % b), antireverse(b) % antireverse(a)));
+      failures += failure(
+          "antireverse(a v b) = antireverse(b) v antireverse(a)", on,
+          difference(antireverse(a & b), antireverse(b) & antireverse(a)));
+      failures +=
+          failure("grade_involution(a ⟑ b)", on,
+                  difference(grade_involution(a * b),
+                             grade_involution(a) * grade_involution(b)));
+      failures +=
+          failure("grade_involution(a ^ b)", on,
+                  difference(grade_involution(a ^ b),
+                             grade_involution(a) ^ grade_involution(b)));
+      failures += failure(
+          "grade_involution(a ⟇ b) = (-1)^n ...", on,
+          difference(grade_involution(a % b),
+                     times(grade_involution(a) % grade_involution(b), sign)));
+      failures += failure(
+          "grade_involution(a v b) = (-1)^n ...", on,
+          difference(grade_involution(a & b),
+                     times(grade_involution(a) & grade_involution(b), sign)));
+    }
+  }
+  CHECK(failures == 0);
+}
+
+// Associativity of the four products on every triple of basis blades a, c
+// of A and b of B, and 1 and the antiscalar as the identities of the
+// geometric product and antiproduct on every basis blade of A and of B.
+// The products b ⟑ c and the others of every pair are formed once, so
+// that each triple takes two products per law.
+template <class A, class B>
+void check_basis_triples() {
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  int failures = 0;
+  const auto one = scalar_one<A>();
+  const auto antione = antiscalar<A>();
+  for (std::size_t i = 0; i < A::component_count; ++i) {
+    const A a = unit<A>(i);
+    const std::string on = unit_name<A>(i);
+    failures += failure("1 ⟑ a = a", on, difference(one * a, a));
+    failures += failure("a ⟑ 1 = a", on, difference(a * one, a));
+    failures += failure("antiscalar ⟇ a = a", on, difference(antione % a, a));
+  }
+  for (std::size_t j = 0; j < B::component_count; ++j) {
+    const B b = unit<B>(j);
+    const std::string on = unit_name<B>(j);
+    failures += failure("1 ⟑ b = b", on, difference(one * b, b));
+    failures += failure("b ⟑ 1 = b", on, difference(b * one, b));
+    failures += failure("b ⟇ antiscalar = b", on, difference(b % antione, b));
+  }
+
+  using GP = decltype(B{} * A{});
+  using W = decltype(B{} ^ A{});
+  using GA = decltype(B{} % A{});
+  using AW = decltype(B{} & A{});
+  std::vector<GP> gp(B::component_count * A::component_count);
+  std::vector<W> w(gp.size());
+  std::vector<GA> ga(gp.size());
+  std::vector<AW> aw(gp.size());
+  for (std::size_t j = 0; j < B::component_count; ++j) {
+    for (std::size_t l = 0; l < A::component_count; ++l) {
+      const std::size_t at = (j * A::component_count) + l;
+      gp.at(at) = unit<B>(j) * unit<A>(l);
+      w.at(at) = unit<B>(j) ^ unit<A>(l);
+      ga.at(at) = unit<B>(j) % unit<A>(l);
+      aw.at(at) = unit<B>(j) & unit<A>(l);
+    }
+  }
+
+  for (std::size_t i = 0; i < A::component_count; ++i) {
+    const A a = unit<A>(i);
+    for (std::size_t j = 0; j < B::component_count; ++j) {
+      const B b = unit<B>(j);
+      const auto ab_gp = a * b;
+      const auto ab_w = a ^ b;
+      const auto ab_ga = a % b;
+      const auto ab_aw = a & b;
+      for (std::size_t l = 0; l < A::component_count; ++l) {
+        const A c = unit<A>(l);
+        const std::size_t at = (j * A::component_count) + l;
+        const auto on = [&] {
+          return unit_name<A>(i) + ", " + unit_name<B>(j) + ", and " +
+                 unit_name<A>(l);
+        };
+        const std::string found_gp = difference(ab_gp * c, a * gp.at(at));
+        const std::string found_w = difference(ab_w ^ c, a ^ w.at(at));
+        const std::string found_ga = difference(ab_ga % c, a % ga.at(at));
+        const std::string found_aw = difference(ab_aw & c, a & aw.at(at));
+        if (!(found_gp + found_w + found_ga + found_aw).empty()) {
+          failures += failure("(a ⟑ b) ⟑ c = a ⟑ (b ⟑ c)", on(), found_gp);
+          failures += failure("(a ^ b) ^ c = a ^ (b ^ c)", on(), found_w);
+          failures += failure("(a ⟇ b) ⟇ c = a ⟇ (b ⟇ c)", on(), found_ga);
+          failures += failure("(a v b) v c = a v (b v c)", on(), found_aw);
+        }
+      }
+    }
+  }
+  CHECK(failures == 0);
+}
+
+// The defining relation on every pair of basis vectors of Alg.
+template <class Alg>
+void check_basis_vectors() {
+  using V = vectors_of<Alg>;
+  INFO("form: ", gram_text<Alg>());
+  int failures = 0;
+  for (std::size_t i = 0; i < V::component_count; ++i) {
+    for (std::size_t j = 0; j < V::component_count; ++j) {
+      failures += failure("a ⟑ b + b ⟑ a = 2 a^T g b",
+                          unit_name<V>(i) + " and " + unit_name<V>(j),
+                          anticommutator_difference(unit<V>(i), unit<V>(j)));
+    }
+  }
+  CHECK(failures == 0);
+}
+
+// Every check on basis blades, on the layouts A and B.
+template <class A, class B>
+void check_basis() {
+  check_basis_pairs<A, B>();
+  check_basis_triples<A, B>();
+  check_basis_vectors<typename A::algebra_type>();
 }
 
 // The layouts the groups are checked on: every blade, vectors and
@@ -282,6 +645,18 @@ void check_each(Identity identity, forms<G...> /*list*/,
   case Identity::product_rules:
     (check_product_rules<A<G>, B<G>>(source), ...);
     return;
+  case Identity::product_laws:
+    (check_product_laws<A<G>, B<G>>(source), ...);
+    return;
+  case Identity::defining_relation:
+    (check_defining_relation<form<G>>(source), ...);
+    return;
+  case Identity::antiproduct_rules:
+    (check_antiproduct_rules<A<G>, B<G>>(source), ...);
+    return;
+  case Identity::basis:
+    (check_basis<A<G>, B<G>>(), ...);
+    return;
   }
 }
 
@@ -296,13 +671,15 @@ void conformal_three(Identity identity, std::mt19937_64& source);
 void dense_forms_of_five(Identity identity, std::mt19937_64& source);
 void forms_of_six(Identity identity, std::mt19937_64& source);
 void large_forms(Identity identity, std::mt19937_64& source);
+void drawn_forms_of_five(Identity identity, std::mt19937_64& source);
+void drawn_forms_of_six(Identity identity, std::mt19937_64& source);
 
 // The groups in the order each test case checks them, so that one seed
 // gives the same multivectors in every build.
 inline constexpr std::array groups{
     &forms_up_to_three, &forms_of_four,       &diagonal_forms_of_five,
     &conformal_three,   &dense_forms_of_five, &forms_of_six,
-    &large_forms,
+    &large_forms,       &drawn_forms_of_five, &drawn_forms_of_six,
 };
 
 } // namespace galoot_test::identities

@@ -1,0 +1,17 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+forbid_values_required	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+semicolon_not_translated	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+will_fail_counted	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+handler_prefix_kept	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+ambiguous_literal_pins_first	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+nested_literal_pins_shortest	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+macro_definition_read	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+comments_read	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+error_directive_ignored	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+subdirectories_not_read	gcc-debug	d5ffafdfa96e	killed	killed	tests.messages_pinned tools.catalogue	-	-	-	-	-
+unlisted_message_accepted	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+stale_entry_accepted	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+pinned_entry_accepted	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+twin_guard_removed	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+twin_forbid_first_counted	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-
+ctest_status_ignored	gcc-debug	d5ffafdfa96e	killed	killed	tools.catalogue	-	-	-	-	-

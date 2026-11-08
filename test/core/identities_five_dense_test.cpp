@@ -44,6 +44,20 @@ void dense_forms_of_five(Identity identity, std::mt19937_64& source) {
     case Identity::product_rules:
       (check_product_rules<bivectors_mv<G>, bivectors_mv<G>>(s), ...);
       return;
+    case Identity::product_laws:
+      (check_product_laws<vectors_mv<G>, vectors_mv<G>>(s), ...);
+      return;
+    case Identity::defining_relation:
+      (check_defining_relation<form<G>>(s), ...);
+      return;
+    case Identity::antiproduct_rules:
+      (check_antiproduct_rules<bivectors_mv<G>, bivectors_mv<G>>(s), ...);
+      return;
+    case Identity::basis:
+      (check_basis_pairs<bivectors_mv<G>, bivectors_mv<G>>(), ...);
+      (check_basis_triples<vectors_mv<G>, vectors_mv<G>>(), ...);
+      (check_basis_vectors<form<G>>(), ...);
+      return;
     }
   }(identity, dense_forms{}, source);
 }

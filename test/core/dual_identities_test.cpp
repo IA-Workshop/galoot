@@ -153,6 +153,15 @@ using dense_forms = forms<core::from_gram({
 using six_forms =
     forms<core::R<4, 2, 0>(), core::R<3, 3, 0>(), core::conformal<4>()>;
 
+// Diagonal forms R(p, q, r) drawn with Python's random.Random(20261108):
+// for n = 5 and then n = 6, of the (p, q, r) with p + q + r = n, ordered
+// by p and then q, both descending, one chosen with q >= 2 and r >= 2,
+// then one with r >= 3 other than the first: R(0,3,2), R(0,2,3),
+// R(1,3,2), R(1,1,4). Those of five are checked on every blade; those of
+// six as the forms of six are.
+using drawn_five_forms = forms<core::R<0, 3, 2>(), core::R<0, 2, 3>()>;
+using drawn_six_forms = forms<core::R<1, 3, 2>(), core::R<1, 1, 4>()>;
+
 // The forms of 8, 12, and 16 generators, checked on sparse sets.
 using large_forms = forms<core::R<8, 0, 0>(), core::R<6, 6, 0>(),
                           core::R<15, 0, 1>(), core::R<8, 8, 0>()>;
@@ -448,7 +457,9 @@ using sparse_b_mv =
 //   bulk dual is zero, and the left duals are the right duals times
 //   (-1)^(gr ag), on random integer multivectors of every blade for
 //   each form of up to five generators, the dense random forms of five, and
-//   the forms of six, and on sparse sets for 8, 12, and 16
+//   the forms of six, on sparse sets for 8, 12, and 16, and on every blade
+//   for R(0,3,2), R(0,2,3), R(1,3,2), and R(1,1,4), diagonal forms drawn at
+//   random
 TEST_CASE("the duals compose to det g over many forms") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);
@@ -466,6 +477,12 @@ TEST_CASE("the duals compose to det g over many forms") {
     (check_dual_identities<sparse_a_mv<G>>(s), ...);
     (check_dual_identities<sparse_b_mv<G>>(s), ...);
   }(large_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dual_identities<full_mv<G>>(s), ...);
+  }(drawn_five_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dual_identities<full_mv<G>>(s), ...);
+  }(drawn_six_forms{}, source);
 }
 
 // Reference: identity: the dot and the antidot are symmetric, since G and
@@ -477,7 +494,9 @@ TEST_CASE("the duals compose to det g over many forms") {
 //   for the weight dual and the antidot, on
 //   random integer multivectors of every blade for each form of up to five
 //   generators, on vectors and on bivectors for the dense random forms of
-//   five and the forms of six, and on sparse sets for 8, 12, and 16
+//   five and the forms of six, on sparse sets for 8, 12, and 16, and on
+//   every blade for R(0,3,2) and R(0,2,3) and on vectors and on bivectors
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
 TEST_CASE("the dot and the antidot are symmetric De Morgan pairs over many "
           "forms") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
@@ -498,6 +517,13 @@ TEST_CASE("the dot and the antidot are symmetric De Morgan pairs over many "
     (check_dot_identities<sparse_a_mv<G>, sparse_b_mv<G>>(s), ...);
     (check_dot_identities<sparse_a_mv<G>, sparse_a_mv<G>>(s), ...);
   }(large_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dot_identities<full_mv<G>, full_mv<G>>(s), ...);
+  }(drawn_five_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dot_identities<vectors_mv<G>, vectors_mv<G>>(s), ...);
+    (check_dot_identities<bivectors_mv<G>, bivectors_mv<G>>(s), ...);
+  }(drawn_six_forms{}, source);
 }
 
 // Reference: identity: in a diagonal form the bulk of a blade is the
@@ -506,7 +532,8 @@ TEST_CASE("the dot and the antidot are symmetric De Morgan pairs over many "
 //   bulk and the weight split x, in R(n, 0, 0) both are x, and with two or
 //   more null generators a blade with some but not all of them is in
 //   neither, on random integer multivectors of every blade for each diagonal
-//   form of up to six generators and on sparse sets for 8, 12, and 16, and
+//   form of up to six generators, among them R(0,3,2), R(0,2,3), R(1,3,2),
+//   and R(1,1,4), drawn at random, and on sparse sets for 8, 12, and 16, and
 //   in conformal(1) to conformal(4), where G is its own inverse and
 //   det g = -1, the weight is the negated bulk
 TEST_CASE("the bulk and the weight in diagonal and conformal forms") {
@@ -533,4 +560,10 @@ TEST_CASE("the bulk and the weight in diagonal and conformal forms") {
     };
     (check(std::type_identity<full_mv<G>>{}), ...);
   }(conformal_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_diagonal_parts<full_mv<G>>(s), ...);
+  }(drawn_five_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_diagonal_parts<full_mv<G>>(s), ...);
+  }(drawn_six_forms{}, source);
 }

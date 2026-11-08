@@ -1,0 +1,96 @@
+# The test units WU14 changed or added, for tools/compiles cost on the
+# debug trees: each changed source before (at the branch point) and after,
+# and the three new sources after only. The test author's spec, kept as
+# written.
+
+compilers = ["gcc", "clang"]
+
+[[unit]]
+name = "core/identities_up_to_three"
+source = "test/core/identities_up_to_three_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_four"
+source = "test/core/identities_four_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_diagonal"
+source = "test/core/identities_five_diagonal_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_conformal3"
+source = "test/core/identities_conformal3_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_dense"
+source = "test/core/identities_five_dense_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_six"
+source = "test/core/identities_six_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_sparse"
+source = "test/core/identities_sparse_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities"
+source = "test/core/identities_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/dual_identities"
+source = "test/core/dual_identities_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/dual"
+source = "test/core/dual_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/transform"
+source = "test/core/transform_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "support/tracked"
+source = "test/support/tracked_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_drawn"
+source = "test/core/identities_five_drawn_test.cpp"
+kind = "debug"
+trees = ["after"]
+
+[[unit]]
+name = "core/identities_six_drawn"
+source = "test/core/identities_six_drawn_test.cpp"
+kind = "debug"
+trees = ["after"]
+
+[[unit]]
+name = "core/identities_rounding"
+source = "test/core/identities_rounding_test.cpp"
+kind = "debug"
+trees = ["after"]

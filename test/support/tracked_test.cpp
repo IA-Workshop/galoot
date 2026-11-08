@@ -199,3 +199,46 @@ TEST_CASE("the ratio limit admits the bound and nothing beyond it") {
   CHECK(test_support::bound_ratio(d, zero, 3, just_within) == 1.0 + (2 * u));
   CHECK(test_support::within_rounding_bound(d, zero, 3, just_within));
 }
+
+// Reference: proof: two results of exact value e, each with at most one
+//   rounding of exact operands, are both the double nearest e, so the
+//   identity check accepts only equal results, here 1 and 1 against the
+//   neighbor 1 + 2u, whatever the magnitudes
+TEST_CASE("with one rounding a side the identity check accepts only equality") {
+  const rational m{3};
+  CHECK(test_support::within_identity_bound(1.0, 0, m, 1.0, 1, m));
+  CHECK(test_support::within_identity_bound(-0.5, 1, m, -0.5, 1, m));
+  CHECK_FALSE(
+      test_support::within_identity_bound(1.0, 1, m, 1.0 + (2 * u), 1, m));
+  CHECK_FALSE(
+      test_support::within_identity_bound(1.0 + (2 * u), 0, m, 1.0, 0, m));
+}
+
+// Reference: proof: with K = 3 on both sides and magnitudes 1, the sum of
+//   the bounds is 2 gamma_3 = 6u / (1 - 3u), just above 6u, so 1 + 2u
+//   against 1 - 4u, 6u apart, is accepted, and the tolerance with one
+//   rounding of margin a side is about 8u, so 1 + 4u against 1 - 6u, 10u
+//   apart, is rejected, and for K from 2 to 200 and magnitudes of 1 and
+//   7/4 the tolerance is at least the sum of gamma_K M of the two sides
+TEST_CASE("with several roundings the identity check admits the sum of the "
+          "bounds") {
+  const rational one{1};
+  CHECK(test_support::within_identity_bound(1.0 + (2 * u), 3, one,
+                                            1.0 - (4 * u), 3, one));
+  CHECK(test_support::within_identity_bound(1.0 - (4 * u), 3, one,
+                                            1.0 + (2 * u), 3, one));
+  CHECK_FALSE(test_support::within_identity_bound(1.0 + (4 * u), 3, one,
+                                                  1.0 - (6 * u), 3, one));
+  CHECK(test_support::within_identity_bound(1.0 + (2 * u), 0, one,
+                                            1.0 - (4 * u), 5, one));
+
+  const rational m{7, 4};
+  for (int k = 2; k <= 200; ++k) {
+    CAPTURE(k);
+    const double gamma = (k * u) / (1.0 - (k * u));
+    CHECK(test_support::identity_tolerance(k, one, k, m) >=
+          gamma * (1.0 + 1.75));
+    CHECK(test_support::identity_tolerance(k, one, k, m) <
+          2 * gamma * (1.0 + 1.75));
+  }
+}

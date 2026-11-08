@@ -996,6 +996,101 @@ TEST_CASE("a mirror in an odd number of generators fixes its vectors times "
   CHECK(core::transform(vector(1, 2, 3), plane) == vector(2, 6, 4));
 }
 
+namespace {
+
+struct rga4 {
+  static constexpr auto value = core::rigid<4>();
+};
+struct r400 {
+  static constexpr auto value = core::R<4, 0, 0>();
+};
+struct r500 {
+  static constexpr auto value = core::R<5, 0, 0>();
+};
+
+// Checks transform(e_A, V) for every blade e_A of Alg against `images`,
+// indexed by mask, for the mirror V whose terms on the blades of grade
+// n - 1 are `mirror`, after checking that Alg is the diagonal form whose
+// generators square to `squares`.
+template <class Alg>
+void check_mirror(std::span<const int> squares,
+                  std::span<const golden::term> mirror,
+                  std::span<const golden::transform_image> images) {
+  constexpr std::size_t n = generators<Alg>;
+  using X = core::mv<Alg, core::full<n>, std::int64_t>;
+  using V = core::mv<Alg, core::of_grade<n, n - 1>, std::int64_t>;
+  REQUIRE(squares.size() == n);
+  for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t j = 0; j < n; ++j) {
+      REQUIRE(Alg::value.gram.at(i).at(j) == (i == j ? squares[i] : 0));
+    }
+  }
+  REQUIRE(images.size() == X::component_count);
+
+  V v{};
+  for (const golden::term& t : mirror) {
+    bool placed = false;
+    for (std::size_t k = 0; k < V::component_count; ++k) {
+      const core::oriented_blade blade = V::layout.blades.at(k);
+      if (blade.mask == t.blade) {
+        v.coefficients.at(k) = std::int64_t{blade.sign} * t.coefficient;
+        placed = true;
+      }
+    }
+    REQUIRE(placed);
+  }
+
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    const core::oriented_blade blade = X::layout.blades.at(k);
+    CAPTURE(blade_name(blade.mask, blade.sign));
+    X x{};
+    x.coefficients.at(k) = 1;
+    const golden::transform_image& image = images[blade.mask];
+    REQUIRE(image.blade == blade.mask);
+    by_mask<std::int64_t> want(X::component_count);
+    for (std::size_t t = 0; t < image.size; ++t) {
+      want.at(image.terms.at(t).blade) =
+          std::int64_t{blade.sign} * image.terms.at(t).coefficient;
+    }
+    CHECK(difference_from(core::transform(x, v), want) == "");
+  }
+}
+
+} // namespace
+
+// Reference: independent value: transform(e_A, V) for every blade e_A and
+//   one mirror V in each of rigid(2), R(3,0,0), rigid(3), R(4,0,0),
+//   rigid(4), and R(5,0,0), from the reference's values, computed apart from
+//   the library as the negated antiproduct -V ⟇ x' ⟇ antireverse(V) and again
+//   by matrices with no geometric algebra, as lambda times the outermorphism
+//   of the reflection R x = x - 2 (f . x) N / lambda, so that a single
+//   mirror maps each vector of the mirror to itself times lambda, where x'
+//   is the antigrade involution: the antigrade involution of a blade of
+//   antigrade m is (-1)^m times it, so the antigrade involution is (-1)^n
+//   times the grade involution, and the values for n = 3 and 5 tell it from
+//   the grade involution, while every image is nonzero, which tells the
+//   leading minus sign
+TEST_CASE("a mirror maps every blade to the reference's image") {
+  check_mirror<rga2>(golden::mirrors::rigid_2_squares,
+                     golden::mirrors::rigid_2_mirror,
+                     golden::mirrors::rigid_2_images);
+  check_mirror<r300>(golden::mirrors::r_3_0_0_squares,
+                     golden::mirrors::r_3_0_0_mirror,
+                     golden::mirrors::r_3_0_0_images);
+  check_mirror<rga3>(golden::mirrors::rigid_3_squares,
+                     golden::mirrors::rigid_3_mirror,
+                     golden::mirrors::rigid_3_images);
+  check_mirror<r400>(golden::mirrors::r_4_0_0_squares,
+                     golden::mirrors::r_4_0_0_mirror,
+                     golden::mirrors::r_4_0_0_images);
+  check_mirror<rga4>(golden::mirrors::rigid_4_squares,
+                     golden::mirrors::rigid_4_mirror,
+                     golden::mirrors::rigid_4_images);
+  check_mirror<r500>(golden::mirrors::r_5_0_0_squares,
+                     golden::mirrors::r_5_0_0_mirror,
+                     golden::mirrors::r_5_0_0_images);
+}
+
 // Reference: independent value: by hand in conformal(3), the plane with
 //   normal (g_x, g_y, g_z) and offset g_w is g_x e4235 + g_y e4315 +
 //   g_z e4125 + g_w e3215, of antigrade 1, so the antiproduct of two planes

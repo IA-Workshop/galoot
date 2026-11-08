@@ -422,6 +422,43 @@ int dual_mismatches(std::span<const golden::blade_image> g,
              [&](const by_mask& x) { return left_of(complements, weight(x)); });
 }
 
+// The four duals of every blade of X against the tables of their images,
+// each indexed by mask: bulk_dual, weight_dual, left_bulk_dual, and
+// left_weight_dual, in that order.
+template <class X>
+int dual_table_mismatches(
+    const std::array<std::span<const golden::blade_image>, 4>& tables) {
+  const std::size_t size = std::size_t{1}
+                           << generators<typename X::algebra_type>;
+  for (const auto& table : tables) {
+    if (table.size() != size) {
+      return failure_if(true, "a table is not one entry per blade");
+    }
+    for (core::mask_t m = 0; m < size; ++m) {
+      if (table[m].blade != m) {
+        return failure_if(true, "a table entry is out of its place");
+      }
+    }
+  }
+  const auto image = [&](std::size_t which) {
+    return [&tables, which](const by_mask& x) {
+      return exomorphism_of(tables.at(which), x);
+    };
+  };
+  return map_mismatches<X>(
+             "bulk_dual", size, [](const X& x) { return core::bulk_dual(x); },
+             image(0)) +
+         map_mismatches<X>(
+             "weight_dual", size,
+             [](const X& x) { return core::weight_dual(x); }, image(1)) +
+         map_mismatches<X>(
+             "left_bulk_dual", size,
+             [](const X& x) { return core::left_bulk_dual(x); }, image(2)) +
+         map_mismatches<X>(
+             "left_weight_dual", size,
+             [](const X& x) { return core::left_weight_dual(x); }, image(3));
+}
+
 // (-1)^(gr ag) for the blade of `mask` in an algebra of n generators: the
 // sign that turns the right complement of the blade into its left one.
 int complement_parity(core::mask_t mask, std::size_t n) {
@@ -926,6 +963,41 @@ TEST_CASE("the duals of oriented blades carry their orientations") {
   }
   CHECK(dual_mismatches<Oriented>(golden::exomorphisms::rigid_3,
                                   golden::complements::n4) == 0);
+}
+
+// Reference: independent value: the four duals of every blade of rigid(3),
+//   of rigid(3) under its oriented names, and of conformal(3), whose Gram
+//   matrices satisfy e_i e_j + e_j e_i = 2 g_ij, from the reference's
+//   tables of their images, computed apart from the library
+//   from the definitions bulk_dual(u) = right(G u),
+//   weight_dual(u) = G right(u), and the left duals with left in place of
+//   the outer right, and again from the geometric product of reverse(u)
+//   and the antiscalar and the geometric antiproduct of antireverse(u) and
+//   1, so that a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal
+//   grade, where in rigid(3) the left and right duals differ in sign at
+//   odd gr ag and in conformal(3) they agree and the weight dual is the
+//   negated bulk dual, so the values tell left from right duals and the
+//   bulk dual from the weight dual
+TEST_CASE("the four duals of every blade are the reference's images") {
+  REQUIRE(rga3::value.gram == golden::gp_tables::rigid_3_gram);
+  REQUIRE(cga3::value.gram == golden::gp_tables::conformal_3_gram);
+  const std::array<std::span<const golden::blade_image>, 4> rigid{
+      golden::duals::rigid_3_bulk_dual,
+      golden::duals::rigid_3_weight_dual,
+      golden::duals::rigid_3_left_bulk_dual,
+      golden::duals::rigid_3_left_weight_dual,
+  };
+  const std::array<std::span<const golden::blade_image>, 4> conformal{
+      golden::duals::conformal_3_bulk_dual,
+      golden::duals::conformal_3_weight_dual,
+      golden::duals::conformal_3_left_bulk_dual,
+      golden::duals::conformal_3_left_weight_dual,
+  };
+  CHECK(dual_table_mismatches<core::mv<rga3, core::full<4>, std::int64_t>>(
+            rigid) == 0);
+  CHECK(dual_table_mismatches<Oriented>(rigid) == 0);
+  CHECK(dual_table_mismatches<core::mv<cga3, core::full<5>, std::int64_t>>(
+            conformal) == 0);
 }
 
 // Reference: proof: for every pair of blades a and b of equal grade of

@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+odd_versor_even_sign	gcc-debug	a1546f9894ee	killed	killed	test/presets/rga3/objects_test.cpp:541	test/CMakeFiles/rga3_objects_test.dir/presets/rga3/objects_test.cpp.o: assert: test/presets/rga3/objects_test.cpp:541:67: error: static assertion failed	rga3.objects	-	-	-

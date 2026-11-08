@@ -1,0 +1,22 @@
+rigid2 0b0 {0: 25}
+rigid2 0b1 {1: 7, 2: -24}
+rigid2 0b10 {2: -7, 1: -24}
+rigid2 0b11 {3: -25}
+rigid2 0b100 {2: -40, 1: -30, 4: 25}
+rigid2 0b101 {3: -40, 5: 7, 6: -24}
+rigid2 0b110 {3: 30, 6: -7, 5: -24}
+rigid2 0b111 {7: -25}
+  x v V on e1: {0: 3}
+  x v V on e2: {0: 4}
+  x v V on e3: {0: 5}
+cga3 bulk_dual 0b1 {'0b11110': 1}
+cga3 bulk_dual 0b1000 {'0b1111': -1}
+cga3 bulk_dual 0b11000 {'0b111': -1}
+cga3 bulk_dual 0b111 {'0b11000': 1}
+cga3 bulk_dual 0b10011 {'0b10100': 1}
+rga3 bulk_dual 0b1 {'0b1110': 1}
+rga3 bulk_dual 0b10 {'0b1101': -1}
+rga3 bulk_dual 0b101 {'0b1010': -1}
+rga3 bulk_dual 0b111 {'0b1000': 1}
+flector plane image {(4, 2, 3): 0, (4, 3, 1): 0, (4, 1, 2): 1, (3, 2, 1): 1}
+flector point image {'0b1': 1, '0b10': 2, '0b100': -3, '0b1000': 1}

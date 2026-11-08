@@ -1,0 +1,12 @@
+# The fixture's messages that no test of tests.json pins, each block a
+# reason and the messages it covers.
+
+reason: only forbidden, so no test requires it
+third: only forbidden
+
+reason: required only by a test that passes when it is missing
+fourth: only in a test that is meant to fail
+
+reason: required only in part, and the part is in both
+seventh: shares a prefix
+seventh: shares a prefix too
