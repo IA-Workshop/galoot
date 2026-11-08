@@ -153,7 +153,8 @@ struct no_scalar_formatter {};
 /// rounded or dropped. Width and fill apply to each coefficient too, so to
 /// pad the whole text, format it to a string first. A specification the
 /// scalar's formatter rejects, such as {:.2f} for int, is reported by the
-/// standard library.
+/// standard library. Coefficients print as the scalar's formatter writes
+/// them, so a floating -0.0, which a join often leaves, prints as -0.
 ///
 /// A blade is printed by the name the algebra tag declares for it, when the
 /// tag has a static member names, a constant convertible to std::string_view
