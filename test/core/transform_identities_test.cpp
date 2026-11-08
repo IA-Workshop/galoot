@@ -137,11 +137,23 @@ std::string gram_text() {
   return text + "]";
 }
 
-// A random multivector of the layout of X, with integer entries from -2 to
-// 2.
+// The bound of the entries of the random vectors and multivectors.
+inline constexpr std::int64_t entry_bound = 2;
+
+// The bound of the entries of the random hyperplanes. Each side of the
+// outermorphism identity at grade 4 for a versor of three hyperplanes is a
+// polynomial of degree 24 in the hyperplanes' entries and 4 in the vectors'.
+// With hyperplane entries from -2 to 2, over the random form of four
+// generators, its terms needed more than the 63 bits a coefficient of the
+// test rational holds at about one seed in five, and the test aborted; from
+// -1 to 1 they stay well within it.
+inline constexpr std::int64_t hyperplane_entry_bound = 1;
+
+// A random multivector of the layout of X, with integer entries from -bound
+// to bound.
 template <class X>
-X random_small(std::mt19937_64& source) {
-  std::uniform_int_distribution<std::int64_t> digit(-2, 2);
+X random_small(std::mt19937_64& source, std::int64_t bound) {
+  std::uniform_int_distribution<std::int64_t> digit(-bound, bound);
   X x{};
   for (rational& c : x.coefficients) {
     c = rational{digit(source)};
@@ -154,10 +166,11 @@ X random_small(std::mt19937_64& source) {
 template <class H, std::size_t Count>
 auto random_versor(std::mt19937_64& source) {
   if constexpr (Count == 1) {
-    return random_small<H>(source);
+    return random_small<H>(source, hyperplane_entry_bound);
   } else {
     const auto first = random_versor<H, Count - 1>(source);
-    return core::compose(random_small<H>(source), first);
+    return core::compose(random_small<H>(source, hyperplane_entry_bound),
+                         first);
   }
 }
 
@@ -194,7 +207,7 @@ void check_outermorphism_at(std::mt19937_64& source, const V& v,
   std::array<A, K> a{};
   std::array<A, K> moved{};
   for (std::size_t i = 0; i < K; ++i) {
-    a.at(i) = random_small<A>(source);
+    a.at(i) = random_small<A>(source, entry_bound);
     moved.at(i) = core::transform(a.at(i), v);
   }
   const auto wedge_all = []<std::size_t... I>(const std::array<A, K>& xs,
@@ -217,7 +230,7 @@ void check_composition_at(std::mt19937_64& source, const W& w, const V& v) {
   using Alg = V::algebra_type;
   using X = core::mv<Alg, core::of_grade<generators<Alg>, K>, rational>;
   CAPTURE(K);
-  const X x = random_small<X>(source);
+  const X x = random_small<X>(source, entry_bound);
   CHECK(core::transform(x, core::compose(w, v)) ==
         core::transform(core::transform(x, v), w));
 }
