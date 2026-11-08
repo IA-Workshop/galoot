@@ -26,6 +26,7 @@
 
 #include <array>
 #include <bit>
+#include <concepts>
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
@@ -535,6 +536,36 @@ consteval auto make_blades() {
   }
 }
 
+// Whether Alg holds a metric that has no generators: such a tag is not
+// missing a metric, so blades gives it a message of its own.
+template <class Alg>
+concept metric_without_generators = requires {
+  requires is_metric_v<std::remove_cvref_t<decltype(Alg::value)>>;
+  requires std::remove_cvref_t<decltype(Alg::value)>::generator_count == 0;
+};
+
+// The set of blades<Alg, Names>, or one error with a message when Alg is not
+// an algebra tag. The variable template constrains Alg only weakly, so that
+// this check, rather than a failed constraint, reports the misuse.
+template <class Alg, name_list Names>
+consteval auto make_blades_of_tag() {
+  if constexpr (metric_like<Alg>) {
+    return make_blades<
+        std::remove_cvref_t<decltype(Alg::value)>::generator_count, Names>();
+  } else if constexpr (metric_without_generators<Alg>) {
+    static_assert(false, "blades: the algebra tag's metric has no "
+                         "generators, and an algebra has at least one; give "
+                         "the tag a metric such as rigid<3>()");
+    return blade_set<0>{};
+  } else {
+    static_assert(false, "blades: the tag is not an algebra; an algebra tag "
+                         "holds its metric as static constexpr value, as in "
+                         "struct rga3 { static constexpr auto value = "
+                         "rigid<3>(); }");
+    return blade_set<0>{};
+  }
+}
+
 } // namespace detail
 
 /// Every blade of an algebra of N generators, each with sign +1, in canonical
@@ -594,15 +625,17 @@ inline constexpr std::size_t index_of = detail::make_index_of<S, Mask>();
 /// +e23, and -e13. Only the algebra's number of generators n is read; the set
 /// does not depend on the metric.
 ///
-/// Requires: Alg is metric_like, or the variable does not match; n <= 9,
+/// Requires: Alg is an algebra tag, one that is metric_like; any other
+/// type, or a tag whose metric has no generators, is rejected with one error
+/// whose message says so (the template's head asks only std::destructible,
+/// so that the check can give that message); n <= 9,
 /// because each index is one digit; at least one name; each name 1 or e
 /// followed by digits from 1 to n, none repeated; and no blade named twice,
 /// in either order. Each is checked at compile time, with a message for the
 /// first name that breaks it.
 /// Guarantees: blades<Alg, Names>.size() is the number of names.
-template <metric_like Alg, detail::name_list Names>
-inline constexpr auto blades = detail::make_blades<
-    std::remove_cvref_t<decltype(Alg::value)>::generator_count, Names>();
+template <std::destructible Alg, detail::name_list Names>
+inline constexpr auto blades = detail::make_blades_of_tag<Alg, Names>();
 
 } // namespace galoot::core
 
