@@ -155,13 +155,14 @@ struct no_scalar_formatter {};
 /// A blade is printed by the name the algebra tag declares for it, when the
 /// tag has a static member names, a constant convertible to std::string_view
 /// that lists oriented names as blades<Alg, "..."> reads them, and one of
-/// them stands for the blade with the orientation the layout stores. Any
-/// other blade is printed by its canonical name, 1 for the scalar and
-/// otherwise e and its indices in increasing order, preceded by - when the
-/// layout stores it with orientation -1: a coefficient c on e41 = -e14 with
-/// no declared name prints as -e14: c. A product's result holds its blades
-/// with orientation +1, in canonical order, so it prints as e12, e13, e14, and
-/// so on.
+/// them stands for the blade with the orientation the layout stores. A
+/// names member that is not one text, such as an array of names, is not
+/// read. Any other blade is printed by its canonical name, 1 for the scalar
+/// and otherwise e and its indices in increasing order, preceded by - when
+/// the layout stores it with orientation -1: a coefficient c on e41 = -e14
+/// with no declared name prints as -e14: c. A product's result holds its
+/// blades with orientation +1, in canonical order, so it prints as e12, e13,
+/// e14, and so on.
 ///
 /// Requires: char output; a std::formatter<T, char> for the scalar type,
 /// whose parse and format may take any context or the standard library's own
