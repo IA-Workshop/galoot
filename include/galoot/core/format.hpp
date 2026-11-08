@@ -150,7 +150,10 @@ struct no_scalar_formatter {};
 /// writes it, with a comma and a space between components. An empty layout
 /// writes {}. A format specification, as in {:.3f} or {:>5}, is read by
 /// std::formatter<T, char> and applies to each coefficient; nothing else is
-/// rounded or dropped.
+/// rounded or dropped. Width and fill apply to each coefficient too, so to
+/// pad the whole text, format it to a string first. A specification the
+/// scalar's formatter rejects, such as {:.2f} for int, is reported by the
+/// standard library.
 ///
 /// A blade is printed by the name the algebra tag declares for it, when the
 /// tag has a static member names, a constant convertible to std::string_view
