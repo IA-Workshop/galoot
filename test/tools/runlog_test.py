@@ -686,13 +686,87 @@ def skip_messages(tool, directory):
               any(re.search(e, result.stderr) for e in expressions), True)
 
 
+def prune_refusals(tool, directory):
+    """Case 14: prune refuses, and leaves every log as it was, unless every
+    era recomputes as the history records it. A rule narrowed after an era
+    was made would otherwise have prune delete rows that era kept."""
+    repo, _, a, b, later = compaction(tool, directory)
+    repo.commit("compact")
+    campaign = f"{os.path.dirname(LOG)}/campaign/runs.tsv"
+    os.makedirs(os.path.dirname(repo.path(campaign)))
+    repo.write(campaign, "\n".join([HEADER, probe_row(90), kept_row(91),
+                                    probe_row(92)]) + "\n")
+    boundary2 = repo.commit("a campaign log")
+    check("compact the campaign log",
+          repo.run("compact", boundary2, "--log", campaign).returncode, 0)
+    repo.commit("compact the campaign log")
+    # A removed row back in the run log, which prune would take out.
+    repo.write(LOG, repo.read(LOG) + a[0] + "\n")
+
+    def refused(name, result, message):
+        check(f"prune exit, {name}", result.returncode, 2)
+        if message not in result.stderr:
+            failures.append(f"prune stderr, {name}: {result.stderr!r}")
+
+    # The rule narrowed so that builds of committed revisions no longer
+    # stay: the two builds the first era kept by the rule now recompute as
+    # removed.
+    source = open(tool, encoding="utf-8").read()
+    anchor = ("    if step in RUN_STEPS:\n"
+              "        return row.get(\"preset\", NO_TREE) != NO_TREE\n")
+    check("anchor of the narrowed rule", source.count(anchor), 1)
+    narrowed = os.path.join(directory, "runlog-narrowed")
+    with open(narrowed, "w", encoding="utf-8") as f:
+        f.write(source.replace(anchor, "    if step in RUN_STEPS:\n"
+                               "        return False\n"))
+    before = [repo.read(LOG), repo.read(campaign)]
+    result = subprocess.run([sys.executable, "-I", narrowed, "prune"],
+                            cwd=repo.top, capture_output=True, text=True,
+                            check=False)
+    refused("narrowed rule", result,
+            "does not recompute as the history records it")
+    check("logs unchanged, narrowed rule",
+          [repo.read(LOG), repo.read(campaign)] == before, True)
+    check("kept builds still there, narrowed rule",
+          has_once(repo, [a[1], b[2]]), True)
+
+    # The history of the second log damaged: the run log, visited first,
+    # is not rewritten either.
+    eras = repo.read(f"{HISTORY}/eras.tsv")
+    damaged = eras.replace(f"{boundary2}\t{campaign}\t3\t2\t",
+                           f"{boundary2}\t{campaign}\t3\t3\t")
+    check("campaign era damaged", damaged != eras, True)
+    repo.write(f"{HISTORY}/eras.tsv", damaged)
+    refused("damaged era of the second log", repo.run("prune"),
+            f"era {boundary2} of {campaign} does not recompute")
+    check("logs unchanged, damaged era",
+          [repo.read(LOG), repo.read(campaign)] == before, True)
+    repo.write(f"{HISTORY}/eras.tsv", eras)
+
+    # A group row damaged.
+    groups = repo.read(f"{HISTORY}/groups.tsv")
+    repo.write(f"{HISTORY}/groups.tsv",
+               groups.replace("\t9\t", "\t8\t", 1))
+    refused("damaged group row", repo.run("prune"),
+            "does not recompute as the history records it")
+    check("logs unchanged, damaged group row",
+          [repo.read(LOG), repo.read(campaign)] == before, True)
+    repo.write(f"{HISTORY}/groups.tsv", groups)
+
+    # The history restored: prune goes ahead.
+    result = repo.run("prune")
+    check("prune exit, history matching", result.returncode, 0)
+    check("removed row gone", a[0] in repo.log_rows(), False)
+    check("check after prune", repo.run("check").returncode, 0)
+
+
 def main(tool, directory):
     tool = os.path.realpath(tool)
     directory = os.path.realpath(directory)
     cases = [summary_values, kept_by_rule, compaction, checks, refusals,
              pruning, merges, second_era, merged_boundary_first,
              inserted_mid_log, later_era_refusal, campaign_log,
-             skip_messages]
+             skip_messages, prune_refusals]
     for case in cases:
         try:
             case(tool, os.path.join(directory, case.__name__))
