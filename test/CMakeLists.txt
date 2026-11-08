@@ -2140,7 +2140,7 @@ function(format_rejects case message)
 endfunction()
 set(format_no_formatter "format: the scalar type has no std::formatter${semicolon} give it a std::formatter, as double has")
 set(format_wide_algebra "format: names such as e123 have one digit per index, so a multivector prints by name only for n up to 9${semicolon} format its coefficients instead")
-set(format_not_a_blade "format: an entry of the algebra tag's names is not a blade of the algebra${semicolon} write 1, or e and distinct indices from 1 to n, as in e41")
+set(format_not_a_blade "format: an entry of the algebra tag's names is not a blade of the algebra${semicolon} write 1, or e and distinct indices from 1 to n, the number of generators, as in e41")
 set(format_named_twice "format: the algebra tag's names name one blade twice, perhaps in both orientations${semicolon} name each blade once")
 foreach(case IN ITEMS scalar_without_formatter scalar_without_formatter_auto
     scalar_without_formatter_print)
