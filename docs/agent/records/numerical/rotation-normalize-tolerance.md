@@ -45,7 +45,7 @@ The first and third rows reproduce `rotation-tolerance.md`'s values, a check of 
 
 ## A direction of length zero
 
-n̂ = 0, so q = ŝ/0 is ±∞ (or NaN when ŝ = 0, at θ = 0), and each line coefficient is 0 · q = NaN or m_i · q = ±∞ or NaN; e1234 still holds ĉ. The motor is not finite, and `transform` propagates the NaN. This is a precondition violation, documented in the comment, not checked. A direction whose squared length underflows (components below about 1e−154 in double, 1e−19 in float) behaves the same way, or loses accuracy when it is subnormal; one whose squared length overflows (above about 1e154 in double, 1e19 in float) gives n̂ = ∞, q = 0, and the motor holds only ĉ on e1234, a wrong motor. Both ranges are stated in the comment.
+n̂ = 0, so q = ŝ/0 is ±∞ (or NaN when ŝ = 0, at θ = 0), and each line coefficient is 0 · q = NaN or m_i · q = ±∞ or NaN; e1234 still holds ĉ. The motor is not finite, and `transform` propagates the NaN. This is a precondition violation, documented in the comment, not checked. A direction whose squared length underflows (length below about 1.5e−154 in double, 1.1e−19 in float) behaves the same way, or loses accuracy when the sum is subnormal; one whose squared length overflows (length above about 1.3e154 in double, 1.8e19 in float) gives n̂ = ∞, q = 0, and the motor holds only ĉ on e1234, a wrong motor. The comment states a safe range for the length, 1e−150 to 1e150 in double and 1e−18 to 1e18 in float.
 
 ## Not covered
 
