@@ -9,7 +9,7 @@ Plan 0022 section 6 and criterion 8. `mutate.py` applies one mutant at a time to
 It then runs every test of the group's label (`core.format`, `core.mv`, `core.linear`, `core.blade_set`), the compile-fail tests included, and restores the header. Results are in `out/gcc-debug.tsv` and `out/clang-debug.tsv`; each build and test is a `mutant:<name>` row in `runs.tsv`. `scan_mutants.py` runs mutants of `records/diagnostics/catalogue/scan.py` against its `--self-test`; its result is `out-scan.txt`.
 
 Run by the WU15 implementer (Claude, agent, Opus 5.5) in the worktree of `feature/core-format`, which no other build used:
-- the 18 format mutants at `810aae5`, against the final format.hpp;
+- the 18 format mutants at `ca81991`, whose format.hpp is that of `02a7580`, the final one;
 - the 19 part 3 mutants at `17c9baa`.
 
 One format mutant, `canonical_index_order_reversed`, first failed to build through a dangling view in the mutant itself. That was a fault of the mutant, not a kill, so it was rewritten and run again on gcc-debug; clang-debug ran only the rewritten form.
@@ -38,8 +38,8 @@ Part 3 mutants and what killed them:
 | --- | --- |
 | `other_source_scalar_only`, `other_source_algebra_only` | the accept test's probes of a derived source (`mv_test.cpp` static_asserts), and every compile-fail test of the lost cause |
 | each `mv` rejection removed, and the swapped messages | the `core.mv_other_*` tests |
-| `number_operand_any_type` | `linear_test.cpp`'s probe that `gadget` has no sum with a multivector, and `core.linear_mixed_*` |
-| `number_operand_not_ring` | the probe that `widget` has no sum |
+| `number_operand_any_type` | `linear_test.cpp`'s probes of sums of two multivectors (the catch-all for a number then also takes them, so the call is ambiguous), and `core.linear_mixed_*` |
+| `number_operand_not_ring` | `linear_test.cpp`'s probe that a type of the user's without arithmetic has no sum with a multivector |
 | `number_operand_multivectors_too` | `core_linear_test` fails to build: the constraint then depends on itself in the check of `ring_scalar` (`mv.hpp:70`), a hard error for valid code |
 | each sum rejection removed, and the swapped messages | the `core.linear_*_number_*` tests |
 | `blades_constrained_by_metric_like`, each `blades` rejection removed, `no_generators_case_lost`, `blades_messages_swapped` | `core.blade_set_blades_*`, `core.blade_set_names_zero` |
