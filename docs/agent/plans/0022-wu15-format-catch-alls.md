@@ -268,8 +268,9 @@ Departures:
 - Each test group's commit also holds the expected values it changes (W9, listed in the commit messages), so that each group is a single failing commit.
 - The full lint preset (`all`) and the release, asan, and clang-measure presets were not run; they are for the merge.
 
+The owner confirmed the 7.2 and S7 wording, the scan as a record tool, `blades`' two messages, and the equivalent survivor with its constraint on 2026-11-08 (decision 0207).
+
 Next:
-- the owner confirms the 7.2 and S7 wording;
 - the optional hci reading;
 - the W5 blind review with the usability checklist, fixes, and a delta review;
 - the merge checks of section 7.
