@@ -122,3 +122,23 @@ TEST_CASE("vectors anticommute to twice their inner product over many forms") {
 TEST_CASE("the involutions follow their antiproduct rules over many forms") {
   check_every_group(Identity::antiproduct_rules);
 }
+
+// Reference: proof: an exhaustive check over a finite set, since each law
+//   of the other test cases is linear in each operand, so it holds for all
+//   multivectors of the layouts once it holds on every pair or triple of
+//   their basis blades, here on every pair the De Morgan laws and their
+//   converses and the product rules of the reverse, the antireverse, and the
+//   grade involution over the four products, with the sign (-1)^n over the
+//   antiproducts, on every triple the associativity of the geometric
+//   product, the wedge, the geometric antiproduct, and the antiwedge, on
+//   every blade 1 and the antiscalar as the identities of the geometric
+//   product and antiproduct, and on every pair of generators
+//   e_i e_j + e_j e_i = 2 g_ij, each through mv with one coefficient 1 and
+//   on the layouts of the random checks, so that the laws are proved for all
+//   multivectors of each form of up to four generators and of R(4,1,0),
+//   R(4,0,1), conformal(3), R(0,3,2), and R(0,2,3), and on the vectors,
+//   bivectors, and sparse sets of the others
+TEST_CASE("the laws hold on every pair and triple of basis blades over many "
+          "forms") {
+  check_every_group(Identity::basis);
+}
