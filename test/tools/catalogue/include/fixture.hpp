@@ -10,7 +10,7 @@ static_assert(c, "third: only forbidden");
 static_assert(d, "fourth: only in a test that is meant to fail");
 void f() { GALOOT_ASSERT(x > 0, "fifth: run time"); }
 static_assert(e(")"), "sixth: joined "
-                       "from two literals");
+                      "from two literals");
 static_assert(g, "seventh: shares a prefix");
 static_assert(h, "seventh: shares a prefix too");
 static_assert(sizeof(int) == 4);
