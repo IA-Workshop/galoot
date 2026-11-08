@@ -12,7 +12,7 @@ Each unit of work has a goal, a definition of done, and acceptance criteria, sta
 
 ### W2 Small units
 
-A unit is one change that a reviewer can understand in one sitting. It leaves the project building, with its tests passing, at every recorded step. One exception: a test committed before the code it judges may leave that single commit failing if the commit message says so. Larger work is split into units that each meet this rule.
+A unit is one change that a reviewer can understand in one sitting. It leaves the project building, with its tests passing, at every recorded step. One exception: a test committed before the code it judges may leave that commit failing if the commit message says so and names the test that fails, and a run of such labelled test commits may precede the one commit that makes them pass (decision 0216). Larger work is split into units that each meet this rule.
 
 ### W3 Plans
 
