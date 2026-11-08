@@ -2,7 +2,7 @@
 
 `mutate.py` applies one mutant at a time to `include/galoot/rga3/motions.hpp`, builds `rga3_motions_test`, runs the CTest `rga3.motions`, and restores the header. Results: `out/gcc-debug.tsv` and `out/clang-debug.tsv` (mutant, build exit, test exit, the failed test cases); every build and test is a `mutant:<name>` row in `runs.tsv`.
 
-Run by the plan 0024 implementer (Claude, agent, Opus 5.5) in `.claude/worktrees/rotation-normalize`, one preset after the other, on the header of `3ab7f85` with the tests of `03c678f`. A first run of `division_omitted` replaced only the sine, so its build failed on the unused `length` (a warning made an error, which does not count); the mutant now also removes that line, and the whole set was run again. The rows of both runs are in `runs.tsv`; `out/` holds the second.
+Run by the plan 0024 implementer (Claude, agent, Opus 5.5) in `.claude/worktrees/rotation-normalize`, one preset after the other. A first run on gcc-debug, on the header of `3ab7f85` with the tests of `03c678f`, had a `division_omitted` that replaced only the sine, so its build failed on the unused `length` (a warning made an error, which does not count); the mutant now also removes that line, and the set was run again on both presets. After lint asked for parentheses in the length (`4577f85`, same evaluation order) and the tests' lint fixes (`451e03f`), the mutants' texts were updated to match and the set was run a third time on both presets, on the header of `4577f85`; `out/` holds that run, and its kills equal the second run's. The rows of all runs are in `runs.tsv`.
 
 ## Result
 

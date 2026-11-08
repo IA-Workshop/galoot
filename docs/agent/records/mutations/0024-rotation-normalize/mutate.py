@@ -25,7 +25,7 @@ ROOT = pathlib.Path(subprocess.run(
 HEADER = ROOT / "include/galoot/rga3/motions.hpp"
 OUT = pathlib.Path(__file__).resolve().parent / "out"
 
-LENGTH = "const T length = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2]);"
+LENGTH = "const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));"
 SINE = "const T s = std::sin(half) / length;"
 DIRECTION = "v[0] * s, v[1] * s, v[2] * s, c,"
 MOMENT = "v[3] * s, v[4] * s, v[5] * s, T{0},"
@@ -42,9 +42,9 @@ MUTANTS = {
                        (MOMENT, "v[3] * r, v[4] * r, v[5] * r, T{0},")],
     # Wrong norms: the squared length, the length of all six coefficients,
     # a direction component left out, and multiplying by the length.
-    "norm_squared": [(LENGTH, "const T length = (v[0] * v[0] + v[1] * v[1]) + v[2] * v[2];")],
-    "norm_with_moment": [(LENGTH, "const T length = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2] + v[3] * v[3] + v[4] * v[4] + v[5] * v[5]);")],
-    "norm_without_z": [(LENGTH, "const T length = std::sqrt(v[0] * v[0] + v[1] * v[1]);")],
+    "norm_squared": [(LENGTH, "const T length = ((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]);")],
+    "norm_with_moment": [(LENGTH, "const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]) + (v[3] * v[3]) + (v[4] * v[4]) + (v[5] * v[5]));")],
+    "norm_without_z": [(LENGTH, "const T length = std::sqrt((v[0] * v[0]) + (v[1] * v[1]));")],
     "times_length": [(SINE, "const T s = std::sin(half) * length;")],
 }
 
