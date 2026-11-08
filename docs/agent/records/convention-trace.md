@@ -35,10 +35,15 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 2.1 | the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it | yes |
 | 2.1 | the antireverse of a blade of antigrade m is (-1)^(m(m-1)/2) times it | yes |
 | 2.1 | the grade involution of a grade-k blade is (-1)^k times it | yes |
+| 2.1 | the antigrade involution of a blade of antigrade m is (-1)^m times it | yes |
+| 2.1 | the antigrade involution is (-1)^n times the grade involution | yes |
+| 2.1 | right(x') is the grade involution of right(x) | yes |
 | 3.1 | u ^ right(u) = antiscalar and left(u) ^ u = antiscalar | yes |
 | 3.1 | the left complement of the right complement is the identity | yes |
 | 3.2 | in rigid(3) the bulk is the part without e4 and the weight the part with it | yes |
 | 3.2 | the metric exomorphism sends e_A to the sum of det g[A, B] e_B | yes |
+| 3.2 | in a diagonal form the bulk of a blade is the product of the squares of its generators times it | yes |
+| 3.2 | with two or more null generators a blade with some but not all of them is in neither | yes |
 | 3.3 | a ^ bulk_dual(b) = (a . b) antiscalar for a and b of equal grade | yes |
 | 3.3 | the left duals are the right duals times (-1)^(gr ag) | yes |
 | 3.4 | in a degenerate metric the double bulk dual is zero | yes |
@@ -46,6 +51,9 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.1 | e_i e_j + e_j e_i = 2 g_ij | yes |
 | 4.1 | the dot is a^T G b and the antidot a^T antiG b times the antiscalar | yes |
 | 4.2 | right(a ^ b) = right(a) v right(b) | yes |
+| 4.2 | right(a ⟑ b) = right(a) ⟇ right(b) | yes |
+| 4.2 | both products and both antiproducts are associative | yes |
+| 4.2 | the grade involution of an antiproduct is (-1)^n times the antiproduct of the grade involutions | yes |
 | 4.3 | a point projected onto a unitized plane has weight +1 | yes |
 | 4.3 | the antiprojection of a plane onto a unitized point is the plane through the point with the same normal | yes |
 | 4.3 | the antiprojection of a line onto a unitized point is the line through the point with the same direction | yes |
