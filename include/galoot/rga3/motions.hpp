@@ -33,11 +33,12 @@ namespace galoot::rga3 {
 /// (its coefficients on e41, e42, e43) and the half angle in the
 /// coefficients. Dividing all six coefficients of l by |v| unitizes the
 /// line, so the result is a unitized motor, up to rounding, for a direction
-/// of any positive length, and the join p ^ q of two points can be passed as
-/// it is. The turn
-/// is counterclockwise when seen from the tip of l's direction, so a
-/// positive theta about (0, 0, 1) takes the x axis toward the y axis. theta
-/// has the line's scalar type exactly: 0.5 over double, 0.5f over float.
+/// of any positive length. So the join of two points needs no division by
+/// its length; it has a layout of its own, the wedge's, and is passed
+/// converted, as Line{p ^ q}. The turn is counterclockwise when seen from
+/// the tip of l's direction, so a positive theta about (0, 0, 1) takes the x
+/// axis toward the y axis. theta has the line's scalar type exactly: 0.5
+/// over double, 0.5f over float.
 ///
 /// Requires: T is a floating type, since the coefficients need std::sin,
 /// std::cos, and std::sqrt. l must be a line, its direction and moment
