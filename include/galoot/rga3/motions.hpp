@@ -61,7 +61,7 @@ namespace galoot::rga3 {
 template <std::floating_point T>
 [[nodiscard]] inline Motor<T> rotation(const Line<T>& l, T theta) {
   const auto& v = l.coefficients;
-  const T length = std::sqrt((v[0] * v[0] + v[1] * v[1]) + v[2] * v[2]);
+  const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));
 
   // The sine divided by the length, so that the six products below hold the
   // unitized line times sin(theta/2) with one division.
