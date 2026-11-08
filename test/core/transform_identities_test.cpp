@@ -302,6 +302,22 @@ void check_identities(std::mt19937_64& source) {
   CHECK(accepted > 0);
 }
 
+// The identities over every form of the lists above, drawn from `source`.
+void check_all_forms(std::mt19937_64& source) {
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_identities<
+         form<G>, core::of_grade<generators<form<G>>, generators<form<G>> - 1>,
+         generators<form<G>>>(s),
+     ...);
+  }(small_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_identities<form<G>, core::of_grade<5, 4>, 3, 2>(s), ...);
+  }(dense_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_identities<form<G>, sparse_hyperplanes, 2>(s), ...);
+  }(large_forms{}, source);
+}
+
 } // namespace
 
 // Reference: identity: for V the antiproduct of one to three random
@@ -320,16 +336,18 @@ TEST_CASE("versors of hyperplanes act as outermorphisms and compose over "
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);
   std::mt19937_64 source(seed);
-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
-    (check_identities<
-         form<G>, core::of_grade<generators<form<G>>, generators<form<G>> - 1>,
-         generators<form<G>>>(s),
-     ...);
-  }(small_forms{}, source);
-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
-    (check_identities<form<G>, core::of_grade<5, 4>, 3, 2>(s), ...);
-  }(dense_forms{}, source);
-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
-    (check_identities<form<G>, sparse_hyperplanes, 2>(s), ...);
-  }(large_forms{}, source);
+  check_all_forms(source);
+}
+
+// Reference: identity: the outermorphism and composition identities of the
+//   case above, at the fixed seeds 8, 23, 27, 37, 38, 39, and 43, at which
+//   hyperplane entries from -2 to 2 made the grade-four check over the
+//   random form of four generators overflow the test rational
+TEST_CASE("versors of hyperplanes act as outermorphisms and compose at the "
+          "seeds that once overflowed the test rational") {
+  for (const unsigned seed : {8U, 23U, 27U, 37U, 38U, 39U, 43U}) {
+    CAPTURE(seed);
+    std::mt19937_64 source(seed);
+    check_all_forms(source);
+  }
 }
