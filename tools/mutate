@@ -39,8 +39,9 @@ end the targets are rebuilt. Every build and test goes through tools/timed
 as mutant:<name>, mutant:baseline, or mutant:restore. Edited files are
 restored after each mutant and on SIGINT or SIGTERM, and a run that stops
 early rebuilds the targets too, so that no program is left deleted; after a
-SIGKILL, `git status` shows any file left mutated. A CTest run that fails
-without naming a failed test leaves its mutant unjudged.
+SIGKILL, `git status` shows any file left mutated. A test that CTest names
+as failed, one that timed out among them, is a kill; a CTest run that fails
+without naming a test leaves its mutant unjudged.
 
 Each failed object is classified by its first error line: `warning` if it
 carries [-Werror, `assert` if it is a failed static assertion or a call
@@ -56,9 +57,9 @@ building nothing.
 
 Writes out/<spec stem>-<preset>[-runtime].tsv beside the spec, one row per
 mutant in spec order; a later run of some mutants replaces their rows only.
-Exit 0 when every mutant is killed or declared equivalent and found so,
-each declared killer killed it, and no leak was found; 1 otherwise; 2 when
-refused.
+Exit 0 when no mutant has a problem: each is killed, or declared equivalent
+and found so, each declared killer killed it, no leak was found, and no
+CTest run failed without naming a test; 1 otherwise; 2 when refused.
 """
 
 import argparse
@@ -360,7 +361,8 @@ def build_failures(output, tree, runtime_files):
             kind = "invalid"
         text = first.replace(f"{ROOT}/", "")[:400]
         failures.append((failed.group(1), kind, text, where))
-    return failures, leaks
+    # Sorted, since Ninja reports objects in the order its jobs finish.
+    return sorted(failures), sorted(leaks)
 
 
 class Run:
@@ -511,7 +513,8 @@ class Run:
                 "expected": mutant["expect"], "killers": " ".join(killers),
                 "build_failures": " | ".join(
                     f"{obj}: {kind}: {text}" for obj, kind, text, _ in failures),
-                "not_run": " ".join(not_run), "failed_cases": " | ".join(cases),
+                "not_run": " ".join(not_run),
+                "failed_cases": " | ".join(sorted(cases)),
                 "leaks": " | ".join(leaks), "problems": " | ".join(problems)}
 
     def record(self, preset, row):
