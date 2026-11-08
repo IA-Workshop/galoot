@@ -1,0 +1,34 @@
+# 0203 `rotation(l, theta)` normalizes its axis: CONVENTIONS 1.13 and the tests that judge it
+
+- Status: recorded. The behavior was ruled by the owner on 2026-11-08 ("Accept all recommendations", decision 0202 item 1, the hci reading's S1 option (a)). The wording of 5.7 below, the formula's form, and the handling of a zero direction are the implementer's, open to the delta review and to the owner, whose confirmation of 5.7's wording is asked (item 2).
+- Date: 2026-11-08
+- Recorded by: Claude (agent, Opus 5.5), implementer of plan 0024
+- Bears on: CONVENTIONS 5.5, 5.7; decisions 0198 item 3, 0201, 0202 item 1; plan 0023 R4, R11; `records/numerical/rotation-tolerance.md`, `records/numerical/rotation-normalize-tolerance.md`; `records/reviews/2026-11-07-wu16-hci-reading.md` S1; VVUQ V12; WORKFLOW W9
+
+## Context
+
+Decision 0198 item 3 had `rotation` assume a unitized axis, unchecked. The hci reading (S1) showed that the README's idiom `Line{p ^ q}` gives a direction q − p of length other than 1 for most pairs of points, and that the rotation then turns by 2 atan(L tan(θ/2)) silently. The owner chose option (a): `rotation` divides the line by the length of its direction.
+
+## Decision
+
+1. **The formula.** `rotation(l, theta)` computes |v| = `std::sqrt((v_x v_x + v_y v_y) + v_z v_z)` from l's coefficients on e41, e42, e43, then s = `std::sin(theta / 2) / |v|`, and stores l_i s on the six line blades and `std::cos(theta / 2)` on e1234. This is (l / |v|) sin(θ/2) + 𝟙 cos(θ/2), with the division folded into the sine: one square root and one division per call, the six products as before. When the computed |v| is a power of 2, the motor is the same bit for bit as the rotor of l / |v| written out, and for |v| = 1 the same as before this change; every unit axis-aligned line and both unit lines off the axes in the construction test, (0.6, 0.8, 0) and (0, −0.6, −0.8), gave the same bits before and after on gcc-debug.
+2. **CONVENTIONS 5.7, as committed in 1.13.** "5.7 Constructors take geometric quantities: `rotation(l, theta)` turns by theta about a line l whose direction v has any positive length, and builds (l / |v|) sin(θ/2) + 𝟙 cos(θ/2), dividing all six coefficients of l by |v|; l must still be a line, v · m = 0. `translation(dx, dy, dz)` moves by d = (dx, dy, dz) and builds ½d on e23, e31, e12 plus 𝟙. Raw motor coefficients hold half-angles and half-distances. (Proposed, with both actions Checked from the coefficients they build for a unitized l)". Against 1.12: the rotation clause names the division and the line condition, and the label adds "for a unitized l", since `conventions_check.py`'s `check_rotation` checks the rotor of a unitized line; the division is the constructor's choice and is pinned by the library's tests. The status line and the 1.13 row record the ruling. The owner's confirmation of this wording is asked; nothing in the code or tests depends on it.
+3. **A zero direction is a precondition violation, documented, not checked.** |v| = 0 gives s = ±∞, or NaN at θ = 0, so the line coefficients are infinite or NaN; a direction whose squared length overflows gives s = 0 and a motor holding only cos(θ/2). The comment states both and a safe range for |v| (1e−150 to 1e150 in double, 1e−18 to 1e18 in float). No `GALOOT_ASSERT` and no fallback were added (item 4 of the options; an owner question).
+4. **The tests that judge the change** (W9, listed for the delta review), on `feature/rotation-normalize--tests`, cherry-picked with `-x`:
+   - `5165641` (as `ed94110`): the bit-for-bit construction test expects l_i (sin(θ/2) / |v|) with |v| computed as the code does, and adds directions of length 2, 5, 5, and 5/2; a new test that joins of length 2 and 4 give the unit line's motor bit for bit and one of length 5 the same motor within 2u on e43 and e31; a new quarter-turn test about the z axis of length 2 (tolerances 39u, 38u, 0, 31u, unchanged, since the motor is the same bit for bit) and of length 5 (41u, 41u, 0, 34u in double; 42u, 41u, 0, 34u in float), derived in `rotation-normalize-tolerance.md` (`da55433`) before the test existed. The existing quarter-turn test about the unit z axis and its tolerances are unchanged.
+   - `a09fd1e` (as `ff758b0`): a correction of the new same-motor test, shown wrong on its first run against the new header. It compared the motor of a join with that of a unit line written as literals; the join gives −0 on some zero coefficients and the literals +0, so the bits differed in the sign of zeros only. The unit lines are now the join's coefficients divided by the length, exact here. No tolerance or case changed.
+   - `c86a68c` (as `03c678f`): the check that an unqualified call finds `rotation` passed a default-constructed, zero `Line`, now outside the precondition; it passes the z axis, with the same expected identity motor.
+5. **Trace.** A 5.7 row, "rotation(l, theta) turns by theta about a line whose direction has any positive length", pinned by the two new tests.
+
+## Options weighed
+
+- Dividing each of the six coefficients by |v| and then multiplying by the sine: six divisions in place of one, and the same rounding count per coefficient (two). Folding the division into the sine was chosen; the mutants of "divide the moment only" and "omit the division" are written against this form.
+- C++17's three-argument `std::hypot(x, y, z)` for the length: guards against overflow and underflow of the squares, at a cost per call that was not measured; the standard does not state its accuracy. The owner's ruling names one square root, so the safe range is documented instead.
+- Checking the zero direction: `GALOOT_ASSERT(length > 0, ...)` in checking builds, as STYLE S9 asks for preconditions the types cannot express, would catch a zero or underflowing direction at no cost in other builds. It is a behavior the brief did not ask for and that the other assumptions of `rotation` (a line, v · m = 0) do not have, since those cannot be tested exactly on a rounding scalar; it is left to the owner (plan 0024's report).
+- Returning a failure value (`std::optional<Motor<T>>`) for a zero direction: changes the return type of a public function for a misuse, against the ruling's scope.
+
+## Consequences
+
+- `rotation(Line{p ^ q}, theta)` turns by theta for any two distinct points, so the README's caution about the axis length is replaced by the line condition.
+- A unit axis not along a coordinate axis whose computed length is not exactly 1 may give a motor that differs in the last bit from before; the construction test computes its expected value by the same formula, so it is a contract on the construction, not on the old bits.
+- The geometric accuracy is derived and tested for the z axis of lengths 1, 2, and 5 only; other lengths and axes are not covered (`rotation-normalize-tolerance.md`, "Not covered").
