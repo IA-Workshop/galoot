@@ -16,7 +16,9 @@
 // and rotation itself is checked against the same formula evaluated in the
 // test. Its accuracy as a turn by theta in floating point is checked for a
 // quarter turn about the z axis, given with directions of length 1, 2, and
-// 5, within a bound that includes the C library's error for sin and cos.
+// 5, within a bound that includes the C library's error for sin and cos, and
+// its division by the length for a half turn about two lines off the axes,
+// against the exact fifths of the unitized lines.
 #include <array>
 #include <bit>
 #include <cmath>
@@ -527,6 +529,76 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about a z axis of length 2 or 5 turns "
                        tolerance));
       CHECK(std::abs(coefficient - expected.at(j)) <= tolerance);
     }
+  }
+}
+
+// The tolerance of each line coefficient of a half turn, rotation(l, fl(pi)),
+// about a line whose direction has length 5 or 5/2, against the exact fifths
+// of the unitized line, in units of the unit roundoff u and indexed by the
+// numerator's magnitude n = 0 to 4. Both lengths are computed exactly, the
+// half of fl(pi) is exact, and sin(fl(pi) / 2) = cos(delta / 2) with
+// delta = |pi - fl(pi)|, within delta^2 / 8 < 1e-7 u of 1, so the library's
+// sine is within a = k u + delta^2 / 8 of 1, with k = 9 ulps as for the
+// quarter turn. A coefficient is v_i fl(s^ / |v|) rounded, which is
+// (n / 5) s^ (1 + e1)(1 + e2) with |e1|, |e2| <= u, within
+// (n / 5) ((1 + a)(1 + u)^2 - 1) < (n / 5) 11.01 u of n / 5. The expected
+// value n / 5 as T is one correctly rounded division, within half an ulp:
+// u / 8, u / 4, u / 2, and u / 2 for n = 1 to 4. The difference of the two is
+// exact by Sterbenz's lemma, and a zero coefficient is 0 times the quotient,
+// a zero. The bounds 0, 2.33, 4.65, 7.11, and 9.31 u are rounded up below.
+namespace {
+constexpr std::array<int, 5> half_turn_fifths_tolerance_in_u{0, 3, 5, 8, 10};
+} // namespace
+
+// Reference: independent value: by hand, the line through (1, 0, 0) with
+//   direction (0, 3, 4) has moment (1, 0, 0) x (0, 3, 4) = (0, -4, 3), so it
+//   is (0, 3, 4, 0, -4, 3), and (1.5, -2, 0, 2, 1.5, 1/2) is a line, since
+//   v . m = 3 - 3 + 0 = 0; their directions have lengths 5 and 5/2, so
+//   divided by them they are (0, 3, 4, 0, -4, 3) / 5 and
+//   (3, -4, 0, 4, 3, 1) / 5; contract: rotation(l, theta) builds
+//   (l / |v|) sin(theta/2) + antiscalar cos(theta/2), and sin(theta/2) is 1
+//   for a half turn, so rotation(l, fl(pi)) holds those fifths on e41, e42,
+//   e43, e23, e31, e12 over float and double, each within its tolerance from
+//   the error of the C library's sine at k = 9 ulps and the roundings of the
+//   division and the products, 0, 3, 5, 8, or 10 u for a numerator of
+//   magnitude 0 to 4, and 0 on 1, for the unit roundoff u, fixed before the
+//   test was first run
+TEST_CASE_TEMPLATE("rotation(l, pi) about a line off the axes whose direction "
+                   "has length 5 or 5/2 holds the unitized line's fifths",
+                   T, float, double) {
+  using Line = rga3::Line<T>;
+  constexpr T u = std::numeric_limits<T>::epsilon() / T{2};
+  const T theta = std::numbers::pi_v<T>;
+  INFO(std::format("theta = {}", theta));
+
+  // Each line, and the numerators of its unitized coefficients over 5.
+  const std::array<std::pair<Line, std::array<int, 6>>, 2> cases{
+      {
+          {Line{T{0}, T{3}, T{4}, T{0}, T{-4}, T{3}}, {0, 3, 4, 0, -4, 3}},
+          {Line{T{1.5}, T{-2}, T{0}, T{2}, T{1.5}, T{0.5}},
+           {3, -4, 0, 4, 3, 1}},
+      },
+  };
+  for (std::size_t c = 0; c < cases.size(); ++c) {
+    CAPTURE(c);
+    const auto& [axis, fifths] = cases.at(c);
+    const rga3::Motor<T> q = rga3::rotation(axis, theta);
+    // The line blades in the motor's order: e41, e42, e43, then e23, e31,
+    // e12 after e1234.
+    constexpr std::array<std::size_t, 6> line_places{0, 1, 2, 4, 5, 6};
+    for (std::size_t i = 0; i < fifths.size(); ++i) {
+      CAPTURE(i);
+      const int n = fifths.at(i);
+      const T expected = static_cast<T>(n) / T{5};
+      const T coefficient = q.coefficients.at(line_places.at(i));
+      const T tolerance = static_cast<T>(half_turn_fifths_tolerance_in_u.at(
+                              static_cast<std::size_t>(std::abs(n)))) *
+                          u;
+      INFO(std::format("coefficient = {}, expected = {}, tolerance = {}",
+                       coefficient, expected, tolerance));
+      CHECK(std::abs(coefficient - expected) <= tolerance);
+    }
+    CHECK(core::get<"1">(q) == T{0});
   }
 }
 
