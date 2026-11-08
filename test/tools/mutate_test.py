@@ -60,6 +60,8 @@ SECOND_ASSERT = line_of(CHECK, "static_assert(lib::twice(-4) == -8);")
 HALVE_CALL = line_of(USES, "lib::halve(ten)")
 HALVE_RETURN = line_of(LIB, "return x / 2;")
 RUNTIME_RETURN = line_of(LIB, "return x << 1;")
+REJECT_CALL = line_of(LIB, "reject_negative();")
+ACCEPTED = line_of(CHECK, "lib::checked(5)")
 
 
 class Repo:
@@ -217,6 +219,7 @@ MESSAGE_CHANGED = [edit('"twice: the argument must be an int"',
                         '"twice: wrong argument"')]
 EQUIVALENT = "x + x equals 2 * x for every int the tests use"
 SYNTAX_ERROR = [edit("return x << 1;", "return x << 1")]
+GUARD_INVERTED = [edit("if (x < 0)", "if (x >= 0)")]
 HALVE_EXPECTED_WRONG = [edit("lib::halve(ten) != 5", "lib::halve(ten) != 6")]
 
 # The main spec: one mutant of each kind, in this order.
@@ -314,6 +317,19 @@ def expected_row(name, preset):
             build_failures=[(check_obj, "invalid", f"{LIB}:{RUNTIME_RETURN}:"),
                             (uses_obj, "invalid", f"{LIB}:{RUNTIME_RETURN}:")],
             not_run=["check", "uses"], problems=["unjudged"]),
+        # The guard fires for the valid argument the test evaluates at
+        # compile time, which is a kill like a failed static_assert. GCC's
+        # first error is the call to the non-constexpr function, in the
+        # header; Clang's is the constexpr variable in the test, a test
+        # error.
+        "guard_kill": dict(
+            verdict="killed",
+            killers=(f"{LIB}:{REJECT_CALL}" if preset == "gcc-debug"
+                     else f"{CHECK}:{ACCEPTED}"),
+            build_failures=[(check_obj, "assert", f"{LIB}:{REJECT_CALL}:")
+                            if preset == "gcc-debug" else
+                            (check_obj, "test", f"{CHECK}:{ACCEPTED}:")],
+            not_run=["check"]),
         # A run-time change of uses_test alone: its own check fails.
         "uses_wrong": dict(verdict="killed", killers="uses",
                            failed_cases=["halve at run time"]),
@@ -536,6 +552,21 @@ def restore_between_files(repo):
                       expected_row(name, preset))
 
 
+def library_guard(repo):
+    """A library guard that rejects a value during constant evaluation
+    kills the mutant that makes it reject a valid one."""
+    write_spec(repo, "guard", LIB_SELECTION,
+               [mutant("guard_kill", GUARD_INVERTED)])
+    result = repo.mutate("guard")
+    check("guard: exit", result.returncode, 0)
+    check_restored(repo, "guard")
+    check_rebuilt(repo, "guard")
+    for preset in PRESETS:
+        _, rows = repo.output("guard", preset)
+        check_row(f"guard {preset}", rows[0] if rows else None,
+                  expected_row("guard_kill", preset))
+
+
 def runtime_mode(repo):
     """--runtime turns off static_asserts of the test for the whole run."""
     assert_kill = mutant("assert_kill", TWICE_WRONG_AT_COMPILE_TIME)
@@ -629,7 +660,8 @@ def main(tools, directory):
         print(f"setup: {error}")
         return 1
     for case in (refusals, failing_baselines, main_run,
-                 restore_between_files, runtime_mode, check_mode):
+                 restore_between_files, library_guard, runtime_mode,
+                 check_mode):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,

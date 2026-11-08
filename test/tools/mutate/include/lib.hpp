@@ -30,6 +30,18 @@ constexpr T halve(T x) {
   return x / 2;
 }
 
+// Not constexpr, so a constant evaluation that reaches it fails: the way
+// checked() rejects a negative argument at compile time.
+inline void reject_negative() {}
+
+// x, which must not be negative.
+constexpr int checked(int x) {
+  if (x < 0) {
+    reject_negative();
+  }
+  return x;
+}
+
 } // namespace lib
 
 #endif

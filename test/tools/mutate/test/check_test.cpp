@@ -29,5 +29,8 @@ int main() {
   // A volatile argument keeps the call out of constant evaluation.
   volatile int three = 3;
   check(lib::twice(three) == 6, "twice at run time");
+  // Constant-evaluated, so that checked()'s guard is judged at compile time.
+  constexpr int accepted = lib::checked(5);
+  check(accepted == 5, "checked accepts a valid value");
   return failures == 0 ? 0 : 1;
 }
