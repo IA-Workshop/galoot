@@ -325,7 +325,7 @@ TEST_CASE_TEMPLATE("rotation(l, theta) builds (l / |v|) sin(theta/2) + "
 //   building the rotor of l divided by the length of its direction, so each
 //   gives the motor of the unitized line, its six coefficients divided by
 //   the length, (0, 0, 1, 0, 0, 0) or (0, 0, 1, 0, -1, 0) with the signs of
-//   the join's zeros kept; over float and double, dividing by a power of 2
+//   the join's zeros kept, and over float and double, dividing by a power of 2
 //   and multiplying back is exact, so the lengths 2 and 4 give that motor
 //   bit for bit, while for the length 5 the sine on e43 and e31 is
 //   5 fl(fl(sin(theta/2)) / 5), within 2u of fl(sin(theta/2)) when its
