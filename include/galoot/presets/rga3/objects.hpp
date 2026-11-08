@@ -16,7 +16,10 @@
 //
 // A blade is named by its generators in the order of their product, so
 // e41 = -e14, e31 = -e13, and e321 = -e123, and a coefficient written on e41
-// multiplies -e14. The antiscalar is e1234.
+// multiplies -e14. The antiscalar is e1234. With <galoot/core/format.hpp>
+// included, the types print by these names: the x axis written by its
+// coefficients, std::format("{}", Line{1, 0, 0, 0, 0, 0}), gives
+// {e41: 1, e42: 0, e43: 0, e23: 0, e31: 0, e12: 0}.
 //
 // The types are the core's multivectors, and every operation on them is the
 // core's, found by argument-dependent lookup: wedge (^) joins, antiwedge (&)
@@ -42,6 +45,16 @@ namespace galoot::presets::rga3 {
 struct algebra {
   /// The metric of rigid(3).
   static constexpr auto value = core::rigid<3>();
+
+  /// The names of the sixteen blades, as Lengyel's rigid geometric algebra
+  /// writes them: the order of a name's generators gives its orientation,
+  /// so e41 = -e14 and e321 = -e123. format.hpp prints each component under
+  /// the name that has the orientation its layout stores, so a line prints
+  /// on e41, e42, e43, e23, e31, e12 and a plane on e423, e431, e412, e321.
+  /// A blade held with the other orientation, as e14 is in the join p ^ q,
+  /// prints by its canonical name, e and its indices in increasing order.
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";
 };
 
 /// The layout of a Point, x e1 + y e2 + z e3 + w e4, in that order. The
