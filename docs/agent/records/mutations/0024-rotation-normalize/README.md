@@ -36,3 +36,5 @@ Because the construction test aborts first under `length_abs_vz`, the fifths tes
 | `times_length` | multiplies by the length | the quarter turn of length 2 or 5; the same-motor test; the construction test |
 
 `direction_only` and `norm_with_moment` pass the quarter-turn tests, whose axes pass through the origin (moment zero); the lines off the origin of the other two tests kill them.
+
+2026-11-08: `mutate.py` now names `include/galoot/presets/rga3/motions.hpp`, the header's path after plan 0025's move (`26c8a82`), and runs again (plan 0026); the runs above were made at the old path, and their outputs are kept as they are.

@@ -34,3 +34,5 @@ Pinned, gcc-debug and clang-debug flags, mean of three:
 | `incidence_test.cpp` | 4,118.9 M, 0.37 s, 157 MiB | 3,641.5 M, 0.34 s, 167 MiB |
 
 From `compile.tsv` (shared mode): the README examples took 1.1 s and 263 MiB (`example_1.cpp`) and 0.4 s and 111 MiB (`example_2.cpp`) on GCC, 1.4 s and 230 MiB and 0.2 s and 136 MiB on Clang; each of the nine compile-fail sources compiled in under 0.31 s and 106 MiB on GCC and 0.29 s and 126 MiB on Clang. The point-group closure runs at run time over the test rational (plan 0023 R10), so its unit costs about what the objects' unit does. The full gcc-debug suite of 434 tests ran in 6.7 s.
+
+2026-11-08: `measure.py` now includes `<galoot/presets/rga3.hpp>` and compiles `test/presets/rga3/<unit>_test.cpp`, the paths after plan 0025's move (`26c8a82`), and runs again (plan 0026); the run above was made at the old paths, and `out/`, `out/units/rga3_only.cpp` among it, is kept as it is.

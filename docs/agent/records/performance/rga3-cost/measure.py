@@ -1,5 +1,5 @@
 #!/usr/bin/env -S python3 -I
-"""Measure what the rga3 model costs to compile.
+"""Measure what the rga3 preset costs to compile.
 
 Usage, from the repository root:
   measure.py <before-revision> <out-dir> [repeats] [cpu]
@@ -16,8 +16,8 @@ every unit alike.
 
 Units:
 - a unit that includes only galoot/core.hpp, before and after, and one that
-  includes only galoot/rga3.hpp, after, with the flags of the gcc-measure
-  and clang-measure presets (-O2, checking off), with -c;
+  includes only galoot/presets/rga3.hpp, after, with the flags of the
+  gcc-measure and clang-measure presets (-O2, checking off), with -c;
 - the five rga3 test units (objects, motions, point_groups, chains,
   incidence), after, with the flags of the gcc-debug and clang-debug test
   builds, with -c.
@@ -104,7 +104,7 @@ def main():
     units = out / "units"
     units.mkdir(exist_ok=True)
     (units / "core_only.cpp").write_text("#include <galoot/core.hpp>\n")
-    (units / "rga3_only.cpp").write_text("#include <galoot/rga3.hpp>\n")
+    (units / "rga3_only.cpp").write_text("#include <galoot/presets/rga3.hpp>\n")
 
     # (name, kind, source, tree): kind "measure" or "debug" picks the flags
     # and the preset named in the row.
@@ -115,7 +115,7 @@ def main():
         ("includer/rga3_only/after", "measure", units / "rga3_only.cpp", ROOT),
     ]
     jobs += [(f"test/rga3_{unit}/after", "debug",
-              ROOT / f"test/rga3/{unit}_test.cpp", ROOT)
+              ROOT / f"test/presets/rga3/{unit}_test.cpp", ROOT)
              for unit in TEST_UNITS]
 
     rows = []

@@ -1,0 +1,389 @@
+#!/usr/bin/env -S python3 -I
+"""Measure what units cost to compile before and after a change, or how
+large the diagnostics of compile-fail sources are.
+
+Usage, from the root of a checkout whose include/ and test/ are committed:
+  tools/compiles cost <spec.toml> <out-dir> --before <revision>
+                 --cpu <cpu|shared> [--repeats <n>]
+  tools/compiles diagnostics <out.tsv> --label <label> [--before <revision>]
+                 [--flags-from <test>] <source glob>...
+
+Both take the "before" tree from `git archive <revision> include test`,
+extracted into the output directory (<out-dir>/before, or before/ beside
+<out.tsv>); the "after" tree is the checkout. Flags come from the build
+trees build/<compiler>-<kind>, never from lists here, so that a change of
+the build presets' flags reaches every measurement: a source listed in the
+tree's compile_commands.json is compiled with its own command; any other
+source with the compile command of a compile-fail test of the tree, as
+`ctest --show-only=json-v1` lists it: the source's own test when it has
+one, else the test named by the spec's flags_from or by --flags-from. A
+launcher (tools/measure tu ... --), the object, and the source are dropped
+from the command; in a before compile each -I or -isystem path under the
+checkout is moved into the before tree.
+
+cost: the spec names the compilers (default gcc and clang), flags_from, and
+units:
+  [[unit]]
+  name = "includer/core_only"
+  text = "#include <galoot/core.hpp>\\n"   # or source = "test/core/x_test.cpp"
+  trees = ["before", "after"]
+  kind = "measure"                         # the build tree: debug or measure
+Text units are written to <out-dir>/units/. Compiles run repeat by repeat,
+compiler by compiler, unit by unit, so that drift on the machine affects
+every unit alike, each as `taskset -c <cpu> tools/timed --log
+<out-dir>/runs.tsv measure ...`; the row each writes to that campaign log is
+read back. --cpu shared runs unpinned, which is not a measurement and the
+summary says so. Take the timing lock and keep other heavy work off the
+machine for a measurement; this tool does neither. Writes rows.tsv (every
+compile) and summary.txt (per compiler, unit, and tree: the mean and range
+of retired instructions, the mean wall time, the largest peak memory, and
+the command). A counter the machine did not give stays `unavailable`.
+
+diagnostics: compiles each source matched by the globs, relative to the
+tree, with -fsyntax-only on GCC and Clang (flags from the debug trees), and
+writes one row per source and compiler: its exit status, the number of
+lines, of lines holding "error:", the longest line, the first error line
+and its length, and the command, with paths relative to the tree.
+
+Exit 0 on success; 1 when a cost unit fails to compile, a row read back is
+not the expected one, or a diagnostics source compiles; 2 when refused.
+"""
+
+import argparse
+import glob
+import io
+import json
+import os
+import shlex
+import shutil
+import subprocess
+import sys
+import tarfile
+import tomllib
+from pathlib import Path
+
+COMPILERS = ("gcc", "clang")
+ROW_COLUMNS = ["repeat", "compiler", "unit", "tree", "preset", "mode",
+               "inst_u", "wall_s", "maxrss_kib", "sibling_busy_s",
+               "pinned_other_s", "command"]
+SUMMARY_COLUMNS = ["compiler", "unit", "tree", "repeats", "inst_mean",
+                   "inst_range", "wall_mean_s", "maxrss_max_kib", "command"]
+DIAGNOSTIC_COLUMNS = ["label", "source", "compiler", "exit", "lines",
+                      "error_lines", "longest", "first_length", "first_error",
+                      "command"]
+UNAVAILABLE = "unavailable"
+
+
+class Refused(Exception):
+    pass
+
+
+def run(command):
+    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
+
+
+def check_clean():
+    if run(["git", "status", "--porcelain", "include", "test"]).stdout.strip():
+        raise Refused("include/ or test/ has uncommitted changes, so the "
+                      "after tree is not a revision")
+
+
+def extract(revision, directory):
+    archive = subprocess.run(["git", "archive", revision, "include", "test"],
+                             cwd=ROOT, capture_output=True)
+    if archive.returncode:
+        raise Refused(f"cannot take the before tree from {revision}: "
+                      f"{archive.stderr.decode(errors='replace').strip()}")
+    tree = directory / "before"
+    if tree.exists():
+        shutil.rmtree(tree)
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        tar.extractall(tree, filter="data")
+    return tree
+
+
+def compile_only(argv, source):
+    """The compiler and its flags: argv without a launcher, the object, -c,
+    and the source."""
+    if len(argv) > 1 and Path(argv[0]).name == "measure" and argv[1] == "tu":
+        argv = argv[argv.index("--") + 1:]
+    flags, skip = [], False
+    for argument in argv:
+        if skip or argument in ("-c", source):
+            skip = False
+        elif argument == "-o":
+            skip = True
+        else:
+            flags.append(argument)
+    return flags
+
+
+class BuildTree:
+    def __init__(self, name):
+        self.path = ROOT / "build" / name
+        commands = self.path / "compile_commands.json"
+        if not commands.exists():
+            raise Refused(f"build/{name}/compile_commands.json is missing")
+        self.commands = {}
+        for entry in json.loads(commands.read_text(encoding="utf-8")):
+            file = os.path.normpath(os.path.join(entry["directory"],
+                                                 entry["file"]))
+            self.commands[file] = (entry.get("arguments")
+                                   or shlex.split(entry["command"]))
+        # A compile-fail test runs `cmake -P <script> -- <expectations> --
+        # <compile command>`.
+        listing = run(["ctest", "--test-dir", str(self.path),
+                       "--show-only=json-v1"])
+        try:
+            tests = json.loads(listing.stdout)["tests"]
+        except (ValueError, KeyError) as error:
+            raise Refused(f"cannot list the tests of build/{name}") from error
+        self.tests = {}
+        for test in tests:
+            command = test.get("command", [])
+            ends = [k for k, argument in enumerate(command) if argument == "--"]
+            if len(ends) >= 2 and len(command) > ends[1] + 1:
+                self.tests[test["name"]] = command[ends[1] + 1:]
+
+    def flags(self, source, flags_from):
+        """The flags for source, an absolute path in the checkout."""
+        if source in self.commands:
+            return compile_only(self.commands[source], source)
+        for command in self.tests.values():
+            if command[-1] == source:
+                return compile_only(command, source)
+        if flags_from not in self.tests:
+            raise Refused(f"no flags for {os.path.relpath(source, ROOT)}: it "
+                          "has no compile command or compile-fail test in "
+                          f"{self.path.relative_to(ROOT)}, and the test to "
+                          f"take flags from ({flags_from}) is not there")
+        command = self.tests[flags_from]
+        return compile_only(command, command[-1])
+
+
+def moved(flags, before):
+    """flags with each include path under the checkout moved into before."""
+    def move(path):
+        inside = path == str(ROOT) or path.startswith(f"{ROOT}/")
+        return str(before) + path[len(str(ROOT)):] if inside else path
+
+    result, k = [], 0
+    while k < len(flags):
+        argument = flags[k]
+        if argument in ("-I", "-isystem") and k + 1 < len(flags):
+            result += [argument, move(flags[k + 1])]
+            k += 2
+            continue
+        for option in ("-isystem", "-I"):
+            if argument.startswith(option) and len(argument) > len(option):
+                argument = option + move(argument[len(option):])
+                break
+        result.append(argument)
+        k += 1
+    return result
+
+
+def shown(command):
+    return " ".join(argument.replace(f"{ROOT}/", "") for argument in command)
+
+
+def last_row(log):
+    lines = log.read_text(encoding="utf-8").splitlines()
+    return dict(zip(lines[0].split("\t"), lines[-1].split("\t")))
+
+
+def number(text):
+    return int(text) if text.isdigit() else None
+
+
+def load_cost_spec(path):
+    try:
+        spec = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
+        raise Refused(f"cannot read the spec {path}: {error}") from error
+    unknown = set(spec) - {"compilers", "flags_from", "unit"}
+    compilers = spec.setdefault("compilers", list(COMPILERS))
+    if unknown or not spec.get("unit") or not compilers or any(
+            c not in COMPILERS for c in compilers):
+        raise Refused("the spec takes compilers (gcc, clang), flags_from, "
+                      "and at least one [[unit]]")
+    names = set()
+    for unit in spec["unit"]:
+        name = unit.get("name")
+        if (set(unit) - {"name", "source", "text", "trees", "kind"}
+                or not isinstance(name, str) or not name or name in names
+                or ("source" in unit) == ("text" in unit)
+                or unit.get("kind") not in ("debug", "measure")
+                or not unit.get("trees")
+                or any(t not in ("before", "after") for t in unit["trees"])):
+            raise Refused(f"unit {name!r} needs a unique name, a source or a "
+                          "text, trees (before, after), and a kind (debug, "
+                          "measure)")
+        names.add(name)
+    return spec
+
+
+def cost(args):
+    spec = load_cost_spec(Path(args.spec))
+    check_clean()
+    out = Path(args.out_dir).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    before = extract(args.before, out)
+    (out / "units").mkdir(exist_ok=True)
+    (out / "objects").mkdir(exist_ok=True)
+
+    # Every command is found before the first compile.
+    trees, jobs = {}, {}
+    for compiler in spec["compilers"]:
+        for unit in spec["unit"]:
+            name = unit["name"]
+            if "text" in unit:
+                source = out / "units" / (name.replace("/", "_") + ".cpp")
+                source.write_text(unit["text"], encoding="utf-8")
+            else:
+                source = ROOT / unit["source"]
+            preset = f"{compiler}-{unit['kind']}"
+            if preset not in trees:
+                trees[preset] = BuildTree(preset)
+            flags = trees[preset].flags(str(source), spec.get("flags_from"))
+            for tree in unit["trees"]:
+                if tree == "after":
+                    jobs[compiler, name, tree] = (preset, flags, source)
+                else:
+                    jobs[compiler, name, tree] = (
+                        preset, moved(flags, before),
+                        before / unit["source"] if "source" in unit
+                        else source)
+
+    rows = []
+    for repeat in range(1, args.repeats + 1):
+        for (compiler, name, tree), (preset, flags, source) in jobs.items():
+            selection = f"cost:{compiler}:{name}/{tree}"
+            target = out / "objects" / (
+                f"{compiler}_{name.replace('/', '_')}_{tree}.o")
+            command = [*flags, "-c", "-o", str(target), str(source)]
+            pin = [] if args.cpu == "shared" else ["taskset", "-c", args.cpu]
+            result = run([*pin, str(ROOT / "tools/timed"), "--log",
+                          str(out / "runs.tsv"), "measure", preset,
+                          selection, "--", *command])
+            if result.returncode:
+                print(f"compiles: {selection} failed:\n{result.stderr}",
+                      file=sys.stderr)
+                return 1
+            row = last_row(out / "runs.tsv")
+            mode = "shared" if args.cpu == "shared" else "pinned"
+            if row.get("selection") != selection or row.get("mode") != mode:
+                print(f"compiles: the last row of {out / 'runs.tsv'} is not "
+                      f"a {mode} row of {selection}", file=sys.stderr)
+                return 1
+            counts = [number(row.get("inst_p_u", ""))]
+            if mode == "shared":
+                counts.append(number(row.get("inst_e_u", "")))
+            inst = UNAVAILABLE if None in counts else str(sum(counts))
+            rows.append([str(repeat), compiler, name, tree, preset, mode,
+                         inst, row.get("wall_s", UNAVAILABLE),
+                         row.get("maxrss_kib", UNAVAILABLE),
+                         row.get("sibling_busy_s", UNAVAILABLE),
+                         row.get("pinned_other_s", UNAVAILABLE),
+                         shown(command)])
+            print("\t".join(rows[-1][:8]), flush=True)
+    write_table(out / "rows.tsv", ROW_COLUMNS, rows)
+
+    lines = []
+    for compiler, name, tree in jobs:
+        mine = [r for r in rows if r[1:4] == [compiler, name, tree]]
+        inst = [number(r[6]) for r in mine]
+        rss = [number(r[8]) for r in mine]
+        walls = [float(r[7]) for r in mine]
+        mean = (UNAVAILABLE if None in inst
+                else str(round(sum(inst) / len(inst))))
+        spread = UNAVAILABLE if None in inst else str(max(inst) - min(inst))
+        lines.append([compiler, name, tree, str(len(mine)), mean, spread,
+                      f"{sum(walls) / len(walls):.3f}",
+                      UNAVAILABLE if None in rss else str(max(rss)),
+                      mine[0][11]])
+    marker = ("not a measurement: compiled unpinned (--cpu shared)\n"
+              if args.cpu == "shared" else "")
+    write_table(out / "summary.txt", SUMMARY_COLUMNS, lines, marker)
+    print(marker + "\n".join("\t".join(line[:8]) for line in lines))
+    return 0
+
+
+def diagnostics(args):
+    check_clean()
+    out = Path(args.out).resolve()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tree = extract(args.before, out.parent) if args.before else ROOT
+    sources = sorted({os.path.relpath(path, tree) for pattern in args.globs
+                      for path in glob.glob(str(tree / pattern))})
+    if not sources:
+        raise Refused(f"no source matches {' '.join(args.globs)} in {tree}")
+
+    jobs = []
+    for source in sources:
+        for compiler in COMPILERS:
+            build = BuildTree(f"{compiler}-debug")
+            flags = build.flags(str(ROOT / source), args.flags_from)
+            if args.before:
+                flags = moved(flags, tree)
+            jobs.append((source, compiler,
+                         [*flags, "-fsyntax-only", str(tree / source)]))
+
+    rows, compiled = [], []
+    for source, compiler, command in jobs:
+        result = run([str(ROOT / "tools/timed"), "diagnostics",
+                      f"{compiler}-debug",
+                      f"diagnostics:{args.label}:{compiler}:{source}", "--",
+                      *command])
+        lines = [line.replace(f"{tree}/", "")
+                 for line in result.stderr.splitlines()
+                 if not line.startswith(("timed:", "measure:"))]
+        errors = [line for line in lines if "error:" in line]
+        rows.append([args.label, source, compiler, str(result.returncode),
+                     str(len(lines)), str(len(errors)),
+                     str(max(map(len, lines), default=0)),
+                     str(len(errors[0]) if errors else 0),
+                     errors[0] if errors else "-", shown(command)])
+        if result.returncode == 0:
+            compiled.append(f"compiles: {source} compiles on {compiler}")
+    write_table(out, DIAGNOSTIC_COLUMNS, rows)
+    for line in compiled:
+        print(line, file=sys.stderr)
+    return 1 if compiled else 0
+
+
+def write_table(path, columns, rows, preamble=""):
+    path.write_text(preamble + "\t".join(columns) + "\n" + "".join(
+        "\t".join(cell.replace("\t", " ") for cell in row) + "\n"
+        for row in rows), encoding="utf-8")
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(prog="tools/compiles", usage=__doc__)
+    commands = parser.add_subparsers(dest="command", required=True)
+    measure = commands.add_parser("cost")
+    measure.add_argument("spec")
+    measure.add_argument("out_dir")
+    measure.add_argument("--before", required=True)
+    measure.add_argument("--cpu", required=True)
+    measure.add_argument("--repeats", type=int, default=3)
+    sizes = commands.add_parser("diagnostics")
+    sizes.add_argument("out")
+    sizes.add_argument("globs", nargs="+")
+    sizes.add_argument("--label", required=True)
+    sizes.add_argument("--before")
+    sizes.add_argument("--flags-from")
+    args = parser.parse_args(argv)
+    if args.command == "cost" and args.repeats < 1:
+        raise Refused("--repeats must be at least 1")
+    return cost(args) if args.command == "cost" else diagnostics(args)
+
+
+if __name__ == "__main__":
+    ROOT = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                               capture_output=True, text=True).stdout.strip())
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Refused as refusal:
+        print(f"compiles: refused: {refusal}", file=sys.stderr)
+        sys.exit(2)

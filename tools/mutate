@@ -1,0 +1,610 @@
+#!/usr/bin/env -S python3 -I
+"""Run the mutants of a spec and say which ones the tests kill.
+
+Usage, from the root of a worktree whose build trees no other workstream
+uses, with the job pool exported (eval "$(tools/jobpool env)"):
+  tools/mutate <spec.toml> [--runtime] [--check] [--preset <build preset>]...
+               [<mutant>...]
+
+The spec lists build presets, selections (the Ninja targets to build and
+the CTest label regex whose tests judge a mutant), and mutants:
+  presets = ["gcc-debug", "clang-debug"]
+  [selection.motions]
+  targets = ["rga3_motions_test"]
+  labels = '^rga3\\.motions$'
+  [[mutant]]
+  name = "division_omitted"
+  selection = "motions"
+  file = "include/galoot/presets/rga3/motions.hpp"
+  edits = [{ anchor = '''x / length''', replacement = '''x''' }]
+  expect = "killed"          # or "equivalent", with reason = "..."
+  killers = ["rga3.motions"] # optional: tests that must be among the killers
+An edit replaces every occurrence of its anchor, which must occur exactly
+`count` times (default 1); a mutant's edits apply in order. [[runtime]]
+tables (file, anchor, replacement, count) are edits of test sources applied
+for the whole run under --runtime, baseline included, typically turning a
+static_assert into `static_assert(true || ...)` so that the run-time checks
+must do the killing. Mutants named on the command line run alone; --preset
+replaces the spec's presets.
+
+Nothing is built until every selected mutant's anchors match, each mutant
+changes its file, each file to edit is tracked and equal to HEAD, each build
+tree exists, each selection selects at least one test, and each selected
+test runs only programs that its selection's targets build. Then, per build
+preset: the unmutated baseline must build and pass; each mutant is applied,
+the selection's programs are deleted and rebuilt with `ninja -k 0`, CTest
+runs the selected tests whose programs now exist (so no test runs a program
+left from an earlier build), and the file is restored byte for byte; at the
+end the targets are rebuilt. Every build and test goes through tools/timed
+as mutant:<name>, mutant:baseline, or mutant:restore. Edited files are
+restored after each mutant and on SIGINT or SIGTERM, and a run that stops
+early rebuilds the targets too, so that no program is left deleted; after a
+SIGKILL, `git status` shows any file left mutated. A test that CTest names
+as failed, one that timed out among them, is a kill; a CTest run that fails
+without naming a test leaves its mutant unjudged.
+
+Each failed object is classified by its first error line: `warning` if it
+carries [-Werror, `assert` if it is a failed static assertion or a call
+to a function that is not constexpr (how a guard stops constant
+evaluation), `test` if it lies in a file under test/, else `invalid`. A mutant is killed if a test
+fails or an object fails as assert or test; else unjudged if an object
+failed (its tests never ran); else equivalent if the spec says so; else
+survived. Under --runtime, a failed static assertion in a file of the
+run-time edits is a leak.
+
+--check validates the spec and the anchors and prints each mutant's diff,
+building nothing.
+
+Writes out/<spec stem>-<preset>[-runtime].tsv beside the spec, one row per
+mutant in spec order; a later run of some mutants replaces their rows only.
+Exit 0 when no mutant has a problem: each is killed, or declared equivalent
+and found so, each declared killer killed it, no leak was found, and no
+CTest run failed without naming a test; 1 otherwise; 2 when refused.
+"""
+
+import argparse
+import difflib
+import json
+import os
+import re
+import signal
+import subprocess
+import sys
+import tempfile
+import tomllib
+from pathlib import Path
+
+COLUMNS = ["mutant", "preset", "revision", "verdict", "expected", "killers",
+           "build_failures", "not_run", "failed_cases", "leaks", "problems"]
+RUN_LOG = "docs/agent/records/performance/runs.tsv"
+RUNTIME_KEYS = frozenset({"file", "anchor", "replacement", "count"})
+FAILED = re.compile(r"^FAILED: (?:\[code=\d+\] )?(.*?)\s*$")
+END_OF_JOB = re.compile(r"^(FAILED: |\[\d+/\d+\] |ninja: )")
+LOCATION = re.compile(r"^(?P<path>[^\s:][^:]*):(?P<line>\d+):(?:\d+:)? "
+                      r"(?:fatal )?error: ")
+# A failed check at compile time: a static assertion, or a guard that stops
+# constant evaluation by calling a function that is not constexpr, which GCC
+# reports at the call (quoting constexpr with ' or with typographic quotes).
+CHECK_FAILED = re.compile(
+    r"static assertion|static_assert|call to non-.?constexpr.? function")
+FAILED_TEST = re.compile(r"^\s*\d+ - (\S+) \(", re.MULTILINE)
+CMAKE_ARGUMENT = re.compile(
+    r'"((?:[^"\\]|\\.)*)"|\[(=*)\[(.*?)\]\2\]|([^\s()"]+)')
+
+
+class Refused(Exception):
+    pass
+
+
+def run(command, **options):
+    return subprocess.run(command, cwd=ROOT, capture_output=True, text=True,
+                          **options)
+
+
+def git(*args):
+    return run(["git", *args]).stdout
+
+
+def check_keys(table, allowed, where):
+    if not isinstance(table, dict):
+        raise Refused(f"{where} is not a table")
+    unknown = set(table) - allowed
+    if unknown:
+        raise Refused(f"{where} has unknown keys: {', '.join(sorted(unknown))}")
+
+
+def strings(value, where, empty_ok=True):
+    if not isinstance(value, list) or not all(
+            isinstance(v, str) and v for v in value) or not (value or empty_ok):
+        raise Refused(f"{where} must be a list of names")
+    return value
+
+
+def edit(table, where, keys=frozenset({"anchor", "replacement", "count"})):
+    check_keys(table, keys, where)
+    anchor, replacement = table.get("anchor"), table.get("replacement")
+    count = table.get("count", 1)
+    if not isinstance(anchor, str) or not anchor or not isinstance(
+            replacement, str):
+        raise Refused(f"{where} needs an anchor and a replacement")
+    if type(count) is not int or count < 1:
+        raise Refused(f"{where}: count must be a positive integer")
+    return anchor, replacement, count
+
+
+def load_spec(path):
+    try:
+        spec = tomllib.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
+        raise Refused(f"cannot read the spec {path}: {error}") from error
+    check_keys(spec, {"presets", "selection", "runtime", "mutant"}, "the spec")
+    strings(spec.get("presets"), "presets", empty_ok=False)
+    for name, selection in spec.get("selection", {}).items():
+        check_keys(selection, {"targets", "labels"}, f"selection {name}")
+        strings(selection.get("targets"), f"selection {name}: targets")
+        if not isinstance(selection.get("labels"), str) or not selection[
+                "labels"]:
+            raise Refused(f"selection {name} needs labels")
+    for k, table in enumerate(spec.setdefault("runtime", [])):
+        edit(table, f"run-time edit {k + 1}", RUNTIME_KEYS)
+        if not isinstance(table.get("file"), str):
+            raise Refused(f"run-time edit {k + 1} needs a file")
+    mutants = spec.get("mutant", [])
+    if not mutants:
+        raise Refused("the spec has no mutants")
+    names = set()
+    for mutant in mutants:
+        check_keys(mutant, {"name", "selection", "file", "edits", "expect",
+                            "reason", "killers"}, "a mutant")
+        name = mutant.get("name")
+        if not isinstance(name, str) or not name or name in names:
+            raise Refused(f"a mutant has no name or a repeated one: {name!r}")
+        names.add(name)
+        if mutant.get("selection") not in spec.get("selection", {}):
+            raise Refused(f"mutant {name} names no selection of the spec")
+        if not isinstance(mutant.get("file"), str):
+            raise Refused(f"mutant {name} needs a file")
+        edits = mutant.get("edits")
+        if not isinstance(edits, list) or not edits:
+            raise Refused(f"mutant {name} needs edits")
+        mutant["edits"] = [edit(e, f"an edit of mutant {name}")
+                           for e in edits]
+        if mutant.get("expect") not in ("killed", "equivalent"):
+            raise Refused(f"mutant {name}: expect is killed or equivalent")
+        if mutant["expect"] == "equivalent" and not mutant.get("reason"):
+            raise Refused(f"mutant {name} is declared equivalent without a "
+                          "reason")
+        strings(mutant.setdefault("killers", []), f"mutant {name}: killers")
+    return spec
+
+
+def apply(text, edits, where):
+    for anchor, replacement, count in edits:
+        found = text.count(anchor)
+        if found != count:
+            raise Refused(f"{where}: the anchor occurs {found} times, not "
+                          f"{count}: {anchor!r}")
+        text = text.replace(anchor, replacement)
+    return text
+
+
+def mutated_texts(spec, mutants, runtime):
+    """The text of each file to edit before any mutant (with the run-time
+    edits under --runtime), and each mutant's text, checked."""
+    base = {}
+
+    def original(file):
+        if file not in base:
+            try:
+                base[file] = (ROOT / file).read_bytes().decode("utf-8")
+            except (OSError, UnicodeError) as error:
+                raise Refused(f"cannot read {file}: {error}") from error
+        return base[file]
+
+    if runtime:
+        for k, table in enumerate(spec["runtime"]):
+            text = original(table["file"])
+            base[table["file"]] = apply(text, [edit(table, "", RUNTIME_KEYS)],
+                                        f"run-time edit {k + 1}")
+    texts = {}
+    for mutant in mutants:
+        text = original(mutant["file"])
+        texts[mutant["name"]] = apply(text, mutant["edits"],
+                                      f"mutant {mutant['name']}")
+        if texts[mutant["name"]] == text:
+            raise Refused(f"mutant {mutant['name']} changes nothing")
+    return base, texts
+
+
+def print_diff(title, file, before, after):
+    print(f"== {title} {file}")
+    for line in difflib.unified_diff(
+            before.splitlines(keepends=True), after.splitlines(keepends=True),
+            f"a/{file}", f"b/{file}"):
+        print(line, end="" if line.endswith("\n") else "\n")
+
+
+def check_clean(files):
+    for file in sorted(files):
+        if run(["git", "ls-files", "--error-unmatch", "--", file]).returncode:
+            raise Refused(f"{file} is not tracked")
+        if git("status", "--porcelain", "--untracked-files=no", "--", file):
+            raise Refused(f"{file} has uncommitted changes; commit them "
+                          "first, so that a leftover mutant shows in git")
+
+
+def cmake_arguments(text):
+    arguments = []
+    for match in CMAKE_ARGUMENT.finditer(text):
+        quoted, _, bracket, plain = match.groups()
+        if quoted is not None:
+            arguments.append(re.sub(r"\\(.)", r"\1", quoted))
+        else:
+            arguments.append(bracket if bracket is not None else plain)
+    return arguments
+
+
+class Tree:
+    """A build tree: its programs, and the tests and programs of each
+    selection, read before anything is built."""
+
+    def __init__(self, preset):
+        self.preset = preset
+        self.path = ROOT / "build" / preset
+        if not (self.path / "CMakeCache.txt").exists():
+            raise Refused(f"the build tree build/{preset} is missing")
+        listing = run(["ninja", "-C", str(self.path), "-t", "targets", "all"])
+        self.programs = {line.rpartition(": ")[0]
+                         for line in listing.stdout.splitlines()
+                         if "EXECUTABLE_LINKER" in line.rpartition(": ")[2]}
+        # CTest leaves a test's command out of its listing while the
+        # program does not exist, so those are read from the test files.
+        self.commands = {}
+        for testfile in self.path.rglob("CTestTestfile.cmake"):
+            for line in testfile.read_text(encoding="utf-8").splitlines():
+                if line.startswith("add_test(") and line.endswith(")"):
+                    arguments = cmake_arguments(line[len("add_test("):-1])
+                    self.commands[arguments[0]] = arguments[1:]
+
+    def target_programs(self, targets):
+        if not targets:
+            return set()
+        query = run(["ninja", "-C", str(self.path), "-t", "query", *targets])
+        if query.returncode:
+            raise Refused(f"build/{self.preset}: {query.stdout.strip()} "
+                          f"{query.stderr.strip()}")
+        found = {t for t in targets if t in self.programs}
+        inputs = False
+        for line in query.stdout.splitlines():
+            if line.startswith("  "):
+                inputs = line.strip().startswith("input:") or (
+                    inputs and line.startswith("    "))
+                if inputs and line.strip() in self.programs:
+                    found.add(line.strip())
+        return found
+
+    def tests(self, selection, name):
+        listing = run(["ctest", "--test-dir", str(self.path),
+                       "--show-only=json-v1", "-L", selection["labels"]])
+        try:
+            tests = json.loads(listing.stdout)["tests"]
+        except (ValueError, KeyError) as error:
+            raise Refused(f"build/{self.preset}: cannot list the tests: "
+                          f"{listing.stderr.strip()}") from error
+        if not tests:
+            raise Refused(f"build/{self.preset}: the labels "
+                          f"{selection['labels']!r} of selection {name} select "
+                          "no test")
+        built = self.target_programs(selection["targets"])
+        programs = {}
+        for test in tests:
+            command = test.get("command") or self.commands.get(test["name"])
+            if command is None:
+                raise Refused(f"build/{self.preset}: no command for test "
+                              f"{test['name']}")
+            programs[test["name"]] = self.programs_of(command)
+            for program in programs[test["name"]] - built:
+                raise Refused(f"build/{self.preset}: test {test['name']} runs "
+                              f"{program}, which no target of selection "
+                              f"{name} builds")
+        return programs, built
+
+    def programs_of(self, command):
+        found = set()
+        for argument in command:
+            if argument.startswith("-D") and "=" in argument:
+                argument = argument.partition("=")[2]
+            if os.path.isabs(argument):
+                relative = os.path.relpath(argument, self.path)
+                if relative in self.programs:
+                    found.add(relative)
+        return found
+
+
+def relative(path, tree):
+    path = os.path.normpath(os.path.join(tree, path))
+    return os.path.relpath(path, ROOT) if path.startswith(f"{ROOT}/") else path
+
+
+def build_failures(output, tree, runtime_files):
+    """Each failed object with its class, first error line, and location,
+    and the failed static assertions in the run-time edit files."""
+    failures, leaks = [], []
+    lines = output.splitlines()
+    for k, line in enumerate(lines):
+        match = LOCATION.match(line)
+        if match and ("static assertion" in line or "static_assert" in line):
+            where = f"{relative(match['path'], tree)}:{match['line']}"
+            if where.rpartition(":")[0] in runtime_files and where not in leaks:
+                leaks.append(where)
+        failed = FAILED.match(line)
+        if not failed:
+            continue
+        first = "-"
+        for rest in lines[k + 1:]:
+            if END_OF_JOB.match(rest):
+                break
+            if "error:" in rest:
+                first = rest
+                break
+        match = LOCATION.match(first)
+        where = (f"{relative(match['path'], tree)}:{match['line']}"
+                 if match else None)
+        message = first.partition("error:")[2]
+        if "[-Werror" in first:
+            kind = "warning"
+        elif CHECK_FAILED.search(message):
+            kind = "assert"
+        elif where and where.startswith("test/"):
+            kind = "test"
+        else:
+            kind = "invalid"
+        text = first.replace(f"{ROOT}/", "")[:400]
+        failures.append((failed.group(1), kind, text, where))
+    # Sorted, since Ninja reports objects in the order its jobs finish.
+    return sorted(failures), sorted(leaks)
+
+
+class Run:
+    def __init__(self, spec, spec_path, mutants, runtime):
+        self.spec, self.mutants, self.runtime = spec, mutants, runtime
+        self.out = spec_path.parent / "out"
+        self.stem = spec_path.stem
+        self.base, self.texts = mutated_texts(spec, mutants, runtime)
+        self.files = {m["file"] for m in mutants} | (
+            {t["file"] for t in spec["runtime"]} if runtime else set())
+        self.originals = {}
+        # The outputs and the run log, which every timed run appends to, do
+        # not make the tree a different revision.
+        out = os.path.relpath(self.out, ROOT) + "/"
+        logs = {RUN_LOG, os.path.relpath(os.environ.get("TIMED_LOG", "/"),
+                                         ROOT)}
+        dirty = [line for line in git("status", "--porcelain",
+                                      "--untracked-files=no").splitlines()
+                 if not line[3:].startswith(out) and line[3:] not in logs]
+        self.revision = git("rev-parse", "--short=12", "HEAD").strip() + (
+            "+dirty" if dirty else "")
+        self.problems = []
+        self.started, self.rebuilt = [], set()
+
+    def write(self, file, text):
+        path = ROOT / file
+        self.originals.setdefault(file, path.read_bytes())
+        path.write_bytes(text.encode("utf-8"))
+
+    def restore(self):
+        for file, data in self.originals.items():
+            (ROOT / file).write_bytes(data)
+        self.originals.clear()
+
+    def timed(self, step, preset, name, command):
+        result = run([str(ROOT / "tools/timed"), step, preset,
+                      f"mutant:{name}", "--", *command])
+        if result.returncode == 2 and result.stderr.startswith(
+                "timed: refused"):
+            raise Refused(result.stderr.strip())
+        return result
+
+    def build(self, tree, name, targets):
+        if not targets:
+            return 0, ""
+        result = self.timed("build", tree.preset, name,
+                            ["ninja", "-C", str(tree.path), "-k", "0",
+                             *targets])
+        return result.returncode, result.stdout + result.stderr
+
+    def test(self, tree, name, tests):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt") as listing:
+            listing.write("".join(f"{test}\n" for test in tests))
+            listing.flush()
+            result = self.timed("test", tree.preset, name,
+                                ["ctest", "--test-dir", str(tree.path),
+                                 "--tests-from-file", listing.name,
+                                 "--output-on-failure"])
+        return result.returncode, result.stdout
+
+    def preset(self, preset):
+        tree = self.trees[preset]
+        self.started.append(preset)
+        runtime_files = ({t["file"] for t in self.spec["runtime"]}
+                         if self.runtime else set())
+        for file in runtime_files:
+            self.write(file, self.base[file])
+        for name, (programs, built) in self.selections[preset].items():
+            selection = self.spec["selection"][name]
+            status, output = self.build(tree, "baseline", selection["targets"])
+            if status == 0:
+                status, output = self.test(tree, "baseline", sorted(programs))
+            if status:
+                raise Refused(f"build/{preset}: the baseline of selection "
+                              f"{name} does not build and pass:\n"
+                              f"{output[-3000:]}")
+        counts = dict.fromkeys(["killed", "equivalent", "survived",
+                                "unjudged"], 0)
+        for mutant in self.mutants:
+            row = self.mutant(tree, mutant, runtime_files)
+            counts[row["verdict"]] += 1
+            print(f"{preset}\t{mutant['name']}\t{row['verdict']}", flush=True)
+            self.record(preset, row)
+        self.restore()
+        self.rebuild(preset)
+        return counts
+
+    def rebuild(self, preset):
+        """Builds the selections' targets on the restored files, so that no
+        program is left deleted."""
+        self.rebuilt.add(preset)
+        targets = sorted({t for name in self.selections[preset]
+                          for t in self.spec["selection"][name]["targets"]})
+        status, output = self.build(self.trees[preset], "restore", targets)
+        if status:
+            self.problems.append(f"problem: {preset}: the restored files do "
+                                 f"not build:\n{output[-2000:]}")
+
+    def mutant(self, tree, mutant, runtime_files):
+        name = mutant["name"]
+        selection = self.spec["selection"][mutant["selection"]]
+        programs, built = self.selections[tree.preset][mutant["selection"]]
+        self.write(mutant["file"], self.texts[name])
+        try:
+            for program in built:
+                (tree.path / program).unlink(missing_ok=True)
+            _, output = self.build(tree, name, selection["targets"])
+            failures, leaks = build_failures(output, tree.path, runtime_files)
+            not_run = sorted(t for t, needed in programs.items()
+                             if any(not (tree.path / p).exists()
+                                    for p in needed))
+            ran = sorted(set(programs) - set(not_run))
+            failed, cases, status = [], [], 0
+            if ran:
+                status, output = self.test(tree, name, ran)
+                failed = FAILED_TEST.findall(output)
+                for line in output.splitlines():
+                    case = line.removeprefix("TEST CASE:").strip()
+                    if line.startswith("TEST CASE:") and case not in cases:
+                        cases.append(case)
+        finally:
+            self.write(mutant["file"], self.base[mutant["file"]])
+        # As sets: CTest and Ninja report in the order their jobs finish.
+        killers = sorted(set(failed)) + sorted(
+            {where for _, kind, _, where in failures
+             if kind in ("assert", "test")})
+        ctest_failed = status != 0 and not failed
+        if killers:
+            verdict = "killed"
+        elif failures or ctest_failed:
+            verdict = "unjudged"
+        else:
+            verdict = ("equivalent" if mutant["expect"] == "equivalent"
+                       else "survived")
+        problems = [verdict] if verdict in ("survived", "unjudged") else []
+        if ctest_failed:
+            problems.append(f"CTest exited {status} without naming a failed "
+                            "test")
+        if verdict == "killed" and mutant["expect"] == "equivalent":
+            problems.append("declared equivalent but killed")
+        problems += [f"declared killer {k} did not kill it"
+                     for k in mutant["killers"] if k not in killers]
+        problems += [f"run-time leak at {leak}" for leak in leaks]
+        self.problems += [f"problem: {tree.preset} {name}: {p}"
+                          for p in problems]
+        return {"mutant": name, "preset": tree.preset,
+                "revision": self.revision, "verdict": verdict,
+                "expected": mutant["expect"], "killers": " ".join(killers),
+                "build_failures": " | ".join(
+                    f"{obj}: {kind}: {text}" for obj, kind, text, _ in failures),
+                "not_run": " ".join(not_run),
+                "failed_cases": " | ".join(sorted(cases)),
+                "leaks": " | ".join(leaks), "problems": " | ".join(problems)}
+
+    def record(self, preset, row):
+        suffix = "-runtime" if self.runtime else ""
+        path = self.out / f"{self.stem}-{preset}{suffix}.tsv"
+        rows = {}
+        if path.exists():
+            for line in path.read_text(encoding="utf-8").splitlines()[1:]:
+                rows[line.split("\t")[0]] = line
+        rows[row["mutant"]] = "\t".join(
+            re.sub(r"[\t\n]+", " ", row[c]) or "-" for c in COLUMNS)
+        order = [m["name"] for m in self.spec["mutant"]]
+        names = [n for n in order if n in rows] + [
+            n for n in rows if n not in order]
+        self.out.mkdir(parents=True, exist_ok=True)
+        path.write_text("\t".join(COLUMNS) + "\n" + "".join(
+            rows[n] + "\n" for n in names), encoding="utf-8")
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(prog="tools/mutate", usage=__doc__)
+    parser.add_argument("spec")
+    parser.add_argument("names", nargs="*")
+    parser.add_argument("--runtime", action="store_true")
+    parser.add_argument("--check", action="store_true")
+    parser.add_argument("--preset", action="append", dest="presets")
+    args = parser.parse_args(argv)
+
+    spec = load_spec(Path(args.spec).resolve())
+    by_name = {m["name"]: m for m in spec["mutant"]}
+    for name in args.names:
+        if name not in by_name:
+            raise Refused(f"the spec has no mutant {name}")
+    mutants = [m for m in spec["mutant"]
+               if not args.names or m["name"] in args.names]
+    if args.runtime and not spec["runtime"]:
+        raise Refused("--runtime needs [[runtime]] edits in the spec")
+    session = Run(spec, Path(args.spec).resolve(), mutants, args.runtime)
+    if args.check:
+        if args.runtime:
+            for file in sorted({t["file"] for t in spec["runtime"]}):
+                original = (ROOT / file).read_bytes().decode("utf-8")
+                print_diff("runtime", file, original, session.base[file])
+        for mutant in mutants:
+            print_diff(mutant["name"], mutant["file"],
+                       session.base[mutant["file"]],
+                       session.texts[mutant["name"]])
+        return 0
+
+    check_clean(session.files)
+    presets = args.presets or spec["presets"]
+    session.trees = {p: Tree(p) for p in presets}
+    used = list(dict.fromkeys(m["selection"] for m in mutants))
+    session.selections = {
+        p: {name: session.trees[p].tests(spec["selection"][name], name)
+            for name in used} for p in presets}
+
+    summary = []
+    try:
+        for preset in presets:
+            counts = session.preset(preset)
+            summary.append(f"{preset}: " + ", ".join(
+                f"{n} {verdict}" for verdict, n in counts.items()))
+    except BaseException:
+        # Stopped early: restore, rebuild what was started, and say if a
+        # rebuild failed, since the summary below is not reached.
+        session.restore()
+        known = len(session.problems)
+        for preset in session.started:
+            if preset not in session.rebuilt:
+                session.rebuild(preset)
+        for problem in session.problems[known:]:
+            print(problem, file=sys.stderr)
+        raise
+    print("\n".join(summary + session.problems))
+    return 1 if session.problems else 0
+
+
+def terminate(signum, frame):
+    raise SystemExit(128 + signum)
+
+
+if __name__ == "__main__":
+    signal.signal(signal.SIGTERM, terminate)
+    ROOT = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                               capture_output=True, text=True).stdout.strip())
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except Refused as refusal:
+        print(f"mutate: refused: {refusal}", file=sys.stderr)
+        sys.exit(2)
+    except KeyboardInterrupt:
+        sys.exit(130)
