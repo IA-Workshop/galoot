@@ -1519,9 +1519,12 @@ set_source_files_properties(core/identities_conformal3_test.cpp
   core/product_conformal3_test.cpp core/identities_rounding_test.cpp
   PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
 
-# core.identities: the De Morgan laws, the associativity of the
-# antiproducts, and the product rules of the involutions, through the public
-# functions and operators over many signatures. It tests product.hpp and
+# core.identities: the De Morgan laws, the associativity of the products and
+# the antiproducts, the defining relation on vectors, and the product rules
+# of the involutions, through the public functions and operators over many
+# signatures, among them seeded random diagonal forms of five and six
+# generators, and on every pair and triple of basis blades of the full
+# layouts of up to five generators. It tests product.hpp and
 # unary.hpp together, so it also carries their labels. Its test cases are in
 # identities_test.cpp, and each group of signatures is checked in a source of
 # its own, so that the groups compile in parallel. It is labeled slow: its
