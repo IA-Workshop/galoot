@@ -77,3 +77,24 @@ template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t KY, std::size_t... K>''' },
 ]
 expect = "killed"
+
+# Criterion 5, added after the branch point's run killed
+# gap_null_pair_wedge_sign: the wedge of a null generator with a blade that
+# holds another null generator and one of negative square negated, a fault
+# only a diagonal form with q >= 1 and r >= 2 can show, which no form of
+# the suites before part B has and each drawn form does.
+[[mutant]]
+name = "gap_mixed_nulls_wedge_sign"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''              multiply_checked(reorder_sign(generator, blade), c));''', replacement = '''              multiply_checked(reorder_sign(generator, blade) * [&] {
+                bool null = false;
+                bool negative = false;
+                for (mask_t r = blade; r != 0; r &= r - 1) {
+                  const auto j = static_cast<std::size_t>(std::countr_zero(r));
+                  null = null || g.gram[j][j] == 0;
+                  negative = negative || g.gram[j][j] < 0;
+                }
+                return g.gram[i][i] == 0 && null && negative ? -1 : 1;
+              }(), c));''' }]
+expect = "killed"
