@@ -381,7 +381,7 @@ blade_set_rejects(names_above_9
 # below it may name the function that parses the names. A message's ; is
 # held as character 1, which expect_output.cmake reads as a ;.
 string(ASCII 1 semicolon)
-set(blades_not_an_algebra "blades: the tag is not an algebra${semicolon} an algebra tag holds its metric as static constexpr value, as in struct rga3 { static constexpr auto value = rigid<3>()${semicolon} }")
+set(blades_not_an_algebra "blades: the tag is not an algebra${semicolon} an algebra tag holds its metric in a static constexpr member named value, as in struct rga3 { static constexpr auto value = rigid<3>()${semicolon} }")
 set(blades_no_generators "blades: the algebra tag's metric has no generators, and an algebra has at least one${semicolon} give the tag a metric such as rigid<3>()")
 foreach(case IN ITEMS blades_not_metric_like blades_tag_without_value
     blades_value_not_metric)
