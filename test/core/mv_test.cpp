@@ -2318,6 +2318,9 @@ struct DerivedFloatLine : Line<float> {
 //   scalar type answer alike for a class derived from one
 TEST_CASE("A source of one algebra and scalar type still converts") {
   const Line<double> line{1, 2, 3, 4, 5, 6};
+  // Not const, so that a constructor taking a non-const source would be
+  // the one chosen.
+  // NOLINTNEXTLINE(misc-const-correctness)
   Line<double> mutable_line{1, 2, 3, 4, 5, 6};
   const Motor<double> expected{0, 1, 2, 3, 4, 5, 6, 0};
   CHECK(Motor<double>{line} == expected);
@@ -2326,6 +2329,8 @@ TEST_CASE("A source of one algebra and scalar type still converts") {
   CHECK(static_cast<Motor<double>>(mutable_line) == expected);
   CHECK(Line<double>{mutable_line} == line);
 
+  // Not const, as above.
+  // NOLINTNEXTLINE(misc-const-correctness)
   DerivedLine derived{1, 2, 3, 4, 5, 6};
   CHECK(Line<double>{derived} == line);
   CHECK(Line<double>(DerivedLine{1, 2, 3, 4, 5, 6}) == line);
