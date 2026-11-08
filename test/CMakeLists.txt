@@ -233,6 +233,15 @@ add_test(NAME tools.mutate
     ${PROJECT_SOURCE_DIR}/tools ${CMAKE_CURRENT_BINARY_DIR}/mutate)
 set_tests_properties(tools.mutate PROPERTIES LABELS "tools;tools.mutate")
 
+# tools.compiles: compile cost before and after a change, and the sizes of
+# diagnostics, in a scratch repository at two commits with hand-written
+# build trees, so that the flags each compile takes can be told apart.
+add_test(NAME tools.compiles
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/compiles_test.py
+    ${PROJECT_SOURCE_DIR}/tools ${CMAKE_CURRENT_BINARY_DIR}/compiles)
+set_tests_properties(tools.compiles PROPERTIES LABELS "tools;tools.compiles")
+
 # tools.measure_header: launchers that open an empty record at once write one
 # header between them, not one each.
 add_test(NAME tools.measure_header
