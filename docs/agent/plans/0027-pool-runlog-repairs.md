@@ -58,3 +58,13 @@ The blind review (`records/reviews/2026-11-08-pool-runlog-review.md`, cherry-pic
 - **I7.** A client that starts during the one-second window while the FIFO is moved aside gets ENOENT, and `tools/timed` refuses with exit 2 in that window; this replaces the double pool. An `ensure` from an older checkout still starts the old code. Neither is changed.
 - The tests before the fixes: four checks of the two new cases failed on the branch's tool (27.7 s), and the lost-slot check now fails on `develop`'s tool as well. After them, `tools.jobpool` passes (29.2 s). Every pool was a private unit. From this round on, the shared pool's status is read only with the main checkout's `tools/jobpool`.
 - P9's checks for a merge into `develop`, rerun from new empty trees at `2e8aa68` with a clean tree (rows `2e8aa680dae1`, selection `gate:all`), all exit 0: gcc-debug 494 tests (64.3 s), gcc-release 494 (75.0 s), gcc-asan 486 (173.8 s), clang-debug 494 (58.7 s), clang-release 494 (78.2 s), clang-asan 494 (155.4 s), lint 494 (201.0 s), clang-measure 486 (77.3 s); `tools.jobpool` took 27.1 to 29.2 s in each. `format-check` (1.3 s), the trace gate (0.3 s), and `tools/runlog check` (2.7 s) exit 0. `develop` had not moved. The shared pool read 23 of 23 free before and after, read with the main checkout's tool. Next: the delta review of `8489cd2` and `34d5af3`.
+
+## State after the delta review (2026-11-08)
+
+The delta review (`records/reviews/2026-11-08-pool-runlog-delta-review.md`, cherry-picked with `-x`) approved with findings L1, I2 to I5.
+
+- **L1.** `aa98f82`, cherry-picked with `-x` from `1ac84b7` on the tests branch, adds a case to `tools.jobpool`. It runs a copy of the tool whose count fails only for the FIFO moved aside, and checks that the pool keeps running with its FIFO back at its path. It passes on the tool (34.5 s). With the last count put back to the old `[[ $(count_clients …) -eq 0 ]]`, its two checks fail (39.5 s, a scratch copy of the tool; the mutant is not committed). The same commit rewrites the module docstring to name every case (I4).
+- **Known, no code (I2, I3, I5).**
+  - I2: resolving `JOBPOOL_FIFO` changes what an override touches. A link as the last component makes the service remove and recreate the link's target. A dangling link into a missing directory makes `start` fail. Without GNU `realpath`, the path would be empty. The default path is unaffected.
+  - I3: `status`'s missing-FIFO message assumes the pool is stopping. A FIFO deleted by hand gets the same text and no hint to restart. `status` exit 1 now also covers a running pool without its FIFO.
+  - I5: `stop` and `status` still find clients through the `find` pipeline in `clients()`, which fails open. A failed scan lets `stop` go ahead without `--force`.
