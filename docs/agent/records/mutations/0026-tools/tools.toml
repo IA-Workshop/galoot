@@ -143,6 +143,16 @@ edits = [
 ]
 expect = "killed"
 
+# A guard that stops constant evaluation not counted as a kill.
+[[mutant]]
+name = "mutate_guard_not_a_kill"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "    r\"static assertion|static_assert|call to non-.?constexpr.? function\")", replacement = "    r\"static assertion|static_assert\")" },
+]
+expect = "killed"
+
 # The unexpected-kill report removed.
 [[mutant]]
 name = "mutate_unexpected_kill_unreported"
