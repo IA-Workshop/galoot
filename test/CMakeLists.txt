@@ -88,6 +88,14 @@ galoot_add_compile_fail_test(NAME assert_consteval_wrong_message
 set_tests_properties(core.assert_consteval_wrong_message PROPERTIES
   WILL_FAIL ON)
 
+# core.assert_checking_value: a checking mode other than 0 or 1 stops the
+# compile with one error that says which values the mode takes.
+galoot_add_compile_fail_test(NAME assert_checking_value
+  MODULE core COMPONENT assert
+  SOURCE core/assert_checking_value_fail.cpp
+  MESSAGE "GALOOT_CHECKING must be 0 or 1"
+  ONE_ERROR)
+
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
 galoot_add_test(MODULE core COMPONENT bits)
