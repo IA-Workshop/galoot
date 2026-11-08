@@ -1,6 +1,6 @@
 # WU15: the messages of format.hpp and of the new catch-alls, and their sizes
 
-Plan 0022 R6, R7, and criterion 4. Decisions 0204 and 0206 give the texts, and decision 0211 rewords four of them. Each is pinned by compile-fail tests in `test/CMakeLists.txt` (`core.format_*`, `core.mv_other_*`, `core.linear_*_number_*`, `core.blade_set_blades_*`, `core.blade_set_names_zero`). Each is registered with `ONE_ERROR`, and the internal names are forbidden on the first error line: `detail::`, `__format`, and `basic_format_arg` for the formatter; `detail::`, `component<`, and `blade_set<` for the catch-alls; `detail::` and `make_blades` for `blades`.
+Plan 0022 R6, R7, and criterion 4. Decisions 0204 and 0206 give the texts, and decision 0212 rewords four of them. Each is pinned by compile-fail tests in `test/CMakeLists.txt` (`core.format_*`, `core.mv_other_*`, `core.linear_*_number_*`, `core.blade_set_blades_*`, `core.blade_set_names_zero`). Each is registered with `ONE_ERROR`, and the internal names are forbidden on the first error line: `detail::`, `__format`, and `basic_format_arg` for the formatter; `detail::`, `component<`, and `blade_set<` for the catch-alls; `detail::` and `make_blades` for `blades`.
 
 ## Method
 

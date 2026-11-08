@@ -1,4 +1,4 @@
-# 0211 WU15 after the hci reading: the scalar's formatter test and four messages
+# 0212 WU15 after the hci reading: the scalar's formatter test and four messages
 
 - Status: recorded. The coordinator directed the resolution on 2026-11-08: S1 by option (a), C1 to C4 as the reading words them, S3, and C5, C6, C8 as comments. S2 (the rga3 tag's names) is outside WU15 and left to the owner; C7 is a CONVENTIONS wording proposal for the owner (C10).
 - Date: 2026-11-08
