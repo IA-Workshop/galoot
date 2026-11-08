@@ -12,8 +12,10 @@ cross products, and determinants, with no geometric algebra. Where a
 convention is stated both as a definition and as a closed formula, a table,
 or a worked example, the script computes both and stops if they differ: the
 complements, grade signs, oriented names, antiscalars, wedge-basis products,
-conformal change of basis, result order, and metric exomorphisms are written
-only when two routes agree. The rigid joins, meets, incidences, rotations,
+conformal change of basis, result order, metric exomorphisms, and duals are
+written only when two routes agree. The transforms by a mirror are computed
+by conventions_check.py's antiproducts and by reflection matrices, with no
+geometric algebra, and written only when the two agree exactly. The rigid joins, meets, incidences, rotations,
 chains of joints, and point groups are each computed by
 conventions_check.py and by rigid_motions.py and written only when the two
 agree exactly; the orders of the point groups must also equal the published
@@ -353,10 +355,199 @@ def exomorphism(name, g, n, right, left, signs):
     return [(a, canonical_terms(images[a])) for a in range(size)]
 
 
+def apply_images(images, x):
+    """A linear map given by the image of each blade, applied to x."""
+    out = {}
+    for m, c in x.items():
+        for t, d in images[m].items():
+            out[t] = out.get(t, 0) + c * d
+    return ref.clean(out)
+
+
+def apply_complement(table, x):
+    return {table[m][0]: c * table[m][1] for m, c in x.items()}
+
+
+DUAL_FORMS = (
+    ("rigid_3", "rigid(3)", ref.rigid(3)),
+    ("conformal_3", "conformal(3)", ref.conformal(3)),
+)
+
+
+def duals(name, g, n, right, left, signs):
+    """The four duals of every blade, from their definitions:
+    bulk_dual(u) = right(G u), weight_dual(u) = right(antiG u) = G right(u),
+    left_bulk_dual(u) = left(G u), and left_weight_dual(u) = left(antiG u),
+    with G e_A the sum of det g[A, B] e_B and antiG = left G right.
+
+    A second route gives each one: the bulk dual is the geometric product
+    reverse(u) antiscalar, and the weight dual the geometric antiproduct of
+    antireverse(u) and 1, with the products from clifford_reference.py and
+    the antiproduct composed from them through the complements, and each
+    left dual
+    the right one times (-1)^(gr ag). In rigid(3), where G keeps the blades
+    without e4 and antiG those with it, conventions_check.py's bulk and
+    weight give a third. The script stops if any two differ."""
+    size = 1 << n
+    full = size - 1
+    images = {}
+    for a in range(size):
+        rows = ref.indices(a)
+        image = {}
+        for cols in itertools.combinations(range(n), len(rows)):
+            minor = gram_minor(g, rows, cols)
+            if minor != 0:
+                image[sum(1 << c for c in cols)] = minor
+        images[a] = image
+
+    def bulk(x):
+        return apply_images(images, x)
+
+    def weight(x):
+        return apply_complement(left, bulk(apply_complement(right, x)))
+
+    alg = ref.Algebra(g)
+    out = {"bulk_dual": [], "weight_dual": [], "left_bulk_dual": [],
+           "left_weight_dual": []}
+    for u in range(size):
+        x = unit(u)
+        by_definition = {
+            "bulk_dual": apply_complement(right, bulk(x)),
+            "weight_dual": apply_complement(right, weight(x)),
+            "left_bulk_dual": apply_complement(left, bulk(x)),
+            "left_weight_dual": apply_complement(left, weight(x)),
+        }
+        agree(by_definition["weight_dual"],
+              bulk(apply_complement(right, x)),
+              f"right(antiG u) = G right(u), blade {u} of {name}")
+        reverse = {u: Fraction(signs[u][0])}
+        antireverse = {u: Fraction(signs[u][1])}
+        star = ref.clean(alg.mul(reverse, unit(full)))
+        # The antiproduct is left(right(a) right(b)), and right(1) is the
+        # antiscalar.
+        open_star = apply_complement(
+            left, ref.clean(alg.mul(apply_complement(right, antireverse),
+                                    unit(full))))
+        parity = (-1) ** (ref.popcount(u) * (n - ref.popcount(u)))
+        by_products = {
+            "bulk_dual": star,
+            "weight_dual": open_star,
+            "left_bulk_dual": {m: c * parity for m, c in star.items()},
+            "left_weight_dual": {m: c * parity for m, c in open_star.items()},
+        }
+        for kind in out:
+            agree(by_definition[kind], by_products[kind],
+                  f"{kind} of {ref.blade_name(u)} in {name}: the definition "
+                  f"against the products")
+        if name == "rigid(3)":
+            before = len(conv.failures)
+            third = {
+                "bulk_dual": conv.right(conv.bulk(x)),
+                "weight_dual": conv.right(conv.weight(x)),
+                "left_bulk_dual": conv.left(conv.bulk(x)),
+                "left_weight_dual": conv.left(conv.weight(x)),
+            }
+            agree(conv.failures[before:], [], "conventions_check.py")
+            for kind in out:
+                agree(by_definition[kind], ref.clean(third[kind]),
+                      f"{kind} of {ref.blade_name(u)} in rigid(3) against "
+                      f"conventions_check.py")
+        for kind in out:
+            out[kind].append((u, canonical_terms(by_definition[kind])))
+    return out
+
+
+# The mirrors that pin the sign of an odd transform: one hyperplane V in each
+# form, with x v V = f . x for the vector f below, chosen with every entry
+# nonzero and with V v antireverse(V) = lambda antiscalar for a lambda other
+# than 1, so that the factor lambda of the transform shows in every image.
+MIRROR_FORMS = (
+    ("rigid_2", "rigid(2)", (1, 1, 0), (3, 4, 5)),
+    ("r_3_0_0", "R(3, 0, 0)", (1, 1, 1), (1, 2, 2)),
+    ("rigid_3", "rigid(3)", (1, 1, 1, 0), (2, 1, 2, 3)),
+    ("r_4_0_0", "R(4, 0, 0)", (1, 1, 1, 1), (1, 2, 2, 4)),
+    ("rigid_4", "rigid(4)", (1, 1, 1, 1, 0), (1, 2, 2, 4, 3)),
+    ("r_5_0_0", "R(5, 0, 0)", (1, 1, 1, 1, 1), (1, 1, 2, 3, 1)),
+)
+
+
+def mirror_images(name, squares, f, left):
+    """transform(e_A, V) for every blade e_A, for the odd versor V of one
+    hyperplane, computed two ways.
+
+    By geometric algebra: the negated antiproduct of V, x', and
+    antireverse(V), with x' the antigrade involution, from
+    conventions_check.py, where V = (-1)^(n-1) left(f) is the hyperplane on
+    which x v V = f . x.
+
+    By matrices, with no geometric algebra: lambda = sum g_ii f_i^2, the
+    normal N with N_i = g_ii f_i, and the reflection R x = x - 2 (f . x) N /
+    lambda, which fixes the hyperplane f . x = 0 and negates N; then
+    transform(e_A, V) = lambda R(e_a1) ^ ... ^ R(e_ak), which is lambda
+    times the sum over B of the minor det R[B, A] times e_B, and lambda for
+    the scalar. Every image is integral.
+
+    The script stops if they differ in any coefficient, if x v V is not
+    f . x, or if V v antireverse(V) is not lambda times the antiscalar."""
+    n = len(squares)
+    lam = sum(s * c * c for s, c in zip(squares, f))
+    normal = [s * c for s, c in zip(squares, f)]
+    sign = (-1) ** (n - 1)
+    v = {left[1 << i][0]: Fraction(sign * left[1 << i][1] * f[i])
+         for i in range(n)}
+    reflection = [[Fraction(int(i == j)) - Fraction(2 * normal[i] * f[j], lam)
+                   for j in range(n)] for i in range(n)]
+    images = []
+    with conv.diagonal_form(squares):
+        before = len(conv.failures)
+        for i in range(n):
+            agree(conv.antiwedge(unit(1 << i), v), ref.clean({0: f[i]}),
+                  f"e{i + 1} v V = f_{i + 1} in {name}")
+        agree(conv.antigp(v, conv.antireverse(v)),
+              {(1 << n) - 1: Fraction(lam)},
+              f"V v antireverse(V) = lambda antiscalar in {name}")
+        transform = conv.mirror_transform(v)
+        for a in range(1 << n):
+            by_versor = ref.clean(transform(unit(a)))
+            cols = ref.indices(a)
+            by_matrix = {}
+            for rows in itertools.combinations(range(n), len(cols)):
+                minor = ref.det([[reflection[r][c] for c in cols]
+                                 for r in rows]) if cols else Fraction(1)
+                if minor != 0:
+                    by_matrix[sum(1 << r for r in rows)] = lam * minor
+            agree(by_versor, by_matrix,
+                  f"transform of {ref.blade_name(a)} by the mirror of {name}: "
+                  f"the antiproduct form against lambda R^k")
+            images.append((a, canonical_terms(by_versor)))
+        agree(conv.failures[before:], [], "conventions_check.py")
+    return lam, canonical_terms(v), images
+
+
 def image_row(a, terms, n, width):
     padded = terms + [(0, 0)] * (width - len(terms))
     body = ", ".join(f"{{{c}, {mask_literal(m, n)}}}" for c, m in padded)
     return f"{{{mask_literal(a, n)}, {len(terms)}, {{{{{body}}}}}}}"
+
+
+def wrapped_image_row(a, terms, n, width):
+    """image_row as an array element at an indent of four, its terms
+    continued on further lines when one line would pass 80 columns."""
+    line = f"    {image_row(a, terms, n, width)},"
+    if len(line) <= 80:
+        return [line]
+    padded = terms + [(0, 0)] * (width - len(terms))
+    items = [f"{{{c}, {mask_literal(m, n)}}}" for c, m in padded]
+    lines = [f"    {{{mask_literal(a, n)}, {len(terms)},"]
+    current = "     {{" + items[0]
+    for item in items[1:]:
+        if len(current) + 2 + len(item) + 1 > 80:
+            lines.append(current + ",")
+            current = "       " + item
+        else:
+            current += ", " + item
+    lines.append(current + "}}},")
+    return lines
 
 
 def product_row(a, b, terms, n, width):
@@ -572,6 +763,14 @@ struct blade_image {
   mask blade;
   std::size_t size;
   std::array<term, @IMAGE_TERMS@> terms;
+};
+
+/// The image of a blade under a transform, as for blade_image, with room
+/// for the longest image of the mirrors.
+struct transform_image {
+  mask blade;
+  std::size_t size;
+  std::array<term, @MIRROR_TERMS@> terms;
 };
 
 // The rigid objects of rigid(3), by their coefficients on Lengyel's oriented
@@ -1108,10 +1307,21 @@ def generate():
     # image as the longest one.
     exomorphisms = [(name, n, exomorphism(title, g, n, *tables[n]))
                     for name, title, g, n, _, _ in gp_tables]
+    dual_tables = [(name, len(g), duals(title, g, len(g), *tables[len(g)]))
+                   for name, title, g in DUAL_FORMS]
     image_width = max(len(terms) for _, _, images in exomorphisms
                       for _, terms in images)
+    image_width = max([image_width] + [
+        len(terms) for _, _, table in dual_tables
+        for images in table.values() for _, terms in images])
+    mirrors = [(name, title, squares, f,
+                *mirror_images(title, squares, f, tables[len(squares)][1]))
+               for name, title, squares, f in MIRROR_FORMS]
+    mirror_width = max(len(terms) for *_, images in mirrors
+                       for _, terms in images)
     out = (HEADER_START.replace("@PRODUCT_TERMS@", str(width))
            .replace("@IMAGE_TERMS@", str(image_width))
+           .replace("@MIRROR_TERMS@", str(mirror_width))
            .replace("@MAX_JOINTS@", str(MAX_JOINTS))
            .replace("@CHAIN_POINTS@", str(CHAIN_POINTS)).splitlines())
 
@@ -1283,6 +1493,67 @@ def generate():
                    [image_row(a, terms, n, image_width)
                     for a, terms in images])
     close_namespace(out, "exomorphisms")
+
+    open_namespace(out, "duals",
+                   "a ^ bulk_dual(b) = (a . b) antiscalar for a and b of "
+                   "equal grade",
+                   "The four duals of every blade of rigid(3) and of "
+                   "conformal(3): bulk_dual(u) = right(G u), weight_dual(u) "
+                   "= right(antiG u) = G right(u), left_bulk_dual(u) = "
+                   "left(G u), and left_weight_dual(u) = left(antiG u), with "
+                   "G the metric exomorphism and antiG = left G right, so "
+                   "that a ^ bulk_dual(b) = (a . b) antiscalar for a and b of "
+                   "equal grade. Each was computed from these definitions and "
+                   "again from the products: the bulk dual as the geometric "
+                   "product of reverse(u) and the antiscalar, the weight dual "
+                   "as the geometric antiproduct of antireverse(u) and 1, and "
+                   "each left dual as the right one times (-1)^(gr ag); in "
+                   "rigid(3) also by "
+                   "conventions_check.py. In conformal(3), where n = 5, the "
+                   "left and right duals are equal, and the weight dual is "
+                   "the negated bulk dual. Indexed by mask.")
+    for name, n, table in dual_tables:
+        for kind, images in table.items():
+            emit_array(out, "blade_image", f"{name}_{kind}",
+                       [image_row(a, terms, n, image_width)
+                        for a, terms in images])
+    close_namespace(out, "duals")
+
+    open_namespace(out, "mirrors",
+                   "a single mirror maps each vector of the mirror to itself "
+                   "times lambda",
+                   "transform(x, V) for a single mirror V, an odd versor, on "
+                   "every blade x, in rigid(2), R(3, 0, 0), rigid(3), "
+                   "R(4, 0, 0), rigid(4), and R(5, 0, 0): the negated "
+                   "geometric antiproduct of V, x', and antireverse(V), with "
+                   "x' the antigrade involution of x, which is the grade "
+                   "involution when n is even and its negation when n is "
+                   "odd. V is the "
+                   "hyperplane on which x v V = f . x, and V v antireverse(V) "
+                   "= lambda antiscalar. Each image was computed by that "
+                   "antiproduct in conventions_check.py and by matrices: the "
+                   "reflection R x = x - 2 (f . x) N / lambda with N_i = "
+                   "g_ii f_i, which fixes the mirror, and the image of e_A is "
+                   "lambda R(e_a1) ^ ... ^ R(e_ak), the sum over B of lambda "
+                   "det R[B, A] e_B; so the mirror maps each of its vectors "
+                   "to itself times lambda. Per form: the squares of the "
+                   "generators, f, V on its blades, lambda, and the images, "
+                   "indexed by mask.")
+    for name, _, squares, f, lam, v, images in mirrors:
+        n = len(squares)
+        declare(out, f"std::array<int, {n}>", f"{name}_squares",
+                f"{{{', '.join(map(str, squares))}}};")
+        declare(out, f"std::array<int, {n}>", f"{name}_f",
+                f"{{{', '.join(map(str, f))}}};")
+        emit_array(out, "term", f"{name}_mirror",
+                   [f"{{{c}, {mask_literal(m, n)}}}" for c, m in v])
+        declare(out, "int", f"{name}_lambda", f"{lam};")
+        declare(out, f"std::array<transform_image, {len(images)}>",
+                f"{name}_images", "{{")
+        for a, terms in images:
+            out.extend(wrapped_image_row(a, terms, n, mirror_width))
+        out.append("}};")
+    close_namespace(out, "mirrors")
 
     rm.self_check()
     incidences = rigid_incidences()
