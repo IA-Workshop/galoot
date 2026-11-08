@@ -618,6 +618,27 @@ public:
                          "is lossy, so request it with truncate<Type>(x)");
   }
 
+  /// Rejects, with one error, a conversion from a multivector of another
+  /// algebra or another scalar type, or from a class derived from one: a
+  /// conversion between layouts keeps both, so Motor{float_line} is an
+  /// error rather than a silent change of scalar. When both differ, the
+  /// algebra is named. Because this constructor exists,
+  /// std::is_constructible_v<Line, FloatLine> is true;
+  /// std::is_convertible_v<FloatLine, Line> is false.
+  template <metric_like OtherAlg, blade_set From, std::destructible U>
+    requires(!std::same_as<OtherAlg, Alg> || !std::same_as<U, T>)
+  constexpr explicit mv(const mv<OtherAlg, From, U>& /*source*/) {
+    if constexpr (!std::same_as<OtherAlg, Alg>) {
+      static_assert(false, "mv: the source is in another algebra; a "
+                           "conversion between layouts keeps the algebra, "
+                           "so give both types the same algebra tag");
+    } else {
+      static_assert(false, "mv: the source has another scalar type; a "
+                           "conversion between layouts keeps the scalar "
+                           "type, so convert the coefficients one by one");
+    }
+  }
+
   /// Rejects any other number of values, other than none and a single
   /// argument that is not a coefficient, with one error that prints the
   /// number given and the number of components, as "3 == 6". A single
