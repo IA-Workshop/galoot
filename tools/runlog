@@ -14,7 +14,14 @@ Usage, from anywhere inside the checkout:
       and no row an era removed. Exits 1 on any difference.
   tools/runlog prune [--log <path>]
       Removes from the log each row an era removed, which a merge can bring
-      back, and each extra copy of a row an era kept.
+      back, and each extra copy of a row an era kept. Refuses, changing no
+      log, unless every era of every log it visits recomputes exactly as
+      the history records it: after a change to which rows stay, the rows
+      an era kept could otherwise recompute as removed, and be deleted.
+
+The merge check that runs `check` is also the CTest test tools.runlog_check,
+which has the label `runlog`. The test presets leave that label out, so it
+runs from a build tree: ctest --test-dir <build tree> -L '^runlog$'.
 
 <path> is relative to the checkout's root. `compact` defaults to the run log,
 docs/agent/records/performance/runs.tsv; `check` and `prune` default to every
@@ -92,9 +99,8 @@ NO_TREE = "-"
 
 
 class Refused(Exception):
-    """A command that cannot go ahead. compact refuses before it writes
-    anything; prune visits one log after another, so its refusal can follow
-    the rewrite of an earlier log."""
+    """A command that cannot go ahead. compact and prune refuse before they
+    write anything."""
 
 
 def git(top, *args):
@@ -494,22 +500,9 @@ def check(top, log):
     for name in visited:
         found = len(problems)
         recorded = [era for era in eras if era[1] == name]
-        kept_all, removed_all = collections.Counter(), collections.Counter()
-        orders = []
-        for era, (record, history, kept, removed, order) in zip(
-                recorded, replay(top, name, eras, states)):
-            kept_all += kept
-            removed_all += removed
-            orders.append((era[0], kept, order))
-            if era != record:
-                problems.append(f"{ERAS}: era {era[0]} of {name} is\n  "
-                                + "\t".join(era) + "\nbut recomputes as\n  "
-                                + "\t".join(record))
-            committed = ["\t".join(cells) for cells in groups
-                         if cells[0] == era[0] and cells[1] == name]
-            if committed != history:
-                problems.append(group_difference(era[0], name, committed,
-                                                 history))
+        differences, kept_all, removed_all, orders = recompute(
+            top, name, eras, groups, states)
+        problems += [text for _, text in differences]
         try:
             _, working = split_log(read_text(os.path.join(top, name)), name)
         except FileNotFoundError:
@@ -524,6 +517,32 @@ def check(top, log):
     for problem in problems:
         print(f"runlog: {problem}", file=sys.stderr)
     return 1 if problems else 0
+
+
+def recompute(top, name, eras, groups, states):
+    """Replays the eras of one log and compares each with the history.
+    Returns ((era, text) for each difference, the rows the eras kept, the
+    rows they removed, and (era, kept, kept rows in order) for each)."""
+    differences = []
+    kept_all, removed_all = collections.Counter(), collections.Counter()
+    orders = []
+    recorded = [era for era in eras if era[1] == name]
+    for era, (record, history, kept, removed, order) in zip(
+            recorded, replay(top, name, eras, states)):
+        kept_all += kept
+        removed_all += removed
+        orders.append((era[0], kept, order))
+        if era != record:
+            differences.append((era[0], f"{ERAS}: era {era[0]} of {name} is"
+                                "\n  " + "\t".join(era)
+                                + "\nbut recomputes as\n  "
+                                + "\t".join(record)))
+        committed = ["\t".join(cells) for cells in groups
+                     if cells[0] == era[0] and cells[1] == name]
+        if committed != history:
+            differences.append((era[0], group_difference(
+                era[0], name, committed, history)))
+    return differences, kept_all, removed_all, orders
 
 
 def group_difference(era, log, committed, history):
@@ -573,12 +592,17 @@ def log_problems(name, working, kept, removed):
 
 def prune(top, log):
     eras = read_table(os.path.join(top, ERAS), ERA_COLUMNS)
+    groups = read_table(os.path.join(top, GROUPS), GROUP_COLUMNS)
     states = read_toolchain(top)
+    pruned = []
     for name in logs_to_visit(eras, log):
-        kept_all, removed_all = collections.Counter(), collections.Counter()
-        for _, _, kept, removed, _ in replay(top, name, eras, states):
-            kept_all += kept
-            removed_all += removed
+        differences, kept_all, removed_all, _ = recompute(top, name, eras,
+                                                          groups, states)
+        if differences:
+            raise Refused(f"era {differences[0][0]} of {name} does not "
+                          "recompute as the history records it, so the rows "
+                          "it kept are not known; tools/runlog check shows "
+                          "the difference")
         path = os.path.join(top, name)
         columns, working = split_log(read_text(path), name)
         allowed = collections.Counter(kept_all)
@@ -589,6 +613,8 @@ def prune(top, log):
             elif allowed[line] > 0:
                 allowed[line] -= 1
                 remaining.append(line)
+        pruned.append((name, path, columns, working, remaining))
+    for name, path, columns, working, remaining in pruned:
         if len(remaining) != len(working):
             write_replacing(path, "\n".join(["\t".join(columns), *remaining])
                             + "\n")
