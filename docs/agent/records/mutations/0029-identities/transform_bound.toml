@@ -1,0 +1,104 @@
+# The mutants of faults_identities.toml and identities.toml that
+# core.transform_identities killed at run time at d5ffafd, judged by that
+# suite alone, to show that drawing its hyperplanes from -1 to 1 (a3aa7c7)
+# instead of -2 to 2 keeps them killed. squares_doubled and
+# gap_squares_doubled are expected to survive: every square doubled is
+# another metric, in which the transform identities hold, and the suite's
+# earlier failure on them was the test rational overflowing, not an
+# identity failing.
+presets = ["gcc-debug"]
+
+[selection.transform]
+targets = ["core_transform_identities_test"]
+labels = '^core\.transform_identities$'
+
+# The reorder sign negated for the pairs of e3 and a blade holding e1 and e2, a class that is not a change of sign of blades; reorder_sign also gives the complements' signs, so the edit reaches both.
+[[mutant]]
+name = "reorder_sign_class"
+selection = "transform"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = '''  int swaps = 0;''', replacement = '''  int swaps = (a == 4U && (b & 3U) == 3U) ? 1 : 0;''' }]
+expect = "killed"
+
+# The right complement's sign flipped on e1 in every algebra, the left one unchanged.
+[[mutant]]
+name = "right_complement_sign_flipped"
+selection = "transform"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = '''  return reorder_sign(a, complement_mask(a, n));''', replacement = '''  return (a == 1U ? -1 : 1) * reorder_sign(a, complement_mask(a, n));''' }]
+expect = "killed"
+
+# The last term of every blade product of two or more terms dropped; only a metric with off-diagonal entries gives such products.
+[[mutant]]
+name = "last_term_dropped"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''  add_blade_product(out, g, a, b, 1);
+  return out;''', replacement = '''  add_blade_product(out, g, a, b, 1);
+  if (out.length > 1) {
+    --out.length;
+    out.terms[out.length] = {};
+  }
+  return out;''' }]
+expect = "killed"
+
+# The entry g_12 doubled where e1 contracts a blade from the left, and nowhere else, so one coefficient of the products through it doubles.
+[[mutant]]
+name = "one_coefficient_doubled"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == 0 && j == 1 ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"
+
+# Informational, beside the five: every square g_ii doubled, which the generator reads only in this loop, so the products are those of another metric and every identity holds; only a comparison with the algebra's own Gram matrix or a golden value can see it.
+[[mutant]]
+name = "squares_doubled"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == j ? 2 : 1) * g.gram[i][j];''' }]
+expect = "equivalent"
+reason = "another metric, in which the transform identities hold"
+
+# Criterion 2: every square g_ii doubled, the algebra of another metric, in
+# which every identity holds; only the defining relation, computed from the
+# algebra's own Gram matrix, can see it.
+[[mutant]]
+name = "gap_squares_doubled"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == j ? 2 : 1) * g.gram[i][j];''' }]
+expect = "equivalent"
+reason = "another metric, in which the transform identities hold"
+
+# Criterion 2: every off-diagonal entry read as zero in both loops, the
+# algebra of the metric's diagonal part, consistent in itself; on the
+# non-diagonal groups only the defining relation can see it.
+[[mutant]]
+name = "gap_offdiagonal_dropped"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = i == j ? g.gram[i][j] : 0;''' },
+  { anchor = '''    const coefficient_type entry = g.gram[low][j];''', replacement = '''    const coefficient_type entry = 0;''' },
+]
+expect = "killed"
+
+# Criteria 1 and 2: the contraction of e_i with a vector e_j, i != j,
+# doubled, and nothing else, so products of vectors in a non-diagonal form
+# are wrong while products of higher grades mostly are not.
+[[mutant]]
+name = "gap_vector_contraction_doubled"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i != j && std::popcount(blade) == 1 ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"
+
+# Criterion 5: the wedge of a null generator with a blade whose lowest
+# generator is also null negated, a wrong sign on products of two null
+# generators of a diagonal form.
+[[mutant]]
+name = "gap_null_pair_wedge_sign"
+selection = "transform"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''              multiply_checked(reorder_sign(generator, blade), c));''', replacement = '''              multiply_checked(reorder_sign(generator, blade) * (g.gram[i][i] == 0 && blade != 0 && blade < generator && g.gram[static_cast<std::size_t>(std::countr_zero(blade))][static_cast<std::size_t>(std::countr_zero(blade))] == 0 ? -1 : 1), c));''' }]
+expect = "killed"

@@ -1,0 +1,31 @@
+# The even-sign mutant of decision 0211 item 5: a flector given a motor's
+# sign, +F ⟇ x̂ ⟇ F̰ in place of -F ⟇ x̂ ⟇ F̰, so that a reflected point gets
+# the weight -1 and a reflected plane is negated. Judged by rga3.objects,
+# whose flector cases name the mirror z = 0's images of the point
+# (1, 2, 3, 1) and of the plane (0, 0, 1, -1). Under --runtime the two
+# static_asserts of those cases become static_assert(true || ...), so that
+# their run-time checks must kill it; the failed cases then name both.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.objects]
+targets = ["rga3_objects_test"]
+labels = '^rga3\.objects$'
+
+[[runtime]]
+file = "test/presets/rga3/objects_test.cpp"
+anchor = 'static_assert(core::transform(IntPoint{1, 2, 3, 1}, int_mirror) =='
+replacement = 'static_assert(true || core::transform(IntPoint{1, 2, 3, 1}, int_mirror) =='
+count = 1
+
+[[runtime]]
+file = "test/presets/rga3/objects_test.cpp"
+anchor = 'static_assert(core::transform(IntPlane{0, 0, 1, -1}, int_mirror) =='
+replacement = 'static_assert(true || core::transform(IntPlane{0, 0, 1, -1}, int_mirror) =='
+count = 1
+
+[[mutant]]
+name = "odd_versor_even_sign"
+selection = "objects"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = 'antigrade_parity<Alg, V> == Parity::odd ? -1 : 1;', replacement = 'antigrade_parity<Alg, V> == Parity::odd ? 1 : 1;' }]
+expect = "killed"
