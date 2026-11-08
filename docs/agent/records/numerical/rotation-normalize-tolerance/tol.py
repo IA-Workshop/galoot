@@ -41,8 +41,13 @@ for name, p, half in (("double", 53, double_half_pi), ("float", 24, float_half_p
     assert F(1, 2) <= s < 1 and F(1, 2) <= c < 1
     # L = 1 or 2: the motor is the unit axis's bit for bit, a = k u.
     # L = 5: the stored sine is fl(5 fl(s_hat / 5)), within 2u of s_hat
-    # (both in [1/2, 1), see the record), so a = (k + 2) u.
-    for label, a in (("L=1,2", k * u), ("L=5", (k + 2) * u)):
+    # (both in [1/2, 1), see the record), so a = (k + 2) u; the record's
+    # tighter lemma puts it within u, so a = (k + 1) u.
+    for label, a in (
+        ("L=1,2", k * u),
+        ("L=5", (k + 2) * u),
+        ("L=5 (1u lemma)", (k + 1) * u),
+    ):
         b = k * u
         e1 = a * (2 * s + a) + b * (2 * c + b)
         e2 = 2 * (s * b + c * a + a * b)
