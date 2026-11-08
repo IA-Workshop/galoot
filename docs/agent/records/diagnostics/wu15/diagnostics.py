@@ -29,8 +29,7 @@ FLAGS = ["-DGALOOT_CHECKING=1", "-Wall", "-Wextra", "-Wpedantic",
 # Part 3's compile-fail sources, by glob under test/core.
 PART3 = ("mv_source_*_fail.cpp", "mv_other_*_fail.cpp",
          "linear_*number*_fail.cpp", "linear_*scalar_sum*_fail.cpp",
-         "blade_set_blades_not_metric_like_fail.cpp",
-         "blade_set_names_zero_fail.cpp")
+         "blade_set_blades_*_fail.cpp", "blade_set_names_zero_fail.cpp")
 
 
 def measure(label, compiler, source, include):
