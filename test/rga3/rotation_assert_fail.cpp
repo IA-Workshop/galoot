@@ -24,6 +24,7 @@
 // compile time. A usage error, or a coefficient that is not as stated,
 // exits 2 or 1 with a message, which fails every test that runs this
 // program.
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -32,6 +33,7 @@
 #include <string_view>
 
 #include <galoot/rga3/motions.hpp>
+#include <galoot/rga3/objects.hpp>
 
 namespace {
 
@@ -42,12 +44,9 @@ namespace rga3 = galoot::rga3;
 template <class T, class P>
 bool line_part_all(const rga3::Motor<T>& q, P predicate) {
   constexpr std::array<std::size_t, 6> line_places{0, 1, 2, 4, 5, 6};
-  for (const std::size_t i : line_places) {
-    if (!predicate(q.coefficients.at(i))) {
-      return false;
-    }
-  }
-  return true;
+  return std::ranges::all_of(line_places, [&](std::size_t i) {
+    return predicate(q.coefficients.at(i));
+  });
 }
 
 } // namespace

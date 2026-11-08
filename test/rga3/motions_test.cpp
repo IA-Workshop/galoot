@@ -480,8 +480,12 @@ TEST_CASE_TEMPLATE("rotation(l, pi/2) about the z axis turns (1, 0, 0, 1) to "
 // length 2 gives the unit axis's motor bit for bit, since dividing by 2 and
 // multiplying back is exact, so it keeps the tolerances above.
 namespace {
-constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u{40, 39, 0,
-                                                                  32};
+constexpr std::array<int, 4> quarter_turn_length_5_tolerance_in_u{
+    40,
+    39,
+    0,
+    32,
+};
 } // namespace
 
 // Reference: independent value: by hand, a quarter turn counterclockwise
@@ -575,8 +579,10 @@ TEST_CASE_TEMPLATE("rotation(l, pi) about a line off the axes whose direction "
   const std::array<std::pair<Line, std::array<int, 6>>, 2> cases{
       {
           {Line{T{0}, T{3}, T{4}, T{0}, T{-4}, T{3}}, {0, 3, 4, 0, -4, 3}},
-          {Line{T{1.5}, T{-2}, T{0}, T{2}, T{1.5}, T{0.5}},
-           {3, -4, 0, 4, 3, 1}},
+          {
+              Line{T{1.5}, T{-2}, T{0}, T{2}, T{1.5}, T{0.5}},
+              {3, -4, 0, 4, 3, 1},
+          },
       },
   };
   for (std::size_t c = 0; c < cases.size(); ++c) {
