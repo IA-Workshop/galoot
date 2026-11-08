@@ -374,21 +374,30 @@ blade_set_rejects(same_blade "${same_blade}" FORBID "${repeated_generator}")
 blade_set_rejects(names_above_9
   "blades: names such as e123 have one digit per index, so they are read only for n up to 9, and a larger algebra takes masks"
   FORBID "${repeated_generator}")
-# blades takes an algebra tag, so a type that is not one, and a tag whose
-# metric has no generators, fail its metric_like constraint before a name is
-# read. The function that parses the names carries the concept's argument
-# too, so the tests forbid its name, which would point the user at internal
-# code.
-galoot_add_compile_fail_test(NAME blade_set_blades_not_metric_like
-  MODULE core COMPONENT blade_set
-  SOURCE core/blade_set_blades_not_metric_like_fail.cpp
-  MESSAGE "${not_metric_like}"
-  FORBID "make_blades")
+# blades takes an algebra tag, so a type that is not one (int, a class with
+# no member value, one whose value is no metric) and a tag whose metric has
+# no generators are rejected before a name is read, each with one error and
+# its message, on a first error line that names no internal code; the notes
+# below it may name the function that parses the names. A message's ; is
+# held as character 1, which expect_output.cmake reads as a ;.
+string(ASCII 1 semicolon)
+set(blades_not_an_algebra "blades: the tag is not an algebra${semicolon} an algebra tag holds its metric as static constexpr value, as in struct rga3 { static constexpr auto value = rigid<3>()${semicolon} }")
+set(blades_no_generators "blades: the algebra tag's metric has no generators, and an algebra has at least one${semicolon} give the tag a metric such as rigid<3>()")
+foreach(case IN ITEMS blades_not_metric_like blades_tag_without_value
+    blades_value_not_metric)
+  galoot_add_compile_fail_test(NAME blade_set_${case}
+    MODULE core COMPONENT blade_set
+    SOURCE core/blade_set_${case}_fail.cpp
+    MESSAGE "${blades_not_an_algebra}"
+    ONE_ERROR FORBID "${blades_no_generators}"
+    FORBID_ON_FIRST_ERROR "detail::" "make_blades")
+endforeach()
 galoot_add_compile_fail_test(NAME blade_set_names_zero
   MODULE core COMPONENT blade_set
   SOURCE core/blade_set_names_zero_fail.cpp
-  MESSAGE "${not_metric_like}"
-  FORBID "make_blades" "${index_above_n}")
+  MESSAGE "${blades_no_generators}"
+  ONE_ERROR FORBID "${index_above_n}" "${blades_not_an_algebra}"
+  FORBID_ON_FIRST_ERROR "detail::" "make_blades")
 blade_set_rejects(full_zero "${no_generators}")
 blade_set_rejects(full_wide
   "blade_set: n is larger than the number of bits in a blade mask")
