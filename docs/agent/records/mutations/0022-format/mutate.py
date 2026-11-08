@@ -143,6 +143,13 @@ MUTANTS = {
     "scalar_formatter_by_formattable": (F, "format", [
         ("concept has_formatter = std::semiregular<std::formatter<T, char>>;",
          "concept has_formatter = std::formattable<T, char>;", None)]),
+    # parse no longer skips a specification for a scalar without a formatter,
+    # so {:.2f} fails in <format> before the rejection is reached.
+    "parse_skip_removed": (F, "format", [
+        ("      auto at = context.begin();\n"
+         "      while (at != context.end() && *at != '}') {\n"
+         "        ++at;\n      }\n      return at;\n",
+         "      return context.begin();\n", None)]),
     "names_checked_as_none": (F, "format", [
         ("    case NameError::no_names:\n      return TagNamesFault::none;\n"
          "    case NameError::repeated_blade:\n      return TagNamesFault::named_twice;\n"
@@ -187,6 +194,11 @@ MUTANTS.update({
     "number_operand_any_type": (L, "linear", [(NUMBER, "concept number_operand = true;", None)]),
     "number_operand_multivectors_too": (L, "linear", [
         (NUMBER, "concept number_operand = ring_scalar<S> || multivector_or_derived<S>;", None)]),
+    # A number narrowed to the arithmetic types, which leaves a ring scalar
+    # such as the test rational to the compiler's error.
+    "number_operand_arithmetic_only": (L, "linear", [
+        (NUMBER, "concept number_operand = !multivector_or_derived<S> && "
+                 "std::is_arithmetic_v<S>;", None)]),
     "number_operand_not_ring": (L, "linear", [
         (NUMBER, "concept number_operand = !multivector_or_derived<S>;", None)]),
     "plus_number_right_removed": (L, "linear", [
