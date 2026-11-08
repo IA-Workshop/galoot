@@ -43,8 +43,12 @@ pinned: the internal list names the messages that no test needs to pin, in
 blocks separated by blank lines, each a line "reason: " and the reason, then
 the messages it covers, one per line; a line starting with # is a comment.
 Prints one line for each message that no test of the listing pins and the
-list leaves out, each entry of the list that no header holds, and each entry
-that a test pins. Exit 1 if it prints any, else 0 after a count.
+list leaves out, each entry of the list that no header holds, each entry
+that a test pins, and each test that requires a part of a longer message
+without forbidding (by FORBID, which reads the whole output) a literal that
+the longer message holds and the shorter lacks, since such a test would
+pass on the longer message too. Exit 1 if it prints any, else 0 after a
+count.
 
 Exit 2 when refused: a wrong command line, an unreadable file, a malformed
 internal list, or a ctest that fails.
@@ -175,15 +179,16 @@ def places_text(places):
     return ", ".join(f"{name}:{line}" for name, line in places)
 
 
-def required_literals(test):
-    """The literals a test requires of its output, or [] if none."""
+def literals(test):
+    """The literals a test requires of its output and those it forbids
+    anywhere in it (FORBID, not FORBID_FIRST), or two empty lists."""
     command = test.get("command") or []
     properties = {p["name"]: p["value"] for p in test.get("properties", [])}
     if properties.get("WILL_FAIL"):
-        return []
+        return [], []
     if len(command) < 5 or not command[2].endswith("expect_output.cmake"):
-        return []
-    literals = []
+        return [], []
+    found = {"require": [], "FORBID": [], "FORBID_FIRST": []}
     mode = "require"
     i = 5  # cmake -P <script> -- <result>
     while i < len(command) and command[i] != "--":
@@ -192,11 +197,16 @@ def required_literals(test):
             i += 2
             continue
         if argument in ("FORBID", "FORBID_FIRST"):
-            mode = "forbid"
-        elif mode == "require":
-            literals.append(argument.replace("\x01", ";"))
+            mode = argument
+        else:
+            found[mode].append(argument.replace("\x01", ";"))
         i += 1
-    return literals
+    return found["require"], found["FORBID"]
+
+
+def required_literals(test):
+    """The literals a test requires of its output, or [] if none."""
+    return literals(test)[0]
 
 
 def pins(literal, messages):
@@ -327,7 +337,30 @@ def read_internal(path):
     return entries
 
 
-def pinned_check(messages, pinned, internal):
+def unguarded_twins(messages, tests):
+    """A line for each test that requires a literal pinning one message,
+    when a longer message holds the literal too and the test forbids no
+    literal that the longer message holds and the shorter lacks."""
+    findings = []
+    for test in sorted(tests, key=lambda t: t["name"]):
+        required, forbidden = literals(test)
+        for literal in required:
+            short = pins(literal, messages)
+            if short is None:
+                continue
+            if literal.startswith(ASSERT_PREFIX):
+                literal = literal[len(ASSERT_PREFIX):]
+            for long in sorted(messages):
+                if long == short or literal not in long:
+                    continue
+                if not any(f in long and f not in short for f in forbidden):
+                    findings.append(
+                        f"not forbidding the longer message: {test['name']} "
+                        f'requires "{short}", a part of "{long}"')
+    return findings
+
+
+def pinned_check(messages, pinned, internal, tests_of_listing):
     """The findings, one line each, and the count of pinned messages."""
     tests = {m: sorted(pinned[m]["listing"]) for m in messages}
     listed = set(internal)
@@ -341,6 +374,7 @@ def pinned_check(messages, pinned, internal):
         elif tests[entry]:
             findings.append(f"listed as internal but pinned by "
                             f"{', '.join(tests[entry])}: {entry}")
+    findings += unguarded_twins(messages, tests_of_listing)
     return findings, sum(1 for m in messages if tests[m])
 
 
@@ -366,7 +400,7 @@ def main(argv):
         internal = read_internal(arguments.internal)
         tests = read_listing(arguments.listing, arguments.ctest)
         pinned = scan(messages, [("listing", tests)])
-        findings, count = pinned_check(messages, pinned, internal)
+        findings, count = pinned_check(messages, pinned, internal, tests)
         for finding in findings:
             print(finding)
         if findings:
