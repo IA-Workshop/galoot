@@ -234,7 +234,7 @@ Size S, as plan 0001 has it, at its upper end: about 1.2M to 1.7M tokens without
 
 ## 14. Outcome
 
-In progress (2026-11-08). Parts 1 to 3 and step 4's records are done on `feature/core-format`. The hci reading (optional), the blind review, and the merge remain; nothing is merged into `develop`.
+In progress (2026-11-08). Parts 1 to 3, step 4's records, the hci reading, and the blind review with its fixes are done on `feature/core-format`. The merge into `develop` remains.
 
 Done:
 - **Part 1: the misuse catalogue.**
@@ -290,6 +290,14 @@ Checks after the resolution:
 - At `47fe4fa`: the trace gate, `tools/runlog check`, and `tests.citations`.
 - Not run: the release, asan, clang-measure, and full lint presets (for the merge); a second full suite after `47fe4fa`, whose two commits changed only `format_test.cpp` and `README.md`, both rerun.
 
-Next:
-- the W5 blind review with the usability checklist, fixes, and a delta review;
-- the merge checks of section 7.
+### The blind review and its resolution (2026-11-08)
+
+The W5 blind review (`records/reviews/2026-11-08-wu15-review.md`, Claude, agent, Opus 5.5, blind-reviewer role with the usability checklist, cherry-picked from `records/review-wu15` with `-x`, without its run rows) approved with non-blocking findings and included the delta review of `a335b7f`. The implementer (Claude, agent, Opus 5.5) resolved them:
+- **L1 and L2, test-only.** `core.linear_plus_number_rational` (a rational, a ring scalar that is not arithmetic) and `core.format_scalar_without_formatter_spec` (`{:.2f}` on a scalar without a formatter), each one error with its message on both compilers. The review's surviving mutants, `number_operand_arithmetic_only` and `parse_skip_removed`, are now in `mutate.py`; each is killed by its new test alone on gcc-debug and clang-debug. The code existed, so no commit fails and no delta review is needed.
+- **L3 and I1, records.** The scan was rerun at `7c07cc4` (153 messages, 133 pinned on both compilers, 20 internal, 170 catalogue test names, none missing). `misuse-catalogue.md` now quotes the current `blades` message, revision, and line numbers. `wu15-messages.md`'s after table was measured again with every `blades` source, and every count was unchanged.
+- **L5.** `format_test.cpp`'s `static_assert(!std::formattable<ratio, char>)` is guarded by `__GLIBCXX__`. It is unchanged on libstdc++, which both compilers use here.
+- **L4, left.** A scalar whose enabled formatter is broken gets the compiler's errors, and GCC's first line names `detail::no_scalar_formatter`. This is a user defect outside the catalogue, and none of the five broken formatters the review probed is admitted silently. A named member alias could keep `detail::` off that line. Recorded here for a later unit.
+- **The hci reading's C7**, applied to CONVENTIONS 1.14 at the coordinator's direction: 7.2 reads "by its canonical name (1.1; the scalar is 1, 1.5)", and the 1.14 revision row says so. 7.2's closing "(Proposed)" was kept. In this document it is the evidence label, a choice with no external source, as on 1.1, 1.2, and 1.7. It does not mark a pending ratification.
+- **Decision numbers.** `develop` recorded its own decision 0211, so this branch's 0211 became 0212, with every reference in the records updated, before `develop` was merged in. That merge brought records only.
+
+Next: the merge into `develop`, by the coordinator, after the checks of section 7 at the final revision.
