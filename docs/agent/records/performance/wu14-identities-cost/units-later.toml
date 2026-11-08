@@ -1,0 +1,17 @@
+# The two test units changed after the first campaign: the transform
+# identities, whose hyperplane draws were bounded and which gained the
+# fixed-seed case, and the rga3 objects test, which gained the plane case.
+# Each before (at the branch point) and after (at the unit's tip).
+compilers = ["gcc", "clang"]
+
+[[unit]]
+name = "core/transform_identities"
+source = "test/core/transform_identities_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "rga3/objects"
+source = "test/presets/rga3/objects_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
