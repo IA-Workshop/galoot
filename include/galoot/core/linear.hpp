@@ -38,7 +38,8 @@
 // a message that names the mistake. The rejection is an overload of its own,
 // so a requires-expression that asks whether such a sum or difference is
 // valid is told yes; ask the operand types instead. A multivector and a
-// number have no sum.
+// number have no sum: x + 1.0 and 1.0 - x are rejected the same way, by an
+// overload of their own, so a requires-expression that asks is told yes.
 //
 // The scalar of s * a, a * s, and a / s must have the multivector's scalar
 // type exactly: 2 * a for a multivector over double is rejected with a
@@ -275,6 +276,58 @@ template <class X, class Y>
   requires detail::mismatched_operands<X, Y>
 constexpr std::remove_cvref_t<X> operator-(const X& /*x*/, const Y& /*y*/) {
   return detail::reject_sum<detail::SumSpelling::minus_operator, X, Y>();
+}
+
+namespace detail {
+
+// Whether S is a number: a ring scalar that is not a multivector or derived
+// from one. What the rejecting sums below take beside a multivector.
+template <class S>
+concept number_operand = !multivector_or_derived<S> && ring_scalar<S>;
+
+} // namespace detail
+
+/// Rejects x + s and s + x for a multivector x, or a class derived from one,
+/// and a number s of any ring scalar type, with one error: a multivector and
+/// a number have no sum. Because these exist, a requires-expression that
+/// asks whether x + 1.0 is valid is told yes.
+template <metric_like Alg, blade_set B, ring_scalar T, class S>
+  requires detail::number_operand<S>
+constexpr mv<Alg, B, T> operator+(const mv<Alg, B, T>& /*x*/, const S& /*s*/) {
+  static_assert(false, "a + b: a multivector and a number have no sum; make "
+                       "the number a multivector on the blade 1 and add "
+                       "that");
+  return {};
+}
+
+/// Rejects s + x, as x + s above.
+template <class S, metric_like Alg, blade_set B, ring_scalar T>
+  requires detail::number_operand<S>
+constexpr mv<Alg, B, T> operator+(const S& /*s*/, const mv<Alg, B, T>& /*x*/) {
+  static_assert(false, "a + b: a multivector and a number have no sum; make "
+                       "the number a multivector on the blade 1 and add "
+                       "that");
+  return {};
+}
+
+/// Rejects x - s and s - x for a multivector x and a number s, as for x + s.
+template <metric_like Alg, blade_set B, ring_scalar T, class S>
+  requires detail::number_operand<S>
+constexpr mv<Alg, B, T> operator-(const mv<Alg, B, T>& /*x*/, const S& /*s*/) {
+  static_assert(false, "a - b: a multivector and a number have no "
+                       "difference; make the number a multivector on the "
+                       "blade 1 and subtract that");
+  return {};
+}
+
+/// Rejects s - x, as x - s above.
+template <class S, metric_like Alg, blade_set B, ring_scalar T>
+  requires detail::number_operand<S>
+constexpr mv<Alg, B, T> operator-(const S& /*s*/, const mv<Alg, B, T>& /*x*/) {
+  static_assert(false, "a - b: a multivector and a number have no "
+                       "difference; make the number a multivector on the "
+                       "blade 1 and subtract that");
+  return {};
 }
 
 namespace detail {
