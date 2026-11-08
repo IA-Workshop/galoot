@@ -234,4 +234,22 @@ Size S, as plan 0001 has it, at its upper end: about 1.2M to 1.7M tokens without
 
 ## 14. Outcome
 
-Not started.
+In progress (2026-11-08). Parts 1 and 2 are done on `feature/core-format`; part 3 has not started; nothing is merged into `develop`.
+
+Done:
+- Part 1: `records/diagnostics/catalogue/scan.py` (with fixtures and `--self-test`), `records/diagnostics/misuse-catalogue.md`, and the scan's output. Of 143 messages, 123 are pinned on both compilers; the remaining 20 are maintainer guards or self-checks of generated plans, each with its reason. The one user-facing message without a test, `GALOOT_CHECKING must be 0 or 1`, got `core.assert_checking_value`.
+- Part 2: `include/galoot/core/format.hpp`, with T2a (`core.format`, `core.format_outside_core`) and T2b (14 `core.format_*` compile-fail tests), each cherry-picked with `-x` right before the code it judges; the `mv.hpp` comment; CONVENTIONS 7.2 and the STYLE S7 sentence as drafts; and the four 7.2 trace rows, now `yes`.
+- Checks: gcc-debug and clang-debug, `-L 'core\.format|core\.headers'`, 18 of 18 each; a targeted lint build (the core's header checks, both format test programs, format-check); the trace gate. Each rejection gives one error line on both compilers.
+
+Departures:
+- The scan reads CTest's JSON listing of a configured tree for each compiler, not `test/CMakeLists.txt` (R1). The listing has variables, loops, and compiler branches already resolved. Section 6's "`${semicolon}` not translated" mutant becomes "character 1 not read as `;`".
+- Criterion 2 uses one layout per grade, with signs alternating, not one layout per blade. It still covers all 2044 oriented blades, each with both signs.
+- `ONE_ERROR` does not catch a message printed twice. One error per case was checked by hand compiles, not by a test.
+
+Readings the tests now pin:
+- a scalar stored with orientation -1 prints as `-1`;
+- tag names may be separated by runs of spaces;
+- a `names` member that does not convert to `std::string_view` is not read;
+- an empty `names` list is valid.
+
+Next: the owner confirms the 7.2 and S7 wording and ratifies the catalogue (O3). Then part 3 (T3a, the catch-alls in `mv.hpp` and `linear.hpp`, T3b with the `blades` change), the catalogue regenerated, and step 4's records: section 6's mutation scripts under `records/mutations/0022-format/`, `wu15-messages.md`, W10, the decisions, and the costs. Then the hci reading, the blind review, and the merge.
