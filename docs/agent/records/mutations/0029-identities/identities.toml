@@ -1,0 +1,79 @@
+# Mutants for the gaps of plan 0029 section 5.2, judged by the identity
+# suites alone, run once at the branch point (the suites before part B) and
+# once at the tip. A gap's mutant counts when the branch point's suites let
+# it survive and the tip's kill it.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = [
+  "core_identities_test",
+  "core_identities_rounding_test",
+  "core_dual_identities_test",
+  "core_transform_identities_test",
+]
+labels = '^core\.(identities|identities_rounding|dual_identities|transform_identities)$'
+
+# Criterion 2: every square g_ii doubled, the algebra of another metric, in
+# which every identity holds; only the defining relation, computed from the
+# algebra's own Gram matrix, can see it.
+[[mutant]]
+name = "gap_squares_doubled"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == j ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"
+
+# Criterion 2: every off-diagonal entry read as zero in both loops, the
+# algebra of the metric's diagonal part, consistent in itself; on the
+# non-diagonal groups only the defining relation can see it.
+[[mutant]]
+name = "gap_offdiagonal_dropped"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = i == j ? g.gram[i][j] : 0;''' },
+  { anchor = '''    const coefficient_type entry = g.gram[low][j];''', replacement = '''    const coefficient_type entry = 0;''' },
+]
+expect = "killed"
+
+# Criteria 1 and 2: the contraction of e_i with a vector e_j, i != j,
+# doubled, and nothing else, so products of vectors in a non-diagonal form
+# are wrong while products of higher grades mostly are not.
+[[mutant]]
+name = "gap_vector_contraction_doubled"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i != j && std::popcount(blade) == 1 ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"
+
+# Criterion 5: the wedge of a null generator with a blade whose lowest
+# generator is also null negated, a wrong sign on products of two null
+# generators of a diagonal form.
+[[mutant]]
+name = "gap_null_pair_wedge_sign"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''              multiply_checked(reorder_sign(generator, blade), c));''', replacement = '''              multiply_checked(reorder_sign(generator, blade) * (g.gram[i][i] == 0 && blade != 0 && blade < generator && g.gram[static_cast<std::size_t>(std::countr_zero(blade))][static_cast<std::size_t>(std::countr_zero(blade))] == 0 ? -1 : 1), c));''' }]
+expect = "killed"
+
+# Criterion 8: every product over a floating scalar multiplied by
+# 1 + 1e-9, far beyond its rounding error; exact scalars are untouched.
+[[mutant]]
+name = "gap_floating_products_perturbed"
+selection = "identities"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''', replacement = '''       out[Kernel[K].out], perturbed<T>(static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b]))),''' },
+  { anchor = '''template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''', replacement = '''template <class T> constexpr T perturbed(T v) {
+  if constexpr (std::is_floating_point_v<T>) {
+    return v * T(1 + 1e-9);
+  } else {
+    return v;
+  }
+}
+
+template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
+          std::size_t KY, std::size_t... K>''' },
+]
+expect = "killed"
