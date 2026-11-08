@@ -92,3 +92,23 @@ TEST_CASE("the products are associative with the scalar 1 as identity over "
 TEST_CASE("vectors anticommute to twice their inner product over many forms") {
   check_every_group(Identity::defining_relation);
 }
+
+// Reference: identity: the antireverse reverses the antiwedge,
+//   antireverse(a v b) = antireverse(b) v antireverse(a), the grade
+//   involution keeps the wedge, grade_involution(a ^ b) =
+//   grade_involution(a) ^ grade_involution(b), and the grade involution of
+//   an antiproduct is (-1)^n times the antiproduct of the grade involutions,
+//   for ⟇ and for v, since the antiproducts add antigrades, so a term of
+//   the antiproduct of blades of grades k and l has a grade of the parity of
+//   k + l - n, and the antigrade involution of a blade of antigrade m is
+//   (-1)^m times it, so the antigrade involution is (-1)^n times the grade
+//   involution, and right(x') is the grade involution of right(x), and
+//   likewise left, with x' the antigrade involution, because a complement
+//   turns antigrade into grade, on random integer multivectors of every
+//   blade for each form of up to four generators and R(4,1,0), R(4,0,1),
+//   and conformal(3), on bivectors for two dense random forms of five, on
+//   vectors and bivectors for six, and on sparse sets for 8, 12, and 16,
+//   where the forms of odd n tell the sign (-1)^n apart
+TEST_CASE("the involutions follow their antiproduct rules over many forms") {
+  check_every_group(Identity::antiproduct_rules);
+}

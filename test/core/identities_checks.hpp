@@ -18,6 +18,7 @@
 // parallel.
 
 #include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <random>
@@ -42,6 +43,7 @@ enum class Identity : std::uint8_t {
   product_rules,
   product_laws,
   defining_relation,
+  antiproduct_rules,
 };
 
 // The checks have internal linkage, as they would in a single source, so
@@ -333,6 +335,69 @@ void check_product_rules(std::mt19937_64& source) {
   }
 }
 
+// x with every coefficient multiplied by sign.
+template <class X>
+X times(X x, std::int64_t sign) {
+  for (auto& c : x.coefficients) {
+    c *= sign;
+  }
+  return x;
+}
+
+// The antigrade involution of x, from its definition: a blade of grade k
+// has antigrade m = n - k and is multiplied by (-1)^m.
+template <class X>
+X antigrade_involution_of(X x) {
+  constexpr int n = static_cast<int>(generators<typename X::algebra_type>);
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    const int m = n - std::popcount(X::layout.blades.at(k).mask);
+    if (m % 2 != 0) {
+      x.coefficients.at(k) = -x.coefficients.at(k);
+    }
+  }
+  return x;
+}
+
+// The rules of the involutions over the antiproducts and the wedge that the
+// product rules leave out, on random a of A and b of B: the antireverse
+// reverses the antiwedge, the grade involution keeps the wedge, and it
+// keeps both antiproducts up to the sign (-1)^n. And the antigrade
+// involution x' is (-1)^n times the grade involution, and the complements
+// turn it into the grade involution: right(x') is the grade involution of
+// right(x), and likewise for left.
+template <class A, class B>
+void check_antiproduct_rules(std::mt19937_64& source) {
+  using core::antireverse;
+  using core::grade_involution;
+  using core::left_complement;
+  using core::right_complement;
+  INFO("form: ", gram_text<typename A::algebra_type>());
+  constexpr std::int64_t sign =
+      generators<typename A::algebra_type> % 2 == 0 ? 1 : -1;
+  for (int k = 0; k < samples; ++k) {
+    const A a = random_integers<A>(source);
+    const B b = random_integers<B>(source);
+    CHECK(difference(antireverse(a & b), antireverse(b) & antireverse(a)) ==
+          "");
+    CHECK(difference(grade_involution(a ^ b),
+                     grade_involution(a) ^ grade_involution(b)) == "");
+    CHECK(difference(grade_involution(a % b),
+                     times(grade_involution(a) % grade_involution(b), sign)) ==
+          "");
+    CHECK(difference(grade_involution(a & b),
+                     times(grade_involution(a) & grade_involution(b), sign)) ==
+          "");
+    CHECK(difference(antigrade_involution_of(a),
+                     times(grade_involution(a), sign)) == "");
+    CHECK(difference(antigrade_involution_of(b),
+                     times(grade_involution(b), sign)) == "");
+    CHECK(difference(right_complement(antigrade_involution_of(a)),
+                     grade_involution(right_complement(a))) == "");
+    CHECK(difference(left_complement(antigrade_involution_of(a)),
+                     grade_involution(left_complement(a))) == "");
+  }
+}
+
 // The layouts the groups are checked on: every blade, vectors and
 // bivectors, and the sparse sets.
 template <auto G>
@@ -371,6 +436,9 @@ void check_each(Identity identity, forms<G...> /*list*/,
     return;
   case Identity::defining_relation:
     (check_defining_relation<form<G>>(source), ...);
+    return;
+  case Identity::antiproduct_rules:
+    (check_antiproduct_rules<A<G>, B<G>>(source), ...);
     return;
   }
 }

@@ -50,6 +50,9 @@ void dense_forms_of_five(Identity identity, std::mt19937_64& source) {
     case Identity::defining_relation:
       (check_defining_relation<form<G>>(s), ...);
       return;
+    case Identity::antiproduct_rules:
+      (check_antiproduct_rules<bivectors_mv<G>, bivectors_mv<G>>(s), ...);
+      return;
     }
   }(identity, dense_forms{}, source);
 }
