@@ -1,7 +1,8 @@
 """tools.catalogue: which tests pin each message of a header tree, read from
 CTest listings given as files or as build trees, the check of a catalogue's
 test names, and the check that every message is pinned or listed as
-internal with its reason.
+internal with its reason, and that a test pinning a part of a longer
+message forbids the longer one.
 
 Usage: python3 -I catalogue_test.py <tools/catalogue> <scratch directory>
 
@@ -128,6 +129,28 @@ exit 1
     check("pinned pinned: output", result.stdout,
           "listed as internal but pinned by t.run_time: fifth: run time\n")
     check("pinned pinned: exit", result.returncode, 1)
+
+    # t.nested requires "dot: nested", a part of "antidot: nested", so it
+    # must forbid a literal of the longer message that the shorter lacks:
+    # with no FORBID, with one the shorter holds too, or with the literal
+    # forbidden on the first error line only, it would pass on the longer.
+    for name, forbid in (
+            ("no forbid", []),
+            ("forbid in both", ["FORBID", "nested"]),
+            ("forbid first", ["FORBID_FIRST", "antidot: nested"])):
+        with open(LISTING, encoding="utf-8") as f:
+            variant = json.load(f)
+        for test in variant["tests"]:
+            if test["name"] == "t.nested":
+                test["command"][6:8] = forbid
+        path = os.path.join(scratch, "twin.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(variant, f)
+        result = run("pinned", INCLUDE, path, fixture("internal_good.txt"))
+        check(f"pinned twin, {name}: output", result.stdout,
+              'not forbidding the longer message: t.nested requires '
+              '"dot: nested", a part of "antidot: nested"\n')
+        check(f"pinned twin, {name}: exit", result.returncode, 1)
 
     # Refusals: a malformed list, a failing ctest, and no listing at all.
     for name, line, text in (

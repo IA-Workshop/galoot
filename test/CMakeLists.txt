@@ -167,9 +167,10 @@ set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
 # tests.messages_pinned: every message of include/galoot/ (a static_assert
 # literal, a GALOOT_ASSERT message, an #error text) is required by a test of
 # this build tree, or is in internal_messages.txt with the reason no user
-# reaches it. The test reads this tree's own listing, as ctest --show-only
-# gives it with no preset's filter, so a test that a preset leaves out of
-# its run still counts; it builds nothing.
+# reaches it, and every test that requires a part of a longer message also
+# forbids the longer one. The test reads this tree's own listing, as ctest
+# --show-only gives it with no preset's filter, so a test that a preset
+# leaves out of its run still counts; it builds nothing.
 add_test(NAME tests.messages_pinned
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/catalogue pinned
     ${PROJECT_SOURCE_DIR}/include/galoot ${CMAKE_BINARY_DIR}
