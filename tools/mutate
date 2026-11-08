@@ -37,8 +37,10 @@ runs the selected tests whose programs now exist (so no test runs a program
 left from an earlier build), and the file is restored byte for byte; at the
 end the targets are rebuilt. Every build and test goes through tools/timed
 as mutant:<name>, mutant:baseline, or mutant:restore. Edited files are
-restored after each mutant and on SIGINT or SIGTERM; after a SIGKILL,
-`git status` shows any file left mutated.
+restored after each mutant and on SIGINT or SIGTERM, and a run that stops
+early rebuilds the targets too, so that no program is left deleted; after a
+SIGKILL, `git status` shows any file left mutated. A CTest run that fails
+without naming a failed test leaves its mutant unjudged.
 
 Each failed object is classified by its first error line: `warning` if it
 carries [-Werror, `assert` if it is a failed static assertion or a call
@@ -381,6 +383,7 @@ class Run:
         self.revision = git("rev-parse", "--short=12", "HEAD").strip() + (
             "+dirty" if dirty else "")
         self.problems = []
+        self.started, self.rebuilt = [], set()
 
     def write(self, file, text):
         path = ROOT / file
@@ -420,6 +423,7 @@ class Run:
 
     def preset(self, preset):
         tree = self.trees[preset]
+        self.started.append(preset)
         runtime_files = ({t["file"] for t in self.spec["runtime"]}
                          if self.runtime else set())
         for file in runtime_files:
@@ -441,13 +445,19 @@ class Run:
             print(f"{preset}\t{mutant['name']}\t{row['verdict']}", flush=True)
             self.record(preset, row)
         self.restore()
+        self.rebuild(preset)
+        return counts
+
+    def rebuild(self, preset):
+        """Builds the selections' targets on the restored files, so that no
+        program is left deleted."""
+        self.rebuilt.add(preset)
         targets = sorted({t for name in self.selections[preset]
                           for t in self.spec["selection"][name]["targets"]})
-        status, output = self.build(tree, "restore", targets)
+        status, output = self.build(self.trees[preset], "restore", targets)
         if status:
             self.problems.append(f"problem: {preset}: the restored files do "
                                  f"not build:\n{output[-2000:]}")
-        return counts
 
     def mutant(self, tree, mutant, runtime_files):
         name = mutant["name"]
@@ -463,9 +473,9 @@ class Run:
                              if any(not (tree.path / p).exists()
                                     for p in needed))
             ran = sorted(set(programs) - set(not_run))
-            failed, cases = [], []
+            failed, cases, status = [], [], 0
             if ran:
-                _, output = self.test(tree, name, ran)
+                status, output = self.test(tree, name, ran)
                 failed = FAILED_TEST.findall(output)
                 for line in output.splitlines():
                     case = line.removeprefix("TEST CASE:").strip()
@@ -473,17 +483,22 @@ class Run:
                         cases.append(case)
         finally:
             self.write(mutant["file"], self.base[mutant["file"]])
-        killers = list(dict.fromkeys(failed + [
-            where for _, kind, _, where in failures
-            if kind in ("assert", "test")]))
+        # As sets: CTest and Ninja report in the order their jobs finish.
+        killers = sorted(set(failed)) + sorted(
+            {where for _, kind, _, where in failures
+             if kind in ("assert", "test")})
+        ctest_failed = status != 0 and not failed
         if killers:
             verdict = "killed"
-        elif failures:
+        elif failures or ctest_failed:
             verdict = "unjudged"
         else:
             verdict = ("equivalent" if mutant["expect"] == "equivalent"
                        else "survived")
         problems = [verdict] if verdict in ("survived", "unjudged") else []
+        if ctest_failed:
+            problems.append(f"CTest exited {status} without naming a failed "
+                            "test")
         if verdict == "killed" and mutant["expect"] == "equivalent":
             problems.append("declared equivalent but killed")
         problems += [f"declared killer {k} did not kill it"
@@ -562,6 +577,9 @@ def main(argv):
                 f"{n} {verdict}" for verdict, n in counts.items()))
     finally:
         session.restore()
+        for preset in session.started:
+            if preset not in session.rebuilt:
+                session.rebuild(preset)
     print("\n".join(summary + session.problems))
     return 1 if session.problems else 0
 
