@@ -37,7 +37,7 @@ The test suite also runs in a build with address and undefined-behavior sanitize
 
 ### S6 Delivery
 
-Each library is headers alone, under `include/galoot/<module>/`, in namespace `galoot::<module>`, with names in `snake_case.hpp`. An algebra preset, a named algebra built on the core such as rga3, lives under `include/galoot/presets/<name>/`, with its umbrella header `include/galoot/presets/<name>.hpp`, in namespace `galoot::presets::<name>`. Each header has an include guard named from its path (`GALOOT_CORE_BITS_HPP`, `GALOOT_PRESETS_RGA3_OBJECTS_HPP`), includes what it uses, and compiles on its own. The core includes only standard headers and other core headers, and names no preset (C13). A preset includes only standard headers, the core's public headers, and its own headers. Names not meant for users live in a nested `detail` namespace.
+Each library is headers alone, under `include/galoot/<module>/`, in namespace `galoot::<module>`, with names in `snake_case.hpp`. An algebra preset, a named algebra built on the core such as rga3, lives under `include/galoot/presets/<name>/`, with its umbrella header `include/galoot/presets/<name>.hpp`, in namespace `galoot::presets::<name>`. Each header has an include guard named from its path (`GALOOT_CORE_BITS_HPP`, `GALOOT_PRESETS_RGA3_OBJECTS_HPP`), includes what it uses, and compiles on its own. The core includes only standard headers and other core headers, and names no preset (C13). A preset includes only standard headers, the core's headers, and its own headers. Names not meant for users live in a nested `detail` namespace.
 
 ### S7 Compile-time generation
 
