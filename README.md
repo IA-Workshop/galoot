@@ -181,6 +181,11 @@ int main() {
 }
 ```
 
+A join `p ^ q` itself is not a `Line` but the wedge's result, which holds
+each blade with its canonical orientation, and since the preset names its
+blades with its own orientations, the join prints by the canonical names,
+such as `e24: -2` where the `Line` made from it prints `e42: 2`.
+
 Each `cpp` block of this README is compiled and run as one of Galoot's
 tests, with both compilers, so the examples stay correct as the library
 changes.
