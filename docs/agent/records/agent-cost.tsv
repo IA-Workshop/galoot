@@ -181,3 +181,10 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-08	plan-0026	delta reviewer	opus	107499	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
 2026-11-08	small	transform.hpp comment	sonnet	49749	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
 2026-11-08	small	agent-cost rows of the previous batch	sonnet	54026	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0029	part A reference values (math)	opus	365836	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	part B test author	opus	323482	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	part N tolerance record	opus	184931	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; approximate
+2026-11-08	plan-0029	implementer parts C1 to C3, integration, review fixes, P9, merge (cumulative)	opus	530263			as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; one agent resumed across all steps
+2026-11-08	plan-0029	seed overflow and O4 test author	opus	279917	145	3510	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	blind reviewer	opus	332061	96	876	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	research	math-tools and knowledge-base survey	opus	241458	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
