@@ -1,13 +1,16 @@
 """tools.jobpool: the job pool's argument checks, the slots it writes back
-and drains when no client holds it, and its idle stop, on a pool of its own.
+and drains when no client holds it, a FIFO path through a symbolic link, a
+count of clients that fails, and the idle stop, on pools of its own.
 
 Usage: python3 -I jobpool_test.py <tools/jobpool> <scratch directory>
 
-The pool under test is a transient user service with a unit name of its own
-and a FIFO in the scratch directory, so the machine's shared pool is never
-opened, stopped, or started. The test stops its own unit directly with
-systemctl when it ends. Prints one line per failed check and exits 1 if
-there is any, or exits 77 when no user service manager is available.
+Each pool under test is a transient user service with a unit name of its
+own and a FIFO in the scratch directory, so the machine's shared pool is
+never opened, stopped, or started. The cases with a failing count run a
+copy of the tool in the scratch directory. The test stops its own units
+directly with systemctl when it ends. Prints one line per failed check and
+exits 1 if there is any, or exits 77 when no user service manager is
+available.
 """
 
 import fcntl
@@ -245,18 +248,26 @@ def symlinked(tool, directory):
         pool.remove()
 
 
+def broken_copy(tool, directory, name, body):
+    """A copy of the tool whose count of clients runs body first; body
+    fails the count by returning 1."""
+    source = open(tool, encoding="utf-8").read()
+    anchor = "count_clients() {\n"
+    check(f"anchor of the count, {name}", source.count(anchor), 1)
+    broken = os.path.join(directory, f"jobpool-{name}")
+    with open(broken, "w", encoding="utf-8") as f:
+        f.write(source.replace(anchor, f"count_clients() {{ {body}; "
+                               "real_count_clients \"$@\"; }\n"
+                               "real_count_clients() {\n"))
+    os.chmod(broken, 0o755)
+    return broken
+
+
 def count_fails(tool, directory):
     """When the pool cannot count its clients, it acts as if one held the
     FIFO: it writes nothing back and does not stop itself. The case runs a
     copy of the tool whose count always fails."""
-    source = open(tool, encoding="utf-8").read()
-    anchor = "count_clients() {\n"
-    check("anchor of the count", source.count(anchor), 1)
-    broken = os.path.join(directory, "jobpool-count-fails")
-    with open(broken, "w", encoding="utf-8") as f:
-        f.write(source.replace(anchor, "count_clients() { return 1; }\n"
-                               "unused_count_clients() {\n"))
-    os.chmod(broken, 0o755)
+    broken = broken_copy(tool, directory, "count-fails", "return 1")
     pool = Pool(broken, directory, "countfails", idle_seconds=2)
     try:
         check("start exit, count fails",
@@ -266,6 +277,24 @@ def count_fails(tool, directory):
         time.sleep(6)
         check("nothing written back when the count fails", free(pool.fifo), 1)
         check("no idle stop when the count fails", pool.active(), True)
+    finally:
+        pool.remove()
+
+
+def last_count_fails(tool, directory):
+    """When only the last count before an idle stop fails, the one made
+    with the FIFO moved aside, the pool puts the FIFO back and keeps
+    running, rather than removing it under a client it could not see."""
+    broken = broken_copy(tool, directory, "last-count-fails",
+                         '[[ $1 == *.stopping ]] && return 1')
+    pool = Pool(broken, directory, "lastcountfails", idle_seconds=2)
+    try:
+        check("start exit, last count fails",
+              pool.run("start", "2", "--idle", "1").returncode, 0)
+        time.sleep(6)
+        check("no idle stop when the last count fails", pool.active(), True)
+        check("FIFO back at its path when the last count fails",
+              wait_for(lambda: os.path.exists(pool.fifo), 5), True)
     finally:
         pool.remove()
 
@@ -311,7 +340,8 @@ def main(tool, directory):
         return SKIPPED
     shutil.rmtree(directory, ignore_errors=True)
     os.makedirs(directory)
-    for case in (arguments, repair, symlinked, count_fails, idle_stop):
+    for case in (arguments, repair, symlinked, count_fails,
+                 last_count_fails, idle_stop):
         try:
             case(tool, directory)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
