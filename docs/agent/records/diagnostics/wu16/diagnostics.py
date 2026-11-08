@@ -1,6 +1,6 @@
 #!/usr/bin/env -S python3 -I
 """The diagnostics of the rga3 motions: for each compile-fail source of
-test/rga3 (rotation over a scalar without sin and cos, with an angle of
+test/presets/rga3 (rotation over a scalar without sin and cos, with an angle of
 another type, or about a multivector that is not a Line; translation over
 an integer scalar or over scalars of two types), compile with the test
 flags and -fsyntax-only on GCC and Clang, and print the length of the
@@ -41,7 +41,7 @@ def measure(compiler, source):
 def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
-    sources = sorted((ROOT / "test/rga3").glob("*_fail.cpp"))
+    sources = sorted((ROOT / "test/presets/rga3").glob("*_fail.cpp"))
     rows = ["source\tcompiler\tfirst_line\tlongest\tlines\terror_lines\t"
             "first_error"]
     for source in sources:

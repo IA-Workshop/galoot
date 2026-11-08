@@ -1,5 +1,5 @@
 #!/usr/bin/env -S python3 -I
-"""Mutants of the normalization in rotation (galoot/rga3/motions.hpp).
+"""Mutants of the normalization in rotation (galoot/presets/rga3/motions.hpp).
 
   mutate.py <preset> [mutant...]
 
@@ -23,7 +23,7 @@ import sys
 ROOT = pathlib.Path(subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True,
     check=True).stdout.strip())
-HEADER = ROOT / "include/galoot/rga3/motions.hpp"
+HEADER = ROOT / "include/galoot/presets/rga3/motions.hpp"
 OUT = pathlib.Path(__file__).resolve().parent / "out"
 
 LENGTH = "const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));"

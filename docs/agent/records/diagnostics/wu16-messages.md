@@ -55,3 +55,5 @@ Columns: the length of the first error line, the longest line, and the number of
 | `translation_mixed_fail.cpp` | 220 / 645 / 10 | 269 / 269 / 9 |
 
 GCC's longest line is its "required from" line, which spells the call's full `mv` types (plan 0023 R3's cost of alias templates). The message itself is on the first error line in every case, so a reader sees it before the long lines.
+
+2026-11-08: `wu16/diagnostics.py` now globs `test/presets/rga3/*_fail.cpp`, the path after plan 0025's move (`26c8a82`), and runs again (plan 0026); the runs above were made at the old paths, and `wu16/sizes.tsv` is kept as it is.
