@@ -1,4 +1,22 @@
-# Mutants of the rga3 model (WU16)
+# Mutants of the rga3 model (WU16), now the rga3 preset
+
+## After the move to the presets layer (plan 0025, 2026-11-08)
+
+The headers moved to `include/galoot/presets/rga3/` (decision 0213), so `mutate.py` reads them there. Its anchors were brought up to date: `rotation_sin_cos_swapped` now matches the sine divided by the length, which plan 0024's normalization added; the mutants of `motions.hpp` also rebuild the two checking-mode programs (`rga3_rotation_mode_0`, `_1`), whose tests carry the label `rga3.motions`; and the mutants of `objects.hpp` also build `rga3_format_test`, the checking-mode programs, and README example 3. It gains seven mutants of the names the algebra tag declares: `names_wrong_blade` (e32 for e31, so the blade of e23 is named twice), `names_swapped` (e42 and e41 exchanged in the list), three names with the wrong sign (`names_e14_for_e41`, `names_e123_for_e321`, `names_e13_for_e31`), `names_e431_dropped`, and `names_removed` (the member deleted).
+
+Run by the plan 0025 implementer (Claude, agent, Opus 5.5) in `.claude/worktrees/presets-rga3`, on the headers of `37f5607` with the tests of `f1992d7`, gcc-debug and then clang-debug, all 50 mutants. `out/` holds this run; it replaces the rows of the earlier runs, which remain in the history of `out/`.
+
+**50 mutants, each on gcc-debug and clang-debug: 43 killed on both compilers, by the same tests on each, and 7 equivalent survivors.** The 43 kills include every one the earlier runs recorded, by the same tests or more: `rga3.format` now also kills every layout and alias mutant whose program builds, since it prints each type by its layout. The six requires-clause survivors are the equivalent ones described below, as before.
+
+Two rows differ from the earlier runs in how they are killed, not in whether. `mixed_catch_all_removed` now also fails the build, at the static_assert in `motions_test.cpp` that a mixed call resolves to the catch-all, a probe the earlier run of this mutant predates. `motor_alias_on_flector_layout` now also fails to build `rga3_motions_test`, at a `get` of a blade the flector layout lacks, so the stale `rga3.motions` program passes where the earlier run had it fail; the mutant is still killed by the static_asserts of `objects_test.cpp`, the lossy conversions of the other programs, `rga3.bare_compile`, and `rga3.format`.
+
+| Mutant | Killed by (both compilers) |
+| --- | --- |
+| `names_wrong_blade` | `format.hpp`'s static_assert that a blade is named twice, reached by `rga3_format_test` and README example 3, which do not build |
+| `names_e14_for_e41`, `names_e13_for_e31`, `names_removed` | `rga3.format` and `rga3.readme_example_3`, which print -e14 or -e13 in place of e41 or e31 |
+| `names_e123_for_e321`, `names_e431_dropped` | `rga3.format`; README example 3 prints no plane |
+| `names_swapped` | survives, equivalent: a name is matched to a layout's blade by the blade it stands for, its mask and orientation, so the order of the list does not change what prints |
+
 
 ## Mutants of rotation and translation
 
