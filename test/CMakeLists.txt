@@ -1584,7 +1584,8 @@ endforeach()
 
 # core.linear_<spelling>_number_<case>: a multivector and a number, on
 # either side, of the multivector's scalar type or another, also into auto
-# r and with a class derived from a multivector, fail to compile with one
+# r, with a class derived from a multivector, and with a ring scalar that is
+# not an arithmetic type (the test rational), fail to compile with one
 # error, the message of the operation as written, on a first error line that
 # spells no layout by its masks.
 set(linear_number_plus "a + b: a multivector and a number have no sum${semicolon} make the number a multivector on the scalar blade 1 and add that")
@@ -1593,7 +1594,7 @@ foreach(spelling IN ITEMS plus minus)
   if(spelling STREQUAL "plus")
     set(message "${linear_number_plus}")
     set(other "${linear_number_minus}")
-    set(cases right left other_type left_other_type auto derived)
+    set(cases right left other_type left_other_type auto derived rational)
   else()
     set(message "${linear_number_minus}")
     set(other "${linear_number_plus}")
@@ -2130,7 +2131,9 @@ set_property(TEST core.format_outside_core APPEND PROPERTY LABELS
 # error, its message, on the line a reader sees first, which names none of
 # the machinery of the formatter or of <format>. Each cause is tried as
 # return std::format("{}", x) and, for some, as auto s = std::format("{}", x)
-# or std::println("{}", x), which reach the formatter by other paths.
+# or std::println("{}", x), which reach the formatter by other paths. A
+# scalar without a formatter is also tried with a specification, {:.2f},
+# which parse must skip so that format gives the one error.
 function(format_rejects case message)
   galoot_add_compile_fail_test(NAME format_${case}
     MODULE core COMPONENT format
@@ -2143,7 +2146,7 @@ set(format_wide_algebra "format: names such as e123 have one digit per index, so
 set(format_not_a_blade "format: an entry of the algebra tag's names is not a blade of the algebra${semicolon} write 1, or e and distinct indices from 1 to n, the number of generators, as in e41")
 set(format_named_twice "format: the algebra tag's names name one blade twice, perhaps in both orientations${semicolon} name each blade once")
 foreach(case IN ITEMS scalar_without_formatter scalar_without_formatter_auto
-    scalar_without_formatter_print)
+    scalar_without_formatter_print scalar_without_formatter_spec)
   format_rejects(${case} "${format_no_formatter}")
 endforeach()
 foreach(case IN ITEMS wide_algebra wide_algebra_auto)
