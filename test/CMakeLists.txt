@@ -842,7 +842,8 @@ set_tests_properties(tools.runlog PROPERTIES
 # union merge of a branch from before the era can bring them back. Skipped
 # outside a git checkout and in a clone that lacks the eras' commits. Its
 # own label, runlog, selects it alone, to run it once for a merge rather
-# than in every build preset.
+# than in every build preset. The test presets leave that label out, so it
+# runs from a build tree: ctest --test-dir <build tree> -L '^runlog$'.
 add_test(NAME tools.runlog_check
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/runlog check
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
