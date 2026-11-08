@@ -1,6 +1,0 @@
-#ifndef GALOOT_RGA3_CYCLE_A_HPP
-#define GALOOT_RGA3_CYCLE_A_HPP
-
-#include "cycle_b.hpp"
-
-#endif // GALOOT_RGA3_CYCLE_A_HPP

@@ -1,6 +1,6 @@
 # C++ style
 
-Status: ratified by the owner on 2026-11-01 (decision 0094). S7 and S8 amended on 2026-11-01, ratified by the owner: proceed as recommended (decisions 0150 and 0152). S7 amended on 2026-11-08 to extend the weaker-concept pattern to variable templates, ruled by the owner on 2026-11-07 (decision 0196 item 5), its wording confirmed by the owner on 2026-11-08: confirmed the recommendations (decision 0207).
+Status: ratified by the owner on 2026-11-01 (decision 0094). S7 and S8 amended on 2026-11-01, ratified by the owner: proceed as recommended (decisions 0150 and 0152). S7 amended on 2026-11-08 to extend the weaker-concept pattern to variable templates, ruled by the owner on 2026-11-07 (decision 0196 item 5), its wording confirmed by the owner on 2026-11-08: confirmed the recommendations (decision 0207). S6 amended on 2026-11-08 to place an algebra preset under `include/galoot/presets/<name>/` in namespace `galoot::presets::<name>`, the layout ruled by the owner on 2026-11-08, its wording confirmed by the owner on 2026-11-08: continue as recommended (decision 0213).
 
 This document sets the style of Galoot's C++ source. It adds detail to the [constitution](CONSTITUTION.md) (cited as C1 to C20), [WORKFLOW.md](WORKFLOW.md), and [VVUQ.md](VVUQ.md), and unlike them it names a language and tools, so it changes when they do. The configuration files it names live at the repository root and are part of the style: where this document and a configuration file disagree, the disagreement is a defect to fix in whichever is wrong.
 
@@ -37,7 +37,7 @@ The test suite also runs in a build with address and undefined-behavior sanitize
 
 ### S6 Delivery
 
-Each library is headers alone, under `include/galoot/<module>/`, in namespace `galoot::<module>`, with names in `snake_case.hpp`. Each header has an include guard named from its path (`GALOOT_CORE_BITS_HPP`), includes what it uses, and compiles on its own. The core includes only standard headers and other core headers (C13). Names not meant for users live in a nested `detail` namespace.
+Each library is headers alone, under `include/galoot/<module>/`, in namespace `galoot::<module>`, with names in `snake_case.hpp`. An algebra preset, a named algebra built on the core such as rga3, lives under `include/galoot/presets/<name>/`, with its umbrella header `include/galoot/presets/<name>.hpp`, in namespace `galoot::presets::<name>`. Each header has an include guard named from its path (`GALOOT_CORE_BITS_HPP`, `GALOOT_PRESETS_RGA3_OBJECTS_HPP`), includes what it uses, and compiles on its own. The core includes only standard headers and other core headers, and names no preset (C13). A preset includes only standard headers, the core's headers, and its own headers. Names not meant for users live in a nested `detail` namespace.
 
 ### S7 Compile-time generation
 

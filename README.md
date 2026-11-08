@@ -9,7 +9,9 @@ the same code runs in a constant expression and at run time, over any scalar
 type that has ring arithmetic: `int`, `float`, `double`, or a type of your
 own.
 
-On top of the core sits `rga3`, the rigid geometric algebra of three
+On top of the core sit the algebra presets, named algebras built on the
+core's public interface as you could build your own. The first, `rga3` in
+namespace `galoot::presets::rga3`, is the rigid geometric algebra of three
 dimensions, R(3, 0, 1). It names the objects of that algebra (`Point`,
 `Line`, `Plane`, and the `Motor` and `Flector` that move them) and stores
 them in the layouts of Eric Lengyel's rigid geometric algebra
@@ -22,19 +24,19 @@ Galoot is in early development, and its interface may still change.
 ## Using Galoot
 
 Galoot is headers alone, so there is nothing to build. Add `include/` to
-your include path, compile as C++23, and include the model or the core:
+your include path, compile as C++23, and include the preset or the core:
 
 ```text
-#include <galoot/rga3.hpp>   // the rga3 model, and through it the core
-#include <galoot/core.hpp>   // the core alone
+#include <galoot/presets/rga3.hpp>   // the rga3 preset, and through it the core
+#include <galoot/core.hpp>           // the core alone
 ```
 
-With CMake, add the source tree and link the target you use, `galoot::rga3`
-or `galoot::core`:
+With CMake, add the source tree and link the target you use,
+`galoot::presets::rga3` or `galoot::core`:
 
 ```text
 add_subdirectory(galoot)
-target_link_libraries(my_program PRIVATE galoot::rga3)
+target_link_libraries(my_program PRIVATE galoot::presets::rga3)
 ```
 
 Galoot is tested with GCC 16 and Clang 23, on Linux with libstdc++. It uses
@@ -59,11 +61,11 @@ blade.
 #include <numbers>
 #include <print>
 
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 int main() {
   namespace core = galoot::core;
-  namespace rga3 = galoot::rga3;
+  namespace rga3 = galoot::presets::rga3;
   using Point = rga3::Point<double>;
   using Line = rga3::Line<double>;
   using Motor = rga3::Motor<double>;
@@ -119,10 +121,10 @@ order, the coefficients on e41, e42, e43, e1234, e23, e31, e12, and 1, and
 they hold half of each distance and angle:
 
 ```cpp
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 namespace core = galoot::core;
-namespace rga3 = galoot::rga3;
+namespace rga3 = galoot::presets::rga3;
 
 constexpr rga3::Point<int> p{1, 0, 0, 1};
 constexpr rga3::Point<int> q{1, 2, 0, 1};
@@ -154,24 +156,35 @@ int main() {}
 ```
 
 To print a value, include `<galoot/core/format.hpp>`, which neither
-`rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
+`presets/rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
 compile. A value then prints as each coefficient on its blade's name, and a
-specification such as `{:.1f}` applies to each coefficient:
+specification such as `{:.1f}` applies to each coefficient. The rga3 types
+print by the names their layouts are written with, so a line's direction
+is on e41, e42, e43, where e41 = -e14:
 
 ```cpp
 #include <print>
 
 #include <galoot/core/format.hpp> // IWYU pragma: keep
-#include <galoot/rga3.hpp>
+#include <galoot/presets/rga3.hpp>
 
 int main() {
-  const galoot::rga3::Point<double> p{1, 3, 3, 1};
+  namespace rga3 = galoot::presets::rga3;
+  const rga3::Point<double> p{1, 3, 3, 1};
   std::println("{}", p);
   // prints: {e1: 1, e2: 3, e3: 3, e4: 1}
   std::println("{:.1f}", p);
   // prints: {e1: 1.0, e2: 3.0, e3: 3.0, e4: 1.0}
+  const rga3::Line<double> z_axis{0, 0, 1, 0, 0, 0};
+  std::println("{}", z_axis);
+  // prints: {e41: 0, e42: 0, e43: 1, e23: 0, e31: 0, e12: 0}
 }
 ```
+
+A join `p ^ q` itself is not a `Line` but the wedge's result, which holds
+each blade with its canonical orientation, and since the preset names its
+blades with its own orientations, the join prints by the canonical names,
+such as `e24: -2` where the `Line` made from it prints `e42: 2`.
 
 Each `cpp` block of this README is compiled and run as one of Galoot's
 tests, with both compilers, so the examples stay correct as the library

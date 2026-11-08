@@ -1,14 +1,14 @@
 #!/usr/bin/env -S python3 -I
-"""Mutation runs for the rga3 model: rotation and translation
-(galoot/rga3/motions.hpp), and the layouts and aliases of the objects
-(galoot/rga3/objects.hpp).
+"""Mutation runs for the rga3 preset: rotation and translation
+(galoot/presets/rga3/motions.hpp), and the layouts, aliases, and names of
+the objects (galoot/presets/rga3/objects.hpp).
 
   mutate.py <preset> [mutant...]
 
 Applies one mutant at a time to its header and restores the header after.
-A mutant of motions.hpp builds rga3_motions_test with ninja's -k 0 and runs
-every test labeled rga3.motions (the program and every compile-fail test of
-the label). A mutant of objects.hpp, which every rga3 program includes,
+A mutant of motions.hpp builds rga3_motions_test and the two checking-mode
+programs with ninja's -k 0 and runs every test labeled rga3.motions (the
+programs and every compile-fail test of the label). A mutant of objects.hpp, which every rga3 program includes,
 builds every rga3 program with -k 0 and runs every test whose label starts
 with rga3. Every build and test goes through tools/timed with the selection
 mutant:<name>.
@@ -35,15 +35,18 @@ import sys
 ROOT = pathlib.Path(subprocess.run(
     ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True,
     check=True).stdout.strip())
-MOTIONS = ROOT / "include/galoot/rga3/motions.hpp"
-OBJECTS = ROOT / "include/galoot/rga3/objects.hpp"
+MOTIONS = ROOT / "include/galoot/presets/rga3/motions.hpp"
+OBJECTS = ROOT / "include/galoot/presets/rga3/objects.hpp"
 OUT = pathlib.Path(__file__).resolve().parent / "out"
-MOTIONS_TARGETS = ["rga3_motions_test"]
+MOTIONS_TARGETS = ["rga3_motions_test", "rga3_rotation_mode_0",
+                   "rga3_rotation_mode_1"]
 MOTIONS_LABELS = r"^rga3\.motions$"
 OBJECTS_TARGETS = ["rga3_objects_test", "rga3_motions_test",
                    "rga3_point_groups_test", "rga3_chains_test",
-                   "rga3_incidence_test", "rga3_readme_example_1",
-                   "rga3_readme_example_2"]
+                   "rga3_incidence_test", "rga3_format_test",
+                   "rga3_rotation_mode_0", "rga3_rotation_mode_1",
+                   "rga3_readme_example_1", "rga3_readme_example_2",
+                   "rga3_readme_example_3"]
 OBJECTS_LABELS = r"^rga3"
 
 # A layout other than the motor's, the core's grade order, for the mutants
@@ -64,8 +67,8 @@ MUTANTS = {
     # rotation's values.
     "rotation_full_angle": [("const T half = theta / T{2};", "const T half = theta;")],
     "rotation_negative_angle": [("const T half = theta / T{2};", "const T half = -theta / T{2};")],
-    "rotation_sin_cos_swapped": [("const T s = std::sin(half);\n  const T c = std::cos(half);",
-                                  "const T s = std::cos(half);\n  const T c = std::sin(half);")],
+    "rotation_sin_cos_swapped": [("const T s = std::sin(half) / length;\n  const T c = std::cos(half);",
+                                  "const T s = std::cos(half) / length;\n  const T c = std::sin(half);")],
     "rotation_layout": [("[[nodiscard]] inline Motor<T> rotation(", "[[nodiscard]] inline auto rotation("),
                         ("  return Motor<T>{\n      v[0] * s,", f"  return {OTHER}{{\n      v[0] * s,")],
     "rotation_any_scalar": [("template <std::floating_point T>\n[[nodiscard]] inline",
@@ -141,6 +144,38 @@ OBJECT_MUTANTS = {
     "motor_alias_on_flector_layout": alias("Motor", "flector", "T"),
     "flector_alias_on_motor_layout": alias("Flector", "motor", "T"),
 }
+# The names the tag declares. A name is matched to a layout's blade by the
+# blade it stands for, mask and orientation, not by its place in the list.
+NAMES = "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234"
+
+
+def renamed(old, new):
+    """The names with the one name old replaced by new, or left out."""
+    return " ".join(new if name == old else name
+                    for name in NAMES.split() if name != old or new)
+
+
+def names(new):
+    head = "  static constexpr auto names =\n      "
+    if new is DELETE:
+        return [(f'{head}"{NAMES}";\n', "")]
+    return [(f'{head}"{NAMES}";', f'{head}"{new}";')]
+
+
+OBJECT_MUTANTS.update({
+    # A name of another blade: e32 is the blade of e23, which is then named
+    # twice.
+    "names_wrong_blade": names(renamed("e31", "e32")),
+    # Two names swapped in the list, which leaves each name on its blade.
+    "names_swapped": names(NAMES.replace("e41 e42", "e42 e41")),
+    # A name with the wrong sign: the other orientation of its blade.
+    "names_e14_for_e41": names(renamed("e41", "e14")),
+    "names_e123_for_e321": names(renamed("e321", "e123")),
+    "names_e13_for_e31": names(renamed("e31", "e13")),
+    # A name left out, and the member removed.
+    "names_e431_dropped": names(renamed("e431", "")),
+    "names_removed": names(DELETE),
+})
 for _name in OBJECT_MUTANTS:
     assert _name not in MUTANTS, _name
 

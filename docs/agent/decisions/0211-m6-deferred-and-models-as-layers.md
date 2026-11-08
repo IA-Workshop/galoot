@@ -2,6 +2,8 @@
 
 Date: 2026-11-08. Status: recorded. Source: the owner's messages of 2026-11-08.
 
+Amended: item 1's layout and namespace are amended by decision 0213 item 1 (the owner's ruling of 2026-11-08): a named algebra is an algebra preset under `include/galoot/presets/<name>/`, with its umbrella header `include/galoot/presets/<name>.hpp`, in namespace `galoot::presets::<name>`. The rest of item 1 stands.
+
 ## Rulings
 
 1. Named algebras (M6's cga3 and others) are convenience layers that build on the general core: a model under `include/galoot/<model>/` in namespace `galoot::<model>`, on the core's public interface only, with zero core diff, as the rga3 model is.

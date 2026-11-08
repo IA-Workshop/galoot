@@ -33,33 +33,35 @@ target_sources(galoot_core INTERFACE
     include/galoot/core/unary.hpp)
 target_compile_features(galoot_core INTERFACE cxx_std_23)
 
-# The rga3 model, the rigid geometric algebra of three dimensions. It is
-# headers alone, written on the core's public headers, and like the core its
-# interface carries no flags of Galoot's own builds.
-add_library(galoot_rga3 INTERFACE)
-add_library(galoot::rga3 ALIAS galoot_rga3)
-target_sources(galoot_rga3 INTERFACE
+# The rga3 preset, the rigid geometric algebra of three dimensions: an
+# algebra preset, a named algebra built on the core. It is headers alone,
+# written on the core's public headers, and like the core its interface
+# carries no flags of Galoot's own builds.
+add_library(galoot_presets_rga3 INTERFACE)
+add_library(galoot::presets::rga3 ALIAS galoot_presets_rga3)
+target_sources(galoot_presets_rga3 INTERFACE
   FILE_SET HEADERS BASE_DIRS include FILES
-    include/galoot/rga3.hpp
-    include/galoot/rga3/motions.hpp
-    include/galoot/rga3/objects.hpp)
-target_link_libraries(galoot_rga3 INTERFACE galoot_core)
+    include/galoot/presets/rga3.hpp
+    include/galoot/presets/rga3/motions.hpp
+    include/galoot/presets/rga3/objects.hpp)
+target_link_libraries(galoot_presets_rga3 INTERFACE galoot_core)
 
 if(NOT PROJECT_IS_TOP_LEVEL)
   return()
 endif()
 
 # Every header under include/galoot belongs to a header set, the rga3
-# model's for galoot/rga3.hpp and the headers under galoot/rga3/, and the
-# core's for the rest. The header checks compile each set's headers one by
-# one and the format check reads both sets, so a header left out is never
-# checked on its own. Stop configuring if one is missing or in the other
-# set; CONFIGURE_DEPENDS reconfigures when a header is added.
+# preset's for galoot/presets/rga3.hpp and the headers under
+# galoot/presets/rga3/, and the core's for the rest. The header checks
+# compile each set's headers one by one and the format check reads both
+# sets, so a header left out is never checked on its own. Stop configuring
+# if one is missing or in the other set; CONFIGURE_DEPENDS reconfigures when
+# a header is added.
 file(GLOB_RECURSE galoot_headers_on_disk CONFIGURE_DEPENDS
   RELATIVE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/include/galoot/*.hpp)
 foreach(header IN LISTS galoot_headers_on_disk)
-  if(header MATCHES "^include/galoot/rga3(\\.hpp$|/)")
-    set(galoot_header_target galoot_rga3)
+  if(header MATCHES "^include/galoot/presets/rga3(\\.hpp$|/)")
+    set(galoot_header_target galoot_presets_rga3)
   else()
     set(galoot_header_target galoot_core)
   endif()
@@ -72,10 +74,10 @@ foreach(header IN LISTS galoot_headers_on_disk)
 endforeach()
 
 # The checking mode changes what the tests check, so it is never a default:
-# every preset declares it.
+# every build preset declares it.
 if(NOT DEFINED GALOOT_CHECKING)
   message(FATAL_ERROR
-    "GALOOT_CHECKING is not set. Configure with a preset "
+    "GALOOT_CHECKING is not set. Configure with a build preset "
     "(cmake --list-presets) or pass -DGALOOT_CHECKING=ON or OFF.")
 endif()
 if(NOT GALOOT_CHECKING MATCHES "^(ON|OFF)$")
@@ -93,15 +95,15 @@ target_compile_definitions(galoot_core INTERFACE
 
 # Per-translation-unit cost record: each compile runs through tools/measure,
 # which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. Every
-# preset but lint sets GALOOT_PRESET, since a compile under clang-tidy does
-# not cost what a user's compile does. The record is the build tree's own
-# compile.tsv by default, so a tree configured with -B beside a preset's own
-# tree keeps its rows apart, and the build writes nothing outside its source
-# and build trees. A record elsewhere, from -D or from an older cache, gets a
-# warning at every configure. The launcher applies to every compile in the
-# tree, the header-check units included.
+# build preset but lint sets GALOOT_PRESET, since a compile under clang-tidy
+# does not cost what a user's compile does. The record is the build tree's
+# own compile.tsv by default, so a tree configured with -B beside a build
+# preset's own tree keeps its rows apart, and the build writes nothing
+# outside its source and build trees. A record elsewhere, from -D or from an
+# older cache, gets a warning at every configure. The launcher applies to
+# every compile in the tree, the header-check units included.
 set(GALOOT_PRESET "" CACHE STRING
-  "Preset named in each compile cost row; empty records no compile costs")
+  "Build preset named in each compile cost row; empty records no compile costs")
 set(GALOOT_COMPILE_RECORD "${CMAKE_BINARY_DIR}/compile.tsv" CACHE FILEPATH
   "compile.tsv that each compile appends its cost row to, with GALOOT_PRESET")
 if(NOT GALOOT_PRESET STREQUAL "")
@@ -126,10 +128,10 @@ endif()
 # Each header compiles on its own, so it includes what it uses: one generated
 # translation unit per header, built by all_verify_interface_header_sets and
 # not by all.
-set_property(TARGET galoot_core galoot_rga3
+set_property(TARGET galoot_core galoot_presets_rga3
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 
-# Layout check over the headers of the core and the rga3 model and the test
+# Layout check over the headers of the core and the rga3 preset and the test
 # sources: clang-format with the repository's .clang-format must leave them
 # unchanged. It does not compile. include/ext keeps its upstream layout.
 find_program(GALOOT_CLANG_FORMAT clang-format REQUIRED)
@@ -140,7 +142,7 @@ file(GLOB_RECURSE galoot_test_sources CONFIGURE_DEPENDS
 add_custom_target(format-check
   COMMAND ${GALOOT_CLANG_FORMAT} --dry-run -Werror
     $<TARGET_PROPERTY:galoot_core,HEADER_SET>
-    $<TARGET_PROPERTY:galoot_rga3,HEADER_SET> ${galoot_test_sources}
+    $<TARGET_PROPERTY:galoot_presets_rga3,HEADER_SET> ${galoot_test_sources}
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMAND_EXPAND_LISTS
   VERBATIM)
