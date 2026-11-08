@@ -164,6 +164,21 @@ add_test(NAME tests.compile_fail_flags_rejects
 set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
   PROPERTIES LABELS "tests;tests.compile_fail")
 
+# tests.messages_pinned: every message of include/galoot/ (a static_assert
+# literal, a GALOOT_ASSERT message, an #error text) is required by a test of
+# this build tree, or is in internal_messages.txt with the reason no user
+# reaches it, and every test that requires a part of a longer message also
+# forbids the longer one. The test reads this tree's own listing, as ctest
+# --show-only gives it with no preset's filter, so a test that a preset
+# leaves out of its run still counts; it builds nothing.
+add_test(NAME tests.messages_pinned
+  COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/catalogue pinned
+    ${PROJECT_SOURCE_DIR}/include/galoot ${CMAKE_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/internal_messages.txt
+    --ctest ${CMAKE_CTEST_COMMAND})
+set_tests_properties(tests.messages_pinned PROPERTIES
+  LABELS "tests;tests.catalogue")
+
 # tools.compile_fail_literal_in_path_*: a compile-fail test whose required
 # literal occurs in its own source path stops configuring, since any compile
 # error would show the literal; one outside the path passes.
@@ -241,6 +256,17 @@ add_test(NAME tools.compiles
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/compiles_test.py
     ${PROJECT_SOURCE_DIR}/tools ${CMAKE_CURRENT_BINARY_DIR}/compiles)
 set_tests_properties(tools.compiles PROPERTIES LABELS "tools;tools.compiles")
+
+# tools.catalogue: which tests pin each message of a fixture header tree, from
+# a CTest listing file and from a stand-in for ctest on a build tree; the
+# check of a catalogue's test names; and the check that each message is
+# pinned or listed as internal, with the lists it rejects.
+add_test(NAME tools.catalogue
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/catalogue_test.py
+    ${PROJECT_SOURCE_DIR}/tools/catalogue ${CMAKE_CURRENT_BINARY_DIR}/catalogue)
+set_tests_properties(tools.catalogue PROPERTIES
+  LABELS "tools;tools.catalogue")
 
 # tools.measure_header: launchers that open an empty record at once write one
 # header between them, not one each.
@@ -1525,7 +1551,9 @@ target_link_libraries(core_product_test PRIVATE galoot_test_support
 
 # core.product_mixed_<cause>_<spelling>: a product or an antiproduct of
 # operands from two algebras or with two scalar types fails to compile with
-# one error, the message of the product as written.
+# one error, the message of the product as written. The wedge's message is a
+# part of the antiwedge's, which would pass the test too, so the wedge's tests
+# also forbid the antiwedge's message of the same cause.
 set(product_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(product_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
 foreach(spelling IN ITEMS geometric_product wedge times caret
@@ -1541,16 +1569,22 @@ foreach(spelling IN ITEMS geometric_product wedge times caret
   else()
     set(written "${spelling}")
   endif()
+  set(twin_algebras "")
+  set(twin_scalars "")
+  if(spelling STREQUAL "wedge")
+    set(twin_algebras "antiwedge: ${product_algebras}")
+    set(twin_scalars "antiwedge: ${product_scalars}")
+  endif()
   galoot_add_compile_fail_test(NAME product_mixed_algebras_${spelling}
     MODULE core COMPONENT product
     SOURCE core/product_mixed_algebras_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_algebras}"
-    ONE_ERROR FORBID "different scalar types")
+    ONE_ERROR FORBID "different scalar types" ${twin_algebras})
   galoot_add_compile_fail_test(NAME product_mixed_scalars_${spelling}
     MODULE core COMPONENT product
     SOURCE core/product_mixed_scalars_${spelling}_fail.cpp
     MESSAGE "${written}: ${product_scalars}"
-    ONE_ERROR FORBID "different algebras")
+    ONE_ERROR FORBID "different algebras" ${twin_scalars})
 endforeach()
 
 # core.product_narrow_scalar_<spelling>: a product with an exact coefficient
@@ -1817,21 +1851,30 @@ dual_rejects_narrow_scalar(project "projection" first_operand)
 
 # core.dual_mixed_<cause>_<function>: a dot, an antidot, or a projection of
 # operands from two algebras or with two scalar types fails to compile with
-# one error, the message of the function, which names the cause.
+# one error, the message of the function, which names the cause. The
+# messages of dot and project are parts of those of antidot and antiproject,
+# which would pass their tests too, so those tests also forbid the longer
+# message of the same cause.
 set(dual_algebras "the operands are in different algebras${semicolon} give both types the same algebra tag")
 set(dual_scalars "the operands have different scalar types${semicolon} give both types the same scalar type")
 foreach(function IN ITEMS dot antidot project)
+  set(twin_algebras "")
+  set(twin_scalars "")
+  if(NOT function STREQUAL "antidot")
+    set(twin_algebras "anti${function}: ${dual_algebras}")
+    set(twin_scalars "anti${function}: ${dual_scalars}")
+  endif()
   galoot_add_compile_fail_test(NAME dual_mixed_algebras_${function}
     MODULE core COMPONENT dual
     SOURCE core/dual_mixed_algebras_${function}_fail.cpp
     MESSAGE "${function}: ${dual_algebras}"
-    ONE_ERROR FORBID "different scalar types"
+    ONE_ERROR FORBID "different scalar types" ${twin_algebras}
     FORBID_ON_FIRST_ERROR ${dual_internal_names})
   galoot_add_compile_fail_test(NAME dual_mixed_scalars_${function}
     MODULE core COMPONENT dual
     SOURCE core/dual_mixed_scalars_${function}_fail.cpp
     MESSAGE "${function}: ${dual_scalars}"
-    ONE_ERROR FORBID "different algebras"
+    ONE_ERROR FORBID "different algebras" ${twin_scalars}
     FORBID_ON_FIRST_ERROR ${dual_internal_names})
 endforeach()
 

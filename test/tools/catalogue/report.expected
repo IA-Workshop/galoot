@@ -1,0 +1,31 @@
+| Message | Places | json | tree |
+| --- | --- | --- | --- |
+| the directive | fixture.hpp:4, fixture.hpp:21 | `t.directive` | `t.directive` |
+| first: required in the second place | fixture.hpp:7 | `t.second_place` | `t.second_place` |
+| second: holds; a semicolon | fixture.hpp:8, nested/deeper.hpp:3 | `t.semicolon` | none |
+| third: only forbidden | fixture.hpp:9 | none | none |
+| fourth: only in a test that is meant to fail | fixture.hpp:10 | none | none |
+| fifth: run time | fixture.hpp:11 | `t.run_time` | `t.run_time` |
+| sixth: joined from two literals | fixture.hpp:12 | `t.joined` | `t.joined` |
+| seventh: shares a prefix | fixture.hpp:14 | none | none |
+| seventh: shares a prefix too | fixture.hpp:15 | none | none |
+| eighth: cut short at run time | fixture.hpp:18 | `t.run_time_prefix` | `t.run_time_prefix` |
+| dot: nested | fixture.hpp:19 | `t.nested` | `t.nested` |
+| antidot: nested | fixture.hpp:20 | `t.nested_long` | `t.nested_long` |
+| ninth: in a subdirectory | nested/deeper.hpp:2 | `core.deeper` | `core.deeper` |
+
+Not pinned in json: 4 of 13 messages
+- fixture.hpp:9: third: only forbidden
+- fixture.hpp:10: fourth: only in a test that is meant to fail
+- fixture.hpp:14: seventh: shares a prefix
+- fixture.hpp:15: seventh: shares a prefix too
+
+Not pinned in tree: 5 of 13 messages
+- fixture.hpp:8, nested/deeper.hpp:3: second: holds; a semicolon
+- fixture.hpp:9: third: only forbidden
+- fixture.hpp:10: fourth: only in a test that is meant to fail
+- fixture.hpp:14: seventh: shares a prefix
+- fixture.hpp:15: seventh: shares a prefix too
+
+Assertions without a message: 2
+- fixture.hpp:16, nested/deeper.hpp:4
