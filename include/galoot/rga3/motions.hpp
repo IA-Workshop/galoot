@@ -85,7 +85,7 @@ Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
                 "rotation: sin and cos of the angle do not give values of this "
                 "scalar type, which is not a floating type; use Line<double> "
                 "or Line<float>, or build the Motor from its coefficients, the "
-                "line times sin(theta/2) and cos(theta/2) on e1234");
+                "unitized line times sin(theta/2) and cos(theta/2) on e1234");
   return Motor<T>{};
 }
 
