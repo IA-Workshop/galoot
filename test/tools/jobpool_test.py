@@ -1,18 +1,20 @@
 """tools.jobpool: the job pool's argument checks, the slots it writes back
 and drains when no client holds it, a FIFO path through a symbolic link, a
-count of clients that fails, and the idle stop, on pools of its own.
+count of clients that fails, a client that opens the FIFO just after a
+count, and the idle stop, on pools of its own.
 
 Usage: python3 -I jobpool_test.py <tools/jobpool> <scratch directory>
 
 Each pool under test is a transient user service with a unit name of its
 own and a FIFO in the scratch directory, so the machine's shared pool is
-never opened, stopped, or started. The cases with a failing count run a
-copy of the tool in the scratch directory. The test stops its own units
+never opened, stopped, or started. The cases with a failing or a slow
+count run a copy of the tool in the scratch directory. The test stops its own units
 directly with systemctl when it ends. Prints one line per failed check and
 exits 1 if there is any, or exits 77 when no user service manager is
 available.
 """
 
+import contextlib
 import fcntl
 import os
 import select
@@ -299,6 +301,98 @@ def last_count_fails(tool, directory):
         pool.remove()
 
 
+# A client under load, as Ninja and CTest behave: until argv[2] seconds
+# have passed it waits a moment, opens the FIFO at argv[1] (skipping the
+# turn when the path is missing), takes up to two tokens, holds them
+# briefly, gives back exactly what it took, and closes the FIFO. It never
+# loses a token.
+BUSY_CLIENT = """
+import os, random, sys, time
+path, end = sys.argv[1], time.monotonic() + float(sys.argv[2])
+random.seed(int(sys.argv[3]))
+while time.monotonic() < end:
+    time.sleep(random.uniform(0.02, 0.3))
+    try:
+        fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
+    except FileNotFoundError:
+        continue
+    try:
+        taken = os.read(fd, random.randint(1, 2))
+    except BlockingIOError:
+        taken = b""
+    time.sleep(random.uniform(0, 0.15))
+    if taken:
+        os.write(fd, taken)
+    os.close(fd)
+"""
+
+
+def surplus_race(tool, directory):
+    """A client that opens the FIFO and takes tokens just after the pool
+    has counted no client must keep them: the pool never writes back the
+    tokens a live client holds, and never ends up with more free slots
+    than its total. The case runs a copy of the tool that, after each count
+    of clients, marks the moment with a file and waits half a second. The
+    test opens the FIFO in that half second, as a client does by chance on
+    a busy machine, in three rounds; then clients that come and go as Ninja
+    and CTest do run against the same copy for ten seconds."""
+    source = open(tool, encoding="utf-8").read()
+    anchor = '  [[ $count == 0 ]]\n}\n'
+    check("anchor of the count's result", source.count(anchor), 1)
+    slow = os.path.join(directory, "jobpool-slow-count")
+    with open(slow, "w", encoding="utf-8") as f:
+        f.write(source.replace(anchor, '  touch -- "$1.counted"\n'
+                               '  sleep 0.5\n  [[ $count == 0 ]]\n}\n'))
+    os.chmod(slow, 0o755)
+    pool = Pool(slow, directory, "race")
+    slots = 4
+    counted = f"{pool.fifo}.counted"
+    clients = []
+    try:
+        check("start exit, race",
+              pool.run("start", str(slots), "--idle", "0").returncode, 0)
+        for round_ in range(3):
+            with contextlib.suppress(FileNotFoundError):
+                os.unlink(counted)
+            if not wait_for(lambda: os.path.exists(counted), 10):
+                failures.append(f"round {round_}: the pool made no count")
+                break
+            fd = os.open(pool.fifo, os.O_RDWR | os.O_NONBLOCK)
+            try:
+                taken = os.read(fd, 2)
+                check(f"round {round_}: tokens taken", len(taken), 2)
+                time.sleep(2.5)
+                check(f"round {round_}: nothing written back while the "
+                      "late client holds its tokens", free(pool.fifo),
+                      slots - 2)
+                os.write(fd, taken)
+            finally:
+                os.close(fd)
+            check(f"round {round_}: no surplus once they are given back",
+                  free(pool.fifo), slots)
+
+        check("every slot free before the clients start",
+              wait_for(lambda: free(pool.fifo) == slots, 10), True)
+        clients = [subprocess.Popen([sys.executable, "-I", "-c", BUSY_CLIENT,
+                                     pool.fifo, "10", str(seed)])
+                   for seed in range(3)]
+        most = 0
+        while any(c.poll() is None for c in clients):
+            found = free(pool.fifo)
+            if found is not None:
+                most = max(most, found)
+            time.sleep(0.02)
+        check("most free slots while clients came and went", most <= slots,
+              True)
+        check("every slot free once the clients are done",
+              wait_for(lambda: free(pool.fifo) == slots, 10), True)
+    finally:
+        for c in clients:
+            if c.poll() is None:
+                c.kill()
+        pool.remove()
+
+
 def idle_stop(tool, directory):
     """The pool stops itself once no client has held it for the idle time.
     A client that opens the FIFO just as the pool decides to stop keeps the
@@ -341,7 +435,7 @@ def main(tool, directory):
     shutil.rmtree(directory, ignore_errors=True)
     os.makedirs(directory)
     for case in (arguments, repair, symlinked, count_fails,
-                 last_count_fails, idle_stop):
+                 last_count_fails, surplus_race, idle_stop):
         try:
             case(tool, directory)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
