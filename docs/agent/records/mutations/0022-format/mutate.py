@@ -20,7 +20,7 @@ Writes out/<preset>.tsv: mutant, build exit, the programs that failed to
 build with the first error line of each, and the failed tests.
 
 Usage, from the root of a worktree that no other build uses, with the job
-pool exported. The groups of part 3 are added when its code exists.
+pool exported.
 """
 
 import pathlib
@@ -37,6 +37,9 @@ OUT = pathlib.Path(__file__).resolve().parent / "out"
 GROUPS = {
     "format": (["core_format_test", "core_format_outside_core_test"],
                r"^core\.format$"),
+    "mv": (["core_mv_test"], r"^core\.mv$"),
+    "linear": (["core_linear_test"], r"^core\.linear$"),
+    "blade_set": (["core_blade_set_test"], r"^core\.blade_set$"),
 }
 
 F = "format.hpp"
@@ -138,6 +141,81 @@ MUTANTS = {
          "    default:\n      return TagNamesFault::not_a_blade;\n",
          "    default:\n      return TagNamesFault::none;\n", None)]),
 }
+
+
+M = "mv.hpp"
+L = "linear.hpp"
+B = "blade_set.hpp"
+OTHER = "requires(!std::same_as<OtherAlg, Alg> || !std::same_as<U, T>)"
+MV_ALGEBRA = ('"mv: the source is in another algebra; a "')
+MV_SCALAR = ('"mv: the source has another scalar type; a "')
+NUMBER = "concept number_operand = !multivector_or_derived<S> && ring_scalar<S>;"
+PLUS = '"a + b: a multivector and a number have no sum; make "'
+MINUS = '"a - b: a multivector and a number have no "'
+BLADES_HEAD = "template <std::destructible Alg, detail::name_list Names>"
+NO_GENERATORS = '"blades: the algebra tag\'s metric has no "'
+NOT_ALGEBRA = '"blades: the tag is not an algebra; an algebra tag "'
+
+MUTANTS.update({
+    # The constructor that rejects another algebra or scalar type.
+    "other_source_widened_to_same_types": (M, "mv", [
+        (OTHER, "requires(true)", None)]),
+    "other_source_scalar_only": (M, "mv", [
+        (OTHER, "requires(std::same_as<OtherAlg, Alg> && "
+                "!std::same_as<U, T>)", None)]),
+    "other_source_algebra_only": (M, "mv", [
+        (OTHER, "requires(!std::same_as<OtherAlg, Alg>)", None)]),
+    "other_algebra_rejection_removed": (M, "mv", [
+        ("static_assert(false, " + MV_ALGEBRA, "static_cast<void>(" + MV_ALGEBRA,
+         None)]),
+    "other_scalar_rejection_removed": (M, "mv", [
+        ("static_assert(false, " + MV_SCALAR, "static_cast<void>(" + MV_SCALAR,
+         None)]),
+    "other_source_messages_swapped": (M, "mv", [
+        ("if constexpr (!std::same_as<OtherAlg, Alg>) {\n      static_assert",
+         "if constexpr (std::same_as<OtherAlg, Alg>) {\n      static_assert",
+         None)]),
+    # The sums of a multivector and a number.
+    "number_operand_any_type": (L, "linear", [(NUMBER, "concept number_operand = true;", None)]),
+    "number_operand_multivectors_too": (L, "linear", [
+        (NUMBER, "concept number_operand = ring_scalar<S> || multivector_or_derived<S>;", None)]),
+    "number_operand_not_ring": (L, "linear", [
+        (NUMBER, "concept number_operand = !multivector_or_derived<S>;", None)]),
+    "plus_number_right_removed": (L, "linear", [
+        ("static_assert(false, " + PLUS, "static_cast<void>(" + PLUS, [0])]),
+    "plus_number_left_removed": (L, "linear", [
+        ("static_assert(false, " + PLUS, "static_cast<void>(" + PLUS, [1])]),
+    "minus_number_right_removed": (L, "linear", [
+        ("static_assert(false, " + MINUS, "static_cast<void>(" + MINUS, [0])]),
+    "minus_number_left_removed": (L, "linear", [
+        ("static_assert(false, " + MINUS, "static_cast<void>(" + MINUS, [1])]),
+    "plus_and_minus_messages_swapped": (L, "linear", [
+        ('"a + b: a multivector and a number have no sum; make "\n'
+         '                       "the number a multivector on the blade 1 and add "\n'
+         '                       "that"', SWAP, [0, 1]),
+        ('"a - b: a multivector and a number have no "\n'
+         '                       "difference; make the number a multivector on the "\n'
+         '                       "blade 1 and subtract that"',
+         '"a + b: a multivector and a number have no sum; make "\n'
+         '                       "the number a multivector on the blade 1 and add "\n'
+         '                       "that"', [0, 1]),
+        (SWAP, '"a - b: a multivector and a number have no "\n'
+               '                       "difference; make the number a multivector on the "\n'
+               '                       "blade 1 and subtract that"', [0, 1])]),
+    # blades on a tag that is not an algebra.
+    "blades_constrained_by_metric_like": (B, "blade_set", [
+        (BLADES_HEAD, "template <metric_like Alg, detail::name_list Names>", None)]),
+    "no_generators_case_lost": (B, "blade_set", [
+        ("  requires std::remove_cvref_t<decltype(Alg::value)>::generator_count == 0;",
+         "  requires false;", None)]),
+    "not_an_algebra_rejection_removed": (B, "blade_set", [
+        ("static_assert(false, " + NOT_ALGEBRA, "static_cast<void>(" + NOT_ALGEBRA, None)]),
+    "no_generators_rejection_removed": (B, "blade_set", [
+        ("static_assert(false, " + NO_GENERATORS, "static_cast<void>(" + NO_GENERATORS, None)]),
+    "blades_messages_swapped": (B, "blade_set", [
+        ("} else if constexpr (metric_without_generators<Alg>) {",
+         "} else if constexpr (!metric_without_generators<Alg>) {", None)]),
+})
 
 
 def mutate(text, old, new, occurrences):
