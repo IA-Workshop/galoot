@@ -100,11 +100,15 @@ numbers and must be qualified, and an unqualified `transform` in a scope
 with `using namespace std::ranges` finds `std::ranges::transform` instead.
 
 `rotation` divides its axis by the length of the axis's direction, so the
-line p ^ q through any two distinct points turns by θ, however far apart
-they are. The axis must be a line, its direction and moment orthogonal, as
-every join of two points is; a `Line` written by its six coefficients must
-meet this itself. Its direction must not be zero: the join p ^ p gives
-coefficients that are infinite or not a number. Neither is checked.
+line p ^ q through two different points of weight 1 turns by θ, however
+far apart they are. In general the join of p and q has a direction that is
+not zero exactly when neither point is a multiple of the other and they are
+not both directions, of weight 0. The axis must be a line, its direction
+and moment orthogonal, as every join of two points is; a `Line` written by
+its six coefficients must meet this itself, and this is not checked. Its
+direction must not be zero, as that of p ^ p is: a checking build stops
+there with a message, and an unchecked one gives coefficients that are
+infinite or not a number.
 
 Over an integer scalar type every result is exact, and the same operations
 run at compile time. The meet `&` intersects a line and a plane.
