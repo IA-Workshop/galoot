@@ -299,4 +299,58 @@ Machine time, from the run log of the recorded runs: the rga3 mutants took about
 
 ## 18. Outcome
 
-To be written by the implementing sessions: done, in progress, next step, open questions (W3); departures, skipped checks, ambiguities first (C20); commits and their kinds (W9); the criteria of section 4 one by one, with revision, command, and result; verification and validation status (V10); run times and the pool's state (P13); agent cost.
+Written 2026-11-08 by the implementer and coordinator (Claude, agent, Opus 5.5), on `feature/evidence-tools`. **State: parts A to G done; P9's checks from new empty trees passed at `f6392cf`; the blind review (section 13) not yet started; the branch is not merged.** Next step: the blind review, launched by the session's coordinator, then fixes with a delta review, then the merge.
+
+### Departures, skipped checks, and ambiguities (C20)
+
+1. **Criterion 9 is not met as worded, in two ways, each traced to its cause.** (a) In normal mode, 37 of the 39 shared verdicts equal `results-b142837-*`; `generator_scale_dropped` and `range_widest_shifted` are `unjudged`, because their only build failure is a warning made an error, which the old driver counted as a kill and the ruled verdict rules do not. (b) With the fourth run-time edit there is no leak at line 856, but four mutants still leak at the type-property `static_assert`s (lines 515 to 518), which no run-time check can replace; the criterion assumed line 856 was the only one left on. Owner items 1 and 2.
+2. **Criterion 11 is not met for two of 16 pairs**: GCC's two includers, where the tool is 0.11% and 0.20% lower. The listed flag difference (the old harness's extra `-I test -isystem include/ext`) accounts for 1.35 M of the 2.81 M gap of `rga3_only` by a probe, the rest within the probe's range; for `core_only` the same cause is inferred, not probed (`records/performance/rga3-cost/rerun-2026-11-08.md`).
+3. **A verdict rule read beyond its words** (decision 0214 item 5, as corrected): a call to a function that is not constexpr, how `GALOOT_ASSERT` stops constant evaluation, counts as class `assert` like a failed static assertion. Without it GCC called `product_magnitude_x` unjudged in run-time mode where Clang called it killed. Owner item 3.
+4. **Criterion 12, the 0024 tables**: the rerun wrote tables byte for byte equal to the recorded ones, so no new files were saved beside them and nothing needed restoring.
+5. **The tools are larger than the plan's "near 300 lines"**: `tools/mutate` 583 lines (a 64-line usage docstring), `tools/compiles` 389.
+6. **Not tested** (so no mutant of them): restoring files on SIGINT and SIGTERM, unknown spec keys, the `+dirty` revision, a missing build tree, an unknown revision, a glob matching nothing, `diagnostics --before`, and `--check --runtime`.
+7. The revision rule leaves the run log out of `+dirty` (decision 0214 item 7), since every timed run appends to it. The diagnostics commit's message `2ed4d0d` names its revision as "1e3e..."; the revision was `3dce33f`.
+8. Run-log rows of the test author's hand runs came in with the cherry-picked test commits.
+
+### Commits (W9)
+
+Records and scripts of records: `e7a04df` (part A, the repath), `bef6652`, `e843c75` (the two specs and `compare_ports.py`), `6a34947` (criterion 11 stated before the runs), `672b6fe` (decision 0214, `tools.toml`, the snippet index), `b5e4d31`, `1fb1511`, `3dce33f`, `2ed4d0d`, `ba98d0c`, `9322d1e`, `3b2869c`, and this outcome. Tests, by the test author, cherry-picked with `-x` from `feature/evidence-tools--tests` (decision 0185): `ce3b16f` (tools.mutate, fails until `0f53ed6`), `fefcd32` (tools.compiles, fails until `6514dad`), `499f177` (restore between files, passes), `49e6110` (a library guard, fails on gcc-debug until `61f0d98`). Tools: `0f53ed6` (`tools/mutate`), `6514dad` (`tools/compiles`), `1f7b971` (the run log not dirty), `61f0d98` (the guard classed as a kill). Merge of `develop` (plan 0027's unit, which shares `test/CMakeLists.txt` and `runs.tsv`): `f6392cf`. Nothing under `include/`, `cmake/`, or the build presets changed; the root `CMakeLists.txt` did not change.
+
+### Criteria (section 4)
+
+1. Refusals: each by a check of `tools.mutate` and a killed mutant (`records/mutations/0026-tools/`). Pass.
+2. Stale binaries: programs deleted before each build, CTest given only existing programs (`--tests-from-file`); tested; in the ports, every test whose program did not build is listed as not run. Pass.
+3. Classification, verdicts, exit: as decision 0214 item 5; tested. Pass.
+4. Run-time mode and leaks: tested; the leak at line 856 found on the five named mutants. Pass.
+5. Restore: tested, after every case and between mutants of two files; SIGINT and SIGTERM not tested (departure 6).
+6. Outputs: `out/<stem>-<preset>[-runtime].tsv`, partial reruns tested. Pass.
+7. `--check`: tested. Pass.
+8. The rga3 port: byte comparison passes for all 50 (`python3 -I docs/agent/records/mutations/0026-tools/compare_ports.py`, at `e843c75` and after); at `1f7b971` on gcc-debug and clang-debug, 43 killed and 7 equivalent, every verdict as recorded; the nine differences in failed tests explained mutant by mutant (`0026-tools/README.md`). Pass.
+9. The blade_product port: see departure 1; the leak, the equivalents, and the 37 other verdicts as the criterion says. Not met as worded.
+10. Diagnostics, at `3dce33f`: one error line per compile-fail source and compiler, and the same first error line, line count, and longest line as the repathed script in all 18 rows (`records/diagnostics/wu16/sizes-tools-2026-11-08.tsv`, `sizes-rerun-2026-11-08.tsv`); `rotation_assert_fail.cpp`, added after the recorded run, compiles and is reported. Pass.
+11. Cost: departure 2.
+12. The repath: the three scripts name the preset's paths and ran to completion: 0024's mutants (11 of 11 killed on both presets, by the tests its README lists, 19 s and 16 s), the cost harness (criterion 11), the diagnostics (criterion 10). Pass.
+
+### Verification and validation (V10)
+
+- Verification: `tools.mutate` and `tools.compiles` pass on gcc-debug and clang-debug (about 12 s and 2 s); the tools' 30 mutants are all killed at `9322d1e`. Expected values of the fixtures were derived by hand by the test author. The driver judging its own mutants is mitigated as section 14 says; the reviewer's independent mutants are still to come.
+- Validation: criteria 8 and 10 pass; 9 and 11 are partly met, with each gap traced (departures 1 and 2).
+
+### Merge checks
+
+At `f6392cf` (the merge of `develop`), from new empty trees, each as `tools/timed workflow <preset> gate:all -- cmake --workflow --preset <preset>`: gcc-debug 496 of 496 (68 s), gcc-release 496 of 496 (76 s), gcc-asan 488 of 488 (174 s), clang-debug 496 of 496 (64 s), clang-release 496 of 496 (83 s), clang-asan 496 of 496 (158 s), lint 496 of 496 (194 s), clang-measure 488 of 488 (80 s); `format-check` on the lint tree, the trace gate, and `tools/runlog check` (one era, 1,727 kept rows) pass. About 17 minutes in all. The pool read 23 of 23 free before, and 32 of 23 after: a surplus of nine slots, which the pool's own check brings back to 23. Its cause is not traced (unexplained). No check was deferred.
+
+### Run times and the pool
+
+The rga3 mutants 9 min 10 s (both presets); the blade_product mutants about 3 min 50 s per spec and mode; the tools' mutants 6 min 1 s and 12 min 37 s; both cost routes 53 s. The pool had 23 of 23 slots free before and after each run, except 22 of 23 after the rga3 run, a slot held by another unit's gcc-asan build at that moment.
+
+### Agent cost
+
+In `records/agent-cost.tsv`: the test author, 242,234 tokens and 61 tool calls (1,161 s), then 262,830 tokens as reported for the resumed agent and 15 tool calls (231 s); the implementer about 190 tool calls, tokens not visible.
+
+### Open items for the owner
+
+1. **The two warning-only blade_product mutants.** Options: rewrite them so that the build stays warning-free (for example `static_cast<void>(scale)`, as 0024's `division_omitted` was rewritten), so the tests judge them; or keep them as recorded, unjudged. Rewriting costs two lines in the spec and changes the port away from the old driver's text. Recommendation: rewrite them in the test-quality unit that writes the bits and blade-set specs, and record their verdicts there.
+2. **Leaks at type-property `static_assert`s.** Options: leave the rule as it is (any failed static assertion in a run-time file is a leak, so these four always show); or let a mutant declare that only a compile-time check can kill it, which the tool then does not report as a leak. The first keeps the tool simple but makes the blade_product run-time mode exit 1 on every run; the second adds a key to the spec format. Recommendation: the second, a per-mutant `compile_time_only = true`, but only when a second spec needs it (C12); until then, the record lists the four.
+3. **The guard rule of departure 3.** Options: keep it (GCC and Clang agree; the library's compile-time checks count as the owner ruled for `static_assert`); or revert to the plan's words, under which GCC calls such mutants unjudged and Clang killed. Recommendation: keep it.
+4. **The diagnostics script `catalogue/scan.py`** stays for WU14, as ruled. No action.
