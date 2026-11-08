@@ -6,7 +6,7 @@ Plan 0022 section 6 and criterion 8. `mutate.py` applies one mutant at a time to
 - `linear.hpp`: `core_linear_test`;
 - `blade_set.hpp`: `core_blade_set_test`.
 
-It then runs every test of the group's label (`core.format`, `core.mv`, `core.linear`, `core.blade_set`), the compile-fail tests included, and restores the header. Results are in `out/gcc-debug.tsv` and `out/clang-debug.tsv`; each build and test is a `mutant:<name>` row in `runs.tsv`. `scan_mutants.py` runs mutants of `records/diagnostics/catalogue/scan.py` against its `--self-test`; its result is `out-scan.txt`.
+It then runs every test of the group's label (`core.format`, `core.mv`, `core.linear`, `core.blade_set`), the compile-fail tests included, and restores the header. Results are in `out/gcc-debug.tsv` and `out/clang-debug.tsv`; each build and test is a `mutant:<name>` row in `runs.tsv`. `scan_mutants.py` runs mutants of `records/diagnostics/catalogue/scan.py` against its `--self-test`; its result is `out-scan.txt`. The scan became `tools/catalogue` in plan 0029, without `--self-test`, so `scan_mutants.py` could no longer run and was removed (version control holds it); its nine mutants are ported, with the tool's new parts, to `records/mutations/0029-identities/catalogue.toml` for `tools/mutate`, judged by `tools.catalogue` and `tests.messages_pinned`. `out-scan.txt` stays as the result of the run made then.
 
 Run by the WU15 implementer (Claude, agent, Opus 5.5) in the worktree of `feature/core-format`, which no other build used:
 - the 18 format mutants at `ca81991`, whose format.hpp is that of `02a7580`, the final one;
