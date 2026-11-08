@@ -153,6 +153,26 @@ static_assert(core::transform(p, turn) == rga3::Point<int>{0, 2, 0, 2});
 int main() {}
 ```
 
+To print a value, include `<galoot/core/format.hpp>`, which neither
+`rga3.hpp` nor `core.hpp` includes, because `<format>` is costly to
+compile. A value then prints as each coefficient on its blade's name, and a
+specification such as `{:.1f}` applies to each coefficient:
+
+```cpp
+#include <print>
+
+#include <galoot/core/format.hpp>
+#include <galoot/rga3.hpp>
+
+int main() {
+  const galoot::rga3::Point<double> p{1, 3, 3, 1};
+  std::println("{}", p);
+  // prints: {e1: 1, e2: 3, e3: 3, e4: 1}
+  std::println("{:.1f}", p);
+  // prints: {e1: 1.0, e2: 3.0, e3: 3.0, e4: 1.0}
+}
+```
+
 Each `cpp` block of this README is compiled and run as one of Galoot's
 tests, with both compilers, so the examples stay correct as the library
 changes.
