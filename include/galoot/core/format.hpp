@@ -29,6 +29,7 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <format>
 #include <string_view>
 #include <type_traits>
@@ -46,6 +47,33 @@ template <class Alg>
 concept declares_names = requires {
   { Alg::names } -> std::convertible_to<std::string_view>;
 };
+
+// Why an algebra tag's names were rejected, for the first one that is wrong.
+enum class TagNamesFault : std::uint8_t { none, not_a_blade, named_twice };
+
+// Checked once per algebra, and only for n up to 9. An empty list declares
+// no name and is no fault.
+template <metric_like Alg>
+consteval TagNamesFault make_tag_names_fault() {
+  if constexpr (declares_names<Alg>) {
+    constexpr std::size_t n =
+        std::remove_cvref_t<decltype(Alg::value)>::generator_count;
+    switch (first_error(Alg::names, n)) {
+    case NameError::none:
+    case NameError::no_names:
+      return TagNamesFault::none;
+    case NameError::repeated_blade:
+      return TagNamesFault::named_twice;
+    default:
+      return TagNamesFault::not_a_blade;
+    }
+  } else {
+    return TagNamesFault::none;
+  }
+}
+
+template <metric_like Alg>
+inline constexpr TagNamesFault tag_names_fault = make_tag_names_fault<Alg>();
 
 // The name a component is printed under: "-", "e", and at most nine digits.
 struct printed_name {
@@ -165,6 +193,42 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
   typename FormatContext::iterator
   format(const galoot::core::mv<Alg, Blades, T>& x,
          FormatContext& context) const {
+    namespace detail = galoot::core::detail;
+    constexpr std::size_t n =
+        std::remove_cvref_t<decltype(Alg::value)>::generator_count;
+
+    // One rejection at most, so that a misuse gives one error.
+    if constexpr (!std::formattable<T, char>) {
+      static_assert(false, "format: the scalar type has no std::formatter; "
+                           "give it a std::formatter, as double has");
+      return context.out();
+    } else if constexpr (n > galoot::core::max_compact_generators) {
+      static_assert(false, "format: names such as e123 have one digit per "
+                           "index, so a multivector prints by name only for "
+                           "n up to 9; format its coefficients instead");
+      return context.out();
+    } else if constexpr (detail::tag_names_fault<Alg> ==
+                         detail::TagNamesFault::not_a_blade) {
+      static_assert(false, "format: an entry of the algebra tag's names is "
+                           "not a blade of the algebra; write 1, or e and "
+                           "distinct indices from 1 to n, as in e41");
+      return context.out();
+    } else if constexpr (detail::tag_names_fault<Alg> ==
+                         detail::TagNamesFault::named_twice) {
+      static_assert(false, "format: the algebra tag's names name one blade "
+                           "twice, perhaps in both orientations; name each "
+                           "blade once");
+      return context.out();
+    } else {
+      return write(x, context);
+    }
+  }
+
+private:
+  template <class FormatContext>
+  typename FormatContext::iterator
+  write(const galoot::core::mv<Alg, Blades, T>& x,
+        FormatContext& context) const {
     constexpr auto& names = galoot::core::detail::printed_names<Alg, Blades>;
     auto out = context.out();
     *out++ = '{';
@@ -184,7 +248,6 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
     return out;
   }
 
-private:
   std::conditional_t<std::formattable<T, char>, std::formatter<T, char>,
                      galoot::core::detail::no_scalar_formatter>
       scalar;
