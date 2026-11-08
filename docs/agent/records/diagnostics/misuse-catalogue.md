@@ -1,6 +1,6 @@
 # The misuse catalogue of the core
 
-Status: draft for the owner's ratification. Written 2026-11-08 by Claude (agent, Opus 5.5, implementer of plan 0022 part 1), against the core and tests at `b72321d` (no change to `include/` since `bd60589`). Part 3 of plan 0022 adds its rows by the same rule.
+Status: ratified by the owner (decision 0196 item 5, recorded in decision 0205). Written 2026-11-08 by Claude (agent, Opus 5.5, implementer of plan 0022 part 1), against the core and tests at `b72321d` (no change to `include/` since `bd60589`). Part 3 of plan 0022 adds its rows by the same rule.
 
 DoD-19 of plan 0001 asks for "a ratified misuse catalogue (mixed algebras, unknown blade, duplicate blade, n out of range, graded signature, asymmetric form, implicit lossy conversion, non-scalar type, odd+even versor in `transform`)" in which each misuse "has a compile-fail test on both compilers, matching the literal message". This record lists, under those nine items, each rejection the core makes, the message or compiler text that its tests require, and the tests. Every rejection outside the nine items is listed after them, by header.
 
@@ -64,7 +64,3 @@ A test that requires "dot: ..." also passes on "antidot: ..." (and "wedge:" on "
 | `plan.hpp:922` to `plan.hpp:937` (7 messages, "unary map: ...") | the same for the unary maps | As above. |
 | `transform.hpp:575` | transform: a dropped coefficient has too many roundings for the margin of the rounding check | An internal invariant of the rounding check's margin, which holds for every layout the core can build; no user input reaches it. |
 
-## Open for the owner
-
-- Ratify this catalogue as DoD-19's, including the three items met by the compiler's own text and graded signatures met by `metric_like`.
-- The scan reads CTest's resolved listing rather than parsing `test/CMakeLists.txt` as plan 0022 R1 described; the reason is that the listing already resolves variables, loops, and compiler branches, which a parser would have to reimplement.
