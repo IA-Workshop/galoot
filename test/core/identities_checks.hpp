@@ -41,6 +41,7 @@ enum class Identity : std::uint8_t {
   antiproduct_laws,
   product_rules,
   product_laws,
+  defining_relation,
 };
 
 // The checks have internal linkage, as they would in a single source, so
@@ -260,6 +261,58 @@ void check_product_laws(std::mt19937_64& source) {
   }
 }
 
+// The vectors of the algebra Alg.
+template <class Alg>
+using vectors_of =
+    core::mv<Alg, core::of_grade<generators<Alg>, 1>, std::int64_t>;
+
+// Empty when a ⟑ b + b ⟑ a is the scalar 2 a^T g b for vectors a and b,
+// with g the Gram matrix of the algebra read here from its value;
+// otherwise the first blade where it differs, with both values.
+template <class V>
+std::string anticommutator_difference(const V& a, const V& b) {
+  using Alg = V::algebra_type;
+  constexpr std::size_t n = generators<Alg>;
+  std::int64_t form = 0;
+  for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t j = 0; j < n; ++j) {
+      form += value_on(a, core::mask_t{1} << i) *
+              static_cast<std::int64_t>(Alg::value.gram.at(i).at(j)) *
+              value_on(b, core::mask_t{1} << j);
+    }
+  }
+  const auto ab = a * b;
+  const auto ba = b * a;
+  const auto report = [&](core::mask_t mask, std::int64_t want) {
+    return blade_name(mask) + ": " +
+           std::to_string(value_on(ab, mask) + value_on(ba, mask)) +
+           " against " + std::to_string(want);
+  };
+  if (value_on(ab, 0) + value_on(ba, 0) != 2 * form) {
+    return report(0, 2 * form);
+  }
+  for (const core::oriented_blade& blade : decltype(ab)::layout.blades) {
+    if (blade.mask != 0 &&
+        value_on(ab, blade.mask) + value_on(ba, blade.mask) != 0) {
+      return report(blade.mask, 0);
+    }
+  }
+  return "";
+}
+
+// The defining relation a ⟑ b + b ⟑ a = 2 a^T g b on random vectors a and b
+// of Alg.
+template <class Alg>
+void check_defining_relation(std::mt19937_64& source) {
+  using V = vectors_of<Alg>;
+  INFO("form: ", gram_text<Alg>());
+  for (int k = 0; k < samples; ++k) {
+    const V a = random_integers<V>(source);
+    const V b = random_integers<V>(source);
+    CHECK(anticommutator_difference(a, b) == "");
+  }
+}
+
 // The rules of the involutions over the products on random a of A and b of
 // B.
 template <class A, class B>
@@ -315,6 +368,9 @@ void check_each(Identity identity, forms<G...> /*list*/,
     return;
   case Identity::product_laws:
     (check_product_laws<A<G>, B<G>>(source), ...);
+    return;
+  case Identity::defining_relation:
+    (check_defining_relation<form<G>>(source), ...);
     return;
   }
 }

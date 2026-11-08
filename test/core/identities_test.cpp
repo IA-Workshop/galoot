@@ -81,3 +81,14 @@ TEST_CASE("the products are associative with the scalar 1 as identity over "
           "many forms") {
   check_every_group(Identity::product_laws);
 }
+
+// Reference: identity: the defining relation of a Clifford algebra,
+//   e_i e_j + e_j e_i = 2 g_ij, which by bilinearity gives
+//   a ⟑ b + b ⟑ a = 2 a^T g b on the scalar and zero on every other blade
+//   for vectors a and b, with g the Gram matrix read from the algebra's
+//   metric and the sum formed here, on random integer vectors of each form
+//   of every group: one to sixteen generators, diagonal, degenerate,
+//   indefinite, and not diagonal
+TEST_CASE("vectors anticommute to twice their inner product over many forms") {
+  check_every_group(Identity::defining_relation);
+}
