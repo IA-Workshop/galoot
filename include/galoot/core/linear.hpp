@@ -289,14 +289,15 @@ concept number_operand = !multivector_or_derived<S> && ring_scalar<S>;
 
 /// Rejects x + s and s + x for a multivector x, or a class derived from one,
 /// and a number s of any ring scalar type, with one error: a multivector and
-/// a number have no sum. Because these exist, a requires-expression that
-/// asks whether x + 1.0 is valid is told yes.
+/// a number have no sum. To add s, make it a multivector on the scalar
+/// blade, mv<Alg, blades<Alg, "1">, T>{s}, and add that. Because these exist,
+/// a requires-expression that asks whether x + 1.0 is valid is told yes.
 template <metric_like Alg, blade_set B, ring_scalar T, class S>
   requires detail::number_operand<S>
 constexpr mv<Alg, B, T> operator+(const mv<Alg, B, T>& /*x*/, const S& /*s*/) {
   static_assert(false, "a + b: a multivector and a number have no sum; make "
-                       "the number a multivector on the blade 1 and add "
-                       "that");
+                       "the number a multivector on the scalar blade 1 and "
+                       "add that");
   return {};
 }
 
@@ -305,8 +306,8 @@ template <class S, metric_like Alg, blade_set B, ring_scalar T>
   requires detail::number_operand<S>
 constexpr mv<Alg, B, T> operator+(const S& /*s*/, const mv<Alg, B, T>& /*x*/) {
   static_assert(false, "a + b: a multivector and a number have no sum; make "
-                       "the number a multivector on the blade 1 and add "
-                       "that");
+                       "the number a multivector on the scalar blade 1 and "
+                       "add that");
   return {};
 }
 
@@ -316,7 +317,7 @@ template <metric_like Alg, blade_set B, ring_scalar T, class S>
 constexpr mv<Alg, B, T> operator-(const mv<Alg, B, T>& /*x*/, const S& /*s*/) {
   static_assert(false, "a - b: a multivector and a number have no "
                        "difference; make the number a multivector on the "
-                       "blade 1 and subtract that");
+                       "scalar blade 1 and subtract that");
   return {};
 }
 
@@ -326,7 +327,7 @@ template <class S, metric_like Alg, blade_set B, ring_scalar T>
 constexpr mv<Alg, B, T> operator-(const S& /*s*/, const mv<Alg, B, T>& /*x*/) {
   static_assert(false, "a - b: a multivector and a number have no "
                        "difference; make the number a multivector on the "
-                       "blade 1 and subtract that");
+                       "scalar blade 1 and subtract that");
   return {};
 }
 
