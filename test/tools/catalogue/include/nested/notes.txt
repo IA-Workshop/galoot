@@ -1,0 +1,1 @@
+Not a header, so not read: static_assert(m, "tenth: outside any header");

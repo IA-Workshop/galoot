@@ -1,0 +1,36 @@
+# The messages of include/galoot/ that no compile-fail test requires, because
+# no input a user can write reaches them. tests.messages_pinned fails on a
+# message that no test of its build tree pins and that this list leaves out,
+# and on an entry here that no header holds or that a test pins.
+#
+# Each block is a line "reason: " and the reason, then the messages it
+# covers, one per line, written as the header's literal joins them. Blocks
+# are separated by blank lines; lines starting with # are comments.
+
+reason: maintainer guards, which fire only if a library constant changes, telling the maintainer to reword the messages that state it
+update the messages that say 1 to 32
+update the messages that say 9
+
+reason: self-checks of the product plan generator's own output; the plan tests verify that output directly
+product plan: a generated term has a zero coefficient
+product plan: a generated term points past the first set
+product plan: a generated term points past the second set
+product plan: a generated term has a generator beyond e_n
+product plan: generated terms are out of order or repeated
+product plan: the result set is out of canonical order or repeats a blade
+product plan: the result set holds a sign other than +1
+product plan: a typed term points past the result set
+product plan: the result set holds a blade that no term uses
+product plan: typed terms are out of order or repeated
+
+reason: self-checks of the unary map generator's own output; the plan tests verify that output directly
+unary map: the result set is out of canonical order or repeats a blade
+unary map: the result set holds a sign other than +1
+unary map: a term points past the result set
+unary map: the result set holds a blade that no term uses
+unary map: the terms are not one for each input blade, in order
+unary map: a term is not on the blade that the operation gives its input
+unary map: a complement's sign differs from its closed form
+
+reason: an invariant of the rounding check's margin, which holds for every layout the core can build
+transform: a dropped coefficient has too many roundings for the margin of the rounding check
