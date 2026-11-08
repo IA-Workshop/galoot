@@ -128,6 +128,15 @@ consteval auto make_printed_names() {
 template <metric_like Alg, blade_set Blades>
 inline constexpr auto printed_names = make_printed_names<Alg, Blades>();
 
+// Whether T has a std::formatter for char: whether that specialization is
+// enabled, which a disabled one never is, since it is not default
+// constructible, copyable, or movable. std::formattable<T, char> asks more:
+// that the formatter accept a context whose iterator the standard leaves
+// unspecified, which a formatter written for std::format_context alone may
+// not, though std::format prints with it.
+template <class T>
+concept has_formatter = std::semiregular<std::formatter<T, char>>;
+
 // Stands in for the formatter of a scalar type that has none, so that the
 // formatter of a multivector over it is still a complete, default
 // constructible type and rejects the scalar only when it formats.
@@ -154,14 +163,16 @@ struct no_scalar_formatter {};
 /// with orientation +1, in canonical order, so it prints as e12, e13, e14, and
 /// so on.
 ///
-/// Requires: char output; a std::formatter<T, char> for the scalar type; an
-/// algebra of at most nine generators, since names have one digit per index;
-/// and, if the tag declares names, that each is a blade of the algebra (1, or
-/// e and distinct indices from 1 to n) and that no blade is named twice, in
-/// either orientation. Each is checked at compile time where x is formatted,
-/// with one error whose message names it. Because the scalar is checked
-/// there, std::formattable<mv<Alg, Blades, T>, char> is true also for a
-/// scalar T without a formatter.
+/// Requires: char output; a std::formatter<T, char> for the scalar type,
+/// whose parse and format may take any context or the standard library's own
+/// std::format_parse_context& and std::format_context&; an algebra of at
+/// most nine generators, since names have one digit per index; and, if the
+/// tag declares names, that each is a blade of the algebra (1, or e and
+/// distinct indices from 1 to n) and that no blade is named twice, in either
+/// orientation. Each is checked at compile time where x is formatted, with
+/// one error whose message names it. Because the scalar is checked there,
+/// std::formattable<mv<Alg, Blades, T>, char> is true also for a scalar T
+/// without a formatter.
 ///
 /// The specialization matches mv<Alg, Blades, T> exactly, so a class derived
 /// from a multivector is not formattable until it is given its base's
@@ -175,7 +186,7 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
   /// Reads the format specification as std::formatter<T, char> reads it.
   template <class ParseContext>
   constexpr ParseContext::iterator parse(ParseContext& context) {
-    if constexpr (std::formattable<T, char>) {
+    if constexpr (galoot::core::detail::has_formatter<T>) {
       return scalar.parse(context);
     } else {
       // Skip to the closing brace, so that the format string is accepted and
@@ -197,7 +208,7 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
         std::remove_cvref_t<decltype(Alg::value)>::generator_count;
 
     // One rejection at most, so that a misuse gives one error.
-    if constexpr (!std::formattable<T, char>) {
+    if constexpr (!detail::has_formatter<T>) {
       static_assert(false, "format: the scalar type has no std::formatter; "
                            "give it a std::formatter, as double has");
       return context.out();
@@ -246,7 +257,8 @@ private:
     return out;
   }
 
-  std::conditional_t<std::formattable<T, char>, std::formatter<T, char>,
+  std::conditional_t<galoot::core::detail::has_formatter<T>,
+                     std::formatter<T, char>,
                      galoot::core::detail::no_scalar_formatter>
       scalar;
 };
