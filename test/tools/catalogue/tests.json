@@ -202,6 +202,22 @@
   {
    "name": "t.no_command",
    "properties": []
+  },
+  {
+   "name": "core.deeper",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "ninth: in a subdirectory",
+    "--",
+    "g++",
+    "-c",
+    "y.cpp"
+   ],
+   "properties": []
   }
  ]
 }

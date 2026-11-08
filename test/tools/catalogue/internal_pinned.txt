@@ -1,0 +1,14 @@
+# As internal_good.txt with a message that t.run_time pins.
+
+reason: only forbidden, so no test requires it
+third: only forbidden
+
+reason: required only by a test that passes when it is missing
+fourth: only in a test that is meant to fail
+
+reason: required only in part, and the part is in both
+seventh: shares a prefix
+seventh: shares a prefix too
+
+reason: listed before its test was written
+fifth: run time

@@ -1,5 +1,5 @@
-// Messages for the scan's self-test; never compiled. Line numbers matter:
-// the assertion without a message is on line 16.
+// Messages for tools.catalogue; never compiled. Line numbers matter: the
+// test names each message by its line, as the tool reports it.
 #if 0
 #error "the directive"
 #endif

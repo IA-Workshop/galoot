@@ -242,6 +242,17 @@ add_test(NAME tools.compiles
     ${PROJECT_SOURCE_DIR}/tools ${CMAKE_CURRENT_BINARY_DIR}/compiles)
 set_tests_properties(tools.compiles PROPERTIES LABELS "tools;tools.compiles")
 
+# tools.catalogue: which tests pin each message of a fixture header tree, from
+# a CTest listing file and from a stand-in for ctest on a build tree; the
+# check of a catalogue's test names; and the check that each message is
+# pinned or listed as internal, with the lists it rejects.
+add_test(NAME tools.catalogue
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/catalogue_test.py
+    ${PROJECT_SOURCE_DIR}/tools/catalogue ${CMAKE_CURRENT_BINARY_DIR}/catalogue)
+set_tests_properties(tools.catalogue PROPERTIES
+  LABELS "tools;tools.catalogue")
+
 # tools.measure_header: launchers that open an empty record at once write one
 # header between them, not one each.
 add_test(NAME tools.measure_header
