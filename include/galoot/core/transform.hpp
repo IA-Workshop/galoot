@@ -601,12 +601,17 @@ transform_dropped_tolerances(const std::array<T, V.size()>& v,
 // - v is a versor with rounding error of its own, from how it was computed,
 //   which can exceed this transform's bound where the dropped part is zero
 //   only because v is a versor, as for the antiscalar part of a
-//   conformal(3) vector. Long chains of composed motors build it up: for
-//   conformal(3) motors of two random flat planes each, composed in double,
-//   the check fired for 0.2% of chains of 2, 2.2% of 8, 11.4% of 64, and
-//   22.7% of 128, while versors whose components were each rounded once
-//   never fired. Rebuild or renormalize v so that it is a versor again
-//   (scaling alone does not), or turn checking off;
+//   conformal(3) vector. For a conformal(3) motor, with weight part v and
+//   bulk part m as the comment of transform defines them, the dropped
+//   antiscalar is 2(v . m) times x's coefficient on e4, and composing motors
+//   in floating point adds to v . m / |v|^2 at every step, by about u times
+//   the ratio of translation to rotation. Long chains of composed motors
+//   thus build it up: for conformal(3) motors of two random flat planes
+//   each, composed in double, the check fired for 0.2% of chains of 2,
+//   2.2% of 8, 11.4% of 64, and 22.7% of 128, while versors whose
+//   components were each rounded once never fired. Rebuild or renormalize v
+//   so that it is a versor again (scaling alone does not; m <- m - (v . m /
+//   |v|^2) v does), or turn checking off;
 // - a dropped coefficient is NaN or infinite, which the check cannot
 //   verify: find where the input became NaN or infinite;
 // - the magnitude, the same computation on absolute values, overflows, so
@@ -733,12 +738,20 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// from its construction, is only nearly a versor, and where what transform
 /// drops is zero only because v is a versor, as for the antiscalar part of
 /// a conformal(3) vector, that error can exceed the bound and the check
-/// aborts. Long chains of composed motors build it up: for conformal(3)
-/// motors of two random flat planes each, composed in double, the check
-/// fired for 0.2% of chains of 2 motors, 2.2% of 8, 11.4% of 64, and 22.7%
-/// of 128, while versors whose components were each rounded once never
-/// fired. Then rebuild or renormalize v so that it is a versor again
-/// (scaling alone does not), or turn checking off. In rigid(3), for the
+/// aborts. For a conformal(3) motor, a rigid(3) motor wedged with e5, write
+/// v for its weight part (on e415, e425, e435, e12345) and m for its bulk
+/// part (on e235, e315, e125, e5). The dropped antiscalar is 2(v . m) times
+/// x's coefficient on e4. The check passes when |v . m| is below about 10u
+/// times |v_x m_x| + |v_y m_y| + |v_z m_z| + |v_w m_w|, whatever x is.
+/// Composing motors in floating point adds to v . m / |v|^2 at every step,
+/// by about u times the ratio of translation to rotation, so the defect
+/// grows with the chain: for conformal(3) motors of two random flat planes
+/// each, composed in double, the check fired for 0.2% of chains of 2
+/// motors, 2.2% of 8, 11.4% of 64, and 22.7% of 128, while versors whose
+/// components were each rounded once never fired. Then rebuild or
+/// renormalize v so that it is a versor again (scaling alone does not):
+/// m <- m - (v . m / |v|^2) v removes the defect and changes the motor by
+/// no more than the defect. Or turn checking off. In rigid(3), for the
 /// five layouts above, what transform drops is zero for every v of one
 /// parity, so this cannot happen there.
 ///
