@@ -850,6 +850,21 @@ set_tests_properties(tools.runlog_check PROPERTIES
   LABELS "tools;tools.runlog_check;runlog"
   SKIP_REGULAR_EXPRESSION "not inside a git checkout;is not in this clone's history")
 
+# tools.jobpool: the job pool's argument checks, the slots it writes back and
+# drains when no client holds it, and its idle stop, including a client that
+# opens the pool just as it decides to stop. It runs a pool of its own, under
+# its own unit name and with its FIFO in the build tree, never the machine's
+# shared pool; skipped where there is no user service manager.
+add_test(NAME tools.jobpool
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/jobpool_test.py
+    ${PROJECT_SOURCE_DIR}/tools/jobpool
+    ${CMAKE_CURRENT_BINARY_DIR}/jobpool)
+set_tests_properties(tools.jobpool PROPERTIES
+  LABELS "tools;tools.jobpool"
+  SKIP_RETURN_CODE 77
+  TIMEOUT 180)
+
 # The golden values that tests compare the library with. They come from the
 # reference scripts in test/reference/, never from the library, so this
 # target does not link galoot::core. A test that needs them links it and
