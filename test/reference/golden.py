@@ -12,8 +12,10 @@ cross products, and determinants, with no geometric algebra. Where a
 convention is stated both as a definition and as a closed formula, a table,
 or a worked example, the script computes both and stops if they differ: the
 complements, grade signs, oriented names, antiscalars, wedge-basis products,
-conformal change of basis, result order, and metric exomorphisms are written
-only when two routes agree. The rigid joins, meets, incidences, rotations,
+conformal change of basis, result order, metric exomorphisms, and duals are
+written only when two routes agree. The transforms by a mirror are computed
+by conventions_check.py's antiproducts and by reflection matrices, with no
+geometric algebra, and written only when the two agree exactly. The rigid joins, meets, incidences, rotations,
 chains of joints, and point groups are each computed by
 conventions_check.py and by rigid_motions.py and written only when the two
 agree exactly; the orders of the point groups must also equal the published
@@ -455,10 +457,10 @@ def duals(name, g, n, right, left, signs):
     return out
 
 
-# The mirrors of 4.4's odd sign: one hyperplane V in each form, with
-# x v V = f . x for the vector f below, chosen with every entry nonzero and
-# with V v antireverse(V) = lambda antiscalar for a lambda other than 1, so
-# that the factor lambda of the transform shows in every image.
+# The mirrors that pin the sign of an odd transform: one hyperplane V in each
+# form, with x v V = f . x for the vector f below, chosen with every entry
+# nonzero and with V v antireverse(V) = lambda antiscalar for a lambda other
+# than 1, so that the factor lambda of the transform shows in every image.
 MIRROR_FORMS = (
     ("rigid_2", "rigid(2)", (1, 1, 0), (3, 4, 5)),
     ("r_3_0_0", "R(3, 0, 0)", (1, 1, 1), (1, 2, 2)),
