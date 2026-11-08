@@ -72,6 +72,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 5.6 | a reflected point keeps a positive weight | yes |
 | 5.6 | the 32 crystal classes close under compose with their published orders | yes |
 | 5.7 | rotation(l, theta) turns by theta | yes |
+| 5.7 | rotation(l, theta) turns by theta about a line whose direction has any positive length | yes |
 | 5.7 | translation(dx, dy, dz) moves points by d = (dx, dy, dz) | yes |
 | 5.8 | a motor is stored on e41, e42, e43, e1234, e23, e31, e12, 1 in that order | yes |
 | 5.8 | a flector is stored on e1, e2, e3, e4, e423, e431, e412, e321 in that order | yes |

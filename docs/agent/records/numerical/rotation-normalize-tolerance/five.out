@@ -1,0 +1,2 @@
+g++ 16.2.1: floats 8388608, max |fl(5 fl(s/5)) - s| = 1 u, count above u/2: 1258291
+clang++ 23.1.4: floats 8388608, max |fl(5 fl(s/5)) - s| = 1 u, count above u/2: 1258291
