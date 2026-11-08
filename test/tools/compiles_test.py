@@ -45,6 +45,32 @@ DIAGNOSTICS = ("label source compiler exit lines error_lines longest "
 # A perf that never starts the command: tools/measure then runs the command
 # without counters and records them as unavailable.
 FAILING_PERF = "#!/bin/sh\nexit 1\n"
+# A perf that runs the command and then writes, in perf stat's -x, form,
+# the instructions of the n-th call on each core type from the table, n
+# counted in the file COUNTING_PERF_STATE names.
+COUNTING_PERF = """#!/bin/sh
+while [ "$1" != "--" ]; do
+  if [ "$1" = "-o" ]; then out=$2; fi
+  shift
+done
+shift
+"$@"
+status=$?
+n=$(($(cat "$COUNTING_PERF_STATE" 2>/dev/null || echo 0) + 1))
+echo "$n" > "$COUNTING_PERF_STATE"
+case $n in
+  1) p=1000 e=10 ;;
+  2) p=4000 e=40 ;;
+  *) p=1600 e=25 ;;
+esac
+printf '%s\\n' "$p,,cpu_core/instructions/u,1000,100.00" \\
+  "$e,,cpu_atom/instructions/u,1000,100.00" \\
+  "1.00,msec,task-clock:u,1000,100.00" > "$out"
+exit $status
+"""
+# The instructions of the three calls, performance and efficiency cores
+# together, as the table above gives them.
+COUNTED = [1000 + 10, 4000 + 40, 1600 + 25]
 
 failures = []
 
@@ -70,10 +96,13 @@ class Repo:
             shutil.copy(os.path.join(tools, tool), self.path("tools", tool))
         self.write("bin/perf", FAILING_PERF)
         os.chmod(self.path("bin/perf"), 0o755)
+        os.makedirs(self.path("counting"))
+        self.write("counting/perf", COUNTING_PERF)
+        os.chmod(self.path("counting/perf"), 0o755)
         self.env = {k: v for k, v in os.environ.items() if k != "TIMED_LOG"}
         self.env["PATH"] = self.path("bin") + os.pathsep + self.env["PATH"]
 
-        self.write(".gitignore", "build/\nbin/\nout/\n")
+        self.write(".gitignore", "build/\nbin/\ncounting/\nout/\n")
         self.write("include/lib.hpp", fixture_text("first/lib.hpp"))
         for name in SOURCES:
             self.write(f"test/{name}", fixture_text(f"test/{name}"))
@@ -158,16 +187,18 @@ class Repo:
         except FileNotFoundError:
             return None
 
-    def compiles(self, *args):
+    def compiles(self, *args, env=None):
         return subprocess.run(
             [sys.executable, "-I", "tools/compiles", *args], cwd=self.top,
-            capture_output=True, text=True, check=False, env=self.env)
+            capture_output=True, text=True, check=False,
+            env=env or self.env)
 
-    def cost(self, spec_name, spec_text, repeats=1):
+    def cost(self, spec_name, spec_text, repeats=1, cpu="shared", env=None):
         self.write(f"out/{spec_name}.toml", spec_text)
         return self.compiles("cost", f"out/{spec_name}.toml",
                              f"out/{spec_name}", "--before", self.first,
-                             "--cpu", "shared", "--repeats", str(repeats))
+                             "--cpu", cpu, "--repeats", str(repeats),
+                             env=env)
 
     def log_selections(self, name):
         """The selection and exit of each row of a run log."""
@@ -352,6 +383,51 @@ def interleaving(repo):
         check(f"{case}: inst_range", line.get("inst_range"), "unavailable")
 
 
+def counters(repo):
+    """Known counters: the mean and range of the summary, and the sum of
+    both core types' instructions in each row of shared mode."""
+    env = dict(repo.env, PATH=repo.path("counting") + os.pathsep
+               + repo.env["PATH"],
+               COUNTING_PERF_STATE=repo.path("out", "perf-calls"))
+    result = repo.cost("counted", unit_spec([dict(USES_TWICE,
+                                                  trees=["after"])]),
+                       repeats=3, env=env)
+    check("counted: exit", result.returncode, 0)
+    rows = table(repo.read("out/counted/rows.tsv"), ROWS)
+    check("counted: inst_u is inst_p_u + inst_e_u in each row",
+          [r.get("inst_u") for r in rows], [str(n) for n in COUNTED])
+    summary = (repo.read("out/counted/summary.txt") or "").splitlines()
+    lines = table("\n".join(summary[1:]), SUMMARY)
+    line = lines[0] if lines else {}
+    # (1010 + 4040 + 1625) / 3 = 2225; 4040 - 1010 = 3030.
+    check("counted: inst_mean", line.get("inst_mean"), "2225")
+    check("counted: inst_range is max - min", line.get("inst_range"), "3030")
+
+
+def wrong_mode(repo):
+    """A compile pinned to an efficiency core makes a shared row, which is
+    not the pinned row a pinned run must read back."""
+    try:
+        with open("/sys/bus/event_source/devices/cpu_atom/cpus",
+                  encoding="ascii") as f:
+            listed = f.read().strip()
+    except OSError:
+        listed = ""
+    efficiency = set()
+    for part in filter(None, listed.split(",")):
+        first, _, last = part.partition("-")
+        efficiency.update(range(int(first), int(last or first) + 1))
+    usable = sorted(efficiency & os.sched_getaffinity(0))
+    if not usable:
+        print("note: no efficiency-core CPU here; the read-back mode check "
+              "was not run")
+        return
+    result = repo.cost("wrong_mode", unit_spec([dict(USES_TWICE,
+                                                     trees=["after"])]),
+                       cpu=str(usable[0]))
+    check("wrong mode: exit", result.returncode, 1)
+
+
 def compiler_output(repo, compiler, source):
     """The stderr lines of the compiler for source, with the flags of the
     source's own compile-fail test, and the root prefix removed."""
@@ -436,7 +512,7 @@ def main(tools, directory):
         print(f"setup: {error}")
         return 1
     for case in (dirty_checkout, before_tree, failing_unit, interleaving,
-                 diagnostics):
+                 counters, wrong_mode, diagnostics):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,
