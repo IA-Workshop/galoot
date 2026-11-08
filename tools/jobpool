@@ -10,10 +10,13 @@
 # A client is a process other than the service that holds the FIFO open;
 # Ninja holds it for its whole build. A client can leave without returning
 # its slots: Ninja killed with SIGKILL, or CTest after a test whose program
-# is missing. Whenever the service finds no client, it writes back the slots
-# missing from its total and drains any surplus a client wrote back. While
-# any client holds the pool, slots in use cannot be told from lost ones, so
-# lost slots come back only at the next moment with no client. A client that
+# is missing. Whenever the service finds no client and the free slots differ
+# from its total, it moves the FIFO aside, so that no client can open it,
+# counts again, and only if there is still no client writes back the slots
+# missing from its total or drains any surplus a client wrote back. So it
+# never takes a live client's slots for lost ones. While any client holds
+# the pool, slots in use cannot be told from lost ones, so lost slots come
+# back only at the next moment with no client. A client that
 # already holds the FIFO keeps using it after the path is replaced, so a
 # restart under running builds serves them from the old pool and new builds
 # from the new one, up to twice the slots.
@@ -51,12 +54,11 @@ os.close(fd)
 PY
 }
 
-# Writes back the tokens missing from $2 and drains any surplus, and prints
-# the change made. Only right while no client holds the FIFO. A client that
-# opens it between the count of clients and this call, and takes tokens,
-# leaves as many surplus tokens once it gives them back, up to $2 of them;
-# they stay until the next poll that finds no client, which on a busy
-# machine can be a long time.
+# Writes back the tokens missing from $2 to the FIFO $1 and drains any
+# surplus, and prints the change made. Only right while no process but the
+# service holds the FIFO and none can open it, that is, while it is moved
+# aside and a count has found no client: then every token there is lies in
+# the FIFO.
 balance() {
   python3 -I - "$1" "$2" <<'PY'
 import fcntl, os, struct, sys, termios
@@ -142,17 +144,31 @@ no_clients() {
   [[ $count == 0 ]]
 }
 
+# Moves the FIFO $1 aside to $1.stopping, so that no new client can open it,
+# waits $2 seconds for an open that found the old path to complete, and
+# counts the clients. Succeeds, leaving the FIFO aside, only if there is
+# none; otherwise puts it back and fails.
+aside_without_clients() {
+  mv -- "$1" "$1.stopping" || return 1
+  sleep "$2" 3>&-
+  no_clients "$1.stopping" $$ && return 0
+  mv -- "$1.stopping" "$1"
+  return 1
+}
+
 # The service body: makes the FIFO, fills it with $2 tokens, and then polls
-# every $4 seconds. At each poll that finds no client (no process but this
-# one and its children holding the FIFO), it brings the FIFO back to $2
-# tokens. With an idle time of $3 seconds, once no client has held the FIFO
-# for that long, it moves the FIFO aside, so that no new client can open it,
-# and counts the clients a last time: a client that opened it just before
-# is found, and the FIFO goes back. Otherwise the service exits, removing
-# it. The poll closes descriptor 3, so its children are not mistaken for
-# clients.
+# every $4 seconds. A count of clients (processes but this one and its
+# children holding the FIFO) is not enough to fix the tokens: a client can
+# open the FIFO and take some just after the count. So at a poll that finds
+# no client and a free count other than $2, the FIFO is moved aside and the
+# clients counted again; with still none, nobody holds a token or can take
+# one, and the tokens are brought back to $2 before the FIFO goes back.
+# With an idle time of $3 seconds, once no client has held the FIFO for that
+# long, it is moved aside the same way, and with no client the service
+# exits, removing it. The poll closes descriptor 3, so its children are not
+# mistaken for clients.
 serve() {
-  local fifo=$1 n=$2 idle=$3 poll=$4 quiet=$SECONDS change
+  local fifo=$1 n=$2 idle=$3 poll=$4 quiet=$SECONDS free change
   rm -f -- "$fifo" "$fifo.stopping"
   mkfifo -m 600 -- "$fifo"
   exec 3<>"$fifo"
@@ -162,17 +178,18 @@ serve() {
       quiet=$SECONDS
       continue
     fi
-    change=$(balance "$fifo" "$n" 3>&-) || change=0
-    if ((change > 0)); then echo "wrote back $change of $n slots that clients never returned"; fi
-    if ((change < 0)); then echo "drained $((-change)) tokens beyond the $n slots, which clients wrote back"; fi
+    free=$(free_slots 3>&-) || continue
+    if ((free != n)) && aside_without_clients "$fifo" 0.2; then
+      change=$(balance "$fifo.stopping" "$n" 3>&-) || change=0
+      mv -- "$fifo.stopping" "$fifo"
+      if ((change > 0)); then echo "wrote back $change of $n slots that clients never returned"; fi
+      if ((change < 0)); then echo "drained $((-change)) tokens beyond the $n slots, which clients wrote back"; fi
+    fi
     if ((idle > 0 && SECONDS - quiet >= idle)); then
-      mv -- "$fifo" "$fifo.stopping"
-      sleep 1 3>&-  # lets an open that found the old path complete
-      if no_clients "$fifo.stopping" $$; then
+      if aside_without_clients "$fifo" 1; then
         rm -f -- "$fifo.stopping"
         exit 0
       fi
-      mv -- "$fifo.stopping" "$fifo"
       quiet=$SECONDS
     fi
   done
@@ -239,7 +256,7 @@ case ${1:-} in
     seconds=$(sed -n 's/.*JOBPOOL_IDLE_SECONDS=\([0-9]*\).*/\1/p' <<<"$environment")
     seconds=${seconds:-$((${idle:-0} * 60))}
     if [[ ! -p $fifo ]]; then
-      echo "running, but $fifo is missing: the pool is stopping, or was moved aside for a moment while it decides to"
+      echo "running, but $fifo is missing: the pool is stopping, or was moved aside for a moment while it counts its clients"
       exit 1
     fi
     total=$(total_slots)
