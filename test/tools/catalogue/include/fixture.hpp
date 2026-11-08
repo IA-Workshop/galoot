@@ -18,3 +18,4 @@ static_assert(sizeof(int) == 4);
 void g() { GALOOT_ASSERT(y, "eighth: cut short at run time"); }
 static_assert(i, "dot: nested");
 static_assert(j, "antidot: nested");
+static_assert(n, "the directive");

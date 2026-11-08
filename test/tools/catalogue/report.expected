@@ -1,6 +1,6 @@
 | Message | Places | json | tree |
 | --- | --- | --- | --- |
-| the directive | fixture.hpp:4 | `t.directive` | `t.directive` |
+| the directive | fixture.hpp:4, fixture.hpp:21 | `t.directive` | `t.directive` |
 | first: required in the second place | fixture.hpp:7 | `t.second_place` | `t.second_place` |
 | second: holds; a semicolon | fixture.hpp:8, nested/deeper.hpp:3 | `t.semicolon` | none |
 | third: only forbidden | fixture.hpp:9 | none | none |
@@ -27,5 +27,5 @@ Not pinned in tree: 5 of 13 messages
 - fixture.hpp:14: seventh: shares a prefix
 - fixture.hpp:15: seventh: shares a prefix too
 
-Assertions without a message: 1
-- fixture.hpp:16
+Assertions without a message: 2
+- fixture.hpp:16, nested/deeper.hpp:4
