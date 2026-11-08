@@ -140,4 +140,17 @@ g++ <gcc-debug flags> -I"$S/include" -Itest -isystem "$S/include/ext" -o "$S/t" 
 
 ## Resolution
 
-To be filled in by the merging agent: each of S1 to S5 and N1 to N9 with its resolution.
+Filled in by the merging agent (Claude, Opus 5.5, implementer of plan 0029) on `feature/core-identities` before the merge, as the coordinator directed. All are records only; no source, test, or build file changed after the review.
+
+- **S1.** Fixed (O3 (a)). `transform_identities_test.cpp` and `presets/rga3/objects_test.cpp` measured before and after under the timing lock (`records/performance/wu14-identities-cost/units-later.toml`, `out-later/`, the README's second section); the README's sentence on the first campaign's tree now says which sources changed after it. `transform_identities_test.cpp` is unchanged within its range and is the largest changed unit, so the README no longer calls `dual_identities_test.cpp` the longest.
+- **S2.** Fixed. The diff adds eight rows (counted again); decision 0217 item 2, the coverage table, and the plan say eight, and 0217's "Corrected:" line names the change.
+- **S3.** Fixed. The coverage table names the flector row's plane case.
+- **S4.** Fixed. The README row of `gap_offdiagonal_dropped` and the comment of `identities.toml` say that the transform suite's kill is the guard `CHECK(accepted > 0)` on the Witt forms made totally null; no verdict changes. The spec copy in `out/branch-point/` stays as it ran.
+- **S5.** Fixed (O4 (a)). `eb1db0d` (`--tests`), `4df954d` and `e032121` (`--tests2`) cherry-picked with `-x`. `feature/core-identities--catalogue--tests` committed no run row and its worktree log holds none: its tests were run in the subfeature's worktree, whose rows are in the unit.
+- **N1.** Kept as recorded (O2 (a)), as the coordinator directed.
+- **N2.** Fixed. The catalogue record says the scan output is the tool's at `f1ed6f1`.
+- **N3.** No change; noted.
+- **N4.** Fixed in the records: the mutation README states the bilinearity premise of the basis proof. The test's marker is unchanged.
+- **N5.** Not fixable without rewriting history; noted.
+- **N6.** Noted here: `c77fb9c` passes its own six tests and inherits the failures of `tools.catalogue` and `tests.messages_pinned` from `ad8bf7d` and `c0f4195`, which `70564f5` ends.
+- **N7, N8, N9.** No change; noted. Criterion 12 (O1) is recorded as not met as written and replaced by the argument, with the note that later plans should judge a gap's mutants by the suite the gap extends.

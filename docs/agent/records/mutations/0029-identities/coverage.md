@@ -50,9 +50,9 @@ The three kernel suites keep different form lists on purpose (plan 0029 section 
 
 ## DoD-11, by convention
 
-- The trace gate at `cd623d7` passes; its only items without a test are 6.1 to 6.4, the cga3 preset's, after v1 (decision 0211). This unit added nine rows: three of 2.1 (the antigrade involution), two of 3.2 (the diagonal bulk and the blades in neither part), and three of 4.2 (the De Morgan law of ⟑, the associativity of all four products, the sign (−1)^n of the grade involution over the antiproducts).
+- The trace gate at `cd623d7` passes; its only items without a test are 6.1 to 6.4, the cga3 preset's, after v1 (decision 0211). This unit added eight rows: three of 2.1 (the antigrade involution), two of 3.2 (the diagonal bulk and the blades in neither part), and three of 4.2 (the De Morgan law of ⟑, the associativity of all four products, the sign (−1)^n of the grade involution over the antiproducts).
 - Golden values from `golden.py` (O2): the namespaces `duals` (3.3) and `mirrors` (4.4), compared with the library by "the four duals of every blade are the reference's images" (`dual_test.cpp`) and "a mirror maps every blade to the reference's image" (`transform_test.cpp`).
-- Section 8 (CONVENTIONS 1.16): "Dual sign" names "the duals of a point are planes with the dual-sign convention", which fails under left duals, closing the M3 gate's m10; "Conformal duals" names "the bulk dual of a conformal sphere is a round point", which fails under the wiki's Duals table (research note 0024 D1, D2). The flector row is unchanged. "Partner of a circle" stays with cga3.
+- Section 8 (CONVENTIONS 1.16): "Dual sign" names "the duals of a point are planes with the dual-sign convention", which fails under left duals, closing the M3 gate's m10; "Conformal duals" names "the bulk dual of a conformal sphere is a round point", which fails under the wiki's Duals table (research note 0024 D1, D2). The flector row adds "the rga3 Flector e412 reflects the plane (0, 0, 1, -1) to (0, 0, 1, 1)" (`test/presets/rga3/objects_test.cpp`), which the single-sign form fails by negating the plane. "Partner of a circle" stays with cga3.
 - Items stated as rules rather than values (4.5, 7.1, 7.2) keep their C++ tests of the rule, as O2 (b) chose.
 
 ## DoD-19, the catalogue

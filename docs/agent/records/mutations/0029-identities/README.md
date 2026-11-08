@@ -32,16 +32,18 @@ Two predictions failed, both for the same reason: the prediction counted only th
 | Mutant | Gap | Branch point (gcc-debug) | Tip (both presets) | Counts |
 | --- | --- | --- | --- | --- |
 | `gap_squares_doubled` | criterion 2 | killed by the dual suite (and by the transform suite only through its rational's overflow, corrected below); no case of `core.identities` failed | killed; in `core.identities` by the defining relation and the basis proof | only as a gap of `core.identities` |
-| `gap_offdiagonal_dropped` | criterion 2 | as above | as above | only as a gap of `core.identities` |
+| `gap_offdiagonal_dropped` | criterion 2 | killed by the dual suite and by the transform suite's guard against passing vacuously, `CHECK(accepted > 0)` in `transform_identities_test.cpp`: with the off-diagonal entries dropped, the two Witt forms are totally null, so no versor has λ ≠ 0 (not an identity's failure and not overflow, as the blind review found; under the bounded draws the guard still kills it, in both cases of that suite); no case of `core.identities` failed | killed; in `core.identities` by the defining relation and the basis proof | only as a gap of `core.identities` |
 | `gap_vector_contraction_doubled` | criteria 1, 2 | killed, `core.identities` among the killers | killed | no |
 | `gap_null_pair_wedge_sign` | criterion 5 | killed, `core.identities` among the killers | killed | no |
 | `gap_mixed_nulls_wedge_sign` | criterion 5 | survived | killed by `core.identities` (the antiproducts' and products' associativity, the product rules, the basis proof on the drawn forms) | **yes** |
 | `gap_floating_products_perturbed` | criterion 8 | survived | killed by `core.identities_rounding` | **yes** |
 
+**Criterion 12's second clause is not met as written.** It asks, for each gap, for a mutant that the branch point lets survive and the tip kills. That holds for two gaps (criteria 5 and 8), and for criterion 2 only when `core.identities` is judged alone. For the others, the argument below takes its place; the blind review found it sound, and recommended that later plans judge a gap's mutants by the suite the gap extends.
+
 Gaps without a counting mutant, and why:
 
 - **Criterion 1** (associativity of ⟑ and ∧) and **criterion 3** (the involutions over ∧, ⟇, and ∨): these laws follow from laws the branch point already tested. The complements turn ∧ into ∨ and ⟑ into ⟇ (the De Morgan laws, tested on every group), so ∧ is associative exactly when ∨ is, on the complemented layouts. The rules over the antiproducts follow from the grade involution over ⟑ and x̌ = (−1)^n x̂. So a mutant that breaks one of them breaks a law the old suites test. Part B's cases cover new layouts and give a direct proof on the full layouts (P); they add no kill power over the old suites.
-- **Criterion 4** (the basis proof): a fault on any pair of basis blades also shows in random multivectors whose coefficients on those blades are nonzero, which the draws make almost certain. The proof turns a sample into a proof (V1 kind 1); it does not add kills.
+- **Criterion 4** (the basis proof): the step from basis blades to all multivectors rests on each law being linear in each operand and on the implementation being bilinear in the coefficients, which straight-line kernels with no branch on a coefficient's value are. Then a fault on any pair of basis blades also shows in random multivectors whose coefficients on those blades are nonzero, which the draws make almost certain. The proof turns a sample into a proof (V1 kind 1); it does not add kills.
 - **Criterion 2** counts only if `core.identities` is judged alone: at the branch point, the dual and transform suites already killed both of its mutants.
 
 Each test case part B added kills at least one mutant on both presets. The products' associativity, the defining relation, the basis proof, and the floating set kill mutants of `identities.toml`. The mirror images kill `squares_doubled` in `faults.toml`. `new_cases.toml` covers the cases that no other mutant reached, all killed on both presets:

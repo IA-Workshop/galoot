@@ -24,8 +24,11 @@ edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', re
 expect = "killed"
 
 # Criterion 2: every off-diagonal entry read as zero in both loops, the
-# algebra of the metric's diagonal part, consistent in itself; on the
-# non-diagonal groups only the defining relation can see it.
+# algebra of the metric's diagonal part, consistent in itself, so of the
+# product identities only the defining relation can see it on the
+# non-diagonal groups. (The dual suite sees it through G, and the transform
+# suite's guard against passing vacuously fires on the Witt forms, which it
+# makes totally null.)
 [[mutant]]
 name = "gap_offdiagonal_dropped"
 selection = "identities"
