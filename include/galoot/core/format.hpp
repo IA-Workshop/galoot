@@ -174,7 +174,7 @@ template <galoot::core::metric_like Alg, galoot::core::blade_set Blades,
 struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
   /// Reads the format specification as std::formatter<T, char> reads it.
   template <class ParseContext>
-  constexpr typename ParseContext::iterator parse(ParseContext& context) {
+  constexpr ParseContext::iterator parse(ParseContext& context) {
     if constexpr (std::formattable<T, char>) {
       return scalar.parse(context);
     } else {
@@ -190,9 +190,8 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
 
   /// Writes x as described above.
   template <class FormatContext>
-  typename FormatContext::iterator
-  format(const galoot::core::mv<Alg, Blades, T>& x,
-         FormatContext& context) const {
+  FormatContext::iterator format(const galoot::core::mv<Alg, Blades, T>& x,
+                                 FormatContext& context) const {
     namespace detail = galoot::core::detail;
     constexpr std::size_t n =
         std::remove_cvref_t<decltype(Alg::value)>::generator_count;
@@ -226,9 +225,8 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
 
 private:
   template <class FormatContext>
-  typename FormatContext::iterator
-  write(const galoot::core::mv<Alg, Blades, T>& x,
-        FormatContext& context) const {
+  FormatContext::iterator write(const galoot::core::mv<Alg, Blades, T>& x,
+                                FormatContext& context) const {
     constexpr auto& names = galoot::core::detail::printed_names<Alg, Blades>;
     auto out = context.out();
     *out++ = '{';
