@@ -221,7 +221,8 @@ struct std::formatter<galoot::core::mv<Alg, Blades, T>, char> {
                          detail::TagNamesFault::not_a_blade) {
       static_assert(false, "format: an entry of the algebra tag's names is "
                            "not a blade of the algebra; write 1, or e and "
-                           "distinct indices from 1 to n, as in e41");
+                           "distinct indices from 1 to n, the number of "
+                           "generators, as in e41");
       return context.out();
     } else if constexpr (detail::tag_names_fault<Alg> ==
                          detail::TagNamesFault::named_twice) {
