@@ -192,3 +192,7 @@ Decision 0094 closed M0 and M1. WU5 (exact rational) moved from M1 to M5, ahead 
 ## Addendum, 2026-11-07: after the M2 and M3 gates
 
 M2 was accepted by the owner on 2026-11-02 (decision 0163). M3 (operation layer: WU9, WU10, WU11) was accepted by the owner on 2026-11-07 with the auditor's recommendations, with B1, MA1, and MA2 of the gate report stated (`records/gates/2026-11-04-M3.md`, decision 0182). The owner decisions of M3 are recorded in decisions 0182 to 0192: the operation inventory and the sixteen `*_layout` names are public interface (0187), and `dot` and `antidot` return multivectors (0191). Next: the fix of B1 (0184) and the split of `identities_test.cpp` (0189), then WU13 (plan 0021) in M4.
+
+## Addendum, 2026-11-08: after the M4 gate
+
+M4 (the `rga3` algebra as data: WU13, WU15, WU16, with the rotation-normalize and presets units) was accepted by the owner on 2026-11-08 with the auditor's findings and the rulings of decision 0215 (`records/gates/2026-11-08-M4-audit.md`, `records/gates/2026-11-08-wu6-wu8-audit.md`). The sufficiency of the V8 cases was accepted with its limits stated (decision 0215 item 3). The rga3 algebra now lives under `include/galoot/presets/` in namespace `galoot::presets::rga3` (decision 0213), and named algebras are layers on the core, with the cga3 preset (M6) shipping after v1 (decision 0211). Next: the evidence tools (plan 0026), the pool and runlog repairs, WU14, WU17 and M5 (WU12).
