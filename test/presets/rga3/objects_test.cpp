@@ -566,6 +566,37 @@ TEST_CASE("the rga3 Flector e412 reflects (1, 2, 3, 1) to (1, 2, -3, 1) with "
         Point{rational{-3}, rational{-3}, rational{7}, rational{1}});
 }
 
+// Reference: independent value: by hand, a reflected plane is the one
+//   spanned by the reflected points in the same order. The plane z = 1 is
+//   (0, 0, 1, -1), since a point lies on it when gz z + gw w = 0, and the
+//   points (0, 0, 1), (1, 0, 1), (0, 1, 1) span it running counterclockwise
+//   seen from the tip of its normal (0, 0, 1). The mirror z = 0, the rga3
+//   Flector holding 1 on e412, sends them to (0, 0, -1), (1, 0, -1),
+//   (0, 1, -1), which run counterclockwise seen from the same side with the
+//   same edge vectors, so the reflected plane z = -1 keeps the normal
+//   (0, 0, 1) and is (0, 0, 1, 1). The form -F ⟇ x ⟇ antireverse(F) without
+//   the grade involution gives its negation, (0, 0, -1, -1)
+TEST_CASE("the rga3 Flector e412 reflects the plane (0, 0, 1, -1) to "
+          "(0, 0, 1, 1)") {
+  using IntPlane = rga3::Plane<std::int64_t>;
+  using IntFlector = rga3::Flector<std::int64_t>;
+  constexpr IntFlector int_mirror{0, 0, 0, 0, 0, 0, 1, 0};
+  static_assert(core::transform(IntPlane{0, 0, 1, -1}, int_mirror) ==
+                IntPlane{0, 0, 1, 1});
+
+  using Plane = rga3::Plane<rational>;
+  using Flector = rga3::Flector<rational>;
+  const Flector mirror{rational{0}, rational{0}, rational{0}, rational{0},
+                       rational{0}, rational{0}, rational{1}, rational{0}};
+  const Plane g{rational{0}, rational{0}, rational{1}, rational{-1}};
+  CHECK(core::transform(g, mirror) ==
+        Plane{rational{0}, rational{0}, rational{1}, rational{1}});
+  const Plane single_sign = core::part<Plane>(-core::geometric_antiproduct(
+      core::geometric_antiproduct(mirror, g), core::antireverse(mirror)));
+  CHECK(single_sign ==
+        Plane{rational{0}, rational{0}, rational{-1}, rational{-1}});
+}
+
 // Reference: independent value: by hand, a motor's or a flector's
 //   transform is the outermorphism of its action on points, so rga3 Lines
 //   and Planes move as the Points that span them, and a reflected line or
