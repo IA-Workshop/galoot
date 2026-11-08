@@ -300,4 +300,13 @@ The W5 blind review (`records/reviews/2026-11-08-wu15-review.md`, Claude, agent,
 - **The hci reading's C7**, applied to CONVENTIONS 1.14 at the coordinator's direction: 7.2 reads "by its canonical name (1.1; the scalar is 1, 1.5)", and the 1.14 revision row says so. 7.2's closing "(Proposed)" was kept. In this document it is the evidence label, a choice with no external source, as on 1.1, 1.2, and 1.7. It does not mark a pending ratification.
 - **Decision numbers.** `develop` recorded its own decision 0211, so this branch's 0211 became 0212, with every reference in the records updated, before `develop` was merged in. That merge brought records only.
 
-Next: the merge into `develop`, by the coordinator, after the checks of section 7 at the final revision.
+The checks of section 7, from new empty trees at `649b0c4`, on a clean tree:
+- the full suite passed on gcc-debug, gcc-release, clang-debug, clang-release, clang-asan, and lint, 492 of 492 each, and on gcc-asan and `clang-measure`, 484 of 484 each (the presets' own exclusions);
+- `format-check`, the trace gate, and `tools/runlog check` passed;
+- wall time about 695 s in all, in the `gate:*` rows of `runs.tsv`.
+
+A first run at `0753412` failed only the lint build, on clang-tidy's `readability-use-concise-preprocessor-directives` at L5's `#if defined(__GLIBCXX__)`. It is now `#ifdef`, and the whole gate ran again from empty trees. That failed lint build left the job pool with 2 of its 23 slots lost. The pool was not restarted.
+
+W10 stands as measured before the review. The code in `include/` has not changed since `a335b7f`.
+
+Next: the merge into `develop`, by the coordinator.
