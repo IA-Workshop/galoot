@@ -29,6 +29,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 1.2 | R(p, q, r) squares p generators to +1, q to -1, and r to 0 | yes |
 | 1.3 | rigid(d) is R(d, 0, 1) | yes |
 | 1.4 | conformal(d) has null e(d+1) and e(d+2) with e(d+1) . e(d+2) = -1 | yes |
+| 1.4 | the change of basis sends e_A to the sum of det P[A, B] e'_B | no |
 | 1.5 | the antiscalar is e12...n with sign +1 | yes |
 | 1.6 | an oriented name lists generators in the order of their product | yes |
 | 1.7 | results are ordered by grade, then by index list | yes |

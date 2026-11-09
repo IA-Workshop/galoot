@@ -607,6 +607,207 @@ def conformal_signature(d):
     return g, p, [diag[i][i] for i in range(n)]
 
 
+def basis_change_images(d):
+    """The image of every blade of conformal(d) under the change of basis of
+    conformal_signature to R(d+1, 1, 0), and of every blade of R(d+1, 1, 0)
+    under its inverse, each as (blade, terms).
+
+    Route 1, clifford_reference.py: the image of e_A is the sum over the
+    blades B of its grade of det P[A, B] e_B, the minors by elimination, and
+    the inverse matrix by Gauss-Jordan elimination. Route 2,
+    conventions_check.py: the image of e_A is the wedge of the images of its
+    generators, and the inverse is the adjugate over det P with Leibniz
+    cofactors; its own copy of the rows of P must equal route 1's. The two
+    must agree on every image, and each map must undo the other on every
+    blade."""
+    n = d + 2
+    _, p, _ = conformal_signature(d)
+    p2 = conv.conformal_change(d)
+    agree(p2, p, f"the rows of the conformal({d}) change in both routes")
+    forward = ref.change_of_basis(p, n)
+    backward = ref.change_of_basis(ref.inverse(p), n)
+    forward2 = conv.change_images(p2)
+    backward2 = conv.change_images(conv.adjugate_inverse(p2))
+    for a in range(1 << n):
+        agree(ref.clean(forward[a]), forward2[a],
+              f"conformal({d}) change, image of {a:b}")
+        agree(ref.clean(backward[a]), backward2[a],
+              f"conformal({d}) inverse change, image of {a:b}")
+        agree(conv.apply_images(backward2, forward2[a]), {a: Fraction(1)},
+              f"conformal({d}) change undone on {a:b}")
+        agree(conv.apply_images(forward2, backward2[a]), {a: Fraction(1)},
+              f"conformal({d}) inverse change undone on {a:b}")
+    agree(forward2[(1 << n) - 1], {(1 << n) - 1: Fraction(-1)},
+          f"conformal({d}) change sends the antiscalar to its negation")
+
+    def ordered(x):
+        return sorted(x.items(),
+                      key=lambda kv: (ref.popcount(kv[0]), ref.indices(kv[0])))
+
+    return ([(a, ordered(forward2[a])) for a in range(1 << n)],
+            [(a, ordered(backward2[a])) for a in range(1 << n)])
+
+
+def change_image_row(a, terms, n, width):
+    padded = list(terms) + [(0, Fraction(0))] * (width - len(terms))
+    body = ", ".join(f"{{{rational_literal(Fraction(c))}, {mask_literal(m, n)}}}"
+                     for m, c in padded)
+    return f"{{{mask_literal(a, n)}, {len(terms)}, {{{{{body}}}}}}}"
+
+
+# The matrix representations of five diagonal signatures, with the matrices
+# as published: the complex 2 x 2 representation of the quaternions and its
+# restriction to the complex numbers (Wikipedia, "Quaternion", section
+# Matrix representations), the real 2 x 2 matrices of the split-quaternions
+# (Wikipedia, "Split-quaternion"), the Pauli matrices (Wikipedia, "Pauli
+# matrices"), and the gamma matrices in the Dirac basis, with
+# {gamma^mu, gamma^nu} = 2 eta^(mu nu) and eta of signature (+ - - -)
+# (Wikipedia, "Gamma matrices"). An entry is a Gaussian integer (re, im).
+# Generator e_k of the signature is the k-th matrix listed.
+GAUSS_I = (0, 1)
+GAUSS_MINUS_I = (0, -1)
+QUATERNION_I = ((GAUSS_I, 0), (0, GAUSS_MINUS_I))
+QUATERNION_J = ((0, 1), (-1, 0))
+SPLIT_I = ((0, 1), (-1, 0))
+SPLIT_J = ((0, 1), (1, 0))
+PAULI = (((0, 1), (1, 0)), ((0, GAUSS_MINUS_I), (GAUSS_I, 0)),
+         ((1, 0), (0, -1)))
+DIRAC = (
+    ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, -1, 0), (0, 0, 0, -1)),
+    ((0, 0, 0, 1), (0, 0, 1, 0), (0, -1, 0, 0), (-1, 0, 0, 0)),
+    ((0, 0, 0, GAUSS_MINUS_I), (0, 0, GAUSS_I, 0), (0, GAUSS_I, 0, 0),
+     (GAUSS_MINUS_I, 0, 0, 0)),
+    ((0, 0, 1, 0), (0, 0, 0, -1), (-1, 0, 0, 0), (0, 1, 0, 0)),
+)
+REPRESENTATIONS = (
+    # name of the golden values, title, (p, q, r), the generators' matrices
+    ("r010", "R(0, 1, 0) as the complex numbers", (0, 1, 0), (QUATERNION_I,)),
+    ("r020", "R(0, 2, 0) as the quaternions", (0, 2, 0),
+     (QUATERNION_I, QUATERNION_J)),
+    ("r110", "R(1, 1, 0) as the real 2 x 2 matrices", (1, 1, 0),
+     (SPLIT_J, SPLIT_I)),
+    ("r300", "R(3, 0, 0) by the Pauli matrices", (3, 0, 0), PAULI),
+    ("r130", "R(1, 3, 0) by the Dirac matrices", (1, 3, 0), DIRAC),
+)
+
+
+def gaussian(z):
+    return z if isinstance(z, tuple) else (z, 0)
+
+
+def matrix_times(a, b):
+    def mul(x, y):
+        (p, q), (r, s) = gaussian(x), gaussian(y)
+        return (p * r - q * s, p * s + q * r)
+    size = len(a)
+    out = []
+    for i in range(size):
+        row = []
+        for j in range(size):
+            re = im = 0
+            for k in range(size):
+                pr, pi = mul(a[i][k], b[k][j])
+                re, im = re + pr, im + pi
+            row.append((re, im))
+        out.append(tuple(row))
+    return tuple(out)
+
+
+def matrix_scaled(a, s):
+    return tuple(tuple((gaussian(x)[0] * s, gaussian(x)[1] * s) for x in row)
+                 for row in a)
+
+
+def matrix_identity(size):
+    return tuple(tuple((int(i == j), 0) for j in range(size))
+                 for i in range(size))
+
+
+def real_rank(matrices):
+    """The rank over the reals of matrices with Gaussian integer entries, each
+    read as the real vector of its real and imaginary parts."""
+    rows = [[Fraction(v) for row in m for x in row for v in gaussian(x)]
+            for m in matrices]
+    rank, col = 0, 0
+    width = len(rows[0])
+    while rank < len(rows) and col < width:
+        pivot = next((i for i in range(rank, len(rows)) if rows[i][col]), None)
+        if pivot is None:
+            col += 1
+            continue
+        rows[rank], rows[pivot] = rows[pivot], rows[rank]
+        for i in range(len(rows)):
+            if i != rank and rows[i][col]:
+                f = rows[i][col] / rows[rank][col]
+                rows[i] = [x - f * y for x, y in zip(rows[i], rows[rank])]
+        rank += 1
+        col += 1
+    return rank
+
+
+def representation_table(title, pqr, generators):
+    """Every product e_A e_B of two blades of R(p, q, r), computed by
+    multiplying the published matrices.
+
+    The blade e_A is the product of its generators' matrices in increasing
+    order (the generators are orthogonal, so the wedge is that product). The
+    published relations are checked first: each generator squares to its
+    square in R(p, q, r) times the identity and distinct generators
+    anticommute, which for the Pauli and Dirac matrices are the relations
+    their sources state; i^2 = j^2 = k^2 = ijk = -1 for the quaternions and
+    i^2 = -1, j^2 = k^2 = 1, ij = k = -ji for the split-quaternions are
+    checked where they apply. The 2^n blade matrices must be linearly
+    independent over the reals, so the representation is faithful and each
+    product has one expansion, which here is plus or minus one blade. The
+    table must equal clifford_reference.py's, a route with no matrices."""
+    n = sum(pqr)
+    size = len(generators[0])
+    squares = ref.r_pqr(*pqr)
+    one = matrix_identity(size)
+    for i in range(n):
+        for j in range(n):
+            anti = [[(x[0] + y[0], x[1] + y[1]) for x, y in zip(r1, r2)]
+                    for r1, r2 in zip(matrix_times(generators[i], generators[j]),
+                                      matrix_times(generators[j], generators[i]))]
+            agree(tuple(map(tuple, anti)),
+                  matrix_scaled(one, 2 * squares[i][j]),
+                  f"{title}: the anticommutator of generators {i + 1} and {j + 1}")
+    blades = []
+    for a in range(1 << n):
+        m = one
+        for i in range(n):
+            if a >> i & 1:
+                m = matrix_times(m, generators[i])
+        blades.append(m)
+    if pqr == (0, 2, 0):
+        k = blades[3]
+        agree(matrix_times(k, k), matrix_scaled(one, -1), f"{title}: k^2 = -1")
+        agree(matrix_times(blades[1], matrix_times(blades[2], k)),
+              matrix_scaled(one, -1), f"{title}: ijk = -1")
+    if pqr == (1, 1, 0):
+        # e1 is j and e2 is i, so e12 = j i = -k.
+        k = matrix_times(SPLIT_I, SPLIT_J)
+        agree(k, matrix_scaled(((1, 0), (0, -1)), 1),
+              f"{title}: ij = k as the source writes k")
+        agree(matrix_times(k, k), one, f"{title}: k^2 = 1")
+        agree(blades[3], matrix_scaled(k, -1), f"{title}: e12 = ji = -k")
+    agree(real_rank(blades), 1 << n, f"{title}: the blade matrices are "
+          "linearly independent over the reals")
+    reference = ref.Algebra(squares).table()
+    products = []
+    for a in range(1 << n):
+        for b in range(1 << n):
+            m = matrix_times(blades[a], blades[b])
+            found = [(s, c) for c in range(1 << n) for s in (1, -1)
+                     if matrix_scaled(blades[c], s) == m]
+            agree(len(found), 1, f"{title}: e_A e_B is one signed blade")
+            s, c = found[0]
+            agree({c: Fraction(s)}, reference[(a, b)],
+                  f"{title}: product {a:b} {b:b} against clifford_reference.py")
+            products.append((a, b, [(s, c)]))
+    return n, products
+
+
 def check_conformal_basis_against_conventions_check():
     before = len(conv.failures)
     conv.check_conformal_basis()
@@ -771,6 +972,21 @@ struct transform_image {
   mask blade;
   std::size_t size;
   std::array<term, @MIRROR_TERMS@> terms;
+};
+
+/// One term of an image with an exact rational coefficient.
+struct rational_term {
+  rational coefficient;
+  mask blade;
+};
+
+/// The image of a blade under a change of basis: its first `size` terms,
+/// ordered by grade and then by index list; the remaining terms are
+/// {{0, 1}, 0}.
+struct change_image {
+  mask blade;
+  std::size_t size;
+  std::array<rational_term, @CHANGE_TERMS@> terms;
 };
 
 // The rigid objects of rigid(3), by their coefficients on Lengyel's oriented
@@ -1319,9 +1535,17 @@ def generate():
                for name, title, squares, f in MIRROR_FORMS]
     mirror_width = max(len(terms) for *_, images in mirrors
                        for _, terms in images)
+    changes = [(d, *basis_change_images(d)) for d in range(1, MAX_N - 1)]
+    change_width = max(len(terms) for _, forward, backward in changes
+                       for _, terms in forward + backward)
+    representations = [(name, title, *representation_table(title, pqr, gens))
+                       for name, title, pqr, gens in REPRESENTATIONS]
+    for _, _, _, products in representations:
+        width = max(width, max(len(terms) for _, _, terms in products))
     out = (HEADER_START.replace("@PRODUCT_TERMS@", str(width))
            .replace("@IMAGE_TERMS@", str(image_width))
            .replace("@MIRROR_TERMS@", str(mirror_width))
+           .replace("@CHANGE_TERMS@", str(change_width))
            .replace("@MAX_JOINTS@", str(MAX_JOINTS))
            .replace("@CHAIN_POINTS@", str(CHAIN_POINTS)).splitlines())
 
@@ -1411,6 +1635,60 @@ def generate():
                    [f"{{{{{', '.join(rational_literal(q) for q in row)}}}}}"
                     for row in p])
     close_namespace(out, "conformal")
+
+    open_namespace(out, "basis_changes",
+                   "the change of basis sends e_A to the sum of det P[A, B] e'_B",
+                   "The change of basis of conformal(d) to R(d+1, 1, 0), for d "
+                   "from 1 to 4, with the rows of P as in the namespace "
+                   "conformal: e_i of conformal(d) goes to e'_i for i <= d, "
+                   "the origin e(d+1) to (e'(d+2) - e'(d+1)) / 2, and the "
+                   "point at infinity e(d+2) to e'(d+2) + e'(d+1), where "
+                   "e'(d+1) squares to +1 and e'(d+2) to -1. Each blade e_A "
+                   "goes to the sum over the blades e'_B of its grade of the "
+                   "minor det P[A, B] times e'_B. det P = -1, so "
+                   "e(d+1)(d+2) goes to -e'(d+1)(d+2) and the antiscalar to "
+                   "its negation. Per d: the image of every blade of "
+                   "conformal(d) (to_diagonal) and of every blade of "
+                   "R(d+1, 1, 0) under the inverse change (from_diagonal), "
+                   "indexed by mask. Each was computed from the minors of P "
+                   "and of its inverse by elimination, and again as the "
+                   "wedge of the images of the blade's generators with the "
+                   "inverse as the adjugate over det P; the two agree, and "
+                   "each map undoes the other on every blade.")
+    for d, forward, backward in changes:
+        n = d + 2
+        for kind, images in (("to_diagonal", forward),
+                             ("from_diagonal", backward)):
+            emit_array(out, "change_image", f"d{d}_{kind}",
+                       [change_image_row(a, terms, n, change_width)
+                        for a, terms in images])
+    close_namespace(out, "basis_changes")
+
+    open_namespace(out, "representations",
+                   "e_i e_j + e_j e_i = 2 g_ij",
+                   "Every product e_A e_B of two blades of five diagonal "
+                   "signatures, computed by multiplying published matrices: "
+                   "R(0, 1, 0) with e1 the quaternion i = [[i, 0], [0, -i]], "
+                   "the complex numbers; R(0, 2, 0) with e1 and e2 the "
+                   "quaternions i and j = [[0, 1], [-1, 0]] of the complex "
+                   "2 x 2 representation, so e12 is k; R(1, 1, 0) with e1 "
+                   "and e2 the split-quaternions j = [[0, 1], [1, 0]] and "
+                   "i = [[0, 1], [-1, 0]], the real 2 x 2 matrices, so e12 "
+                   "is -k; R(3, 0, 0) with e1, e2, e3 the Pauli matrices; "
+                   "and R(1, 3, 0) with e1 to e4 the Dirac matrices gamma^0 "
+                   "to gamma^3 in the Dirac basis, with eta of signature "
+                   "(+ - - -). A blade is the product of its generators' "
+                   "matrices in increasing order. Each set of matrices was "
+                   "checked to satisfy e_i e_j + e_j e_i = 2 g_ij and to be "
+                   "faithful: its 2^n blade matrices are linearly "
+                   "independent over the reals. Each table equals the one "
+                   "clifford_reference.py computes with no matrices. "
+                   "Products are listed in order of a, then b.")
+    for name, _, n, products in representations:
+        emit_array(out, "product", name,
+                   [product_row(a, b, terms, n, width)
+                    for a, b, terms in products])
+    close_namespace(out, "representations")
 
     open_namespace(out, "units",
                    "the antiscalar is e12...n with sign +1",
