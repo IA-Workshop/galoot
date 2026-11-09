@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+resigned_e123	gcc-debug	774ff66285a9	survived	killed	-	-	-	-	-	survived
