@@ -2341,7 +2341,7 @@ basis_change_rejects(basis_change_both_counts "${source_count}"
 # still be reported as singular.
 set(not_positive "basis_change: every denominator must be positive${semicolon} put a row's sign in its entries")
 set(dependent "basis_change: the rows are linearly dependent, so the change has no inverse${semicolon} the images of the source's generators must be independent")
-set(not_isometry "basis_change: the rows do not carry the target's form to the source's (P G' P^T is not G)${semicolon} check the rows, and that source and target are not swapped")
+set(not_isometry "basis_change: the change does not keep the inner products (P G' P^T is not G)${semicolon} check that row i writes e_i in the target's generators, and that source and target are not swapped")
 basis_change_rejects(basis_change_denominator_negative "${not_positive}")
 basis_change_rejects(basis_change_denominator_zero "${not_positive}")
 basis_change_rejects(basis_change_dependent "${dependent}")
@@ -2369,8 +2369,8 @@ basis_change_rejects(change_basis_not_a_change
   "change_basis: ${not_a_change}")
 basis_change_rejects(change_basis_back_not_a_change
   "change_basis_back: ${not_a_change}")
-set(not_in_source "change_basis: x is not in the change's source algebra${semicolon} give x the source's algebra tag, or use change_basis_back to map from the target")
-set(not_in_target "change_basis_back: y is not in the change's target algebra${semicolon} give y the target's algebra tag, or use change_basis to map from the source")
+set(not_in_source "change_basis: x is not in the change's source algebra${semicolon} use change_basis_back to map from the target, or check that the tag's source is x's algebra")
+set(not_in_target "change_basis_back: y is not in the change's target algebra${semicolon} use change_basis to map from the source, or check that the tag's target is y's algebra")
 foreach(case IN ITEMS target_operand other_algebra other_algebra_auto)
   basis_change_rejects(change_basis_${case} "${not_in_source}")
 endforeach()
