@@ -2354,10 +2354,19 @@ basis_change_rejects(basis_change_pairing_not_kept "${not_isometry}")
 
 # An exact value of the change's checks that does not fit coefficient_type:
 # the checks note it rather than stop, and report it as one error with its
-# message first.
-basis_change_rejects(basis_change_overflow
-  "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries"
+# message first; here in the check of the inner products.
+# The same in each other check that can overflow: the elimination (whose
+# pivots grow past the range though the inner products fit), the check that
+# the inverse inverts the rows, and the inverse's rows. Each must give the
+# overflow message, not the message of the check it stopped.
+set(overflow "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries")
+basis_change_rejects(basis_change_overflow "${overflow}"
   FORBID "${not_isometry}")
+basis_change_rejects(basis_change_overflow_elimination "${overflow}"
+  FORBID "${dependent}")
+basis_change_rejects(basis_change_overflow_inverse_check "${overflow}"
+  FORBID "basis_change: the computed inverse does not invert the rows")
+basis_change_rejects(basis_change_overflow_inverse_rows "${overflow}")
 
 # A template argument that is not a change tag, and an operand in the wrong
 # algebra: the target's or a third one, as a statement and into auto r.
