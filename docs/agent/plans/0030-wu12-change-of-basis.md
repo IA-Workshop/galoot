@@ -309,7 +309,9 @@ Size M to L: about 1.4M to 2.3M tokens with O1 (a). Machine time, inferred from 
 
 ## 18. Outcome
 
-In progress. Parts D, N, and A (a) to (g) are merged into the unit (`1818efe`); the owner's rulings on them are decisions 0219 and 0222.
+Done, 2026-11-09: merged into `develop` after the owner's final rulings (decision 0225: the STYLE S7 sentence for value-as-tag catch-alls; the safe value-initialization in `test/support/diagonalize.hpp`, `2438c88`), with the P9 matrix passing from new empty trees at `2438c88` (gate:all, all eight presets, `format-check`, the trace gate, `tools/runlog check`). The open items below stay for the units named; the kernels' form-A change for the GCC defect is its own core unit (decision 0225 item 2). The history of the unit follows.
+
+In progress (until the merge). Parts D, N, and A (a) to (g) are merged into the unit (`1818efe`); the owner's rulings on them are decisions 0219 and 0222.
 
 Parts C and E, 2026-11-09, by Claude (agent, Opus 5.5, implementer, cpp-expert role), on `feature/core-basis-change`:
 
