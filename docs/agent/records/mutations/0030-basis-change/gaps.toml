@@ -1,0 +1,99 @@
+# The gap mutants of plan 0030 section 8, at the tip: each changes a factory
+# of metric.hpp so that every algebra stays consistent with its own Gram
+# matrix, which the identity suites cannot see. A gap mutant counts when the
+# suites the gap extends let it survive at the branch point (the same
+# mutants in branch-point/gaps.toml, judged by the four identity suites
+# alone) and the same suites with core.basis_change_identities kill it here.
+# The predictions are gap-predictions.md, written before any run. Under
+# --runtime the kernel sources' static_asserts of det P and of the
+# contragredient condition, which the tests compute from the tag's rows and
+# the stored forms, become static_assert(true || ...), so that the
+# library's own check, or the run-time identities, must do the killing.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = [
+  "core_identities_test",
+  "core_identities_rounding_test",
+  "core_dual_identities_test",
+  "core_transform_identities_test",
+  "core_basis_change_identities_test",
+]
+labels = '^core\.(identities|identities_rounding|dual_identities|transform_identities|basis_change_identities)$'
+
+[[runtime]]
+file = "test/core/basis_change_conformal_test.cpp"
+anchor = 'static_assert(bc::'
+replacement = 'static_assert(true || bc::'
+count = 5
+
+[[runtime]]
+file = "test/core/basis_change_conformal3_test.cpp"
+anchor = 'static_assert(bc::'
+replacement = 'static_assert(true || bc::'
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_witt_test.cpp"
+anchor = 'static_assert(bc::'
+replacement = 'static_assert(true || bc::'
+count = 8
+
+[[runtime]]
+file = "test/core/basis_change_witt_test.cpp"
+anchor = 'static_assert(!bc::'
+replacement = 'static_assert(true || !bc::'
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_random_test.cpp"
+anchor = 'static_assert(bc::'
+replacement = 'static_assert(true || bc::'
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_random_test.cpp"
+anchor = 'static_assert(!bc::'
+replacement = 'static_assert(true || !bc::'
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_random_five_test.cpp"
+anchor = 'static_assert(bc::'
+replacement = 'static_assert(true || bc::'
+count = 2
+
+[[runtime]]
+file = "test/core/basis_change_checks.hpp"
+anchor = '  static_assert(dual_isometry<C>);'
+replacement = '  static_assert(true || dual_isometry<C>);'
+count = 1
+
+# conformal(d) with e(d+1) . e(d+2) = +1, a consistent algebra of another
+# form.
+[[mutant]]
+name = "conformal_pairing_positive"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [
+  { anchor = '''m.gram[D][D + 1] = -1;''', replacement = '''m.gram[D][D + 1] = 1;''' },
+  { anchor = '''m.gram[D + 1][D] = -1;''', replacement = '''m.gram[D + 1][D] = 1;''' },
+]
+expect = "killed"
+
+# R(p, q, r) with its -1 squares before its +1 squares.
+[[mutant]]
+name = "diagonal_negative_first"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [{ anchor = '''m.gram[i][i] = i < P ? 1 : -1;''', replacement = '''m.gram[i][i] = i < Q ? -1 : 1;''' }]
+expect = "killed"
+
+# from_gram doubling every entry off the diagonal, the nearest library
+# mutant to a Witt form of pairing 2.
+[[mutant]]
+name = "witt_pairing_doubled"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [{ anchor = '''m.gram[i][j] = gram[i][j];''', replacement = '''m.gram[i][j] = i == j ? gram[i][j] : 2 * gram[i][j];''' }]
+expect = "killed"

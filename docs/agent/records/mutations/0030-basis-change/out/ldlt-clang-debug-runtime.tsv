@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+pivot_swap_skipped	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form	-	-
+pairing_skipped	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form | two null vectors are paired, and the radical stays	-	-
+squarefree_scaling_skipped	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form | each square is scaled to the squarefree part of p q | two null vectors are paired, and the radical stays	-	-

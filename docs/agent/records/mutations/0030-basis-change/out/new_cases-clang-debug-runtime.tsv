@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+transpose_is_identity	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form | the matrix product, transpose, and inverse on hand values	-	-
+squarefree_part_last_prime_lost	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form | each square is scaled to the squarefree part of p q | the squarefree part and the integer square root on hand values | two null vectors are paired, and the radical stays	-	-
+swap_leaves_t	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	a zero pivot is swapped with the next nonzero square | diagonalize gives T G T^T = D on every listed form	-	-
