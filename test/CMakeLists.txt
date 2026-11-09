@@ -2352,14 +2352,11 @@ basis_change_rejects(basis_change_swapped "${not_isometry}")
 basis_change_rejects(basis_change_transposed "${not_isometry}")
 basis_change_rejects(basis_change_pairing_not_kept "${not_isometry}")
 
-# An exact value of the change's checks that does not fit coefficient_type
-# ends the constant evaluation that forms it, and the diagnostic shows the
-# message through the line of the failed assertion.
-galoot_add_compile_fail_test(NAME basis_change_overflow
-  MODULE core COMPONENT basis_change
-  SOURCE core/basis_change_overflow_fail.cpp
-  MESSAGE "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries"
-  REQUIRE "assertion_failed"
+# An exact value of the change's checks that does not fit coefficient_type:
+# the checks note it rather than stop, and report it as one error with its
+# message first.
+basis_change_rejects(basis_change_overflow
+  "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries"
   FORBID "${not_isometry}")
 
 # A template argument that is not a change tag, and an operand in the wrong
@@ -2369,6 +2366,11 @@ basis_change_rejects(change_basis_not_a_change
   "change_basis: ${not_a_change}")
 basis_change_rejects(change_basis_back_not_a_change
   "change_basis_back: ${not_a_change}")
+# The change's value, as conformal_change<3>(), given where its tag belongs.
+set(value_as_tag "the template argument is a value, not a change tag${semicolon} put it in a tag, as in struct cga3_to_r410 { using source = cga3${semicolon} using target = r410${semicolon} static constexpr auto value = conformal_change<3>()${semicolon} }")
+basis_change_rejects(change_basis_value_as_tag "change_basis: ${value_as_tag}")
+basis_change_rejects(change_basis_back_value_as_tag
+  "change_basis_back: ${value_as_tag}")
 set(not_in_source "change_basis: x is not in the change's source algebra${semicolon} use change_basis_back to map from the target, or check that the tag's source is x's algebra")
 set(not_in_target "change_basis_back: y is not in the change's target algebra${semicolon} use change_basis to map from the source, or check that the tag's target is y's algebra")
 foreach(case IN ITEMS target_operand other_algebra other_algebra_auto)
