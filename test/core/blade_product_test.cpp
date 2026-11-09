@@ -581,6 +581,33 @@ TEST_CASE("In a diagonal form a product of blades is one signed term") {
   });
 }
 
+// Reference: independent value: e_i e_j + e_j e_i = 2 g_ij, satisfied by
+//   the published matrices that represent five algebras faithfully, so the
+//   product of every pair of blades, each blade the product of its
+//   generators' matrices in increasing order, equals the library's, for
+//   R(0, 1, 0) as the complex numbers, with e1 = diag(i, -i), R(0, 2, 0) as
+//   the quaternions, with e1 and e2 the quaternions i and j of the complex
+//   2 x 2 representation, so that e12 is k, R(1, 1, 0) as the real 2 x 2
+//   matrices, with e1 and e2 the split-quaternions j and i, R(3, 0, 0) with
+//   the Pauli matrices, and R(1, 3, 0) with the Dirac matrices gamma^0 to
+//   gamma^3 in the Dirac basis, of signature (+ - - -), the generator of
+//   square +1 first as R(p, q, r) orders them, where the golden tables
+//   multiply those matrices, check that their 2^n blade matrices are
+//   linearly independent, and agree with the reference's tables computed
+//   without matrices
+TEST_CASE("The products of five algebras equal their matrix representations") {
+  CHECK(table_mismatches(core::R<0, 1, 0>(), golden::representations::r010) ==
+        0);
+  CHECK(table_mismatches(core::R<0, 2, 0>(), golden::representations::r020) ==
+        0);
+  CHECK(table_mismatches(core::R<1, 1, 0>(), golden::representations::r110) ==
+        0);
+  CHECK(table_mismatches(core::R<3, 0, 0>(), golden::representations::r300) ==
+        0);
+  CHECK(table_mismatches(core::R<1, 3, 0>(), golden::representations::r130) ==
+        0);
+}
+
 // Reference: independent value: e_i e_j + e_j e_i = 2 g_ij, by the golden
 //   product tables of rigid(3), conformal(3), a degenerate form, and a seeded
 //   random form, which the reference scripts validate by the defining

@@ -2266,12 +2266,15 @@ set_property(TEST core.transform_identities APPEND PROPERTY LABELS
 # core.basis_change: the change of basis of basis_change.hpp: what a change
 # tag must be, the image of every blade under conformal_change<D>() and its
 # inverse against the golden values, hand values, what depends on the basis,
-# and, in basis_change_scalars_test.cpp, the scalar types it serves, with
-# each floating result checked against its exact value or its forward error
-# bound from the tracking scalar.
+# in basis_change_scalars_test.cpp, the scalar types it serves, with each
+# floating result checked against its exact value or its forward error bound
+# from the tracking scalar, and, in basis_change_validation_test.cpp, the
+# published null pair of the conformal model and the Witt basis with its
+# anticommutation relations.
 galoot_add_test(MODULE core COMPONENT basis_change)
 target_sources(core_basis_change_test PRIVATE
-  core/basis_change_scalars_test.cpp)
+  core/basis_change_scalars_test.cpp
+  core/basis_change_validation_test.cpp)
 target_link_libraries(core_basis_change_test PRIVATE galoot_golden
   galoot_test_support)
 
