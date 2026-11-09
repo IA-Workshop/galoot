@@ -90,8 +90,12 @@ struct diagonal_form {
 template <std::size_t N, class Entry>
 [[nodiscard]] constexpr diagonal_form<N>
 diagonalize(const std::array<std::array<Entry, N>, N>& gram) {
-  rational_matrix<N> a{};
-  rational_matrix<N> t{};
+  // Value-initialized with (), not {}: GCC 16.2.1 can give a {} of an array
+  // of a type whose zero is not all zero bits, such as the rational, the
+  // wrong value at run time when a constant evaluation of the same
+  // declaration in the program has written into it first.
+  rational_matrix<N> a = rational_matrix<N>();
+  rational_matrix<N> t = rational_matrix<N>();
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       a[i][j] = rational{static_cast<std::int64_t>(gram[i][j])};
@@ -182,7 +186,8 @@ diagonalize(const std::array<std::array<Entry, N>, N>& gram) {
 template <std::size_t N>
 [[nodiscard]] constexpr rational_matrix<N>
 multiply(const rational_matrix<N>& x, const rational_matrix<N>& y) {
-  rational_matrix<N> out{};
+  // () rather than {}, for the reason diagonalize gives.
+  rational_matrix<N> out = rational_matrix<N>();
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       for (std::size_t k = 0; k < N; ++k) {
@@ -197,7 +202,8 @@ multiply(const rational_matrix<N>& x, const rational_matrix<N>& y) {
 template <std::size_t N>
 [[nodiscard]] constexpr rational_matrix<N>
 transpose(const rational_matrix<N>& x) {
-  rational_matrix<N> out{};
+  // () rather than {}, for the reason diagonalize gives.
+  rational_matrix<N> out = rational_matrix<N>();
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       out[i][j] = x[j][i];
@@ -213,7 +219,8 @@ transpose(const rational_matrix<N>& x) {
 /// aborts, with a message.
 template <std::size_t N>
 [[nodiscard]] constexpr rational_matrix<N> inverse(rational_matrix<N> x) {
-  rational_matrix<N> out{};
+  // () rather than {}, for the reason diagonalize gives.
+  rational_matrix<N> out = rational_matrix<N>();
   for (std::size_t i = 0; i < N; ++i) {
     out[i][i] = rational{1};
   }
