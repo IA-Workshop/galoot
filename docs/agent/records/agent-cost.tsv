@@ -197,3 +197,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0031	implementer merge steps (cumulative, replaces earlier 530263 figure)	opus	551312			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	part A mathematics (a to g)	opus	502235	153	2526	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	small	math-tools replay verify and run.sh branch	sonnet	46243	8	102	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	part B test author	opus	571561	219	3555	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	parts C and E implementer	opus	583917	248	4635	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	hci reader	opus	201901	46	602	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	Sage cross-check	opus	202657	62	758	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
