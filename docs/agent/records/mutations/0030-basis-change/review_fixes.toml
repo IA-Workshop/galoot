@@ -1,0 +1,64 @@
+# The blind review's two surviving mutants (its mutants.toml, F1 and F2),
+# run again after the tests that answer them, and three edits of the new
+# expected factors of N4's checks: each must now be killed on both
+# presets. Run at the tip only.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[selection.agreement]
+targets = ["core_basis_change_identities_test"]
+labels = '^core\.basis_change_identities$'
+
+# F1: the isometry check compares only the squares. The reviewer's mutant,
+# unchanged; core.basis_change_pairing_not_kept must kill it.
+[[mutant]]
+name = "isometry_diagonal_only"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      if (left != right) {''', replacement = '''      if (i == j && left != right) {''' }]
+expect = "killed"
+killers = ["core.basis_change_pairing_not_kept"]
+
+# F2: the pivot's sign left out of the inverse's rows, so a denominator can
+# be negative. The reviewer's mutant, unchanged; the integer case of
+# change_basis_back must kill it.
+[[mutant]]
+name = "inverse_sign_not_moved"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const coefficient_type sign = e.pivot < 0 ? -1 : 1;''', replacement = '''  const coefficient_type sign = e.pivot < 0 ? 1 : 1;''' }]
+expect = "killed"
+
+# N4: the expected factor of transform by a flector, of the projection, and
+# of the antiprojection made 1/d, which differs from 1/d^2 for every change
+# with d other than 1: det P = -1 for the conformal and Witt changes, 2 for
+# the doubled rigid(3) change.
+[[mutant]]
+name = "flector_transform_factor_one_over_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                            rational{1} / (d * d),
+                            core::transform(x_image, h_image)) == "");''', replacement = '''                            rational{1} / d,
+                            core::transform(x_image, h_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "project_factor_one_over_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                            rational{1} / (d * d),
+                            core::project(x_image, h_image)) == "");''', replacement = '''                            rational{1} / d,
+                            core::project(x_image, h_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiproject_factor_one_over_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                            rational{1} / (d * d),
+                            core::antiproject(h_image, x_image)) == "");''', replacement = '''                            rational{1} / d,
+                            core::antiproject(h_image, x_image)) == "");''' }]
+expect = "killed"

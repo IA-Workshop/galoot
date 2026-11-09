@@ -59,3 +59,15 @@ The fourth row of the coverage table, the test-side LDLᵀ, has no counting muta
 ## The seed campaign (criterion 14)
 
 Both new randomized programs, `core_basis_change_test` (its scalar cases draw from doctest's seed) and `core_basis_change_identities_test` (the kernel groups), ran with `--rand-seed=1` to `50` on gcc-debug at `752fdea`, each run through `tools/timed --log seeds/runs.tsv` with the step `seed`, on 2026-11-09 from 15:22:19 to 15:22:34 UTC. All 100 runs passed (exit 0), so no failure became a fixed test or a defect report. Median wall times 0.056 s and 0.172 s. The draws are integers from −3 to 3 for the kernel groups, inside the overflow bound of research note 0026 section F2 (provably safe up to ±9 for every traced computation), so no seed is expected to overflow the test rational; the campaign supports that, as a sample (V9).
+
+## After the blind review
+
+The blind review (`records/reviews/2026-11-09-wu12-blind-review.md`) found two survivors of its own spec, F1 and F2, and noted untested claims, N4. Four test commits answer them: `0c5f0e0` (the compile-fail test `core.basis_change_pairing_not_kept`), `cc923ac` (`change_basis_back` over `std::int64_t` on e′1 e′2 e′3), `a83eec3` (transform by a flector, and the projection and antiprojection, with 1/d², in `check_transform`), and `9cd86f0`, which corrects `a83eec3`: the antiprojection of a vector onto a hyperplane is zero once n ≥ 3 (x ∨ H☆ has grade 2 − n), so it now takes the hyperplane's antiprojection onto the vector. A first run of the antiprojection's factor mutant at `a83eec3` was killed only by the one-mode Witt change (n = 2), which showed the zero; its rows were replaced by the run at `9cd86f0`.
+
+`review_fixes.toml` runs the reviewer's two survivors unchanged and three edits of the new expected factors, at `9cd86f0` (the records only dirty) on both presets: all 5 killed on each (`out/review_fixes-<preset>.tsv`).
+
+| Mutant | Killed by, both presets |
+| --- | --- |
+| `isometry_diagonal_only` (F1) | `core.basis_change_pairing_not_kept`, the spec's declared killer |
+| `inverse_sign_not_moved` (F2) | the rejection `change_basis_back: the change divides by an integer …` firing at compile time in `basis_change_scalars_test.cpp`, from the new integer call |
+| `flector_transform_factor_one_over_d`, `project_factor_one_over_d`, `antiproject_factor_one_over_d` | the three cases that call `check_transform` (every change there has d = −1 or 2, where 1/d and 1/d² differ) |
