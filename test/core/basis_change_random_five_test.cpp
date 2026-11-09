@@ -12,6 +12,7 @@
 
 #include "basis_change_checks.hpp"
 #include "basis_change_forms.hpp"
+#include <support/rational.hpp>
 
 namespace {
 
@@ -33,6 +34,11 @@ using random_7 = bc::to_diagonal_tag<core::from_gram({
     {-2, -1, -3, -2, 2},
 })>;
 
+// Both changes are lower triangular, so det P is the product of their
+// diagonals: (1/3)(1/10)(4/47)(1/11) = 2/7755 and (2/3)(1/2)(2)(5/12) = 5/18.
+static_assert(bc::determinant_of<random_3> == test_support::rational{2, 7755});
+static_assert(bc::determinant_of<random_7> == test_support::rational{5, 18});
+
 template <class C>
 void check_all(std::mt19937_64& source, const char* name) {
   constexpr auto v = core::of_grade<5, 1>;
@@ -42,15 +48,21 @@ void check_all(std::mt19937_64& source, const char* name) {
   bc::check_products<C, b, b>(source, name);
   bc::check_round_trips<C, v>(source, name);
   bc::check_round_trips<C, b>(source, name);
+  bc::check_agreement<C, v, v>(source, name);
+  bc::check_agreement<C, v, b>(source, name);
+  bc::check_agreement<C, b, b>(source, name);
 }
 
 } // namespace
 
 // Reference: identity: a change P with P G' P^T = G is an algebra map, so
 //   change_basis(x y) = change_basis(x) change_basis(y) and the same for the
-//   wedge, and the inverse change undoes it both ways, on random integer
-//   vectors and bivectors for the changes of the random forms 3 and 7 to
-//   their diagonal counterparts, whose denominators reach 7755 and 12
+//   wedge, and the inverse change undoes it both ways, and it preserves the
+//   dot, the reverse, the antireverse, and the grade involution, and scales
+//   the antiwedge by 1 / det P and the bulk duals by det P, on random
+//   integer vectors and bivectors for the changes of the random forms 3 and
+//   7 to their diagonal counterparts, whose denominators reach 7755 and 12
+//   and whose det P are 2/7755 and 5/18
 TEST_CASE("the dense random forms' changes to their diagonals are "
           "isomorphisms") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;

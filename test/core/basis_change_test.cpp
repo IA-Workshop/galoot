@@ -20,11 +20,15 @@
 #include <galoot/core/basis_change.hpp>
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
+#include <galoot/core/dual.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
+#include <galoot/core/product.hpp>
+#include <galoot/core/unary.hpp>
 
 #include <doctest/doctest.h>
 
+#include "basis_change_forms.hpp"
 #include <reference/golden.hpp>
 #include <support/rational.hpp>
 
@@ -95,6 +99,22 @@ struct rga3_doubled {
       },
       {1, 1, 1, 1});
 };
+
+// Random form 1, [[2, 0, -3], [0, 1, -3], [-3, -3, -2]], and its change to
+// its exact diagonal counterpart diag(2, 1, -62), whose rows are e1 = e'1,
+// e2 = e'2, and e3 = (-3 e'1 - 6 e'2 + e'3) / 2.
+using random_1 = galoot_test::basis_changes::to_diagonal_tag<core::from_gram({
+    {2, 0, -3},
+    {0, 1, -3},
+    {-3, -3, -2},
+})>;
+static_assert(random_1::value == core::from_rows(
+                                     {
+                                         {1, 0, 0},
+                                         {0, 1, 0},
+                                         {-3, -6, 1},
+                                     },
+                                     {1, 1, 2}));
 
 // Types that are not change tags: an algebra tag, a tag without a target, a
 // tag whose value is a metric, and a tag whose value cannot be read in a
@@ -371,4 +391,75 @@ TEST_CASE("changes with a determinant of 2 and of -1 on hand values") {
       Diagonal{rational{0}, rational{0}, rational{1}, rational{0}});
   CHECK(value_on(back_second, 0b01) == rational{1});
   CHECK(value_on(back_second, 0b10) == rational{-1, 2});
+}
+
+// Reference: proof: in conformal(3) the bulk of the origin is G e4 = -e5,
+//   but its image (e'5 - e'4) / 2 has the bulk (-e'5 - e'4) / 2 in
+//   R(4, 1, 0), which maps back to -e5 / 2, and likewise the weight of e4 is
+//   e5 against e5 / 2, and its right and left complements, equal for a
+//   vector when n = 5, are -e1235 against e1235 / 2, since by way of the
+//   target they are (e'1234 + e'1235) / 2, the image of e1235 / 2, so each
+//   of these depends on the basis it is computed in, and the test fails if
+//   the change preserved it
+TEST_CASE("the bulk, the weight, and the complements depend on the basis") {
+  using Origin = core::mv<cga3, core::blades<cga3, "e4">, rational>;
+  const Origin origin{rational{1}};
+  const auto there = core::change_basis<cga3_to_r410>(origin);
+  constexpr core::mask_t e5 = 0b10000;
+  constexpr core::mask_t e1235 = 0b10111;
+
+  CHECK(value_on(core::bulk(origin), e5) == rational{-1});
+  CHECK(value_on(core::change_basis_back<cga3_to_r410>(core::bulk(there)),
+                 e5) == rational{-1, 2});
+  CHECK(value_on(core::weight(origin), e5) == rational{1});
+  CHECK(value_on(core::change_basis_back<cga3_to_r410>(core::weight(there)),
+                 e5) == rational{1, 2});
+  CHECK(value_on(core::right_complement(origin), e1235) == rational{-1});
+  CHECK(value_on(core::change_basis_back<cga3_to_r410>(
+                     core::right_complement(there)),
+                 e1235) == rational{1, 2});
+  CHECK(value_on(core::left_complement(origin), e1235) == rational{-1});
+  CHECK(value_on(
+            core::change_basis_back<cga3_to_r410>(core::left_complement(there)),
+            e1235) == rational{1, 2});
+}
+
+// Reference: independent value: for random form 1 and its change to
+//   diag(2, 1, -62), whose contragredient does not keep the inner
+//   products, e12 ⟇ e12 is -2 e123 in the form and -124 e123 by way of the
+//   diagonal, the antidot of e12 with itself likewise, and the weight dual
+//   of e3 is 2 e12 - 6 e13 + 3 e23 against -2510 e12 - 744 e13 + 186 e23,
+//   computed exactly from the definitions apart from the library, so the
+//   antiproduct family is not preserved by this change and the test fails
+//   if it were
+TEST_CASE("the antiproduct family depends on the basis for a diagonalizing "
+          "change") {
+  using Bivector = core::mv<random_1::source,
+                            core::blades<random_1::source, "e12">, rational>;
+  using Vector = core::mv<random_1::source,
+                          core::blades<random_1::source, "e3">, rational>;
+  const Bivector e12{rational{1}};
+  const Vector e3{rational{1}};
+  const auto e12_image = core::change_basis<random_1>(e12);
+  const auto e3_image = core::change_basis<random_1>(e3);
+  constexpr core::mask_t e123 = 0b111;
+
+  CHECK(value_on(core::geometric_antiproduct(e12, e12), e123) == rational{-2});
+  CHECK(value_on(core::change_basis_back<random_1>(
+                     core::geometric_antiproduct(e12_image, e12_image)),
+                 e123) == rational{-124});
+  CHECK(value_on(core::antidot(e12, e12), e123) == rational{-2});
+  CHECK(value_on(core::change_basis_back<random_1>(
+                     core::antidot(e12_image, e12_image)),
+                 e123) == rational{-124});
+
+  const auto here = core::weight_dual(e3);
+  CHECK(value_on(here, 0b011) == rational{2});
+  CHECK(value_on(here, 0b101) == rational{-6});
+  CHECK(value_on(here, 0b110) == rational{3});
+  const auto by_way_of =
+      core::change_basis_back<random_1>(core::weight_dual(e3_image));
+  CHECK(value_on(by_way_of, 0b011) == rational{-2510});
+  CHECK(value_on(by_way_of, 0b101) == rational{-744});
+  CHECK(value_on(by_way_of, 0b110) == rational{186});
 }

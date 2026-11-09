@@ -286,8 +286,8 @@ TEST_CASE("each form's change to its diagonal counterpart is an "
 //   algebra map, here conformal_change<d>() from conformal(d), with its null
 //   pair e(d+1) . e(d+2) = -1, to R(d+1, 1, 0), d = 1 to 4, of determinant
 //   -1, the Witt changes e(2j-1) = (e'j + e'(m+j)) / 2,
-//   e(2j) = e'j - e'(m+j) of one and two modes to R(m, m, 0), of
-//   determinant -1 and 1, and rigid(3) to itself with e4 = 2 e'4, of
+//   e(2j) = e'j - e'(m+j) of one and two modes to R(m, m, 0), each of
+//   determinant -1, and rigid(3) to itself with e4 = 2 e'4, of
 //   determinant 2, each checked on every blade and pair of blades
 TEST_CASE("the conformal, Witt, and doubled changes are isomorphisms") {
   check("conformal(1)", core::conformal<1>(), core::R<2, 1, 0>(),
