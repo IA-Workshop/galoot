@@ -1,6 +1,6 @@
 # 0031 WU14 follow-ups: the generator-rule family, two off-axis degenerate forms, the catalogue test's label, and the proofs note
 
-- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), planner and implementer with doctest-expert and math-expert judgement, from `develop` at `ba12e5a`. Not merged by its author; a blind review follows (W5).
+- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), planner and implementer with doctest-expert and math-expert judgement, from `develop` at `ba12e5a`. Implemented 2026-11-09; awaiting the blind review (W5). Not merged by its author.
 - Source of scope: decision 0218 items 1, 2, 3, 5, and 6 (the owner's rulings on the math-tools and knowledge-base survey and the WU14 gate items), on the coordinator's instruction. Plan 0030 is WU12's, being written on `records/plan-wu12`; this plan takes 0031.
 - Branches, from `develop` after this claim (W7):
   - `feature/wu14-follow-ups`, worktree `.claude/worktrees/wu14-follow-ups`: the unit. Only this branch merges into `develop`.
@@ -91,4 +91,40 @@ Planner and implementer, Opus high: 250k to 400k tokens. Blind review: 100k to 1
 
 ## 11. Outcome
 
-In progress.
+State at the end of the implementer's session (2026-11-09 UTC): every part of section 5 is done; the blind review has not run, and the unit is not merged. Next step: the blind review of section 8, of the diff from `774ff66` to the tip.
+
+| Commit | What | Kind (W9) |
+| --- | --- | --- |
+| `45cf6cb` | cherry-picked with `-x` from `5975ca4`: the two forms in `for_each_signature`, the identity group `forms_off_axis`, the dual suite's `off_axis_forms` | test, passing when committed |
+| `adfabd6` | cherry-picked with `-x` from `5388177`: the generator rule and the recursion, two cases of `core.identities` | test, passing when committed |
+| `a5c2608` | cherry-picked with `-x` from `1df105b`: the tests branch's run rows | record |
+| `7cc961e` | `tests.messages_pinned` carries `core.headers` | build description |
+| `98fd0c2`, `6e34e67` | the mutation spec, and its recursion mutant narrowed to n ≤ 4 | record |
+| `0e7c247` | the mutants' rows and README, the seed campaign, the coverage table's K9 and family row, research note 0025 | record |
+| `53aa46d` | the compile cost campaign | record |
+
+Results:
+
+- **Criteria 1 and 2.** Both cases pass on gcc-debug and clang-debug over the 41 full-layout forms (82 assertions, 0.17 s together on gcc-debug).
+- **Criterion 3.** No new product is built: the checks multiply only full layouts, whose products the basis-blade case already builds. The cost (criterion 7) grows only where forms or checking code were added.
+- **Criterion 4.** The forms are appended as section 1 item 4 reads; the existing cases pass with them at seed 0 and at seeds 1 to 50 (`records/mutations/0031-wu14-follow-ups/seeds/`).
+- **Criterion 5.** `ctest -L '^core\.headers$' -N` lists `tests.messages_pinned`, `core.bare_compile`, and `core.include_scan` on both presets.
+- **Criterion 6.** `resigned_e12` survives `core.identities` at the branch point on both compilers and is killed at the tip by both new cases; `recursion_contraction_doubled` is killed at both points, at the tip with the recursion case among its failed cases. The first run of the latter, doubled at every n, was unjudged on clang-debug (the dense forms of five exceeded Clang's constant-evaluation limit); narrowed to n ≤ 4, both compilers judge it. Record: `records/mutations/0031-wu14-follow-ups/README.md`.
+- **Criterion 7.** `core_identities_test`'s sources +3.1% (GCC) and +2.2% (Clang) in retired instructions; `records/performance/wu14-follow-ups-cost/`.
+- **Criterion 8.** 100 of 100 seed runs pass.
+- **Research note 0025.** The harness on math-tools `develop` `d698d34` against Galoot's headers at `ba12e5a`: 15 of 15 obligations pass. ga-P7 and ga-P11 failed only their replay in the first run, because the manifest's replay command reads the opam root from `$PWD` after a `cd` when `MT_SRC` is unset; with `MT_SRC` set both pass, replay included. The whole run takes about 13 minutes, not three: logic-E20's 32 mutants take 492 s.
+- **Checks at the tip `53aa46d`:** `core.identities`, `core.dual_identities`, `core.blade_product`, `core.plan`, every `tests.*` test, and the `core.headers` selection on gcc-debug and clang-debug (12 of 12 each); the lint build of the four programs (no diagnostic); `format-check`; the trace gate (only 6.1 to 6.4 without a test); `tools/runlog check`. The full P9 matrix is the merge's.
+
+Departures and notes beyond section 1:
+
+- One probe run of `core_identities_test -d` (to read the new cases' durations) ran outside `tools/timed`; the harness ran outside it by design (section 1 item 8).
+- The draws are unchanged by construction (section 1 item 4), not by a comparison run.
+
+Open items for the owner, with the recommendation:
+
+- **O1. The governance sentence for criterion 12 (decision 0218 item 5).** No plan template exists, so the sentence would go into WORKFLOW W3, after "the evidence it will produce": "Where a plan adds tests to close a gap in an existing suite, it judges the gap's mutants by that suite: a mutant counts for the gap when the suite without the new tests lets it survive and the suite with them kills it, and a mutant written for a new test counts when that test is among those it fails." Options: (a) add it to W3; (b) add it to VVUQ V2 instead, as a rule about what a test shows; (c) leave it in each plan's criteria. Recommended: (a); it is guidance for plans, and (c) relies on each planner remembering decision 0218.
+- **O2. The family at the structure layer.** `for_each_signature` reaches n = 6 and the Witt and random forms the identity groups do not hold on every blade; three conditions over `blade_product` directly would cost 4^n checks per form (4,096 at n = 6). Options: (a) a small follow-up adding them to `blade_product_test.cpp`; (b) leave the family at n ≤ 5. Recommended: (a), after WU12's plan is settled, since it touches no file WU12 needs.
+- **O3. The math-tools manifest's replay path.** Options: (a) a math-tools agent sets the opam root before the `cd` in the ga-P7 and ga-P11 replay commands; (b) document that `MT_SRC` must always be exported. Recommended: (a); a run from the main checkout should not need the variable.
+- **O4. The readings of section 1 items 4 and 5** (the forms in lists of their own, checked last, rather than appended to `up_to_three` and `small_forms`; none in the forms of four). Recommended: confirm; appending to the existing lists would change every later group's draws, which the ruling excludes.
+
+Agent cost: recorded by the coordinator from the harness report (decision 0215).
