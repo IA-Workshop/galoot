@@ -993,6 +993,22 @@ endforeach()
 galoot_add_test(MODULE support COMPONENT tracked)
 target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
 
+# support.tracked_rejects_<case>: a double that the rational cannot hold, by
+# its magnitude or its denominator, aborts exact_rational at run time with
+# its message.
+add_executable(support_tracked_exact_rational_fail
+  support/tracked_exact_rational_fail.cpp)
+target_link_libraries(support_tracked_exact_rational_fail PRIVATE
+  galoot_test_support)
+foreach(case IN ITEMS magnitude_two_62 magnitude_above denominator_two_63)
+  add_test(NAME support.tracked_rejects_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "exact_rational: the double does not fit the rational"
+      -- $<TARGET_FILE:support_tracked_exact_rational_fail> ${case})
+  set_tests_properties(support.tracked_rejects_${case} PROPERTIES
+    LABELS "support;support.tracked")
+endforeach()
+
 # core.rounding: every product, map, sum, scaling, and copy over double
 # within its forward error bound of the exact value from the golden tables,
 # with the bound taken from a run over the tracking scalar.

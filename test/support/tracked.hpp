@@ -202,7 +202,16 @@ inline constexpr int rounding_margin = 2;
     significand /= 2;
     ++power;
   }
-  if (power > 8 || power < -62) {
+  // The value is significand 2^power. With power < 0 its magnitude is below
+  // 2^53, so only the denominator 2^-power can be too large. With power >= 0
+  // the denominator is 1, and the magnitude is below 2^62 exactly when
+  // |significand| <= (2^62 - 1) >> power; power is checked first so that the
+  // shift stays below the width of the type.
+  const std::int64_t below_two_62 = power_of_two(62) - 1;
+  const bool fits = power < 0 ? power >= -62
+                              : power <= 62 && detail::magnitude(significand) <=
+                                                   (below_two_62 >> power);
+  if (!fits) {
     detail::rational_failed(
         "exact_rational: the double does not fit the rational");
   }

@@ -96,6 +96,28 @@ TEST_CASE("conversions between rationals and doubles round to nearest") {
         rational{test_support::power_of_two(53) + 2});
 }
 
+// Reference: contract: exact_rational accepts every double with a
+//   denominator of at most 2^62 and a magnitude below 2^62, so the integers
+//   1024 = 2^10 and 511 2^9, the largest power of two below 2^62, 2^61, and
+//   the largest double below it, (2^53 - 1) 2^9, convert exactly, as does
+//   2^-62 with its denominator at the limit; the doubles beyond the limits
+//   are refused by support.tracked_rejects_*
+TEST_CASE("exact_rational converts every double within its stated range") {
+  const std::int64_t two_53 = test_support::power_of_two(53);
+  CHECK(test_support::exact_rational(1024.0) == rational{1024});
+  CHECK(test_support::exact_rational(-1024.0) == rational{-1024});
+  CHECK(test_support::exact_rational(511.0 * 512.0) ==
+        rational{std::int64_t{511} * 512});
+  CHECK(test_support::exact_rational(0x1p61) ==
+        rational{test_support::power_of_two(61)});
+  CHECK(test_support::exact_rational((0x1p53 - 1.0) * 0x1p9) ==
+        rational{(two_53 - 1) * 512});
+  CHECK(test_support::exact_rational(-(0x1p53 - 1.0) * 0x1p9) ==
+        rational{-(two_53 - 1) * 512});
+  CHECK(test_support::exact_rational(0x1p-62) ==
+        rational{1, test_support::power_of_two(62)});
+}
+
 // Reference: proof: one rounding of exact operands is correctly rounded in
 //   IEEE 754, so with one rounding only the double nearest the exact value
 //   is accepted, ties to even: 1 for 1 + 2^-53 and 1 + 2^-52 for
