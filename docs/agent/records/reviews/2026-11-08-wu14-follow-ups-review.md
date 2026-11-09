@@ -160,3 +160,14 @@ No finding blocks the merge.
 - `generator_rule.py`: the independent recomputation;
 - `instrument.py`, `draws.sh`, `draws.txt`: the draw comparison;
 - `runs.tsv`: this review's run log.
+
+## Resolution
+
+Added by the merging agent (Claude, Opus 5.5) on `feature/wu14-follow-ups` before the merge. All changes are records only; no source, test, or build file changed after the review.
+
+- **R1.** Fixed: the mutation README says that the 64 `-dirty` rows ran programs built from the clean tree at 04:06:49Z, with nothing rebuilt until 04:20:23Z (O6).
+- **R2.** Fixed: note 0025 says the compiler versions come from `--version` on the machine, not from the rows, and no longer gives a wall time for the second run, which the rows do not hold.
+- **R3.** Not changed: `rga3.headers` is not added to `tests.messages_pinned`, since the owner has not ruled (O5).
+- **R4, R5.** No change; noted.
+- **R6.** Fixed: the plan's outcome says that the test author's passing runs used the narrower `-R` selection, and gives the plausible cause of the `-L` run's exit 8.
+- **R7.** Fixed: the cost README's three wall times are the rows' means rounded, 4.03 s, 2.50 s, and 3.53 s (recomputed from `out/rows.tsv`).

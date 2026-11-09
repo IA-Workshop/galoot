@@ -20,7 +20,7 @@ Run on 2026-11-09 (UTC) by Claude (agent, Opus 5.5, implementer of plan 0031), e
 
 ## Seeds (criterion 8)
 
-`seeds/`: `core_identities_test` and `core_dual_identities_test`, each with `--rand-seed=1` to `50`, on gcc-debug at `6e34e67` (the test sources of the tip), rows in `seeds/runs.tsv` (a campaign log) and `seeds/results.tsv`. All 100 runs pass: `core_identities_test` 9 cases and 5,074 assertions per seed, 15.6 to 16.0 s each; `core_dual_identities_test` 3 cases and 2,691 assertions, under 0.1 s each. Fifty seeds are a sample, not a proof (V9); the generator rule and the recursion draw nothing, so the seeds bear only on the existing cases over the new forms and the old ones.
+`seeds/`: `core_identities_test` and `core_dual_identities_test`, each with `--rand-seed=1` to `50`, on gcc-debug at `6e34e67` (the test sources of the tip), rows in `seeds/runs.tsv` (a campaign log) and `seeds/results.tsv`. All 100 runs pass: `core_identities_test` 9 cases and 5,074 assertions per seed, 15.6 to 16.0 s each; `core_dual_identities_test` 3 cases and 2,691 assertions, under 0.1 s each. 64 of the 100 rows (seed 19 onward) carry the revision `6e34e678783a-dirty`: the programs were built from the clean tree at 04:06:49Z and nothing was rebuilt in the worktree until the campaign ended at 04:20:23Z, so every run tested `6e34e67`'s programs; the files that differed were most likely records being written meanwhile (inferred, not recoverable from the rows). Fifty seeds are a sample, not a proof (V9); the generator rule and the recursion draw nothing, so the seeds bear only on the existing cases over the new forms and the old ones.
 
 ## Draws unchanged
 
