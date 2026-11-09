@@ -1,0 +1,61 @@
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp: In function ‘void use(const P&)’:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:76: error: no matching function for call to ‘change_basis<galoot::core::conformal_change<3>()>(int)’
+   27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  • there are 4 candidates
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:2:
+    • candidate 1: ‘template<class C, blade_set<...auto...> S, class T>  requires (basis_change_like<C>) && (ring_scalar<T>) constexpr galoot::core::mv<typename C::target, change_basis_layout<C, S>, T> galoot::core::change_basis(const mv<typename C::source, S, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1103:1:
+       1103 | change_basis(const mv<typename C::source, S, T>& x) {
+            | ^~~~~~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: type/value mismatch at argument 1 in template parameter list for ‘template<class C, blade_set<...auto...> S, class T>  requires (basis_change_like<C>) && (ring_scalar<T>) constexpr galoot::core::mv<typename C::target, change_basis_layout<C, S>, T> galoot::core::change_basis(const mv<typename C::source, S, T>&)’
+          /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:76:
+             27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+                |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        •   expected a type, got ‘galoot::core::conformal_change<3>()’
+    • candidate 2: ‘template<class C, class X>  requires (basis_change_like<C>) && (multivector<X>) && !(same_as<typename std::remove_cvref<_Tp2>::type::algebra_type, typename C::source>) constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&)’
+      /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1171:34:
+       1171 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+            |                                  ^~~~~~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: type/value mismatch at argument 1 in template parameter list for ‘template<class C, class X>  requires (basis_change_like<C>) && (multivector<X>) && !(same_as<typename std::remove_cvref<_Tp2>::type::algebra_type, typename C::source>) constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&)’
+          /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:76:
+             27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+                |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        •   expected a type, got ‘galoot::core::conformal_change<3>()’
+    • candidate 3: ‘template<class C, class X>  requires (multivector<X>) && !(basis_change_like<C>) constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&)’
+      /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1197:34:
+       1197 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+            |                                  ^~~~~~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: type/value mismatch at argument 1 in template parameter list for ‘template<class C, class X>  requires (multivector<X>) && !(basis_change_like<C>) constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&)’
+          /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:76:
+             27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+                |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        •   expected a type, got ‘galoot::core::conformal_change<3>()’
+    • candidate 4: ‘template<auto Value, class X>  requires  multivector<X> constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&)’
+      /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1224:34:
+       1224 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+            |                                  ^~~~~~~~~~~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:139:
+          • /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/mv.hpp: In substitution of ‘template<auto Value, class X>  requires  multivector<X> constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&) [with auto Value = galoot::core::basis_change<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1, 1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1, 1}}}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1, 1, 1, 2, 1}}}; X = int]’:
+          • required from here
+            /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:76:   
+               27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+                  |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+          • required for the satisfaction of ‘multivector<X>’ [with X = int]
+            /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/mv.hpp:133:9:   
+              133 | concept multivector = detail::is_multivector_v<std::remove_cvref_t<X>>;
+                  |         ^~~~~~~~~~~
+          • the expression ‘is_multivector_v<typename std::remove_cvref<_Tp>::type> [with X = int]’ evaluated to ‘false’
+            /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/mv.hpp:133:31:
+              133 | concept multivector = detail::is_multivector_v<std::remove_cvref_t<X>>;
+                  |                       ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:13:36: error: unused parameter ‘p’ [-Werror=unused-parameter]
+   13 | [[maybe_unused]] void use(const P& p) {
+      |                           ~~~~~~~~~^
+cc1plus: all warnings being treated as errors
+timed: probe overloads-4-g++ took 0.126 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

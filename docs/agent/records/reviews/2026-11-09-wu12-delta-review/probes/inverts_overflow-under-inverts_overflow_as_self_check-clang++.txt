@@ -1,0 +1,24 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverts_overflow.cpp:2:
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:707:21: error: static assertion failed due to requirement 'inverse_holds': basis_change: the computed inverse does not invert the rows
+  707 |       static_assert(inverse_holds, "basis_change: the computed inverse does "
+      |                     ^~~~~~~~~~~~~
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:720:40: note: in instantiation of function template specialization 'galoot::core::detail::make_checked_change<bad>' requested here
+  720 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:928:42: note: in instantiation of variable template specialization 'galoot::core::detail::checked_change' requested here
+  928 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:964:39: note: in instantiation of function template specialization 'galoot::core::detail::make_change_map<bad, false, blade_set<1>{{{{1, 1}}}}>' requested here
+  964 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:1058:13: note: in instantiation of variable template specialization 'galoot::core::detail::change_map_of' requested here
+ 1058 |     detail::change_map_of<C, false, S>.result;
+      |             ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-inverts_overflow_as_self_check/galoot/core/basis_change.hpp:1102:48: note: in instantiation of variable template specialization 'galoot::core::change_basis_layout' requested here
+ 1102 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverts_overflow.cpp:11:46: note: while substituting deduced template arguments into function template 'change_basis' [with C = bad, S = blade_set<1>{{{{1, 1}}}}, T = double]
+   11 | [[maybe_unused]] auto f(const X& x) { return core::change_basis<bad>(x); }
+      |                                              ^
+1 error generated.
+timed: probe inverts_overflow-under-inverts_overflow_as_self_check-clang++ took 0.194 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

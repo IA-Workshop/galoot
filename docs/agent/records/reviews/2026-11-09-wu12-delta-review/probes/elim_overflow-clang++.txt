@@ -1,0 +1,24 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/elim_overflow.cpp:2:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:695:21: error: static assertion failed due to requirement 'fits': basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+  695 |       static_assert(fits, "basis_change: an exact value the change computes "
+      |                     ^~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:720:40: note: in instantiation of function template specialization 'galoot::core::detail::make_checked_change<bad>' requested here
+  720 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:928:42: note: in instantiation of variable template specialization 'galoot::core::detail::checked_change' requested here
+  928 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:964:39: note: in instantiation of function template specialization 'galoot::core::detail::make_change_map<bad, false, blade_set<1>{{{{1, 1}}}}>' requested here
+  964 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1058:13: note: in instantiation of variable template specialization 'galoot::core::detail::change_map_of' requested here
+ 1058 |     detail::change_map_of<C, false, S>.result;
+      |             ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1102:48: note: in instantiation of variable template specialization 'galoot::core::change_basis_layout' requested here
+ 1102 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/elim_overflow.cpp:12:46: note: while substituting deduced template arguments into function template 'change_basis' [with C = bad, S = blade_set<1>{{{{1, 1}}}}, T = double]
+   12 | [[maybe_unused]] auto f(const X& x) { return core::change_basis<bad>(x); }
+      |                                              ^
+1 error generated.
+timed: probe elim_overflow-clang++ took 0.144 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

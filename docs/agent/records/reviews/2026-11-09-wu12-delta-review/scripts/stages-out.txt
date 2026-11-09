@@ -1,0 +1,3 @@
+inverse_rows witness, null forms -> inverse_rows-overflow elim: (-97184120832, True)
+inverts witness, null forms -> inverts-overflow elim: (-137438953472, True)
+2x2 elimination, 2I against I -> elim elim: (0, False)

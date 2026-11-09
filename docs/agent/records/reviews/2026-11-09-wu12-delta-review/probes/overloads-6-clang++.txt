@@ -1,0 +1,12 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:2:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1198:17: error: static assertion failed: change_basis: the template argument is not a change of basis; give a tag with source, target, and value, as in struct cga3_to_r410 { using source = cga3; using target = r410; static constexpr auto value = conformal_change<3>(); }
+ 1198 |   static_assert(false, "change_basis: the template argument is not a change "
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:12:69: note: in instantiation of function template specialization 'galoot::core::change_basis<galoot::core::basis_change<5>, galoot::core::mv<cga3, blade_set<5>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}}}}, double>>' requested here
+   12 | template <class C, class T> auto generic(const T& t) { return core::change_basis<C>(t); }
+      |                                                                     ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:31:29: note: in instantiation of function template specialization 'generic<galoot::core::basis_change<5>, galoot::core::mv<cga3, blade_set<5>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}}}}, double>>' requested here
+   31 |   [[maybe_unused]] auto q = generic<core::basis_change<5>>(p);
+      |                             ^
+1 error generated.
+timed: probe overloads-6-clang++ took 0.144 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

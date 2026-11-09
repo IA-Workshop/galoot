@@ -1,0 +1,5 @@
+  left block [[2147483647, 2147483647], [-2147483647, 9223372028264841218]] note.fits False
+pivot 9223372028264841218 scaled inverse [[2147483647, -2147483647], [2147483647, 2147483647]] fits reported True
+inverts (fits, holds) (True, True)
+  left block [[2147483647, 2147483647], [-2147483647, 9223372028264841218]] note.fits False
+stage none
