@@ -153,3 +153,40 @@ TEST_CASE("the laws hold on every pair and triple of basis blades over many "
           "forms") {
   check_every_group(Identity::basis);
 }
+
+// Reference: proof: an exhaustive check over a finite set, on every
+//   generator e_i and every blade e_B: e_i ⟑ e_B = e_i ⌋ e_B + e_i ^ e_B,
+//   the rule by which a vector acts in Chevalley's construction of the
+//   Clifford algebra of g, with e_i ⌋ e_B the sum over the generators
+//   b_0 < b_1 < ... of B of (-1)^p g(e_i, e_(b_p)) e_(B without b_p), and
+//   e_i ^ e_B zero when B holds e_i and otherwise (-1)^c e_(B with i), c the
+//   number of generators of B below i, both formed here from the Gram matrix
+//   read from the algebra's metric, through mv with one coefficient 1, for
+//   each form of up to four generators, R(4,1,0), R(4,0,1), conformal(3),
+//   R(0,3,2), R(0,2,3), and two degenerate forms of three generators whose
+//   radical lies along no generator, so that a table associative on another
+//   basis, such as e12 taken as -e12, which the associativity checks
+//   accept, fails here
+TEST_CASE("a generator times a blade is its contraction plus its wedge over "
+          "many forms") {
+  check_every_group(Identity::generator_rule);
+}
+
+// Reference: proof: an exhaustive check over a finite set, on every blade
+//   e_A of grade at least 2, with e_a its lowest generator and e_A' the
+//   others, and every blade e_B:
+//   e_A ⟑ e_B = e_a ⟑ (e_A' ⟑ e_B) - (e_a ⌋ e_A') ⟑ e_B, which holds in the
+//   Clifford algebra because e_a e_A' = e_a ⌋ e_A' + e_A and the product is
+//   associative, with e_a ⌋ e_A' formed here from the Gram matrix, through
+//   mv with one coefficient 1, for each form of up to four generators,
+//   R(4,1,0), R(4,0,1), conformal(3), R(0,3,2), R(0,2,3), and two degenerate
+//   forms of three generators whose radical lies along no generator, and
+//   with 1 ⟑ x = x on every blade, which the check on basis blades makes,
+//   and the generator rule, it determines every product by induction on the
+//   grade of the left factor, so the geometric product of each of these
+//   forms is the Clifford product of g on the basis of wedges of generators
+//   in increasing order
+TEST_CASE("a product of blades follows the recursion on its lowest generator "
+          "over many forms") {
+  check_every_group(Identity::recursion);
+}
