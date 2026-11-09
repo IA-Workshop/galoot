@@ -100,8 +100,8 @@ TEST_CASE("conversions between rationals and doubles round to nearest") {
 //   denominator of at most 2^62 and a magnitude below 2^62, so the integers
 //   1024 = 2^10 and 511 2^9, the largest power of two below 2^62, 2^61, and
 //   the largest double below it, (2^53 - 1) 2^9, convert exactly, as does
-//   2^-62 with its denominator at the limit; the doubles beyond the limits
-//   are refused by support.tracked_rejects_*
+//   2^-62 with its denominator at the limit, while 2^62, (2^53 - 1) 2^10,
+//   and 2^-63 abort, which a program of their own checks
 TEST_CASE("exact_rational converts every double within its stated range") {
   const std::int64_t two_53 = test_support::power_of_two(53);
   CHECK(test_support::exact_rational(1024.0) == rational{1024});

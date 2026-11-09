@@ -84,7 +84,7 @@ static_assert(diagonal_mismatches(witt_one, witt_one_diagonal) == 0);
 
 } // namespace
 
-// Reference: hand values: [[1, 2], [3, 4]] [[5, 6], [7, 8]] = [[19, 22],
+// Reference: proof: by hand, [[1, 2], [3, 4]] [[5, 6], [7, 8]] = [[19, 22],
 //   [43, 50]], its transpose is [[1, 3], [2, 4]], and the inverse of
 //   [[2, 1], [1, 1]] is [[1, -1], [-1, 2]] and that of [[0, 1], [2, 0]],
 //   which needs a row swap, is [[0, 1/2], [1, 0]]
@@ -107,15 +107,15 @@ TEST_CASE("the matrix product, transpose, and inverse on hand values") {
 
 // Reference: identity: T G T^T = D with D diagonal, on every form of the
 //   exhaustive tests, the diagonal, conformal, Witt, degenerate, and seeded
-//   random ones; each nonzero square is an integer with no square factor,
+//   random ones, with each nonzero square an integer with no square factor,
 //   within the largest magnitude of a Gram entry, so that the diagonal is a
-//   form the library accepts; T is invertible, its inverse undoing it; and
-//   the number of zero squares is the dimension of the radical, n minus the
-//   rank, which for the forms listed with a radical is 1 for R(1,0,1),
-//   R(2,0,1), R(1,1,1), R(4,0,1), rigid(3) (both orders), the degenerate
-//   form, and the form of rank 2 with its radical off the axes, 2 for
-//   R(0,0,2), R(2,0,2), and the form with every entry 1, 3 for R(0,0,3), 4
-//   for R(0,0,4), 1 for R(0,0,1), and 0 for every other
+//   form the library accepts, and T invertible, its inverse undoing it;
+//   proof: by Sylvester's law of inertia the number of zero squares is the
+//   dimension of the radical, n minus the rank, which for the forms listed with
+//   a radical is 1 for R(1,0,1), R(2,0,1), R(1,1,1), R(4,0,1), rigid(3) (both
+//   orders), the degenerate form, and the form of rank 2 with its radical off
+//   the axes, 2 for R(0,0,2), R(2,0,2), and the form with every entry 1, 3 for
+//   R(0,0,3), 4 for R(0,0,4), 1 for R(0,0,1), and 0 for every other
 TEST_CASE("diagonalize gives T G T^T = D on every listed form") {
   galoot_test::for_each_signature([](const char* name, const auto& g) {
     INFO(name);
@@ -156,7 +156,7 @@ TEST_CASE("diagonalize gives T G T^T = D on every listed form") {
   });
 }
 
-// Reference: hand values: in [[0, 1], [1, 1]] the first pivot is zero and
+// Reference: proof: by hand, in [[0, 1], [1, 1]] the first pivot is zero and
 //   e2 squares to 1, so the two are swapped, f1 = e2, and then f2 = e1 - e2,
 //   whose square is 0 - 2 + 1 = -1
 TEST_CASE("a zero pivot is swapped with the next nonzero square") {
@@ -166,11 +166,11 @@ TEST_CASE("a zero pivot is swapped with the next nonzero square") {
   CHECK(result.squares == std::array<std::int64_t, 2>{1, -1});
 }
 
-// Reference: hand values: in the degenerate form [[0, 1, 0], [1, 0, 0],
+// Reference: proof: by hand, in the degenerate form [[0, 1, 0], [1, 0, 0],
 //   [0, 0, 0]] no generator has a nonzero square, so f1 = e1 + e2, of
-//   square 2; then f2 = e2 - f1 / 2 = (e2 - e1) / 2, of square -1/2, scaled
-//   by 2 to e2 - e1, of square -2; and e3 pairs with nothing and stays,
-//   of square 0, the radical
+//   square 2, then f2 = e2 - f1 / 2 = (e2 - e1) / 2, of square -1/2, scaled
+//   by 2 to e2 - e1, of square -2, and e3 pairs with nothing and stays, of
+//   square 0, the radical
 TEST_CASE("two null vectors are paired, and the radical stays") {
   const std::array<std::array<int, 3>, 3> g = {
       {
@@ -184,10 +184,10 @@ TEST_CASE("two null vectors are paired, and the radical stays") {
   CHECK(result.squares == std::array<std::int64_t, 3>{2, -2, 0});
 }
 
-// Reference: hand values: in [[2, 1], [1, 2]], f2 = e2 - e1 / 2 has square
+// Reference: proof: by hand, in [[2, 1], [1, 2]], f2 = e2 - e1 / 2 has square
 //   2 - 1 + 1/2 = 3/2, and 3 2 = 6 is squarefree, so f2 is scaled by 2 to
-//   2 e2 - e1, of square 6; in [[8]] and [[-12]], 8 = 2 2^2 and
-//   12 = 3 2^2, so e1 is scaled by 1/2, to squares 2 and -3; and in
+//   2 e2 - e1, of square 6, in [[8]] and [[-12]], 8 = 2 2^2 and
+//   12 = 3 2^2, so e1 is scaled by 1/2, to squares 2 and -3, and in
 //   [[3, 1], [1, -2]], f2 = e2 - e1 / 3 has square -2 - 1/3 = -7/3, and
 //   7 3 = 21, so f2 is scaled by 3 to 3 e2 - e1, of square -21
 TEST_CASE("each square is scaled to the squarefree part of p q") {
@@ -211,7 +211,7 @@ TEST_CASE("each square is scaled to the squarefree part of p q") {
   CHECK(thirds.squares == std::array<std::int64_t, 2>{3, -21});
 }
 
-// Reference: hand values: the squarefree part of 1, 2, 12 = 3 2^2,
+// Reference: proof: by hand, the squarefree part of 1, 2, 12 = 3 2^2,
 //   72 = 2 6^2, 1770 = 2 3 5 59, and 2^2 3^2 5^2 = 900, and the integer
 //   square roots of 0, 1, 15, 16, and 2^62 - 1, whose root is 2^31 - 1
 //   since (2^31)^2 = 2^62
