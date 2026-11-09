@@ -191,3 +191,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-08	plan-0030	WU12 planner	opus	328633	73	1127	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
 2026-11-08	plan-0031	follow-ups planner and implementer	opus	349171	157	3104	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
 2026-11-08	plan-0031	blind reviewer	opus	221421	88	1318	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-09	plan-0030	part D interface	opus	298151	62	1018	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	part N tolerance rule	opus	226897	58	1241	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools replay fix	sonnet	52632	9	88	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0031	implementer merge steps (cumulative, replaces earlier 530263 figure)	opus	551312			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
