@@ -11,8 +11,12 @@ namespace galoot_test {
 // Every signature of the exhaustive checks: the diagonal R(p, q, r) with
 // null generators last, conformal(d), the Witt forms of one and two modes,
 // scaled so that a a† + a† a = 2, a degenerate form with a zero first pivot,
-// rigid(3) with its null generator first, and ten seeded random symmetric
-// forms with entries from -3 to 3.
+// rigid(3) with its null generator first, ten seeded random symmetric
+// forms with entries from -3 to 3, and two degenerate forms whose radical
+// lies along no generator, so that no zero on the diagonal marks it: one of
+// rank 2 whose radical is spanned by e1 - e2 - e3, although e2 squares to
+// zero, and the form of rank 1 with every entry 1, in which no generator
+// squares to zero.
 template <class Visit>
 void for_each_signature(const Visit& visit) {
   visit("R(1,0,0)", galoot::core::R<1, 0, 0>());
@@ -116,6 +120,16 @@ void for_each_signature(const Visit& visit) {
                         {-3, 1, -2},
                         {1, -3, -2},
                         {-2, -2, 1},
+                    }));
+  visit("radical off the axes", galoot::core::from_gram({
+                                    {1, 1, 0},
+                                    {1, 0, 1},
+                                    {0, 1, -1},
+                                }));
+  visit("all ones", galoot::core::from_gram({
+                        {1, 1, 1},
+                        {1, 1, 1},
+                        {1, 1, 1},
                     }));
 }
 

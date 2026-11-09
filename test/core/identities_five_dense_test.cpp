@@ -58,6 +58,10 @@ void dense_forms_of_five(Identity identity, std::mt19937_64& source) {
       (check_basis_triples<vectors_mv<G>, vectors_mv<G>>(), ...);
       (check_basis_vectors<form<G>>(), ...);
       return;
+    case Identity::generator_rule:
+    case Identity::recursion:
+      // These run on every blade, whose products are not built here.
+      return;
     }
   }(identity, dense_forms{}, source);
 }

@@ -46,6 +46,8 @@ enum class Identity : std::uint8_t {
   defining_relation,
   antiproduct_rules,
   basis,
+  generator_rule,
+  recursion,
 };
 
 // The checks have internal linkage, as they would in a single source, so
@@ -612,6 +614,187 @@ void check_basis() {
   check_basis_vectors<typename A::algebra_type>();
 }
 
+// The generator rule and the recursion on the lowest generator, which with
+// 1 as the identity on the left determine the geometric product: by
+// induction on the grade of the left factor, a table T that satisfies
+// T(1, x) = x, T(e_i, e_B) = e_i ⌋ e_B + e_i ^ e_B, and
+// T(e_A, e_B) = T(e_a, T(e_A', e_B)) - T(e_a ⌋ e_A', e_B), for a the lowest
+// generator of A and A' the others, is the Clifford product of g on the
+// basis of wedges of generators in increasing order. So the checks tell
+// apart a table that is associative but on another basis, which the
+// associativity checks accept. The right sides are formed here, from the
+// Gram matrix and the index list of each blade, on dense coefficients
+// indexed by mask, and the signs are counted here rather than taken from
+// the library. They run on layouts that hold every blade, and build no
+// product that the checks on basis blades do not.
+
+// Whether the layout of X holds every blade of its algebra.
+template <class X>
+inline constexpr bool every_blade =
+    X::component_count ==
+    (std::size_t{1} << generators<typename X::algebra_type>);
+
+// The coefficients of a multivector of n generators on the canonical blade
+// of each mask, indexed by mask.
+using dense = std::vector<std::int64_t>;
+
+// The indices of the generators of a mask, lowest first, counting from 0.
+inline std::vector<std::size_t> indices_of(core::mask_t mask) {
+  std::vector<std::size_t> indices;
+  for (std::size_t i = 0; i < 32; ++i) {
+    if (((mask >> i) & 1U) != 0) {
+      indices.push_back(i);
+    }
+  }
+  return indices;
+}
+
+// The canonical blade of mask with coefficient 1, on dense coefficients.
+template <class Alg>
+dense dense_blade(core::mask_t mask) {
+  dense x(std::size_t{1} << generators<Alg>);
+  x.at(mask) = 1;
+  return x;
+}
+
+// e_i ⌋ e_B: the p-th generator e_j of B, counting from 0 in increasing
+// order, contributes (-1)^p g_ij e_(B without j).
+template <class Alg>
+dense contraction(std::size_t i, core::mask_t b) {
+  dense x(std::size_t{1} << generators<Alg>);
+  const std::vector<std::size_t> indices = indices_of(b);
+  for (std::size_t p = 0; p < indices.size(); ++p) {
+    const std::size_t j = indices.at(p);
+    const std::int64_t sign = p % 2 == 0 ? 1 : -1;
+    x.at(b & ~(core::mask_t{1} << j)) +=
+        sign * static_cast<std::int64_t>(Alg::value.gram.at(i).at(j));
+  }
+  return x;
+}
+
+// Adds e_i ^ e_B to x: zero when B holds e_i, and otherwise e_(B with i)
+// with the sign (-1)^c, where c counts the generators of B below e_i, each
+// of which e_i moves past.
+inline void add_wedge(dense& x, std::size_t i, core::mask_t b) {
+  int below = 0;
+  for (const std::size_t j : indices_of(b)) {
+    if (j == i) {
+      return;
+    }
+    if (j < i) {
+      ++below;
+    }
+  }
+  x.at(b | (core::mask_t{1} << i)) += below % 2 == 0 ? 1 : -1;
+}
+
+// x of X from dense coefficients; X holds every blade.
+template <class X>
+X from_dense(const dense& coefficients) {
+  X x{};
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    const core::oriented_blade blade = X::layout.blades.at(k);
+    x.coefficients.at(k) = blade.sign * coefficients.at(blade.mask);
+  }
+  return x;
+}
+
+// The dense coefficients of x, on the canonical blade of each mask.
+template <class X>
+dense dense_of(const X& x) {
+  dense coefficients(std::size_t{1} << generators<typename X::algebra_type>);
+  for (std::size_t k = 0; k < X::component_count; ++k) {
+    const core::oriented_blade blade = X::layout.blades.at(k);
+    coefficients.at(blade.mask) += blade.sign * x.coefficients.at(k);
+  }
+  return coefficients;
+}
+
+// Empty when x and y are equal; otherwise the first blade where they
+// differ, with both values.
+inline std::string dense_difference(const dense& x, const dense& y) {
+  for (std::size_t mask = 0; mask < x.size(); ++mask) {
+    if (x.at(mask) != y.at(mask)) {
+      return blade_name(static_cast<core::mask_t>(mask)) + ": " +
+             std::to_string(x.at(mask)) + " against " +
+             std::to_string(y.at(mask));
+    }
+  }
+  return "";
+}
+
+// e_i ⟑ e_B = e_i ⌋ e_B + e_i ^ e_B for every generator e_i and every blade
+// e_B of the algebra of X.
+template <class X>
+void check_generator_rule() {
+  using Alg = X::algebra_type;
+  constexpr std::size_t n = generators<Alg>;
+  INFO("form: ", gram_text<Alg>());
+  int failures = 0;
+  for (std::size_t i = 0; i < n; ++i) {
+    const core::mask_t generator = core::mask_t{1} << i;
+    const X e_i = from_dense<X>(dense_blade<Alg>(generator));
+    for (core::mask_t b = 0; b < (core::mask_t{1} << n); ++b) {
+      dense rule = contraction<Alg>(i, b);
+      add_wedge(rule, i, b);
+      failures += failure(
+          "e_i ⟑ e_B = e_i ⌋ e_B + e_i ^ e_B",
+          blade_name(generator) + " and " + blade_name(b),
+          dense_difference(dense_of(e_i * from_dense<X>(dense_blade<Alg>(b))),
+                           rule));
+    }
+  }
+  CHECK(failures == 0);
+}
+
+// e_A ⟑ e_B = e_a ⟑ (e_A' ⟑ e_B) - (e_a ⌋ e_A') ⟑ e_B for every blade e_A
+// of grade at least 2, with e_a its lowest generator and e_A' the others,
+// and every blade e_B of the algebra of X.
+template <class X>
+void check_recursion() {
+  using Alg = X::algebra_type;
+  constexpr std::size_t n = generators<Alg>;
+  constexpr core::mask_t blades = core::mask_t{1} << n;
+  INFO("form: ", gram_text<Alg>());
+  int failures = 0;
+  for (core::mask_t a = 0; a < blades; ++a) {
+    const std::vector<std::size_t> indices = indices_of(a);
+    if (indices.size() < 2) {
+      continue;
+    }
+    const core::mask_t lowest = core::mask_t{1} << indices.front();
+    const core::mask_t rest = a & ~lowest;
+    const X e_a = from_dense<X>(dense_blade<Alg>(lowest));
+    const X e_rest = from_dense<X>(dense_blade<Alg>(rest));
+    const X e_whole = from_dense<X>(dense_blade<Alg>(a));
+    const X inner = from_dense<X>(contraction<Alg>(indices.front(), rest));
+    for (core::mask_t b = 0; b < blades; ++b) {
+      const X e_b = from_dense<X>(dense_blade<Alg>(b));
+      dense recursion = dense_of(e_a * (e_rest * e_b));
+      const dense subtracted = dense_of(inner * e_b);
+      for (std::size_t mask = 0; mask < recursion.size(); ++mask) {
+        recursion.at(mask) -= subtracted.at(mask);
+      }
+      failures += failure("e_A ⟑ e_B = e_a ⟑ (e_A' ⟑ e_B) - (e_a ⌋ e_A') ⟑ e_B",
+                          blade_name(a) + " and " + blade_name(b),
+                          dense_difference(dense_of(e_whole * e_b), recursion));
+    }
+  }
+  CHECK(failures == 0);
+}
+
+// The generator rule, or the recursion, on X when it holds every blade.
+template <class X>
+void check_characterization(Identity identity) {
+  if constexpr (every_blade<X>) {
+    if (identity == Identity::generator_rule) {
+      check_generator_rule<X>();
+    } else {
+      check_recursion<X>();
+    }
+  }
+}
+
 // The layouts the groups are checked on: every blade, vectors and
 // bivectors, and the sparse sets.
 template <auto G>
@@ -657,6 +840,10 @@ void check_each(Identity identity, forms<G...> /*list*/,
   case Identity::basis:
     (check_basis<A<G>, B<G>>(), ...);
     return;
+  case Identity::generator_rule:
+  case Identity::recursion:
+    (check_characterization<A<G>>(identity), ...);
+    return;
   }
 }
 
@@ -673,13 +860,16 @@ void forms_of_six(Identity identity, std::mt19937_64& source);
 void large_forms(Identity identity, std::mt19937_64& source);
 void drawn_forms_of_five(Identity identity, std::mt19937_64& source);
 void drawn_forms_of_six(Identity identity, std::mt19937_64& source);
+void forms_off_axis(Identity identity, std::mt19937_64& source);
 
 // The groups in the order each test case checks them, so that one seed
-// gives the same multivectors in every build.
+// gives the same multivectors in every build. A group added later goes
+// last, so that the groups before it keep their draws.
 inline constexpr std::array groups{
     &forms_up_to_three, &forms_of_four,       &diagonal_forms_of_five,
     &conformal_three,   &dense_forms_of_five, &forms_of_six,
     &large_forms,       &drawn_forms_of_five, &drawn_forms_of_six,
+    &forms_off_axis,
 };
 
 } // namespace galoot_test::identities
