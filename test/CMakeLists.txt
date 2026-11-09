@@ -170,14 +170,16 @@ set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
 # reaches it, and every test that requires a part of a longer message also
 # forbids the longer one. The test reads this tree's own listing, as ctest
 # --show-only gives it with no preset's filter, so a test that a preset
-# leaves out of its run still counts; it builds nothing.
+# leaves out of its run still counts; it builds nothing. It also carries
+# core.headers, so that a change to a header, which may add a message,
+# selects it.
 add_test(NAME tests.messages_pinned
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/catalogue pinned
     ${PROJECT_SOURCE_DIR}/include/galoot ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/internal_messages.txt
     --ctest ${CMAKE_CTEST_COMMAND})
 set_tests_properties(tests.messages_pinned PROPERTIES
-  LABELS "tests;tests.catalogue")
+  LABELS "tests;tests.catalogue;core.headers")
 
 # tools.compile_fail_literal_in_path_*: a compile-fail test whose required
 # literal occurs in its own source path stops configuring, since any compile
