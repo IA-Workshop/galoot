@@ -936,7 +936,8 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/rational.hpp support/scalar_faults.hpp support/tracked.hpp)
+    FILES support/diagonalize.hpp support/rational.hpp support/scalar_faults.hpp
+      support/tracked.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -985,6 +986,13 @@ foreach(operation IN ITEMS add multiply)
     MESSAGE "${rational_does_not_fit}"
     REQUIRE rational_failed)
 endforeach()
+
+# support.diagonalize: T G T^T = D on every form of the exhaustive tests,
+# with integer squarefree squares in the range of a Gram entry, and one hand
+# case of each rule of the elimination: a swap, the pairing of two null
+# vectors, the radical, and the scaling of the squares.
+galoot_add_test(MODULE support COMPONENT diagonalize)
+target_link_libraries(support_diagonalize_test PRIVATE galoot_test_support)
 
 # support.tracked: the tracking scalar's rules for counting roundings and
 # magnitudes, the conversions between rationals and doubles, and the forward
