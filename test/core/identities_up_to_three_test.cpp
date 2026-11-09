@@ -59,10 +59,31 @@ using up_to_three = forms<
         {-2, -2, 1},
     })>;
 
+// Two degenerate forms whose radical lies along no generator, so that no
+// zero on the diagonal marks it: one of rank 2 whose radical is spanned by
+// e1 - e2 - e3, although e2 squares to zero, and the form of rank 1 with
+// every entry 1, in which no generator squares to zero. They are a group of
+// their own, checked after every other group, so that the multivectors the
+// other groups draw from a seed stay as they were.
+using off_axis = forms<core::from_gram({
+                           {1, 1, 0},
+                           {1, 0, 1},
+                           {0, 1, -1},
+                       }),
+                       core::from_gram({
+                           {1, 1, 1},
+                           {1, 1, 1},
+                           {1, 1, 1},
+                       })>;
+
 } // namespace
 
 void forms_up_to_three(Identity identity, std::mt19937_64& source) {
   check_each<full_mv, full_mv>(identity, up_to_three{}, source);
+}
+
+void forms_off_axis(Identity identity, std::mt19937_64& source) {
+  check_each<full_mv, full_mv>(identity, off_axis{}, source);
 }
 
 } // namespace galoot_test::identities

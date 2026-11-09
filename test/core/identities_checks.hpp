@@ -673,13 +673,16 @@ void forms_of_six(Identity identity, std::mt19937_64& source);
 void large_forms(Identity identity, std::mt19937_64& source);
 void drawn_forms_of_five(Identity identity, std::mt19937_64& source);
 void drawn_forms_of_six(Identity identity, std::mt19937_64& source);
+void forms_off_axis(Identity identity, std::mt19937_64& source);
 
 // The groups in the order each test case checks them, so that one seed
-// gives the same multivectors in every build.
+// gives the same multivectors in every build. A group added later goes
+// last, so that the groups before it keep their draws.
 inline constexpr std::array groups{
     &forms_up_to_three, &forms_of_four,       &diagonal_forms_of_five,
     &conformal_three,   &dense_forms_of_five, &forms_of_six,
     &large_forms,       &drawn_forms_of_five, &drawn_forms_of_six,
+    &forms_off_axis,
 };
 
 } // namespace galoot_test::identities

@@ -162,6 +162,23 @@ using six_forms =
 using drawn_five_forms = forms<core::R<0, 3, 2>(), core::R<0, 2, 3>()>;
 using drawn_six_forms = forms<core::R<1, 3, 2>(), core::R<1, 1, 4>()>;
 
+// Two degenerate forms whose radical lies along no generator, so that no
+// zero on the diagonal marks it: one of rank 2 whose radical is spanned by
+// e1 - e2 - e3, although e2 squares to zero, and the form of rank 1 with
+// every entry 1, in which no generator squares to zero. Each test case
+// checks them after every other list, so that the multivectors the other
+// lists draw from a seed stay as they were.
+using off_axis_forms = forms<core::from_gram({
+                                 {1, 1, 0},
+                                 {1, 0, 1},
+                                 {0, 1, -1},
+                             }),
+                             core::from_gram({
+                                 {1, 1, 1},
+                                 {1, 1, 1},
+                                 {1, 1, 1},
+                             })>;
+
 // The forms of 8, 12, and 16 generators, checked on sparse sets.
 using large_forms = forms<core::R<8, 0, 0>(), core::R<6, 6, 0>(),
                           core::R<15, 0, 1>(), core::R<8, 8, 0>()>;
@@ -459,7 +476,8 @@ using sparse_b_mv =
 //   each form of up to five generators, the dense random forms of five, and
 //   the forms of six, on sparse sets for 8, 12, and 16, and on every blade
 //   for R(0,3,2), R(0,2,3), R(1,3,2), and R(1,1,4), diagonal forms drawn at
-//   random
+//   random, and for two degenerate forms of three generators whose radical
+//   lies along no generator
 TEST_CASE("the duals compose to det g over many forms") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);
@@ -483,6 +501,9 @@ TEST_CASE("the duals compose to det g over many forms") {
   []<auto... G>(forms<G...>, std::mt19937_64& s) {
     (check_dual_identities<full_mv<G>>(s), ...);
   }(drawn_six_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dual_identities<full_mv<G>>(s), ...);
+  }(off_axis_forms{}, source);
 }
 
 // Reference: identity: the dot and the antidot are symmetric, since G and
@@ -496,7 +517,9 @@ TEST_CASE("the duals compose to det g over many forms") {
 //   generators, on vectors and on bivectors for the dense random forms of
 //   five and the forms of six, on sparse sets for 8, 12, and 16, and on
 //   every blade for R(0,3,2) and R(0,2,3) and on vectors and on bivectors
-//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random
+//   for R(1,3,2) and R(1,1,4), diagonal forms drawn at random, and on every
+//   blade for two degenerate forms of three generators whose radical lies
+//   along no generator
 TEST_CASE("the dot and the antidot are symmetric De Morgan pairs over many "
           "forms") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
@@ -524,6 +547,9 @@ TEST_CASE("the dot and the antidot are symmetric De Morgan pairs over many "
     (check_dot_identities<vectors_mv<G>, vectors_mv<G>>(s), ...);
     (check_dot_identities<bivectors_mv<G>, bivectors_mv<G>>(s), ...);
   }(drawn_six_forms{}, source);
+  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+    (check_dot_identities<full_mv<G>, full_mv<G>>(s), ...);
+  }(off_axis_forms{}, source);
 }
 
 // Reference: identity: in a diagonal form the bulk of a blade is the
