@@ -2242,6 +2242,107 @@ target_link_libraries(core_transform_identities_test PRIVATE
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
 
+# core.basis_change: the change of basis of basis_change.hpp: what a change
+# tag must be, the image of every blade under conformal_change<D>() and its
+# inverse against the golden values, and hand values.
+galoot_add_test(MODULE core COMPONENT basis_change)
+target_link_libraries(core_basis_change_test PRIVATE galoot_golden
+  galoot_test_support)
+
+# The names of the machinery under a change of basis, which the first error
+# line of a rejection must not show: the user wrote the tag or the call.
+set(basis_change_internal_names "detail::")
+
+# core.<name>: a misuse of a change of basis fails to compile with one
+# error, its message, from the source core/<name>_fail.cpp. Further
+# arguments go to the test.
+function(basis_change_rejects name message)
+  galoot_add_compile_fail_test(NAME ${name}
+    MODULE core COMPONENT basis_change
+    SOURCE core/${name}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR ${ARGN}
+    FORBID_ON_FIRST_ERROR ${basis_change_internal_names})
+endfunction()
+
+# A tag whose algebras and change disagree in their number of generators:
+# the check compares the two counts as written, so that both compilers print
+# them, 4 against 5.
+set(dimension "a change maps between algebras of one dimension")
+basis_change_rejects(basis_change_source_count
+  "basis_change: the source algebra has a different number of generators than the change has rows${semicolon} ${dimension}"
+  REQUIRE "4 == 5")
+basis_change_rejects(basis_change_target_count
+  "basis_change: the target algebra has a different number of generators than the change has rows${semicolon} ${dimension}"
+  REQUIRE "4 == 5")
+
+# A denominator that is negative or zero, a change without an inverse, and a
+# change that does not keep the inner products, including one whose source
+# and target are swapped and one whose matrix is transposed. A singular
+# change of a form whose inner products are all zero keeps them, and must
+# still be reported as singular.
+set(not_positive "basis_change: every denominator must be positive${semicolon} put a row's sign in its entries")
+set(dependent "basis_change: the rows are linearly dependent, so the change has no inverse${semicolon} the images of the source's generators must be independent")
+set(not_isometry "basis_change: the rows do not carry the target's form to the source's (P G' P^T is not G)${semicolon} check the rows, and that source and target are not swapped")
+basis_change_rejects(basis_change_denominator_negative "${not_positive}")
+basis_change_rejects(basis_change_denominator_zero "${not_positive}")
+basis_change_rejects(basis_change_dependent "${dependent}")
+basis_change_rejects(basis_change_dependent_degenerate "${dependent}"
+  FORBID "${not_isometry}")
+basis_change_rejects(basis_change_not_isometry "${not_isometry}")
+basis_change_rejects(basis_change_swapped "${not_isometry}")
+basis_change_rejects(basis_change_transposed "${not_isometry}")
+
+# An exact value of the change's checks that does not fit coefficient_type
+# ends the constant evaluation that forms it, and the diagnostic shows the
+# message through the line of the failed assertion.
+galoot_add_compile_fail_test(NAME basis_change_overflow
+  MODULE core COMPONENT basis_change
+  SOURCE core/basis_change_overflow_fail.cpp
+  MESSAGE "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries"
+  REQUIRE "assertion_failed"
+  FORBID "${not_isometry}")
+
+# A template argument that is not a change tag, and an operand in the wrong
+# algebra: the target's or a third one, as a statement and into auto r.
+set(not_a_change "the template argument is not a change of basis${semicolon} give a tag with source, target, and value, as in struct cga3_to_r410 { using source = cga3${semicolon} using target = r410${semicolon} static constexpr auto value = conformal_change<3>()${semicolon} }")
+basis_change_rejects(change_basis_not_a_change
+  "change_basis: ${not_a_change}")
+basis_change_rejects(change_basis_back_not_a_change
+  "change_basis_back: ${not_a_change}")
+set(not_in_source "change_basis: x is not in the change's source algebra${semicolon} give x the source's algebra tag, or use change_basis_back to map from the target")
+set(not_in_target "change_basis_back: y is not in the change's target algebra${semicolon} give y the target's algebra tag, or use change_basis to map from the source")
+foreach(case IN ITEMS target_operand other_algebra other_algebra_auto)
+  basis_change_rejects(change_basis_${case} "${not_in_source}")
+endforeach()
+foreach(case IN ITEMS source_operand other_algebra)
+  basis_change_rejects(change_basis_back_${case} "${not_in_target}")
+endforeach()
+
+# A scalar that cannot hold one of the change's exact coefficients, float for
+# 2^24 + 1; and a scalar that cannot divide exactly, an integer type or a
+# ring scalar without division, on a layout whose image needs a division.
+set(narrow "the scalar type cannot hold one of the change's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+basis_change_rejects(change_basis_narrow_scalar "change_basis: ${narrow}")
+basis_change_rejects(change_basis_back_narrow_scalar
+  "change_basis_back: ${narrow}")
+set(division "the change divides by an integer on this layout, which the scalar type cannot do exactly${semicolon} use a rational or floating scalar type")
+basis_change_rejects(change_basis_integer_division "change_basis: ${division}")
+basis_change_rejects(change_basis_no_division "change_basis: ${division}")
+basis_change_rejects(change_basis_back_integer_division
+  "change_basis_back: ${division}")
+
+# A change with more generators than a blade mask has bits, written by hand.
+basis_change_rejects(basis_change_type_width
+  "basis_change: n is larger than the number of bits in a blade mask")
+
+# A blade set written by hand, given to a layout of a change directly, with a
+# generator beyond the algebra or a sign other than +1 or -1.
+basis_change_rejects(basis_change_layout_beyond_n
+  "basis change map: the blade set names a generator beyond e_n")
+basis_change_rejects(basis_change_layout_bad_sign
+  "basis change map: the blade set holds a sign other than +1 or -1")
+
 # core.format: the formatter of a multivector, against names worked out in
 # the test from each blade's mask and sign, and texts written out there.
 galoot_add_test(MODULE core COMPONENT format)
