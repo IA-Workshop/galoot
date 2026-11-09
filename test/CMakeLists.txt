@@ -2249,6 +2249,19 @@ galoot_add_test(MODULE core COMPONENT basis_change)
 target_link_libraries(core_basis_change_test PRIVATE galoot_golden
   galoot_test_support)
 
+# core.basis_change_identities: the change of basis as an algebra isomorphism.
+# basis_change_identities_test.cpp checks the generated terms of each change
+# at run time on every blade and pair of blades, for every form of the
+# exhaustive tests against its exact diagonal counterpart and for the
+# conformal, Witt, and doubled changes. A program of its own, so that a
+# change to basis_change_test.cpp does not rebuild it; it also carries the
+# label core.basis_change.
+galoot_add_test(MODULE core COMPONENT basis_change_identities)
+target_link_libraries(core_basis_change_identities_test PRIVATE
+  galoot_test_support)
+set_property(TEST core.basis_change_identities APPEND PROPERTY LABELS
+  core.basis_change)
+
 # The names of the machinery under a change of basis, which the first error
 # line of a rejection must not show: the user wrote the tag or the call.
 set(basis_change_internal_names "detail::")
