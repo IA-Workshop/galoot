@@ -1060,7 +1060,8 @@ def check_conformal_basis():
 
 class Form:
     """The Clifford algebra of any symmetric Gram matrix g, on wedge-monomial
-    blades, with the operations of CONVENTIONS 2 to 4 written for it.
+    blades, with the grade operations, complements, duals, and products
+    written for it as for a diagonal form above.
 
     The product follows Chevalley's construction, a route of its own: for a
     generator e_i and any x, e_i x = e_i ^ x + e_i _| x, where the left
@@ -1216,7 +1217,7 @@ def apply_images(images, x):
 
 
 def conformal_change(d):
-    """CONVENTIONS 1.4: rows of P for conformal(d) in R(d+1, 1, 0); e_i stays
+    """The rows of P for conformal(d) in R(d+1, 1, 0): e_i stays
     for i <= d, origin = (e'(d+2) - e'(d+1)) / 2, infinity = e'(d+2) + e'(d+1)."""
     n = d + 2
     p = [[Fraction(int(i == j)) for j in range(n)] for i in range(d)]
@@ -1237,7 +1238,7 @@ def diagonal_gram(squares):
 
 
 def check_conformal_change():
-    """CONVENTIONS 1.4: the change of basis from conformal(d) to R(d+1, 1, 0)
+    """The change of basis from conformal(d) to R(d+1, 1, 0)
     for d = 1 to 4 carries the diagonal form to the conformal one, sends each
     blade to the wedge of its generators' images, the origin-infinity
     bivector to its negation and the antiscalar to its negation (det P = -1),
