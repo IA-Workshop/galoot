@@ -2322,14 +2322,16 @@ endfunction()
 
 # A tag whose algebras and change disagree in their number of generators:
 # the check compares the two counts as written, so that both compilers print
-# them, 4 against 5.
+# them, 4 against 5. When both disagree, only the source's is reported.
 set(dimension "a change maps between algebras of one dimension")
-basis_change_rejects(basis_change_source_count
-  "basis_change: the source algebra has a different number of generators than the change has rows${semicolon} ${dimension}"
+set(source_count "basis_change: the source algebra has a different number of generators than the change has rows${semicolon} ${dimension}")
+set(target_count "basis_change: the target algebra has a different number of generators than the change has rows${semicolon} ${dimension}")
+basis_change_rejects(basis_change_source_count "${source_count}"
   REQUIRE "4 == 5")
-basis_change_rejects(basis_change_target_count
-  "basis_change: the target algebra has a different number of generators than the change has rows${semicolon} ${dimension}"
+basis_change_rejects(basis_change_target_count "${target_count}"
   REQUIRE "4 == 5")
+basis_change_rejects(basis_change_both_counts "${source_count}"
+  REQUIRE "5 == 4" FORBID "${target_count}")
 
 # A denominator that is negative or zero, a change without an inverse, and a
 # change that does not keep the inner products, including one whose source
