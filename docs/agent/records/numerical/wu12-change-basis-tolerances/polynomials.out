@@ -1,0 +1,12 @@
+sympy 1.14.0
+1. Lemma 3.1 extremes hold exactly for k = 1 to 64, u = 1/9007199254740992
+1. Lemma 3.1 extremes hold exactly for k = 1 to 64, u = 1/16777216
+2. 6u - gamma_5 = u*(30*u - 1)/(5*u - 1)
+   u = 1/9007199254740992: gamma_5 < 6u; rejection threshold (1 + 4u)/(1 - gamma_5) = 1 + 9.000000 u
+   u = 1/16777216: gamma_5 < 6u; rejection threshold (1 + 4u)/(1 - gamma_5) = 1 + 9.000004 u
+3. cleared (1-u)^2 gamma_(K+1) - gamma_K = -K**2*u**3 + 2*K**2*u**2 - K*u**3 + 3*K*u**2 - 2*K*u + u**2 - 2*u + 1 = -K**2*u**3 + 2*K**2*u**2 - K*u**3 + 3*K*u**2 - 2*K*u + u**2 - 2*u + 1
+   in x = (K + 1) u: x**2*(2 - u) + x*(u**2 - u - 2) + 1
+   u = 1/9007199254740992: margin 1 holds and margin 0 fails, exactly, for K = 1 to 10000
+   u = 1/16777216: margin 1 holds and margin 0 fails, exactly, for K = 1 to 2000
+4. double: 3 N = 2^21.x, 12 N = 12582912 <= 2^53 = 9007199254740992
+4. float: 3 N = 2^21.x, 12 N = 12582912 <= 2^24 = 16777216

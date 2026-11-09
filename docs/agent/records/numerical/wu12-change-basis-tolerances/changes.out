@@ -1,0 +1,38 @@
+conformal(1) -> R(2,1,0): q in [1, 2] (dyadic); max m = 2; max C = 3; max sum|minor| = 3/2; +-1 coefficients 8 of 12
+R(2,1,0) -> conformal(1): q in [1, 2] (dyadic); max m = 2; max C = 2; max sum|minor| = 2; +-1 coefficients 12 of 12
+conformal(2) -> R(3,1,0): q in [1, 2] (dyadic); max m = 2; max C = 3; max sum|minor| = 3/2; +-1 coefficients 16 of 24
+R(3,1,0) -> conformal(2): q in [1, 2] (dyadic); max m = 2; max C = 2; max sum|minor| = 2; +-1 coefficients 24 of 24
+conformal(3) -> R(4,1,0): q in [1, 2] (dyadic); max m = 2; max C = 3; max sum|minor| = 3/2; +-1 coefficients 32 of 48
+R(4,1,0) -> conformal(3): q in [1, 2] (dyadic); max m = 2; max C = 2; max sum|minor| = 2; +-1 coefficients 48 of 48
+conformal(4) -> R(5,1,0): q in [1, 2] (dyadic); max m = 2; max C = 3; max sum|minor| = 3/2; +-1 coefficients 64 of 96
+R(5,1,0) -> conformal(4): q in [1, 2] (dyadic); max m = 2; max C = 2; max sum|minor| = 2; +-1 coefficients 96 of 96
+random 0, n = 2, target squares [-1, 7], row denominators of P [1, 1]
+  random 0 -> diagonal: q in [1] (dyadic); max m = 2; max C = 3; max sum|minor| = 3; +-1 coefficients 4 of 5
+  diagonal -> random 0: q in [1] (dyadic); max m = 2; max C = 3; max sum|minor| = 3; +-1 coefficients 4 of 5
+random 1, n = 3, target squares [2, 1, -62], row denominators of P [1, 1, 2]
+  random 1 -> diagonal: q in [1, 2] (dyadic); max m = 3; max C = 11; max sum|minor| = 11/2; +-1 coefficients 6 of 12
+  diagonal -> random 1: q in [1] (dyadic); max m = 3; max C = 10; max sum|minor| = 10; +-1 coefficients 4 of 12
+random 2, n = 4, target squares [-2, -2, 30, 1770], row denominators of P [1, 1, 2, 30]
+  random 2 -> diagonal: q in [1, 2, 15, 30] (not dyadic); max m = 5; max C = 42; max sum|minor| = 6; +-1 coefficients 11 of 36
+  diagonal -> random 2: q in [1] (dyadic); max m = 5; max C = 90; max sum|minor| = 90; +-1 coefficients 4 of 36
+random 3, n = 5, target squares [3, -30, -470, 517, -165], row denominators of P [1, 3, 10, 705, 7755]
+  random 3 -> diagonal: q in [1, 3, 11, 30, 33, 330, 470, 517, 1410, 1551, 2585, 5170, 7755, 15510] (not dyadic); max m = 10; max C = 857; max sum|minor| = 10/3; +-1 coefficients 7 of 132
+  diagonal -> random 3: q in [1, 2, 4] (dyadic); max m = 10; max C = 18612; max sum|minor| = 4653; +-1 coefficients 1 of 132
+random 4, n = 2, target squares [3, -21], row denominators of P [1, 3]
+  random 4 -> diagonal: q in [1, 3] (not dyadic); max m = 2; max C = 4; max sum|minor| = 4/3; +-1 coefficients 4 of 5
+  diagonal -> random 4: q in [1] (dyadic); max m = 2; max C = 3; max sum|minor| = 3; +-1 coefficients 3 of 5
+random 5, n = 3, target squares [-3, 1, -1], row denominators of P [1, 1, 1]
+  random 5 -> diagonal: q in [1] (dyadic); max m = 3; max C = 5; max sum|minor| = 5; +-1 coefficients 5 of 13
+  diagonal -> random 5: q in [1, 2] (dyadic); max m = 3; max C = 3; max sum|minor| = 3; +-1 coefficients 13 of 13
+random 6, n = 4, target squares [-1, 1, 1, -2], row denominators of P [1, 1, 1, 1]
+  random 6 -> diagonal: q in [1] (dyadic); max m = 5; max C = 5; max sum|minor| = 5; +-1 coefficients 37 of 39
+  diagonal -> random 6: q in [1] (dyadic); max m = 5; max C = 6; max sum|minor| = 6; +-1 coefficients 37 of 39
+random 7, n = 5, target squares [-3, -6, 6, 1, -105], row denominators of P [1, 3, 6, 6, 12]
+  random 7 -> diagonal: q in [1, 3, 4, 6, 12, 18, 24, 36, 72] (not dyadic); max m = 10; max C = 867; max sum|minor| = 289/24; +-1 coefficients 3 of 132
+  diagonal -> random 7: q in [1, 5, 10, 20] (not dyadic); max m = 10; max C = 774; max sum|minor| = 387/10; +-1 coefficients 1 of 132
+random 8, n = 2, target squares [3, -30], row denominators of P [1, 3]
+  random 8 -> diagonal: q in [1, 3] (not dyadic); max m = 2; max C = 5; max sum|minor| = 5/3; +-1 coefficients 3 of 5
+  diagonal -> random 8: q in [1] (dyadic); max m = 2; max C = 3; max sum|minor| = 3; +-1 coefficients 2 of 5
+random 9, n = 3, target squares [-3, -6, 5], row denominators of P [1, 3, 3]
+  random 9 -> diagonal: q in [1, 3] (not dyadic); max m = 3; max C = 6; max sum|minor| = 2; +-1 coefficients 4 of 14
+  diagonal -> random 9: q in [1, 2] (dyadic); max m = 3; max C = 7; max sum|minor| = 7/2; +-1 coefficients 4 of 14
