@@ -20,7 +20,7 @@ Decision 0223 item 3 rules that an overflow in a change tag's checks gives one e
 
 ## Options weighed
 
-- For items 1 to 3, a flag per check inside the existing `if constexpr` nest: the same messages, but six levels of nesting, which `clang-tidy`'s cognitive-complexity check refuses, and each check's arithmetic spread over the nest. One verdict computed by a plain constexpr function keeps the order of the checks in one readable place.
+- For items 1 to 3, a flag per check inside the existing `if constexpr` nest: the same messages, but about seven levels of nesting (inferred, not tried, to exceed `clang-tidy`'s cognitive-complexity threshold of 25, which `eliminate` already reached), and each check's arithmetic spread over the nest. One verdict computed by a plain constexpr function keeps the order of the checks in one readable place.
 - For item 3, conditions written as `checked.fault != ChangeFault::overflow`: shorter, but Clang prints the condition, naming `detail::`, on the first error line.
 - For item 4, the noting form in the term generation too: one error there as well, but every map of every layout would carry the flags through `blade_image` and `typed_change`, and the ruling asked for the tag checks only.
 - For item 5, a constraint `requires (!std::is_class_v<decltype(Value)> || ...)` or to change values: no present case it would serve, and it narrows what the message catches.
