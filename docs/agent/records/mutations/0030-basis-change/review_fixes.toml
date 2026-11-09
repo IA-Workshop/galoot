@@ -13,12 +13,12 @@ targets = ["core_basis_change_identities_test"]
 labels = '^core\.basis_change_identities$'
 
 # F1: the isometry check compares only the squares. The reviewer's mutant,
-# unchanged; core.basis_change_pairing_not_kept must kill it.
+# rewritten for the check's form since the review rulings; core.basis_change_pairing_not_kept must kill it.
 [[mutant]]
 name = "isometry_diagonal_only"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''      if (left != right) {''', replacement = '''      if (i == j && left != right) {''' }]
+edits = [{ anchor = '''      holds = holds && left == right;''', replacement = '''      holds = holds && (i != j || left == right);''' }]
 expect = "killed"
 killers = ["core.basis_change_pairing_not_kept"]
 

@@ -61,7 +61,10 @@ expect = "killed"
 name = "columns_for_rows"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''rows.rows[i][j]''', replacement = '''rows.rows[j][i]''', count = 2 }]
+edits = [
+  { anchor = '''        if (rows.rows[i][j] == 0) {''', replacement = '''        if (rows.rows[j][i] == 0) {''' },
+  { anchor = '''change_multiply(partial.coefficient, rows.rows[i][j]),''', replacement = '''change_multiply(partial.coefficient, rows.rows[j][i]),''' },
+]
 expect = "killed"
 
 # The denominator never applied: every output's q_B left at 1, so the
@@ -88,8 +91,8 @@ expect = "killed"
 name = "inverse_as_transpose"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''      out.rows[i][j] = change_multiply(sign * e.scaled_inverse[i][j],
-                                       change.denominators[j]);''', replacement = '''      out.rows[i][j] = sign * change.rows[j][i];''' }]
+edits = [{ anchor = '''      out.rows.rows[i][j] = multiply_noting(sign * e.scaled_inverse[i][j],
+                                            change.denominators[j], out.fits);''', replacement = '''      out.rows.rows[i][j] = sign * change.rows[j][i];''' }]
 expect = "killed"
 
 # The isometry check written as P G P^T = G', the two forms swapped.
@@ -97,7 +100,7 @@ expect = "killed"
 name = "isometry_sides_swapped"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''keeps_inner_products(C::value, C::source::value, C::target::value);''', replacement = '''keeps_inner_products(C::value, C::target::value, C::source::value);''' }]
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(change, source, target);''', replacement = '''  const identity_check isometry = keeps_inner_products(change, target, source);''' }]
 expect = "killed"
 
 # The isometry check removed.
@@ -105,7 +108,7 @@ expect = "killed"
 name = "isometry_check_removed"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''            keeps_inner_products(C::value, C::source::value, C::target::value);''', replacement = '''            true;''' }]
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(change, source, target);''', replacement = '''  const identity_check isometry{.fits = true, .holds = source.gram.size() == target.gram.size()};''' }]
 expect = "killed"
 
 # The invertibility check removed: a singular change goes on to the
@@ -114,10 +117,7 @@ expect = "killed"
 name = "independence_check_removed"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [
-  { anchor = '''      static_assert(e.pivot != 0,''', replacement = '''      static_assert(true || e.pivot != 0,''' },
-  { anchor = '''      if constexpr (e.pivot != 0) {''', replacement = '''      if constexpr (true) {''' },
-]
+edits = [{ anchor = '''  if (!e.fits || e.pivot == 0) {''', replacement = '''  if (!e.fits) {''' }]
 expect = "killed"
 
 # The counts of generators not compared: a change of another size goes on.
@@ -127,7 +127,9 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [
   { anchor = '''  static_assert(C::source::value.generator_count == C::value.generator_count,''', replacement = '''  static_assert(true || C::source::value.generator_count == C::value.generator_count,''' },
-  { anchor = '''  static_assert(C::target::value.generator_count == C::value.generator_count,''', replacement = '''  static_assert(true || C::target::value.generator_count == C::value.generator_count,''' },
+  { anchor = '''  if constexpr (C::source::value.generator_count == n) {''', replacement = '''  if constexpr (true) {''' },
+  { anchor = '''    static_assert(C::target::value.generator_count == C::value.generator_count,''', replacement = '''    static_assert(true || C::target::value.generator_count == C::value.generator_count,''' },
+  { anchor = '''    if constexpr (C::target::value.generator_count == n) {''', replacement = '''    if constexpr (true) {''' },
 ]
 expect = "killed"
 
@@ -136,10 +138,7 @@ expect = "killed"
 name = "denominator_check_removed"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [
-  { anchor = '''    static_assert(positive, "basis_change: every denominator must be "''', replacement = '''    static_assert(true || positive, "basis_change: every denominator must be "''' },
-  { anchor = '''    if constexpr (positive) {''', replacement = '''    if constexpr (true) {''' },
-]
+edits = [{ anchor = '''  if (!denominators_positive(change)) {''', replacement = '''  if (!denominators_positive(change) && false) {''' }]
 expect = "killed"
 
 # The scalar's image dropped: a layout holding 1 maps it to nothing.
@@ -160,14 +159,14 @@ file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''      !detail::divides(map) || detail::divides_exactly<T>;''', replacement = '''      true;''', count = 2 }]
 expect = "killed"
 
-# The checked arithmetic made unchecked: an overflow goes on as undefined
-# behavior, which a constant evaluation still rejects, but not with the
-# change's message.
+# The checked arithmetic made unchecked: a product that overflows goes on
+# as undefined behavior, which a constant evaluation still rejects, but not
+# with the change's message.
 [[mutant]]
 name = "checked_arithmetic_unchecked"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''  GALOOT_ASSERT(fits, "basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries");''', replacement = '''  static_cast<void>(fits);''' }]
+edits = [{ anchor = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x) {''', replacement = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x && magnitude_x < 0) {''' }]
 expect = "killed"
 
 # The elimination's row swap at a zero pivot skipped.
@@ -184,7 +183,7 @@ expect = "killed"
 name = "elimination_division_dropped"
 selection = "change"
 file = "include/galoot/core/basis_change.hpp"
-edits = [{ anchor = '''                          -change_multiply(row[k], pivot_row[j])) /
-               previous;''', replacement = '''                          -change_multiply(row[k], pivot_row[j])) /
+edits = [{ anchor = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
+               previous;''', replacement = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
                (previous / previous);''' }]
 expect = "killed"

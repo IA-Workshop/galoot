@@ -203,3 +203,17 @@ Should-fix findings are ranked by the number of users they reach and the cost of
 
 - In `api-design/library-diagnostics-in-cpp.md`: a function template whose first parameter is a type can also have a catch-all whose first parameter is `auto`. That catches a value passed where a tag belongs, with one error and no effect on valid calls (GCC 16.2, Clang 23.1, checked here only in scratch).
 - In `api-design/error-message-design.md`: a message's suggested fix must be safe to follow for the most likely cause, not only true for some cause. "Give x the same tag" is right for a product of two algebras and wrong for a change between them.
+
+## Resolution
+
+Written by the implementer of plan 0030 (Claude, agent, Opus 5.5), not by the reader, after the owner's rulings (decision 0223 items 1 and 2). Test commits came first for every changed pinned literal and new case (W9), each labelled failing where it failed (W2); the header change `30c2275` makes them pass. The delta review of that header change is the coordinator's next step.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| S1 | The target's count is asserted only when the source's is right; new compile-fail test `core.basis_change_both_counts` (both counts wrong, one error, the source's message with "5 == 4", the target's forbidden). | test `320c0d4`, header `30c2275` |
+| S2, S3 | The reader's texts, unchanged: I found none better. The operand messages now advise the other function or the tag's algebra; the isometry message says the change does not keep the inner products and names the row convention. Nine tests' pinned literals change. | test `fcc25a7`, header `30c2275` |
+| S4 | The example's round trip without `truncate` where the layout comes back whole, and the origin, which needs it; its test follows. | test `488a4ab`, header `30c2275` |
+| S5 | Δ for the diagonal of the denominators in every comment; d stays det(P) and D the dimension of `conformal_change<D>`. | `30c2275` |
+| S6 | The catch-alls `template <auto Value, multivector X>` for `change_basis` and `change_basis_back`, with the reader's text. Confirmed in the cpp-expert role against the overload set: a type argument does not match an `auto` non-type parameter, so every valid call and every other catch-all chooses as before (the whole P8 selection passes on both presets), and the new compile-fail tests `core.change_basis_value_as_tag` and `core.change_basis_back_value_as_tag` give one error, the message first, on GCC and Clang. The `auto` parameter is not constrained by a named concept, since any value given there is the same mistake. | test `9bfa204`, header `30c2275` |
+| S7 | The sentence naming `change_basis` in `basis_change`'s comment. | `30c2275` |
+| N1 to N10 | As the owner ruled: the names stay (N1, item 2); the README section waits for the M5 gate (N9, item 2); no change-finding factory in v1 (N5, item 2); N6 waits for the M5 message pass (item 1); the others are not acted on in this unit. | — |
