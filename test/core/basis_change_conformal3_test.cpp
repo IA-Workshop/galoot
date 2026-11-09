@@ -42,9 +42,9 @@ TEST_CASE("conformal_change is an isomorphism for d = 3") {
 //   1 / det P and transform by 1 / det(P)^2, on random integer multivectors of
 //   every blade for conformal_change<3>(), of det P = -1, and the transform of
 //   a point by a motor built in the null basis, the antiproduct of two random
-//   hyperplanes, and by a flector, one random hyperplane, and its projection
-//   and antiprojection onto that hyperplane agree with the same in
-//   R(4, 1, 0) up to 1 / det(P)^2
+//   hyperplanes, and by a flector, one random hyperplane, and the point's
+//   projection onto that hyperplane and the hyperplane's antiprojection onto
+//   the point agree with the same in R(4, 1, 0) up to 1 / det(P)^2
 TEST_CASE("conformal_change preserves the operations it must, d = 3") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);

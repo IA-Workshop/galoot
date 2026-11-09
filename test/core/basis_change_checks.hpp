@@ -331,8 +331,10 @@ auto random_hyperplane(std::mt19937_64& source) {
 // x on X of C's source, X of whole grades, so that transform drops nothing:
 // phi(compose(W, V)) = compose(phi(W), phi(V)) / d, phi(transform(x, V)) =
 // transform(phi(x), phi(V)) / d^2 and the same for H, and the projection
-// and the antiprojection of x onto H, each one antiwedge and one weight
-// dual, phi(project(x, H)) = project(phi(x), phi(H)) / d^2 and likewise.
+// of x onto H and the antiprojection of H onto x, each one antiwedge and one
+// weight dual, phi(project(x, H)) = project(phi(x), phi(H)) / d^2 and
+// likewise. The antiprojection is taken that way round because that of a
+// vector x onto H is zero once n >= 3: x antiwedge H* has grade 2 - n.
 template <class C, core::blade_set X>
 void check_transform(std::mt19937_64& source, const char* name) {
   static_assert(dual_isometry<C>);
@@ -363,9 +365,9 @@ void check_transform(std::mt19937_64& source, const char* name) {
     CHECK(scaled_difference(core::change_basis<C>(core::project(x, h)),
                             rational{1} / (d * d),
                             core::project(x_image, h_image)) == "");
-    CHECK(scaled_difference(core::change_basis<C>(core::antiproject(x, h)),
+    CHECK(scaled_difference(core::change_basis<C>(core::antiproject(h, x)),
                             rational{1} / (d * d),
-                            core::antiproject(x_image, h_image)) == "");
+                            core::antiproject(h_image, x_image)) == "");
   }
 }
 
