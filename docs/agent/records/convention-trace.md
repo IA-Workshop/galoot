@@ -29,10 +29,16 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 1.2 | R(p, q, r) squares p generators to +1, q to -1, and r to 0 | yes |
 | 1.3 | rigid(d) is R(d, 0, 1) | yes |
 | 1.4 | conformal(d) has null e(d+1) and e(d+2) with e(d+1) . e(d+2) = -1 | yes |
-| 1.4 | the change of basis sends e_A to the sum of det P[A, B] e'_B | yes |
+| 1.4 | the origin e4 = (e'5 - e'4) / 2 and the point at infinity e5 = e'4 + e'5 | yes |
+| 1.4 | the antiscalar to det P = -1 times the target's | yes |
 | 1.5 | the antiscalar is e12...n with sign +1 | yes |
 | 1.6 | an oriented name lists generators in the order of their product | yes |
 | 1.7 | results are ordered by grade, then by index list | yes |
+| 1.8 | the change of basis sends e_A to the sum of det P[A, B] e'_B | yes |
+| 1.8 | a change P with P G' P^T = G is an algebra map | yes |
+| 1.8 | a change of basis preserves the dot, the reverse, the antireverse, and the grade involution, and scales the antiwedge by 1 / det P and the bulk duals by det P | yes |
+| 1.8 | scales the geometric antiproduct, the antidot, the weight duals, and compose by 1 / det P and transform by 1 / det(P)^2 | yes |
+| 1.8 | in conformal(3) the bulk of the origin is G e4 = -e5, but its image (e'5 - e'4) / 2 has the bulk (-e'5 - e'4) / 2 in R(4, 1, 0), which maps back to -e5 / 2 | yes |
 | 2.1 | the reverse of a grade-k blade is (-1)^(k(k-1)/2) times it | yes |
 | 2.1 | the antireverse of a blade of antigrade m is (-1)^(m(m-1)/2) times it | yes |
 | 2.1 | the grade involution of a grade-k blade is (-1)^k times it | yes |
