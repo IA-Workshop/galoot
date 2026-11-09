@@ -203,3 +203,18 @@ The "After the review rulings" section says eight mutants of `change.toml` were 
    - Tradeoff: (b) is a few lines and removes the common case, such as m e′_i over m. (c) removes spurious overflows that remain after reduction, but changes the elimination that the identity tests verify. Both are core changes with their own review. (a) costs nothing, but contradicts the spirit of `from_rows`'s "a row need not be reduced".
    - Recommended: (b) as a backlog item before release, not in this merge.
 3. **Still open from before:** the meaning of `==` on `basis_change` before release (decision 0223 item 4), and N2 and N5 of the blind review. This review does not change them.
+
+## Resolution
+
+Written by the implementer of plan 0030 (Claude, agent, Opus 5.5), not by the reviewer, on `feature/core-basis-change` after this record was cherry-picked into it (`a8ad066`). Nothing under `include/` changed, so no further delta review is owed.
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| B1 | Fixed, tests only: `core.basis_change_overflow_elimination`, `core.basis_change_overflow_inverse_check`, and `core.basis_change_overflow_inverse_rows`, from `probes/elim_overflow_identity.cpp`, `probes/inverts_overflow.cpp`, and `probes/inverse_rows_overflow.cpp`, through `basis_change_rejects` (one error, the overflow message first, no `detail::` name there), the first two also forbidding the message of the check they stopped. They pass against the header as it is. This review's `mutants.toml`, rerun unchanged on both presets at `a4eb995`: all 8 killed on each, the four survivors by the new tests (`records/mutations/0030-basis-change/delta-review/out/`). | `a4eb995` |
+| S1 | The catalogue regenerated after the catalogue's rows were edited, so the scan output's count of test names (220, with the three new tests) matches the committed catalogue. | records commit after `a2cad6f` |
+| S2 | `CONVENTIONS.md`'s final newline restored, alone; no text changes. | `a2cad6f` |
+| S3 | Plan 0030's outcome records the work after the blind review, this review, and the pending P9 matrix. | records commit after `a2cad6f` |
+| N1 | No change: the overflow message for a non-isometry whose check overflows is right, since that check decided nothing. | — |
+| N2, N3 | Listed among the plan's open items for a later unit: `.fits = fits` at the elimination's later returns (N2), and reducing each row by its gcd before the checks (N3, the owner backlog item the review recommends). | — |
+| N4 to N7 | No change: noted for the record. | — |
+| N8 | The mutation README says nine. | records commit after `a2cad6f` |
