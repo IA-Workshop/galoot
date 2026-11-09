@@ -1,0 +1,15 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+denominator_unreduced	clang-debug	0fa98ac301d8+dirty	killed	killed	include/galoot/core/basis_change.hpp:1113	test/CMakeFiles/core_basis_change_test.dir/core/basis_change_scalars_test.cpp.o: assert: include/galoot/core/basis_change.hpp:1113:17: error: static assertion failed due to requirement 'scalar_divides_where_needed': change_basis: the change divides by an integer on this layout, which the scalar type cannot do exactly; use a rational or floating scalar type	core.basis_change	-	-	-
+transpose_is_identity	clang-debug	0fa98ac301d8+dirty	killed	killed	test/support/diagonalize_test.cpp:83	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:83:15: error: static assertion failed due to requirement 'diagonal_mismatches(witt_one, witt_one_diagonal) == 0'	support.diagonalize	-	-	-
+squarefree_part_last_prime_lost	clang-debug	0fa98ac301d8+dirty	killed	killed	test/support/diagonalize_test.cpp:81	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:81:15: error: static assertion failed due to requirement 'witt_one_diagonal.squares == std::array<long, 2>{2, -2}'	support.diagonalize	-	-	-
+exact_rational_magnitude_widened	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked_rejects_magnitude_above support.tracked_rejects_magnitude_two_62	-	-	-	-	-
+exact_rational_magnitude_narrowed	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked	-	-	exact_rational converts every double within its stated range	-	-
+exact_rational_denominator_widened	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked_rejects_denominator_two_63	-	-	-	-	-
+division_by_power_of_two_counted	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked	-	-	tracked counts a division by an exact divisor	-	-
+rounded_divisor_accepted	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked_rejects_rounded_divisor	-	-	-	-	-
+zero_divisor_unchecked	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked_rejects_zero_divisor	-	-	-	-	-
+correctly_rounded_dyadic_case_dropped	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked	-	-	correctly_rounded gives the nearest double of any rational	-	-
+scaled_numerator_unchecked	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked_rejects_not_a_double	-	-	-	-	-
+quotient_limit_doubled	clang-debug	0fa98ac301d8+dirty	killed	killed	support.tracked	-	-	the quotient check admits exactly the bound	-	-
+diagonal_negative_first	clang-debug	0fa98ac301d8+dirty	killed	killed	core.blade_product	-	-	The products of five algebras equal their matrix representations	-	-
+swap_leaves_t	clang-debug	0fa98ac301d8+dirty	killed	killed	support.diagonalize	-	-	a zero pivot is swapped with the next nonzero square | diagonalize gives T G T^T = D on every listed form	-	-

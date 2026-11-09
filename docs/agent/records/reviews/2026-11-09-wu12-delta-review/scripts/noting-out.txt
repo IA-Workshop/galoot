@@ -1,0 +1,8 @@
+dependent 65945
+direct:inverse_rows-overflow 1619
+direct:inverts-overflow 199
+elim 88795
+isometry 45228
+isometry-overflow 32
+witness inverse_rows ([[0, 1048576, 0], [0, -16777216, 46341], [2, -378, 0]], [1, 1073741824, 2147483647])
+witness inverts ([[65536, 0, 0], [1, -2, 0], [0, 1073741824, 1048576]], [2124569019, 2, 2])

@@ -1,0 +1,5 @@
+swap R210 (orthogonal, d=-1): d=-1 (C)=True orth=True PPtG=G:True G'PtP=G':True
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '-1', 'antiprod': '-1', 'antidot': '-1', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '-1', 'lbulk_dual': '-1', 'weight_dual': '-1', 'lweight_dual': '-1', 'right': '-1', 'left': '-1', 'bulk': '1', 'weight': '1', 'transform_even': '1', 'transform_odd': '1'}
+bulk e4 direct {16: Fraction(-1, 1)}  via R410 {16: Fraction(-1, 2)}
+images e4 {8: Fraction(-1, 2), 16: Fraction(1, 2)} e5 {8: Fraction(1, 1), 16: Fraction(1, 1)} e45 {24: Fraction(-1, 1)} I {31: Fraction(-1, 1)}
+timed: check review:factors2.py took 0.362 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-blind-review/docs/agent/records/reviews/2026-11-09-wu12-blind-review/runs.tsv

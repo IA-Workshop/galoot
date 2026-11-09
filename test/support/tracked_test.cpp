@@ -96,6 +96,28 @@ TEST_CASE("conversions between rationals and doubles round to nearest") {
         rational{test_support::power_of_two(53) + 2});
 }
 
+// Reference: contract: exact_rational accepts every double with a
+//   denominator of at most 2^62 and a magnitude below 2^62, so the integers
+//   1024 = 2^10 and 511 2^9, the largest power of two below 2^62, 2^61, and
+//   the largest double below it, (2^53 - 1) 2^9, convert exactly, as does
+//   2^-62 with its denominator at the limit, while 2^62, (2^53 - 1) 2^10,
+//   and 2^-63 abort, which a program of their own checks
+TEST_CASE("exact_rational converts every double within its stated range") {
+  const std::int64_t two_53 = test_support::power_of_two(53);
+  CHECK(test_support::exact_rational(1024.0) == rational{1024});
+  CHECK(test_support::exact_rational(-1024.0) == rational{-1024});
+  CHECK(test_support::exact_rational(511.0 * 512.0) ==
+        rational{std::int64_t{511} * 512});
+  CHECK(test_support::exact_rational(0x1p61) ==
+        rational{test_support::power_of_two(61)});
+  CHECK(test_support::exact_rational((0x1p53 - 1.0) * 0x1p9) ==
+        rational{(two_53 - 1) * 512});
+  CHECK(test_support::exact_rational(-(0x1p53 - 1.0) * 0x1p9) ==
+        rational{-(two_53 - 1) * 512});
+  CHECK(test_support::exact_rational(0x1p-62) ==
+        rational{1, test_support::power_of_two(62)});
+}
+
 // Reference: proof: one rounding of exact operands is correctly rounded in
 //   IEEE 754, so with one rounding only the double nearest the exact value
 //   is accepted, ties to even: 1 for 1 + 2^-53 and 1 + 2^-52 for
@@ -241,4 +263,69 @@ TEST_CASE("with several roundings the identity check admits the sum of the "
     CHECK(test_support::identity_tolerance(k, one, k, m) <
           2 * gamma * (1.0 + 1.75));
   }
+}
+
+// Reference: proof: in the standard model a quotient rounds once, so a / b
+//   for an exact b adds one rounding after a's and divides a's magnitude by
+//   |b|, and a division by a power of two is exact, so 3/4 over 3 is 1/4
+//   with one rounding, over 4 is 3/16 with none, over -3 is -1/4 of
+//   magnitude 1/4, and a product over 2 keeps the product's one rounding
+//   while over 6 it has two
+TEST_CASE("tracked counts a division by an exact divisor") {
+  const tracked a = tracked::input(rational{3, 4});
+  const tracked third = a / tracked{3};
+  CHECK(third.value == rational{1, 4});
+  CHECK(third.magnitude == rational{1, 4});
+  CHECK(third.roundings == 1);
+  const tracked quarter = a / tracked{4};
+  CHECK(quarter.value == rational{3, 16});
+  CHECK(quarter.magnitude == rational{3, 16});
+  CHECK(quarter.roundings == 0);
+  const tracked negative = a / tracked{-3};
+  CHECK(negative.value == rational{-1, 4});
+  CHECK(negative.magnitude == rational{1, 4});
+  CHECK(negative.roundings == 1);
+  const tracked p = a * tracked::input(rational{-1, 2});
+  CHECK((p / tracked{2}).roundings == 1);
+  CHECK((p / tracked{2}).magnitude == rational{3, 16});
+  CHECK((p / tracked{6}).roundings == 2);
+  CHECK((p / tracked{6}).value == rational{-1, 16});
+}
+
+// Reference: contract: correctly_rounded gives the double nearest a
+//   rational, ties to even, as IEEE 754 rounds the quotient of two doubles:
+//   1/3, 2/3, and 1/10 as the quotients 1.0 / 3.0, 2.0 / 3.0, and
+//   1.0 / 10.0 compute them, 5/4 exactly, -7/3 as -7.0 / 3.0, and
+//   (2^53 + 1) / 2, dyadic but no double, as 2^52 by the tie to even
+TEST_CASE("correctly_rounded gives the nearest double of any rational") {
+  const std::int64_t two_53 = test_support::power_of_two(53);
+  CHECK(test_support::correctly_rounded(rational{1, 3}) == 1.0 / 3.0);
+  CHECK(test_support::correctly_rounded(rational{2, 3}) == 2.0 / 3.0);
+  CHECK(test_support::correctly_rounded(rational{1, 10}) == 1.0 / 10.0);
+  CHECK(test_support::correctly_rounded(rational{5, 4}) == 1.25);
+  CHECK(test_support::correctly_rounded(rational{-7, 3}) == -7.0 / 3.0);
+  CHECK(test_support::correctly_rounded(rational{two_53 + 1, 2}) == 0x1p52);
+}
+
+// Reference: proof: with e = M = 1/3 and K = 2, gamma_2 M is a little more
+//   than 4/3 of an ulp of 1/3, 2^-54, and fl(1/3) lies 1/3 ulp below 1/3,
+//   so the double one ulp below fl(1/3) is 4/3 ulp away, within the bound,
+//   and the double two ulps above is 5/3 ulp away, beyond it, while the
+//   check by count wants the exact value for K = 0 and fl(1/3) for K = 1
+TEST_CASE("the quotient check admits exactly the bound") {
+  const rational e{1, 3};
+  const double nearest = 1.0 / 3.0;
+  const double below = std::nextafter(nearest, 0.0);
+  const double above = std::nextafter(std::nextafter(nearest, 1.0), 1.0);
+  const double ratio_below = test_support::scaled_bound_ratio(below, e, 2, e);
+  CHECK(ratio_below <= 1.0);
+  CHECK(ratio_below > 0.99);
+  CHECK(test_support::within_quotient_bound(below, e, 2, e));
+  CHECK(test_support::scaled_bound_ratio(above, e, 2, e) > 1.2);
+  CHECK_FALSE(test_support::within_quotient_bound(above, e, 2, e));
+  CHECK(test_support::within_quotient_bound(nearest, e, 1, e));
+  CHECK_FALSE(test_support::within_quotient_bound(below, e, 1, e));
+  CHECK_FALSE(test_support::within_quotient_bound(nearest, e, 0, e));
+  CHECK(test_support::within_quotient_bound(0.25, rational{1, 4}, 0, e));
+  CHECK(test_support::scaled_bound_ratio(0.25, rational{1, 4}, 2, e) == 0.0);
 }

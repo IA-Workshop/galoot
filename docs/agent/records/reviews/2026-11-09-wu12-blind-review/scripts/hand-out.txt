@@ -1,0 +1,8 @@
+isometry True det 1/2
+antiprod e12 e12 {7: Fraction(-2, 1)} via {7: Fraction(-124, 1)}
+antidot {7: Fraction(-2, 1)} via {7: Fraction(-124, 1)}
+wdual e3 {3: Fraction(2, 1), 5: Fraction(-6, 1), 6: Fraction(3, 1)} via {3: Fraction(-2510, 1), 6: Fraction(186, 1), 5: Fraction(-744, 1)}
+weight {16: Fraction(1, 1)} via {16: Fraction(1, 2)}
+right {23: Fraction(-1, 1)} via {23: Fraction(1, 2)}
+left {23: Fraction(-1, 1)} via {23: Fraction(1, 2)}
+timed: check review:hand.py took 0.198 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-blind-review/docs/agent/records/reviews/2026-11-09-wu12-blind-review/runs.tsv

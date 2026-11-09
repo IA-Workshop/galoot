@@ -1,0 +1,31 @@
+conformal(1) to R(2,1,0): n = 3, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+conformal(2) to R(3,1,0): n = 4, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+conformal(3) to R(4,1,0): n = 5, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+Witt, one mode, to R(1,1,0): n = 2, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+Witt, two modes, to R(2,2,0): n = 4, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+R(2,0,0) rotated by (3/5, 4/5): n = 2, det P = 1, P^-T G' P^-1 = G: True, orthogonal: True, P P^T G = G: True, G' P^T P = G': True
+R(1,1,0) boosted by (5/3, 4/3): n = 2, det P = 1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+R(1,0,1), the null shear e1 to e1 + e2: n = 2, det P = 1, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+rigid(3) with its null generator first, to rigid(3): n = 4, det P = -1, P^-T G' P^-1 = G: True, orthogonal: True, P P^T G = G: True, G' P^T P = G': True
+rigid(3), e4 to 2 e4': n = 4, det P = 2, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: True, G' P^T P = G': True
+rigid(3), e1 to e1' + e4', e4 to e4'/3: n = 4, det P = 1/3, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+control: rigid(3), e4 to e1' + e4'/3: n = 4, det P = 1/3, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+R(0,0,1), e1 to 3 e1': n = 1, det P = 3, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: True, G' P^T P = G': True
+R(2,0,1), e3 to e3'/2, then rotated: n = 3, det P = 1/2, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: True, G' P^T P = G': True
+diag(4, 1) to R(2,0,0), e1 to 2 e1': n = 2, det P = 2, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+degenerate form to R(1,1,1): n = 3, det P = -1, P^-T G' P^-1 = G: True, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+M R(2,1,0) M^T, det M = 3, to R(2,1,0): n = 3, det P = 3, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 0 to its scaled LDL^T diagonal [-1, 7]: n = 2, det P = 1, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 1 to its scaled LDL^T diagonal [2, 1, -62]: n = 3, det P = 1/2, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 2 to its scaled LDL^T diagonal [-2, -2, 30, 1770]: n = 4, det P = 1/30, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 3 to its scaled LDL^T diagonal [3, -30, -470, 517, -165]: n = 5, det P = 2/7755, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 4 to its scaled LDL^T diagonal [3, -21]: n = 2, det P = 1/3, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 5 to its scaled LDL^T diagonal [-3, 1, -1]: n = 3, det P = 2, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 6 to its scaled LDL^T diagonal [-1, 1, 1, -2]: n = 4, det P = -1, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 7 to its scaled LDL^T diagonal [-3, -6, 6, 1, -105]: n = 5, det P = 5/18, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 8 to its scaled LDL^T diagonal [3, -30]: n = 2, det P = 1/3, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+random 9 to its scaled LDL^T diagonal [-3, -6, 5]: n = 3, det P = 2/3, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+degenerate to its scaled LDL^T diagonal [2, -2, 0]: n = 3, det P = 1/2, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+radical off the axes to its scaled LDL^T diagonal [1, -1, 0]: n = 3, det P = 1, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+all ones to its scaled LDL^T diagonal [1, 0, 0]: n = 3, det P = 1, P^-T G' P^-1 = G: False, orthogonal: False, P P^T G = G: False, G' P^T P = G': False
+every statement holds on every blade and pair of blades

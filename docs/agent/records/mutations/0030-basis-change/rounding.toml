@@ -1,0 +1,64 @@
+# Mutants judged by the floating cases of the change of basis, in
+# core.basis_change (basis_change_scalars_test.cpp), with the predictions of
+# the tolerance rule's record (records/numerical/wu12-change-basis-
+# tolerances.md, section "rounding.toml"): the division applied to each term
+# before the sum, the division's rounding left out of the tracked count, and
+# every double result moved by 1 + 2^-48. The label core.basis_change also
+# selects the identity program, which carries it, so both are built.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.scalars]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change$'
+
+# Each term c x / q_B rounded on its own and then summed, in place of one
+# division of the sum. Predicted: killed by the small dyadic inputs of a
+# change whose denominators are not powers of two (random 7 and random 2);
+# survives the dyadic changes and the wide inputs, where the tracked run
+# follows the mutated templates.
+[[mutant]]
+name = "division_per_term"
+selection = "scalars"
+file = "include/galoot/core/basis_change.hpp"
+edits = [
+  { anchor = '''template <coefficient_type Q, class T>
+constexpr void divide_by(T& out) {''', replacement = '''template <coefficient_type C, coefficient_type Q, class T>
+constexpr void add_divided(T& out, const T& value) {
+  out = static_cast<T>(out + static_cast<T>(static_cast<T>(static_cast<T>(C) * value) / static_cast<T>(Q)));
+}
+
+template <coefficient_type Q, class T>
+constexpr void divide_by(T& out) {''' },
+  { anchor = '''  std::array<T, sizeof...(R)> out = run_map<Map.terms, sizeof...(R)>(
+      x, std::make_index_sequence<Map.terms.size()>{});
+  (divide_by<Map.denominators[R]>(out[R]), ...);''', replacement = '''  std::array<T, sizeof...(R)> out{};
+  [&]<std::size_t... J>(std::index_sequence<J...>) {
+    (add_divided<Map.terms[J].coefficient, Map.denominators[Map.terms[J].out]>(out[Map.terms[J].out], x[Map.terms[J].a]), ...);
+  }(std::make_index_sequence<Map.terms.size()>{});''' },
+]
+expect = "killed"
+
+# The division's rounding not counted by the tracking scalar, so the bound
+# of a quotient asks one rounding too few. Predicted: killed by the wide
+# inputs where an output has one or two roundings with the division, not
+# where it has more.
+[[mutant]]
+name = "division_rounding_uncounted"
+selection = "scalars"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  r.roundings = a.roundings + (power_of_two ? 0 : 1);''', replacement = '''  r.roundings = a.roundings + (power_of_two ? 0 : 0);''' }]
+expect = "killed"
+
+# Every double result times 1 + 2^-48, a change of 32 ulps: a probe of how
+# tight the checks are.
+[[mutant]]
+name = "double_results_scaled"
+selection = "scalars"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  (divide_by<Map.denominators[R]>(out[R]), ...);''', replacement = '''  (divide_by<Map.denominators[R]>(out[R]), ...);
+  if constexpr (std::is_same_v<T, double>) {
+    for (T& v : out) {
+      v *= 1.0 + 0x1p-48;
+    }
+  }''' }]
+expect = "killed"

@@ -1,0 +1,38 @@
+ok    B1 e-.e- = -1, e+.e+ = +1
+ok    B1 e4 and e5 are null
+ok    B1 e4 . e5 = -1, the Metrics page's -1 at (4,5)
+ok    B1 e4 ^ e5 = e- ^ e+ (a = 1/2, b = 1)
+ok    B1 so e4 ^ e5 = -(e+ ^ e-): with e'4 = e+, e'5 = e-, e45 -> -e'45
+ok    B1 (a(e- - e+)) ^ (b(e- + e+)) = 2ab e- ^ e+, equal to e- ^ e+ when ab = 1/2
+ok    B1 the Main Page's point formula in e-, e+ equals x e1 + y e2 + z e3 + e4 + x^2/2 e5
+ok    B1 that point is null
+ok    B2 eq. 2.40 inverts eq. 2.39
+ok    B2 n_inf and n_o of eq. 2.39 are null
+ok    B2 n_inf . n_o = -1
+ok    B2 eq. 2.41: n_o n_inf = -1 + E
+ok    B2 eq. 2.42: E = n_o ^ n_inf = e+ e- for eq. 2.39
+ok    B2 eq. 2.43: E^2 = 1
+ok    B2 Table 2.6's n_o = (e- - e+)/2, n_inf = e- + e+ are null with n_o . n_inf = -1
+ok    B2 for Table 2.6's pair, n_o ^ n_inf = -e+ e-: the sign of eq. 2.42 flips
+ok    B2 det = +1 for eq. 2.39, -1 for Table 2.6 (CONVENTIONS 1.4)
+ok    B3 eq. 3: e e* = 1 + E
+ok    B3 eq. 4: e* e = 1 - E
+ok    B3 eq. 2: E^2 = 1
+ok    B3 eq. 5: Ee = -eE = e, e*E = -Ee* = e*
+ok    B3 eq. 7: e+^2 = 1, e-^2 = -1, e+ . e- = 0, for every lambda
+ok    B3 e+ ^ e- = -(e ^ e*) for every lambda
+ok    B3 eq. 7's 'E = e ^ e* = e+ ^ e-' fails: an erratum; E = e- ^ e+
+ok    B3 e+ e- = e+ ^ e- (orthogonal), so eq. 7's e+ e- is -E as well
+ok    B3 with o = e*, inf = -e: o . inf = -1
+ok    B3 lambda = 1/sqrt(2): e+ = e/2 + e*, e- = e/2 - e*, no square roots left
+ok    B3 then o = (e'(d+2) - e'(d+1))/2 and inf = e'(d+2) + e'(d+1), CONVENTIONS 1.4
+ok    B3 and o ^ inf = -e'(d+1) ^ e'(d+2), det -1
+ok    B4 eq. 3.16 a, b
+ok    B4 eq. 2.5: w*_i . w_j = delta_ij / 2
+ok    B4 eqs. 2.7 a, b: {w_i, w_j} = 0 and {w*_i, w*_j} = 0
+ok    B4 from eqs. 2.5 and 3.7: w_i w*_j + w*_j w_i = delta_ij (the CAR)
+ok    B4 eq. 3.34 as printed, w_i w*_j + w_j w*_i = delta_ij, fails: an erratum
+ok    B4 the scaled Witt form: {c_j, c_k^dagger} = delta_jk, {c_j, c_k} = {c_j^dagger, c_k^dagger} = 0
+ok    B4 the Witt change sends c_j to w_j and c_j^dagger to w*_j
+ok    B4 the Witt change is an isometry onto R(2,2,0)
+all reading checks passed

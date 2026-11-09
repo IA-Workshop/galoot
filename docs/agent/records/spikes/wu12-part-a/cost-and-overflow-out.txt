@@ -1,0 +1,28 @@
+group	layouts	change terms (most per output blade)	clang largest phase (steps)	gcc largest phase (ops)	longest loop	phases outside the fit	largest safe K	its binding operation	largest denominator of phi(x)	largest safe K with reduced output denominators
+conformal(1) and R(2,1,0)	full x full	12 (2)	40367 (antigp 8x8 fill; under)	213538 (antigp 8x8 fill; under)	64	0	356248	geometric product, degree 3	2	356248
+conformal(2) and R(3,1,0)	full x full	24 (2)	196735 (antigp 16x16 fill; under)	1049394 (antigp 16x16 fill; under)	256	0	263523	geometric product, degree 3	2	263523
+conformal(3) and R(4,1,0)	full x full	48 (2)	947839 (antigp 32x32 fill; under)	5096386 (antigp 32x32 fill; under)	1024	0	197349	geometric product, degree 3	2	197349
+conformal(4) and R(5,1,0)	vectors x bivectors	8 (2)	154563 (antigp 6x15 fill; under)	843480 (antigp 6x15 fill; under)	90	4	554477893	geometric product, degree 2	2	554477893
+conformal(4) and R(5,1,0)	bivectors x bivectors	23 (2)	316116 (antigp 15x15 fill; under)	1719245 (antigp 15x15 fill; under)	225	4	303700049	geometric product, degree 2	2	303700049
+conformal(4) and R(5,1,0)	full x full (not proposed)	96 (2)	5110503 (gp 64x64 collect; OVER)	25853002 (gp 64x64 collect; under)	4096	0	-	-	-	-
+Witt, one mode, and R(1,1,0)	full x full	6 (2)	8216 (antigp 4x4 fill; under)	43144 (antigp 4x4 fill; under)	16	0	595604800	geometric product, degree 2	2	595604800
+Witt, two modes, and R(2,2,0)	full x full	36 (4)	226064 (antigp 16x16 fill; under)	1203118 (antigp 16x16 fill; under)	256	0	116807711	geometric product, degree 2	4	116807711
+the degenerate form and R(1,1,1)	full x full	12 (2)	36234 (antigp 8x8 fill; under)	191760 (antigp 8x8 fill; under)	48	0	421156193	geometric product, degree 2	2	421156193
+rigid(3) with its null generator first, and rigid(3)	full x full	16 (1)	170927 (antigp 16x16 fill; under)	915538 (antigp 16x16 fill; under)	192	0	759250124	geometric product, degree 2	1	759250124
+random 0 and diag(-1, 7)	full x full	5 (2)	6323 (gp 4x4 fill; under)	35639 (gp 4x4 fill; under)	22	0	573939146	change of basis numerator, degree 2	1	573939146
+random 1 and diag(2, 1, -62)	full x full	12 (3)	47066 (gp 8x8 fill; under)	259419 (gp 8x8 fill; under)	118	0	112250768	geometric product, degree 2	2	112250768
+random 2 and diag(-2, -2, 30, 1770)	full x full	36 (5)	560320 (gp 16x16 fill; under)	3005649 (gp 16x16 fill; under)	814	0	1238983	geometric product, degree 2	60	2477966
+random 3 and diag(3, -30, -470, 517, -165)	vectors x vectors	15 (5)	9015 (gp 5x5 fill; under)	51484 (gp 5x5 fill; under)	41	4	23790	geometric product, degree 2	15510	23790
+random 3 and diag(3, -30, -470, 517, -165)	vectors x bivectors	15 (5)	23731 (gp 5x10 fill; under)	135557 (gp 5x10 fill; under)	114	4	815	geometric product, degree 2	10934550	21661
+random 3 and diag(3, -30, -470, 517, -165)	bivectors x bivectors	50 (10)	138087 (gp 10x10 fill; under)	752051 (gp 10x10 fill; under)	372	4	9	geometric product, degree 2	10934550	6802
+random 3 and diag(3, -30, -470, 517, -165)	full x full (not proposed)	132 (10)	6482384 (gp 32x32 fill; OVER)	34022671 (gp 32x32 fill; under)	5326	0	-	-	-	-
+random 4 and diag(3, -21)	full x full	5 (2)	6323 (gp 4x4 fill; under)	35595 (gp 4x4 fill; under)	22	0	255761580	geometric product, degree 2	3	255761580
+random 5 and diag(-3, 1, -1)	full x full	13 (3)	39962 (gp 8x8 fill; under)	220890 (gp 8x8 fill; under)	100	0	236430168	geometric product, degree 2	1	236430168
+random 6 and diag(-1, 1, 1, -2)	full x full	39 (5)	322214 (gp 16x16 fill; under)	1756919 (gp 16x16 fill; under)	562	0	210578096	change of basis numerator, degree 2	1	210578096
+random 7 and diag(-3, -6, 6, 1, -105)	vectors x vectors	15 (5)	9212 (gp 5x5 fill; under)	52573 (gp 5x5 fill; under)	42	4	21873278	geometric product, degree 2	12	21873278
+random 7 and diag(-3, -6, 6, 1, -105)	vectors x bivectors	15 (5)	24405 (gp 5x10 fill; under)	139458 (gp 5x10 fill; under)	118	4	5959028	geometric product, degree 2	72	5959028
+random 7 and diag(-3, -6, 6, 1, -105)	bivectors x bivectors	50 (10)	150579 (gp 10x10 fill; under)	818606 (gp 10x10 fill; under)	383	4	767622	geometric product, degree 2	72	767622
+random 7 and diag(-3, -6, 6, 1, -105)	full x full (not proposed)	132 (10)	7263222 (gp 32x32 fill; OVER)	38106148 (gp 32x32 fill; under)	5404	0	-	-	-	-
+random 8 and diag(3, -30)	full x full	5 (2)	6323 (gp 4x4 fill; under)	35631 (gp 4x4 fill; under)	22	0	212632565	geometric product, degree 2	3	212632565
+random 9 and diag(-3, -6, 5)	full x full	14 (3)	60909 (gp 8x8 fill; under)	330856 (gp 8x8 fill; under)	136	0	25105179	geometric product, degree 2	9	75315539
+timed: spike wu12-cost-overflow took 74.367 s (exit 0)

@@ -1,0 +1,9 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:2:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1225:17: error: static assertion failed: change_basis: the template argument is a value, not a change tag; put it in a tag, as in struct cga3_to_r410 { using source = cga3; using target = r410; static constexpr auto value = conformal_change<3>(); }
+ 1225 |   static_assert(false, "change_basis: the template argument is a value, not a "
+      |                 ^~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:25:35: note: in instantiation of function template specialization 'galoot::core::change_basis<metric<3UL + 2>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, 0, -1}}, {{0, 0, 0, -1, 0}}}}}, galoot::core::mv<cga3, blade_set<5>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}}}}, double>>' requested here
+   25 |   [[maybe_unused]] auto q = core::change_basis<cga3::value>(p);
+      |                                   ^
+1 error generated.
+timed: probe overloads-3-clang++ took 0.145 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

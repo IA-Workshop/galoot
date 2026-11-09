@@ -309,4 +309,26 @@ Size M to L: about 1.4M to 2.3M tokens with O1 (a). Machine time, inferred from 
 
 ## 18. Outcome
 
-Planned. Nothing is implemented.
+Done, 2026-11-09: merged into `develop` after the owner's final rulings (decision 0225: the STYLE S7 sentence for value-as-tag catch-alls; the safe value-initialization in `test/support/diagonalize.hpp`, `2438c88`), with the P9 matrix passing from new empty trees at `2438c88` (gate:all, all eight presets, `format-check`, the trace gate, `tools/runlog check`). The open items below stay for the units named; the kernels' form-A change for the GCC defect is its own core unit (decision 0225 item 2). The history of the unit follows.
+
+In progress (until the merge). Parts D, N, and A (a) to (g) are merged into the unit (`1818efe`); the owner's rulings on them are decisions 0219 and 0222.
+
+Parts C and E, 2026-11-09, by Claude (agent, Opus 5.5, implementer, cpp-expert role), on `feature/core-basis-change`:
+
+- Part B's eleven commits cherry-picked in order with `-x` (`fc2fdb1` to `79b35f9`); `basis_change.hpp` (`2e10061`) makes the labelled failing ones pass; `tests.messages_pinned` gains `rga3.headers` (`73eb2ac`, decision 0219 item 13); the 1.4 trace row is implemented (`1bac5a5`); a test of the header's example (`404f2fc`); the catalogue regenerated (`440806b`); the coverage table (`8f241f2`); decision 0221, with the form of the division and the recheck of the tolerance rule (`752fdea`).
+- Part E (`9167b81`): every mutant of section 8 and of `new_cases.toml` killed at the tip on both presets; the three gap mutants survive at the branch point and die at the tip, as predicted; the 50-seed campaign passes for both programs; the compile and test costs recorded.
+
+After parts C and E, 2026-11-09, on `feature/core-basis-change`:
+
+- The blind review (`records/reviews/2026-11-09-wu12-blind-review.md`, cherry-picked as `26a90f9`) blocked on F1; its fixes are tests only: `0c5f0e0` (F1), `cc923ac` (F2), `a83eec3` and `9cd86f0` (N4), with its Resolution in `f52c6c8`.
+- Part A (h), the Sage cross-check, is recorded in `records/cross-checks/0030-sage-change-of-basis/` (cherry-picked as `2d9ee04`): 0 mismatches over 63 changes; note 0026 points to it (`c67be83`). The hci reading is cherry-picked as `23857a5`.
+- The owner's rulings on the reviews, decision 0223, are applied: test commits first (`320c0d4`, `fcc25a7`, `9bfa204`, `488a4ab`), then the header change `30c2275` (one error per tag, the tag checks noting an overflow, the reworded messages, the value-as-tag catch-alls, the comments of S4, S5, S7, N3, and N7), with decision 0224 for its form (`8c717f1`); CONVENTIONS 1.17 committed as ratified, with the trace rows of 1.4 and 1.8 (`c634077`); the catalogue and coverage regenerated (`0fa98ac`); the mutants rerun (`82825e9`); the compile cost and the seeds again (`a7e2fec`).
+- The delta review of `30c2275` (`records/reviews/2026-11-09-wu12-delta-review.md`, `a8ad066`) blocked on B1; its fix is tests only (`a4eb995`), and its other records items are done (`a2cad6f` and the records commit that follows it), with its Resolution.
+
+Next: the P9 matrix from new empty trees at the final revision (gate:all). Then the merge into `develop`, which waits for two owner items.
+
+Open:
+
+- For the owner, before the merge: the STYLE S7 departure of the `auto Value` catch-alls (decision 0224 item 5; the delta review's open item 1 recommends a sentence in S7 allowing it); and the GCC constexpr-initializer finding of the Sage record, which touches `test/support/diagonalize.hpp` (decision 0223 item 6).
+- For a later unit (core changes, each with its own review): the elimination's later returns should state `.fits = fits` rather than `true` (delta review N2); reduce each row by the gcd of its entries and its denominator before the checks, so that large unreduced rows such as m e'_i over m are not rejected as an overflow (delta review N3, recommended as an owner backlog item before release).
+- Before release, as ruled in decision 0223: the meaning of `==` on `basis_change`; the blind review's N2 and N5; the hci reading's N6 at the M5 message pass; the README section at the M5 gate; `tools/mutate`'s Clang guard classification and survival expectations as a tools unit.

@@ -1,0 +1,181 @@
+# Edits of the tests' own expected rules for what a change of basis
+# preserves and what it does not: each factor of the agreement checks set
+# to 1, d replaced by 1/d where they differ, and each expected inequality of
+# the basis-dependent operations made an equality. The library is correct,
+# so a test that holds its rule as load-bearing fails each wrong rule: a
+# kill shows the factor or the inequality is checked, not assumed.
+presets = ["gcc-debug", "clang-debug"]
+
+# The agreement checks run in the kernel groups; the inequalities in
+# core.basis_change. The label core.basis_change also selects the identity
+# program, which carries it, so both programs are built.
+[selection.agreement]
+targets = ["core_basis_change_identities_test"]
+labels = '^core\.basis_change_identities$'
+
+[selection.dependence]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change$'
+
+[[mutant]]
+name = "antiwedge_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                            inverse_d,
+                            core::antiwedge(a_image, b_image)) == "");''', replacement = '''                            rational{1},
+                            core::antiwedge(a_image, b_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiwedge_factor_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                            inverse_d,
+                            core::antiwedge(a_image, b_image)) == "");''', replacement = '''                            d,
+                            core::antiwedge(a_image, b_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "bulk_dual_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''core::change_basis<C>(core::bulk_dual(a)), d,''', replacement = '''core::change_basis<C>(core::bulk_dual(a)), rational{1},''' }]
+expect = "killed"
+
+[[mutant]]
+name = "bulk_dual_factor_inverse"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''core::change_basis<C>(core::bulk_dual(a)), d,''', replacement = '''core::change_basis<C>(core::bulk_dual(a)), inverse_d,''' }]
+expect = "killed"
+
+[[mutant]]
+name = "left_bulk_dual_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''core::change_basis<C>(core::left_bulk_dual(a)), d,''', replacement = '''core::change_basis<C>(core::left_bulk_dual(a)), rational{1},''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiproduct_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                inverse_d,
+                core::geometric_antiproduct(a_image, b_image)) == "");''', replacement = '''                rational{1},
+                core::geometric_antiproduct(a_image, b_image)) == "");''' }]
+expect = "killed"
+
+# 1/d against d for the antiproduct family: equal for every change of a
+# nondegenerate form, different for rigid(3) with e4 = 2 e'4.
+[[mutant]]
+name = "antiproduct_factor_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                inverse_d,
+                core::geometric_antiproduct(a_image, b_image)) == "");''', replacement = '''                d,
+                core::geometric_antiproduct(a_image, b_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antidot_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                              inverse_d,
+                              core::antidot(a_image, b_image)) == "");''', replacement = '''                              rational{1},
+                              core::antidot(a_image, b_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "weight_dual_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                              inverse_d, core::weight_dual(a_image)) == "");''', replacement = '''                              rational{1}, core::weight_dual(a_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "left_weight_dual_factor_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''                              inverse_d,
+                              core::left_weight_dual(a_image)) == "");''', replacement = '''                              d,
+                              core::left_weight_dual(a_image)) == "");''' }]
+expect = "killed"
+
+[[mutant]]
+name = "compose_factor_one"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''core::change_basis<C>(core::compose(w, v)), rational{1} / d,''', replacement = '''core::change_basis<C>(core::compose(w, v)), rational{1},''' }]
+expect = "killed"
+
+[[mutant]]
+name = "transform_factor_one_over_d"
+selection = "agreement"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''              rational{1} / (d * d),''', replacement = '''              rational{1} / d,''' }]
+expect = "killed"
+
+[[mutant]]
+name = "bulk_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''core::bulk(there)),
+                 e5) == rational{-1, 2});''', replacement = '''core::bulk(there)),
+                 e5) == rational{-1});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "weight_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''core::weight(there)),
+                 e5) == rational{1, 2});''', replacement = '''core::weight(there)),
+                 e5) == rational{1});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "right_complement_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''                     core::right_complement(there)),
+                 e1235) == rational{1, 2});''', replacement = '''                     core::right_complement(there)),
+                 e1235) == rational{-1});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "left_complement_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''core::left_complement(there)),
+            e1235) == rational{1, 2});''', replacement = '''core::left_complement(there)),
+            e1235) == rational{-1});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiproduct_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''                     core::geometric_antiproduct(e12_image, e12_image)),
+                 e123) == rational{-124});''', replacement = '''                     core::geometric_antiproduct(e12_image, e12_image)),
+                 e123) == rational{-2});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antidot_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [{ anchor = '''                     core::antidot(e12_image, e12_image)),
+                 e123) == rational{-124});''', replacement = '''                     core::antidot(e12_image, e12_image)),
+                 e123) == rational{-2});''' }]
+expect = "killed"
+
+[[mutant]]
+name = "weight_dual_preserved"
+selection = "dependence"
+file = "test/core/basis_change_test.cpp"
+edits = [
+  { anchor = '''  CHECK(value_on(by_way_of, 0b011) == rational{-2510});''', replacement = '''  CHECK(value_on(by_way_of, 0b011) == rational{2});''' },
+  { anchor = '''  CHECK(value_on(by_way_of, 0b101) == rational{-744});''', replacement = '''  CHECK(value_on(by_way_of, 0b101) == rational{-6});''' },
+  { anchor = '''  CHECK(value_on(by_way_of, 0b110) == rational{186});''', replacement = '''  CHECK(value_on(by_way_of, 0b110) == rational{3});''' },
+]
+expect = "killed"

@@ -1,0 +1,2630 @@
+change conformal(1)
+n 3
+route public
+source_gram 1 0 0 ; 0 0 -1 ; 0 -1 0
+target_gram 1 0 0 ; 0 1 0 ; 0 0 -1
+rows 1 0 0 ; 0 -1 1 ; 0 1 1
+denominators_rows 1 2 1
+inverse 1 0 0 ; 0 -2 1 ; 0 2 1
+denominators_inverse 1 2 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 -1/2 4 1/2
+forward 3: 3 -1/2 5 1/2
+forward 4: 2 1/1 4 1/1
+forward 5: 3 1/1 5 1/1
+forward 6: 6 -1/1
+forward 7: 7 -1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 -1/1 4 1/2
+back 3: 3 -1/1 5 1/2
+back 4: 2 1/1 4 1/2
+back 5: 3 1/1 5 1/2
+back 6: 6 -1/1
+back 7: 7 -1/1
+end
+change conformal(2)
+n 4
+route public
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 0 -1 ; 0 0 -1 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 -1
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 -1 1 ; 0 0 1 1
+denominators_rows 1 1 2 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 -2 1 ; 0 0 2 1
+denominators_inverse 1 1 2 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 -1/2 8 1/2
+forward 5: 5 -1/2 9 1/2
+forward 6: 6 -1/2 10 1/2
+forward 7: 7 -1/2 11 1/2
+forward 8: 4 1/1 8 1/1
+forward 9: 5 1/1 9 1/1
+forward 10: 6 1/1 10 1/1
+forward 11: 7 1/1 11 1/1
+forward 12: 12 -1/1
+forward 13: 13 -1/1
+forward 14: 14 -1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 -1/1 8 1/2
+back 5: 5 -1/1 9 1/2
+back 6: 6 -1/1 10 1/2
+back 7: 7 -1/1 11 1/2
+back 8: 4 1/1 8 1/2
+back 9: 5 1/1 9 1/2
+back 10: 6 1/1 10 1/2
+back 11: 7 1/1 11 1/2
+back 12: 12 -1/1
+back 13: 13 -1/1
+back 14: 14 -1/1
+back 15: 15 -1/1
+end
+change conformal(3)
+n 5
+route public
+source_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 0 -1 ; 0 0 0 -1 0
+target_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 -1
+rows 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 -1 1 ; 0 0 0 1 1
+denominators_rows 1 1 1 2 1
+inverse 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 -2 1 ; 0 0 0 2 1
+denominators_inverse 1 1 1 2 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 -1/2 16 1/2
+forward 9: 9 -1/2 17 1/2
+forward 10: 10 -1/2 18 1/2
+forward 11: 11 -1/2 19 1/2
+forward 12: 12 -1/2 20 1/2
+forward 13: 13 -1/2 21 1/2
+forward 14: 14 -1/2 22 1/2
+forward 15: 15 -1/2 23 1/2
+forward 16: 8 1/1 16 1/1
+forward 17: 9 1/1 17 1/1
+forward 18: 10 1/1 18 1/1
+forward 19: 11 1/1 19 1/1
+forward 20: 12 1/1 20 1/1
+forward 21: 13 1/1 21 1/1
+forward 22: 14 1/1 22 1/1
+forward 23: 15 1/1 23 1/1
+forward 24: 24 -1/1
+forward 25: 25 -1/1
+forward 26: 26 -1/1
+forward 27: 27 -1/1
+forward 28: 28 -1/1
+forward 29: 29 -1/1
+forward 30: 30 -1/1
+forward 31: 31 -1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 -1/1 16 1/2
+back 9: 9 -1/1 17 1/2
+back 10: 10 -1/1 18 1/2
+back 11: 11 -1/1 19 1/2
+back 12: 12 -1/1 20 1/2
+back 13: 13 -1/1 21 1/2
+back 14: 14 -1/1 22 1/2
+back 15: 15 -1/1 23 1/2
+back 16: 8 1/1 16 1/2
+back 17: 9 1/1 17 1/2
+back 18: 10 1/1 18 1/2
+back 19: 11 1/1 19 1/2
+back 20: 12 1/1 20 1/2
+back 21: 13 1/1 21 1/2
+back 22: 14 1/1 22 1/2
+back 23: 15 1/1 23 1/2
+back 24: 24 -1/1
+back 25: 25 -1/1
+back 26: 26 -1/1
+back 27: 27 -1/1
+back 28: 28 -1/1
+back 29: 29 -1/1
+back 30: 30 -1/1
+back 31: 31 -1/1
+end
+change conformal(4)
+n 6
+route public
+source_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 0 -1 ; 0 0 0 0 -1 0
+target_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 0 ; 0 0 0 0 0 -1
+rows 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 -1 1 ; 0 0 0 0 1 1
+denominators_rows 1 1 1 1 2 1
+inverse 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 -2 1 ; 0 0 0 0 2 1
+denominators_inverse 1 1 1 1 2 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 -1/2 32 1/2
+forward 17: 17 -1/2 33 1/2
+forward 18: 18 -1/2 34 1/2
+forward 19: 19 -1/2 35 1/2
+forward 20: 20 -1/2 36 1/2
+forward 21: 21 -1/2 37 1/2
+forward 22: 22 -1/2 38 1/2
+forward 23: 23 -1/2 39 1/2
+forward 24: 24 -1/2 40 1/2
+forward 25: 25 -1/2 41 1/2
+forward 26: 26 -1/2 42 1/2
+forward 27: 27 -1/2 43 1/2
+forward 28: 28 -1/2 44 1/2
+forward 29: 29 -1/2 45 1/2
+forward 30: 30 -1/2 46 1/2
+forward 31: 31 -1/2 47 1/2
+forward 32: 16 1/1 32 1/1
+forward 33: 17 1/1 33 1/1
+forward 34: 18 1/1 34 1/1
+forward 35: 19 1/1 35 1/1
+forward 36: 20 1/1 36 1/1
+forward 37: 21 1/1 37 1/1
+forward 38: 22 1/1 38 1/1
+forward 39: 23 1/1 39 1/1
+forward 40: 24 1/1 40 1/1
+forward 41: 25 1/1 41 1/1
+forward 42: 26 1/1 42 1/1
+forward 43: 27 1/1 43 1/1
+forward 44: 28 1/1 44 1/1
+forward 45: 29 1/1 45 1/1
+forward 46: 30 1/1 46 1/1
+forward 47: 31 1/1 47 1/1
+forward 48: 48 -1/1
+forward 49: 49 -1/1
+forward 50: 50 -1/1
+forward 51: 51 -1/1
+forward 52: 52 -1/1
+forward 53: 53 -1/1
+forward 54: 54 -1/1
+forward 55: 55 -1/1
+forward 56: 56 -1/1
+forward 57: 57 -1/1
+forward 58: 58 -1/1
+forward 59: 59 -1/1
+forward 60: 60 -1/1
+forward 61: 61 -1/1
+forward 62: 62 -1/1
+forward 63: 63 -1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 -1/1 32 1/2
+back 17: 17 -1/1 33 1/2
+back 18: 18 -1/1 34 1/2
+back 19: 19 -1/1 35 1/2
+back 20: 20 -1/1 36 1/2
+back 21: 21 -1/1 37 1/2
+back 22: 22 -1/1 38 1/2
+back 23: 23 -1/1 39 1/2
+back 24: 24 -1/1 40 1/2
+back 25: 25 -1/1 41 1/2
+back 26: 26 -1/1 42 1/2
+back 27: 27 -1/1 43 1/2
+back 28: 28 -1/1 44 1/2
+back 29: 29 -1/1 45 1/2
+back 30: 30 -1/1 46 1/2
+back 31: 31 -1/1 47 1/2
+back 32: 16 1/1 32 1/2
+back 33: 17 1/1 33 1/2
+back 34: 18 1/1 34 1/2
+back 35: 19 1/1 35 1/2
+back 36: 20 1/1 36 1/2
+back 37: 21 1/1 37 1/2
+back 38: 22 1/1 38 1/2
+back 39: 23 1/1 39 1/2
+back 40: 24 1/1 40 1/2
+back 41: 25 1/1 41 1/2
+back 42: 26 1/1 42 1/2
+back 43: 27 1/1 43 1/2
+back 44: 28 1/1 44 1/2
+back 45: 29 1/1 45 1/2
+back 46: 30 1/1 46 1/2
+back 47: 31 1/1 47 1/2
+back 48: 48 -1/1
+back 49: 49 -1/1
+back 50: 50 -1/1
+back 51: 51 -1/1
+back 52: 52 -1/1
+back 53: 53 -1/1
+back 54: 54 -1/1
+back 55: 55 -1/1
+back 56: 56 -1/1
+back 57: 57 -1/1
+back 58: 58 -1/1
+back 59: 59 -1/1
+back 60: 60 -1/1
+back 61: 61 -1/1
+back 62: 62 -1/1
+back 63: 63 -1/1
+end
+change Witt, one mode
+n 2
+route public
+source_gram 0 1 ; 1 0
+target_gram 1 0 ; 0 -1
+rows 1 1 ; 1 -1
+denominators_rows 2 1
+inverse 2 1 ; 2 -1
+denominators_inverse 2 2
+forward 0: 0 1/1
+forward 1: 1 1/2 2 1/2
+forward 2: 1 1/1 2 -1/1
+forward 3: 3 -1/1
+back 0: 0 1/1
+back 1: 1 1/1 2 1/2
+back 2: 1 1/1 2 -1/2
+back 3: 3 -1/1
+end
+change Witt, two modes
+n 4
+route public
+source_gram 0 1 0 0 ; 1 0 0 0 ; 0 0 0 1 ; 0 0 1 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 -1 0 ; 0 0 0 -1
+rows 1 0 1 0 ; 1 0 -1 0 ; 0 1 0 1 ; 0 1 0 -1
+denominators_rows 2 1 2 1
+inverse 2 1 0 0 ; 0 0 2 1 ; 2 -1 0 0 ; 0 0 2 -1
+denominators_inverse 2 2 2 2
+forward 0: 0 1/1
+forward 1: 1 1/2 4 1/2
+forward 2: 1 1/1 4 -1/1
+forward 3: 5 -1/1
+forward 4: 2 1/2 8 1/2
+forward 5: 3 1/4 6 -1/4 9 1/4 12 1/4
+forward 6: 3 1/2 6 1/2 9 1/2 12 -1/2
+forward 7: 7 1/2 13 -1/2
+forward 8: 2 1/1 8 -1/1
+forward 9: 3 1/2 6 -1/2 9 -1/2 12 -1/2
+forward 10: 3 1/1 6 1/1 9 -1/1 12 1/1
+forward 11: 7 1/1 13 1/1
+forward 12: 10 -1/1
+forward 13: 11 -1/2 14 1/2
+forward 14: 11 -1/1 14 -1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 1 1/1 2 1/2
+back 2: 4 1/1 8 1/2
+back 3: 5 1/1 6 1/2 9 1/2 10 1/4
+back 4: 1 1/1 2 -1/2
+back 5: 3 -1/1
+back 6: 5 -1/1 6 1/2 9 -1/2 10 1/4
+back 7: 7 1/1 11 1/2
+back 8: 4 1/1 8 -1/2
+back 9: 5 1/1 6 1/2 9 -1/2 10 -1/4
+back 10: 12 -1/1
+back 11: 13 -1/1 14 -1/2
+back 12: 5 1/1 6 -1/2 9 -1/2 10 1/4
+back 13: 7 -1/1 11 1/2
+back 14: 13 1/1 14 -1/2
+back 15: 15 -1/1
+end
+change rigid(3), e4 doubled
+n 4
+route public
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 2
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 2/1
+forward 9: 9 2/1
+forward 10: 10 2/1
+forward 11: 11 2/1
+forward 12: 12 2/1
+forward 13: 13 2/1
+forward 14: 14 2/1
+forward 15: 15 2/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/2
+back 9: 9 1/2
+back 10: 10 1/2
+back 11: 11 1/2
+back 12: 12 1/2
+back 13: 13 1/2
+back 14: 14 1/2
+back 15: 15 1/2
+end
+listed degenerate same
+change degenerate
+n 3
+route public
+source_gram 0 1 0 ; 1 0 0 ; 0 0 0
+target_gram 2 0 0 ; 0 -2 0 ; 0 0 0
+rows 1 -1 0 ; 1 1 0 ; 0 0 1
+denominators_rows 2 2 1
+inverse 1 1 0 ; -1 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/2 2 -1/2
+forward 2: 1 1/2 2 1/2
+forward 3: 3 1/2
+forward 4: 4 1/1
+forward 5: 5 1/2 6 -1/2
+forward 6: 5 1/2 6 1/2
+forward 7: 7 1/2
+back 0: 0 1/1
+back 1: 1 1/1 2 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 2/1
+back 4: 4 1/1
+back 5: 5 1/1 6 1/1
+back 6: 5 -1/1 6 1/1
+back 7: 7 2/1
+end
+listed rigid(3), null first same
+change rigid(3), null first
+n 4
+route public
+source_gram 0 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+rows 0 0 0 1 ; 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0
+denominators_rows 1 1 1 1
+inverse 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1 ; 1 0 0 0
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 8 1/1
+forward 2: 1 1/1
+forward 3: 9 -1/1
+forward 4: 2 1/1
+forward 5: 10 -1/1
+forward 6: 3 1/1
+forward 7: 11 1/1
+forward 8: 4 1/1
+forward 9: 12 -1/1
+forward 10: 5 1/1
+forward 11: 13 1/1
+forward 12: 6 1/1
+forward 13: 14 1/1
+forward 14: 7 1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 2 1/1
+back 2: 4 1/1
+back 3: 6 1/1
+back 4: 8 1/1
+back 5: 10 1/1
+back 6: 12 1/1
+back 7: 14 1/1
+back 8: 1 1/1
+back 9: 3 -1/1
+back 10: 5 -1/1
+back 11: 7 1/1
+back 12: 9 -1/1
+back 13: 11 1/1
+back 14: 13 1/1
+back 15: 15 -1/1
+end
+listed random 0 same
+change random 0
+n 2
+route public
+source_gram -1 -2 ; -2 3
+target_gram -1 0 ; 0 7
+rows 1 0 ; 2 1
+denominators_rows 1 1
+inverse 1 0 ; -2 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 2/1 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -2/1 2 1/1
+back 3: 3 1/1
+end
+listed random 1 same
+change random 1
+n 3
+route public
+source_gram 2 0 -3 ; 0 1 -3 ; -3 -3 -2
+target_gram 2 0 0 ; 0 1 0 ; 0 0 -62
+rows 1 0 0 ; 0 1 0 ; -3 -6 1
+denominators_rows 1 1 2
+inverse 1 0 0 ; 0 1 0 ; 3 6 2
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 1 -3/2 2 -3/1 4 1/2
+forward 5: 3 -3/1 5 1/2
+forward 6: 3 3/2 6 1/2
+forward 7: 7 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 1 3/1 2 6/1 4 2/1
+back 5: 3 6/1 5 2/1
+back 6: 3 -3/1 6 2/1
+back 7: 7 2/1
+end
+listed random 2 same
+change random 2
+n 4
+route public
+source_gram -2 0 -2 2 ; 0 -2 -3 3 ; -2 -3 1 3 ; 2 3 3 3
+target_gram -2 0 0 0 ; 0 -2 0 0 ; 0 0 30 0 ; 0 0 0 1770
+rows 1 0 0 0 ; 0 1 0 0 ; 2 3 1 0 ; -30 -45 -7 2
+denominators_rows 1 1 2 30
+inverse 1 0 0 0 ; 0 1 0 0 ; -2 -3 2 0 ; 8 12 7 15
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 1 1/1 2 3/2 4 1/2
+forward 5: 3 3/2 5 1/2
+forward 6: 3 -1/1 6 1/2
+forward 7: 7 1/2
+forward 8: 1 -1/1 2 -3/2 4 -7/30 8 1/15
+forward 9: 3 -3/2 5 -7/30 9 1/15
+forward 10: 3 1/1 6 -7/30 10 1/15
+forward 11: 7 -7/30 11 1/15
+forward 12: 5 4/15 6 2/5 9 1/15 10 1/10 12 1/30
+forward 13: 7 2/5 11 1/10 13 1/30
+forward 14: 7 -4/15 11 -1/15 14 1/30
+forward 15: 15 1/30
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 1 -2/1 2 -3/1 4 2/1
+back 5: 3 -3/1 5 2/1
+back 6: 3 2/1 6 2/1
+back 7: 7 2/1
+back 8: 1 8/1 2 12/1 4 7/1 8 15/1
+back 9: 3 12/1 5 7/1 9 15/1
+back 10: 3 -8/1 6 7/1 10 15/1
+back 11: 7 7/1 11 15/1
+back 12: 5 -30/1 6 -45/1 9 -30/1 10 -45/1 12 30/1
+back 13: 7 -45/1 11 -45/1 13 30/1
+back 14: 7 30/1 11 30/1 14 30/1
+back 15: 15 30/1
+end
+listed random 3 same
+change random 3
+n 5
+route public
+source_gram 3 1 -3 -1 -2 ; 1 -3 -2 1 0 ; -3 -2 -2 3 0 ; -1 1 3 3 2 ; -2 0 0 2 -1
+target_gram 3 0 0 0 0 ; 0 -30 0 0 0 ; 0 0 -470 0 0 ; 0 0 0 517 0 ; 0 0 0 0 -165
+rows 1 0 0 0 0 ; 1 1 0 0 0 ; -10 1 1 0 0 ; -235 -94 -24 60 0 ; -5170 -517 363 150 705
+denominators_rows 1 3 10 705 7755
+inverse 1 0 0 0 0 ; -1 3 0 0 0 ; 11 -3 10 0 0 ; 27 14 16 47 0 ; -1 6 -12 -5 22
+denominators_inverse 1 1 1 4 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/3 2 1/3
+forward 3: 3 1/3
+forward 4: 1 -1/1 2 1/10 4 1/10
+forward 5: 3 1/10 5 1/10
+forward 6: 3 11/30 5 1/30 6 1/30
+forward 7: 7 1/30
+forward 8: 1 -1/3 2 -2/15 4 -8/235 8 4/47
+forward 9: 3 -2/15 5 -8/235 9 4/47
+forward 10: 3 1/15 5 -8/705 6 -8/705 9 4/141 10 4/141
+forward 11: 7 -8/705 11 4/141
+forward 12: 3 1/6 5 19/282 6 7/705 9 -4/47 10 2/235 12 2/235
+forward 13: 7 7/705 11 2/235 13 2/235
+forward 14: 7 -9/470 11 22/705 13 2/705 14 2/705
+forward 15: 15 2/705
+forward 16: 1 -2/3 2 -1/15 4 11/235 8 10/517 16 1/11
+forward 17: 3 -1/15 5 11/235 9 10/517 17 1/11
+forward 18: 3 1/5 5 11/705 6 11/705 9 10/1551 10 10/1551 17 1/33 18 1/33
+forward 19: 7 11/705 11 10/1551 19 1/33
+forward 20: 3 2/15 5 14/705 6 8/705 9 -10/517 10 1/517 12 1/517 17 -1/11 18 1/110 20 1/110
+forward 21: 7 8/705 11 1/517 13 1/517 19 1/110 21 1/110
+forward 22: 7 -2/705 11 1/141 13 1/1551 14 1/1551 19 1/30 21 1/330 22 1/330
+forward 23: 15 1/1551 23 1/330
+forward 24: 3 -1/15 5 -9/235 6 -2/235 9 26/517 10 8/2585 12 -12/2585 17 -1/33 18 -2/165 20 -8/2585 24 4/517
+forward 25: 7 -2/235 11 8/2585 13 -12/2585 19 -2/165 21 -8/2585 25 4/517
+forward 26: 7 7/705 11 -122/7755 13 -4/2585 14 -4/2585 19 1/165 21 -8/7755 22 -8/7755 25 4/1551 26 4/1551
+forward 27: 15 -4/2585 23 -8/7755 27 4/1551
+forward 28: 7 4/705 11 -21/2585 13 -1/2585 14 -2/2585 19 1/66 21 19/3102 22 7/7755 25 -4/517 26 2/2585 28 2/2585
+forward 29: 15 -2/2585 23 7/7755 27 2/2585 29 2/2585
+forward 30: 15 -1/7755 23 -9/5170 27 2/705 29 2/7755 30 2/7755
+forward 31: 31 2/7755
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 3/1
+back 3: 3 3/1
+back 4: 1 11/1 2 -3/1 4 10/1
+back 5: 3 -3/1 5 10/1
+back 6: 3 -30/1 5 -10/1 6 30/1
+back 7: 7 30/1
+back 8: 1 27/4 2 7/2 4 4/1 8 47/4
+back 9: 3 7/2 5 4/1 9 47/4
+back 10: 3 -95/4 5 -4/1 6 12/1 9 -47/4 10 141/4
+back 11: 7 12/1 11 141/4
+back 12: 3 235/4 5 -47/2 6 -47/1 9 517/4 10 -141/4 12 235/2
+back 13: 7 -47/1 11 -141/4 13 235/2
+back 14: 7 235/2 11 -705/2 13 -235/2 14 705/2
+back 15: 15 705/2
+back 16: 1 -1/2 2 3/1 4 -6/1 8 -5/2 16 11/1
+back 17: 3 3/1 5 -6/1 9 -5/2 17 11/1
+back 18: 3 -3/2 5 6/1 6 -18/1 9 5/2 10 -15/2 17 -11/1 18 33/1
+back 19: 7 -18/1 11 -15/2 19 33/1
+back 20: 3 63/2 5 -61/1 6 -12/1 9 -55/2 10 15/2 12 -25/1 17 121/1 18 -33/1 20 110/1
+back 21: 7 -12/1 11 15/2 13 -25/1 19 -33/1 21 110/1
+back 22: 7 195/1 11 75/1 13 25/1 14 -75/1 19 -330/1 21 -110/1 22 330/1
+back 23: 15 -75/1 23 330/1
+back 24: 3 22/1 5 -77/2 6 -33/1 9 -11/1 10 -44/1 12 121/2 17 297/4 18 77/2 20 44/1 24 517/4
+back 25: 7 -33/1 11 -44/1 13 121/2 19 77/2 21 44/1 25 517/4
+back 26: 7 297/2 11 77/1 13 -121/2 14 363/2 19 -1045/4 21 -44/1 22 132/1 25 -517/4 26 1551/4
+back 27: 15 363/2 23 132/1 27 1551/4
+back 28: 7 -517/2 11 -517/1 13 1551/2 14 517/2 19 2585/4 21 -517/2 22 -517/1 25 5687/4 26 -1551/4 28 2585/2
+back 29: 15 517/2 23 -517/1 27 -1551/4 29 2585/2
+back 30: 15 -2585/1 23 2585/2 27 -7755/2 29 -2585/2 30 7755/2
+back 31: 31 7755/2
+end
+listed random 4 same
+change random 4
+n 2
+route public
+source_gram 3 1 ; 1 -2
+target_gram 3 0 ; 0 -21
+rows 1 0 ; 1 1
+denominators_rows 1 3
+inverse 1 0 ; -1 3
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/3 2 1/3
+forward 3: 3 1/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 3/1
+back 3: 3 3/1
+end
+listed random 5 same
+change random 5
+n 3
+route public
+source_gram -3 -3 0 ; -3 -2 2 ; 0 2 0
+target_gram -3 0 0 ; 0 1 0 ; 0 0 -1
+rows 1 0 0 ; 1 1 0 ; 0 2 2
+denominators_rows 1 1 1
+inverse 1 0 0 ; -1 1 0 ; 2 -2 1
+denominators_inverse 1 1 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/1 2 1/1
+forward 3: 3 1/1
+forward 4: 2 2/1 4 2/1
+forward 5: 3 2/1 5 2/1
+forward 6: 3 2/1 5 2/1 6 2/1
+forward 7: 7 2/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 1/1
+back 4: 1 1/1 2 -1/1 4 1/2
+back 5: 3 -1/1 5 1/2
+back 6: 5 -1/2 6 1/2
+back 7: 7 1/2
+end
+listed random 6 same
+change random 6
+n 4
+route public
+source_gram 0 1 -1 0 ; 1 -1 0 -1 ; -1 0 2 0 ; 0 -1 0 -1
+target_gram -1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 -2
+rows -1 1 0 0 ; 1 0 0 0 ; 0 -1 1 0 ; 1 -1 -1 1
+denominators_rows 1 1 1 1
+inverse 0 1 0 0 ; 1 1 0 0 ; 1 1 1 0 ; 2 1 1 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 -1/1 2 1/1
+forward 2: 1 1/1
+forward 3: 3 -1/1
+forward 4: 2 -1/1 4 1/1
+forward 5: 3 1/1 5 -1/1 6 1/1
+forward 6: 3 -1/1 5 1/1
+forward 7: 7 -1/1
+forward 8: 1 1/1 2 -1/1 4 -1/1 8 1/1
+forward 9: 5 1/1 6 -1/1 9 -1/1 10 1/1
+forward 10: 3 -1/1 5 -1/1 9 1/1
+forward 11: 7 1/1 11 -1/1
+forward 12: 3 1/1 5 -1/1 6 2/1 10 -1/1 12 1/1
+forward 13: 7 -1/1 11 1/1 13 -1/1 14 1/1
+forward 14: 7 2/1 11 -1/1 13 1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 2 1/1
+back 2: 1 1/1 2 1/1
+back 3: 3 -1/1
+back 4: 1 1/1 2 1/1 4 1/1
+back 5: 3 -1/1 6 1/1
+back 6: 5 1/1 6 1/1
+back 7: 7 -1/1
+back 8: 1 2/1 2 1/1 4 1/1 8 1/1
+back 9: 3 -2/1 6 1/1 10 1/1
+back 10: 3 -1/1 5 1/1 6 1/1 9 1/1 10 1/1
+back 11: 7 -1/1 11 -1/1
+back 12: 3 -1/1 5 -1/1 9 1/1 10 1/1 12 1/1
+back 13: 7 1/1 11 -1/1 14 1/1
+back 14: 7 1/1 13 1/1 14 1/1
+back 15: 15 -1/1
+end
+listed random 7 same
+change random 7
+n 5
+route public
+source_gram -3 1 2 -1 -2 ; 1 -3 0 -3 -1 ; 2 0 0 3 -3 ; -1 -3 3 1 -2 ; -2 -1 -3 -2 2
+target_gram -3 0 0 0 0 ; 0 -6 0 0 0 ; 0 0 6 0 0 ; 0 0 0 1 0 ; 0 0 0 0 -105
+rows 1 0 0 0 0 ; -1 2 0 0 0 ; -4 -1 3 0 0 ; 2 5 3 12 0 ; 8 5 -19 33 5
+denominators_rows 1 3 6 6 12
+inverse 1 0 0 0 0 ; 1 3 0 0 0 ; 3 1 4 0 0 ; -3 -3 -2 2 0 ; 171 107 218 -66 48
+denominators_inverse 1 2 2 4 20
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -1/3 2 2/3
+forward 3: 3 2/3
+forward 4: 1 -2/3 2 -1/6 4 1/2
+forward 5: 3 -1/6 5 1/2
+forward 6: 3 1/2 5 -1/6 6 1/3
+forward 7: 7 1/3
+forward 8: 1 1/3 2 5/6 4 1/2 8 2/1
+forward 9: 3 5/6 5 1/2 9 2/1
+forward 10: 3 -1/2 5 -1/6 6 1/3 9 -2/3 10 4/3
+forward 11: 7 1/3 11 4/3
+forward 12: 3 -1/2 5 -1/2 6 -1/2 9 -4/3 10 -1/3 12 1/1
+forward 13: 7 -1/2 11 -1/3 13 1/1
+forward 14: 7 1/2 11 1/1 13 -1/3 14 2/3
+forward 15: 15 2/3
+forward 16: 1 2/3 2 5/12 4 -19/12 8 11/4 16 5/12
+forward 17: 3 5/12 5 -19/12 9 11/4 17 5/12
+forward 18: 3 -7/12 5 19/36 6 -19/18 9 -11/12 10 11/6 17 -5/36 18 5/18
+forward 19: 7 -19/18 11 11/6 19 5/18
+forward 20: 3 -1/6 5 13/18 6 1/18 9 -11/6 10 -11/24 12 11/8 17 -5/18 18 -5/72 20 5/24
+forward 21: 7 1/18 11 -11/24 13 11/8 19 -5/72 21 5/24
+forward 22: 7 -1/2 11 11/8 13 -11/24 14 11/12 19 5/24 21 -5/72 22 5/36
+forward 23: 15 11/12 23 5/36
+forward 24: 3 -5/12 5 -31/36 6 -55/36 9 -5/12 10 35/24 12 109/24 17 5/36 18 25/72 20 5/24 24 5/6
+forward 25: 7 -55/36 11 35/24 13 109/24 19 25/72 21 5/24 25 5/6
+forward 26: 7 13/12 11 -5/24 13 -109/72 14 109/36 19 -5/24 21 -5/72 22 5/36 25 -5/18 26 5/9
+forward 27: 15 109/36 23 5/36 27 5/9
+forward 28: 7 2/3 11 -25/24 13 -203/72 14 -107/72 19 -5/24 21 -5/24 22 -5/24 25 -5/9 26 -5/36 28 5/12
+forward 29: 15 -107/72 23 -5/24 27 -5/36 29 5/12
+forward 30: 15 19/8 23 5/24 27 5/12 29 -5/36 30 5/18
+forward 31: 31 5/18
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 1/2 2 3/2
+back 3: 3 3/2
+back 4: 1 3/2 2 1/2 4 2/1
+back 5: 3 1/2 5 2/1
+back 6: 3 -2/1 5 1/1 6 3/1
+back 7: 7 3/1
+back 8: 1 -3/4 2 -3/4 4 -1/2 8 1/2
+back 9: 3 -3/4 5 -1/2 9 1/2
+back 10: 3 3/4 5 -1/4 6 -3/4 9 1/4 10 3/4
+back 11: 7 -3/4 11 3/4
+back 12: 3 -3/4 5 3/4 6 5/4 9 3/4 10 1/4 12 1/1
+back 13: 7 5/4 11 1/4 13 1/1
+back 14: 7 -1/2 11 -1/1 13 1/2 14 3/2
+back 15: 15 3/2
+back 16: 1 171/20 2 107/20 4 109/10 8 -33/10 16 12/5
+back 17: 3 107/20 5 109/10 9 -33/10 17 12/5
+back 18: 3 -203/20 5 109/20 6 327/20 9 -33/20 10 -99/20 17 6/5 18 18/5
+back 19: 7 327/20 11 -99/20 19 18/5
+back 20: 3 15/4 5 -3/4 6 -21/4 9 -99/20 10 -33/20 12 -33/5 17 18/5 18 6/5 20 24/5
+back 21: 7 -21/4 11 -33/20 13 -33/5 19 6/5 21 24/5
+back 22: 7 -3/2 11 33/5 13 -33/10 14 -99/10 19 -24/5 21 12/5 22 36/5
+back 23: 15 -99/10 23 36/5
+back 24: 3 12/5 5 -39/10 6 -11/2 9 -9/5 10 -1/5 12 -19/5 17 -9/5 18 -9/5 20 -6/5 24 6/5
+back 25: 7 -11/2 11 -1/5 13 -19/5 19 -9/5 21 -6/5 25 6/5
+back 26: 7 31/10 11 13/5 13 -19/10 14 -57/10 19 9/5 21 -3/5 22 -9/5 25 3/5 26 9/5
+back 27: 15 -57/10 23 -9/5 27 9/5
+back 28: 7 -3/2 11 3/5 13 -21/10 14 -3/2 19 -9/5 21 9/5 22 3/1 25 9/5 26 3/5 28 12/5
+back 29: 15 -3/2 23 3/1 27 3/5 29 12/5
+back 30: 15 12/5 23 -6/5 27 -12/5 29 6/5 30 18/5
+back 31: 31 18/5
+end
+listed random 8 same
+change random 8
+n 2
+route public
+source_gram 3 -2 ; -2 -2
+target_gram 3 0 ; 0 -30
+rows 1 0 ; -2 1
+denominators_rows 1 3
+inverse 1 0 ; 2 3
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -2/3 2 1/3
+forward 3: 3 1/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 2/1 2 3/1
+back 3: 3 3/1
+end
+listed random 9 same
+change random 9
+n 3
+route public
+source_gram -3 1 -2 ; 1 -3 -2 ; -2 -2 1
+target_gram -3 0 0 ; 0 -6 0 ; 0 0 5
+rows 1 0 0 ; -1 2 0 ; 2 2 3
+denominators_rows 1 3 3
+inverse 1 0 0 ; 1 3 0 ; -1 -1 1
+denominators_inverse 1 2 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -1/3 2 2/3
+forward 3: 3 2/3
+forward 4: 1 2/3 2 2/3 4 1/1
+forward 5: 3 2/3 5 1/1
+forward 6: 3 -2/3 5 -1/3 6 2/3
+forward 7: 7 2/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 1/2 2 3/2
+back 3: 3 3/2
+back 4: 1 -1/1 2 -1/1 4 1/1
+back 5: 3 -1/1 5 1/1
+back 6: 3 1/1 5 1/2 6 3/2
+back 7: 7 3/2
+end
+change R(1,0,0)
+n 1
+route terms
+source_gram 1
+target_gram 1
+rows 1
+denominators_rows 1
+inverse 1
+denominators_inverse 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+end
+change R(0,1,0)
+n 1
+route terms
+source_gram -1
+target_gram -1
+rows 1
+denominators_rows 1
+inverse 1
+denominators_inverse 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+end
+change R(0,0,1)
+n 1
+route terms
+source_gram 0
+target_gram 0
+rows 1
+denominators_rows 1
+inverse 1
+denominators_inverse 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+end
+change R(2,0,0)
+n 2
+route terms
+source_gram 1 0 ; 0 1
+target_gram 1 0 ; 0 1
+rows 1 0 ; 0 1
+denominators_rows 1 1
+inverse 1 0 ; 0 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+end
+change R(0,2,0)
+n 2
+route terms
+source_gram -1 0 ; 0 -1
+target_gram -1 0 ; 0 -1
+rows 1 0 ; 0 1
+denominators_rows 1 1
+inverse 1 0 ; 0 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+end
+change R(1,1,0)
+n 2
+route terms
+source_gram 1 0 ; 0 -1
+target_gram 1 0 ; 0 -1
+rows 1 0 ; 0 1
+denominators_rows 1 1
+inverse 1 0 ; 0 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+end
+change R(1,0,1)
+n 2
+route terms
+source_gram 1 0 ; 0 0
+target_gram 1 0 ; 0 0
+rows 1 0 ; 0 1
+denominators_rows 1 1
+inverse 1 0 ; 0 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+end
+change R(0,0,2)
+n 2
+route terms
+source_gram 0 0 ; 0 0
+target_gram 0 0 ; 0 0
+rows 1 0 ; 0 1
+denominators_rows 1 1
+inverse 1 0 ; 0 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+end
+change R(3,0,0)
+n 3
+route terms
+source_gram 1 0 0 ; 0 1 0 ; 0 0 1
+target_gram 1 0 0 ; 0 1 0 ; 0 0 1
+rows 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+end
+change R(2,1,0)
+n 3
+route terms
+source_gram 1 0 0 ; 0 1 0 ; 0 0 -1
+target_gram 1 0 0 ; 0 1 0 ; 0 0 -1
+rows 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+end
+change R(2,0,1)
+n 3
+route terms
+source_gram 1 0 0 ; 0 1 0 ; 0 0 0
+target_gram 1 0 0 ; 0 1 0 ; 0 0 0
+rows 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+end
+change R(1,1,1)
+n 3
+route terms
+source_gram 1 0 0 ; 0 -1 0 ; 0 0 0
+target_gram 1 0 0 ; 0 -1 0 ; 0 0 0
+rows 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+end
+change R(0,0,3)
+n 3
+route terms
+source_gram 0 0 0 ; 0 0 0 ; 0 0 0
+target_gram 0 0 0 ; 0 0 0 ; 0 0 0
+rows 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; 0 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+end
+change R(4,0,0)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change rigid(3)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(1,3,0)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 -1 0 0 ; 0 0 -1 0 ; 0 0 0 -1
+target_gram 1 0 0 0 ; 0 -1 0 0 ; 0 0 -1 0 ; 0 0 0 -1
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(3,1,0)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 -1
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 -1
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(2,2,0)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 -1 0 ; 0 0 0 -1
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 -1 0 ; 0 0 0 -1
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(2,0,2)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 0 0 ; 0 0 0 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 0 0 ; 0 0 0 0
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(0,0,4)
+n 4
+route terms
+source_gram 0 0 0 0 ; 0 0 0 0 ; 0 0 0 0 ; 0 0 0 0
+target_gram 0 0 0 0 ; 0 0 0 0 ; 0 0 0 0 ; 0 0 0 0
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_rows 1 1 1 1
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+end
+change R(4,1,0)
+n 5
+route terms
+source_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 -1
+target_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 -1
+rows 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 1
+denominators_rows 1 1 1 1 1
+inverse 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 1
+denominators_inverse 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 1/1
+forward 17: 17 1/1
+forward 18: 18 1/1
+forward 19: 19 1/1
+forward 20: 20 1/1
+forward 21: 21 1/1
+forward 22: 22 1/1
+forward 23: 23 1/1
+forward 24: 24 1/1
+forward 25: 25 1/1
+forward 26: 26 1/1
+forward 27: 27 1/1
+forward 28: 28 1/1
+forward 29: 29 1/1
+forward 30: 30 1/1
+forward 31: 31 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 1/1
+back 17: 17 1/1
+back 18: 18 1/1
+back 19: 19 1/1
+back 20: 20 1/1
+back 21: 21 1/1
+back 22: 22 1/1
+back 23: 23 1/1
+back 24: 24 1/1
+back 25: 25 1/1
+back 26: 26 1/1
+back 27: 27 1/1
+back 28: 28 1/1
+back 29: 29 1/1
+back 30: 30 1/1
+back 31: 31 1/1
+end
+change R(4,0,1)
+n 5
+route terms
+source_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 0
+target_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 0
+rows 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 1
+denominators_rows 1 1 1 1 1
+inverse 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 0 ; 0 0 0 0 1
+denominators_inverse 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 1/1
+forward 17: 17 1/1
+forward 18: 18 1/1
+forward 19: 19 1/1
+forward 20: 20 1/1
+forward 21: 21 1/1
+forward 22: 22 1/1
+forward 23: 23 1/1
+forward 24: 24 1/1
+forward 25: 25 1/1
+forward 26: 26 1/1
+forward 27: 27 1/1
+forward 28: 28 1/1
+forward 29: 29 1/1
+forward 30: 30 1/1
+forward 31: 31 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 1/1
+back 17: 17 1/1
+back 18: 18 1/1
+back 19: 19 1/1
+back 20: 20 1/1
+back 21: 21 1/1
+back 22: 22 1/1
+back 23: 23 1/1
+back 24: 24 1/1
+back 25: 25 1/1
+back 26: 26 1/1
+back 27: 27 1/1
+back 28: 28 1/1
+back 29: 29 1/1
+back 30: 30 1/1
+back 31: 31 1/1
+end
+change R(4,2,0)
+n 6
+route terms
+source_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 -1 0 ; 0 0 0 0 0 -1
+target_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 -1 0 ; 0 0 0 0 0 -1
+rows 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 0 ; 0 0 0 0 0 1
+denominators_rows 1 1 1 1 1 1
+inverse 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 0 ; 0 0 0 0 0 1
+denominators_inverse 1 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 1/1
+forward 17: 17 1/1
+forward 18: 18 1/1
+forward 19: 19 1/1
+forward 20: 20 1/1
+forward 21: 21 1/1
+forward 22: 22 1/1
+forward 23: 23 1/1
+forward 24: 24 1/1
+forward 25: 25 1/1
+forward 26: 26 1/1
+forward 27: 27 1/1
+forward 28: 28 1/1
+forward 29: 29 1/1
+forward 30: 30 1/1
+forward 31: 31 1/1
+forward 32: 32 1/1
+forward 33: 33 1/1
+forward 34: 34 1/1
+forward 35: 35 1/1
+forward 36: 36 1/1
+forward 37: 37 1/1
+forward 38: 38 1/1
+forward 39: 39 1/1
+forward 40: 40 1/1
+forward 41: 41 1/1
+forward 42: 42 1/1
+forward 43: 43 1/1
+forward 44: 44 1/1
+forward 45: 45 1/1
+forward 46: 46 1/1
+forward 47: 47 1/1
+forward 48: 48 1/1
+forward 49: 49 1/1
+forward 50: 50 1/1
+forward 51: 51 1/1
+forward 52: 52 1/1
+forward 53: 53 1/1
+forward 54: 54 1/1
+forward 55: 55 1/1
+forward 56: 56 1/1
+forward 57: 57 1/1
+forward 58: 58 1/1
+forward 59: 59 1/1
+forward 60: 60 1/1
+forward 61: 61 1/1
+forward 62: 62 1/1
+forward 63: 63 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 1/1
+back 17: 17 1/1
+back 18: 18 1/1
+back 19: 19 1/1
+back 20: 20 1/1
+back 21: 21 1/1
+back 22: 22 1/1
+back 23: 23 1/1
+back 24: 24 1/1
+back 25: 25 1/1
+back 26: 26 1/1
+back 27: 27 1/1
+back 28: 28 1/1
+back 29: 29 1/1
+back 30: 30 1/1
+back 31: 31 1/1
+back 32: 32 1/1
+back 33: 33 1/1
+back 34: 34 1/1
+back 35: 35 1/1
+back 36: 36 1/1
+back 37: 37 1/1
+back 38: 38 1/1
+back 39: 39 1/1
+back 40: 40 1/1
+back 41: 41 1/1
+back 42: 42 1/1
+back 43: 43 1/1
+back 44: 44 1/1
+back 45: 45 1/1
+back 46: 46 1/1
+back 47: 47 1/1
+back 48: 48 1/1
+back 49: 49 1/1
+back 50: 50 1/1
+back 51: 51 1/1
+back 52: 52 1/1
+back 53: 53 1/1
+back 54: 54 1/1
+back 55: 55 1/1
+back 56: 56 1/1
+back 57: 57 1/1
+back 58: 58 1/1
+back 59: 59 1/1
+back 60: 60 1/1
+back 61: 61 1/1
+back 62: 62 1/1
+back 63: 63 1/1
+end
+change R(3,3,0)
+n 6
+route terms
+source_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 -1 0 0 ; 0 0 0 0 -1 0 ; 0 0 0 0 0 -1
+target_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 -1 0 0 ; 0 0 0 0 -1 0 ; 0 0 0 0 0 -1
+rows 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 0 ; 0 0 0 0 0 1
+denominators_rows 1 1 1 1 1 1
+inverse 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 0 ; 0 0 0 0 0 1
+denominators_inverse 1 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 1/1
+forward 17: 17 1/1
+forward 18: 18 1/1
+forward 19: 19 1/1
+forward 20: 20 1/1
+forward 21: 21 1/1
+forward 22: 22 1/1
+forward 23: 23 1/1
+forward 24: 24 1/1
+forward 25: 25 1/1
+forward 26: 26 1/1
+forward 27: 27 1/1
+forward 28: 28 1/1
+forward 29: 29 1/1
+forward 30: 30 1/1
+forward 31: 31 1/1
+forward 32: 32 1/1
+forward 33: 33 1/1
+forward 34: 34 1/1
+forward 35: 35 1/1
+forward 36: 36 1/1
+forward 37: 37 1/1
+forward 38: 38 1/1
+forward 39: 39 1/1
+forward 40: 40 1/1
+forward 41: 41 1/1
+forward 42: 42 1/1
+forward 43: 43 1/1
+forward 44: 44 1/1
+forward 45: 45 1/1
+forward 46: 46 1/1
+forward 47: 47 1/1
+forward 48: 48 1/1
+forward 49: 49 1/1
+forward 50: 50 1/1
+forward 51: 51 1/1
+forward 52: 52 1/1
+forward 53: 53 1/1
+forward 54: 54 1/1
+forward 55: 55 1/1
+forward 56: 56 1/1
+forward 57: 57 1/1
+forward 58: 58 1/1
+forward 59: 59 1/1
+forward 60: 60 1/1
+forward 61: 61 1/1
+forward 62: 62 1/1
+forward 63: 63 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 1/1
+back 17: 17 1/1
+back 18: 18 1/1
+back 19: 19 1/1
+back 20: 20 1/1
+back 21: 21 1/1
+back 22: 22 1/1
+back 23: 23 1/1
+back 24: 24 1/1
+back 25: 25 1/1
+back 26: 26 1/1
+back 27: 27 1/1
+back 28: 28 1/1
+back 29: 29 1/1
+back 30: 30 1/1
+back 31: 31 1/1
+back 32: 32 1/1
+back 33: 33 1/1
+back 34: 34 1/1
+back 35: 35 1/1
+back 36: 36 1/1
+back 37: 37 1/1
+back 38: 38 1/1
+back 39: 39 1/1
+back 40: 40 1/1
+back 41: 41 1/1
+back 42: 42 1/1
+back 43: 43 1/1
+back 44: 44 1/1
+back 45: 45 1/1
+back 46: 46 1/1
+back 47: 47 1/1
+back 48: 48 1/1
+back 49: 49 1/1
+back 50: 50 1/1
+back 51: 51 1/1
+back 52: 52 1/1
+back 53: 53 1/1
+back 54: 54 1/1
+back 55: 55 1/1
+back 56: 56 1/1
+back 57: 57 1/1
+back 58: 58 1/1
+back 59: 59 1/1
+back 60: 60 1/1
+back 61: 61 1/1
+back 62: 62 1/1
+back 63: 63 1/1
+end
+change conformal(1)
+n 3
+route terms
+source_gram 1 0 0 ; 0 0 -1 ; 0 -1 0
+target_gram 1 0 0 ; 0 -2 0 ; 0 0 2
+rows 1 0 0 ; 0 1 -1 ; 0 1 1
+denominators_rows 1 2 2
+inverse 1 0 0 ; 0 1 1 ; 0 -1 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/2 4 -1/2
+forward 3: 3 1/2 5 -1/2
+forward 4: 2 1/2 4 1/2
+forward 5: 3 1/2 5 1/2
+forward 6: 6 1/2
+forward 7: 7 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1 4 1/1
+back 3: 3 1/1 5 1/1
+back 4: 2 -1/1 4 1/1
+back 5: 3 -1/1 5 1/1
+back 6: 6 2/1
+back 7: 7 2/1
+end
+change conformal(2)
+n 4
+route terms
+source_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 0 -1 ; 0 0 -1 0
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 -2 0 ; 0 0 0 2
+rows 1 0 0 0 ; 0 1 0 0 ; 0 0 1 -1 ; 0 0 1 1
+denominators_rows 1 1 2 2
+inverse 1 0 0 0 ; 0 1 0 0 ; 0 0 1 1 ; 0 0 -1 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/2 8 -1/2
+forward 5: 5 1/2 9 -1/2
+forward 6: 6 1/2 10 -1/2
+forward 7: 7 1/2 11 -1/2
+forward 8: 4 1/2 8 1/2
+forward 9: 5 1/2 9 1/2
+forward 10: 6 1/2 10 1/2
+forward 11: 7 1/2 11 1/2
+forward 12: 12 1/2
+forward 13: 13 1/2
+forward 14: 14 1/2
+forward 15: 15 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1 8 1/1
+back 5: 5 1/1 9 1/1
+back 6: 6 1/1 10 1/1
+back 7: 7 1/1 11 1/1
+back 8: 4 -1/1 8 1/1
+back 9: 5 -1/1 9 1/1
+back 10: 6 -1/1 10 1/1
+back 11: 7 -1/1 11 1/1
+back 12: 12 2/1
+back 13: 13 2/1
+back 14: 14 2/1
+back 15: 15 2/1
+end
+change conformal(3)
+n 5
+route terms
+source_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 0 -1 ; 0 0 0 -1 0
+target_gram 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 -2 0 ; 0 0 0 0 2
+rows 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 -1 ; 0 0 0 1 1
+denominators_rows 1 1 1 2 2
+inverse 1 0 0 0 0 ; 0 1 0 0 0 ; 0 0 1 0 0 ; 0 0 0 1 1 ; 0 0 0 -1 1
+denominators_inverse 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/2 16 -1/2
+forward 9: 9 1/2 17 -1/2
+forward 10: 10 1/2 18 -1/2
+forward 11: 11 1/2 19 -1/2
+forward 12: 12 1/2 20 -1/2
+forward 13: 13 1/2 21 -1/2
+forward 14: 14 1/2 22 -1/2
+forward 15: 15 1/2 23 -1/2
+forward 16: 8 1/2 16 1/2
+forward 17: 9 1/2 17 1/2
+forward 18: 10 1/2 18 1/2
+forward 19: 11 1/2 19 1/2
+forward 20: 12 1/2 20 1/2
+forward 21: 13 1/2 21 1/2
+forward 22: 14 1/2 22 1/2
+forward 23: 15 1/2 23 1/2
+forward 24: 24 1/2
+forward 25: 25 1/2
+forward 26: 26 1/2
+forward 27: 27 1/2
+forward 28: 28 1/2
+forward 29: 29 1/2
+forward 30: 30 1/2
+forward 31: 31 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1 16 1/1
+back 9: 9 1/1 17 1/1
+back 10: 10 1/1 18 1/1
+back 11: 11 1/1 19 1/1
+back 12: 12 1/1 20 1/1
+back 13: 13 1/1 21 1/1
+back 14: 14 1/1 22 1/1
+back 15: 15 1/1 23 1/1
+back 16: 8 -1/1 16 1/1
+back 17: 9 -1/1 17 1/1
+back 18: 10 -1/1 18 1/1
+back 19: 11 -1/1 19 1/1
+back 20: 12 -1/1 20 1/1
+back 21: 13 -1/1 21 1/1
+back 22: 14 -1/1 22 1/1
+back 23: 15 -1/1 23 1/1
+back 24: 24 2/1
+back 25: 25 2/1
+back 26: 26 2/1
+back 27: 27 2/1
+back 28: 28 2/1
+back 29: 29 2/1
+back 30: 30 2/1
+back 31: 31 2/1
+end
+change conformal(4)
+n 6
+route terms
+source_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 0 -1 ; 0 0 0 0 -1 0
+target_gram 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 -2 0 ; 0 0 0 0 0 2
+rows 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 -1 ; 0 0 0 0 1 1
+denominators_rows 1 1 1 1 2 2
+inverse 1 0 0 0 0 0 ; 0 1 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 1 1 ; 0 0 0 0 -1 1
+denominators_inverse 1 1 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 4 1/1
+forward 5: 5 1/1
+forward 6: 6 1/1
+forward 7: 7 1/1
+forward 8: 8 1/1
+forward 9: 9 1/1
+forward 10: 10 1/1
+forward 11: 11 1/1
+forward 12: 12 1/1
+forward 13: 13 1/1
+forward 14: 14 1/1
+forward 15: 15 1/1
+forward 16: 16 1/2 32 -1/2
+forward 17: 17 1/2 33 -1/2
+forward 18: 18 1/2 34 -1/2
+forward 19: 19 1/2 35 -1/2
+forward 20: 20 1/2 36 -1/2
+forward 21: 21 1/2 37 -1/2
+forward 22: 22 1/2 38 -1/2
+forward 23: 23 1/2 39 -1/2
+forward 24: 24 1/2 40 -1/2
+forward 25: 25 1/2 41 -1/2
+forward 26: 26 1/2 42 -1/2
+forward 27: 27 1/2 43 -1/2
+forward 28: 28 1/2 44 -1/2
+forward 29: 29 1/2 45 -1/2
+forward 30: 30 1/2 46 -1/2
+forward 31: 31 1/2 47 -1/2
+forward 32: 16 1/2 32 1/2
+forward 33: 17 1/2 33 1/2
+forward 34: 18 1/2 34 1/2
+forward 35: 19 1/2 35 1/2
+forward 36: 20 1/2 36 1/2
+forward 37: 21 1/2 37 1/2
+forward 38: 22 1/2 38 1/2
+forward 39: 23 1/2 39 1/2
+forward 40: 24 1/2 40 1/2
+forward 41: 25 1/2 41 1/2
+forward 42: 26 1/2 42 1/2
+forward 43: 27 1/2 43 1/2
+forward 44: 28 1/2 44 1/2
+forward 45: 29 1/2 45 1/2
+forward 46: 30 1/2 46 1/2
+forward 47: 31 1/2 47 1/2
+forward 48: 48 1/2
+forward 49: 49 1/2
+forward 50: 50 1/2
+forward 51: 51 1/2
+forward 52: 52 1/2
+forward 53: 53 1/2
+forward 54: 54 1/2
+forward 55: 55 1/2
+forward 56: 56 1/2
+forward 57: 57 1/2
+forward 58: 58 1/2
+forward 59: 59 1/2
+forward 60: 60 1/2
+forward 61: 61 1/2
+forward 62: 62 1/2
+forward 63: 63 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 4 1/1
+back 5: 5 1/1
+back 6: 6 1/1
+back 7: 7 1/1
+back 8: 8 1/1
+back 9: 9 1/1
+back 10: 10 1/1
+back 11: 11 1/1
+back 12: 12 1/1
+back 13: 13 1/1
+back 14: 14 1/1
+back 15: 15 1/1
+back 16: 16 1/1 32 1/1
+back 17: 17 1/1 33 1/1
+back 18: 18 1/1 34 1/1
+back 19: 19 1/1 35 1/1
+back 20: 20 1/1 36 1/1
+back 21: 21 1/1 37 1/1
+back 22: 22 1/1 38 1/1
+back 23: 23 1/1 39 1/1
+back 24: 24 1/1 40 1/1
+back 25: 25 1/1 41 1/1
+back 26: 26 1/1 42 1/1
+back 27: 27 1/1 43 1/1
+back 28: 28 1/1 44 1/1
+back 29: 29 1/1 45 1/1
+back 30: 30 1/1 46 1/1
+back 31: 31 1/1 47 1/1
+back 32: 16 -1/1 32 1/1
+back 33: 17 -1/1 33 1/1
+back 34: 18 -1/1 34 1/1
+back 35: 19 -1/1 35 1/1
+back 36: 20 -1/1 36 1/1
+back 37: 21 -1/1 37 1/1
+back 38: 22 -1/1 38 1/1
+back 39: 23 -1/1 39 1/1
+back 40: 24 -1/1 40 1/1
+back 41: 25 -1/1 41 1/1
+back 42: 26 -1/1 42 1/1
+back 43: 27 -1/1 43 1/1
+back 44: 28 -1/1 44 1/1
+back 45: 29 -1/1 45 1/1
+back 46: 30 -1/1 46 1/1
+back 47: 31 -1/1 47 1/1
+back 48: 48 2/1
+back 49: 49 2/1
+back 50: 50 2/1
+back 51: 51 2/1
+back 52: 52 2/1
+back 53: 53 2/1
+back 54: 54 2/1
+back 55: 55 2/1
+back 56: 56 2/1
+back 57: 57 2/1
+back 58: 58 2/1
+back 59: 59 2/1
+back 60: 60 2/1
+back 61: 61 2/1
+back 62: 62 2/1
+back 63: 63 2/1
+end
+change Witt, one mode
+n 2
+route terms
+source_gram 0 1 ; 1 0
+target_gram 2 0 ; 0 -2
+rows 1 -1 ; 1 1
+denominators_rows 2 2
+inverse 1 1 ; -1 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/2 2 -1/2
+forward 2: 1 1/2 2 1/2
+forward 3: 3 1/2
+back 0: 0 1/1
+back 1: 1 1/1 2 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 2/1
+end
+change Witt, two modes
+n 4
+route terms
+source_gram 0 1 0 0 ; 1 0 0 0 ; 0 0 0 1 ; 0 0 1 0
+target_gram 2 0 0 0 ; 0 -2 0 0 ; 0 0 2 0 ; 0 0 0 -2
+rows 1 -1 0 0 ; 1 1 0 0 ; 0 0 1 -1 ; 0 0 1 1
+denominators_rows 2 2 2 2
+inverse 1 1 0 0 ; -1 1 0 0 ; 0 0 1 1 ; 0 0 -1 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/2 2 -1/2
+forward 2: 1 1/2 2 1/2
+forward 3: 3 1/2
+forward 4: 4 1/2 8 -1/2
+forward 5: 5 1/4 9 -1/4 6 -1/4 10 1/4
+forward 6: 5 1/4 9 -1/4 6 1/4 10 -1/4
+forward 7: 7 1/4 11 -1/4
+forward 8: 4 1/2 8 1/2
+forward 9: 5 1/4 9 1/4 6 -1/4 10 -1/4
+forward 10: 5 1/4 9 1/4 6 1/4 10 1/4
+forward 11: 7 1/4 11 1/4
+forward 12: 12 1/2
+forward 13: 13 1/4 14 -1/4
+forward 14: 13 1/4 14 1/4
+forward 15: 15 1/4
+back 0: 0 1/1
+back 1: 1 1/1 2 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 2/1
+back 4: 4 1/1 8 1/1
+back 5: 5 1/1 9 1/1 6 1/1 10 1/1
+back 6: 5 -1/1 9 -1/1 6 1/1 10 1/1
+back 7: 7 2/1 11 2/1
+back 8: 4 -1/1 8 1/1
+back 9: 5 -1/1 9 1/1 6 -1/1 10 1/1
+back 10: 5 1/1 9 -1/1 6 -1/1 10 1/1
+back 11: 7 -2/1 11 2/1
+back 12: 12 2/1
+back 13: 13 2/1 14 2/1
+back 14: 13 -2/1 14 2/1
+back 15: 15 4/1
+end
+change degenerate
+n 3
+route terms
+source_gram 0 1 0 ; 1 0 0 ; 0 0 0
+target_gram 2 0 0 ; 0 -2 0 ; 0 0 0
+rows 1 -1 0 ; 1 1 0 ; 0 0 1
+denominators_rows 2 2 1
+inverse 1 1 0 ; -1 1 0 ; 0 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/2 2 -1/2
+forward 2: 1 1/2 2 1/2
+forward 3: 3 1/2
+forward 4: 4 1/1
+forward 5: 5 1/2 6 -1/2
+forward 6: 5 1/2 6 1/2
+forward 7: 7 1/2
+back 0: 0 1/1
+back 1: 1 1/1 2 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 2/1
+back 4: 4 1/1
+back 5: 5 1/1 6 1/1
+back 6: 5 -1/1 6 1/1
+back 7: 7 2/1
+end
+change rigid(3), null first
+n 4
+route terms
+source_gram 0 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1
+target_gram 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 0
+rows 0 0 0 1 ; 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0
+denominators_rows 1 1 1 1
+inverse 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1 ; 1 0 0 0
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 8 1/1
+forward 2: 1 1/1
+forward 3: 9 -1/1
+forward 4: 2 1/1
+forward 5: 10 -1/1
+forward 6: 3 1/1
+forward 7: 11 1/1
+forward 8: 4 1/1
+forward 9: 12 -1/1
+forward 10: 5 1/1
+forward 11: 13 1/1
+forward 12: 6 1/1
+forward 13: 14 1/1
+forward 14: 7 1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 2 1/1
+back 2: 4 1/1
+back 3: 6 1/1
+back 4: 8 1/1
+back 5: 10 1/1
+back 6: 12 1/1
+back 7: 14 1/1
+back 8: 1 1/1
+back 9: 3 -1/1
+back 10: 5 -1/1
+back 11: 7 1/1
+back 12: 9 -1/1
+back 13: 11 1/1
+back 14: 13 1/1
+back 15: 15 -1/1
+end
+change random 0
+n 2
+route terms
+source_gram -1 -2 ; -2 3
+target_gram -1 0 ; 0 7
+rows 1 0 ; 2 1
+denominators_rows 1 1
+inverse 1 0 ; -2 1
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 2/1 2 1/1
+forward 3: 3 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -2/1 2 1/1
+back 3: 3 1/1
+end
+change random 1
+n 3
+route terms
+source_gram 2 0 -3 ; 0 1 -3 ; -3 -3 -2
+target_gram 2 0 0 ; 0 1 0 ; 0 0 -62
+rows 1 0 0 ; 0 1 0 ; -3 -6 1
+denominators_rows 1 1 2
+inverse 1 0 0 ; 0 1 0 ; 3 6 2
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 1 -3/2 2 -3/1 4 1/2
+forward 5: 3 -3/1 5 1/2
+forward 6: 3 3/2 6 1/2
+forward 7: 7 1/2
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 1 3/1 2 6/1 4 2/1
+back 5: 3 6/1 5 2/1
+back 6: 3 -3/1 6 2/1
+back 7: 7 2/1
+end
+change random 2
+n 4
+route terms
+source_gram -2 0 -2 2 ; 0 -2 -3 3 ; -2 -3 1 3 ; 2 3 3 3
+target_gram -2 0 0 0 ; 0 -2 0 0 ; 0 0 30 0 ; 0 0 0 1770
+rows 1 0 0 0 ; 0 1 0 0 ; 2 3 1 0 ; -30 -45 -7 2
+denominators_rows 1 1 2 30
+inverse 1 0 0 0 ; 0 1 0 0 ; -2 -3 2 0 ; 8 12 7 15
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 2 1/1
+forward 3: 3 1/1
+forward 4: 1 1/1 2 3/2 4 1/2
+forward 5: 3 3/2 5 1/2
+forward 6: 3 -1/1 6 1/2
+forward 7: 7 1/2
+forward 8: 1 -1/1 2 -3/2 4 -7/30 8 1/15
+forward 9: 3 -3/2 5 -7/30 9 1/15
+forward 10: 3 1/1 6 -7/30 10 1/15
+forward 11: 7 -7/30 11 1/15
+forward 12: 5 4/15 9 1/15 6 2/5 10 1/10 12 1/30
+forward 13: 7 2/5 11 1/10 13 1/30
+forward 14: 7 -4/15 11 -1/15 14 1/30
+forward 15: 15 1/30
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 2 1/1
+back 3: 3 1/1
+back 4: 1 -2/1 2 -3/1 4 2/1
+back 5: 3 -3/1 5 2/1
+back 6: 3 2/1 6 2/1
+back 7: 7 2/1
+back 8: 1 8/1 2 12/1 4 7/1 8 15/1
+back 9: 3 12/1 5 7/1 9 15/1
+back 10: 3 -8/1 6 7/1 10 15/1
+back 11: 7 7/1 11 15/1
+back 12: 5 -30/1 9 -30/1 6 -45/1 10 -45/1 12 30/1
+back 13: 7 -45/1 11 -45/1 13 30/1
+back 14: 7 30/1 11 30/1 14 30/1
+back 15: 15 30/1
+end
+change random 3
+n 5
+route terms
+source_gram 3 1 -3 -1 -2 ; 1 -3 -2 1 0 ; -3 -2 -2 3 0 ; -1 1 3 3 2 ; -2 0 0 2 -1
+target_gram 3 0 0 0 0 ; 0 -30 0 0 0 ; 0 0 -470 0 0 ; 0 0 0 517 0 ; 0 0 0 0 -165
+rows 1 0 0 0 0 ; 1 1 0 0 0 ; -10 1 1 0 0 ; -235 -94 -24 60 0 ; -5170 -517 363 150 705
+denominators_rows 1 3 10 705 7755
+inverse 1 0 0 0 0 ; -1 3 0 0 0 ; 11 -3 10 0 0 ; 27 14 16 47 0 ; -1 6 -12 -5 22
+denominators_inverse 1 1 1 4 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/3 2 1/3
+forward 3: 3 1/3
+forward 4: 1 -1/1 2 1/10 4 1/10
+forward 5: 3 1/10 5 1/10
+forward 6: 3 11/30 5 1/30 6 1/30
+forward 7: 7 1/30
+forward 8: 1 -1/3 2 -2/15 4 -8/235 8 4/47
+forward 9: 3 -2/15 5 -8/235 9 4/47
+forward 10: 3 1/15 5 -8/705 9 4/141 6 -8/705 10 4/141
+forward 11: 7 -8/705 11 4/141
+forward 12: 3 1/6 5 19/282 9 -4/47 6 7/705 10 2/235 12 2/235
+forward 13: 7 7/705 11 2/235 13 2/235
+forward 14: 7 -9/470 11 22/705 13 2/705 14 2/705
+forward 15: 15 2/705
+forward 16: 1 -2/3 2 -1/15 4 11/235 8 10/517 16 1/11
+forward 17: 3 -1/15 5 11/235 9 10/517 17 1/11
+forward 18: 3 1/5 5 11/705 9 10/1551 17 1/33 6 11/705 10 10/1551 18 1/33
+forward 19: 7 11/705 11 10/1551 19 1/33
+forward 20: 3 2/15 5 14/705 9 -10/517 17 -1/11 6 8/705 10 1/517 18 1/110 12 1/517 20 1/110
+forward 21: 7 8/705 11 1/517 19 1/110 13 1/517 21 1/110
+forward 22: 7 -2/705 11 1/141 19 1/30 13 1/1551 21 1/330 14 1/1551 22 1/330
+forward 23: 15 1/1551 23 1/330
+forward 24: 3 -1/15 5 -9/235 9 26/517 17 -1/33 6 -2/235 10 8/2585 18 -2/165 12 -12/2585 20 -8/2585 24 4/517
+forward 25: 7 -2/235 11 8/2585 19 -2/165 13 -12/2585 21 -8/2585 25 4/517
+forward 26: 7 7/705 11 -122/7755 19 1/165 13 -4/2585 21 -8/7755 25 4/1551 14 -4/2585 22 -8/7755 26 4/1551
+forward 27: 15 -4/2585 23 -8/7755 27 4/1551
+forward 28: 7 4/705 11 -21/2585 19 1/66 13 -1/2585 21 19/3102 25 -4/517 14 -2/2585 22 7/7755 26 2/2585 28 2/2585
+forward 29: 15 -2/2585 23 7/7755 27 2/2585 29 2/2585
+forward 30: 15 -1/7755 23 -9/5170 27 2/705 29 2/7755 30 2/7755
+forward 31: 31 2/7755
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 3/1
+back 3: 3 3/1
+back 4: 1 11/1 2 -3/1 4 10/1
+back 5: 3 -3/1 5 10/1
+back 6: 3 -30/1 5 -10/1 6 30/1
+back 7: 7 30/1
+back 8: 1 27/4 2 7/2 4 4/1 8 47/4
+back 9: 3 7/2 5 4/1 9 47/4
+back 10: 3 -95/4 5 -4/1 9 -47/4 6 12/1 10 141/4
+back 11: 7 12/1 11 141/4
+back 12: 3 235/4 5 -47/2 9 517/4 6 -47/1 10 -141/4 12 235/2
+back 13: 7 -47/1 11 -141/4 13 235/2
+back 14: 7 235/2 11 -705/2 13 -235/2 14 705/2
+back 15: 15 705/2
+back 16: 1 -1/2 2 3/1 4 -6/1 8 -5/2 16 11/1
+back 17: 3 3/1 5 -6/1 9 -5/2 17 11/1
+back 18: 3 -3/2 5 6/1 9 5/2 17 -11/1 6 -18/1 10 -15/2 18 33/1
+back 19: 7 -18/1 11 -15/2 19 33/1
+back 20: 3 63/2 5 -61/1 9 -55/2 17 121/1 6 -12/1 10 15/2 18 -33/1 12 -25/1 20 110/1
+back 21: 7 -12/1 11 15/2 19 -33/1 13 -25/1 21 110/1
+back 22: 7 195/1 11 75/1 19 -330/1 13 25/1 21 -110/1 14 -75/1 22 330/1
+back 23: 15 -75/1 23 330/1
+back 24: 3 22/1 5 -77/2 9 -11/1 17 297/4 6 -33/1 10 -44/1 18 77/2 12 121/2 20 44/1 24 517/4
+back 25: 7 -33/1 11 -44/1 19 77/2 13 121/2 21 44/1 25 517/4
+back 26: 7 297/2 11 77/1 19 -1045/4 13 -121/2 21 -44/1 25 -517/4 14 363/2 22 132/1 26 1551/4
+back 27: 15 363/2 23 132/1 27 1551/4
+back 28: 7 -517/2 11 -517/1 19 2585/4 13 1551/2 21 -517/2 25 5687/4 14 517/2 22 -517/1 26 -1551/4 28 2585/2
+back 29: 15 517/2 23 -517/1 27 -1551/4 29 2585/2
+back 30: 15 -2585/1 23 2585/2 27 -7755/2 29 -2585/2 30 7755/2
+back 31: 31 7755/2
+end
+change random 4
+n 2
+route terms
+source_gram 3 1 ; 1 -2
+target_gram 3 0 ; 0 -21
+rows 1 0 ; 1 1
+denominators_rows 1 3
+inverse 1 0 ; -1 3
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/3 2 1/3
+forward 3: 3 1/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 3/1
+back 3: 3 3/1
+end
+change random 5
+n 3
+route terms
+source_gram -3 -3 0 ; -3 -2 2 ; 0 2 0
+target_gram -3 0 0 ; 0 1 0 ; 0 0 -1
+rows 1 0 0 ; 1 1 0 ; 0 2 2
+denominators_rows 1 1 1
+inverse 1 0 0 ; -1 1 0 ; 2 -2 1
+denominators_inverse 1 1 2
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/1 2 1/1
+forward 3: 3 1/1
+forward 4: 2 2/1 4 2/1
+forward 5: 3 2/1 5 2/1
+forward 6: 3 2/1 5 2/1 6 2/1
+forward 7: 7 2/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 1/1
+back 4: 1 1/1 2 -1/1 4 1/2
+back 5: 3 -1/1 5 1/2
+back 6: 5 -1/2 6 1/2
+back 7: 7 1/2
+end
+change random 6
+n 4
+route terms
+source_gram 0 1 -1 0 ; 1 -1 0 -1 ; -1 0 2 0 ; 0 -1 0 -1
+target_gram -1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 -2
+rows -1 1 0 0 ; 1 0 0 0 ; 0 -1 1 0 ; 1 -1 -1 1
+denominators_rows 1 1 1 1
+inverse 0 1 0 0 ; 1 1 0 0 ; 1 1 1 0 ; 2 1 1 1
+denominators_inverse 1 1 1 1
+forward 0: 0 1/1
+forward 1: 1 -1/1 2 1/1
+forward 2: 1 1/1
+forward 3: 3 -1/1
+forward 4: 2 -1/1 4 1/1
+forward 5: 3 1/1 5 -1/1 6 1/1
+forward 6: 3 -1/1 5 1/1
+forward 7: 7 -1/1
+forward 8: 1 1/1 2 -1/1 4 -1/1 8 1/1
+forward 9: 5 1/1 9 -1/1 6 -1/1 10 1/1
+forward 10: 3 -1/1 5 -1/1 9 1/1
+forward 11: 7 1/1 11 -1/1
+forward 12: 3 1/1 5 -1/1 6 2/1 10 -1/1 12 1/1
+forward 13: 7 -1/1 11 1/1 13 -1/1 14 1/1
+forward 14: 7 2/1 11 -1/1 13 1/1
+forward 15: 15 -1/1
+back 0: 0 1/1
+back 1: 2 1/1
+back 2: 1 1/1 2 1/1
+back 3: 3 -1/1
+back 4: 1 1/1 2 1/1 4 1/1
+back 5: 3 -1/1 6 1/1
+back 6: 5 1/1 6 1/1
+back 7: 7 -1/1
+back 8: 1 2/1 2 1/1 4 1/1 8 1/1
+back 9: 3 -2/1 6 1/1 10 1/1
+back 10: 3 -1/1 5 1/1 9 1/1 6 1/1 10 1/1
+back 11: 7 -1/1 11 -1/1
+back 12: 3 -1/1 5 -1/1 9 1/1 10 1/1 12 1/1
+back 13: 7 1/1 11 -1/1 14 1/1
+back 14: 7 1/1 13 1/1 14 1/1
+back 15: 15 -1/1
+end
+change random 7
+n 5
+route terms
+source_gram -3 1 2 -1 -2 ; 1 -3 0 -3 -1 ; 2 0 0 3 -3 ; -1 -3 3 1 -2 ; -2 -1 -3 -2 2
+target_gram -3 0 0 0 0 ; 0 -6 0 0 0 ; 0 0 6 0 0 ; 0 0 0 1 0 ; 0 0 0 0 -105
+rows 1 0 0 0 0 ; -1 2 0 0 0 ; -4 -1 3 0 0 ; 2 5 3 12 0 ; 8 5 -19 33 5
+denominators_rows 1 3 6 6 12
+inverse 1 0 0 0 0 ; 1 3 0 0 0 ; 3 1 4 0 0 ; -3 -3 -2 2 0 ; 171 107 218 -66 48
+denominators_inverse 1 2 2 4 20
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -1/3 2 2/3
+forward 3: 3 2/3
+forward 4: 1 -2/3 2 -1/6 4 1/2
+forward 5: 3 -1/6 5 1/2
+forward 6: 3 1/2 5 -1/6 6 1/3
+forward 7: 7 1/3
+forward 8: 1 1/3 2 5/6 4 1/2 8 2/1
+forward 9: 3 5/6 5 1/2 9 2/1
+forward 10: 3 -1/2 5 -1/6 9 -2/3 6 1/3 10 4/3
+forward 11: 7 1/3 11 4/3
+forward 12: 3 -1/2 5 -1/2 9 -4/3 6 -1/2 10 -1/3 12 1/1
+forward 13: 7 -1/2 11 -1/3 13 1/1
+forward 14: 7 1/2 11 1/1 13 -1/3 14 2/3
+forward 15: 15 2/3
+forward 16: 1 2/3 2 5/12 4 -19/12 8 11/4 16 5/12
+forward 17: 3 5/12 5 -19/12 9 11/4 17 5/12
+forward 18: 3 -7/12 5 19/36 9 -11/12 17 -5/36 6 -19/18 10 11/6 18 5/18
+forward 19: 7 -19/18 11 11/6 19 5/18
+forward 20: 3 -1/6 5 13/18 9 -11/6 17 -5/18 6 1/18 10 -11/24 18 -5/72 12 11/8 20 5/24
+forward 21: 7 1/18 11 -11/24 19 -5/72 13 11/8 21 5/24
+forward 22: 7 -1/2 11 11/8 19 5/24 13 -11/24 21 -5/72 14 11/12 22 5/36
+forward 23: 15 11/12 23 5/36
+forward 24: 3 -5/12 5 -31/36 9 -5/12 17 5/36 6 -55/36 10 35/24 18 25/72 12 109/24 20 5/24 24 5/6
+forward 25: 7 -55/36 11 35/24 19 25/72 13 109/24 21 5/24 25 5/6
+forward 26: 7 13/12 11 -5/24 19 -5/24 13 -109/72 21 -5/72 25 -5/18 14 109/36 22 5/36 26 5/9
+forward 27: 15 109/36 23 5/36 27 5/9
+forward 28: 7 2/3 11 -25/24 19 -5/24 13 -203/72 21 -5/24 25 -5/9 14 -107/72 22 -5/24 26 -5/36 28 5/12
+forward 29: 15 -107/72 23 -5/24 27 -5/36 29 5/12
+forward 30: 15 19/8 23 5/24 27 5/12 29 -5/36 30 5/18
+forward 31: 31 5/18
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 1/2 2 3/2
+back 3: 3 3/2
+back 4: 1 3/2 2 1/2 4 2/1
+back 5: 3 1/2 5 2/1
+back 6: 3 -2/1 5 1/1 6 3/1
+back 7: 7 3/1
+back 8: 1 -3/4 2 -3/4 4 -1/2 8 1/2
+back 9: 3 -3/4 5 -1/2 9 1/2
+back 10: 3 3/4 5 -1/4 9 1/4 6 -3/4 10 3/4
+back 11: 7 -3/4 11 3/4
+back 12: 3 -3/4 5 3/4 9 3/4 6 5/4 10 1/4 12 1/1
+back 13: 7 5/4 11 1/4 13 1/1
+back 14: 7 -1/2 11 -1/1 13 1/2 14 3/2
+back 15: 15 3/2
+back 16: 1 171/20 2 107/20 4 109/10 8 -33/10 16 12/5
+back 17: 3 107/20 5 109/10 9 -33/10 17 12/5
+back 18: 3 -203/20 5 109/20 9 -33/20 17 6/5 6 327/20 10 -99/20 18 18/5
+back 19: 7 327/20 11 -99/20 19 18/5
+back 20: 3 15/4 5 -3/4 9 -99/20 17 18/5 6 -21/4 10 -33/20 18 6/5 12 -33/5 20 24/5
+back 21: 7 -21/4 11 -33/20 19 6/5 13 -33/5 21 24/5
+back 22: 7 -3/2 11 33/5 19 -24/5 13 -33/10 21 12/5 14 -99/10 22 36/5
+back 23: 15 -99/10 23 36/5
+back 24: 3 12/5 5 -39/10 9 -9/5 17 -9/5 6 -11/2 10 -1/5 18 -9/5 12 -19/5 20 -6/5 24 6/5
+back 25: 7 -11/2 11 -1/5 19 -9/5 13 -19/5 21 -6/5 25 6/5
+back 26: 7 31/10 11 13/5 19 9/5 13 -19/10 21 -3/5 25 3/5 14 -57/10 22 -9/5 26 9/5
+back 27: 15 -57/10 23 -9/5 27 9/5
+back 28: 7 -3/2 11 3/5 19 -9/5 13 -21/10 21 9/5 25 9/5 14 -3/2 22 3/1 26 3/5 28 12/5
+back 29: 15 -3/2 23 3/1 27 3/5 29 12/5
+back 30: 15 12/5 23 -6/5 27 -12/5 29 6/5 30 18/5
+back 31: 31 18/5
+end
+change random 8
+n 2
+route terms
+source_gram 3 -2 ; -2 -2
+target_gram 3 0 ; 0 -30
+rows 1 0 ; -2 1
+denominators_rows 1 3
+inverse 1 0 ; 2 3
+denominators_inverse 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -2/3 2 1/3
+forward 3: 3 1/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 2/1 2 3/1
+back 3: 3 3/1
+end
+change random 9
+n 3
+route terms
+source_gram -3 1 -2 ; 1 -3 -2 ; -2 -2 1
+target_gram -3 0 0 ; 0 -6 0 ; 0 0 5
+rows 1 0 0 ; -1 2 0 ; 2 2 3
+denominators_rows 1 3 3
+inverse 1 0 0 ; 1 3 0 ; -1 -1 1
+denominators_inverse 1 2 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 -1/3 2 2/3
+forward 3: 3 2/3
+forward 4: 1 2/3 2 2/3 4 1/1
+forward 5: 3 2/3 5 1/1
+forward 6: 3 -2/3 5 -1/3 6 2/3
+forward 7: 7 2/3
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 1/2 2 3/2
+back 3: 3 3/2
+back 4: 1 -1/1 2 -1/1 4 1/1
+back 5: 3 -1/1 5 1/1
+back 6: 3 1/1 5 1/2 6 3/2
+back 7: 7 3/2
+end
+change radical off the axes
+n 3
+route terms
+source_gram 1 1 0 ; 1 0 1 ; 0 1 -1
+target_gram 1 0 0 ; 0 -1 0 ; 0 0 0
+rows 1 0 0 ; 1 1 0 ; 0 -1 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; -1 1 0 ; -1 1 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/1 2 1/1
+forward 3: 3 1/1
+forward 4: 2 -1/1 4 1/1
+forward 5: 3 -1/1 5 1/1
+forward 6: 3 -1/1 5 1/1 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 1/1
+back 4: 1 -1/1 2 1/1 4 1/1
+back 5: 3 1/1 5 1/1
+back 6: 5 -1/1 6 1/1
+back 7: 7 1/1
+end
+change all ones
+n 3
+route terms
+source_gram 1 1 1 ; 1 1 1 ; 1 1 1
+target_gram 1 0 0 ; 0 0 0 ; 0 0 0
+rows 1 0 0 ; 1 1 0 ; 1 0 1
+denominators_rows 1 1 1
+inverse 1 0 0 ; -1 1 0 ; -1 0 1
+denominators_inverse 1 1 1
+forward 0: 0 1/1
+forward 1: 1 1/1
+forward 2: 1 1/1 2 1/1
+forward 3: 3 1/1
+forward 4: 1 1/1 4 1/1
+forward 5: 5 1/1
+forward 6: 3 -1/1 5 1/1 6 1/1
+forward 7: 7 1/1
+back 0: 0 1/1
+back 1: 1 1/1
+back 2: 1 -1/1 2 1/1
+back 3: 3 1/1
+back 4: 1 -1/1 4 1/1
+back 5: 5 1/1
+back 6: 3 1/1 5 -1/1 6 1/1
+back 7: 7 1/1
+end

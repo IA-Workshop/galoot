@@ -29,7 +29,13 @@
 //   a + b and a - b: K = max(K_a, K_b) + 1, magnitude m_a + m_b, since the
 //     one rounding multiplies every term of both;
 //   a * b: K = K_a + K_b + 1, magnitude m_a m_b, since a term of the
-//     product is a term of a times a term of b, times the one rounding.
+//     product is a term of a times a term of b, times the one rounding;
+//   a / b, for an exact b (K_b = 0) that is not zero: K = K_a + 1, magnitude
+//     m_a / |b|, since the standard model holds for division too, so the
+//     one rounding multiplies every term of a / b; and K = K_a when |b| is a
+//     power of two, by which a double divides exactly. A rounded divisor
+//     would make the result a ratio of two such sums, which this does not
+//     bound, so it stops instead.
 // A rule may count a rounding that the double operation does not make, as
 // for a product by 2, which only makes the bound larger. A fused
 // multiply-add makes one rounding where the rules count two, so the bound
@@ -129,6 +135,29 @@ namespace detail {
   return r;
 }
 
+/// a / b: one rounding after a's count, or none when |b| is a power of two.
+///
+/// Requires: b is exact, with no rounding, and not zero; otherwise the
+/// evaluation fails or the program aborts, with a message.
+[[nodiscard]] constexpr tracked operator/(const tracked& a,
+                                          const tracked& b) noexcept {
+  if (b.roundings != 0) {
+    detail::rational_failed("tracked: the divisor must be exact");
+  }
+  if (b.value.numerator == 0) {
+    detail::rational_failed("tracked: division by zero");
+  }
+  const rational size = b.value.numerator < 0 ? -b.value : b.value;
+  const bool power_of_two =
+      std::has_single_bit(static_cast<std::uint64_t>(size.numerator)) &&
+      std::has_single_bit(static_cast<std::uint64_t>(size.denominator));
+  tracked r;
+  r.value = a.value / b.value;
+  r.magnitude = a.magnitude / size;
+  r.roundings = a.roundings + (power_of_two ? 0 : 1);
+  return r;
+}
+
 // The check below assumes that each double operation rounds once, to
 // nearest, to double's 53 bits.
 static_assert(std::numeric_limits<double>::is_iec559);
@@ -202,7 +231,16 @@ inline constexpr int rounding_margin = 2;
     significand /= 2;
     ++power;
   }
-  if (power > 8 || power < -62) {
+  // The value is significand 2^power. With power < 0 its magnitude is below
+  // 2^53, so only the denominator 2^-power can be too large. With power >= 0
+  // the denominator is 1, and the magnitude is below 2^62 exactly when
+  // |significand| <= (2^62 - 1) >> power; power is checked first so that the
+  // shift stays below the width of the type.
+  const std::int64_t below_two_62 = power_of_two(62) - 1;
+  const bool fits = power < 0 ? power >= -62
+                              : power <= 62 && detail::magnitude(significand) <=
+                                                   (below_two_62 >> power);
+  if (!fits) {
     detail::rational_failed(
         "exact_rational: the double does not fit the rational");
   }
@@ -210,6 +248,31 @@ inline constexpr int rounding_margin = 2;
     return rational{significand * power_of_two(power)};
   }
   return rational{significand, power_of_two(-power)};
+}
+
+/// The double nearest the rational x, ties to even, for any positive
+/// denominator, when x times the odd part w of its denominator is a double.
+/// With w = 1, x is dyadic and nearest_double rounds it once. Otherwise
+/// fl(w x / w): w x and w are doubles, and IEEE 754 rounds a quotient of two
+/// doubles correctly, so the result depends only on the real w x / w = x.
+/// Requires: w x is exactly a double, as for a quotient of an exact sum by
+/// an integer; checked, and a false check aborts.
+[[nodiscard]] inline double correctly_rounded(rational x) {
+  std::int64_t w = x.denominator;
+  while (w % 2 == 0) {
+    w /= 2;
+  }
+  if (w == 1) {
+    return nearest_double(x);
+  }
+  const rational scaled = x * rational{w};
+  const double numerator = nearest_double(scaled);
+  if (exact_rational(numerator) != scaled) {
+    detail::rational_failed(
+        "correctly_rounded: w x is not a double, for the odd part w of the "
+        "denominator");
+  }
+  return numerator / static_cast<double>(w);
 }
 
 /// The tolerance of a result with `roundings` K >= 2 and the magnitude
@@ -316,6 +379,58 @@ inline constexpr int identity_margin = 1;
 // safe by this argument. A result whose exact ratio exceeds
 // (1 + 4u) / (1 - gamma_5), about 1 + 9u, is rejected.
 inline constexpr double ratio_limit = 1.0 + (4 * unit_roundoff);
+
+/// bound_ratio for an exact value and magnitude whose denominators need not
+/// be powers of two, as for a sum divided by an integer: both sides scaled
+/// by w, the least common multiple of the odd parts of the denominators of
+/// exact and magnitude, which makes them dyadic, so that
+/// |d - e| <= gamma_K M exactly when |w d - w e| <= gamma_K w M. The scaled
+/// ratio is computed with the same five roundings as bound_ratio, so
+/// ratio_limit bounds it for a result within the bound. Requires
+/// roundings >= 1, and w d - w e and w M within the rational.
+[[nodiscard]] inline double scaled_bound_ratio(double d, rational exact,
+                                               int roundings,
+                                               rational magnitude) {
+  const auto odd_part = [](std::int64_t x) {
+    while (x % 2 == 0) {
+      x /= 2;
+    }
+    return x;
+  };
+  const std::int64_t a = odd_part(exact.denominator);
+  const std::int64_t b = odd_part(magnitude.denominator);
+  const rational w{(a / detail::gcd(a, b)) * b};
+  const rational difference = (exact_rational(d) * w) - (exact * w);
+  if (difference.numerator == 0) {
+    return 0.0;
+  }
+  const double k = roundings;
+  const double gamma = (k * unit_roundoff) / (1.0 - (k * unit_roundoff));
+  return std::abs(nearest_double(difference)) /
+         (gamma * nearest_double(magnitude * w));
+}
+
+/// Whether the double d of a sum of products divided by an integer is
+/// within the forward error bound of the exact value `exact`, for the count
+/// `roundings` and the magnitude `magnitude` of its tracked run, whose
+/// denominators need not be powers of two.
+///
+/// K = 0: nothing rounded, so d must be the exact value. K = 1: one
+/// operation of exact operands rounded, correctly, and what follows it, a
+/// negation or a division by a power of two, is exact, so d must be the
+/// double nearest the exact value, correctly_rounded. K >= 2:
+/// scaled_bound_ratio <= ratio_limit.
+[[nodiscard]] inline bool within_quotient_bound(double d, rational exact,
+                                                int roundings,
+                                                rational magnitude) {
+  if (roundings == 0) {
+    return exact_rational(d) == exact;
+  }
+  if (roundings == 1) {
+    return d == correctly_rounded(exact);
+  }
+  return scaled_bound_ratio(d, exact, roundings, magnitude) <= ratio_limit;
+}
 
 /// Whether the double d is within the forward error bound of the exact value
 /// `exact`, for a computation whose tracked run gave the count `roundings`

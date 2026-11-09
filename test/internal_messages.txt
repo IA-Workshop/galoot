@@ -34,3 +34,7 @@ unary map: a complement's sign differs from its closed form
 
 reason: an invariant of the rounding check's margin, which holds for every layout the core can build
 transform: a dropped coefficient has too many roundings for the margin of the rounding check
+
+reason: self-checks of the change of basis generator's own output, an inverse that inverts and terms that keep their grade; the change's tests verify that output directly
+basis_change: the computed inverse does not invert the rows
+basis change map: a term has another grade than its input blade

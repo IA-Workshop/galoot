@@ -19,6 +19,7 @@ target_sources(galoot_core INTERFACE
   FILE_SET HEADERS BASE_DIRS include FILES
     include/galoot/core.hpp
     include/galoot/core/assert.hpp
+    include/galoot/core/basis_change.hpp
     include/galoot/core/bits.hpp
     include/galoot/core/blade_product.hpp
     include/galoot/core/blade_set.hpp

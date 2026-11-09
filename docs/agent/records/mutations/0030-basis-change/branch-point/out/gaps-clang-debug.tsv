@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+conformal_pairing_positive	clang-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived
+diagonal_negative_first	clang-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived
+witt_pairing_doubled	clang-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived

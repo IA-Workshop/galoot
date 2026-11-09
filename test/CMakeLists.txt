@@ -171,15 +171,15 @@ set_tests_properties(tests.compile_fail_flags tests.compile_fail_flags_rejects
 # forbids the longer one. The test reads this tree's own listing, as ctest
 # --show-only gives it with no preset's filter, so a test that a preset
 # leaves out of its run still counts; it builds nothing. It also carries
-# core.headers, so that a change to a header, which may add a message,
-# selects it.
+# core.headers and rga3.headers, so that a change to a header of the core
+# or of the rga3 preset, which may add a message, selects it.
 add_test(NAME tests.messages_pinned
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/catalogue pinned
     ${PROJECT_SOURCE_DIR}/include/galoot ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/internal_messages.txt
     --ctest ${CMAKE_CTEST_COMMAND})
 set_tests_properties(tests.messages_pinned PROPERTIES
-  LABELS "tests;tests.catalogue;core.headers")
+  LABELS "tests;tests.catalogue;core.headers;rga3.headers")
 
 # tools.compile_fail_literal_in_path_*: a compile-fail test whose required
 # literal occurs in its own source path stops configuring, since any compile
@@ -936,7 +936,8 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/rational.hpp support/scalar_faults.hpp support/tracked.hpp)
+    FILES support/diagonalize.hpp support/rational.hpp support/scalar_faults.hpp
+      support/tracked.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -986,12 +987,56 @@ foreach(operation IN ITEMS add multiply)
     REQUIRE rational_failed)
 endforeach()
 
+# support.diagonalize: T G T^T = D on every form of the exhaustive tests,
+# with integer squarefree squares in the range of a Gram entry, and one hand
+# case of each rule of the elimination: a swap, the pairing of two null
+# vectors, the radical, and the scaling of the squares.
+galoot_add_test(MODULE support COMPONENT diagonalize)
+target_link_libraries(support_diagonalize_test PRIVATE galoot_test_support)
+
 # support.tracked: the tracking scalar's rules for counting roundings and
 # magnitudes, the conversions between rationals and doubles, and the forward
 # error bound check accepting results within the bound and rejecting results
 # beyond it.
 galoot_add_test(MODULE support COMPONENT tracked)
 target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
+
+# support.tracked_rejects_<case>: a double that the rational cannot hold, by
+# its magnitude or its denominator, aborts exact_rational at run time with
+# its message.
+add_executable(support_tracked_exact_rational_fail
+  support/tracked_exact_rational_fail.cpp)
+target_link_libraries(support_tracked_exact_rational_fail PRIVATE
+  galoot_test_support)
+foreach(case IN ITEMS magnitude_two_62 magnitude_above denominator_two_63)
+  add_test(NAME support.tracked_rejects_${case}
+    COMMAND ${expect_output} "Subprocess aborted"
+      "exact_rational: the double does not fit the rational"
+      -- $<TARGET_FILE:support_tracked_exact_rational_fail> ${case})
+  set_tests_properties(support.tracked_rejects_${case} PROPERTIES
+    LABELS "support;support.tracked")
+endforeach()
+
+# support.tracked_rejects_<case>: a division by a rounded or a zero divisor,
+# and the nearest double of a rational whose scaled numerator is not a
+# double, abort at run time with their messages.
+add_executable(support_tracked_division_fail support/tracked_division_fail.cpp)
+target_link_libraries(support_tracked_division_fail PRIVATE
+  galoot_test_support)
+add_test(NAME support.tracked_rejects_rounded_divisor
+  COMMAND ${expect_output} "Subprocess aborted"
+    "tracked: the divisor must be exact"
+    -- $<TARGET_FILE:support_tracked_division_fail> rounded_divisor)
+add_test(NAME support.tracked_rejects_zero_divisor
+  COMMAND ${expect_output} "Subprocess aborted" "tracked: division by zero"
+    -- $<TARGET_FILE:support_tracked_division_fail> zero_divisor)
+add_test(NAME support.tracked_rejects_not_a_double
+  COMMAND ${expect_output} "Subprocess aborted"
+    "correctly_rounded: w x is not a double"
+    -- $<TARGET_FILE:support_tracked_division_fail> not_a_double)
+set_tests_properties(support.tracked_rejects_rounded_divisor
+  support.tracked_rejects_zero_divisor support.tracked_rejects_not_a_double
+  PROPERTIES LABELS "support;support.tracked")
 
 # core.rounding: every product, map, sum, scaling, and copy over double
 # within its forward error bound of the exact value from the golden tables,
@@ -2217,6 +2262,156 @@ target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
   core.transform)
+
+# core.basis_change: the change of basis of basis_change.hpp: what a change
+# tag must be, the image of every blade under conformal_change<D>() and its
+# inverse against the golden values, hand values, what depends on the basis,
+# in basis_change_scalars_test.cpp, the scalar types it serves, with each
+# floating result checked against its exact value or its forward error bound
+# from the tracking scalar, and, in basis_change_validation_test.cpp, the
+# published null pair of the conformal model and the Witt basis with its
+# anticommutation relations.
+galoot_add_test(MODULE core COMPONENT basis_change)
+target_sources(core_basis_change_test PRIVATE
+  core/basis_change_scalars_test.cpp
+  core/basis_change_validation_test.cpp)
+target_link_libraries(core_basis_change_test PRIVATE galoot_golden
+  galoot_test_support)
+
+# core.basis_change_identities: the change of basis as an algebra isomorphism.
+# basis_change_identities_test.cpp checks the generated terms of each change
+# at run time on every blade and pair of blades, for every form of the
+# exhaustive tests against its exact diagonal counterpart and for the
+# conformal, Witt, and doubled changes. The other sources check, through the
+# public functions on seeded random multivectors, that each change maps
+# products to products and that its inverse undoes it, one group of changes
+# to a source, so that the groups compile in parallel. A program of its own,
+# so that a change to basis_change_test.cpp does not rebuild it; it also
+# carries the label core.basis_change. The source of conformal(3), which
+# builds the products of two full<5> multivectors of conformal(3) and of
+# R(4, 1, 0), takes the raised step limit of the identities of conformal(3).
+galoot_add_test(MODULE core COMPONENT basis_change_identities)
+target_sources(core_basis_change_identities_test PRIVATE
+  core/basis_change_conformal_test.cpp
+  core/basis_change_conformal3_test.cpp
+  core/basis_change_witt_test.cpp
+  core/basis_change_random_test.cpp
+  core/basis_change_random_five_test.cpp)
+set_source_files_properties(core/basis_change_conformal3_test.cpp
+  PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
+target_link_libraries(core_basis_change_identities_test PRIVATE
+  galoot_test_support)
+set_property(TEST core.basis_change_identities APPEND PROPERTY LABELS
+  core.basis_change)
+
+# The names of the machinery under a change of basis, which the first error
+# line of a rejection must not show: the user wrote the tag or the call.
+set(basis_change_internal_names "detail::")
+
+# core.<name>: a misuse of a change of basis fails to compile with one
+# error, its message, from the source core/<name>_fail.cpp. Further
+# arguments go to the test.
+function(basis_change_rejects name message)
+  galoot_add_compile_fail_test(NAME ${name}
+    MODULE core COMPONENT basis_change
+    SOURCE core/${name}_fail.cpp
+    MESSAGE "${message}"
+    ONE_ERROR ${ARGN}
+    FORBID_ON_FIRST_ERROR ${basis_change_internal_names})
+endfunction()
+
+# A tag whose algebras and change disagree in their number of generators:
+# the check compares the two counts as written, so that both compilers print
+# them, 4 against 5. When both disagree, only the source's is reported.
+set(dimension "a change maps between algebras of one dimension")
+set(source_count "basis_change: the source algebra has a different number of generators than the change has rows${semicolon} ${dimension}")
+set(target_count "basis_change: the target algebra has a different number of generators than the change has rows${semicolon} ${dimension}")
+basis_change_rejects(basis_change_source_count "${source_count}"
+  REQUIRE "4 == 5")
+basis_change_rejects(basis_change_target_count "${target_count}"
+  REQUIRE "4 == 5")
+basis_change_rejects(basis_change_both_counts "${source_count}"
+  REQUIRE "5 == 4" FORBID "${target_count}")
+
+# A denominator that is negative or zero, a change without an inverse, and a
+# change that does not keep the inner products, including one whose source
+# and target are swapped, one whose matrix is transposed, and one that keeps
+# every square but not the null pair's inner product. A singular
+# change of a form whose inner products are all zero keeps them, and must
+# still be reported as singular.
+set(not_positive "basis_change: every denominator must be positive${semicolon} put a row's sign in its entries")
+set(dependent "basis_change: the rows are linearly dependent, so the change has no inverse${semicolon} the images of the source's generators must be independent")
+set(not_isometry "basis_change: the change does not keep the inner products (P G' P^T is not G)${semicolon} check that row i writes e_i in the target's generators, and that source and target are not swapped")
+basis_change_rejects(basis_change_denominator_negative "${not_positive}")
+basis_change_rejects(basis_change_denominator_zero "${not_positive}")
+basis_change_rejects(basis_change_dependent "${dependent}")
+basis_change_rejects(basis_change_dependent_degenerate "${dependent}"
+  FORBID "${not_isometry}")
+basis_change_rejects(basis_change_not_isometry "${not_isometry}")
+basis_change_rejects(basis_change_swapped "${not_isometry}")
+basis_change_rejects(basis_change_transposed "${not_isometry}")
+basis_change_rejects(basis_change_pairing_not_kept "${not_isometry}")
+
+# An exact value of the change's checks that does not fit coefficient_type:
+# the checks note it rather than stop, and report it as one error with its
+# message first; here in the check of the inner products.
+# The same in each other check that can overflow: the elimination (whose
+# pivots grow past the range though the inner products fit), the check that
+# the inverse inverts the rows, and the inverse's rows. Each must give the
+# overflow message, not the message of the check it stopped.
+set(overflow "basis_change: an exact value the change computes does not fit coefficient_type${semicolon} use rows with smaller entries")
+basis_change_rejects(basis_change_overflow "${overflow}"
+  FORBID "${not_isometry}")
+basis_change_rejects(basis_change_overflow_elimination "${overflow}"
+  FORBID "${dependent}")
+basis_change_rejects(basis_change_overflow_inverse_check "${overflow}"
+  FORBID "basis_change: the computed inverse does not invert the rows")
+basis_change_rejects(basis_change_overflow_inverse_rows "${overflow}")
+
+# A template argument that is not a change tag, and an operand in the wrong
+# algebra: the target's or a third one, as a statement and into auto r.
+set(not_a_change "the template argument is not a change of basis${semicolon} give a tag with source, target, and value, as in struct cga3_to_r410 { using source = cga3${semicolon} using target = r410${semicolon} static constexpr auto value = conformal_change<3>()${semicolon} }")
+basis_change_rejects(change_basis_not_a_change
+  "change_basis: ${not_a_change}")
+basis_change_rejects(change_basis_back_not_a_change
+  "change_basis_back: ${not_a_change}")
+# The change's value, as conformal_change<3>(), given where its tag belongs.
+set(value_as_tag "the template argument is a value, not a change tag${semicolon} put it in a tag, as in struct cga3_to_r410 { using source = cga3${semicolon} using target = r410${semicolon} static constexpr auto value = conformal_change<3>()${semicolon} }")
+basis_change_rejects(change_basis_value_as_tag "change_basis: ${value_as_tag}")
+basis_change_rejects(change_basis_back_value_as_tag
+  "change_basis_back: ${value_as_tag}")
+set(not_in_source "change_basis: x is not in the change's source algebra${semicolon} use change_basis_back to map from the target, or check that the tag's source is x's algebra")
+set(not_in_target "change_basis_back: y is not in the change's target algebra${semicolon} use change_basis to map from the source, or check that the tag's target is y's algebra")
+foreach(case IN ITEMS target_operand other_algebra other_algebra_auto)
+  basis_change_rejects(change_basis_${case} "${not_in_source}")
+endforeach()
+foreach(case IN ITEMS source_operand other_algebra)
+  basis_change_rejects(change_basis_back_${case} "${not_in_target}")
+endforeach()
+
+# A scalar that cannot hold one of the change's exact coefficients, float for
+# 2^24 + 1; and a scalar that cannot divide exactly, an integer type or a
+# ring scalar without division, on a layout whose image needs a division.
+set(narrow "the scalar type cannot hold one of the change's exact coefficients${semicolon} use a scalar type that holds larger integers exactly")
+basis_change_rejects(change_basis_narrow_scalar "change_basis: ${narrow}")
+basis_change_rejects(change_basis_back_narrow_scalar
+  "change_basis_back: ${narrow}")
+set(division "the change divides by an integer on this layout, which the scalar type cannot do exactly${semicolon} use a rational or floating scalar type")
+basis_change_rejects(change_basis_integer_division "change_basis: ${division}")
+basis_change_rejects(change_basis_no_division "change_basis: ${division}")
+basis_change_rejects(change_basis_back_integer_division
+  "change_basis_back: ${division}")
+
+# A change with more generators than a blade mask has bits, written by hand.
+basis_change_rejects(basis_change_type_width
+  "basis_change: n is larger than the number of bits in a blade mask")
+
+# A blade set written by hand, given to a layout of a change directly, with a
+# generator beyond the algebra or a sign other than +1 or -1.
+basis_change_rejects(basis_change_layout_beyond_n
+  "basis change map: the blade set names a generator beyond e_n")
+basis_change_rejects(basis_change_layout_bad_sign
+  "basis change map: the blade set holds a sign other than +1 or -1")
 
 # core.format: the formatter of a multivector, against names worked out in
 # the test from each blade's mask and sign, and texts written out there.

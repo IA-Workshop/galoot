@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+pivot_swap_skipped	gcc-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form	-	-
+pairing_skipped	gcc-debug	752fdea249c2	killed	killed	test/support/diagonalize_test.cpp:81	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:81:41: error: static assertion failed	support.diagonalize	-	-	-
+squarefree_scaling_skipped	gcc-debug	752fdea249c2	killed	killed	test/support/diagonalize_test.cpp:82	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:82:38: error: static assertion failed	support.diagonalize	-	-	-

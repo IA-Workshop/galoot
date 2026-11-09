@@ -1,0 +1,25 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverse_rows_overflow.cpp:3:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_checked_change() [with C = bad]’:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:720:62:   required from ‘constexpr const auto galoot::core::detail::checked_change<bad>’
+  720 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:928:42:   required from ‘consteval auto galoot::core::detail::make_change_map() [with C = bad; bool Back = false; blade_set<...auto...> S = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}]’
+  928 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:964:66:   required from ‘constexpr const auto galoot::core::detail::change_map_of<bad, false, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}>’
+  964 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1058:13:   required from ‘constexpr const auto galoot::core::change_basis_layout<bad, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}>’
+ 1058 |     detail::change_map_of<C, false, S>.result;
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1102:48:   required by substitution of ‘template<class C, blade_set<...auto...> S, class T>  requires (basis_change_like<C>) && (ring_scalar<T>) constexpr galoot::core::mv<typename C::target, change_basis_layout<C, S>, T> galoot::core::change_basis(const mv<typename C::source, S, T>&) [with C = bad; blade_set<...auto...> S = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}; T = double]’
+ 1102 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverse_rows_overflow.cpp:12:69:   required from here
+   12 | [[maybe_unused]] auto f(const X& x) { return core::change_basis<bad>(x); }
+      |                                              ~~~~~~~~~~~~~~~~~~~~~~~^~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:695:21: error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+  695 |       static_assert(fits, "basis_change: an exact value the change computes "
+      |                     ^~~~
+  • ‘fits’ evaluates to false
+timed: probe inverse_rows_overflow-g++ took 0.131 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

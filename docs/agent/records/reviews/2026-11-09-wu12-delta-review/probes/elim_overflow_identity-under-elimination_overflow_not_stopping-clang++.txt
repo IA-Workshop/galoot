@@ -1,0 +1,24 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/elim_overflow_identity.cpp:4:
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:696:21: error: static assertion failed due to requirement 'independent': basis_change: the rows are linearly dependent, so the change has no inverse; the images of the source's generators must be independent
+  696 |       static_assert(independent,
+      |                     ^~~~~~~~~~~
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:718:40: note: in instantiation of function template specialization 'galoot::core::detail::make_checked_change<bad>' requested here
+  718 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:926:42: note: in instantiation of variable template specialization 'galoot::core::detail::checked_change' requested here
+  926 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:962:39: note: in instantiation of function template specialization 'galoot::core::detail::make_change_map<bad, false, blade_set<1>{{{{1, 1}}}}>' requested here
+  962 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:1056:13: note: in instantiation of variable template specialization 'galoot::core::detail::change_map_of' requested here
+ 1056 |     detail::change_map_of<C, false, S>.result;
+      |             ^
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/delta/inc-elimination_overflow_not_stopping/galoot/core/basis_change.hpp:1100:48: note: in instantiation of variable template specialization 'galoot::core::change_basis_layout' requested here
+ 1100 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/elim_overflow_identity.cpp:13:46: note: while substituting deduced template arguments into function template 'change_basis' [with C = bad, S = blade_set<1>{{{{1, 1}}}}, T = double]
+   13 | [[maybe_unused]] auto f(const X& x) { return core::change_basis<bad>(x); }
+      |                                              ^
+1 error generated.
+timed: probe elim_overflow_identity-under-elimination_overflow_not_stopping-clang++ took 0.378 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv
