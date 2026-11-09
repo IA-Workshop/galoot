@@ -1,0 +1,20 @@
+conformal(3) -> R(4,1,0), regime E: 400 draws, 32 coefficients each, q in [1, 2]; inexact results 0 of 12800; rejecting draws: correct 0, per_term 0, drop_div 0, scaled 400
+conformal(3) -> R(4,1,0), regime C: 400 draws, 32 coefficients each, q in [1, 2]; inexact results 1797 of 12800; rejecting draws: correct 0, per_term 0, drop_div 0, scaled 400; N_R = 2^53; K >= 2 coefficients 6400, exact ratio median 0, worst 0.5
+R(4,1,0) -> conformal(3), regime E: 400 draws, 32 coefficients each, q in [1, 2]; inexact results 0 of 12800; rejecting draws: correct 0, per_term 0, drop_div 0, scaled 400
+R(4,1,0) -> conformal(3), regime C: 400 draws, 32 coefficients each, q in [1, 2]; inexact results 748 of 12800; rejecting draws: correct 0, per_term 0, drop_div 359, scaled 400; N_R = 2^53; K >= 2 coefficients 0, exact ratio median 0, worst 0
+random 2 -> diagonal, regime E: 400 draws, 16 coefficients each, q in [1, 2, 15, 30]; inexact results 4503 of 6400; rejecting draws: correct 0, per_term 386, drop_div 400, scaled 400
+random 2 -> diagonal, regime C: 400 draws, 16 coefficients each, q in [1, 2, 15, 30]; inexact results 5260 of 6400; rejecting draws: correct 0, per_term 0, drop_div 400, scaled 400; N_R = 2^53; K >= 2 coefficients 4000, exact ratio median 0.0753, worst 0.932
+random 4 -> diagonal, regime E: 400 draws, 4 coefficients each, q in [1, 3]; inexact results 782 of 1600; rejecting draws: correct 0, per_term 84, drop_div 363, scaled 400
+random 4 -> diagonal, regime C: 400 draws, 4 coefficients each, q in [1, 3]; inexact results 891 of 1600; rejecting draws: correct 0, per_term 0, drop_div 363, scaled 400; N_R = 2^53; K >= 2 coefficients 400, exact ratio median 0.131, worst 0.638
+random 7 -> diagonal, regime E: 400 draws, 32 coefficients each, q in [1, 3, 4, 6, 12, 18, 24, 36, 72]; inexact results 9520 of 12800; rejecting draws: correct 0, per_term 400, drop_div 400, scaled 400
+random 7 -> diagonal, regime C: 400 draws, 32 coefficients each, q in [1, 3, 4, 6, 12, 18, 24, 36, 72]; inexact results 10465 of 12800; rejecting draws: correct 0, per_term 0, drop_div 18, scaled 400; N_R = 2^50; K >= 2 coefficients 12400, exact ratio median 0.0512, worst 0.638
+random 8 -> diagonal, regime E: 400 draws, 4 coefficients each, q in [1, 3]; inexact results 782 of 1600; rejecting draws: correct 0, per_term 127, drop_div 338, scaled 400
+random 8 -> diagonal, regime C: 400 draws, 4 coefficients each, q in [1, 3]; inexact results 839 of 1600; rejecting draws: correct 0, per_term 0, drop_div 346, scaled 400; N_R = 2^53; K >= 2 coefficients 400, exact ratio median 0.115, worst 0.609
+random 9 -> diagonal, regime E: 400 draws, 8 coefficients each, q in [1, 3]; inexact results 1638 of 3200; rejecting draws: correct 0, per_term 330, drop_div 396, scaled 400
+random 9 -> diagonal, regime C: 400 draws, 8 coefficients each, q in [1, 3]; inexact results 1745 of 3200; rejecting draws: correct 0, per_term 0, drop_div 1, scaled 400; N_R = 2^53; K >= 2 coefficients 2400, exact ratio median 0.109, worst 0.712
+diagonal -> random 7, regime E: 400 draws, 32 coefficients each, q in [1, 5, 10, 20]; inexact results 9908 of 12800; rejecting draws: correct 0, per_term 400, drop_div 400, scaled 400
+diagonal -> random 7, regime C: 400 draws, 32 coefficients each, q in [1, 5, 10, 20]; inexact results 10982 of 12800; rejecting draws: correct 0, per_term 0, drop_div 43, scaled 400; N_R = 2^50; K >= 2 coefficients 12400, exact ratio median 0.0676, worst 0.742
+conformal(1) round trip, regime E: 200 draws exact
+conformal(2) round trip, regime E: 200 draws exact
+conformal(3) round trip, regime E: 200 draws exact
+conformal(4) round trip, regime E: 200 draws exact

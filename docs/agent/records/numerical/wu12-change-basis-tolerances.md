@@ -7,7 +7,8 @@
 - Files, in `wu12-change-basis-tolerances/`:
   - `changes.py`, `changes.out`: the denominators, term counts, and coefficient sums of 1.4's change and of the LDLᵀ change of each seeded random form, exact.
   - `polynomials.py`, `polynomials.out`: the sympy and exact checks of the polynomials and constants below (sympy 1.14.0, CPython 3.14.9, the math-tools interpreter).
-  - Run each from the repository root with `python3 -I <path>`. They are single runs, not build or test steps, so they need no job pool. Here they ran under `tools/timed` with a log in the session scratchpad: 0.13 s and 0.46 s.
+  - `model.py`, `model.out`: a model of the assumed operation form in Python floats, run only after the rule was committed (section "Model check").
+  - Run each from the repository root with `python3 -I <path>`. They are single runs, not build or test steps, so they need no job pool. Here they ran under `tools/timed` with a log in the session scratchpad: 0.13 s, 0.46 s, and 2.6 s.
 
 ## The computation
 
@@ -56,7 +57,7 @@ The tests use two classes of inputs, and the class fixes the check for each coef
 
 ### Regime E: small dyadic inputs, so that only the division can round
 
-**Inputs.** Each input is x = n · 2⁻ᵇ with |n| ≤ N_E = 2²⁰ and 0 ≤ b ≤ 20. Until `exact_rational`'s range check is corrected (see "A defect in `exact_rational`"), the test also needs C · N_E · 2⁻ᵇ < 2⁹, so that no exact result is a multiple of 2⁹. For 1.4's change and its round trip that means b ≥ 15.
+**Inputs.** Each input is x = n · 2⁻ᵇ with |n| ≤ N_E = 2²⁰ and 0 ≤ b ≤ 20. Until `exact_rational`'s range check is corrected (see "A defect in `exact_rational`"), the test also needs C · N_E · 2⁻ᵇ < 2⁹, so that no exact result is a multiple of 2⁹. For 1.4's change and its round trip, b ≥ 15 is enough.
 
 **Condition.** Let C = max_B Σ_A |c_AB| over the outputs of the layout. The condition is C · N_E ≤ 2ᵖ: 2⁵³ for double and 2²⁴ for float. For 1.4's change, C is 3 forward and 2 back. A round trip, back after forward, needs 12 N_E ≤ 2ᵖ. In units of 2^−(b+1), the forward results have integer numerators of at most 6 N_E, and the back change sums at most 2 of them per output. For the LDLᵀ changes of `changes.out`, C is at most 18,612, so N_E = 2²⁰ meets the condition for double (2³⁵ < 2⁵³) on every change listed.
 
@@ -136,7 +137,7 @@ Each case also checks that the tracked run's value equals the exact rational run
 Each addition has a present caller, the floating cases of criterion 8. Each comment states its derivation in its own words and cites no record (S11).
 
 1. `operator/(tracked, tracked)`, the division rule above. It stops when the divisor is not exact or is zero, and it keeps the count when |divisor| is a power of two.
-2. The correctly rounded value of a rational whose denominator need not be a power of two: fl(`nearest_double(w x)` / w), with w the odd part of the denominator. It stops unless w x is exactly a double.
+2. The correctly rounded value of a rational x whose denominator need not be a power of two. If x is dyadic (w = 1), it is `nearest_double(x)`, which rounds the numerator once and scales exactly. Otherwise it is fl(`nearest_double(w x)` / w), with w the odd part of the denominator, and it stops unless w x is exactly a double. The first commit of this record gave only the second form, which stops on a dyadic x that is not a double, such as (x_a + x_b)/2 with a 54-bit sum. That case is K = 1 in regime C, where the one rounding is the addition, and the model check below found it (correction 1).
 3. The scaled ratio: `bound_ratio` with both sides multiplied by w, the least common multiple of the odd parts of the denominators of e and M. When w = 1 it is `bound_ratio`, so generalizing `bound_ratio` in place is also an option.
 4. The check for one coefficient, by count: K = 0, exact; K = 1, correctly rounded (2); K ≥ 2, scaled ratio (3) at most `ratio_limit`. A regime-E test calls (2), or checks exactness, directly. Its premise is Lemma E's condition on the inputs, not the count.
 5. The correction of `exact_rational`'s range check.
@@ -148,10 +149,43 @@ Each gets a test in `tracked_test.cpp`, including the stop on a rounded divisor 
 | Mutant | Regime E, power-of-two q_B | Regime E, other q_B | Regime C |
 | --- | --- | --- | --- |
 | the division applied to each term before the sum | survives: x / 2ᵏ is exact either way | killed: each term's quotient rounds, then the sum rounds, so the result is not in general the correctly rounded quotient | survives: each term then has K = 2, the chain still gives K = m + 1 at most, and `tracked`, running the mutated templates, counts the same bound |
-| the tolerance's division term dropped (K − 1 in the ratio; exactness expected in place of correct rounding) | not applicable: no rounding is counted | killed: e is not a double when q_B does not divide S_B | expected to survive: a worst-case bound is rarely reached, and the WU14 and pilot records saw worst ratios of 0.03 to 0.7 |
+| the tolerance's division term dropped (K − 1 in the ratio; exactness expected in place of correct rounding) | not applicable: no rounding is counted | killed: e is not a double when q_B does not divide S_B | expected to survive: a worst-case bound is rarely reached; the numerical pilot saw medians of 0.03 to 0.08 and maxima up to 0.69 for such bounds (the first commit misquoted this as "worst ratios of 0.03 to 0.7") |
 | every floating result times 1 + 2⁻⁴⁸ | killed: every nonzero result moves | killed | killed on coefficients where 32|e| exceeds the bound's γ_K M by enough, that is, with little cancellation; not on every coefficient |
 
 So the regime-E case with a denominator that is not a power of two is the one that kills the first two mutants. The γ-bound case of regime C cannot kill them, by construction. Each regime-C prediction says "expected", because it depends on values that have not been seen.
+
+## Model check, run after the rule's commit
+
+The rule above was committed on this branch (`4414fe6`) before this check ran. Nothing in the rule was changed to fit the check's results. `model.py` models the assumed operation form in Python floats, which are IEEE double with round to nearest: the terms in ascending order of source blade, ±1 as an addition or a subtraction, `float(c) * x` otherwise, and then one division. It also models `tracked` with the division rule, and applies the rule's checks as stated, with the ratio computed in double as the helper would compute it. It is a model, not the library, which does not exist yet. So it shows that the rule is consistent with its own assumptions, and it shows what the mutants do to the model. It is not evidence about part C's code. It used seed 20261109, 400 draws per change and regime, and 200 round trips per d, and took 2.6 s under `tools/timed` (`model.out`).
+
+| Change | Regime | Draws rejected: correct, per-term division, division term dropped, ×(1 + 2⁻⁴⁸) | Worst exact ratio, K ≥ 2 (median) |
+| --- | --- | --- | --- |
+| conformal(3) → R(4,1,0) | E | 0, 0, 0, 400 | — |
+| conformal(3) → R(4,1,0) | C | 0, 0, 0, 400 | 0.5 (0) |
+| R(4,1,0) → conformal(3) | E | 0, 0, 0, 400 | — |
+| R(4,1,0) → conformal(3) | C | 0, 0, 359, 400 | no K ≥ 2 |
+| random 2 → diagonal | E | 0, 386, 400, 400 | — |
+| random 2 → diagonal | C | 0, 0, 400, 400 | 0.932 (0.075) |
+| random 4 → diagonal | E | 0, 84, 363, 400 | — |
+| random 4 → diagonal | C | 0, 0, 363, 400 | 0.638 (0.131) |
+| random 7 → diagonal | E | 0, 400, 400, 400 | — |
+| random 7 → diagonal | C | 0, 0, 18, 400 | 0.638 (0.051) |
+| random 8 → diagonal | E | 0, 127, 338, 400 | — |
+| random 8 → diagonal | C | 0, 0, 346, 400 | 0.609 (0.115) |
+| random 9 → diagonal | E | 0, 330, 396, 400 | — |
+| random 9 → diagonal | C | 0, 0, 1, 400 | 0.712 (0.109) |
+| diagonal → random 7 | E | 0, 400, 400, 400 | — |
+| diagonal → random 7 | C | 0, 0, 43, 400 | 0.742 (0.068) |
+
+The round trip of 1.4's change in regime E was exact in all 200 draws for each of d = 1 to 4.
+
+Findings:
+
+- The rule never rejected the unmutated model. The worst exact ratio was 0.932, for random 2 in regime C, so the bound is close to attained there and leaves little room for an undeclared change of order. Because `tracked` follows the library's own tree, such a change is counted, not hidden.
+- The per-term division was rejected only in regime E with a denominator that is not a power of two, as predicted.
+- ×(1 + 2⁻⁴⁸) was rejected in every draw of every case. The model counts rejecting draws, not coefficients, so the prediction that regime C does not reject it on every coefficient was not checked.
+- **Correction 1, to the correctly rounded helper** (item 2 of "What part B adds"): its first form stopped on a dyadic exact value that is not a double. This made the model's correct runs fail for 1.4's inverse in regime C. The corrected helper uses `nearest_double` when w = 1. This completes the recipe for the check the rule already states ("K = 1: correctly rounded"). It loosens nothing.
+- **Correction 2, to the prediction for the dropped division term in regime C.** The table above said "expected to survive". In the model it is rejected when an output with K = 2 or K = 1 has a result that K − 1 does not admit. K − 1 then asks for correct rounding or exactness, which a sum that rounded and then divided does not give in general. It is rejected in most draws of the small changes and of 1.4's inverse, and in few draws of random 7 (18 and 43) and random 9 (1), whose outputs have larger K. The prediction holds only for coefficients with K ≥ 3. This is a correction of a prediction, not of the rule.
 
 ## Not covered
 
@@ -159,4 +193,4 @@ So the regime-E case with a denominator that is not a power of two is the one th
 - Underflow, overflow, subnormal inputs, `-ffast-math`, flush-to-zero, and arithmetic that is not IEEE round-to-nearest.
 - An implementation form other than the one assumed above (section "The computation").
 - Random 3 → diagonal in regime C, which is outside the oracle's range.
-- Tightness. How close the doubles come to the bound was not measured, because the library does not exist yet.
+- The tightness of the library's results, which do not exist yet. The model's ratios are in the section above.
