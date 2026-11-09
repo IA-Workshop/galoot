@@ -1056,6 +1056,377 @@ def check_conformal_basis():
     check(form(origin, infinity) == -1, "origin . infinity = -1")
 
 
+# --- Forms that are not diagonal, and changes of basis between forms --------
+
+class Form:
+    """The Clifford algebra of any symmetric Gram matrix g, on wedge-monomial
+    blades, with the operations of CONVENTIONS 2 to 4 written for it.
+
+    The product follows Chevalley's construction, a route of its own: for a
+    generator e_i and any x, e_i x = e_i ^ x + e_i _| x, where the left
+    contraction is e_i _| (e_b1 ^ ... ^ e_bk) = sum over j of
+    (-1)^(j-1) g_(i, bj) times the wedge without e_bj; and a blade e_A with
+    lowest generator e_a and the rest R is e_a ^ R = e_a R - e_a _| R, so
+    e_A y = e_a (R y) - (e_a _| R) y. Products of two blades are kept once
+    computed."""
+
+    def __init__(self, g):
+        self.g = [[Fraction(v) for v in row] for row in g]
+        self.n = len(g)
+        self.full = (1 << self.n) - 1
+        self.table = {}
+
+    def contract(self, i, x):
+        out = {}
+        for b, c in x.items():
+            sign = 1
+            for j in range(self.n):
+                if b >> j & 1:
+                    if self.g[i][j]:
+                        m = b & ~(1 << j)
+                        out[m] = out.get(m, 0) + sign * self.g[i][j] * c
+                    sign = -sign
+        return clean(out)
+
+    def generator_times(self, i, y):
+        return add(wedge({1 << i: Fraction(1)}, y), self.contract(i, y))
+
+    def blade_times(self, a, b):
+        if (a, b) not in self.table:
+            if a == 0:
+                result = {b: Fraction(1)}
+            else:
+                low = (a & -a).bit_length() - 1
+                rest = a & ~(1 << low)
+                result = self.generator_times(low, self.blade_times(rest, b))
+                for m, c in self.contract(low, {rest: Fraction(1)}).items():
+                    result = add(result, scale(self.blade_times(m, b), -c))
+            self.table[(a, b)] = result
+        return self.table[(a, b)]
+
+    def gp(self, x, y):
+        out = {}
+        for a, ca in x.items():
+            for b, cb in y.items():
+                for m, c in self.blade_times(a, b).items():
+                    out[m] = out.get(m, 0) + ca * cb * c
+        return clean(out)
+
+    def right(self, x):
+        return clean({self.full ^ m: c * reorder_sign(m, self.full ^ m)
+                      for m, c in x.items()})
+
+    def left(self, x):
+        return clean({self.full ^ m: c * reorder_sign(self.full ^ m, m)
+                      for m, c in x.items()})
+
+    def signs(self, x, f):
+        return clean({m: c * f(popcount(m)) for m, c in x.items()})
+
+    def reverse(self, x):
+        return self.signs(x, grade_sign)
+
+    def antireverse(self, x):
+        return self.signs(x, lambda k: grade_sign(self.n - k))
+
+    def involution(self, x):
+        return self.signs(x, lambda k: (-1) ** k)
+
+    def antiinvolution(self, x):
+        return self.signs(x, lambda k: (-1) ** (self.n - k))
+
+    def bulk(self, x):
+        """The metric exomorphism: e_A to the sum of det g[A, B] e_B."""
+        r = {}
+        for a, c in x.items():
+            rows = [i for i in range(self.n) if a >> i & 1]
+            for cols in itertools.combinations(range(self.n), len(rows)):
+                minor = determinant([[self.g[i][j] for j in cols] for i in rows])
+                if minor:
+                    b = sum(1 << j for j in cols)
+                    r[b] = r.get(b, 0) + c * minor
+        return clean(r)
+
+    def weight(self, x):
+        return self.left(self.bulk(self.right(x)))
+
+    def bulk_dual(self, x):
+        return self.right(self.bulk(x))
+
+    def weight_dual(self, x):
+        return self.right(self.weight(x))
+
+    def antigp(self, x, y):
+        return self.left(self.gp(self.right(x), self.right(y)))
+
+    def antiwedge(self, x, y):
+        return self.left(wedge(self.right(x), self.right(y)))
+
+    def dot(self, x, y):
+        gy = self.bulk(y)
+        return clean({0: sum(c * gy.get(m, 0) for m, c in x.items())})
+
+    def antidot(self, x, y):
+        wy = self.weight(y)
+        return clean({self.full: sum(c * wy.get(m, 0) for m, c in x.items())})
+
+    def transform(self, x, v):
+        """4.4 before its result is cut to the blades of x."""
+        odd = (self.n - popcount(next(iter(v)))) % 2
+        inner = self.antiinvolution(x) if odd else x
+        y = self.antigp(self.antigp(v, inner), self.antireverse(v))
+        return scale(y, -1) if odd else y
+
+
+def matrix_product(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(len(b)))
+             for j in range(len(b[0]))] for i in range(len(a))]
+
+
+def transposed(a):
+    return [list(row) for row in zip(*a)]
+
+
+def adjugate_inverse(p):
+    """P^-1 as the adjugate over det P, each cofactor by Leibniz expansion."""
+    n = len(p)
+    d = Fraction(determinant(p))
+    return [[Fraction((-1) ** (i + j) * determinant(
+        [[p[r][c] for c in range(n) if c != i] for r in range(n) if r != j])) / d
+        for j in range(n)] for i in range(n)]
+
+
+def change_images(p):
+    """The image of each blade e_A under the change of basis whose row i writes
+    e_i in the target's generators: the wedge of the images of its
+    generators, so that no minor is formed by name."""
+    n = len(p)
+    gens = [clean({1 << j: Fraction(p[i][j]) for j in range(n)})
+            for i in range(n)]
+    return [wedge_all([gens[i] for i in range(n) if a >> i & 1])
+            for a in range(1 << n)]
+
+
+def apply_images(images, x):
+    out = {}
+    for a, c in x.items():
+        for b, k in images[a].items():
+            out[b] = out.get(b, 0) + c * k
+    return clean(out)
+
+
+def conformal_change(d):
+    """CONVENTIONS 1.4: rows of P for conformal(d) in R(d+1, 1, 0); e_i stays
+    for i <= d, origin = (e'(d+2) - e'(d+1)) / 2, infinity = e'(d+2) + e'(d+1)."""
+    n = d + 2
+    p = [[Fraction(int(i == j)) for j in range(n)] for i in range(d)]
+    p.append([Fraction(0)] * d + [Fraction(-1, 2), Fraction(1, 2)])
+    p.append([Fraction(0)] * d + [Fraction(1), Fraction(1)])
+    return p
+
+
+def conformal_gram(d):
+    g = [[int(i == j and i < d) for j in range(d + 2)] for i in range(d + 2)]
+    g[d][d + 1] = g[d + 1][d] = -1
+    return g
+
+
+def diagonal_gram(squares):
+    return [[squares[i] if i == j else 0 for j in range(len(squares))]
+            for i in range(len(squares))]
+
+
+def check_conformal_change():
+    """CONVENTIONS 1.4: the change of basis from conformal(d) to R(d+1, 1, 0)
+    for d = 1 to 4 carries the diagonal form to the conformal one, sends each
+    blade to the wedge of its generators' images, the origin-infinity
+    bivector to its negation and the antiscalar to its negation (det P = -1),
+    is a homomorphism of the product of each form (every pair of blades for
+    d <= 3, every pair of generators for d = 4), and has an inverse that
+    composes with it to the identity on every blade."""
+    for d in range(1, 5):
+        n = d + 2
+        g, gd = conformal_gram(d), diagonal_gram([1] * (d + 1) + [-1])
+        p = conformal_change(d)
+        name = f"conformal({d}) to R({d + 1},1,0)"
+        check(matrix_product(matrix_product(p, gd), transposed(p)) == g,
+              f"{name}: P D P^T = G")
+        check(determinant(p) == -1, f"{name}: det P = -1")
+        images = change_images(p)
+        o, inf, pair, full = 1 << d, 1 << (d + 1), 3 << d, (1 << n) - 1
+        check(images[o] == {o: Fraction(-1, 2), inf: Fraction(1, 2)},
+              f"{name}: the origin goes to (e'(d+2) - e'(d+1)) / 2")
+        check(images[inf] == {o: Fraction(1), inf: Fraction(1)},
+              f"{name}: infinity goes to e'(d+2) + e'(d+1)")
+        check(all(images[1 << i] == {1 << i: Fraction(1)} for i in range(d)),
+              f"{name}: each Euclidean e_i goes to e'_i")
+        check(images[pair] == {pair: Fraction(-1)},
+              f"{name}: e(d+1)(d+2) goes to -e'(d+1)(d+2)")
+        check(images[full] == {full: Fraction(-1)},
+              f"{name}: the antiscalar goes to its negation")
+        check(images[0] == {0: Fraction(1)}, f"{name}: 1 goes to 1")
+        check(all(popcount(b) == popcount(a) for a in range(1 << n)
+                  for b in images[a]), f"{name}: grades are kept")
+        back = change_images(adjugate_inverse(p))
+        check(all(apply_images(back, images[a]) == {a: Fraction(1)}
+                  for a in range(1 << n)), f"{name}: the inverse undoes it")
+        source, target = Form(g), Form(gd)
+        masks = range(1 << n) if d <= 3 else [1 << i for i in range(n)]
+        check(all(apply_images(images, source.gp({a: 1}, {b: 1})) ==
+                  target.gp(images[a], images[b])
+                  for a in masks for b in masks),
+              f"{name}: a homomorphism of the geometric product")
+    # The bulk depends on the basis: in conformal(3) the bulk of the origin
+    # e4 is -e5, while by way of R(4,1,0) it is -e5 / 2.
+    p = conformal_change(3)
+    images, back = change_images(p), change_images(adjugate_inverse(p))
+    source, target = Form(conformal_gram(3)), Form(diagonal_gram([1] * 4 + [-1]))
+    e4 = {1 << 3: Fraction(1)}
+    check(source.bulk(e4) == {1 << 4: Fraction(-1)},
+          "conformal(3): the bulk of e4 is -e5")
+    check(apply_images(back, target.bulk(apply_images(images, e4))) ==
+          {1 << 4: Fraction(-1, 2)},
+          "conformal(3): the bulk of e4 by way of R(4,1,0) is -e5 / 2")
+
+
+CHANGES = {
+    # name: (source Gram, target Gram, rows of P)
+    "conformal(1)": (conformal_gram(1), diagonal_gram([1, 1, -1]),
+                     conformal_change(1)),
+    "conformal(2)": (conformal_gram(2), diagonal_gram([1, 1, 1, -1]),
+                     conformal_change(2)),
+    "Witt, one mode": ([[0, 1], [1, 0]], diagonal_gram([1, -1]),
+                       [[Fraction(1, 2), Fraction(1, 2)], [1, -1]]),
+    "Witt, two modes": ([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1],
+                         [0, 0, 1, 0]], diagonal_gram([1, 1, -1, -1]),
+                        [[Fraction(1, 2), 0, Fraction(1, 2), 0], [1, 0, -1, 0],
+                         [0, Fraction(1, 2), 0, Fraction(1, 2)],
+                         [0, 1, 0, -1]]),
+    "a rotation of R(2,0,0)": (diagonal_gram([1, 1]), diagonal_gram([1, 1]),
+                               [[Fraction(3, 5), Fraction(4, 5)],
+                                [Fraction(-4, 5), Fraction(3, 5)]]),
+    "the null shear of R(1,0,1)": (diagonal_gram([1, 0]),
+                                   diagonal_gram([1, 0]), [[1, 1], [0, 1]]),
+    "rigid(3) with its null generator first": (
+        diagonal_gram([0, 1, 1, 1]), diagonal_gram([1, 1, 1, 0]),
+        [[0, 0, 0, 1], [1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]),
+    "rigid(3) with e4 doubled": (
+        diagonal_gram([1, 1, 1, 0]), diagonal_gram([1, 1, 1, 0]),
+        [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 2]]),
+    "e1 doubled, diag(4, 1) to R(2,0,0)": (
+        diagonal_gram([4, 1]), diagonal_gram([1, 1]), [[2, 0], [0, 1]]),
+    "the degenerate form to R(1,1,1)": (
+        [[0, 1, 0], [1, 0, 0], [0, 0, 0]], diagonal_gram([1, -1, 0]),
+        [[Fraction(1, 2), Fraction(1, 2), 0], [1, -1, 0], [0, 0, 1]]),
+    "a dense form to diag(2, 1, -62)": (
+        [[2, 0, -3], [0, 1, -3], [-3, -3, -2]], diagonal_gram([2, 1, -62]),
+        [[1, 0, 0], [0, 1, 0], [Fraction(-3, 2), -3, Fraction(1, 2)]]),
+}
+
+
+def check_change_preserves(rng):
+    """What a change of basis preserves, with its factor, on every blade and
+    every pair of blades of each change of CHANGES (P G' P^T = G, phi the
+    outermorphism of P, det P = d):
+    - phi keeps grades and is a homomorphism of the geometric product and
+      the wedge; the reverse, antireverse, grade involution, and dot are
+      preserved; 1 goes to 1 and the antiscalar to d times the antiscalar;
+    - phi(a v b) = phi(a) v phi(b) / d and phi(bulk_dual(x)) =
+      d bulk_dual(phi(x)), for every change;
+    - the geometric antiproduct, the weight dual, and the antidot are
+      preserved with the factor 1 / d, and the transform with 1 / d^2,
+      exactly when P^-T G' P^-1 = G;
+    - the right and left complements are preserved, with the factor d,
+      exactly when P is orthogonal; the bulk exactly when P P^T G = G and the
+      weight exactly when G' P^T P = G', each with the factor 1.
+    Where |d| is not 1 the factors are told from their inverses."""
+    for name, (g, gt, rows) in CHANGES.items():
+        p = [[Fraction(v) for v in row] for row in rows]
+        n = len(p)
+        s, t = Form(g), Form(gt)
+        check(matrix_product(matrix_product(p, t.g), transposed(p)) == s.g,
+              f"{name}: P G' P^T = G")
+        d = Fraction(determinant(p))
+        q = transposed(adjugate_inverse(p))
+        images = change_images(p)
+
+        def phi(x, images=images):
+            return apply_images(images, x)
+
+        contragredient = matrix_product(matrix_product(q, t.g),
+                                        transposed(q)) == s.g
+        identity = [[Fraction(int(i == j)) for j in range(n)]
+                    for i in range(n)]
+        orthogonal = matrix_product(p, transposed(p)) == identity
+        keeps_bulk = matrix_product(matrix_product(p, transposed(p)), s.g) == s.g
+        keeps_weight = matrix_product(matrix_product(t.g, transposed(p)), p) == t.g
+        blades = [{a: Fraction(1)} for a in range(1 << n)]
+        pairs = [(x, y) for x in blades for y in blades]
+
+        def unary(op, f):
+            return all(phi(getattr(s, op)(x)) == scale(getattr(t, op)(phi(x)), f)
+                       for x in blades)
+
+        def binary(op, f):
+            sop = getattr(s, op, None) or (lambda x, y: wedge(x, y))
+            top = getattr(t, op, None) or (lambda x, y: wedge(x, y))
+            return all(phi(sop(x, y)) == scale(top(phi(x), phi(y)), f)
+                       for x, y in pairs)
+
+        check(all(popcount(b) == popcount(a) for a in range(1 << n)
+                  for b in images[a]), f"{name}: grades are kept")
+        check(images[0] == {0: Fraction(1)}, f"{name}: 1 goes to 1")
+        check(images[(1 << n) - 1] == {(1 << n) - 1: d},
+              f"{name}: the antiscalar goes to det P times the antiscalar")
+        for op in ("gp", "wedge", "dot"):
+            check(binary(op, 1), f"{name}: {op} preserved")
+        for op in ("reverse", "antireverse", "involution"):
+            check(unary(op, 1), f"{name}: {op} preserved")
+        check(binary("antiwedge", 1 / d), f"{name}: antiwedge with 1 / det P")
+        check(unary("bulk_dual", d), f"{name}: bulk dual with det P")
+        for op in ("weight_dual",):
+            check(unary(op, 1 / d) == contragredient,
+                  f"{name}: {op} with 1 / det P exactly when P^-T G' P^-1 = G")
+        for op in ("antigp", "antidot"):
+            check(binary(op, 1 / d) == contragredient,
+                  f"{name}: {op} with 1 / det P exactly when P^-T G' P^-1 = G")
+        if contragredient:
+            for parity in (0, 1):
+                masks = [a for a in range(1 << n)
+                         if (n - popcount(a)) % 2 == parity]
+                v = clean({a: Fraction(rng.randint(-3, 3)) for a in masks})
+                v = v or {masks[0]: Fraction(1)}
+                check(all(phi(s.transform(x, v)) ==
+                          scale(t.transform(phi(x), phi(v)), 1 / (d * d))
+                          for x in blades), f"{name}: transform with 1 / det P^2")
+        check(unary("right", d) == orthogonal,
+              f"{name}: right complement exactly when P is orthogonal")
+        check(unary("left", d) == orthogonal,
+              f"{name}: left complement exactly when P is orthogonal")
+        check(unary("bulk", 1) == keeps_bulk,
+              f"{name}: bulk exactly when P P^T G = G")
+        check(unary("weight", 1) == keeps_weight,
+              f"{name}: weight exactly when G' P^T P = G'")
+        if abs(d) != 1:
+            check(not binary("antiwedge", d) and not unary("bulk_dual", 1 / d),
+                  f"{name}: det P and its inverse are told apart")
+            if contragredient:
+                check(not binary("antigp", d) and not unary("weight_dual", d),
+                      f"{name}: det P and its inverse are told apart for the "
+                      "antiproduct family")
+
+
+def check_form_product_against_diagonal():
+    """Form's product, written for any Gram matrix, equals the diagonal
+    single-term rule of gp on every pair of blades of rigid(3) and R(1,3,0)."""
+    for squares in ((1, 1, 1, 0), (1, -1, -1, -1)):
+        with diagonal_form(squares):
+            f = Form(diagonal_gram(list(squares)))
+            check(all(f.gp({a: 1}, {b: 1}) == gp({a: 1}, {b: 1})
+                      for a in range(1 << N) for b in range(1 << N)),
+                  f"Form's product equals the single-term rule for {squares}")
+
+
 def main():
     rng = random.Random(SEED)
     check_complements()
@@ -1073,6 +1444,12 @@ def main():
     check_rotation(rng)
     check_joint_chain(rng)
     check_motor_and_flector_pages(rng)
+    # The checks of non-diagonal forms and changes of basis draw from a
+    # source of their own, so that the draws of the checks above stay as
+    # they were.
+    check_form_product_against_diagonal()
+    check_conformal_change()
+    check_change_preserves(random.Random(SEED))
     print("sign s of a mirror V acting as s V v x^ v antireverse(V), found "
           "by the outermorphism property: " +
           ", ".join(f"{name} (n = {len(ODD_SIGN_FORMS[name])}) "
