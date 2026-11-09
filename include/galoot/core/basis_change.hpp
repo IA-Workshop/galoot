@@ -21,8 +21,16 @@
 //   using Point = galoot::core::mv<cga3, point_layout, double>;
 //   Point p{1, 2, 3, 1, 7};
 //   auto q = galoot::core::change_basis<cga3_to_r410>(p);  // in r410
-//   Point p2 = galoot::core::truncate<Point>(
-//       galoot::core::change_basis_back<cga3_to_r410>(q));  // p2 == p
+//   Point p2 = galoot::core::change_basis_back<cga3_to_r410>(q);  // p2 == p
+//
+// A layout whose image holds other blades comes back on more blades than it
+// had, and truncate reads it as its own type:
+//
+//   using Origin = galoot::core::mv<cga3, galoot::core::blades<cga3, "e4">,
+//                                   double>;
+//   auto o = galoot::core::change_basis<cga3_to_r410>(Origin{1});  // e4', e5'
+//   Origin o2 = galoot::core::truncate<Origin>(
+//       galoot::core::change_basis_back<cga3_to_r410>(o));  // e5 is 0
 //
 // A change is a matrix P whose row i writes the source's generator e_i in
 // the target's generators e'_1 to e'_n: e_i = P_i1 e'_1 + ... + P_in e'_n.
@@ -78,7 +86,7 @@
 // names it. Convert it to a named type, Type{q}, to read it under that
 // type's orientations. A round trip can hold more blades than it started
 // with: the origin e4 alone maps onto e4' and e5', and those map back onto
-// e4 and e5, with zero on e5 in exact arithmetic. truncate<Point> reads it
+// e4 and e5, with zero on e5 in exact arithmetic. truncate<Origin> reads it
 // back and, for an exact scalar, checks that what it drops is zero. Nothing
 // here drops a component, so nothing here checks one.
 //
@@ -93,10 +101,10 @@
 // accepted only on a layout where every q_B is 1.
 //
 // Compile cost: the checks of a change run once per change tag, in about
-// 2 n^3 checked integer operations for the inner products and 3 n^3 for the
-// inverse, whatever the layouts. The terms of a layout cost what the images
-// of its blades cost: the image of a blade of grade k is built by wedging
-// the rows of its generators one at a time, so its cost grows with the
+// 2 n^3 checked multiplications for the inner products and 5 n^3 for the
+// inverse and its check, whatever the layouts. The terms of a layout cost what
+// the images of its blades cost: the image of a blade of grade k is built by
+// wedging the rows of its generators one at a time, so its cost grows with the
 // number of nonzero entries in those rows and, for a dense P, with the
 // binomial coefficients C(n, j) for j up to k. conformal_change has at most
 // two entries per row, so its images have at most two terms for each null
@@ -142,7 +150,8 @@ namespace galoot::core {
 /// conformal_change build one. A tag whose `value` is a basis_change, beside
 /// its `source` and `target` algebra tags, is a change that change_basis and
 /// change_basis_back apply; basis_change_like says what the tag requires and
-/// what is checked.
+/// what is checked. The function that applies a change is change_basis, a
+/// verb; basis_change is the value that a tag holds.
 ///
 /// Requires: N <= mask_bits, checked at compile time with a message that
 /// names it. The values are checked only when a tag that holds them is first
@@ -165,8 +174,9 @@ struct basis_change {
   static constexpr std::size_t generator_count = N;
 
   /// Two changes are equal when their rows and their denominators are equal
-  /// entry by entry, so a row scaled together with its denominator gives an
-  /// unequal value for the same matrix P.
+  /// entry by entry: == compares the stored rows, not the matrices they stand
+  /// for, so a row scaled together with its denominator gives an unequal
+  /// value for the same matrix P.
   [[nodiscard]] constexpr bool operator==(const basis_change&) const = default;
 };
 
@@ -235,6 +245,33 @@ template <std::size_t D>
 
 namespace detail {
 
+// x y and x + y, each within -max to max, the range that generated
+// coefficients keep. Each clears `fits` and returns 0 when its exact result
+// would leave that range, so that the checks of a change tag can note an
+// overflow and report it with one static_assert rather than stop inside an
+// evaluation.
+[[nodiscard]] constexpr coefficient_type
+multiply_noting(coefficient_type x, coefficient_type y, bool& fits) noexcept {
+  constexpr coefficient_type max = std::numeric_limits<coefficient_type>::max();
+  const coefficient_type magnitude_x = x < 0 ? -x : x;
+  const coefficient_type magnitude_y = y < 0 ? -y : y;
+  if (magnitude_x != 0 && magnitude_y > max / magnitude_x) {
+    fits = false;
+    return 0;
+  }
+  return x * y;
+}
+
+[[nodiscard]] constexpr coefficient_type
+add_noting(coefficient_type x, coefficient_type y, bool& fits) noexcept {
+  constexpr coefficient_type max = std::numeric_limits<coefficient_type>::max();
+  if (y > 0 ? x > max - y : x < -max - y) {
+    fits = false;
+    return 0;
+  }
+  return x + y;
+}
+
 // Fails unless a value the change computes fits coefficient_type. A compiler
 // quotes the source line of a failed assertion, so the message is kept on
 // one line, where both show it whole.
@@ -244,23 +281,22 @@ constexpr void check_fits(bool fits) noexcept {
   // clang-format on
 }
 
-// The exact arithmetic of a change's checks and terms, each step checked to
-// stay within -max to max, the range that generated coefficients keep, with a
+// The same for the term generation, which stops at an overflow, with a
 // message that names the change rather than a product.
 [[nodiscard]] constexpr coefficient_type
 change_multiply(coefficient_type x, coefficient_type y) noexcept {
-  constexpr coefficient_type max = std::numeric_limits<coefficient_type>::max();
-  const coefficient_type magnitude_x = x < 0 ? -x : x;
-  const coefficient_type magnitude_y = y < 0 ? -y : y;
-  check_fits(magnitude_x == 0 || magnitude_y <= max / magnitude_x);
-  return x * y;
+  bool fits = true;
+  const coefficient_type product = multiply_noting(x, y, fits);
+  check_fits(fits);
+  return product;
 }
 
 [[nodiscard]] constexpr coefficient_type
 change_add(coefficient_type x, coefficient_type y) noexcept {
-  constexpr coefficient_type max = std::numeric_limits<coefficient_type>::max();
-  check_fits(y > 0 ? x <= max - y : x >= -max - y);
-  return x + y;
+  bool fits = true;
+  const coefficient_type sum = add_noting(x, y, fits);
+  check_fits(fits);
+  return sum;
 }
 
 // The greatest common divisor of |x| and |y|, and 0 for two zeros.
@@ -312,24 +348,28 @@ denominators_positive(const basis_change<N>& change) noexcept {
 // The end of a fraction-free Gauss-Jordan elimination of [M | I] for the
 // integer rows M (Bareiss's method, in its Gauss-Jordan form): [p I | p M^-1],
 // with p = det M or -det M by the row swaps made, or p = 0 when M is
-// singular.
+// singular; and whether every intermediate fit coefficient_type, without
+// which the rest means nothing.
 template <std::size_t N>
 struct elimination {
   coefficient_type pivot;
   std::array<std::array<coefficient_type, N>, N> scaled_inverse;
+  bool fits;
 };
 
 // One row's part of step k of the elimination below, with `pivot_row` the
-// row of the pivot a_kk and `previous` the pivot of the step before.
+// row of the pivot a_kk and `previous` the pivot of the step before, which
+// is not zero.
 template <std::size_t M>
 constexpr void
 eliminate_entries(std::array<coefficient_type, M>& row,
                   const std::array<coefficient_type, M>& pivot_row,
-                  std::size_t k, coefficient_type previous) noexcept {
+                  std::size_t k, coefficient_type previous,
+                  bool& fits) noexcept {
   for (std::size_t j = 0; j < M; ++j) {
     if (j != k) {
-      row[j] = change_add(change_multiply(pivot_row[k], row[j]),
-                          -change_multiply(row[k], pivot_row[j])) /
+      row[j] = add_noting(multiply_noting(pivot_row[k], row[j], fits),
+                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
                previous;
     }
   }
@@ -342,7 +382,8 @@ eliminate_entries(std::array<coefficient_type, M>& row,
 // and after the last step every diagonal entry of the left block is the last
 // pivot. A zero pivot is replaced by a row below it; a row swap changes the
 // sign of the pivots after it, not the right block's ratio to them, so the
-// right block is p M^-1 whatever rows were swapped.
+// right block is p M^-1 whatever rows were swapped. An overflow ends the
+// elimination at the step where it happens.
 template <std::size_t N>
 [[nodiscard]] constexpr elimination<N>
 eliminate(const basis_change<N>& change) noexcept {
@@ -354,6 +395,7 @@ eliminate(const basis_change<N>& change) noexcept {
     a[i][N + i] = 1;
   }
 
+  bool fits = true;
   coefficient_type previous = 1;
   for (std::size_t k = 0; k < N; ++k) {
     std::size_t row = k;
@@ -361,20 +403,23 @@ eliminate(const basis_change<N>& change) noexcept {
       ++row;
     }
     if (row == N) {
-      return {.pivot = 0, .scaled_inverse = {}};
+      return {.pivot = 0, .scaled_inverse = {}, .fits = true};
     }
     if (row != k) {
       std::swap(a[row], a[k]);
     }
     for (std::size_t i = 0; i < N; ++i) {
       if (i != k) {
-        eliminate_entries(a[i], a[k], k, previous);
+        eliminate_entries(a[i], a[k], k, previous, fits);
       }
+    }
+    if (!fits) {
+      return {.pivot = 0, .scaled_inverse = {}, .fits = false};
     }
     previous = a[k][k];
   }
 
-  elimination<N> out{.pivot = previous, .scaled_inverse = {}};
+  elimination<N> out{.pivot = previous, .scaled_inverse = {}, .fits = true};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       out.scaled_inverse[i][j] = a[i][N + j];
@@ -383,47 +428,63 @@ eliminate(const basis_change<N>& change) noexcept {
   return out;
 }
 
+// What a check of an identity in integers found: whether every value fit
+// coefficient_type, and, if so, whether the identity holds.
+struct identity_check {
+  bool fits;
+  bool holds;
+};
+
 // Whether M times the right block is p I, as it is when the elimination is
 // right: a check of the inverse at the cost of one matrix product.
 template <std::size_t N>
-[[nodiscard]] constexpr bool inverts(const basis_change<N>& change,
-                                     const elimination<N>& e) noexcept {
+[[nodiscard]] constexpr identity_check
+inverts(const basis_change<N>& change, const elimination<N>& e) noexcept {
+  bool fits = true;
+  bool holds = true;
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       coefficient_type sum = 0;
       for (std::size_t k = 0; k < N; ++k) {
-        sum = change_add(
-            sum, change_multiply(change.rows[i][k], e.scaled_inverse[k][j]));
+        sum = add_noting(
+            sum,
+            multiply_noting(change.rows[i][k], e.scaled_inverse[k][j], fits),
+            fits);
       }
-      if (sum != (i == j ? e.pivot : 0)) {
-        return false;
-      }
+      holds = holds && sum == (i == j ? e.pivot : 0);
     }
   }
-  return true;
+  return {.fits = fits, .holds = fits && holds};
 }
 
-// P^-1 = M^-1 D for P = D^-1 M, with D the diagonal of the denominators: row
-// i of P^-1 is (p M^-1)_ij D_j over p. The sign of p moves into the row, so
-// that the denominator is positive, and each row is reduced by the gcd of
+// The rows of the inverse, and whether every value fit coefficient_type.
+template <std::size_t N>
+struct noted_rows {
+  change_rows<N> rows;
+  bool fits;
+};
+
+// P^-1 = M^-1 Δ for P = Δ^-1 M, with Δ the diagonal of the denominators:
+// row i of P^-1 is (p M^-1)_ij Δ_j over p. The sign of p moves into the row,
+// so that the denominator is positive, and each row is reduced by the gcd of
 // its entries and its denominator.
 template <std::size_t N>
-[[nodiscard]] constexpr change_rows<N>
+[[nodiscard]] constexpr noted_rows<N>
 inverse_rows(const basis_change<N>& change, const elimination<N>& e) noexcept {
   const coefficient_type sign = e.pivot < 0 ? -1 : 1;
   const coefficient_type magnitude = sign * e.pivot;
-  change_rows<N> out{};
+  noted_rows<N> out{.rows = {}, .fits = true};
   for (std::size_t i = 0; i < N; ++i) {
     coefficient_type common = magnitude;
     for (std::size_t j = 0; j < N; ++j) {
-      out.rows[i][j] = change_multiply(sign * e.scaled_inverse[i][j],
-                                       change.denominators[j]);
-      common = change_gcd(common, out.rows[i][j]);
+      out.rows.rows[i][j] = multiply_noting(sign * e.scaled_inverse[i][j],
+                                            change.denominators[j], out.fits);
+      common = change_gcd(common, out.rows.rows[i][j]);
     }
     for (std::size_t j = 0; j < N; ++j) {
-      out.rows[i][j] /= common;
+      out.rows.rows[i][j] /= common;
     }
-    out.denominators[i] = magnitude / common;
+    out.rows.denominators[i] = magnitude / common;
   }
   return out;
 }
@@ -433,56 +494,62 @@ inverse_rows(const basis_change<N>& change, const elimination<N>& e) noexcept {
 /// generators.
 ///
 /// Requires: the rows are linearly independent, checked by GALOOT_ASSERT.
-/// Every intermediate of the elimination fits coefficient_type, checked by
-/// GALOOT_ASSERT.
+/// Every intermediate of the elimination and of the rows fits
+/// coefficient_type, checked by GALOOT_ASSERT.
 /// Guarantees: the rows times the change's rows, each over its denominator,
 /// are the identity.
 template <std::size_t N>
 [[nodiscard]] constexpr change_rows<N>
 inverse_change(const basis_change<N>& change) noexcept {
   const elimination<N> e = eliminate(change);
+  check_fits(e.fits);
   GALOOT_ASSERT(e.pivot != 0,
                 "basis_change: the rows are linearly dependent, so the change "
                 "has no inverse; the images of the source's generators must "
                 "be independent");
-  return inverse_rows(change, e);
+  const noted_rows<N> inverse = inverse_rows(change, e);
+  check_fits(inverse.fits);
+  return inverse.rows;
 }
 
-// Whether P G' P^T = G, in integers as M G' M^T = D G D for the integer rows
-// M and the diagonal D of the denominators. M G' is formed once, so the
+// Whether P G' P^T = G, in integers as M G' M^T = Δ G Δ for the integer rows
+// M and the diagonal Δ of the denominators. M G' is formed once, so the
 // check costs 2 n^3 multiplications.
 template <std::size_t N>
-[[nodiscard]] constexpr bool
+[[nodiscard]] constexpr identity_check
 keeps_inner_products(const basis_change<N>& change, const metric<N>& source,
                      const metric<N>& target) noexcept {
+  bool fits = true;
   std::array<std::array<coefficient_type, N>, N> rows_times_target{};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t l = 0; l < N; ++l) {
       coefficient_type sum = 0;
       for (std::size_t k = 0; k < N; ++k) {
-        sum = change_add(sum,
-                         change_multiply(change.rows[i][k], target.gram[k][l]));
+        sum = add_noting(
+            sum, multiply_noting(change.rows[i][k], target.gram[k][l], fits),
+            fits);
       }
       rows_times_target[i][l] = sum;
     }
   }
 
+  bool holds = true;
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       coefficient_type left = 0;
       for (std::size_t l = 0; l < N; ++l) {
-        left = change_add(
-            left, change_multiply(rows_times_target[i][l], change.rows[j][l]));
+        left = add_noting(
+            left,
+            multiply_noting(rows_times_target[i][l], change.rows[j][l], fits),
+            fits);
       }
-      const coefficient_type right = change_multiply(
-          change_multiply(change.denominators[i], source.gram[i][j]),
-          change.denominators[j]);
-      if (left != right) {
-        return false;
-      }
+      const coefficient_type right = multiply_noting(
+          multiply_noting(change.denominators[i], source.gram[i][j], fits),
+          change.denominators[j], fits);
+      holds = holds && left == right;
     }
   }
-  return true;
+  return {.fits = fits, .holds = fits && holds};
 }
 
 template <class T>
@@ -507,10 +574,11 @@ inline constexpr bool is_basis_change_v<basis_change<N>> = true;
 /// linearly independent, so the change has an inverse; and P G' P^T = G for
 /// the Gram matrices G of the source and G' of the target, so that the
 /// change keeps every inner product. The last is computed exactly in
-/// integers, as M G' M^T = D G D for the integer rows M and the diagonal D of
-/// the denominators. A value of these checks, of the inverse, or of the
-/// generated terms that does not fit coefficient_type fails the constant
-/// evaluation with a message, so it cannot pass silently.
+/// integers, as M G' M^T = Δ G Δ for the integer rows M and the diagonal Δ of
+/// the denominators. A value of these checks or of the inverse that does not
+/// fit coefficient_type is reported with a message of its own, and one of
+/// the generated terms fails the constant evaluation with that message, so
+/// neither can pass silently.
 template <class C>
 concept basis_change_like =
     metric_like<typename C::source> && metric_like<typename C::target> &&
@@ -524,22 +592,79 @@ concept basis_change_like =
 
 namespace detail {
 
+// The faults the checks of a change tag can find, each but the counts of
+// generators found by check_change.
+// An int, so that a compiler prints its values and not a byte.
+// NOLINTNEXTLINE(performance-enum-size)
+enum class ChangeFault : int {
+  generator_count,
+  denominator,
+  overflow,
+  dependent,
+  isometry,
+  inverse,
+  none,
+};
+
 // What the checks of a change tag found, and, when it passed them, its rows
 // and those of its inverse, which the term generation reads.
 template <std::size_t N>
 struct checked_change_data {
-  bool valid;
+  ChangeFault fault;
   change_rows<N> forward;
   change_rows<N> inverse;
 };
 
-// The checks of a change tag, in the order a user would fix them: the counts
-// of generators, the denominators, the independence of the rows, and the
-// inner products. Independence comes before the inner products because in a
-// degenerate form a singular P can keep them, and the fault is then that it
-// has no inverse. Each fault stops the checks after it, so a tag gives one
-// error. The counts are compared as written, so that the compilers print
-// both. Every local is static constexpr, so that it is evaluated once, as in
+// The checks of a change between algebras of N generators each, in the
+// order a user would fix them: the denominators, the independence of the
+// rows, the inner products, and the inverse. Independence comes before the
+// inner products because in a degenerate form a singular P can keep them,
+// and the fault is then that it has no inverse. An overflow in any of them
+// is a fault of its own, since a check that overflowed decides nothing.
+template <std::size_t N>
+[[nodiscard]] constexpr checked_change_data<N>
+check_change(const basis_change<N>& change, const metric<N>& source,
+             const metric<N>& target) noexcept {
+  checked_change_data<N> out{
+      .fault = ChangeFault::none,
+      .forward = widened(change),
+      .inverse = {},
+  };
+  if (!denominators_positive(change)) {
+    out.fault = ChangeFault::denominator;
+    return out;
+  }
+  const elimination<N> e = eliminate(change);
+  if (!e.fits || e.pivot == 0) {
+    out.fault = e.fits ? ChangeFault::dependent : ChangeFault::overflow;
+    return out;
+  }
+  const identity_check isometry = keeps_inner_products(change, source, target);
+  if (!isometry.holds) {
+    out.fault = isometry.fits ? ChangeFault::isometry : ChangeFault::overflow;
+    return out;
+  }
+  const identity_check inverse_holds = inverts(change, e);
+  if (!inverse_holds.holds) {
+    out.fault =
+        inverse_holds.fits ? ChangeFault::inverse : ChangeFault::overflow;
+    return out;
+  }
+  const noted_rows<N> inverse = inverse_rows(change, e);
+  if (!inverse.fits) {
+    out.fault = ChangeFault::overflow;
+    return out;
+  }
+  out.inverse = inverse.rows;
+  return out;
+}
+
+// The checks of a change tag, each a static_assert with its message: the
+// counts of generators, compared as written so that the compilers print
+// both, the source's first and the target's only when the source's is
+// right; then check_change's verdict, read once, at most one of whose
+// assertions fails. So a tag gives one error, whatever its faults. Every
+// local is static constexpr, so that it is evaluated once, as in
 // make_product_plan.
 template <basis_change_like C>
 [[nodiscard]] consteval auto make_checked_change() {
@@ -549,45 +674,46 @@ template <basis_change_like C>
                 "basis_change: the source algebra has a different number of "
                 "generators than the change has rows; a change maps between "
                 "algebras of one dimension");
-  static_assert(C::target::value.generator_count == C::value.generator_count,
-                "basis_change: the target algebra has a different number of "
-                "generators than the change has rows; a change maps between "
-                "algebras of one dimension");
-
-  if constexpr (C::source::value.generator_count == n &&
-                C::target::value.generator_count == n) {
-    static constexpr bool positive = denominators_positive(C::value);
-    static_assert(positive, "basis_change: every denominator must be "
-                            "positive; put a row's sign in its entries");
-    if constexpr (positive) {
-      static constexpr elimination<n> e = eliminate(C::value);
-      static_assert(e.pivot != 0,
+  if constexpr (C::source::value.generator_count == n) {
+    static_assert(C::target::value.generator_count == C::value.generator_count,
+                  "basis_change: the target algebra has a different number of "
+                  "generators than the change has rows; a change maps between "
+                  "algebras of one dimension");
+    if constexpr (C::target::value.generator_count == n) {
+      static constexpr result checked =
+          check_change(C::value, C::source::value, C::target::value);
+      static constexpr bool positive =
+          checked.fault != ChangeFault::denominator;
+      static constexpr bool fits = checked.fault != ChangeFault::overflow;
+      static constexpr bool independent =
+          checked.fault != ChangeFault::dependent;
+      static constexpr bool isometry = checked.fault != ChangeFault::isometry;
+      static constexpr bool inverse_holds =
+          checked.fault != ChangeFault::inverse;
+      static_assert(positive, "basis_change: every denominator must be "
+                              "positive; put a row's sign in its entries");
+      static_assert(fits, "basis_change: an exact value the change computes "
+                          "does not fit coefficient_type; use rows with "
+                          "smaller entries");
+      static_assert(independent,
                     "basis_change: the rows are linearly dependent, so the "
                     "change has no inverse; the images of the source's "
                     "generators must be independent");
-      if constexpr (e.pivot != 0) {
-        static constexpr bool isometry =
-            keeps_inner_products(C::value, C::source::value, C::target::value);
-        static_assert(isometry,
-                      "basis_change: the rows do not carry the target's form "
-                      "to the source's (P G' P^T is not G); check the rows, "
-                      "and that source and target are not swapped");
-        if constexpr (isometry) {
-          static constexpr bool inverse_holds = inverts(C::value, e);
-          static_assert(inverse_holds, "basis_change: the computed inverse "
-                                       "does not invert the rows");
-          if constexpr (inverse_holds) {
-            return result{
-                .valid = true,
-                .forward = widened(C::value),
-                .inverse = inverse_rows(C::value, e),
-            };
-          }
-        }
-      }
+      static_assert(isometry,
+                    "basis_change: the change does not keep the inner products "
+                    "(P G' P^T is not G); check that row i writes e_i in the "
+                    "target's generators, and that source and target are not "
+                    "swapped");
+      static_assert(inverse_holds, "basis_change: the computed inverse does "
+                                   "not invert the rows");
+      return checked;
     }
   }
-  return result{};
+  return result{
+      .fault = ChangeFault::generator_count,
+      .forward = {},
+      .inverse = {},
+  };
 }
 
 template <basis_change_like C>
@@ -809,7 +935,7 @@ template <basis_change_like C, bool Back, blade_set S>
   static_assert(valid_signs, "basis change map: the blade set holds a sign "
                              "other than +1 or -1");
 
-  if constexpr (checked.valid && in_range && valid_signs) {
+  if constexpr (checked.fault == ChangeFault::none && in_range && valid_signs) {
     static constexpr const auto& rows =
         Back ? checked.inverse : checked.forward;
     static constexpr std::size_t capacity = image_capacity(S.blades, n);
@@ -1044,8 +1170,9 @@ template <basis_change_like C, multivector X>
                          typename C::source>)
 constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
   static_assert(false, "change_basis: x is not in the change's source "
-                       "algebra; give x the source's algebra tag, or use "
-                       "change_basis_back to map from the target");
+                       "algebra; use change_basis_back to map from the "
+                       "target, or check that the tag's source is x's "
+                       "algebra");
   return {};
 }
 
@@ -1056,8 +1183,8 @@ template <basis_change_like C, multivector X>
                          typename C::target>)
 constexpr std::remove_cvref_t<X> change_basis_back(const X& /*y*/) {
   static_assert(false, "change_basis_back: y is not in the change's target "
-                       "algebra; give y the target's algebra tag, or use "
-                       "change_basis to map from the source");
+                       "algebra; use change_basis to map from the source, or "
+                       "check that the tag's target is y's algebra");
   return {};
 }
 
@@ -1086,6 +1213,31 @@ constexpr std::remove_cvref_t<X> change_basis_back(const X& /*y*/) {
                        "value, as in struct cga3_to_r410 { using source = "
                        "cga3; using target = r410; static constexpr auto "
                        "value = conformal_change<3>(); }");
+  return {};
+}
+
+/// Rejects a change_basis whose template argument is a value, such as
+/// conformal_change<3>(), where a change tag belongs, with one error whose
+/// message shows the tag to put it in. Any value given there is the same
+/// mistake, so the parameter takes any value.
+template <auto Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+  static_assert(false, "change_basis: the template argument is a value, not a "
+                       "change tag; put it in a tag, as in struct cga3_to_r410 "
+                       "{ using source = cga3; using target = r410; static "
+                       "constexpr auto value = conformal_change<3>(); }");
+  return {};
+}
+
+/// Rejects a change_basis_back whose template argument is a value, as for
+/// change_basis.
+template <auto Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis_back(const X& /*y*/) {
+  static_assert(false, "change_basis_back: the template argument is a value, "
+                       "not a change tag; put it in a tag, as in struct "
+                       "cga3_to_r410 { using source = cga3; using target = "
+                       "r410; static constexpr auto value = "
+                       "conformal_change<3>(); }");
   return {};
 }
 
