@@ -2253,10 +2253,23 @@ target_link_libraries(core_basis_change_test PRIVATE galoot_golden
 # basis_change_identities_test.cpp checks the generated terms of each change
 # at run time on every blade and pair of blades, for every form of the
 # exhaustive tests against its exact diagonal counterpart and for the
-# conformal, Witt, and doubled changes. A program of its own, so that a
-# change to basis_change_test.cpp does not rebuild it; it also carries the
-# label core.basis_change.
+# conformal, Witt, and doubled changes. The other sources check, through the
+# public functions on seeded random multivectors, that each change maps
+# products to products and that its inverse undoes it, one group of changes
+# to a source, so that the groups compile in parallel. A program of its own,
+# so that a change to basis_change_test.cpp does not rebuild it; it also
+# carries the label core.basis_change. The source of conformal(3), which
+# builds the products of two full<5> multivectors of conformal(3) and of
+# R(4, 1, 0), takes the raised step limit of the identities of conformal(3).
 galoot_add_test(MODULE core COMPONENT basis_change_identities)
+target_sources(core_basis_change_identities_test PRIVATE
+  core/basis_change_conformal_test.cpp
+  core/basis_change_conformal3_test.cpp
+  core/basis_change_witt_test.cpp
+  core/basis_change_random_test.cpp
+  core/basis_change_random_five_test.cpp)
+set_source_files_properties(core/basis_change_conformal3_test.cpp
+  PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
 target_link_libraries(core_basis_change_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.basis_change_identities APPEND PROPERTY LABELS
