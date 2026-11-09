@@ -463,3 +463,23 @@ TEST_CASE("the antiproduct family depends on the basis for a diagonalizing "
   CHECK(value_on(by_way_of, 0b101) == rational{-744});
   CHECK(value_on(by_way_of, 0b110) == rational{186});
 }
+
+// Reference: proof: the point e1 + 2 e2 + 3 e3 + e4 + 7 e5 of conformal(3)
+//   goes to e'1 + 2 e'2 + 3 e'3 + (7 - 1/2) e'4 + (7 + 1/2) e'5, since the
+//   origin e4 is (e'5 - e'4) / 2 and the point at infinity e5 is e'4 + e'5,
+//   and the inverse brings it back to the point, as the header's example
+//   says, over double, where every value here is exact
+TEST_CASE("the header's example: a conformal(3) point to R(4, 1, 0) and "
+          "back") {
+  constexpr auto point_layout = core::blades<cga3, "e1 e2 e3 e4 e5">;
+  using Point = core::mv<cga3, point_layout, double>;
+  const Point p{1, 2, 3, 1, 7};
+  const auto q = core::change_basis<cga3_to_r410>(p);
+  using Q = std::remove_cvref_t<decltype(q)>;
+  static_assert(std::is_same_v<Q::algebra_type, r410>);
+  static_assert(Q::layout == core::blades<r410, "e1 e2 e3 e4 e5">);
+  CHECK(q.coefficients == std::array<double, 5>{1, 2, 3, 6.5, 7.5});
+  const Point p2 =
+      core::truncate<Point>(core::change_basis_back<cga3_to_r410>(q));
+  CHECK(p2 == p);
+}
