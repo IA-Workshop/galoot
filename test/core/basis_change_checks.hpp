@@ -232,7 +232,7 @@ using in_target = core::mv<typename C::target, S, rational>;
 // wedge, on random x on A and y on B of C's source.
 template <class C, core::blade_set A, core::blade_set B>
 void check_products(std::mt19937_64& source, const char* name) {
-  INFO("change: ", name);
+  INFO("change: ", std::string{name});
   for (int k = 0; k < samples; ++k) {
     const auto x = random_integers<in_source<C, A>>(source);
     const auto y = random_integers<in_source<C, B>>(source);
@@ -250,7 +250,7 @@ void check_products(std::mt19937_64& source, const char* name) {
 // target.
 template <class C, core::blade_set S>
 void check_round_trips(std::mt19937_64& source, const char* name) {
-  INFO("change: ", name);
+  INFO("change: ", std::string{name});
   using X = in_source<C, S>;
   using Y = in_target<C, S>;
   for (int k = 0; k < samples; ++k) {
@@ -269,7 +269,7 @@ void check_round_trips(std::mt19937_64& source, const char* name) {
 // contragredient keeps the inner products too.
 template <class C, core::blade_set A, core::blade_set B>
 void check_agreement(std::mt19937_64& source, const char* name) {
-  INFO("change: ", name);
+  INFO("change: ", std::string{name});
   const rational d = determinant_of<C>;
   const rational inverse_d = rational{1} / d;
   INFO("det P: ", text(d));
@@ -333,7 +333,7 @@ auto random_hyperplane(std::mt19937_64& source) {
 template <class C, core::blade_set X>
 void check_transform(std::mt19937_64& source, const char* name) {
   static_assert(dual_isometry<C>);
-  INFO("change: ", name);
+  INFO("change: ", std::string{name});
   const rational d = determinant_of<C>;
   INFO("det P: ", text(d));
   for (int k = 0; k < samples; ++k) {
