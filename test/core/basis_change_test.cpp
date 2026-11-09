@@ -467,8 +467,10 @@ TEST_CASE("the antiproduct family depends on the basis for a diagonalizing "
 // Reference: proof: the point e1 + 2 e2 + 3 e3 + e4 + 7 e5 of conformal(3)
 //   goes to e'1 + 2 e'2 + 3 e'3 + (7 - 1/2) e'4 + (7 + 1/2) e'5, since the
 //   origin e4 is (e'5 - e'4) / 2 and the point at infinity e5 is e'4 + e'5,
-//   and the inverse brings it back to the point, as the header's example
-//   says, over double, where every value here is exact
+//   and the inverse brings it back to the point on its own layout, while the
+//   origin alone goes to (e'5 - e'4) / 2 and comes back as e4 + 0 e5, which
+//   truncate reads as the origin, as the header's example says, over double,
+//   where every value here is exact
 TEST_CASE("the header's example: a conformal(3) point to R(4, 1, 0) and "
           "back") {
   constexpr auto point_layout = core::blades<cga3, "e1 e2 e3 e4 e5">;
@@ -479,7 +481,15 @@ TEST_CASE("the header's example: a conformal(3) point to R(4, 1, 0) and "
   static_assert(std::is_same_v<Q::algebra_type, r410>);
   static_assert(Q::layout == core::blades<r410, "e1 e2 e3 e4 e5">);
   CHECK(q.coefficients == std::array<double, 5>{1, 2, 3, 6.5, 7.5});
-  const Point p2 =
-      core::truncate<Point>(core::change_basis_back<cga3_to_r410>(q));
+  const Point p2 = core::change_basis_back<cga3_to_r410>(q);
   CHECK(p2 == p);
+
+  using Origin = core::mv<cga3, core::blades<cga3, "e4">, double>;
+  const auto o = core::change_basis<cga3_to_r410>(Origin{1});
+  CHECK(o.coefficients == std::array<double, 2>{-0.5, 0.5});
+  const auto back = core::change_basis_back<cga3_to_r410>(o);
+  static_assert(decltype(back)::layout == core::blades<cga3, "e4 e5">);
+  CHECK(back.coefficients == std::array<double, 2>{1, 0});
+  const Origin o2 = core::truncate<Origin>(back);
+  CHECK(o2 == Origin{1});
 }
