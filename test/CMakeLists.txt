@@ -1017,6 +1017,27 @@ foreach(case IN ITEMS magnitude_two_62 magnitude_above denominator_two_63)
     LABELS "support;support.tracked")
 endforeach()
 
+# support.tracked_rejects_<case>: a division by a rounded or a zero divisor,
+# and the nearest double of a rational whose scaled numerator is not a
+# double, abort at run time with their messages.
+add_executable(support_tracked_division_fail support/tracked_division_fail.cpp)
+target_link_libraries(support_tracked_division_fail PRIVATE
+  galoot_test_support)
+add_test(NAME support.tracked_rejects_rounded_divisor
+  COMMAND ${expect_output} "Subprocess aborted"
+    "tracked: the divisor must be exact"
+    -- $<TARGET_FILE:support_tracked_division_fail> rounded_divisor)
+add_test(NAME support.tracked_rejects_zero_divisor
+  COMMAND ${expect_output} "Subprocess aborted" "tracked: division by zero"
+    -- $<TARGET_FILE:support_tracked_division_fail> zero_divisor)
+add_test(NAME support.tracked_rejects_not_a_double
+  COMMAND ${expect_output} "Subprocess aborted"
+    "correctly_rounded: w x is not a double"
+    -- $<TARGET_FILE:support_tracked_division_fail> not_a_double)
+set_tests_properties(support.tracked_rejects_rounded_divisor
+  support.tracked_rejects_zero_divisor support.tracked_rejects_not_a_double
+  PROPERTIES LABELS "support;support.tracked")
+
 # core.rounding: every product, map, sum, scaling, and copy over double
 # within its forward error bound of the exact value from the golden tables,
 # with the bound taken from a run over the tracking scalar.
