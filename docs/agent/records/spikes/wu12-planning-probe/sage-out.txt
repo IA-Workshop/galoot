@@ -1,0 +1,3 @@
+conformal(1): codomain Gram is R(2,1,0): True; wedge-coordinate images vs minors of P: 0 mismatches of 64; homomorphism failures 0 of 64; det P = -1
+conformal(2): codomain Gram is R(3,1,0): True; wedge-coordinate images vs minors of P: 0 mismatches of 256; homomorphism failures 0 of 256; det P = -1
+conformal(3): codomain Gram is R(4,1,0): True; wedge-coordinate images vs minors of P: 0 mismatches of 1024; homomorphism failures 0 of 1024; det P = -1
