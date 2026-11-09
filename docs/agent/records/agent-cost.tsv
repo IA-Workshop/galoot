@@ -188,3 +188,6 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-08	plan-0029	seed overflow and O4 test author	opus	279917	145	3510	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	plan-0029	blind reviewer	opus	332061	96	876	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	research	math-tools and knowledge-base survey	opus	241458	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0030	WU12 planner	opus	328633	73	1127	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-08	plan-0031	follow-ups planner and implementer	opus	349171	157	3104	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-08	plan-0031	blind reviewer	opus	221421	88	1318	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
