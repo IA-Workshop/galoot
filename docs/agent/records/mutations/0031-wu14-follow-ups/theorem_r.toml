@@ -33,13 +33,16 @@ edits = [{ anchor = '''  add_blade_product(out, g, a, b, 1);
   return out;''' }]
 expect = "killed"
 
-# The contraction term of the recursion, -(e_a ⌋ e_A') e_B, doubled. It
-# changes only products whose left blade has grade 2 or more, and only in
-# forms that are not diagonal, where e_a ⌋ e_A' is not zero; the products
-# of a generator, which the generator rule reads, are unchanged.
+# The contraction term of the recursion, -(e_a ⌋ e_A') e_B, doubled in
+# algebras of up to four generators. It changes only products whose left
+# blade has grade 2 or more, and only in forms that are not diagonal, where
+# e_a ⌋ e_A' is not zero; the products of a generator, which the generator
+# rule reads, are unchanged. (Doubled at every n, it made the dense forms of
+# five exceed Clang's constant-evaluation limit, which left it unjudged on
+# clang-debug; the first run's rows are in the README.)
 [[mutant]]
 name = "recursion_contraction_doubled"
 selection = "identities"
 file = "include/galoot/core/blade_product.hpp"
-edits = [{ anchor = '''    const coefficient_type entry = g.gram[low][j];''', replacement = '''    const coefficient_type entry = 2 * g.gram[low][j];''' }]
+edits = [{ anchor = '''    const coefficient_type entry = g.gram[low][j];''', replacement = '''    const coefficient_type entry = (N <= 4 ? 2 : 1) * g.gram[low][j];''' }]
 expect = "killed"
