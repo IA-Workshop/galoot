@@ -195,3 +195,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0030	part N tolerance rule	opus	226897	58	1241	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	small	math-tools replay fix	sonnet	52632	9	88	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0031	implementer merge steps (cumulative, replaces earlier 530263 figure)	opus	551312			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	part A mathematics (a to g)	opus	502235	153	2526	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools replay verify and run.sh branch	sonnet	46243	8	102	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
