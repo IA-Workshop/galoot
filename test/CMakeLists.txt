@@ -2333,7 +2333,8 @@ basis_change_rejects(basis_change_target_count
 
 # A denominator that is negative or zero, a change without an inverse, and a
 # change that does not keep the inner products, including one whose source
-# and target are swapped and one whose matrix is transposed. A singular
+# and target are swapped, one whose matrix is transposed, and one that keeps
+# every square but not the null pair's inner product. A singular
 # change of a form whose inner products are all zero keeps them, and must
 # still be reported as singular.
 set(not_positive "basis_change: every denominator must be positive${semicolon} put a row's sign in its entries")
@@ -2347,6 +2348,7 @@ basis_change_rejects(basis_change_dependent_degenerate "${dependent}"
 basis_change_rejects(basis_change_not_isometry "${not_isometry}")
 basis_change_rejects(basis_change_swapped "${not_isometry}")
 basis_change_rejects(basis_change_transposed "${not_isometry}")
+basis_change_rejects(basis_change_pairing_not_kept "${not_isometry}")
 
 # An exact value of the change's checks that does not fit coefficient_type
 # ends the constant evaluation that forms it, and the diagnostic shows the
