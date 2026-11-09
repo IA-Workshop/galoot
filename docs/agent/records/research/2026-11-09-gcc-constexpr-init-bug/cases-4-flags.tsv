@@ -1,0 +1,29 @@
+orig-O0	-O0 -DSTORES=0x111
+orig-O1	-O1 -DSTORES=0x111
+orig-O2	-O2 -DSTORES=0x111
+orig-O3	-O3 -DSTORES=0x111
+orig-Os	-Os -DSTORES=0x111
+orig-Og	-Og -DSTORES=0x111
+orig-Ofast	-Ofast -DSTORES=0x111
+flag-fno-elide-constructors	-O2 -fno-elide-constructors -DSTORES=0x111
+flag-fimplicit-constexpr	-O2 -fimplicit-constexpr -DSTORES=0x111
+flag-fno-inline	-O2 -fno-inline -DSTORES=0x111
+flag-fno-tree-ccp	-O2 -fno-tree-ccp -DSTORES=0x111
+flag-fno-strict-aliasing	-O2 -fno-strict-aliasing -DSTORES=0x111
+flag-D_GLIBCXX_ASSERTIONS	-O2 -D_GLIBCXX_ASSERTIONS -DSTORES=0x111
+flag-fsanitize=undefined	-O2 -fsanitize=undefined -DSTORES=0x111
+flag-fsanitize=address	-O2 -fsanitize=address -DSTORES=0x111
+flag-flto	-O2 -flto -DSTORES=0x111
+flag-fconstexpr-ops-limit=100000000	-O2 -fconstexpr-ops-limit=100000000 -DSTORES=0x111
+flag-fconstexpr-cache-depth=0	-O2 -fconstexpr-cache-depth=0 -DSTORES=0x111
+flag-fno-threadsafe-statics	-O2 -fno-threadsafe-statics -DSTORES=0x111
+flag-fno-exceptions	-O2 -fno-exceptions -DSTORES=0x111
+flag-fpermissive	-O2 -fpermissive -DSTORES=0x111
+flag-fno-optimize-sibling-calls	-O2 -fno-optimize-sibling-calls -DSTORES=0x111
+flag-ftrivial-auto-var-init=pattern	-O2 -ftrivial-auto-var-init=pattern -DSTORES=0x111
+flag-ftrivial-auto-var-init=zero	-O2 -ftrivial-auto-var-init=zero -DSTORES=0x111
+flag-fno-gnu-unique	-O2 -fno-gnu-unique -DSTORES=0x111
+std20	-O2 -std=c++20 -DSTORES=0x111
+std26	-O2 -std=c++26 -DSTORES=0x111
+std17	-O2 -std=c++17 -DSTORES=0x111
+gnu23	-O2 -std=gnu++23 -DSTORES=0x111

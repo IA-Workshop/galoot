@@ -1,0 +1,6 @@
+g++	base-O0	-O0	wrong 0x24 (exit 1)
+clang++	base-O0	-O0	wrong 0 (exit 0)
+g++	base-O2	-O2	wrong 0x24 (exit 1)
+clang++	base-O2	-O2	wrong 0 (exit 0)
+g++	noce-O0	-O0 -DCE=0	wrong 0 (exit 0)
+clang++	noce-O0	-O0 -DCE=0	wrong 0 (exit 0)

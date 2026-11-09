@@ -1,0 +1,3 @@
+base-O0	-O0
+base-O2	-O2
+noce-O0	-O0 -DCE=0
