@@ -1,0 +1,85 @@
+# The test units plan 0031 changed, for tools/compiles cost on the debug
+# trees, each before (at the claim, 774ff66, whose tests are those of
+# develop at ba12e5a) and after: the identity sources, which all include
+# identities_checks.hpp, the dual suite, and the two structure-layer
+# programs that read test/core/signatures.hpp.
+
+compilers = ["gcc", "clang"]
+
+[[unit]]
+name = "core/identities_up_to_three"
+source = "test/core/identities_up_to_three_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_four"
+source = "test/core/identities_four_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_diagonal"
+source = "test/core/identities_five_diagonal_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_conformal3"
+source = "test/core/identities_conformal3_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_dense"
+source = "test/core/identities_five_dense_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_six"
+source = "test/core/identities_six_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_sparse"
+source = "test/core/identities_sparse_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_five_drawn"
+source = "test/core/identities_five_drawn_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities_six_drawn"
+source = "test/core/identities_six_drawn_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/identities"
+source = "test/core/identities_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/dual_identities"
+source = "test/core/dual_identities_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/blade_product"
+source = "test/core/blade_product_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
+
+[[unit]]
+name = "core/plan"
+source = "test/core/plan_test.cpp"
+kind = "debug"
+trees = ["before", "after"]

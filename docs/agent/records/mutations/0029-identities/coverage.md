@@ -2,9 +2,11 @@
 
 Written 2026-11-08 by Claude (agent, Opus 5.5, implementer of plan 0029 part C2) on `feature/core-identities`, against the tests at `cd623d7` (part B's commits cherry-picked, the trace rows, CONVENTIONS 1.16, the catalogue regenerated). Test cases are named by their `TEST_CASE` text and file, not by line, so that the table outlives edits. "WU12" marks a family left to the exact change of basis (decision 0216 item 1).
 
+Extended 2026-11-09 by Claude (agent, Opus 5.5, implementer of plan 0031) on `feature/wu14-follow-ups`: the group K9 and its two forms in S, the family "the geometric product is the Clifford product of g on the wedge basis" (cases GR and RC), and K9 in each cell whose cases run over it (decision 0218 items 1 and 2).
+
 ## Signature groups
 
-Structure layer (V1 kind 1, over plans and blade products): S, every signature of `test/core/signatures.hpp`'s `for_each_signature`, which holds 28 named diagonal and conformal forms of up to six generators, the Witt forms of one and two modes, the degenerate non-diagonal form, rigid(3) with its null generator first, and ten seeded random symmetric forms.
+Structure layer (V1 kind 1, over plans and blade products): S, every signature of `test/core/signatures.hpp`'s `for_each_signature`, which holds 28 named diagonal and conformal forms of up to six generators, the Witt forms of one and two modes, the degenerate non-diagonal form, rigid(3) with its null generator first, ten seeded random symmetric forms, and the two forms of K9, appended last.
 
 Kernel layer (V1 kind 2, seeded random integer multivectors through the public functions), the groups of `test/core/identities_checks.hpp`:
 
@@ -18,26 +20,28 @@ Kernel layer (V1 kind 2, seeded random integer multivectors through the public f
 | K6 | R(8,0,0), R(6,6,0), R(15,0,1), R(8,8,0) | sparse sets |
 | K7 | R(0,3,2), R(0,2,3), drawn at random (research note 0024 B1) | every blade |
 | K8 | R(1,3,2), R(1,1,4), drawn at random | vectors, bivectors |
-| P | the basis-blade proof of K1, K2, K3, K7 on every blade, and of the others on their layouts (V1 kind 1 through `mv`) | one coefficient 1 |
+| K9 | [[1, 1, 0], [1, 0, 1], [0, 1, −1]] (rank 2, radical e1 − e2 − e3) and the all-ones form of three (rank 1), degenerate with a radical along no generator; checked after every other group, so that no earlier draw changes | every blade |
+| P | the basis-blade proof of K1, K2, K3, K7, K9 on every blade, and of the others on their layouts (V1 kind 1 through `mv`) | one coefficient 1 |
 | F | rigid(3), conformal(3) over `double`, within forward error bounds (V12) | as the case says |
 
 ## DoD-10, by family
 
-Cases of `test/core/identities_test.cpp` are named by a short tag: AP "the products are associative with the scalar 1 as identity over many forms"; AA "the antiproducts are associative over many forms"; DM "the De Morgan laws hold on multivectors over many forms"; IP "the involutions follow their product rules over many forms"; IA "the involutions follow their antiproduct rules over many forms"; DR "vectors anticommute to twice their inner product over many forms"; BP "the laws hold on every pair and triple of basis blades over many forms". FR is "the identities hold over double within their forward error bounds" (`identities_rounding_test.cpp`); DD "the duals compose to det g over many forms" and DO "the dot and the antidot are symmetric De Morgan pairs over many forms" (`dual_identities_test.cpp`).
+Cases of `test/core/identities_test.cpp` are named by a short tag: AP "the products are associative with the scalar 1 as identity over many forms"; AA "the antiproducts are associative over many forms"; DM "the De Morgan laws hold on multivectors over many forms"; IP "the involutions follow their product rules over many forms"; IA "the involutions follow their antiproduct rules over many forms"; DR "vectors anticommute to twice their inner product over many forms"; BP "the laws hold on every pair and triple of basis blades over many forms"; GR "a generator times a blade is its contraction plus its wedge over many forms"; RC "a product of blades follows the recursion on its lowest generator over many forms". FR is "the identities hold over double within their forward error bounds" (`identities_rounding_test.cpp`); DD "the duals compose to det g over many forms" and DO "the dot and the antidot are symmetric De Morgan pairs over many forms" (`dual_identities_test.cpp`).
 
-| Family | Structure (S) | Kernel K1 to K8 | Proof P | Floating F |
+| Family | Structure (S) | Kernel K1 to K9 | Proof P | Floating F |
 | --- | --- | --- | --- | --- |
-| Associativity of ⟑, and 1 as its identity | "The product of blades is associative on every triple" (`blade_product_test.cpp`) | AP on K1 to K8 (K4 on vectors) | BP | FR |
-| Associativity of ∧ | "The wedge plan is associative on every triple of blades" (`plan_test.cpp`) | AP on K1 to K8 (K4 on vectors) | BP | not in FR |
-| Associativity of ⟇ and ∨, the antiscalar as identity | "The antiproducts are associative, with their identities and ..." (`plan_test.cpp`) | AA on K1 to K8 (K4 on vectors) | BP | FR (⟇) |
-| The four De Morgan laws and their converses | "The complements turn each product into its antiproduct" (`plan_test.cpp`) | DM on K1 to K8 (K4 on bivectors) | BP | FR |
+| Associativity of ⟑, and 1 as its identity | "The product of blades is associative on every triple" (`blade_product_test.cpp`) | AP on K1 to K9 (K4 on vectors) | BP | FR |
+| The geometric product is the Clifford product of g on the wedge basis: 1 ⟑ x = x, the generator rule, and the recursion on the lowest generator, which determine it by induction on the grade of the left factor | "Each blade is the antisymmetrized product of its generators, up to k!" (`blade_product_test.cpp`, n ≤ 5) tells the basis apart by another route; the three conditions are not checked at this layer (plan 0031 O2) | an exhaustive family, not drawn: see P | GR and RC on K1, K2, K3, K7, K9, with BP's 1 ⟑ a = a | not in FR |
+| Associativity of ∧ | "The wedge plan is associative on every triple of blades" (`plan_test.cpp`) | AP on K1 to K9 (K4 on vectors) | BP | not in FR |
+| Associativity of ⟇ and ∨, the antiscalar as identity | "The antiproducts are associative, with their identities and ..." (`plan_test.cpp`) | AA on K1 to K9 (K4 on vectors) | BP | FR (⟇) |
+| The four De Morgan laws and their converses | "The complements turn each product into its antiproduct" (`plan_test.cpp`) | DM on K1 to K9 (K4 on bivectors) | BP | FR |
 | left ∘ right = id, right ∘ right = (−1)^(gr ag) | `bits_test.cpp` complement cases (n ≤ 8); "The maps compose as the involutions and complements do" (`plan_test.cpp`, n ≤ 10) | "the involutions and complements satisfy their relations" (`unary_test.cpp`, n = 1 to 6 and sparse) | not needed: one blade at a time already | not in FR |
 | u ∧ ū = 𝟙, u̲ ∧ u = 𝟙 | "u ∧ right(u) and left(u) ∧ u are the antiscalar, for every blade ..." (`bits_test.cpp`, n ≤ 8) | metric-independent; no kernel group needed | the structure test is exhaustive | not needed |
 | Reverse and antireverse are involutions | "The maps compose as the involutions and complements do" | "the involutions and complements satisfy their relations" | as above | not needed |
-| Product rules of the involutions over ⟑ and ∧, ⟇ and ∨, with (−1)^n over the antiproducts | "The antiproducts are associative, with their identities and ..." (reverse over ⟑, antireverse over ⟇) | IP and IA on K1 to K8 (K4 on bivectors); the sign (−1)^n told apart only on odd n (K1's forms of one and three, K3, K4, K7) | BP | not in FR |
+| Product rules of the involutions over ⟑ and ∧, ⟇ and ∨, with (−1)^n over the antiproducts | "The antiproducts are associative, with their identities and ..." (reverse over ⟑, antireverse over ⟇) | IP and IA on K1 to K9 (K4 on bivectors); the sign (−1)^n told apart only on odd n (K1's forms of one and three, K3, K4, K7) | BP | not in FR |
 | e_i e_j + e_j e_i = 2 g_ij | "e_i e_j + e_j e_i = 2 g_ij for every pair of generators" (`blade_product_test.cpp`) | DR on every group's vectors, g read from the algebra's metric | BP (every pair of generators) | not in FR |
-| a ∧ b★ = (a • b)𝟙 | "a wedged with the dual of b is the dot times the antiscalar" (`dual_test.cpp`, five forms) | DO on K1, K2, K3 and every form of up to five, K4 and K5 on vectors and bivectors, K6, K7, K8 | not in BP | not in FR |
-| G𝔾 = 𝔾G = det(g) I, the double duals | "the four duals of each basis blade are composed from G" (`dual_test.cpp`); the Python proofs of `records/spikes/dual-identities/check.py` | DD on every form of up to five, K4, K5, K6, K7, K8 | not in BP | not in FR |
+| a ∧ b★ = (a • b)𝟙 | "a wedged with the dual of b is the dot times the antiscalar" (`dual_test.cpp`, five forms) | DO on K1, K2, K3 and every form of up to five, K4 and K5 on vectors and bivectors, K6, K7, K8, K9 | not in BP | not in FR |
+| G𝔾 = 𝔾G = det(g) I, the double duals | "the four duals of each basis blade are composed from G" (`dual_test.cpp`); the Python proofs of `records/spikes/dual-identities/check.py` | DD on every form of up to five, K4, K5, K6, K7, K8, K9 | not in BP | not in FR |
 | u★★ = 0 exactly when degenerate | "the double duals are zero exactly when the metric is degenerate" (`dual_test.cpp`) | DD | not in BP | not in FR |
 | Pseudoscalar square (DoD-16) | "The pseudoscalar squares to (-1)^(n(n-1)/2) det g" (`blade_product_test.cpp`) | not needed | not needed | not needed |
 | The bulk and weight in diagonal and conformal forms (3.2) | "bulk and weight in a diagonal form are the products of squares" (`dual_test.cpp`) | "the bulk and the weight in diagonal and conformal forms" (`dual_identities_test.cpp`), every diagonal form of up to six, K7, K8, K6, conformal(1) to conformal(4) | not needed | not needed |
