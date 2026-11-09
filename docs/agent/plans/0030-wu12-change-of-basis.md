@@ -309,4 +309,11 @@ Size M to L: about 1.4M to 2.3M tokens with O1 (a). Machine time, inferred from 
 
 ## 18. Outcome
 
-Planned. Nothing is implemented.
+In progress. Parts D, N, and A (a) to (g) are merged into the unit (`1818efe`); the owner's rulings on them are decisions 0219 and 0222.
+
+Parts C and E, 2026-11-09, by Claude (agent, Opus 5.5, implementer, cpp-expert role), on `feature/core-basis-change`:
+
+- Part B's eleven commits cherry-picked in order with `-x` (`fc2fdb1` to `79b35f9`); `basis_change.hpp` (`2e10061`) makes the labelled failing ones pass; `tests.messages_pinned` gains `rga3.headers` (`73eb2ac`, decision 0219 item 13); the 1.4 trace row is implemented (`1bac5a5`); a test of the header's example (`404f2fc`); the catalogue regenerated (`440806b`); the coverage table (`8f241f2`); decision 0221, with the form of the division and the recheck of the tolerance rule (`752fdea`).
+- Part E (`9167b81`): every mutant of section 8 and of `new_cases.toml` killed at the tip on both presets; the three gap mutants survive at the branch point and die at the tip, as predicted; the 50-seed campaign passes for both programs; the compile and test costs recorded.
+
+Next: part A (h), the Sage cross-check (criterion 10), then the blind review (section 11). Open: CONVENTIONS 1.17 for the owner to ratify at the merge (note 0026 section E); the 1.4 trace row moves to 1.8 then, with the facts 0221 item 11 names.
