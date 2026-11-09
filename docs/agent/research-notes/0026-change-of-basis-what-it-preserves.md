@@ -1,6 +1,6 @@
 # 0026 The exact change of basis: what it preserves, the readings behind 1.4 and DoD-16, and part A's predictions
 
-Written by: Claude (agent, Opus 5.5, math-expert role), 2026-11-09 UTC, for WU12 part A (plan 0030, section 9 step 2, items (a) to (g)), on `feature/core-basis-change--math` from `develop` at `a6307ba`. Item (h), the Sage cross-check, comes later and will be added here. Not yet reviewed by the owner or by the unit's blind reviewer.
+Written by: Claude (agent, Opus 5.5, math-expert role), 2026-11-09 UTC, for WU12 part A (plan 0030, section 9 step 2, items (a) to (g)), on `feature/core-basis-change--math` from `develop` at `a6307ba`. Item (h), the Sage cross-check, comes later and will be added here. Item (h) is recorded in `records/cross-checks/0030-sage-change-of-basis/README.md` (0 mismatches over 63 changes and 71,864 image entries, both directions), not in this note. Not yet reviewed by the owner or by the unit's blind reviewer.
 
 ## Departures and open points first (C20)
 
