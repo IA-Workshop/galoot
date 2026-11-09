@@ -1,0 +1,17 @@
+conformal(2): d=-1 (C)=True orth=False PPtG=G:False G'PtP=G':False
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '-1', 'antiprod': '-1', 'antidot': '-1', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '-1', 'lbulk_dual': '-1', 'weight_dual': '-1', 'lweight_dual': '-1', 'right': 'none', 'left': 'none', 'bulk': 'none', 'weight': 'none', 'transform_even': '1', 'transform_odd': '1'}
+rigid3 e4->2e4': d=2 (C)=True orth=False PPtG=G:True G'PtP=G':True
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '1/2', 'antiprod': '1/2', 'antidot': '1/2', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '2', 'lbulk_dual': '2', 'weight_dual': '1/2', 'lweight_dual': '1/2', 'right': 'none', 'left': 'none', 'bulk': '1', 'weight': '1', 'transform_even': '1/4', 'transform_odd': '1/4'}
+dense d=3: d=3 (C)=False orth=False PPtG=G:False G'PtP=G':False
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '1/3', 'antiprod': 'none', 'antidot': 'none', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '3', 'lbulk_dual': '3', 'weight_dual': 'none', 'lweight_dual': 'none', 'right': 'none', 'left': 'none', 'bulk': 'none', 'weight': 'none', 'transform_even': 'none', 'transform_odd': 'none'}
+rotation R200: d=1 (C)=True orth=True PPtG=G:True G'PtP=G':True
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '1', 'antiprod': '1', 'antidot': '1', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '1', 'lbulk_dual': '1', 'weight_dual': '1', 'lweight_dual': '1', 'right': '1', 'left': '1', 'bulk': '1', 'weight': '1', 'transform_even': '1', 'transform_odd': '1'}
+R101 e2->2e2': d=2 (C)=True orth=False PPtG=G:True G'PtP=G':True
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '1/2', 'antiprod': '1/2', 'antidot': '1/2', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '2', 'lbulk_dual': '2', 'weight_dual': '1/2', 'lweight_dual': '1/2', 'right': 'none', 'left': 'none', 'bulk': '1', 'weight': '1', 'transform_even': '1/4', 'transform_odd': '1/4'}
+null shear R101: d=1 (C)=False orth=False PPtG=G:False G'PtP=G':False
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '1', 'antiprod': 'none', 'antidot': 'none', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '1', 'lbulk_dual': '1', 'weight_dual': 'none', 'lweight_dual': 'none', 'right': 'none', 'left': 'none', 'bulk': 'none', 'weight': 'none', 'transform_even': 'none', 'transform_odd': 'none'}
+witt1: d=-1 (C)=True orth=False PPtG=G:False G'PtP=G':False
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '-1', 'antiprod': '-1', 'antidot': '-1', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '-1', 'lbulk_dual': '-1', 'weight_dual': '-1', 'lweight_dual': '-1', 'right': 'none', 'left': 'none', 'bulk': 'none', 'weight': 'none', 'transform_even': '1', 'transform_odd': '1'}
+ldlt [[2,1],[1,3]] -> diag(2,10): d=1/2 (C)=False orth=False PPtG=G:False G'PtP=G':False
+    {'gp': '1', 'wedge': '1', 'dot': '1', 'antiwedge': '2', 'antiprod': 'none', 'antidot': 'none', 'rev': '1', 'antirev': '1', 'ginv': '1', 'bulk_dual': '1/2', 'lbulk_dual': '1/2', 'weight_dual': 'none', 'lweight_dual': 'none', 'right': 'none', 'left': 'none', 'bulk': 'none', 'weight': 'none', 'transform_even': 'none', 'transform_odd': 'none'}
+timed: check review:factors.py took 2.056 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-blind-review/docs/agent/records/reviews/2026-11-09-wu12-blind-review/runs.tsv
