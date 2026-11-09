@@ -1,0 +1,5 @@
+conformal(2) to R(3,1,0): det P = -1, contragredient isometry True; failures of 256 pairs: gp 0, antiwedge/det 0, antigp/det 0
+Witt, one mode, to R(1,1,0): det P = -1, contragredient isometry True; failures of 16 pairs: gp 0, antiwedge/det 0, antigp/det 0
+rigid(3), e4 to 2 e4': det P = 2, contragredient isometry True; failures of 256 pairs: gp 0, antiwedge/det 0, antigp/det 0
+M R(2,1,0) M^T, det M = 3, to R(2,1,0): det P = 3, contragredient isometry False; failures of 64 pairs: gp 0, antiwedge/det 0, antigp/det 49
+all agree
