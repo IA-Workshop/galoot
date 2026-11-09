@@ -281,7 +281,9 @@ double check_wide(std::mt19937_64& source, const char* name,
 //   conformal_change<3>() on e1, e2, e3, e45, and e12345, whose images e'1,
 //   e'2, e'3, -e'45, and -e'12345 have integer coefficients once each
 //   output's denominator is reduced with its terms, equal the results over
-//   the test rational
+//   the test rational, and the inverse of conformal_change<3>() keeps the
+//   Euclidean generators, e'i = e_i over the denominator 1, so it maps
+//   e'1, e'2, e'3 back without a division
 TEST_CASE("change_basis over std::int64_t where no division is needed") {
   using Full = core::mv<null_first::source, core::full<4>, std::int64_t>;
   Full x{};
@@ -311,6 +313,14 @@ TEST_CASE("change_basis over std::int64_t where no division is needed") {
   CHECK(q.coefficients.at(2) == 3);
   CHECK(q.coefficients.at(3) == -4);
   CHECK(q.coefficients.at(4) == -5);
+
+  using r410 = bc::conformal_tag<3>::target;
+  const core::mv<r410, core::blades<r410, "e1 e2 e3">, std::int64_t> u{1, 2, 3};
+  const auto v = core::change_basis_back<bc::conformal_tag<3>>(u);
+  CHECK(v.coefficients.size() == 3);
+  CHECK(v.coefficients.at(0) == 1);
+  CHECK(v.coefficients.at(1) == 2);
+  CHECK(v.coefficients.at(2) == 3);
 }
 
 // Reference: proof: with inputs n 2^-b, |n| <= 2^20, and the integer
