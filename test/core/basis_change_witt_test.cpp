@@ -96,9 +96,11 @@ TEST_CASE("the Witt, degenerate, and rigid changes are isomorphisms") {
 //   1 / det P and transform by 1 / det(P)^2, on random integer multivectors of
 //   every blade for the Witt changes, the changes of a degenerate form and of
 //   rigid(3) with its null generator first, and rigid(3) with e4 = 2 e'4, of
-//   det P = 2, on which 1 / det P and det P differ, and transform and compose
-//   for all but the degenerate form, whose change's contragredient does not
-//   keep the inner products
+//   det P = 2, on which 1 / det P and det P differ, and transform by a motor
+//   and by a flector, compose, and the projection and antiprojection onto a
+//   hyperplane, each by 1 / det(P)^2 but compose by 1 / det P, for all but
+//   the degenerate form, whose change's contragredient does not keep the
+//   inner products
 TEST_CASE("the Witt, degenerate, and rigid changes preserve what they must") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);

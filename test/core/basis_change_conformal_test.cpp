@@ -66,7 +66,9 @@ TEST_CASE("conformal_change is an isomorphism for d = 1, 2, and 4") {
 //   conformal_change<d>(), on every blade for d = 1 and 2 and on vectors
 //   and bivectors for d = 4, and for d = 1 and 2 the transform of a point
 //   by a motor built in the null basis, the antiproduct of two random
-//   hyperplanes, agrees with the same in R(d+1, 1, 0)
+//   hyperplanes, and by a flector, one random hyperplane, and its projection
+//   and antiprojection onto that hyperplane agree with the same in
+//   R(d+1, 1, 0) up to 1 / det(P)^2
 TEST_CASE("conformal_change preserves the operations it must, d = 1, 2, 4") {
   const unsigned seed = doctest::getContextOptions()->rand_seed;
   INFO("seed: ", seed);

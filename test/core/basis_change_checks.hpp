@@ -327,9 +327,12 @@ auto random_hyperplane(std::mt19937_64& source) {
 
 // For a change whose contragredient keeps the inner products: compose and
 // transform, on versors V and W that are each the antiproduct of two random
-// hyperplanes and on random x on X of C's source, X of whole grades, so
-// that transform drops nothing: phi(compose(W, V)) = compose(phi(W),
-// phi(V)) / d and phi(transform(x, V)) = transform(phi(x), phi(V)) / d^2.
+// hyperplanes, on the odd versor of one random hyperplane H, and on random
+// x on X of C's source, X of whole grades, so that transform drops nothing:
+// phi(compose(W, V)) = compose(phi(W), phi(V)) / d, phi(transform(x, V)) =
+// transform(phi(x), phi(V)) / d^2 and the same for H, and the projection
+// and the antiprojection of x onto H, each one antiwedge and one weight
+// dual, phi(project(x, H)) = project(phi(x), phi(H)) / d^2 and likewise.
 template <class C, core::blade_set X>
 void check_transform(std::mt19937_64& source, const char* name) {
   static_assert(dual_isometry<C>);
@@ -350,6 +353,19 @@ void check_transform(std::mt19937_64& source, const char* name) {
               core::change_basis<C>(core::transform(x, v)),
               rational{1} / (d * d),
               core::transform(core::change_basis<C>(x), v_image)) == "");
+
+    const auto h = random_hyperplane<C>(source);
+    const auto h_image = core::change_basis<C>(h);
+    const auto x_image = core::change_basis<C>(x);
+    CHECK(scaled_difference(core::change_basis<C>(core::transform(x, h)),
+                            rational{1} / (d * d),
+                            core::transform(x_image, h_image)) == "");
+    CHECK(scaled_difference(core::change_basis<C>(core::project(x, h)),
+                            rational{1} / (d * d),
+                            core::project(x_image, h_image)) == "");
+    CHECK(scaled_difference(core::change_basis<C>(core::antiproject(x, h)),
+                            rational{1} / (d * d),
+                            core::antiproject(x_image, h_image)) == "");
   }
 }
 
