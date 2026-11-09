@@ -1,0 +1,8 @@
+include/galoot/core/blade_set.hpp:388
+test/core/bits_test.cpp:291
+test/core/bits_test.cpp:37
+test/core/blade_product_test.cpp:84
+test/core/blade_set_test.cpp:104
+test/core/blade_set_test.cpp:422
+test/core/blade_set_test.cpp:60
+test/presets/rga3/point_groups_test.cpp:41

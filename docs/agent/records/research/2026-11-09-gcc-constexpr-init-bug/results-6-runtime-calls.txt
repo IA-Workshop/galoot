@@ -1,0 +1,16 @@
+g++	ce8-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=8	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce8-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=8	first 1
+wrong 0 (exit 0)
+g++	ce9-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=9	first 1
+wrong 0 (exit 0)
+clang++	ce9-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=9	first 1
+wrong 0 (exit 0)
+g++	ce8-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=8	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce8-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=8	first 1
+wrong 0 (exit 0)
+g++	ce9-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=9	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce9-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=9	first 1
+wrong 0 (exit 0)

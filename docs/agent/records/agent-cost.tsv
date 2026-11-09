@@ -201,3 +201,8 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0030	parts C and E implementer	opus	583917	248	4635	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	hci reader	opus	201901	46	602	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	Sage cross-check	opus	202657	62	758	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	blind reviewer	opus	316678	103	1275	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	delta reviewer	opus	270786			as relayed by the coordinator from the harness completion report; recorded 2026-11-09; figure not yet relayed
+2026-11-09	research	GCC constexpr initializer scan	opus	314507	133	2251	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools sage note	sonnet	48306	5	27	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	implementer cumulative to date (replaces 633742)	opus	762362			as relayed by the coordinator from the harness completion report; recorded 2026-11-09

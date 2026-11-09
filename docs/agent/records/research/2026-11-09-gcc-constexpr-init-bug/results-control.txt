@@ -1,0 +1,4 @@
+g++ CE=0: wrong 0 
+clang++ CE=0: wrong 0 
+g++ CE=1: damaged control control.cpp:156 [with T = std::array<std::array<fraction, 3>, 3>] wrong 0x1e4 
+clang++ CE=1: wrong 0 
