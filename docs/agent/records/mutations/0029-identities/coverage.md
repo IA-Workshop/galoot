@@ -1,6 +1,6 @@
 # WU14 coverage: DoD-10's identity families, DoD-11's conventions, DoD-19's catalogue
 
-Written 2026-11-08 by Claude (agent, Opus 5.5, implementer of plan 0029 part C2) on `feature/core-identities`, against the tests at `cd623d7` (part B's commits cherry-picked, the trace rows, CONVENTIONS 1.16, the catalogue regenerated). Test cases are named by their `TEST_CASE` text and file, not by line, so that the table outlives edits. "WU12" marks a family left to the exact change of basis (decision 0216 item 1).
+Written 2026-11-08 by Claude (agent, Opus 5.5, implementer of plan 0029 part C2) on `feature/core-identities`, against the tests at `cd623d7` (part B's commits cherry-picked, the trace rows, CONVENTIONS 1.16, the catalogue regenerated). Test cases are named by their `TEST_CASE` text and file, not by line, so that the table outlives edits. "WU12" marked a family left to the exact change of basis (decision 0216 item 1); since plan 0030 part C (2026-11-09), those three rows point to `../0030-basis-change/coverage.md`.
 
 Extended 2026-11-09 by Claude (agent, Opus 5.5, implementer of plan 0031) on `feature/wu14-follow-ups`: the group K9 and its two forms in S, the family "the geometric product is the Clifford product of g on the wedge basis" (cases GR and RC), and K9 in each cell whose cases run over it (decision 0218 items 1 and 2).
 
@@ -46,9 +46,9 @@ Cases of `test/core/identities_test.cpp` are named by a short tag: AP "the produ
 | Pseudoscalar square (DoD-16) | "The pseudoscalar squares to (-1)^(n(n-1)/2) det g" (`blade_product_test.cpp`) | not needed | not needed | not needed |
 | The bulk and weight in diagonal and conformal forms (3.2) | "bulk and weight in a diagonal form are the products of squares" (`dual_test.cpp`) | "the bulk and the weight in diagonal and conformal forms" (`dual_identities_test.cpp`), every diagonal form of up to six, K7, K8, K6, conformal(1) to conformal(4) | not needed | not needed |
 | Transforms are λ times an outermorphism and compose | "transform is the sandwich of the tables" (`transform_test.cpp`) | "versors of hyperplanes act as outermorphisms and compose over ..." (`transform_identities_test.cpp`: forms of two to five, a dense form, R(8,0,0), rigid(7)), and "... compose at the seeds that once overflowed the test rational" at seven fixed seeds | not in BP | FR (composition) |
-| Change of basis is an algebra isomorphism and round-trips | WU12 | WU12 | WU12 | WU12 |
-| Diagonal and null-basis results agree | WU12 | WU12 | WU12 | WU12 |
-| Test-side rational LDLᵀ for the random forms (plan 0001 section 5) | WU12 | WU12 | WU12 | WU12 |
+| Change of basis is an algebra isomorphism and round-trips | covered by WU12: `../0030-basis-change/coverage.md` | covered by WU12, there | not needed: WU12's structure layer is exhaustive per form | not in FR |
+| Diagonal and null-basis results agree | covered by WU12: `../0030-basis-change/coverage.md` (with what is not preserved) | covered by WU12, there | not needed | not in FR; WU12's floating cases are in `basis_change_scalars_test.cpp` |
+| Test-side rational LDLᵀ for the random forms (plan 0001 section 5) | covered by WU12: `../0030-basis-change/coverage.md` | used by WU12's kernel groups, there | not needed | not needed |
 
 The three kernel suites keep different form lists on purpose (plan 0029 section 5.2): the transform suite has rigid(2), rigid(4), and rigid(7) and not the drawn forms; the dual suite has the drawn forms. A shared list would make each suite pay the largest one's compile cost.
 
