@@ -1,0 +1,45 @@
+# Mutants of the generator rule and the recursion (plan 0031), judged by
+# core.identities, the suite the two cases extend. resigned_e12 is the gap
+# mutant: it runs once at the branch point (the suite before the cases) and
+# once at the tip; it counts when the branch point lets it survive and the
+# tip kills it. recursion_contraction_doubled is the recursion case's own
+# mutant, run at the tip; it counts when that case is among its failed
+# cases.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = ["core_identities_test"]
+labels = '^core\.identities$'
+
+# The product table of the basis in which e12 stands for -e12: every product
+# of blades A and B multiplied by s(A) s(B), and each term on e12 negated,
+# with s = -1 on e12 and 1 elsewhere. It is the right product carried by a
+# grade-preserving change of basis, so it is associative with 1 as its
+# identity, the involutions keep their product rules, and the
+# anticommutator of two vectors is unchanged; the antiproducts are built
+# from it through the complements, so the De Morgan laws hold too. The
+# generator rule sees it: e1 e2 has the term -e12.
+[[mutant]]
+name = "resigned_e12"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''  add_blade_product(out, g, a, b, 1);
+  return out;''', replacement = '''  add_blade_product(out, g, a, b, (a == 0b11 ? -1 : 1) * (b == 0b11 ? -1 : 1));
+  for (std::size_t k = 0; k < out.length; ++k) {
+    if (out.terms[k].blade == 0b11) {
+      out.terms[k].coefficient = -out.terms[k].coefficient;
+    }
+  }
+  return out;''' }]
+expect = "killed"
+
+# The contraction term of the recursion, -(e_a ⌋ e_A') e_B, doubled. It
+# changes only products whose left blade has grade 2 or more, and only in
+# forms that are not diagonal, where e_a ⌋ e_A' is not zero; the products
+# of a generator, which the generator rule reads, are unchanged.
+[[mutant]]
+name = "recursion_contraction_doubled"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''    const coefficient_type entry = g.gram[low][j];''', replacement = '''    const coefficient_type entry = 2 * g.gram[low][j];''' }]
+expect = "killed"
