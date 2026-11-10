@@ -1,7 +1,8 @@
-// The identity change of R(3, 0, 0) written with rows m e'_i over m, for
-// m = 2^31 - 1: its inner products fit, but the pivots of its elimination
-// grow as m, m^2, m^3, beyond std::int64_t, which must be reported as an
-// overflow, not as dependent rows.
+// The change e_i = m e'_i of R(0, 0, 3) to itself, for m = 2^31 - 1: every
+// invertible change keeps the inner products of a form that is all zero, and
+// no row has a common factor to divide out, but the elimination forms m^2 m^2,
+// beyond std::int64_t, which must be reported as an overflow, not as
+// dependent rows.
 // This file must not compile.
 #include <galoot/core/basis_change.hpp>
 #include <galoot/core/blade_set.hpp>
@@ -12,17 +13,17 @@ namespace {
 
 namespace core = galoot::core;
 
-struct r300 {
-  static constexpr auto value = core::R<3, 0, 0>();
+struct r003 {
+  static constexpr auto value = core::R<0, 0, 3>();
 };
 struct bad {
-  using source = r300;
-  using target = r300;
+  using source = r003;
+  using target = r003;
   static constexpr auto value = core::from_rows(
       {{2147483647, 0, 0}, {0, 2147483647, 0}, {0, 0, 2147483647}},
-      {2147483647, 2147483647, 2147483647});
+      {1, 1, 1});
 };
-using X = core::mv<r300, core::blades<r300, "e1">, double>;
+using X = core::mv<r003, core::blades<r003, "e1">, double>;
 
 [[maybe_unused]] void use(const X& x) {
   [[maybe_unused]] auto r = core::change_basis<bad>(x);
