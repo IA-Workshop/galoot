@@ -2596,6 +2596,31 @@ galoot_add_test(MODULE rga3 COMPONENT incidence DIRECTORY presets/rga3)
 target_link_libraries(rga3_incidence_test PRIVATE galoot::presets::rga3
   galoot_golden galoot_test_support)
 
+# rga3.op_counts_checking and rga3.op_counts_unchecked: one program built in
+# each checking mode runs the joins, the meet, the transforms, and the
+# composition once over the counting scalar and compares its counts with the
+# reference's counts for that mode. The programs take the headers directly,
+# so that the build preset's mode does not reach them.
+foreach(mode IN ITEMS checking unchecked)
+  if(mode STREQUAL "checking")
+    set(checking 1)
+  else()
+    set(checking 0)
+  endif()
+  add_executable(rga3_op_counts_${mode} presets/rga3/op_counts_test.cpp)
+  target_include_directories(rga3_op_counts_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(rga3_op_counts_${mode} PRIVATE galoot_doctest_main
+    galoot_golden galoot_test_support)
+  target_compile_features(rga3_op_counts_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(rga3_op_counts_${mode} PRIVATE
+    GALOOT_CHECKING=${checking})
+  add_test(NAME rga3.op_counts_${mode} COMMAND rga3_op_counts_${mode})
+  set_tests_properties(rga3.op_counts_${mode} PROPERTIES
+    LABELS "rga3;rga3.op_counts"
+    FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+endforeach()
+
 # Each misuse of rotation and translation is one error with its message, and
 # the line a reader sees first names no internal name.
 function(motions_rejects case message)
