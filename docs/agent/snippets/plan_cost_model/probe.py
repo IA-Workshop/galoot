@@ -118,10 +118,15 @@ def is_map(case):
     return case["op"] in mirror.UNARY
 
 
+# The cases and the mirror keep the short names; plan.hpp spells two of the
+# products out.
+ENUMERATOR = {"gp": "geometric_product", "antigp": "geometric_antiproduct"}
+
+
 def op_expr(op):
     if op in mirror.UNARY:
         return f"d::UnaryOperation::{op}"
-    return f"d::BinaryOperation::{op}"
+    return f"d::BinaryOperation::{ENUMERATOR.get(op, op)}"
 
 
 def plan_array(plan):

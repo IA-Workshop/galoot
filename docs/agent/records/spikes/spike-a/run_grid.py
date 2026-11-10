@@ -4,7 +4,7 @@ Each point compiles plan_tu.cpp once, serially, pinned to one performance
 core (PERFORMANCE P14), under tools/timed (P13), and appends a row to
 out/<set>.tsv. Run from anywhere:
 
-  python3 -I docs/agent/workbench/spike-a/run_grid.py SET [SET ...]
+  python3 -I docs/agent/records/spikes/spike-a/run_grid.py SET [SET ...]
 
 Sets:
   main    euclidean and conformal, n = 4..8, g++ and clang++, -O0 and -O2
@@ -30,7 +30,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[3]
+ROOT = HERE.parents[4]
 OUT = HERE / "out"
 CPU = 6          # performance core 3; its other hardware thread is CPU 7
 SIBLING = 7
