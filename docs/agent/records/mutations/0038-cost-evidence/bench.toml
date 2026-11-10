@@ -55,3 +55,33 @@ file = "test/bench/reference_kernels.hpp"
 edits = [{ anchor = '''      -(e1 * q[1]) + e2 * q[0] + e3 * q[3] + e4 * q[6] + e123 * q[2] - e124 * q[7] + e134 * q[4] + e234 * q[5], // e3''', replacement = '''      -(e1 * q[1] - e2 * q[0] - e3 * q[3] - e4 * q[6] - e123 * q[2] + e124 * q[7] - e134 * q[4] - e234 * q[5]), // e3''' }]
 expect = "killed"
 killers = ["rga3.reference_kernels"]
+
+# The inlining marks: without one of them a compiler may keep the kernel or
+# the reference lambda out of line, a call in the timed loop, and
+# rga3.benchmark_transform_line_inline must kill the mutant by finding its
+# symbol. On gcc-debug and clang-debug nothing is inlined unless marked, so
+# both must be killed there; run also with --preset gcc-measure --preset
+# clang-measure, where the compilers' own heuristics decide.
+[selection.inline]
+targets = ["bench_wedge_point_point", "bench_wedge_point_point_point",
+  "bench_antiwedge_line_plane", "bench_transform_point", "bench_transform_line",
+  "bench_transform_plane", "bench_compose_motors"]
+labels = '^rga3\.benchmarks$'
+
+[[mutant]]
+name = "transform_line_kernel_not_always_inline"
+selection = "inline"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''[[gnu::always_inline]] constexpr std::array<T, 6> transform_line(''', replacement = '''constexpr std::array<T, 6> transform_line(''' }]
+expect = "killed"
+killers = ["rga3.benchmark_transform_line_inline"]
+
+[[mutant]]
+name = "transform_line_reference_lambda_not_always_inline"
+selection = "inline"
+file = "test/bench/transform_line_bench.cpp"
+edits = [{ anchor = '''      [] [[gnu::always_inline]] (const Line& x, const Motor& q) {
+        return bench::as<Line>(''', replacement = '''      [](const Line& x, const Motor& q) {
+        return bench::as<Line>(''' }]
+expect = "killed"
+killers = ["rga3.benchmark_transform_line_inline"]
