@@ -2408,12 +2408,15 @@ basis_change_rejects(basis_change_type_width
 
 # A blade set written by hand, given to a layout of a change directly, with a
 # generator beyond the algebra or a sign other than +1 or -1: the message
-# names the layout as written, change_basis_layout or change_basis_back_layout.
-foreach(layout IN ITEMS change_basis_layout change_basis_back_layout)
+# names the layout as written, change_basis_layout or change_basis_back_layout,
+# and the algebra the set must be in, the change's source or its target.
+set(bad_sign "the blade set holds a sign other than +1 or -1${semicolon} give each blade of a set written out by hand the sign +1 or -1")
+set(change_layouts change_basis_layout change_basis_back_layout)
+set(change_layout_algebras source target)
+foreach(layout algebra IN ZIP_LISTS change_layouts change_layout_algebras)
   basis_change_rejects(${layout}_beyond_n
-    "${layout}: the blade set names a generator beyond e_n")
-  basis_change_rejects(${layout}_bad_sign
-    "${layout}: the blade set holds a sign other than +1 or -1")
+    "${layout}: the blade set names a generator beyond e_n${semicolon} use a set whose blades are all in the change's ${algebra} algebra")
+  basis_change_rejects(${layout}_bad_sign "${layout}: ${bad_sign}")
 endforeach()
 
 # core.format: the formatter of a multivector, against names worked out in
