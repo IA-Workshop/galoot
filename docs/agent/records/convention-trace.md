@@ -21,6 +21,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 - Each fact of `golden.hpp` appears here, as written on its `// Fact:` line. A new golden namespace needs its row in the same change.
 - Set Implemented to `yes` in the change that implements the item in `include/galoot/core/` or in a model, and to `no` otherwise. From then on the gate command fails until a test states that row's fact; a test of another row's fact does not count.
 - Change a fact only together with every marker and `// Fact:` line that states it.
+- One row is a fact of structure rather than of mathematics: under 4.4, "each term is one product and each later term on a place one addition", the fact of the golden namespace `operation_counts`. It states the rule by which the operation counts of the rga3 operations and of a transform are derived, which no item of CONVENTIONS.md states; it sits under 4.4 because the counts with checking on pin 4.4's check of every discarded part, one comparison per dropped blade.
 
 | Item | Fact | Implemented |
 | --- | --- | --- |
@@ -70,6 +71,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.4 | compose(Q2, Q1) applies Q1 first | yes |
 | 4.4 | the transform by V is lambda times an outermorphism | yes |
 | 4.4 | a single mirror maps each vector of the mirror to itself times lambda | yes |
+| 4.4 | each term is one product and each later term on a place one addition | yes |
 | 4.5 | truncate checks that the part it drops is zero | yes |
 | 4.5 | part never checks what it drops | yes |
 | 4.5 | transform checks a rounding scalar's dropped part against its forward error bound | yes |

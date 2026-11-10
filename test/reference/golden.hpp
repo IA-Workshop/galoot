@@ -229,6 +229,26 @@ struct joint_chain {
   std::array<point, 10> images;
 };
 
+/// The arithmetic of one operation's generated terms over a scalar: each
+/// term is one multiplication; each term after the first on its place one
+/// addition, or a subtraction for a term of sign -1 (counted together); and
+/// a first term of sign -1 one negation. Then the comparisons of a check,
+/// and the integer constants formed, one for each term whose coefficient is
+/// other than +1 or -1.
+struct operation_count {
+  int multiplications;
+  int additions;
+  int negations;
+  int comparisons;
+  int integer_constants;
+};
+
+/// The counts of one operation with checking off and with it on.
+struct checked_operation_count {
+  operation_count unchecked;
+  operation_count checking;
+};
+
 /// A crystallographic point group by its Hermann-Mauguin symbol: its order,
 /// its first `generator_count` generators (the rest are zero), and the index
 /// of its first element in the array of elements.
@@ -7354,6 +7374,44 @@ inline constexpr std::array<matrix3, 332> elements = {{
     }},
 }};
 } // namespace point_groups
+
+// The arithmetic of the rga3 operations over a scalar, with checking off and
+// on: p ^ q and (p ^ q) ^ r of points, the antiwedge l v g of a line and a
+// plane, and compose(Q2, Q1), the geometric antiproduct of two motors, on
+// the canonical blades of their results, and transform(x, Q) of a point, a
+// line, and a plane by a motor as the geometric antiproduct of Q and x and
+// then of that and antireverse(Q); and transform(x, V) in the degenerate
+// form with e1 . e2 = 1, for V on e1, e2, e3, e123 and x on e123, where the
+// second stage reads only some of the middle blades. Each operation's terms
+// are listed from the products of its operands' oriented blades, in the
+// order of the first operand's place and then the second's, and each list
+// was checked to compute its operation on seeded rationals. Each term is one
+// multiplication, its sign of +1 or -1 carried and not multiplied; the first
+// term on a place is assigned, one negation when its sign is -1, and each
+// later one is one addition or subtraction. With checking on, a transform's
+// first stage keeps every term, its terms on the blades x lacks are
+// computed, and each of those blades is compared with zero once; with it
+// off, the first stage keeps the terms on the middle blades that the kept
+// terms read.
+// Fact: each term is one product and each later term on a place one addition
+namespace operation_counts {
+inline constexpr checked_operation_count
+    point_join = {{12, 6, 0, 0, 0}, {12, 6, 0, 0, 0}};
+inline constexpr checked_operation_count
+    plane_join = {{24, 14, 0, 0, 0}, {24, 14, 0, 0, 0}};
+inline constexpr checked_operation_count
+    line_plane_meet = {{12, 8, 1, 0, 0}, {12, 8, 1, 0, 0}};
+inline constexpr checked_operation_count
+    point_transform = {{48, 36, 3, 0, 0}, {68, 52, 6, 4, 0}};
+inline constexpr checked_operation_count
+    line_transform = {{72, 58, 9, 0, 0}, {84, 68, 10, 2, 0}};
+inline constexpr checked_operation_count
+    plane_transform = {{48, 36, 5, 0, 0}, {76, 60, 6, 4, 0}};
+inline constexpr checked_operation_count
+    motor_compose = {{48, 40, 4, 0, 0}, {48, 40, 4, 0, 0}};
+inline constexpr checked_operation_count
+    degenerate_transform = {{4, 1, 1, 0, 0}, {16, 8, 2, 3, 0}};
+} // namespace operation_counts
 
 } // namespace golden
 
