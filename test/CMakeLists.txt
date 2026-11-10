@@ -1003,6 +1003,12 @@ target_link_libraries(support_diagonalize_test PRIVATE galoot_test_support)
 galoot_add_test(MODULE support COMPONENT tracked)
 target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
 
+# support.counting: the counting scalar is an exact ring scalar with ==, and
+# each of its operations computes its integer result and counts once, in its
+# own kind.
+galoot_add_test(MODULE support COMPONENT counting)
+target_link_libraries(support_counting_test PRIVATE galoot_test_support)
+
 # support.tracked_rejects_<case>: a double that the rational cannot hold, by
 # its magnitude or its denominator, aborts exact_rational at run time with
 # its message.
