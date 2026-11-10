@@ -1,0 +1,10 @@
+as written: denominators [6, 6], q_B = 6
+  q / gcd(q, own) = 1
+  q / gcd(q, own) = 1
+  q_B / own = 1
+  q_B / own = 1
+reduced: denominators [2, 3], q_B = 6
+  q / gcd(q, own) = 1
+  q / gcd(q, own) = 2
+  q_B / own = 3
+  q_B / own = 2
