@@ -247,3 +247,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-d	author review-fix pass	opus	34123	17	287	fixes for review 4e1804e; 13 scratch run rows lost (departure recorded)
 2026-11-10	basis-change-rows	implementer	opus	338565	141	5202	plan 0039 unit, merged 7b85b33 (token figure is the agent total)
 2026-11-10	wu17-part-d	delta-reviewer	opus	112484	37	404	delta review 8573247
+2026-11-10	wu17-part-c	doctest/cpp (one agent)	opus	334093	133	3090	counting scalar, op_counts; feature/cost-evidence--counting b1be3e9
