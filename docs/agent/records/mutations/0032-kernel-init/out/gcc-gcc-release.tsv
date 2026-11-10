@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+run_map_shared_initializer	gcc-release	20ae7aecc31e	killed	killed	core.mv	-	-	A conversion is zero on the blades its source lacks after a constant evaluation of it	-	-
+run_product_shared_initializer	gcc-release	20ae7aecc31e	killed	killed	core.mv	-	-	apply onto a wider target is zero where no term reaches after a constant evaluation of it	-	-
+run_sum_shared_initializer	gcc-release	20ae7aecc31e	equivalent	equivalent	-	-	-	-	-	-

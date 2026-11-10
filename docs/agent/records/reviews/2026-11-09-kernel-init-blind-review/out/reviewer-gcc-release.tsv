@@ -1,0 +1,5 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+helper_returns_braces	gcc-release	6d008781ff35	killed	killed	core.mv	-	-	A conversion is zero on the blades its source lacks after a constant evaluation of it | apply onto a wider target is zero where no term reaches after a constant evaluation of it	-	-
+helper_gives_one	gcc-release	6d008781ff35	killed	killed	test/core/mv_test.cpp:1971	test/CMakeFiles/core_mv_test.dir/core/mv_test.cpp.o: assert: test/core/mv_test.cpp:1971:38: error: static assertion failed	core.mv	-	-	declared killer core.mv did not kill it
+run_map_braced_temporary	gcc-release	6d008781ff35	killed	killed	core.mv	-	-	A conversion is zero on the blades its source lacks after a constant evaluation of it	-	-
+run_product_copy_list	gcc-release	6d008781ff35	killed	killed	core.mv	-	-	apply onto a wider target is zero where no term reaches after a constant evaluation of it	-	-
