@@ -50,12 +50,13 @@ without naming a test leaves its mutant unjudged.
 Each failed object is classified by its first error line: `warning` if it
 carries [-Werror; `assert` if it is a failed static assertion or a call to
 a function that is not constexpr (how a guard stops constant evaluation, as
-GCC reports it), or an error about a constant expression whose notes name
-such a call (as Clang reports it); `test` if it lies in a file under test/;
-else `invalid`. A mutant is killed if a test fails or an object fails as
-assert or test; else unjudged if an object failed (its tests never ran);
-else equivalent if the spec says so; else survived. Under --runtime, a
-failed static assertion in a file of the run-time edits is a leak.
+GCC reports it), or an error whose notes, up to the next error, name such a
+call (as Clang reports it: an error about the constant expression the guard
+stopped); `test` if it lies in a file under test/; else `invalid`. A mutant
+is killed if a test fails or an object fails as assert or test; else
+unjudged if an object failed (its tests never ran); else equivalent if the
+spec says so; else survived. Under --runtime, a failed static assertion in
+a file of the run-time edits is a leak.
 
 --check validates the spec and the anchors and prints each mutant's diff,
 building nothing.
@@ -96,7 +97,6 @@ CHECK_FAILED = re.compile(
 # Clang reports the same guard as an error about the constant expression it
 # stopped (a constexpr variable that "must be initialized by a constant
 # expression", say), with the call in a note of that error.
-CONSTANT_EXPRESSION = re.compile(r"constant expression")
 GUARD_NOTE = re.compile(r"note: non-constexpr function .* cannot be used in "
                         r"a constant expression")
 FAILED_TEST = re.compile(r"^\s*\d+ - (\S+) \(", re.MULTILINE)
@@ -357,28 +357,25 @@ def build_failures(output, tree, runtime_files):
         failed = FAILED.match(line)
         if not failed:
             continue
-        first, notes = "-", []
-        for j in range(k + 1, len(lines)):
-            if END_OF_JOB.match(lines[j]):
+        output = []
+        for rest in lines[k + 1:]:
+            if END_OF_JOB.match(rest):
                 break
-            if "error:" in lines[j]:
-                first = lines[j]
-                # The notes of the first error: the lines up to the next
-                # error or the end of the object's output.
-                for rest in lines[j + 1:]:
-                    if END_OF_JOB.match(rest) or "error:" in rest:
-                        break
-                    notes.append(rest)
-                break
+            output.append(rest)
+        # The object's first error, and that error's notes: the lines after
+        # it up to its next error.
+        errors = [j for j, rest in enumerate(output) if "error:" in rest]
+        first = output[errors[0]] if errors else "-"
+        notes = (output[errors[0] + 1:errors[1] if len(errors) > 1 else None]
+                 if errors else [])
         match = LOCATION.match(first)
         where = (f"{relative(match['path'], tree)}:{match['line']}"
                  if match else None)
         message = first.partition("error:")[2]
         if "[-Werror" in first:
             kind = "warning"
-        elif CHECK_FAILED.search(message) or (
-                CONSTANT_EXPRESSION.search(message)
-                and any(GUARD_NOTE.search(note) for note in notes)):
+        elif CHECK_FAILED.search(message) or any(
+                GUARD_NOTE.search(note) for note in notes):
             kind = "assert"
         elif where and where.startswith("test/"):
             kind = "test"
