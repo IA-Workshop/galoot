@@ -256,3 +256,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-e1	performance-engineer	opus	253168	97	1094	assembly read, records/cost-evidence-measurements--asm c2f181d
 2026-11-10	wu17-e2-e3	performance-engineer	opus	320485	154	3267	benchmarks and growth grid, records/cost-evidence-measurements acff460
 2026-11-10	wu17-part-d-inline	author (tests and code)	opus	66000	36	538	inline reference kernels, feature/cost-evidence--bench--inline 16c88af (427274 total minus 361124 earlier, rounded)
+2026-11-10	wu17-part-d-inline	blind-reviewer	opus	193131	61	895	review 53d2e01
