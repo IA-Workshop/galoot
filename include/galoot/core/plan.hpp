@@ -618,9 +618,11 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// product of two large sets. The geometric product of the scalar with
 /// full<10> in R(10,0,0), 1,024 terms on 1,024 blades, fails at GCC 16.2.1's
 /// default limit, though full<6> times full<6>, 4,096 terms on 64 blades,
-/// builds. The scalar times full<10> needs about 89 million operations,
-/// measured with _GLIBCXX_ASSERTIONS and GCC's cache of constant calls on,
-/// and builds with -fconstexpr-ops-limit=134217728. On Clang 23 the scalar
+/// builds. The largest evaluation of the scalar's plan, the typing of its
+/// terms, needs about 89 million operations, measured with
+/// _GLIBCXX_ASSERTIONS and GCC's cache of constant calls on, and
+/// -fconstexpr-ops-limit=134217728 builds the product at -O0 with
+/// _GLIBCXX_ASSERTIONS and at -O2 without. On Clang 23 the scalar
 /// times full<8> fails at the default steps; -fconstexpr-steps sets Clang's
 /// limit. GCC may report that it ran out of operations as libstdc++'s
 /// std::span bounds check, a __builtin_expect in <span>, being "not a

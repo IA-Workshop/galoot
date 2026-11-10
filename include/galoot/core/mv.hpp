@@ -489,8 +489,8 @@ concept holds_several_values =
 /// and with or without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double>
 /// builds for n up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on
 /// GCC 16. A product with such a multivector can fail where its layout
-/// builds: the product of the scalar with full<10> fails on GCC 16 at its
-/// default limits, and with full<8> on Clang 23.
+/// builds: in R(n,0,0), the geometric product of the scalar with full<10>
+/// fails on GCC 16 at its default limits, and with full<8> on Clang 23.
 /// Guarantees: not an aggregate; trivially copyable and standard-layout when
 /// T is, with sizeof equal to the number of blades times sizeof(T) for a
 /// nonempty layout; usable as a template argument when T is a structural
@@ -886,17 +886,18 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
 /// plan builds. A plan's cost grows with its terms times the blades of its
 /// result, not with its terms alone, so the size of a plan that builds
-/// depends on its sets. The plan of the scalar times full<10> has 1,024 terms
-/// on 1,024 blades and fails at GCC 16.2.1's default limit, and the scalar
-/// times full<8> fails at Clang 23's, although mv on full<10> builds on GCC
-/// and mv on full<8> on Clang. -fconstexpr-ops-limit=134217728 builds the
-/// first on GCC, and GCC may report the failure as libstdc++'s std::span
-/// bounds check being "not a constant expression" rather than as its
-/// operation limit. For a full layout times itself, the plans build up to
-/// full<6> times full<6> (4,096 terms, on 64 blades) on GCC 16, and up to
-/// full<5> times full<5> on Clang 23, with two exceptions there: dense
-/// five-generator forms, whose products do not build on Clang at
-/// all, and the geometric antiproduct of full<5> in conformal(3), which builds
+/// depends on its sets. In R(n,0,0), the plan of the geometric product of the
+/// scalar with full<10> has 1,024 terms on 1,024 blades and fails at GCC
+/// 16.2.1's default limit, and that of the scalar with full<8> fails at Clang
+/// 23's, although mv on full<10> builds on GCC and mv on full<8> on Clang.
+/// -fconstexpr-ops-limit=134217728 builds the product with full<10> on GCC,
+/// and GCC may report the failure as libstdc++'s std::span bounds check
+/// being "not a constant expression" rather than as its operation limit.
+/// For a full layout times itself, the plans build up to full<6> times
+/// full<6> (4,096 terms, on 64 blades) on GCC 16, and up to full<5> times
+/// full<5> on Clang 23, with two exceptions there: dense five-generator
+/// forms, whose products do not build on Clang at all, and the geometric
+/// antiproduct of full<5> in conformal(3), which builds
 /// only with _GLIBCXX_ASSERTIONS, which libstdc++ defines by itself only
 /// without optimization, because without it each subscript is a function call
 /// that Clang counts, and the plan then needs more than Clang's default steps
