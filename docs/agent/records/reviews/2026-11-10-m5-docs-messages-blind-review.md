@@ -54,3 +54,17 @@ Approve with non-blocking findings. Criteria 1 and 2 are met. Criterion 3 is met
 ## Interface changes the review suggests that would break later users
 
 None. The messages are the only public text changed, and they are changed before release, which is the cheapest time (Hyrum's law). If finding 4's fix is wanted, it should come before release for the same reason.
+
+## Resolution
+
+Written by the implementer of plan 0035 (Claude, agent, Opus 5.5), not by the reviewer. The fixes to the header and tests had a delta review (`2026-11-10-m5-docs-messages-delta-review.md`).
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| 1 | M5.md item 8 withdrawn with the reason; the edit dropped from owner decision 1 | `cce3496` |
+| 2 | Not acted on: the review already marks those claims inferred; a run belongs to the unit of owner decision 1 | — |
+| 3 | "It then reads ..." (comment only) | `d00d338` |
+| 4 | Applied: each of the four layout messages gives its fix after a semicolon (a set whose blades are all in the change's source, or target, algebra; the sign +1 or -1 on each blade). Test commit first, labelled failing with the four tests; catalogue regenerated | test `a1f05e5`, header `d00d338`, records `2a3b748` |
+| 5 | Both wordings applied: `max_form_entry` named; "a floating scalar type, or a rational type of your own whose division is exact" | `cce3496` |
+| 6, 8 | Observations; nothing to do | — |
+| 7 | Not acted on: the README mechanism labels every block `rga3.readme`; listed as an open item for the owner | — |

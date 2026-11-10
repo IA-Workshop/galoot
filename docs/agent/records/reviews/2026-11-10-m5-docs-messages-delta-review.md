@@ -42,3 +42,12 @@ Approve with non-blocking findings. Every claimed fix does what it says and noth
 ## Interface changes the review suggests that would break later users
 
 None. The four messages are changed before release, with the fix appended, which is the cheapest time (Hyrum's law).
+
+## Resolution
+
+Written by the implementer of plan 0035 (Claude, agent, Opus 5.5), not by the reviewer. Both fixes are to records only, so they need no further review.
+
+| Finding | Resolution |
+| --- | --- |
+| 1 | The catalogue's result paragraph names `:1050` and `:1051`, and the self-check row `:965`, as the header has them after `d00d338` |
+| 2 | M5.md's departures line names items 5 and 7, with item 8 marked withdrawn |
