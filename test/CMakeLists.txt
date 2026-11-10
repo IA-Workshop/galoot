@@ -938,8 +938,8 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/diagonalize.hpp support/rational.hpp support/scalar_faults.hpp
-      support/tracked.hpp)
+    FILES support/counting.hpp support/diagonalize.hpp support/rational.hpp
+      support/scalar_faults.hpp support/tracked.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
