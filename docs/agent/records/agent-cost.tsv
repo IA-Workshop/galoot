@@ -252,3 +252,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-c	blind-reviewer	opus	229428	74	1180	review 9b5a47d
 2026-11-10	wu17-part-c	author review-fix pass	opus	107604	91	4249	fixes M1-M3 L1-L4 N1; tip 0dfc35a (441697 total minus 334093 earlier)
 2026-11-10	wu17-part-c	delta-reviewer	opus	167497	71	1100	delta review c1104d1
+2026-11-10	wu17-part-c	author merge pass	opus	15065	15	524	R1-R3, merge fe4791b (456762 total minus 441697)
