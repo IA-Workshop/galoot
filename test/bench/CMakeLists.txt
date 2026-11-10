@@ -79,11 +79,16 @@ foreach(operation IN LISTS bench_operations)
     COMMAND bench_${operation} check 1 ${bench_seed})
 
   # rga3.benchmark_<operation>_inline: the program defines no function of
-  # reference_kernels, so the reference form runs inline in the timed loop,
-  # as straight-line code, and not as a call. The symbol table, demangled,
-  # must name main and nothing of reference_kernels.
+  # reference_kernels and neither of its two forms' lambdas, so the
+  # reference form runs inline in the timed loop, as straight-line code,
+  # and each form calls no wrapper of the program's own; any call left is
+  # the library's. In the demangled symbol table a lambda of main is a
+  # symbol whose name starts with main::, after its type letter (local t,
+  # global T, or weak W); elsewhere main:: shows only inside the template
+  # arguments of the harness's functions.
   add_test(NAME rga3.benchmark_${operation}_inline
-    COMMAND ${expect_output} 0 " T main" FORBID "reference_kernels::"
+    COMMAND ${expect_output} 0 " T main"
+      FORBID "reference_kernels::" " t main::" " T main::" " W main::"
       -- ${CMAKE_NM} -C $<TARGET_FILE:bench_${operation}>)
   set_tests_properties(rga3.benchmark_${operation}
     rga3.benchmark_${operation}_inline PROPERTIES
