@@ -57,6 +57,22 @@ edits = [
 ]
 expect = "killed"
 
+# The service ends without an error, so the unit does not show as failed.
+[[mutant]]
+name = "jobpool_missing_fifo_exit_zero"
+selection = "jobpool"
+file = "tools/jobpool"
+edits = [
+  { anchor = '''
+      echo "$fifo is gone, so the pool stops" >&2
+      exit 1
+''', replacement = '''
+      echo "$fifo is gone, so the pool stops" >&2
+      exit 0
+''' },
+]
+expect = "killed"
+
 # No wait while the FIFO is aside.
 [[mutant]]
 name = "timed_wait_removed"
@@ -92,6 +108,16 @@ edits = [
 ]
 expect = "killed"
 
+# A wait of 4 s, twice the 2 s.
+[[mutant]]
+name = "timed_wait_long"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '  for _ in {1..20}; do', replacement = '  for _ in {1..40}; do' },
+]
+expect = "killed"
+
 # The refusal after the wait says there is no pool.
 [[mutant]]
 name = "timed_still_aside_message_removed"
@@ -115,17 +141,17 @@ name = "mutate_guard_note_ignored"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = '        elif CHECK_FAILED.search(message) or (', replacement = '        elif CHECK_FAILED.search(message) or False and (' },
+  { anchor = '        elif CHECK_FAILED.search(message) or any(', replacement = '        elif CHECK_FAILED.search(message) or False and any(' },
 ]
 expect = "killed"
 
-# Every error about a constant expression counted as a failed check.
+# Every first error with notes counted as a failed check.
 [[mutant]]
-name = "mutate_every_constant_expression_error"
+name = "mutate_every_error_with_notes_a_guard"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = '                and any(GUARD_NOTE.search(note) for note in notes)):', replacement = '                and True):' },
+  { anchor = '                GUARD_NOTE.search(note) for note in notes):', replacement = '                True for note in notes):' },
 ]
 expect = "killed"
 
@@ -135,7 +161,7 @@ name = "mutate_notes_past_next_error"
 selection = "mutate"
 file = "tools/mutate"
 edits = [
-  { anchor = '                    if END_OF_JOB.match(rest) or "error:" in rest:', replacement = '                    if END_OF_JOB.match(rest):' },
+  { anchor = '        notes = (output[errors[0] + 1:errors[1] if len(errors) > 1 else None]', replacement = '        notes = (output[errors[0] + 1:None]' },
 ]
 expect = "killed"
 
