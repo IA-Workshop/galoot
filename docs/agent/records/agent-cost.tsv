@@ -250,3 +250,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-c	doctest/cpp (one agent)	opus	334093	133	3090	counting scalar, op_counts; feature/cost-evidence--counting b1be3e9
 2026-11-10	wu17-part-d	author merge and lesson pass	opus	17786	12	142	R1-R4 fixes, merge 3e5c4f5, lesson 0072
 2026-11-10	wu17-part-c	blind-reviewer	opus	229428	74	1180	review 9b5a47d
+2026-11-10	wu17-part-c	author review-fix pass	opus	107604	91	4249	fixes M1-M3 L1-L4 N1; tip 0dfc35a (441697 total minus 334093 earlier)
