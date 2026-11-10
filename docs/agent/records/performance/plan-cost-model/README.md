@@ -59,3 +59,26 @@ Against note 0017's weights (`e1af2ac`, `records/performance/constexpr-certifica
 The canary's thresholds are the `figures` rows `gp-r-5`, `gp-dense-4`, `gp-grades-3-7`, `sparse-antigp-16`, `reverse-7`, and `right_complement-8`, confirmed by `core.plan_cost_model` on clang-debug and gcc-debug at `22db6bc`. After the W5 review (decision 0132) two more references were added, from the rows `antiwedge-r-5` and `gp-vectors-full-6` (the second a row added for it), confirmed by `core.plan_cost_model.<unit>` on both debug presets at `9b70dc8`, on GCC with the check above the threshold.
 
 Configurations checked with the canary's six units (decision 0131): clang-release, clang-asan, lint, and gcc-release count exactly as the debug presets; gcc-asan counts 2.2 % to 4.4 % more. Clang at bare `-std=c++23 -pedantic-errors -O2`, without `_GLIBCXX_ASSERTIONS`: `full<5>` × `full<5>` in R(5,0,0) costs 770,687 steps against 655,239 (selection `cost-model-config:*`).
+
+## Rerun at `6a3cf13`
+
+Headers of `develop` at `692d661`, with the compilers above. `probe.py` first had its product names repaired (`gp` and `antigp` are now written as `geometric_product` and `geometric_antiproduct`, the enumerators `plan.hpp` has had since `5c5188f`); before that, every plan probe and every `capacity`, `count`, and `fill` probe of those two products failed to compile. Each run is a row of `runs.tsv` with the selection named here. The `verify` runs were made on the working tree that was then committed as `6a3cf13`, so their rows carry `f5a2698-dirty`; the blind review of plan 0037 repeated them at `753a334` (selections `review:snippets:*`).
+
+| Run | Selection | Outcome |
+| --- | --- | --- |
+| `probe.py verify` of `test` (204 cases), both compilers | `snippets:plan_cost_model:verify-test:<compiler>` | 0 differ; the output equals `verify-test-<compiler>.tsv` row for row |
+| `probe.py verify` of `maps` (52 cases), both compilers | `snippets:plan_cost_model:verify-maps:<compiler>` | 0 differ; equals `verify-maps-<compiler>.tsv` |
+| `probe.py verify` of all seven sets, both compilers, by the reviewer at `753a334` | `review:snippets:verify-<set>:<compiler>` | 0 differ in each. Each output equals the committed file except `verify-train-gen-*.tsv`, which hold two rows (`traingen47-count`, `traingen47-fill`) for cases that `train-gen-cases.tsv` does not have. Both files came in one commit (`cd7dcf2`), so the cause is not traced; the fit reads the case file, not the verify file, so the two extra rows touch no weight |
+| `cost.py selfcheck`, Clang data | `snippets:plan_cost_model:selfcheck-clang` | "1228 measured cases predicted; 9 whole units whose largest evaluation is the metric's check, not compared; 0 differences", exit 0, 88.7 s |
+| `cost.py selfcheck`, GCC data | `snippets:plan_cost_model:selfcheck-gcc` | "1235 measured cases predicted; 9 whole units ... not compared; 0 differences", exit 0, 91.7 s |
+| `cost.py comments include/galoot/core/plan.hpp` with both figures files | `snippets:plan_cost_model:comments` | Exit 1: "4 counts in the comments are not in the figures", all in `product_plan`'s comment |
+
+The four counts `comments` reports, with their sources. None is a cost the model predicts, so none contradicts it; each came into the comment from `records/research/2026-11-09-scalar-full10-gcc.md` (`70f91fa`, `16b4d56`):
+
+| Line | Count | What it is |
+| --- | --- | --- |
+| 619 (twice) | 1,024 | The terms and the result blades of the scalar times `full<10>`: sizes, not costs |
+| 620 | 4,096 | The terms of `full<6>` times `full<6>`: a size |
+| 624 | 134217728 | The value of `-fconstexpr-ops-limit` under which the scalar times `full<10>` builds (2^27), a flag value from the research record's runs |
+
+The comment's "about 89 million operations" is not matched by the checker's pattern, which takes only digits; its source is the same record (89,102,056, the typing phase, measured with the cache on). `selfcheck` compares the model with the committed measurements; it does not measure the current headers. The `verify` runs show that the mirror still gives the C++ generators' results phase by phase, and the canary `core.plan_cost_model` checks the counts of its eight reference units in each preset without sanitizers; it passed in the P9 matrix at `fe4fb3b` (`gate:all`), whose headers are those of `692d661`. So the model's figures stand. The thresholds were not remeasured (no `probe.py run`).

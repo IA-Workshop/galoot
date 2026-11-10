@@ -6,14 +6,14 @@ rule, change back), so agreement on every blade pair is a kind-3 cross-check
 (VVUQ V1) of both. Run from the repository root after building
 out/runtime_check_<compiler>:
 
-  python3 -I docs/agent/workbench/spike-a/diff_reference.py gcc clang
+  python3 -I docs/agent/records/spikes/spike-a/diff_reference.py gcc clang
 """
 
 import subprocess
 import sys
 from pathlib import Path
 
-root = Path(__file__).resolve().parents[4]
+root = Path(__file__).resolve().parents[5]
 here = Path(__file__).resolve().parent
 sys.path.insert(0, str(root / "test/reference"))
 import clifford_reference as ref  # noqa: E402

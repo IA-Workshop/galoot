@@ -272,6 +272,11 @@ integer scalar, as `change_basis<witt_to_r110>(g)` is, since e2 maps to
 (e'1 - e'2) / 2. A floating scalar type, or a rational type of your own
 whose division is exact, takes every layout.
 
+The examples declare their tags in an anonymous namespace because each is a
+program of one file; a tag copied into a header that several files include
+goes in a named namespace instead, since an anonymous one gives each file
+its own tag and so its own algebra type.
+
 `conformal_change<D>()` is the change from conformal(D), whose origin
 e(D+1) and point at infinity e(D+2) square to zero with
 e(D+1) · e(D+2) = -1, to its diagonal counterpart R(D+1, 1, 0):
