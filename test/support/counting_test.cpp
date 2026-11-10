@@ -34,8 +34,8 @@ void check_counts(const operation_counts& seen,
 
 // Reference: contract: a multivector over an exact scalar with == checks
 //   what it drops, and its numeric_limits saying is_exact is what makes a
-//   scalar exact; the counting scalar declares itself exact and has ==, as
-//   integer arithmetic is
+//   scalar exact, so the counting scalar declares itself exact and has ==,
+//   as integer arithmetic is
 TEST_CASE("counting is an exact ring scalar with ==") {
   static_assert(galoot::core::ring_scalar<counting>);
   static_assert(galoot::core::exact_scalar<counting>);
@@ -44,8 +44,8 @@ TEST_CASE("counting is an exact ring scalar with ==") {
 }
 
 // Reference: proof: each operation of the scalar is one integer operation
-//   on its operands' values, and adds one to the count of its own kind; a
-//   copy is not an operation and counts nothing
+//   on its operands' values, and adds one to the count of its own kind,
+//   while a copy is not an operation and counts nothing
 TEST_CASE("each operation of counting computes its integer result and adds "
           "one to its own count") {
   const counting a{7};

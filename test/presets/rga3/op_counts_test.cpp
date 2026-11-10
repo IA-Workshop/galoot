@@ -81,7 +81,7 @@ void check_counts(const test_support::operation_counts& seen,
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   p ^ q from the wedge of the blades of two points, 12 terms on 6 places
 TEST_CASE("p ^ q of two rga3 points makes the reference's operations") {
   const Point p = point_a();
@@ -95,7 +95,7 @@ TEST_CASE("p ^ q of two rga3 points makes the reference's operations") {
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   p ^ q and of its wedge with r from the wedge of the blades, 12 and 12
 TEST_CASE("(p ^ q) ^ r of three rga3 points makes the reference's "
           "operations") {
@@ -111,7 +111,7 @@ TEST_CASE("(p ^ q) ^ r of three rga3 points makes the reference's "
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   l & g from the antiwedge of the blades of a line and a plane, 12 terms on
 //   4 places
 TEST_CASE("l & g of an rga3 line and plane makes the reference's "
@@ -128,7 +128,7 @@ TEST_CASE("l & g of an rga3 line and plane makes the reference's "
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   Q ⟇ x for a point x restricted to the places that the second stage reads
 //   (all of them with checking on), the terms of that times antireverse(Q)
 //   on the point's blades, and with checking on those on the other blades,
@@ -147,7 +147,7 @@ TEST_CASE("transform(p, Q) of an rga3 point by a motor makes the "
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   Q ⟇ x for a line x restricted to the places that the second stage reads
 //   (all of them with checking on), the terms of that times antireverse(Q)
 //   on the line's blades, and with checking on those on the other blades,
@@ -166,7 +166,7 @@ TEST_CASE("transform(l, Q) of an rga3 line by a motor makes the "
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   Q ⟇ x for a plane x restricted to the places that the second stage reads
 //   (all of them with checking on), the terms of that times antireverse(Q)
 //   on the plane's blades, and with checking on those on the other blades,
@@ -185,7 +185,7 @@ TEST_CASE("transform(g, Q) of an rga3 plane by a motor makes the "
 
 // Reference: independent value: each term is one product and each later
 //   term on a place one addition, or a subtraction for a term of sign -1,
-//   and a first term of sign -1 is one negation; the reference lists the terms of
+//   and a first term of sign -1 is one negation, and the reference lists the terms of
 //   Q2 ⟇ Q1 from the geometric antiproduct of the blades of two motors, 48
 //   terms on 8 places
 TEST_CASE("compose(Q2, Q1) of two rga3 motors makes the reference's "
