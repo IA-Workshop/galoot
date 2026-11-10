@@ -1,0 +1,203 @@
+# The mutants of the counting tests at the tip. The gap mutants of gap.toml
+# run against the same suites with rga3.op_counts added; the others change
+# the counting scalar or the reference's count, and must be killed by the
+# new tests.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.values]
+targets = ["core_identities_rounding_test", "core_identities_test", "core_product_test", "core_transform_identities_test", "core_transform_mode_0", "core_transform_mode_1", "core_transform_rounding_mode_0", "core_transform_rounding_mode_1", "core_transform_rounding_test", "core_transform_test", "rga3_chains_test", "rga3_format_test", "rga3_incidence_test", "rga3_motions_test", "rga3_objects_test", "rga3_point_groups_test", "rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3", "rga3_readme_example_4", "rga3_readme_example_5", "rga3_rotation_mode_0", "rga3_rotation_mode_1", "rga3_op_counts_checking", "rga3_op_counts_unchecked"]
+labels = '^(core\.product|core\.transform|rga3\.(chains|format|headers|incidence|motions|objects|op_counts|point_groups|readme))$'
+
+[selection.counting]
+targets = ["rga3_op_counts_checking", "rga3_op_counts_unchecked", "support_counting_test"]
+labels = '^(rga3\.op_counts|support\.counting)$'
+
+[selection.golden]
+targets = []
+labels = '^reference\.golden$'
+
+# a product kernel that keeps a term with coefficient zero
+[[mutant]]
+name = "product_kernel_zero_term"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  std::array<kernel_term, plan.terms.size()> terms{};
+  for (std::size_t k = 0; k < terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''', replacement = '''  std::array<kernel_term, plan.terms.size() + (plan.terms.empty() ? 0 : 1)>
+      terms{};
+  for (std::size_t k = 0; k < plan.terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''' },
+  { anchor = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+''', replacement = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+  if (!plan.terms.empty()) {
+    terms.back() = terms.front();
+    terms.back().coefficient = 0;
+  }
+''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked"]
+
+# a kernel that multiplies by a coefficient of +1 or -1 instead of folding its sign
+[[mutant]]
+name = "sign_multiplied"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = value;''', replacement = '''  if constexpr (false) {
+    if constexpr (First) {
+      out = value;''' },
+  { anchor = '''  } else if constexpr (C == -1) {
+    if constexpr (First) {''', replacement = '''  } else if constexpr (false) {
+    if constexpr (First) {''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked"]
+
+# transform's first stage keeping every term with checking off
+[[mutant]]
+name = "first_stage_all"
+selection = "values"
+file = "include/galoot/core/transform.hpp"
+edits = [
+  { anchor = '''        detail::transform_middle<Alg, V, X, false>(v.coefficients,''', replacement = '''        detail::transform_middle<Alg, V, X, true>(v.coefficients,''' },
+]
+expect = "survived"
+reason = "not a gap mutant: in rigid(3) the second stage of a motor acting on a point, a line, or a plane reads every middle blade, so the restricted first stage is already whole and nothing changes"
+
+# a term pair t and -t added to one output of a product kernel
+[[mutant]]
+name = "cancelling_pair"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  std::array<kernel_term, plan.terms.size()> terms{};
+  for (std::size_t k = 0; k < terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''', replacement = '''  std::array<kernel_term, plan.terms.size() + (plan.terms.empty() ? 0 : 2)>
+      terms{};
+  for (std::size_t k = 0; k < plan.terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''' },
+  { anchor = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+''', replacement = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+  if (!plan.terms.empty()) {
+    terms[plan.terms.size()] = terms.front();
+    terms.back() = terms.front();
+    terms.back().coefficient = -terms.front().coefficient;
+  }
+''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked"]
+
+# the counting scalar not counting its multiplications
+[[mutant]]
+name = "counting_without_multiplications"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().multiplications;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked", "support.counting"]
+
+# the counting scalar not counting its additions
+[[mutant]]
+name = "counting_without_additions"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().additions;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked", "support.counting"]
+
+# the counting scalar not counting its subtractions
+[[mutant]]
+name = "counting_without_subtractions"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().subtractions;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "rga3.op_counts_unchecked", "support.counting"]
+
+# the counting scalar not counting its negations
+[[mutant]]
+name = "counting_without_negations"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().negations;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_unchecked", "rga3.op_counts_checking", "support.counting"]
+
+# the counting scalar not counting its comparisons
+[[mutant]]
+name = "counting_without_comparisons"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().comparisons;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["rga3.op_counts_checking", "support.counting"]
+
+# the counting scalar not counting its integer constructions
+[[mutant]]
+name = "counting_without_integer_constructions"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().integer_constructions;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["support.counting"]
+
+# the counting scalar not counting its default constructions
+[[mutant]]
+name = "counting_without_default_constructions"
+selection = "counting"
+file = "test/support/counting.hpp"
+edits = [
+  { anchor = '''++detail::tally().default_constructions;''', replacement = '''''' },
+]
+expect = "killed"
+killers = ["support.counting"]
+
+# the reference counting a term with coefficient +1 or -1 as two multiplications
+[[mutant]]
+name = "golden_sign_as_multiplication"
+selection = "golden"
+file = "test/reference/golden.py"
+edits = [
+  { anchor = '''        mul += 1
+''', replacement = '''        mul += 2
+''' },
+]
+expect = "killed"
+killers = ["reference.golden"]

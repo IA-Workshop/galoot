@@ -1,0 +1,5 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+product_kernel_zero_term	clang-debug	286a32297763	survived	survived	-	-	-	-	-	-
+sign_multiplied	clang-debug	286a32297763	killed	survived	core.transform_rounding	-	-	transform's tolerance counts the middle blades that only the dropped terms read | transform's tolerance holds dropped coefficients whose products underflow | transform's tolerance of each dropped coefficient is between gamma_K M and gamma_(K+2) M	-	expected to survive but killed
+first_stage_all	clang-debug	286a32297763	survived	survived	-	-	-	-	-	-
+cancelling_pair	clang-debug	286a32297763	survived	survived	-	-	-	-	-	-

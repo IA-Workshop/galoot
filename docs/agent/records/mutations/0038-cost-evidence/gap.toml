@@ -1,0 +1,106 @@
+# The gap mutants of the counting tests, judged by the suites that check
+# values (core.product, core.transform, and rga3's components other than
+# op_counts), which the unit leaves unchanged. Each is expected to survive
+# them; counting.toml runs the same mutants against the same suites with
+# rga3.op_counts added, where the first, second, and fourth must be killed.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.values]
+targets = ["core_identities_rounding_test", "core_identities_test", "core_product_test", "core_transform_identities_test", "core_transform_mode_0", "core_transform_mode_1", "core_transform_rounding_mode_0", "core_transform_rounding_mode_1", "core_transform_rounding_test", "core_transform_test", "rga3_chains_test", "rga3_format_test", "rga3_incidence_test", "rga3_motions_test", "rga3_objects_test", "rga3_point_groups_test", "rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3", "rga3_readme_example_4", "rga3_readme_example_5", "rga3_rotation_mode_0", "rga3_rotation_mode_1"]
+labels = '^(core\.product|core\.transform|rga3\.(chains|format|headers|incidence|motions|objects|point_groups|readme))$'
+
+# a product kernel that keeps a term with coefficient zero
+[[mutant]]
+name = "product_kernel_zero_term"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  std::array<kernel_term, plan.terms.size()> terms{};
+  for (std::size_t k = 0; k < terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''', replacement = '''  std::array<kernel_term, plan.terms.size() + (plan.terms.empty() ? 0 : 1)>
+      terms{};
+  for (std::size_t k = 0; k < plan.terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''' },
+  { anchor = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+''', replacement = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+  if (!plan.terms.empty()) {
+    terms.back() = terms.front();
+    terms.back().coefficient = 0;
+  }
+''' },
+]
+expect = "survived"
+reason = "a gap mutant: a term with coefficient zero adds zero, so every value is the same; only the count of operations changes"
+
+# a kernel that multiplies by a coefficient of +1 or -1 instead of folding its sign
+[[mutant]]
+name = "sign_multiplied"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = value;''', replacement = '''  if constexpr (false) {
+    if constexpr (First) {
+      out = value;''' },
+  { anchor = '''  } else if constexpr (C == -1) {
+    if constexpr (First) {''', replacement = '''  } else if constexpr (false) {
+    if constexpr (First) {''' },
+]
+expect = "survived"
+reason = "a gap mutant: a product by +1 or -1 is exact, and a + (-1 * b) is a - b exactly, so every value is the same; only the count of operations changes"
+
+# transform's first stage keeping every term with checking off
+[[mutant]]
+name = "first_stage_all"
+selection = "values"
+file = "include/galoot/core/transform.hpp"
+edits = [
+  { anchor = '''        detail::transform_middle<Alg, V, X, false>(v.coefficients,''', replacement = '''        detail::transform_middle<Alg, V, X, true>(v.coefficients,''' },
+]
+expect = "survived"
+reason = "a gap mutant: in rigid(3) the second stage of a motor acting on a point, a line, or a plane reads every middle blade, so the restricted first stage is already whole and nothing changes"
+
+# a term pair t and -t added to one output of a product kernel
+[[mutant]]
+name = "cancelling_pair"
+selection = "values"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  std::array<kernel_term, plan.terms.size()> terms{};
+  for (std::size_t k = 0; k < terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''', replacement = '''  std::array<kernel_term, plan.terms.size() + (plan.terms.empty() ? 0 : 2)>
+      terms{};
+  for (std::size_t k = 0; k < plan.terms.size(); ++k) {
+    const typed_term& t = plan.terms[k];''' },
+  { anchor = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+''', replacement = '''        .b = t.b,
+        .out = at,
+        .coefficient = Target.blades[at].sign * t.coefficient,
+        .first = false,
+    };
+  }
+  if (!plan.terms.empty()) {
+    terms[plan.terms.size()] = terms.front();
+    terms.back() = terms.front();
+    terms.back().coefficient = -terms.front().coefficient;
+  }
+''' },
+]
+expect = "survived"
+reason = "a gap mutant: t - t is zero over an exact scalar, and over double the values move at most by rounding, within the tolerances of the value tests"
