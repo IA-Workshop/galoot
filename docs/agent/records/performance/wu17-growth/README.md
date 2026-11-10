@@ -2,6 +2,10 @@
 
 Plan 0038 section 4 item 7 (DoD-23; P2 as decision 0005 reads it). Run by Claude (agent, Opus 5.5, performance-engineer) on 2026-11-10 in the worktree `.claude/worktrees/wu17-e23`, branch `records/cost-evidence-measurements`, at `18849b5` (the tip of `feature/cost-evidence`). Recorded, never asserted (decision 0013).
 
+## Revision
+
+Measured at `18849b5`. The branch has since merged `feature/cost-evidence` at `2de0d36` (the inline reference kernels). Between the two revisions, nothing under `include/`, `tools/`, or `cmake/` changed, and neither did `CMakeLists.txt` or `CMakePresets.json` (`git diff --stat 18849b5 2de0d36` on those paths is empty). Under `test/`, only `test/bench/` and `test/reference/reference_kernels.py` changed. No unit here includes either, and the compile-fail test whose flags the units take (`core.assert_consteval`) is unchanged. So the grid stands at `2de0d36` and was not rerun.
+
 ## Caveats, read first
 
 1. **The figures join decisions 0113 and 0116 in method, not in value.** Those grids compiled plan-level units (`core::detail::product_plan<...>.terms`) with Galoot's flags at `-O0` and no `-g`. These units call the public operations, so each use includes its kernels' instantiation and code, and they take the debug trees' flags through `tools/compiles`, which add `-g`. The same method (`-O0`, three repeats interleaved, each use minus a baseline of the same algebra) makes the growth with n comparable; the absolute figures are not.

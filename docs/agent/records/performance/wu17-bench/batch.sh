@@ -8,6 +8,7 @@
 set -u
 here=docs/agent/records/performance/wu17-bench
 lock=/home/brianm/projects/utils/math-core/math-tools/exercises/performance/pe-common/lock.sh
+mkdir -p "$here/out"
 log=$here/out/protocol.log
 env=$1
 reading() {

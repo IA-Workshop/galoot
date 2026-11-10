@@ -1,0 +1,12 @@
+env 0 note: the before and lock-taken readings of this batch were not written, because out/ did not exist until drive.py made it; the lock was taken just before the first row of out/runs.tsv (2026-11-10T18:34:51Z); the nearest earlier reading, taken before the merge and rebuild (its time not recorded), was pool running 23 of 23 free, load 1.39; a reading during the batch at 2026-11-10T18:35:51Z was pool running 23 of 23 free, load 2.11 (this batch's own process included)
+env 0 lock released, exit 127 2026-11-10T18:41:59Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.10 2.07 1.83 4/1723 2890668
+env 0 note: the release line's exit 127 is not the driver's status: batch.sh was edited (a mkdir line added) while this batch ran, and bash, which reads a script as it runs, then misread the line after drive.py; drive.py had finished all 11 rounds (its last pair, round 11 clang compose_motors latency reference, is in rows.tsv), and the lock was released by the script's trap
+env 1352 before 2026-11-10T18:42:34Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.61 1.95 1.79 2/1717 2890901
+env 1352 lock taken 2026-11-10T18:42:35Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.61 1.95 1.79 3/1717 2890939
+env 1352 lock released, exit 0 2026-11-10T18:49:41Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.04 2.11 1.96 3/1723 2907698
+env 2768 before 2026-11-10T18:49:41Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.04 2.11 1.96 2/1723 2907722
+env 2768 lock taken 2026-11-10T18:49:41Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.04 2.11 1.96 2/1723 2907758
+env 2768 lock released, exit 0 2026-11-10T18:56:49Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.05 2.05 2.00 3/1689 2924413
+stalls before 2026-11-10T18:57:10Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.75 1.98 1.98 2/1676 2924532
+stalls lock taken 2026-11-10T18:57:10Z
+stalls lock released, exit 0 2026-11-10T18:57:45Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.86 1.98 1.98 3/1677 2924871
