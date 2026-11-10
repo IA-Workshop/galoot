@@ -222,6 +222,8 @@ integers. A change takes them to R(1, 1, 0):
 
 namespace core = galoot::core;
 
+namespace {
+
 // The Gram matrix of e1 and e2: e1 . e1 = e2 . e2 = 0 and e1 . e2 = 1.
 struct witt {
   static constexpr auto value = core::from_gram({{0, 1}, {1, 0}});
@@ -259,6 +261,8 @@ constexpr auto fg = core::change_basis<witt_to_r110>(f * g);
 static_assert(fg == EvenR{1, -1});
 static_assert(core::change_basis_back<witt_to_r110>(fg) == f * g);
 
+} // namespace
+
 int main() {}
 ```
 
@@ -284,6 +288,8 @@ so the comments say which one it is in:
 
 namespace core = galoot::core;
 
+namespace {
+
 struct cga3 {
   static constexpr auto value = core::conformal<3>();
 };
@@ -303,6 +309,8 @@ using Point = core::mv<cga3, core::blades<cga3, "e1 e2 e3 e4 e5">, double>;
 constexpr Point point(double x, double y, double z) {
   return Point{x, y, z, 1, ((x * x) + (y * y) + (z * z)) / 2};
 }
+
+} // namespace
 
 int main() {
   const Point p = point(1, 2, 3);
