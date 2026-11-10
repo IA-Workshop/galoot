@@ -159,7 +159,8 @@ constexpr std::array<T, R> run_sum(const std::array<T, NX>& x,
                                    const std::array<T, NY>& y,
                                    std::index_sequence<I...> /*x_terms*/,
                                    std::index_sequence<J...> /*y_terms*/) {
-  std::array<T, R> out{};
+  // Not out{}, which GCC can compile wrongly; zero_places says why.
+  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
   (accumulate<KX[I].coefficient, KX[I].first>(out[KX[I].out], x[KX[I].a]), ...);
   (accumulate<KY[J].coefficient, KY[J].first>(out[KY[J].out], y[KY[J].a]), ...);
   return out;
