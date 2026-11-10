@@ -1,6 +1,6 @@
 # 0028 Job pool: the automatic top-up never makes surplus slots
 
-- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), implementer with build-expert and cpp-expert judgement. Source: finding F1 of the evidence-tools review (`records/reviews/2026-11-08-evidence-tools-review.md`, branch `records/review-evidence-tools` at `dc2d1d9`) on the top-up plan 0027 merged in `d0b84bc`. On the coordinator's instruction. Not merged by its author; a delta review follows (W5).
+- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), implementer with build-expert and cpp-expert judgement. Source: finding F1 of the evidence-tools review (`records/reviews/2026-11-08-evidence-tools-review.md`, branch `records/review-evidence-tools` at `dc2d1d9`) on the top-up plan 0027 merged in `d0b84bc`. On the coordinator's instruction. Merged into `develop` by `2adc87f` on 2026-11-08, after the blind review recorded below (status corrected 2026-11-10).
 - Branches, from `develop` after this claim (W7): `feature/pool-surplus-fix`, worktree `.claude/worktrees/pool-surplus-fix`; tests on `feature/pool-surplus-fix--tests`, worktree `.claude/worktrees/pool-surplus-fix--tests`, cherry-picked with `-x`.
 
 ## Goal and definition of done
@@ -41,6 +41,7 @@ Not covered:
 
 - A holder that forks a child that inherits the descriptor, then exits during the scan, after the child's entry was read. This is contrived, and the FIFO is opened with no inheritance by the clients in use here.
 - A process that keeps tokens after closing the FIFO.
+- An unreadable `/proc/<pid>/fd` directory, which hides that client from the count (a known limit, decision 0228 item 9).
 
 **Kept.** A failed count is a client (the existing `count_fails` and `last_count_fails` cases pass). The FIFO path is resolved (`symlinked` passes). The idle stop moves the FIFO aside with its 1 s wait (`idle_stop` passes).
 

@@ -1,6 +1,6 @@
 # 0027 Pool and run-log repairs: lost slots restored, `prune` guarded, the `runlog` label documented
 
-- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), implementer with build-expert and cpp-expert judgement. Source: decision 0215 item 10, accepting the recommendations of the three-merge review (`records/reviews/2026-11-08-three-merges-review.md`, owner items 1 to 3) and decision 0130 item 7 (automatic repair). Not merged by its author; a blind review follows (W5).
+- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), implementer with build-expert and cpp-expert judgement. Source: decision 0215 item 10, accepting the recommendations of the three-merge review (`records/reviews/2026-11-08-three-merges-review.md`, owner items 1 to 3) and decision 0130 item 7 (automatic repair). Merged into `develop` by `d0b84bc` on 2026-11-08, after the blind review and its delta review below (status corrected 2026-11-10).
 - Branches, from `develop` after this claim (W7):
   - `feature/pool-runlog-repairs`, worktree `.claude/worktrees/pool-runlog-repairs`: the unit.
   - `feature/pool-runlog-repairs--tests`, worktree `.claude/worktrees/pool-runlog-repairs--tests`: the tests, written first and cherry-picked with `-x`.
@@ -24,7 +24,7 @@ The extraction of the pool (decision 0130), the slot total read from the unit's 
 
 ## State at the end of the implementer's session (2026-11-08)
 
-Done on `feature/pool-runlog-repairs`, ready for the blind review (W5); not merged.
+Done on `feature/pool-runlog-repairs`, ready for the blind review (W5); not merged. (Corrected 2026-11-10: the review and delta review followed in the sections below, and the branch merged as `d0b84bc`.)
 
 | Commit | What | Kind (W9) |
 | --- | --- | --- |

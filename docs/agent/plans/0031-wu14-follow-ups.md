@@ -1,6 +1,6 @@
 # 0031 WU14 follow-ups: the generator-rule family, two off-axis degenerate forms, the catalogue test's label, and the proofs note
 
-- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), planner and implementer with doctest-expert and math-expert judgement, from `develop` at `ba12e5a`. Implemented 2026-11-09; awaiting the blind review (W5). Not merged by its author.
+- Status: claimed 2026-11-08 by Claude (agent, Opus 5.5), planner and implementer with doctest-expert and math-expert judgement, from `develop` at `ba12e5a`. Implemented 2026-11-09. The blind review ran (`records/reviews/2026-11-08-wu14-follow-ups-review.md`) and the unit merged into `develop` as `ba05a36` on 2026-11-09 (corrected 2026-11-10).
 - Source of scope: decision 0218 items 1, 2, 3, 5, and 6 (the owner's rulings on the math-tools and knowledge-base survey and the WU14 gate items), on the coordinator's instruction. Plan 0030 is WU12's, being written on `records/plan-wu12`; this plan takes 0031.
 - Branches, from `develop` after this claim (W7):
   - `feature/wu14-follow-ups`, worktree `.claude/worktrees/wu14-follow-ups`: the unit. Only this branch merges into `develop`.
@@ -91,7 +91,7 @@ Planner and implementer, Opus high: 250k to 400k tokens. Blind review: 100k to 1
 
 ## 11. Outcome
 
-State at the end of the implementer's session (2026-11-09 UTC): every part of section 5 is done; the blind review has not run, and the unit is not merged. Next step: the blind review of section 8, of the diff from `774ff66` to the tip.
+State at the end of the implementer's session (2026-11-09 UTC): every part of section 5 is done; the blind review has not run, and the unit is not merged. Next step: the blind review of section 8, of the diff from `774ff66` to the tip. (Corrected 2026-11-10: the review ran and the unit merged as `ba05a36`.)
 
 | Commit | What | Kind (W9) |
 | --- | --- | --- |

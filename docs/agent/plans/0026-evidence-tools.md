@@ -1,6 +1,6 @@
 # 0026 Evidence tools: `tools/mutate`, `tools/compiles`, and the rga3 record scripts repathed
 
-- Status: planned 2026-11-08 by Claude (agent, Opus 5.5), planner role with cpp-expert, doctest-expert, and build-expert judgement, on `records/plan-tools` (worktree `.claude/worktrees/plan-tools`) from `develop` at `5190c58`. Not merged by its author. The unit is claimed when the coordinator merges this plan into `develop` (W7). Nothing in section 11 after step 0 starts until the owner has answered O1 to O6 (section 15), or has said to proceed as recommended.
+- Status: planned 2026-11-08 by Claude (agent, Opus 5.5), planner role with cpp-expert, doctest-expert, and build-expert judgement, on `records/plan-tools` (worktree `.claude/worktrees/plan-tools`) from `develop` at `5190c58`. Merged into `develop` by `c829b02` on 2026-11-08 (corrected 2026-11-10; see the outcome). The unit is claimed when the coordinator merges this plan into `develop` (W7). Nothing in section 11 after step 0 starts until the owner has answered O1 to O6 (section 15), or has said to proceed as recommended.
 - Branches, from `develop` after the claim, named by W7:
   - `feature/evidence-tools`, worktree `.claude/worktrees/evidence-tools`: the unit. Only this branch merges into `develop`.
   - `feature/evidence-tools--tests`, worktree `.claude/worktrees/evidence-tools--tests`: the test author's fixtures and test scripts, never merged; each group is cherry-picked with `-x` into the unit (decision 0185).
@@ -299,7 +299,7 @@ Machine time, from the run log of the recorded runs: the rga3 mutants took about
 
 ## 18. Outcome
 
-Written 2026-11-08 by the implementer and coordinator (Claude, agent, Opus 5.5), on `feature/evidence-tools`. **State: parts A to G done; P9's checks from new empty trees passed at `f6392cf`; the blind review (section 13) not yet started; the branch is not merged.** Next step: the blind review, launched by the session's coordinator, then fixes with a delta review, then the merge.
+Written 2026-11-08 by the implementer and coordinator (Claude, agent, Opus 5.5), on `feature/evidence-tools`. **State: parts A to G done; P9's checks from new empty trees passed at `f6392cf`; the blind review (section 13) not yet started; the branch is not merged.** Next step: the blind review, launched by the session's coordinator, then fixes with a delta review, then the merge. *Corrected 2026-11-10: that was the state when this paragraph was written. The blind review and its delta review ran (`records/reviews/2026-11-08-evidence-tools-review.md`, `records/reviews/2026-11-08-evidence-tools-delta-review.md`), and the branch merged into `develop` as `c829b02` on 2026-11-08. The sections below record the review's resolutions.*
 
 ### Departures, skipped checks, and ambiguities (C20)
 
