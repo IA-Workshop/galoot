@@ -91,7 +91,7 @@ Planner and implementer, Opus high: 200k to 350k tokens. Blind review: 80k to 15
 
 ## 11. Outcome
 
-State at the end of the implementer's session (2026-11-10 UTC): every part of section 5 is done; the blind review has not run, and the unit is not merged. Next step: the blind review of section 8, of the diff from `e2f317a` (the claim) to the tip.
+Done, 2026-11-10: the blind review approved the unit with no must-fix (`records/reviews/2026-11-09-kernel-init-blind-review.md`, cherry-picked with `-x` from `d9ca6c9`), and it is merged into `develop`. The owner's rulings on its open items are decision 0226. The history of the unit follows; the changes after the review are at the end.
 
 | Commit | What | Kind (W9) |
 | --- | --- | --- |
@@ -114,3 +114,12 @@ Departures and notes beyond section 1:
 - **A defect found outside the unit** (W9): `geometric_product` of a scalar and a `full<10>` value of R(10,0,0) fails to build on GCC 16.2.1 inside `collect_result` (a `std::span` bounds check in constant evaluation, `plan.hpp:313`); scalar times `full<9>` builds. Whether it is a defect of the plan builder, a limit, or the compiler was not investigated. The documented limits name products of two full layouts, not this case.
 - One configure in the gap worktree went to that worktree's run log and was lost with it; one direct run of `core_mv_test` with a test-case filter, on the tests branch, ran outside `tools/timed`.
 - The probes of `records/performance/kernel-init-cost/probes/` were compiled in scratch space through `tools/timed` with a campaign log, committed as `probes/runs.tsv`.
+
+After the review (W5; comment and test edits only, so no delta review):
+
+- `72b4ed7`: finding S1, comment only. The conversion canary's reference said e42 and e43 have sign +1 in both layouts; they stand for −e24 and −e34 in both, and the conversion uses the product of the signs, +1, so the expected value was right.
+- `fe8a0f2`: note N3, test only. Each canary checks the denominators by index with the place captured, so a failure names the wrong places; the assertions and expected values are unchanged. `core.mv` on gcc-debug and clang-debug, 100 of 100 each.
+- `4f2a3af`: note N9, record only. The unused zero-length array in `probes/reach.cpp` removed; the probe's output is unchanged, and it builds with `-Wpedantic -Werror`.
+- The review record cherry-picked with `-x`; its 56 run rows apply once each, and `tools/runlog check` passes on the result; `format-check` passes. These edits reach only `core.mv` (P8), so the P9 matrix of `1c5a9bf` was not rerun.
+- Lesson 0065 now says the kernels take one initializer per place and names the canaries.
+- Decision 0226: the three IEC 559 arrays of `transform.hpp` stay as they are (O1); the tests' reference kernels in `mv_test.cpp` take the safe form in a small test-only change after this merge (O2); the scalar times `full<10>` failure gets its own short investigation (O3); `minimal.cpp` is retested on each new GCC (F2). The reviewer's residual risk on O1 stands as a note: `rounding_checked_scalar` checks only `numeric_limits`, so a class type that declares itself IEC 559 while holding another member whose zero is not all zero bits would pass the concept.
