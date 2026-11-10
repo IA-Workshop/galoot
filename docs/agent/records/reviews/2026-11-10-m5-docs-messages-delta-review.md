@@ -1,0 +1,53 @@
+# Delta review of the fix after the blind review of plan 0035
+
+- Reviewer: blind-reviewer role (a general-purpose agent briefed with `.claude/agents/blind-reviewer.md`), Claude Sonnet 5.5, delta reviewer, 2026-11-10 UTC. The author of the fix was Claude Opus 5.5 (hci-expert and implementer); this reviewer did not see the fix before this review.
+- Range: `02ece71..2a3b748` on `feature/m5-docs-messages`: `a1f05e5` (tests, cherry-picked with -x from `94e905e` on `feature/m5-docs-messages--tests`), `c6884c1` (its run rows, cherry-picked), `d00d338` (header), `cce3496` (README and snippets review), `2a3b748` (catalogue records). The commit after `2a3b748` is only the cherry-picked blind-review record and was not reviewed.
+- The brief carried no verdict. It gave the fix's claims and the author's departures.
+- Reviewer's tree: worktree `.claude/worktrees/review-m5-docs-messages-delta` at `2a3b748`, gcc-debug and clang-debug, each step through `tools/timed`; the run rows are in `docs/agent/records/performance/runs.tsv` on this branch.
+
+## Outcome
+
+Approve with non-blocking findings. Every claimed fix does what it says and nothing else changed. Two stale line numbers remain in the catalogue's prose (finding 1) and one stale item number in the snippets review (finding 2); none changes a test or a message.
+
+## What was checked and how
+
+- Diff and log of `02ece71..2a3b748` read in full: 7 files (`README.md`, `include/galoot/core/basis_change.hpp`, `test/CMakeLists.txt`, `docs/agent/snippets/reviews/M5.md`, the catalogue record, `catalogue/scan-output.md`, `runs.tsv`). Nothing else is in the range; no other file, test, or header text moved.
+- **Finding 1 of the blind review (M5.md item 8): fixed as claimed.** Item 8 is now marked withdrawn, with the right reason (the path is relative to `test/`; `test/tools/plan_cost_model.py` exists), and the `test/CMakeLists.txt` comment is gone from owner decision 1. The item keeps its number, so item 9 and the references to "item 5" are undisturbed. One stale reference to item 8 remains (finding 2).
+- **Finding 3 (comment's subject): fixed as claimed.** "Then reads" became "It then reads"; the comment's lines were re-wrapped, and no code in that hunk changed. `clang-format --dry-run --Werror` on the header: exit 0.
+- **Finding 4 (the four layout messages).** The header diff touches only the four `static_assert` strings and the comment. Texts now:
+  - `change_basis_layout: the blade set names a generator beyond e_n; use a set whose blades are all in the change's source algebra`
+  - `change_basis_back_layout: ... beyond e_n; use a set whose blades are all in the change's target algebra`
+  - `change_basis_layout: the blade set holds a sign other than +1 or -1; give each blade of a set written out by hand the sign +1 or -1` (and the same for `change_basis_back_layout`).
+  Against the checklist: the operation is first (the layout as written); the mistake is stated; the fix follows a semicolon; no masks, positions, or internal names (`e_n` is the algebra's own term, as in the unchanged first half); the fix is in the algebra's terms (the change's source or target algebra, the direction matching the layout); the fix is safe to follow (a set inside the named algebra, signs of +1 or -1 only) and cannot make the other fault. The four causes stay distinct. The sign message's "written out by hand" matches the fact that only a hand-written set reaches these layouts. Both the source/target split and the operation's name come from the test's `foreach(... IN ZIP_LISTS ...)`, which is correct for both rows.
+- **The labelled failing test commit (W2, W9): reproduced.** A detached worktree at `a1f05e5` (its tree is `02ece71` plus the one `test/CMakeLists.txt` hunk, `git rev-parse a1f05e5^` is `02ece71`), configured gcc-debug and run through `tools/timed`: `ctest -R 'core.change_basis_(back_)?layout|tests.messages_pinned|tests.catalogue' --output-on-failure` gives 20% passed, 4 failed of 5 matched: exactly `core.change_basis_layout_beyond_n`, `core.change_basis_layout_bad_sign`, `core.change_basis_back_layout_beyond_n`, `core.change_basis_back_layout_bad_sign`, as the commit message names; `tests.messages_pinned` passes (the message set is unchanged in count). Each fails with `expect_output: output lacks '<new text>'` and the old message as the unexpected line, so for the stated reason. The failure text was read from the same timed run (`--output-on-failure`), not from an untimed rerun. Rows `a1f05e53727f` in `runs.tsv`. The tests are in a commit before the header commit and the header commit's message says which tests it makes pass (W9). The worktree is removed.
+- **Passing after the fix.** Selection `core.basis_change|rga3.readme|tests.catalogue|tests.citations` after building `core_basis_change_test`, `core_basis_change_identities_test`, and `rga3_readme_example_1` to `_5`: 100% passed, 44 of 44, on gcc-debug (0.81 s) and clang-debug (0.89 s). That selection includes the four layout tests, `tests.messages_pinned`, the `rga3.readme` tests, and `tests.citations`: the README builds and runs and cites nothing.
+- **The catalogue.** `tools/catalogue report include/galoot gcc-debug=build/gcc-debug clang-debug=build/clang-debug --check docs/agent/records/diagnostics/misuse-catalogue.md` at `2a3b748`: exit 0; its output equals `catalogue/scan-output.md` except for the file's own four-line heading (checked with `diff`). The heading says "the tests at `cce3496`"; `include/` and `test/` are the same at `2a3b748`. `tools/catalogue pinned` prints `182 messages: 160 pinned by a test, 22 listed as internal`, as the record says. The line numbers of the four rows and of the three self-checks in the scan output match the header (`:936`/`:939`/`:944`/`:947`, `:965`, `:1050`/`:1051`).
+- **Finding 5 (README wordings): fixed as claimed.** `from_gram` "takes a symmetric matrix of integers, within `max_form_entry`", which is the name of a constant in `metric.hpp` (`max_form_entry`, the largest magnitude of an entry, from `isqrt(max/2)`); and "A floating scalar type, or a rational type of your own whose division is exact, takes every layout", which no longer implies the library ships a rational type. The rest of the README hunk is re-wrapping.
+- Format: `clang-format --dry-run --Werror include/galoot/core/basis_change.hpp` exit 0.
+
+## What was not checked
+
+- The full P9 matrix (the author's), release, asan, lint targets other than the one clang-format run, and clang-tidy; the convention trace gate (the diff touches no reference or convention text, and the range changes no test source apart from `test/CMakeLists.txt`'s message strings).
+- The old-header failure on clang-debug (the author's rows cover gcc-debug only, as did this reproduction; the compile-fail text compares the same way on both, and the new messages pass on both).
+- Build-cost change: no probe; the change is four string literals and does no template work. No author build-cost record exists (the departure is noted; W10).
+- That the README's `max_form_entry` bound holds for the generator count (`max_generators`) as well; the README names one bound.
+
+## Findings, most severe first (none blocking)
+
+1. **`docs/agent/records/diagnostics/misuse-catalogue.md` lines 24 and 88 (low, confirmed, stale prose).** The header edit moved the self-checks down six lines, and the regenerated record keeps the old numbers in two places its tool does not check: the result paragraph (line 24) still says "three assertions without a message (`core/blade_set.hpp:86`, and `core/basis_change.hpp:1044` and `:1045`)", where `catalogue/scan-output.md` in the same commit says `:1050` and `:1051`; and the table of internal messages (line 88) still names `basis_change.hpp:959` for the grade self-check, which is now `:965` (`scan-output.md`: "core/basis_change.hpp:965"). The blind review had checked these numbers against the file and found them right, so this is a regression of the fix. Failure scenario: a reader following `:959` lands on a different line of the header. Fix: change the three numbers (`:959` to `:965`, `:1044` and `:1045` to `:1050` and `:1051`); `--check` does not read them. Does not block.
+2. **`docs/agent/snippets/reviews/M5.md` line 7 (nit, confirmed).** The departures bullet still says "the stale-path findings in items 5, 7, and 8 come from reading the source", though item 8 is withdrawn. Say "items 5 and 7".
+3. **The new message text (observation, not a defect).** "use a set whose blades are all in the change's source algebra" suits a set written by hand; a user who got the set from a multivector's layout cannot reach this message, so the fix is addressed to the right reader. Nothing to change.
+4. **Author's departures noted.** The reruns of the old-header failure were in the tests worktree, one outside `tools/timed`; this reviewer reproduced the failure inside `tools/timed` and found the same four tests and the same failure text, so the departure does not weaken the evidence. No build-cost record was taken; nothing in the fix would change a build cost.
+
+## Interface changes the review suggests that would break later users
+
+None. The four messages are changed before release, with the fix appended, which is the cheapest time (Hyrum's law).
+
+## Resolution
+
+Written by the implementer of plan 0035 (Claude, agent, Opus 5.5), not by the reviewer. Both fixes are to records only, so they need no further review.
+
+| Finding | Resolution |
+| --- | --- |
+| 1 | The catalogue's result paragraph names `:1050` and `:1051`, and the self-check row `:965`, as the header has them after `d00d338` |
+| 2 | M5.md's departures line names items 5 and 7, with item 8 marked withdrawn |

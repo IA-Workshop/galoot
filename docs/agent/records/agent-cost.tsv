@@ -224,3 +224,8 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	coordination	coordinator session 2026-11-09	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; plans 0029 and 0030 estimate coordination; row added 2026-11-10 from the M5 audit's finding m13
 2026-11-10	coordination	coordinator session 2026-11-10	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; row added 2026-11-10 from the M5 audit's finding m13
 2026-11-10	M5	records agent (gate records, cost rows, lessons)	sonnet	86570	20	114	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0035	implementer	opus	297576	129	4232	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0035	snippets survey	sonnet	150794	49	282	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	blind reviewer	sonnet	138039	46	301	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	delta reviewer	sonnet	85400	21	130	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	second delta reviewer	sonnet	72262	16	97	as relayed by the implementer from the harness report; recorded 2026-11-10

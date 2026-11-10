@@ -1,0 +1,70 @@
+# Blind review of plan 0035, the M5 README section, message pass, and snippets review
+
+- Reviewer: blind-reviewer role (a general-purpose agent briefed with `.claude/agents/blind-reviewer.md`), Claude Sonnet 5.5, 2026-11-10 UTC. The author was Claude Opus 5.5 (hci-expert and implementer); the reviewer shared none of its context.
+- Range: `aa644c2...02ece71` on `feature/m5-docs-messages`, parent `develop` at `aa644c2`: six commits, `19f97ad` (tests, cherry-picked), `f544e33` (their run rows), `0d1ef53` (header), `30a638d` (README), `276ff5d` (catalogue records), `02ece71` (snippets review).
+- The brief carried no verdict. It gave the three acceptance criteria and the author's departures and choices; none said the change was correct or ready.
+- Reviewer's tree: worktree `.claude/worktrees/review-m5-docs-messages` at `02ece71`, presets gcc-debug, clang-debug, and lint, each through `tools/timed`; run rows are in `docs/agent/records/performance/runs.tsv` on this branch.
+
+## Outcome
+
+Approve with non-blocking findings. Criteria 1 and 2 are met. Criterion 3 is met in form, with one wrong finding in the review (finding 1), which should be corrected before the merge because the review asks the owner to decide on it.
+
+## What was checked and how
+
+- Diff and log read in full: `README.md`, `include/galoot/core/basis_change.hpp` (whole of `make_change_map` and the comments the README cites), the four layout compile-fail sources, `test/CMakeLists.txt` hunk, `test/internal_messages.txt`, the catalogue records, `M5.md`, and the run rows.
+- Selection `core.basis_change|rga3.readme|tests.catalogue|tests.citations`: 44 tests, all passed on gcc-debug (0.628 s) and clang-debug (0.813 s), after building `core_basis_change_test`, `core_basis_change_identities_test`, and `rga3_readme_example_1` to `_5` on both. The four layout tests, `tests.messages_pinned`, `rga3.readme_example_4` and `_5`, and `tests.citations` are among them.
+- The test commit labelled failing (W2, W9): the author's rows for it are on an uncommitted tree (`aa644c22b0c8-dirty`), so the reviewer reproduced it from `git archive 19f97ad` into scratch, configured gcc-debug, and ran `ctest -R 'core.change_basis_(back_)?layout|tests.messages_pinned'`: exactly the five tests the commit names fail (0 of 5 pass), each with `expect_output: output has an unexpected line` quoting the old `basis change map:` text, so they fail for the stated reason. That run was untimed (a scratch tree outside `tools/timed`'s run log).
+- The catalogue: reran `tools/catalogue report include/galoot gcc-debug=... clang-debug=... --check misuse-catalogue.md` (exit 0) and diffed its output against `catalogue/scan-output.md`: identical apart from the four-line heading the file carries. `tools/catalogue pinned` prints `182 messages: 160 pinned by a test, 22 listed as internal`, as the record says. The record's line numbers `basis_change.hpp:959` and `:1044`/`:1045` match the file (959 is the second line of the grade `static_assert`'s message).
+- Trace gate (`python3 -I tools/test_references.py trace ...`): exit 0; last line "items with no test: 6.1, 6.2, 6.3, 6.4", the same on `develop` (run in the main checkout).
+- Format: `cmake --build --preset lint --target format-check` exit 0 (1.685 s). clang-tidy and the other lint targets were not run.
+- Build cost: the author took no before-and-after record. The reviewer compiled one unit that changes every blade of conformal(3) in both directions (`change_basis` then `change_basis_back` of the full 32-blade layout), `-fsyntax-only`, three runs each against the old and new header: GCC 0.156 s against 0.146 s, Clang 0.218 s against 0.208 s. No growth, as the author expected.
+- README mathematics, recomputed without Galoot code (a short Python script with `fractions`, and by hand):
+  - Witt example: `e1 e2 = e1.e2 + e1^e2 = 1 + e12` and `e2 e1 = 1 - e12`, so `f g + g f = 2`; with rows `{1, 1}/1` and `{1, -1}/2`, `e1.e1 = 1 - 1 = 0`, `e2.e2 = (1 - 1)/4 = 0`, `e1.e2 = (1 + 1)/2 = 1`; `e1^e2 = det [[1, 1], [1/2, -1/2]] e'12 = -e'12`, so `f g` becomes `1 - e'12`. `fg == EvenR{1, -1}` is right.
+  - Conformal example: `P G' P^T = G` holds for the rows of `conformal_change<3>`; the point `(1, 2, 3)` is `{1, 2, 3, 1, 7}`, its image `{1, 2, 3, 6.5, 7.5}`, and back `{1, 2, 3, 1, 7}`; the inner product of `(1, 2, 3)` and `(4, 6, 3)` is `25 - 61/2 - 7 = -12.5`, equal to minus half of the squared distance 25, and the same in R(4, 1, 0). All four `// prints:` lines match.
+  - Prose: origin = `(e'(D+2) - e'(D+1))/2`, infinity = `e'(D+1) + e'(D+2)`, with `origin.infinity = -1` as stated; bulk of `e4` is `-e5` in conformal(3), and by way of R(4, 1, 0) it is `-e5/2` (computed: `(-e'4 - e'5)/2` mapped back); the origin alone maps to `{e4: -0.5, e5: 0.5}`, back to `{e4: 1, e5: 0}`, and `truncate<Origin>` gives `{e4: 1}` (compiled and run on g++ and clang++); `change_basis<witt_to_r110>(g)` over `int` is rejected with "the change divides by an integer on this layout" on both compilers.
+  - Every statement about what is preserved, the determinant factor, and the bulk matches the top comment of `basis_change.hpp` and `metric.hpp`'s comments for `R`, `rigid`, `conformal`, and `from_gram`.
+- Citations: `tests.citations` passes; `grep` of the README for decision, plan, rule, and finding names finds none. The README does not name a record or rule (S11).
+- Usability checklist, task first. Tasks written from the README alone: (1) declare an algebra tag and make a value; (2) change a value into another algebra's basis and back; (3) declare a change of my own with `from_rows`. All three can be done from the section's examples. Places the implementation had to be read: what a user sees when the rows are not an isometry or not invertible (the README says only that the first use checks it; the catalogue holds the messages); that no rational scalar type ships with the library (finding 5).
+- Layout messages tried by hand on both compilers: a hand-written set naming `e6` given to `change_basis_back_layout` gives one error, on the first error line after the context, "change_basis_back_layout: the blade set names a generator beyond e_n"; a set with both faults given to `change_basis_layout` gives two errors, one for each cause, each with its own message (finding 6).
+
+## What was not checked
+
+- The full P9 matrix (the author's, at the final tip), the release, asan, clang-measure, and lint targets other than `format-check`; clang-tidy of the changed header was not run.
+- `M5.md`'s claims beyond those listed here: not re-counted (305 commits, 33 worktrees, the five worktrees with a modified `runs.tsv`), no snippet rerun, and nothing about the scratchpads. Checked and found true: the `parents[4]` paths of `spike-a/diff_reference.py` and `spike-b/fault_injection.py` give `docs/`; `probe.py` writes `BinaryOperation::{gp,...}` and `plan.hpp` names `geometric_product` and `geometric_antiproduct`; Ninja is 1.13.2; the 305 commit count for `6f1e90a..aa644c2`; `M4.md` was added by `6f1e90a`; decision 0215 item 10 says the evaluation counter stays for WU17.
+- Cross-checks of the README's `// prints:` formatting beyond what the passing tests show.
+- The author's departures are noted: the two early probe compiles outside `tools/timed` (not reviewable); the `-dirty` rows (the reproduction above replaces them as evidence).
+
+## Acceptance criteria
+
+1. **README section: met.** Both blocks compile and run on both compilers as `rga3.readme_example_4` and `_5`; the expected values equal the reviewer's own (above); the section declares an algebra tag, a change tag with `conformal_change` and one with `from_rows` (a `basis_change<2>` value), and uses `change_basis` and `change_basis_back`; the prose agrees with the header's comments and with `metric.hpp`; no record or rule is cited.
+2. **Messages and records: met.** The two layout messages now read `change_basis_layout:` or `change_basis_back_layout:` by direction, the grade self-check reads `basis_change:`, the test commit comes first and fails on the old header with the five tests it names, the catalogue and scan output are what the tool produces at this tree. The internal list was updated in the test commit.
+3. **Snippets review: met in form, with finding 1.** It follows `M4.md`'s sections (surveyed table, M4's findings and status, index, stale paths, scripts of the window, missing, index changes, owner decisions), applies nothing, and states its skipped checks and its inferences.
+
+## Findings, most severe first (none blocking)
+
+1. **`docs/agent/snippets/reviews/M5.md` item 8 and owner decision 1 (low, confirmed, wrong claim).** Item 8 says "`test/CMakeLists.txt` lines 725 to 740 cite `tools/plan_cost_model.py`; the file does not exist". The comment's path is relative to `test/`, and `test/tools/plan_cost_model.py` exists; it is the checker that `core.plan_cost_model.<unit>` and `tools.plan_cost_model_*` run (`test/CMakeLists.txt:784`, `:805`). The comment is right, and the "fix" that owner decision 1 asks for ("the `test/CMakeLists.txt` comment") is a no-op that would waste the unit's time. Remove item 8 and the comment from decision 1, or say the checked search lives in two places, `test/tools/plan_cost_model.py` (the CTest check) and `snippets/plan_cost_model/harness.py` (the model's own search). The author's commit message also says "two spike scripts" are broken; that part holds. Does not block the merge; the owner reads the review at the gate, so fix it first.
+2. **`docs/agent/snippets/reviews/M5.md` item 5, item 7 (plausible, not rerun).** The enumerator names and the `parents[4]` path were confirmed by the reviewer, but that `probe.py` and `cost.py fit` fail, and that `cost.py comments` reports counts it does not know, rest on reading and were not run. The review marks them inferred, as it should; nothing to fix, noted so that the owner knows what a run would add.
+3. **`include/galoot/core/basis_change.hpp` near 920-926 (nit, comment).** The rewritten comment ends its first sentence with a colon and a clause about the two layouts, then begins a sentence "Then reads the checked rows ..." with no subject. Reads as a fragment. Suggest "It then reads the checked rows ...".
+4. **The four layout messages, `basis_change.hpp:936-945` (low, checklist, not new).** The checklist asks a message to give the fix after a semicolon ("the blade set names a generator beyond e_n" says what is wrong and not what to do). The old messages had the same shape, and a hand-written blade set is reached by few callers, so this does not block. If wanted: "...beyond e_n; keep each blade to the algebra's generators".
+5. **`README.md` section on integer scalars (nit).** "a rational or floating scalar type takes every layout": the library ships no rational type, so a reader looking for one finds none (the tests define their own). Say "a rational type of your own, or a floating one". Likewise "`from_gram` takes any symmetric matrix of integers" is bounded by `max_form_entry` and by the number of generators; "any" is a little generous.
+6. **A blade set with both faults gives two errors (observation, not new).** `change_basis_layout<..., both>` prints both messages, one per cause, on both compilers; the checklist's "one error per misuse" is met per cause, and the causes are distinct. Not a defect.
+7. **README tests carry the `rga3.` labels though they use only the core (low, a departure the author listed).** A selection by `core.*` labels (P8) omits them, so a core change that breaks the README's new examples is found only by a run that selects `rga3.readme`. No change asked for now; a rename to a neutral label would need its own unit.
+8. **W9, W10 (observation).** The README's expected values and its prose are one commit, as the README test requires; the review brief lists the criterion, which W9 allows. No build-cost record was taken (W10, plan 0035's evidence line says so); the reviewer's probe above shows no cost change.
+
+## Interface changes the review suggests that would break later users
+
+None. The messages are the only public text changed, and they are changed before release, which is the cheapest time (Hyrum's law). If finding 4's fix is wanted, it should come before release for the same reason.
+
+## Resolution
+
+Written by the implementer of plan 0035 (Claude, agent, Opus 5.5), not by the reviewer. The fixes to the header and tests had a delta review (`2026-11-10-m5-docs-messages-delta-review.md`).
+
+| Finding | Resolution | Commits |
+| --- | --- | --- |
+| 1 | M5.md item 8 withdrawn with the reason; the edit dropped from owner decision 1 | `cce3496` |
+| 2 | Not acted on: the review already marks those claims inferred; a run belongs to the unit of owner decision 1 | — |
+| 3 | "It then reads ..." (comment only) | `d00d338` |
+| 4 | Applied: each of the four layout messages gives its fix after a semicolon (a set whose blades are all in the change's source, or target, algebra; the sign +1 or -1 on each blade). Test commit first, labelled failing with the four tests; catalogue regenerated | test `a1f05e5`, header `d00d338`, records `2a3b748` |
+| 5 | Both wordings applied: `max_form_entry` named; "a floating scalar type, or a rational type of your own whose division is exact" | `cce3496` |
+| 6, 8 | Observations; nothing to do | — |
+| 7 | Not acted on: the README mechanism labels every block `rga3.readme`; listed as an open item for the owner | — |
