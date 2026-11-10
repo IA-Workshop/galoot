@@ -1,0 +1,11 @@
+# 0237 WU17 part E findings: coordinator rulings
+
+Date: 2026-11-10. Coordinator rulings after E1 and E2/E3 reports, within plan 0038 and the owner's rulings in decision 0233 (items 3 and 8). The owner may reverse any of them.
+
+1. **Benchmark asymmetry (E1 finding).** Owner-accepted recommendation (a) in the owner's "proceed as recommended": E2 is read beside E1's call table.
+2. **Reference kernels called out of line (E2 finding).** E2 showed that on the three transforms and `compose` both compilers emit the straight-line reference kernel out of line, so the comparison is not against inline code, which is what DoD-24 means. Ruling: a small test-only change in part D's scope makes the reference kernels inline (generator output and the regenerate-and-diff test; no change under `include/`), with a blind review, then E2 reruns at the new revision. The first E2 run stays in the records as the out-of-line run. This is the precondition decision 0233 item 3 sets for any inlining unit in the core: the cost of the call is not isolated until the reference is inline too.
+3. **O3 trigger (decision 0233 item 3).** Clang `transform(line, motor)` (about 9% slower) and `compose` may be beyond the criterion. No core inlining unit is started; the rerun decides between recording the departure and a core unit, which would be put to the owner.
+4. **The 1% busy threshold.** Kept for E2's first run as fixed in plan 0038 section 6. For F and WU18 it is restated in ticks with the run length given (the resolution of `/proc/stat` is 10 ms), or the runs are lengthened. The restatement is recorded in those campaigns' READMEs.
+5. **`bulk_dual` growth with n at fixed use** (+1.8% on GCC, +7.3% on Clang between n = 4 and 16) is growth contrary to C6 that decision 0141 does not cover. Recorded as a defect found beside decision 0141, no fix now; raised at the M7 gate.
+6. **`tools/compiles`** does not repeat single busy compiles; a whole-campaign repeat (about 50 s) is the remedy.
+7. **Pool stop during E2.** The shared pool stopped itself after 30 minutes without a client; it was not restarted by the agents. It will be started with `tools/jobpool ensure` when next needed (allowed when it reports "not running").
