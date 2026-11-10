@@ -1,0 +1,26 @@
+$ clang++ -I include -std=c++23 -fsyntax-only -O0 -D_GLIBCXX_ASSERTIONS -DKEYS=4096 docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:49:18: error: constexpr variable 'result' must be initialized by a constant expression
+   49 | constexpr sorted result = collect();
+      |                  ^        ~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/span:287:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+  287 |       {
+      |       ^
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:17:25: note: in call to 'out.operator[](360)'
+   17 |     while (at < size && out[at] < key) {
+      |                         ^~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:45:12: note: in call to 'insert_all({&keys._M_elems[0], {4096}}, {&s.keys._M_elems[0], {4096}})'
+   45 |   s.size = insert_all(keys, s.keys);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:49:27: note: in call to 'collect()'
+   49 | constexpr sorted result = collect();
+      |                           ^~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:50:15: error: static assertion expression is not an integral constant expression
+   50 | static_assert(result.size == KEYS);
+      |               ^~~~~~~~~~~~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:50:15: note: initializer of 'result' is not a constant expression
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:49:18: note: declared here
+   49 | constexpr sorted result = collect();
+      |                  ^
+2 errors generated.
+timed: compile scalar-full10:minimal-k4096-clang-assert took 0.422 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 1

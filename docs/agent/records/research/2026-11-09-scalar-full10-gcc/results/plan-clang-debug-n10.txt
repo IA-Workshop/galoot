@@ -1,0 +1,38 @@
+$ clang++ -I include -std=c++23 -fsyntax-only -DGALOOT_CHECKING=1 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -O0 docs/agent/records/research/2026-11-09-scalar-full10-gcc/plan.cpp
+In file included from docs/agent/records/research/2026-11-09-scalar-full10-gcc/plan.cpp:4:
+include/galoot/core/plan.hpp:571:27: error: constexpr variable 'found' must be initialized by a constant expression
+  571 |     static constexpr auto found = collected(generated);
+      |                           ^       ~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:665:38: note: in instantiation of function template specialization 'galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, rn, blade_set<1>{{{{0, 1}}}}, blade_set<1024>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' requested here
+  665 | inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
+      |                                      ^
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/plan.cpp:16:45: note: in instantiation of variable template specialization 'galoot::core::detail::product_plan' requested here
+   16 | constexpr auto plan = galoot::core::detail::product_plan<
+      |                                             ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/span:254:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+  254 |       { return this->_M_extent._M_extent(); }
+      |       ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/span:288:27: note: in call to 'this->size()'
+  288 |         __glibcxx_assert(__idx < size());
+      |                                  ^~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h:647:32: note: expanded from macro '__glibcxx_assert'
+  647 |     if (__builtin_expect(!bool(cond), false))                           \
+      |                                ^~~~
+include/galoot/core/plan.hpp:313:40: note: in call to 'out.operator[](204)'
+  313 |     while (at < size && canonical_less(out[at].mask, t.out)) {
+      |                                        ^~~~~~~
+include/galoot/core/plan.hpp:514:16: note: in call to 'collect_result({&generated._M_elems[0], {1024}}, {&found.blades._M_elems[0], {1024}})'
+  514 |   found.size = collect_result(plan, found.blades);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:571:35: note: in call to 'collected<1024UL>(generated)'
+  571 |     static constexpr auto found = collected(generated);
+      |                                   ^~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:572:34: error: no matching function for call to 'typed'
+  572 |     static constexpr auto plan = typed<found.size>(generated, found);
+      |                                  ^~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:520:1: note: candidate template ignored: non-type template argument is not a constant expression for template parameter 'R'
+  520 | typed(const std::array<plan_term, T>& plan,
+      | ^
+2 errors generated.
+timed: compile scalar-full10:plan-clang-debug-n10 took 0.476 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 1

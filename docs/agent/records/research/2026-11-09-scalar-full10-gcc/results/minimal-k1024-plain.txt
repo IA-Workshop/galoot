@@ -1,0 +1,21 @@
+$ g++ -I include -std=c++23 -fsyntax-only -O2 -DKEYS=1024 docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp
+In file included from docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:6:
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:49:34:   in ‘constexpr’ expansion of ‘collect()’
+   49 | constexpr sorted result = collect();
+      |                           ~~~~~~~^~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:45:22:   in ‘constexpr’ expansion of ‘insert_all(std::span<const unsigned int>(keys), std::span<unsigned int>(s.sorted::keys))’
+   45 |   s.size = insert_all(keys, s.keys);
+      |            ~~~~~~~~~~^~~~~~~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:17:31:   in ‘constexpr’ expansion of ‘out.std::span<unsigned int>::operator[](at)’
+   17 |     while (at < size && out[at] < key) {
+      |                               ^
+/usr/include/c++/16/span:288:2:   in ‘constexpr’ expansion of ‘((const std::span<unsigned int>*)this)->std::span<unsigned int>::size()’
+  288 |         __glibcxx_assert(__idx < size());
+      |         ^~~~~~~~~~~~~~~~
+/usr/include/c++/16/span:254:22: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+  254 |       { return this->_M_extent._M_extent(); }
+      |                ~~~~~~^~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:50:27: error: non-constant condition for static assertion
+   50 | static_assert(result.size == KEYS);
+timed: compile scalar-full10:minimal-k1024-plain took 1.972 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 1

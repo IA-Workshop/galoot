@@ -1,0 +1,13 @@
+$ g++ -I include -std=c++23 -fsyntax-only -O0 -D_GLIBCXX_ASSERTIONS -DKEYS=4096 docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:49:34:   in ‘constexpr’ expansion of ‘collect()’
+   49 | constexpr sorted result = collect();
+      |                           ~~~~~~~^~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:45:22:   in ‘constexpr’ expansion of ‘insert_all(std::span<const unsigned int>(keys), std::span<unsigned int>(s.sorted::keys))’
+   45 |   s.size = insert_all(keys, s.keys);
+      |            ~~~~~~~~~~^~~~~~~~~~~~~~
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:17:33: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+   17 |     while (at < size && out[at] < key) {
+docs/agent/records/research/2026-11-09-scalar-full10-gcc/minimal.cpp:50:27: error: non-constant condition for static assertion
+   50 | static_assert(result.size == KEYS);
+timed: compile scalar-full10:minimal-k4096-assert took 2.021 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 1
