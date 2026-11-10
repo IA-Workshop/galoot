@@ -38,10 +38,10 @@ for the line through p and q).
 
 Usage, with the interpreter isolated as for every reference script:
 
-  python3 -I test/reference/reference_kernels.py
+  python3 -I test/reference/reference_kernels.py \\
           > test/bench/reference_kernels.hpp
       Regenerate the committed header.
-  python3 -I test/reference/reference_kernels.py
+  python3 -I test/reference/reference_kernels.py \\
           --check test/bench/reference_kernels.hpp
       Exit 1, printing a unified diff, if the file differs in any byte from
       what the script writes now; exit 0 if it is the same.
