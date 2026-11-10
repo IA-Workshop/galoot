@@ -1,0 +1,71 @@
+# Delta review probe: the two gap mutants against the existing tests most
+# likely to see them, and against the counting tests.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.existing]
+targets = ["core_rounding_test", "core_identities_rounding_test",
+  "core_transform_rounding_test", "core_transform_rounding_mode_0",
+  "core_transform_rounding_mode_1", "core_transform_test",
+  "core_transform_mode_0", "core_transform_mode_1",
+  "core_transform_identities_test", "core_product_test",
+  "core_identities_test", "rga3_motions_test",
+  "rga3_reference_kernels_test", "bench_antiwedge_line_plane",
+  "bench_compose_motors", "bench_transform_line", "bench_transform_plane",
+  "bench_transform_point", "bench_wedge_point_point",
+  "bench_wedge_point_point_point", "rga3_rotation_mode_0",
+  "rga3_rotation_mode_1"]
+labels = '^(core\.rounding|core\.identities_rounding|core\.transform_rounding|core\.transform|core\.transform_identities|core\.product|core\.identities|rga3\.motions|rga3\.reference_kernels|rga3\.benchmarks)$'
+
+[selection.counting]
+targets = ["core_transform_counts_checking",
+  "core_transform_counts_unchecked", "rga3_op_counts_checking",
+  "rga3_op_counts_unchecked"]
+labels = '^(core\.transform_counts|rga3\.op_counts)$'
+
+[[mutant]]
+name = "first_stage_all_existing"
+selection = "existing"
+file = "include/galoot/core/transform.hpp"
+edits = [
+  { anchor = '''        detail::transform_middle<Alg, V, X, false>(v.coefficients,''', replacement = '''        detail::transform_middle<Alg, V, X, true>(v.coefficients,''' },
+]
+expect = "survived"
+reason = "probe"
+
+[[mutant]]
+name = "first_stage_all_counting"
+selection = "counting"
+file = "include/galoot/core/transform.hpp"
+edits = [
+  { anchor = '''        detail::transform_middle<Alg, V, X, false>(v.coefficients,''', replacement = '''        detail::transform_middle<Alg, V, X, true>(v.coefficients,''' },
+]
+expect = "killed"
+killers = ["core.transform_counts_unchecked"]
+
+[[mutant]]
+name = "double_negation_existing"
+selection = "existing"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = value;''', replacement = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = static_cast<T>(-static_cast<T>(-value));''' },
+]
+expect = "survived"
+reason = "probe"
+
+[[mutant]]
+name = "double_negation_counting"
+selection = "counting"
+file = "include/galoot/core/mv.hpp"
+edits = [
+  { anchor = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = value;''', replacement = '''  if constexpr (C == 1) {
+    if constexpr (First) {
+      out = static_cast<T>(-static_cast<T>(-value));''' },
+]
+expect = "killed"
+killers = ["core.transform_counts_checking", "core.transform_counts_unchecked", "rga3.op_counts_checking", "rga3.op_counts_unchecked"]
