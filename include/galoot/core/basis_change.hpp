@@ -169,7 +169,8 @@ struct basis_change {
   /// image of e_(i+1).
   std::array<std::array<entry_type, N>, N> rows;
 
-  /// denominators[i] divides every entry of row i. Each must be positive.
+  /// denominators[i] is the denominator of every entry of row i, as
+  /// P_ij = rows[i][j] / denominators[i]. Each must be positive.
   std::array<entry_type, N> denominators;
 
   /// The number of generators of the source and of the target, n.
@@ -357,12 +358,13 @@ denominators_positive(const basis_change<N>& change) noexcept {
 // The change with each row and its denominator divided by their greatest
 // common divisor g_i: the same matrix, since rows[i][j] / denominators[i] is
 // unchanged, with a positive denominator wherever the denominator was
-// positive. Every value that the checks and the term generation form from
-// the reduced rows is the value they form from the rows as written divided
-// by a positive integer, because each is a sum of products of minors of the
-// rows and of the denominators, which scale with the g_i; so the reduction
-// can only bring a value into range, and what is generated does not depend
-// on it. A row whose divisor is 0 or 1 is kept as it is.
+// positive. Each product and sum that the checks and the term generation
+// form from the reduced rows, the values whose range they check, is the one
+// they form from the rows as written divided by a positive integer, because
+// each is built from minors of the rows and from the denominators, and both
+// scale with the g_i. So the reduction can only bring a value into range,
+// and what is generated, which depends on the matrix alone, is unchanged. A
+// row whose divisor is 0 or 1 is kept as it is.
 template <std::size_t N>
 [[nodiscard]] constexpr basis_change<N>
 reduced(const basis_change<N>& change) noexcept {
