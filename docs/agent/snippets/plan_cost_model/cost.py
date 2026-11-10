@@ -43,8 +43,11 @@ Usage:
       the next largest.
   cost.py comments <header> <figures.txt>...
       Checks that every count in the /// comments of the header is the
-      threshold of a row of the figures files, or one of the compilers'
-      default limits; prints each that is not and exits 1 if there is one.
+      threshold of a row of the figures files, one of the compilers'
+      default limits, or an entry of NON_COST below (a size or flag value,
+      each with the record it comes from); counts written as "<digits>
+      million" are read too. Prints each that is not and exits 1 if there
+      is one.
   cost.py selfcheck <weights.tsv> <figures.txt> --train <c>:<t>...
           --check <c>:<t>...
       Refits from the training files and compares every weight and
@@ -471,13 +474,45 @@ def figures_text(weights_path):
 
 # Numbers the comments state that are limits, not counts.
 LIMITS = (1 << 20, 1 << 25, GCC_LOOP_LIMIT)
-COUNT = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b")
+
+# Counts the comments state that are sizes or flag values, not costs of the
+# model, each with the record it comes from.
+SCALAR_FULL10 = "records/research/2026-11-09-scalar-full10-gcc.md"
+NON_COST = (
+    (1024, SCALAR_FULL10),
+    (4096, SCALAR_FULL10),
+    (134217728, SCALAR_FULL10),
+    (89_000_000, SCALAR_FULL10),
+)
+
+COUNT = re.compile(r"\b\d{1,3}(?:,\d{3})+\b|\b\d{4,}\b|\b\d+ million\b")
 
 
-def comments(header_path, figures_paths):
+def count_value(text):
+    """The integer a count in a comment states: "1,024" is 1024 and
+    "89 million" is 89000000."""
+    if text.endswith(" million"):
+        return int(text.split()[0]) * 1_000_000
+    return int(text.replace(",", ""))
+
+
+def listed_counts(non_cost):
+    """The values of the list `non_cost` of (count, source) entries; an entry
+    without a source is refused."""
+    values = set()
+    for entry in non_cost:
+        value, source = entry
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError(f"non-cost count {value} has no source record")
+        values.add(value)
+    return values
+
+
+def comments(header_path, figures_paths, non_cost=NON_COST):
     """Checks that every count in the /// comments of `header_path` is the
-    threshold of some row of the figures files, or a limit."""
-    known = set(LIMITS)
+    threshold of some row of the figures files, a limit, or a count of the
+    list `non_cost`."""
+    known = set(LIMITS) | listed_counts(non_cost)
     for path in figures_paths:
         for line in pathlib.Path(path).read_text(
                 encoding="utf-8").splitlines()[2:]:
@@ -488,7 +523,7 @@ def comments(header_path, figures_paths):
         if not line.lstrip().startswith("///"):
             continue
         for text in COUNT.findall(line):
-            if int(text.replace(",", "")) not in known:
+            if count_value(text) not in known:
                 unknown.append(f"{header_path}:{number}: {text}")
     for u in unknown:
         print(u)
