@@ -17,8 +17,18 @@
 // dropped. A run prints one line: the operation, form, loop, number of
 // operations, seed, nanoseconds per operation by the steady clock, and the
 // checksum. `check` runs each loop in both forms and exits 1 unless their
-// checksums agree. Instructions and cycles come from outside, from a
-// counter over the whole process; repeats are separate processes.
+// checksums agree. The checksum adds bits, so a zero's sign counts: a
+// product or compose computed with an orientation's sign on the sum rather
+// than on its terms can differ from its reference kernel there, but uniform
+// draws give an exact zero with probability next to none.
+//
+// The nanoseconds per operation include the checksum's work, a move and an
+// addition per coefficient, the same in both forms. Instructions and cycles
+// come from outside, from a counter over the whole process, so they include
+// the process's start, the drawing of the operands, and the printing; the
+// difference of two runs with different pass counts, divided by the
+// difference of their operation counts, leaves them out. Repeats are
+// separate processes.
 
 #include <array>
 #include <bit>
@@ -40,8 +50,9 @@
 namespace bench {
 
 // Operand sets per run: 128 sets take at most 16 KiB, two motors each for
-// compose, half of a first-level data cache of 32 KiB, so that the loops
-// time arithmetic rather than memory.
+// compose, a third of the 48 KiB first-level data cache of a performance
+// core of the development machine and half of an efficiency core's 32 KiB,
+// so that the loops time arithmetic rather than memory.
 inline constexpr std::size_t pool = 128;
 
 // The checksum is stored here before the clock is read again, so the timed

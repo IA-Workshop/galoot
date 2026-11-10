@@ -38,9 +38,11 @@ for the line through p and q).
 
 Usage, with the interpreter isolated as for every reference script:
 
-  python3 -I test/reference/reference_kernels.py > test/bench/reference_kernels.hpp
+  python3 -I test/reference/reference_kernels.py
+          > test/bench/reference_kernels.hpp
       Regenerate the committed header.
-  python3 -I test/reference/reference_kernels.py --check test/bench/reference_kernels.hpp
+  python3 -I test/reference/reference_kernels.py
+          --check test/bench/reference_kernels.hpp
       Exit 1, printing a unified diff, if the file differs in any byte from
       what the script writes now; exit 0 if it is the same.
 """
@@ -243,7 +245,7 @@ def transform_kernel(name, object_name, names_of_x):
     return (first, second, len(mid)), text
 
 
-# --- Checks against the definitions -------------------------------------------
+# --- Checks against the definitions ----------------------------------------
 
 def agree(a, b, what):
     if list(a) != list(b):
@@ -251,7 +253,8 @@ def agree(a, b, what):
 
 
 def draw(rng, size):
-    return [Fraction(rng.randint(-9, 9), rng.randint(1, 8)) for _ in range(size)]
+    return [Fraction(rng.randint(-9, 9), rng.randint(1, 8))
+            for _ in range(size)]
 
 
 def check_products(rng, pp, ppp, lg, qq):
@@ -292,7 +295,7 @@ def check_transform(rng, stages, names):
               conv.coeffs(whole, names), f"transform on {' '.join(names)}")
 
 
-# --- The header ----------------------------------------------------------------
+# --- The header --------------------------------------------------------------
 
 HEAD = """\
 // Straight-line kernels of seven operations of rigid(3), the arithmetic of
@@ -374,7 +377,8 @@ def main(argv):
             print(f"{argv[1]}: matches the regenerated kernels")
             return 0
         diff = difflib.unified_diff(
-            committed.splitlines(keepends=True), text.splitlines(keepends=True),
+            committed.splitlines(keepends=True),
+            text.splitlines(keepends=True),
             fromfile=argv[1], tofile="regenerated")
         sys.stdout.writelines(diff)
         print(f"{argv[1]}: differs from the regenerated kernels; regenerate "

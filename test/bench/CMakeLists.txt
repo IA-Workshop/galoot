@@ -31,15 +31,6 @@ galoot_add_test(MODULE rga3 COMPONENT reference_kernels DIRECTORY .)
 target_link_libraries(rga3_reference_kernels_test PRIVATE
   galoot::presets::rga3 galoot_reference_kernels galoot_test_support)
 
-# bench_<operation>: one program per benchmarked operation, which times the
-# rga3 operation and its reference kernel over double (harness.hpp), built
-# in every preset so that none goes stale. Each test
-# bench.<operation>_<form>_<loop> runs it once; they carry the label bench, which the presets' test runs
-# leave out, so they run only by hand or as ctest -L '^bench$', one at a
-# time, since each times itself. A measurement worth recording runs the
-# program directly, pinned, and repeats it in separate processes. Only an
-# operation whose result has its first operand's type, a transform or
-# compose, has a latency loop.
 # The harness, which needs the rga3 preset; it too compiles on its own in
 # all_verify_interface_header_sets.
 add_library(galoot_bench_harness INTERFACE)
@@ -49,6 +40,15 @@ target_link_libraries(galoot_bench_harness INTERFACE galoot::presets::rga3)
 set_property(TARGET galoot_bench_harness
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 
+# bench_<operation>: one program per benchmarked operation, which times the
+# rga3 operation and its reference kernel over double (harness.hpp), built
+# in every preset so that none goes stale. Each test
+# bench.<operation>_<form>_<loop> runs it once. They carry the label bench,
+# which the presets' test runs leave out, so they run only by hand or as
+# ctest -L '^bench$', one at a time, since each times itself. A measurement
+# worth recording runs the program directly, pinned, and repeats it in
+# separate processes. Only an operation whose result has its first operand's
+# type, a transform or compose, has a latency loop.
 set(bench_operations wedge_point_point wedge_point_point_point
   antiwedge_line_plane transform_point transform_line transform_plane
   compose_motors)
