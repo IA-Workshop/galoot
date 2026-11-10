@@ -6,7 +6,12 @@
 presets = ["gcc-debug", "gcc-release"]
 
 [selection.mv]
-targets = ["core_mv_test", "core_mv_part_checking", "core_mv_truncate_mode_0"]
+targets = [
+  "core_mv_test",
+  "core_mv_part_checking",
+  "core_mv_truncate_mode_0",
+  "core_mv_truncate_mode_1",
+]
 labels = '^core\.mv$'
 
 [selection.sum]
@@ -16,6 +21,7 @@ targets = [
   "core_mv_test",
   "core_mv_part_checking",
   "core_mv_truncate_mode_0",
+  "core_mv_truncate_mode_1",
 ]
 labels = '^core\.(mv|linear)$'
 
