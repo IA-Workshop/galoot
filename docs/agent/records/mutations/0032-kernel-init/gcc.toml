@@ -1,0 +1,55 @@
+# Mutants of plan 0032 on GCC: each restores std::array<T, R> out{} in one
+# kernel, the form GCC 16.2.1 compiles wrongly after a constant evaluation of
+# the same kernel. The canaries of core.mv must kill the first two; the
+# third cannot be seen, for the reason it states. Clang compiles the form
+# correctly, so clang.toml declares all three equivalent there.
+presets = ["gcc-debug", "gcc-release"]
+
+[selection.mv]
+targets = ["core_mv_test", "core_mv_part_checking", "core_mv_truncate_mode_0"]
+labels = '^core\.mv$'
+
+[selection.sum]
+targets = [
+  "core_linear_test",
+  "core_linear_divide_assert_fail",
+  "core_mv_test",
+  "core_mv_part_checking",
+  "core_mv_truncate_mode_0",
+]
+labels = '^core\.(mv|linear)$'
+
+# run_map starting from out{}: the conversion canary's kernel.
+[[mutant]]
+name = "run_map_shared_initializer"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],''', replacement = '''  std::array<T, R> out{};
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],''' }]
+expect = "killed"
+killers = ["core.mv"]
+
+# run_product starting from out{}: the product canary's kernel.
+[[mutant]]
+name = "run_product_shared_initializer"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(
+       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''', replacement = '''  std::array<T, R> out{};
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(
+       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''' }]
+expect = "killed"
+killers = ["core.mv"]
+
+# run_sum starting from out{}: no test can see it, for the reason it states.
+[[mutant]]
+name = "run_sum_shared_initializer"
+selection = "sum"
+file = "include/galoot/core/linear.hpp"
+edits = [{ anchor = '''  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
+  (accumulate<KX[I].coefficient, KX[I].first>(out[KX[I].out], x[KX[I].a]), ...);''', replacement = '''  std::array<T, R> out{};
+  (accumulate<KX[I].coefficient, KX[I].first>(out[KX[I].out], x[KX[I].a]), ...);''' }]
+expect = "equivalent"
+reason = "a sum's target is sum_layout, the union of the operands' layouts, and a term of run_sum is first on every place of it, so a place zero-filled at run time is always assigned before it is read"
