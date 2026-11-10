@@ -208,3 +208,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0030	implementer cumulative to date (replaces 633742)	opus	762362			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	implementer final to date (replaces 762362)	opus	830661			as relayed by the harness completion report; recorded 2026-11-09
 2026-11-09	small	lesson 0065 and KB GCC corrections	sonnet	71312	16	85	as relayed by the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0032	planner and implementer	opus		100	3238	figures: tool calls and wall time from the agent report; tokens to be taken from the harness completion report
