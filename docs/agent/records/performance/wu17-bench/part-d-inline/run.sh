@@ -19,3 +19,4 @@ for cxx in g++ clang++; do
   done
 done
 python3 -I "$here/calls.py" "$scratch"/*.s
+python3 -I "$here/loops.py" "$scratch"/*.s

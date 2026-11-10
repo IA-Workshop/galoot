@@ -29,9 +29,13 @@ def qualified(demangled):
 
 
 for path in sys.argv[1:]:
-    targets = re.findall(r"^\s+(?:call|callq|jmp|jmpq)\s+\*?([^\s#]+)", open(path).read(), re.M)
+    text = open(path, encoding="utf-8").read()
+    targets = re.findall(r"^\s+(?:call|callq|jmp|jmpq)\s+\*?([^\s#]+)",
+                         text, re.M)
     targets = [t.split("@")[0] for t in targets if not t.startswith(".L")]
-    dem = subprocess.run(["c++filt"], input="\n".join(targets), capture_output=True, text=True).stdout.splitlines()
+    dem = subprocess.run(["c++filt"], input="\n".join(targets),
+                         capture_output=True, text=True,
+                         check=True).stdout.splitlines()
     found = {}
     for mangled, d in zip(targets, dem):
         m = re.match(r"main::(\$_\d|\{lambda\(.*?\)#\d\})::operator\(\)", d)

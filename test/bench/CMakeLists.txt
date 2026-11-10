@@ -85,7 +85,9 @@ foreach(operation IN LISTS bench_operations)
   # the library's. In the demangled symbol table a lambda of main is a
   # symbol whose name starts with main::, after its type letter (local t,
   # global T, or weak W); elsewhere main:: shows only inside the template
-  # arguments of the harness's functions.
+  # arguments of the harness's functions. The forms must stay non-generic
+  # lambdas: a generic one's operator() demangles after its return type,
+  # where these patterns would not find it.
   add_test(NAME rga3.benchmark_${operation}_inline
     COMMAND ${expect_output} 0 " T main"
       FORBID "reference_kernels::" " t main::" " T main::" " W main::"
