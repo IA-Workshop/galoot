@@ -68,7 +68,7 @@ The log shows the difference at a versor of λ = 4, at λ = 1 with h ≠ 0, and 
 | line | 72 mul, 58 add | 53 mul, 62 add, 15 scl | 48 mul, 39 add, 7 scl | 48 mul, 39 add, 9 scl |
 | plane | 48 mul, 36 add | 35 mul, 35 add, 9 scl | 30 mul, 24 add, 7 scl | 30 mul, 24 add, 6 scl |
 
-Form A under the kernels' own accumulation (rule K) has the same `mul` and `add + sub`, and `neg` of 3 (point), 9 (line), 5 (plane); in checking mode the first stage is whole and the dropped-blade terms are computed, which gives 68, 84, 76 multiplications. The multiplication counts 48, 72, 48 and compose's 48 equal the restricted counts of plan 0021's probes, and the point's 25 + 11 additions and subtractions equal the 15 + 21 of the probe's GCC assembly.
+Form A under the kernels' own accumulation (rule K) has the same `mul` and `add + sub`, and `neg` of 3 (point), 9 (line), 5 (plane); in checking mode the first stage is whole and the dropped-blade terms are computed, which gives 68, 84, 76 multiplications. The multiplication counts 48, 72, 48 and compose's 48 equal the restricted counts of plan 0021's probes.
 
 For a batch under one motor, per object: B 13 mul + 9 add (point and plane, same matrix) or 27 + 21 (line), against A's 48 (point, plane) and 72 (line); the motor-only cost of B is 22 mul + 26 add + 9 scl (point, plane) and 26 + 41 + 15 (line). C per object, motor doubled first: 22 + 18 (point), 36 + 30 (line), 18 + 15 (plane), with 12 mul + 9 add + 7 scl once per motor for T (line, plane).
 
