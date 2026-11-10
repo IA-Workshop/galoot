@@ -900,9 +900,10 @@ set_tests_properties(tools.runlog_check PROPERTIES
 
 # tools.jobpool: the job pool's argument checks, the slots it writes back and
 # drains when no client holds it, and its idle stop, including a client that
-# opens the pool just as it decides to stop, a FIFO path through a symbolic
-# link, a count of clients that fails, and a client that opens the pool just
-# after a count. It runs pools of its own, under their own unit names and
+# opens the pool just as it decides to stop, an idle, full pool that leaves
+# its FIFO in place, a FIFO path through a symbolic link, a count of clients
+# that fails, a client that opens the pool just after a count, and a FIFO
+# deleted by hand. It runs pools of its own, under their own unit names and
 # with their FIFOs in the build tree, never the machine's shared pool;
 # skipped where there is no user service manager. It waits for the pools'
 # polls for about a minute, so it is slow.
