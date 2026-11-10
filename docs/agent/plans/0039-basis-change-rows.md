@@ -144,6 +144,7 @@ Planner and implementer, Opus high: 250k to 400k tokens. Blind review: 100k to 2
 
 - O1. Whether `detail::inverse_change`, used by one test only, should reduce too, or be removed in favor of the checked rows (section 1 item 5).
 - O2. Remaining spurious overflows of the reduced rows (section 1 item 2): the delta review's option (c), and an isometry check that reduces P G′ Pᵀ entry by entry in fractions.
+- O3. The blind review's N4: `a == b` on two changes gets the compilers' generic error, which does not name `same_rows`. A C++11 `bool operator==(const basis_change&) const = delete;` with a comment naming `same_rows` keeps `std::equality_comparable` false and puts the hint on a note line that both compilers quote. Not applied: it is a non-comment interface change after the review.
 
 ## 13. Outcome
 

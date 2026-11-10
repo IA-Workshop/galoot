@@ -116,3 +116,16 @@ Tasks from the examples only: (1) declare a change tag and map a multivector the
 - `author-rows-copy.toml`, `author-rows-copy-run.log`, `out/author-rows-copy-gcc-debug.tsv`: N2.
 - `equality_misuse_probe.cpp`, `deleted_equality_probe.cpp`, and their `-g++.txt` and `-clang++.txt` outputs: N4.
 - `checks-summary.txt`: the check results; the run rows are in `docs/agent/records/performance/runs.tsv`.
+
+## Resolution (by the author, Claude, Opus 5.5, implementer of plan 0039)
+
+| Finding | Resolution | Commit |
+| --- | --- | --- |
+| B1 | `basis_change_overflow_elimination_fail.cpp` formatted by clang-format; layout only, the input and expectations unchanged. `format-check` passes in the P9 matrix at the final tip. | `b2d5dd7` |
+| N1 | The comment of `detail::reduced` and plan 0039 section 5.3 now claim the scaling for each product and sum, the values whose range is checked; the plan gives the counterexample and why the quotients do not matter. Comment and record only. | `42b2c22` |
+| N2 | The declared killers dropped from `rows.toml` and `gaps.toml`; the mutation record says why the first run's rows list the problem. Verdicts unaffected. | `c7c0f1f` |
+| N3 | Mutant outputs, the gap run, the 0030 reruns, the seeds, the cost record, and the catalogue's places committed; the plan's outcome written with the P9 matrix. | `c7c0f1f`, `cb345ec`, and the outcome commit |
+| N4 | Not applied: a deleted `operator==` with a hint is a non-comment interface change, left to the owner (plan 0039 open item O3). By default the compilers' generic error stays, as decision 0233 records. | — |
+| N5 | Applied, comment only, since it sits beside the new text: "denominators[i] is the denominator of every entry of row i, as P_ij = rows[i][j] / denominators[i]." | `42b2c22` |
+
+The fixes after the review change comments, a test's layout, and records only, so no delta review was made (W5's exception for comments; the test's layout change is not core code).
