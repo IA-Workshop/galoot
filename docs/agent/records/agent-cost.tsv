@@ -214,3 +214,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0033	blind reviewer (reference kernels)	sonnet	73547	13	75	as relayed by the implementer from the harness report; recorded 2026-11-10
 2026-11-10	plan-0032	implementer cumulative to date (replaces 305111)	opus	353558	206		as relayed by the harness completion report; recorded 2026-11-10
 2026-11-10	plan-0034	blind reviewer (placement comments)	sonnet	99557	21	189	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0034	implementer	opus	159678	71	767	as relayed by the harness completion report; recorded 2026-11-10
