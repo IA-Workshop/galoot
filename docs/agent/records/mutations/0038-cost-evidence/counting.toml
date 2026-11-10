@@ -109,7 +109,9 @@ killers = ["core.rounding", "core.transform_rounding", "rga3.op_counts_checking"
 # The plan listed it as a gap mutant, and the first gap run, judged by
 # core.product, core.transform, and rga3 alone, declared it surviving.
 # The whole suite kills it through the tracking oracle's count of
-# roundings, so it is not a gap mutant; the counting tests kill it too.
+# roundings, and through part D's bit-exact smoke tests (the reference
+# kernels and the benchmarks' smoke tests), whose double results it moves
+# by rounding, so it is not a gap mutant; the counting tests kill it too.
 [[mutant]]
 name = "canceling_pair"
 selection = "suite"
