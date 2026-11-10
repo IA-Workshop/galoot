@@ -259,11 +259,13 @@ def fifo_deleted(tool, directory):
         os.unlink(pool.fifo)
         check("service ended after its FIFO was deleted",
               wait_for(lambda: not pool.active(), 10), True)
-        # Ended with an error, so that the unit shows as failed.
-        failed = subprocess.run(
-            ["systemctl", "--user", "is-failed", "--quiet",
-             f"{pool.unit}.service"], check=False).returncode == 0
-        check("unit failed after its FIFO was deleted", failed, True)
+        # Ended with an error, so that the unit shows as failed once its
+        # stop has finished (it is not active while it is deactivating).
+        check("unit failed after its FIFO was deleted",
+              wait_for(lambda: subprocess.run(
+                  ["systemctl", "--user", "is-failed", "--quiet",
+                   f"{pool.unit}.service"], check=False).returncode == 0, 10),
+              True)
         status = pool.run("status")
         check("status after the FIFO was deleted",
               (status.returncode, status.stdout), (1, "not running\n"))
