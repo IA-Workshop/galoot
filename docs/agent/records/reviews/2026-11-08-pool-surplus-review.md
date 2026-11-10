@@ -169,3 +169,16 @@ Approve with non-blocking findings.
 | 2026-11-08T17:48:25Z | a83b0665d686 | trace | - | review:trace-gate | 0.222 | 0 |
 
 These ran untimed in the scratch directory: the mutant and repeat runs of `jobpool_test.py` (55 to 100 s each), the four 240 s load runs (whose client runs were timed into per-pool scratch logs), and the `strace` probes.
+
+## Resolution (added 2026-11-10, with the cherry-pick to `develop`)
+
+Added after the review, by the coordinator's records-only change, from the repository only. The reviewer wrote nothing above this section after it. The same table is in plan 0028 ("Resolution of the review's findings").
+
+| Finding | Resolution |
+| --- | --- |
+| L1 | Open, no recorded resolution. `tools/jobpool:182` still has the gate, and no test watches an idle, full pool's path across polls |
+| L2 | Open, no recorded resolution. `tools/jobpool:181` still skips the idle check when the free count fails, and nothing exits on a missing FIFO |
+| L3 | Open, no recorded resolution. The invariant of plan 0028 was not extended to name an unreadable `/proc/<pid>/fd`, and the count still skips such an entry |
+| L4, I5, I6, I7 | No recorded resolution |
+
+`tools/jobpool` and `test/tools/jobpool_test.py` are unchanged since the fix `6bc4674`. The "Open for the owner" items above have no recorded ruling.
