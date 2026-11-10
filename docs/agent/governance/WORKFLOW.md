@@ -1,6 +1,6 @@
 # Galoot development workflow
 
-Status: ratified by the owner on 2026-11-01 (decision 0094). W5 amended on 2026-11-01, ratified by the owner: adopt the usability checklist (decision 0160). W5 and W7 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decisions 0183 and 0188). The `records/<name>` row of W7 was ratified on 2026-11-07 (decision 0196). W5's treatment of records-only merges was ratified on 2026-11-08 (decision 0215).
+Status: ratified by the owner on 2026-11-01 (decision 0094). W5 amended on 2026-11-01, ratified by the owner: adopt the usability checklist (decision 0160). W5 and W7 amended on 2026-11-07, ratified by the owner: proceed with recommendations (decisions 0183 and 0188). The `records/<name>` row of W7 was ratified on 2026-11-07 (decision 0196). W5's treatment of records-only merges was ratified on 2026-11-08 (decision 0215). W2 was widened on 2026-11-08 (decision 0216 item 8). W3's sentence on judging a gap's mutants was ratified on 2026-11-09 (decision 0219 item 10); this status line was brought up to date on 2026-11-10 (decision 0228).
 
 This document says how a change to Galoot is planned, made, checked, reviewed, and recorded. It adds detail to the [constitution](CONSTITUTION.md), cited here as C1 to C20, and [VVUQ.md](VVUQ.md) defines the evidence each step refers to.
 
