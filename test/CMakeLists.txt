@@ -863,8 +863,9 @@ galoot_add_compile_fail_test(NAME plan_map_not_metric_like
   MESSAGE "${not_metric_like}"
   FORBID "make_unary_map")
 
-# tools.measure_record: the fields of a cost row, and the reader's `--` for
-# cells that rows written before a column existed lack.
+# tools.measure_record: the fields of a cost row, the reader's `--` for cells
+# that rows written before a column existed lack, and the logs and the job
+# pool's FIFO that tools/timed asks for.
 add_test(NAME tools.measure_record
   COMMAND ${Python3_EXECUTABLE} -I
     ${CMAKE_CURRENT_SOURCE_DIR}/tools/measure_record_test.py

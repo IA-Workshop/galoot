@@ -1,5 +1,6 @@
-"""tools.measure_record: what the cost recorder writes in each row, and how
-its reader fills cells that older rows lack.
+"""tools.measure_record: what the cost recorder writes in each row, how its
+reader fills cells that older rows lack, and the logs and the job pool that
+tools/timed asks for.
 
 Usage: python3 -I measure_record_test.py <tools/measure> <scratch directory>
 
@@ -13,10 +14,13 @@ the real git, or fails when a case asks it to. Prints one line per failed
 check and exits 1 if there is any.
 """
 
+import contextlib
 import os
 import shutil
 import subprocess
 import sys
+import threading
+import time
 
 FAKE_PERF = """#!/bin/sh
 # Stands in for perf stat: runs the command after -- and writes the lines in
@@ -77,8 +81,11 @@ class Scratch:
         self.write_script(self.git, FAKE_GIT.format(git=real_git))
         for program in ("ninja", "ctest", "cmake"):
             os.symlink("/bin/true", os.path.join(self.top, "bin", program))
-        # tools/timed runs under bash and starts the recorder with python3.
+        # tools/timed runs under bash, waits with sleep, and starts the
+        # recorder with python3.
         os.symlink(shutil.which("bash"), os.path.join(self.top, "bin", "bash"))
+        os.symlink(shutil.which("sleep"),
+                   os.path.join(self.top, "bin", "sleep"))
         os.symlink(sys.executable, os.path.join(self.top, "bin", "python3"))
         git = [real_git, "-C", self.top, "-c", "user.name=test",
                "-c", "user.email=test@example.invalid"]
@@ -113,10 +120,12 @@ class Scratch:
                               cwd=cwd or self.top, env=env,
                               capture_output=True, text=True, check=False)
 
-    def timed_cmd(self, args, cwd=None, timed_log=None):
+    def timed_cmd(self, args, cwd=None, timed_log=None, makeflags=None):
         env = {"PATH": os.path.join(self.top, "bin"), "GIT_LOG": self.git_log}
         if timed_log is not None:
             env["TIMED_LOG"] = timed_log
+        if makeflags is not None:
+            env["MAKEFLAGS"] = makeflags
         return subprocess.run([self.timed, *args], cwd=cwd or self.top,
                               env=env, capture_output=True, text=True,
                               check=False)
@@ -449,11 +458,74 @@ def log_option(s):
           result.stderr.startswith("usage: tools/timed [--log <file>]"), True)
 
 
+def timed_pool(s):
+    """A build step needs the FIFO that MAKEFLAGS names. The pool moves its
+    FIFO aside to <fifo>.stopping for a moment while it counts its clients,
+    so tools/timed waits up to about 2 s while that file exists, and
+    refuses at once when neither exists."""
+    pools = os.path.join(s.top, "pools")
+    os.makedirs(pools, exist_ok=True)
+    fifo = os.path.join(pools, "pool.fifo")
+    aside = f"{fifo}.stopping"
+    makeflags = f"-j3 --jobserver-auth=fifo:{fifo}"
+    marker = os.path.join(s.top, "built.txt")
+
+    def build(selection):
+        with contextlib.suppress(FileNotFoundError):
+            os.unlink(marker)
+        start = time.monotonic()
+        result = s.timed_cmd(["build", "-", selection, "--", "/bin/sh", "-c",
+                              f"echo built > {marker}"], makeflags=makeflags)
+        return result, time.monotonic() - start, os.path.exists(marker)
+
+    check("pool: refused with no MAKEFLAGS",
+          s.timed_cmd(["build", "-", "none", "--", "/bin/true"]).returncode, 2)
+
+    os.mkfifo(fifo)
+    result, _, built = build("present")
+    check("pool: exit with the FIFO present", result.returncode, 0)
+    check("pool: built with the FIFO present", built, True)
+
+    os.unlink(fifo)
+    result, seconds, built = build("missing")
+    check("pool: exit with the FIFO missing", result.returncode, 2)
+    check("pool: refused with the FIFO missing",
+          result.stderr.startswith("timed: refused:"), True)
+    check("pool: not built with the FIFO missing", built, False)
+    check("pool: refused at once with nothing moved aside", seconds < 1.0,
+          True)
+
+    os.mkfifo(aside)
+    mover = threading.Timer(0.5, os.rename, (aside, fifo))
+    mover.start()
+    try:
+        result, seconds, built = build("moved-back")
+    finally:
+        mover.join()
+    check("pool: exit when the FIFO comes back", result.returncode, 0)
+    check("pool: built when the FIFO comes back", built, True)
+    check("pool: waited for the FIFO to come back", seconds >= 0.4, True)
+
+    os.rename(fifo, aside)
+    result, seconds, built = build("stays-aside")
+    check("pool: exit with the FIFO left aside", result.returncode, 2)
+    check("pool: refused with the FIFO left aside",
+          result.stderr.startswith("timed: refused:"), True)
+    check("pool: not built with the FIFO left aside", built, False)
+    check("pool: waited about 2 s with the FIFO left aside",
+          1.5 <= seconds < 5.0, True)
+    check("pool: rows of the runs that built",
+          [r["selection"] for r in s.rows(RUN_LOG) if r["selection"] in (
+              "present", "missing", "moved-back", "stays-aside")],
+          ["present", "moved-back"])
+
+
 def main(measure, directory):
     s = Scratch(measure, directory)
     for case in (perf_ran_but_named_no_event, command_cannot_start,
                  compile_options, counters_per_core_type, run_options, reader,
-                 record_with_another_header, git_attribution, log_option):
+                 record_with_another_header, git_attribution, log_option,
+                 timed_pool):
         try:
             case(s)
         except (OSError, KeyError, IndexError, ValueError) as error:
