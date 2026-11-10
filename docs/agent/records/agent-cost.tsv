@@ -230,3 +230,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0035	delta reviewer	sonnet	85400	21	130	as relayed by the implementer from the harness report; recorded 2026-11-10
 2026-11-10	plan-0035	second delta reviewer	sonnet	72262	16	97	as relayed by the implementer from the harness report; recorded 2026-11-10
 2026-11-10	plan-0037	blind reviewer	sonnet	115092	54	557	harness-measured, as relayed by the implementer; recorded 2026-11-10
+2026-11-10	plan-0037	implementer	opus	177877	95	1490	as relayed by the harness completion report; recorded 2026-11-10
