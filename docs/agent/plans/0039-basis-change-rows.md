@@ -5,13 +5,13 @@
 - Branches, from `develop` after this claim (W7):
   - `feature/basis-change-rows`, worktree `.claude/worktrees/basis-change-rows`: the unit. Only this branch merges into `develop`.
   - `feature/basis-change-rows--tests`, worktree `.claude/worktrees/basis-change-rows--tests`: the test commits, never merged; cherry-picked with `-x` into the unit (decision 0185).
-- Record locations, free on every branch at this commit: `records/mutations/0039-basis-change-rows/`, `records/performance/basis-change-rows-cost/`, decision 0233 (the implementer's choices, committed with this claim). Research note 0027 is plan 0038's, so the proof of section 5 lives here rather than in a note.
+- Record locations, free on every branch at this commit: `records/mutations/0039-basis-change-rows/`, `records/performance/basis-change-rows-cost/`, decision 0235 (the implementer's choices, committed with this claim). Research note 0027 is plan 0038's, so the proof of section 5 lives here rather than in a note.
 
 ## 1. Departures, ambiguities, and readings (C20)
 
 1. **"Genuinely overflowing rows."** Read as: rows whose reduced form still makes a check overflow. Two of the four overflow compile-fail tests use rows that the reduction makes small (`core.basis_change_overflow`, k e1 = m e'1 / m; `core.basis_change_overflow_elimination`, m e'_i over m in R(3, 0, 0)); after this unit both changes are accepted. Their inputs move to the new acceptance tests, and each test gets a reduced input that overflows in the same check (section 4, criterion 5). The change of the guarded result is stated here before the change, as W9 asks of a regression guard. The other two (`_inverse_check`, `_inverse_rows`) overflow in the same check after the reduction (section 5.4) and keep their inputs.
 2. **What remains spurious.** An overflow that the reduced rows still cause is reported as before, though the change's results may fit: the new input of `core.basis_change_overflow` is e1 = e'1 + e'2 / m, whose P and P⁻¹ are small, but whose integer check M G' Mᵀ = Δ G Δ forms m² k. The delta review's option (c) (skip the discarded left-block entries of the elimination) and an isometry check in reduced fractions would remove more; neither is in scope. Open item O2.
-3. **The name.** The brief offers `same_rows` and asks for the best name with the hci view. Chosen: `same_rows(a, b)`, a free function (decision 0233 item 1 weighs `same_rows_and_denominators`, `same_entries`, and a member). No `==` remains on `basis_change`; a test pins its absence.
+3. **The name.** The brief offers `same_rows` and asks for the best name with the hci view. Chosen: `same_rows(a, b)`, a free function (decision 0235 item 1 weighs `same_rows_and_denominators`, `same_entries`, and a member). No `==` remains on `basis_change`; a test pins its absence.
 4. **N2 has no killable mutant.** `.fits = fits` at the elimination's two later returns states the same value as `true` there, because the loop has returned on `!fits` before either is reached. Its mutant (`true` restored) is declared equivalent with that reason. N2 is a change of form for the reader and for a later edit that drops the early exit; no test can tell it apart, and none is added.
 5. **`detail::inverse_change`** (used by `basis_change_identities_test.cpp` only) is left as it is: it inverts the rows as written, and its comment says that every intermediate must fit. The tag checks, which every public path uses, reduce. Not a departure from the brief, which names the checks.
 6. **The misuse catalogue record** names places in `basis_change.hpp` by line; the header's lines move, so its rows of that header are regenerated at the end (a record step, as plan 0030 did).
@@ -80,7 +80,7 @@ The replica `records/mutations/0039-basis-change-rows/witnesses.py` (a transcrip
 
 ## 6. Approach and order
 
-0. Claim: this plan and decision 0233 on `develop`.
+0. Claim: this plan and decision 0235 on `develop`.
 1. Tests branch, from the unit's branch:
    - T1: the new inputs of `core.basis_change_overflow` and `_overflow_elimination` (criterion 5). Passes before and after the change: the inputs overflow at the same stage either way.
    - T2: `same_rows` in place of `==` and `!=` in the tests, the new `static_assert`s of criterion 1. Labelled failing: `core_basis_change_test` does not build until the header has `same_rows`.

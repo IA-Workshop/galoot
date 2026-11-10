@@ -245,3 +245,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-a	blind-reviewer (token correction for earlier row)	sonnet	64053	8	71	corrects the empty-token row above
 2026-11-10	wu17-part-d	blind-reviewer	opus	201346	67	812	review 4e6a342
 2026-11-10	wu17-part-d	author review-fix pass	opus	34123	17	287	fixes for review 4e1804e; 13 scratch run rows lost (departure recorded)
+2026-11-10	basis-change-rows	implementer	opus	338565	141	5202	plan 0039 unit, merged 7b85b33 (token figure is the agent total)

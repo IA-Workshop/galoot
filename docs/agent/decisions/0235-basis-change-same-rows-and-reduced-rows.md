@@ -1,4 +1,4 @@
-# 0233 `basis_change`: `same_rows` in place of `==`, and rows reduced before the checks
+# 0235 `basis_change`: `same_rows` in place of `==`, and rows reduced before the checks
 
 - Status: recorded. The owner ruled the rename and the reduction (decision 0225 items 3 and 4); the forms below are the implementer's choices, open to the review and to the owner (C18).
 - Date: 2026-11-10
