@@ -14,6 +14,7 @@
 // at infinity as e'(d+2) + e'(d+1) in R(d+1, 1, 0), where e'(d+1) squares to
 // +1 and e'(d+2) to -1; its determinant is -1.
 #include <array>
+#include <concepts>
 #include <cstddef>
 #include <type_traits>
 
@@ -108,13 +109,13 @@ using random_1 = galoot_test::basis_changes::to_diagonal_tag<core::from_gram({
     {0, 1, -3},
     {-3, -3, -2},
 })>;
-static_assert(random_1::value == core::from_rows(
-                                     {
-                                         {1, 0, 0},
-                                         {0, 1, 0},
-                                         {-3, -6, 1},
-                                     },
-                                     {1, 1, 2}));
+static_assert(core::same_rows(random_1::value, core::from_rows(
+                                                   {
+                                                       {1, 0, 0},
+                                                       {0, 1, 0},
+                                                       {-3, -6, 1},
+                                                   },
+                                                   {1, 1, 2})));
 
 // Types that are not change tags: an algebra tag, a tag without a target, a
 // tag whose value is a metric, and a tag whose value cannot be read in a
@@ -157,8 +158,8 @@ struct takes_a_change {
 };
 static_assert(std::is_trivially_copyable_v<core::basis_change<5>>);
 static_assert(core::basis_change<5>::generator_count == 5);
-static_assert(takes_a_change<witt1_to_r110::value>::value ==
-              witt1_to_r110::value);
+static_assert(core::same_rows(takes_a_change<witt1_to_r110::value>::value,
+                              witt1_to_r110::value));
 constexpr std::array<std::array<core::entry_type, 2>, 2> witt1_rows{
     {
         {1, 1},
@@ -168,27 +169,40 @@ constexpr std::array<std::array<core::entry_type, 2>, 2> witt1_rows{
 static_assert(witt1_to_r110::value.rows == witt1_rows);
 static_assert(witt1_to_r110::value.denominators ==
               std::array<core::entry_type, 2>{2, 1});
-static_assert(core::from_rows({{2, 2}, {1, -1}}, {4, 1}) !=
-              witt1_to_r110::value);
+
+// Guarantees of same_rows: true exactly when the rows and the denominators
+// are equal entry by entry. Equal rows over other denominators, and other
+// rows over equal denominators, are not the same rows; nor is a row scaled
+// with its denominator, though the matrix is the same. A change has no ==,
+// which would read as a comparison of matrices.
+static_assert(core::same_rows(witt1_to_r110::value, witt1_to_r110::value));
+static_assert(!core::same_rows(core::from_rows({{1, 1}, {1, -1}}, {1, 1}),
+                               witt1_to_r110::value));
+static_assert(!core::same_rows(core::from_rows({{1, -1}, {1, 1}}, {2, 1}),
+                               witt1_to_r110::value));
+static_assert(!core::same_rows(core::from_rows({{2, 2}, {1, -1}}, {4, 1}),
+                               witt1_to_r110::value));
+static_assert(!std::equality_comparable<core::basis_change<2>>);
 
 // Guarantees of conformal_change<D>(): the rows of 1.4's change, every
 // denominator 1 but the origin's, which is 2.
-static_assert(core::conformal_change<1>() == core::from_rows(
-                                                 {
-                                                     {1, 0, 0},
-                                                     {0, -1, 1},
-                                                     {0, 1, 1},
-                                                 },
-                                                 {1, 2, 1}));
-static_assert(core::conformal_change<3>() == core::from_rows(
-                                                 {
-                                                     {1, 0, 0, 0, 0},
-                                                     {0, 1, 0, 0, 0},
-                                                     {0, 0, 1, 0, 0},
-                                                     {0, 0, 0, -1, 1},
-                                                     {0, 0, 0, 1, 1},
-                                                 },
-                                                 {1, 1, 1, 2, 1}));
+static_assert(core::same_rows(core::conformal_change<1>(), core::from_rows(
+                                                               {
+                                                                   {1, 0, 0},
+                                                                   {0, -1, 1},
+                                                                   {0, 1, 1},
+                                                               },
+                                                               {1, 2, 1})));
+static_assert(core::same_rows(core::conformal_change<3>(),
+                              core::from_rows(
+                                  {
+                                      {1, 0, 0, 0, 0},
+                                      {0, 1, 0, 0, 0},
+                                      {0, 0, 1, 0, 0},
+                                      {0, 0, 0, -1, 1},
+                                      {0, 0, 0, 1, 1},
+                                  },
+                                  {1, 1, 1, 2, 1})));
 
 // The coefficient of x on the canonical blade of this mask: the stored
 // coefficient times the orientation of the blade in the layout, or zero when
