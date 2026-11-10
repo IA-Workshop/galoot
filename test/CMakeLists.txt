@@ -23,6 +23,9 @@ set_target_properties(galoot_doctest_main PROPERTIES SKIP_LINTING ON)
 set(expect_output
   ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/expect_output.cmake --)
 
+# The benchmarks, their reference kernels, and the tests of both.
+add_subdirectory(bench)
+
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
 # The mode the configuration declares, passed to the test directly rather
