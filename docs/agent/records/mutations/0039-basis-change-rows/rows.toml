@@ -1,0 +1,77 @@
+# Plan 0039 section 8: a mutant for each new test of the unit, run at the
+# tip on both presets. Each counts when the test it was written for is among
+# those it fails; for a static_assert, the failed object is the test's
+# source.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+# The checks and the generation read the rows as written: the scaled
+# changes of "rows with a large common factor" overflow again.
+[[mutant]]
+name = "rows_not_reduced"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const basis_change<N> rows = reduced(change);''', replacement = '''  const basis_change<N> rows = change;''' }]
+expect = "killed"
+
+# The entries are divided and the denominator is not, so P changes: the
+# reduction's hand values and the scaled changes' isometry fail.
+[[mutant]]
+name = "reduction_keeps_denominator"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      out.denominators[i] =
+          static_cast<entry_type>(out.denominators[i] / common);''', replacement = '''      static_cast<void>(out.denominators[i]);''' }]
+expect = "killed"
+
+# The divisor taken from the entries alone: the row {2, 4, 0} over 3 of the
+# reduction's hand values becomes {1, 2, 0} over 1.
+[[mutant]]
+name = "reduction_gcd_without_denominator"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    coefficient_type common = change.denominators[i];''', replacement = '''    coefficient_type common = 0;''' }]
+expect = "killed"
+
+# The checks read the reduced rows, the terms the rows as written: the
+# image of e123 under m e'_i over m is m^3 over m^3.
+[[mutant]]
+name = "forward_rows_as_written"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  out.forward = widened(rows);''', replacement = '''  out.forward = widened(change);''' }]
+expect = "killed"
+
+# same_rows compares the denominators only: other rows over equal
+# denominators compare as the same rows.
+[[mutant]]
+name = "same_rows_ignores_rows"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  return a.rows == b.rows && a.denominators == b.denominators;''', replacement = '''  return a.denominators == b.denominators;''' }]
+expect = "killed"
+
+# == defaulted again: basis_change is std::equality_comparable.
+[[mutant]]
+name = "equality_restored"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  static constexpr std::size_t generator_count = N;
+};''', replacement = '''  static constexpr std::size_t generator_count = N;
+
+  [[nodiscard]] constexpr bool operator==(const basis_change&) const = default;
+};''' }]
+expect = "killed"
+
+# true at the elimination's two later returns, as before the unit: the loop
+# returns on !fits before either, so fits is true at both.
+[[mutant]]
+name = "elimination_fits_hard_coded"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''.scaled_inverse = {}, .fits = fits}''', replacement = '''.scaled_inverse = {}, .fits = true}''', count = 2 }]
+expect = "equivalent"
+reason = "fits is true at both returns: the step before returned on !fits"

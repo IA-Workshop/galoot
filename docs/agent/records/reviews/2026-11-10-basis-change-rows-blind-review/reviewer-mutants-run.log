@@ -1,0 +1,28 @@
+gcc-debug	elimination_as_written	killed
+gcc-debug	isometry_as_written	killed
+gcc-debug	inverse_check_as_written	killed
+gcc-debug	inverse_rows_as_written	killed
+gcc-debug	last_row_kept	killed
+gcc-debug	divisor_two_kept	killed
+gcc-debug	reduced_before_denominator_check	equivalent
+clang-debug	elimination_as_written	killed
+clang-debug	isometry_as_written	killed
+clang-debug	inverse_check_as_written	killed
+clang-debug	inverse_rows_as_written	killed
+clang-debug	last_row_kept	killed
+clang-debug	divisor_two_kept	killed
+clang-debug	reduced_before_denominator_check	equivalent
+gcc-debug: 6 killed, 1 equivalent, 0 survived, 0 unjudged
+clang-debug: 6 killed, 1 equivalent, 0 survived, 0 unjudged
+problem: gcc-debug elimination_as_written: declared killer core.basis_change did not kill it
+problem: gcc-debug isometry_as_written: declared killer core.basis_change did not kill it
+problem: gcc-debug inverse_check_as_written: declared killer core.basis_change did not kill it
+problem: gcc-debug inverse_rows_as_written: declared killer core.basis_change did not kill it
+problem: gcc-debug last_row_kept: declared killer core.basis_change did not kill it
+problem: gcc-debug divisor_two_kept: declared killer core.basis_change did not kill it
+problem: clang-debug elimination_as_written: declared killer core.basis_change did not kill it
+problem: clang-debug isometry_as_written: declared killer core.basis_change did not kill it
+problem: clang-debug inverse_check_as_written: declared killer core.basis_change did not kill it
+problem: clang-debug inverse_rows_as_written: declared killer core.basis_change did not kill it
+problem: clang-debug last_row_kept: declared killer core.basis_change did not kill it
+problem: clang-debug divisor_two_kept: declared killer core.basis_change did not kill it

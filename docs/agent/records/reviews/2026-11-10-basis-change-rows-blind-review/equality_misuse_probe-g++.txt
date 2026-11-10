@@ -1,0 +1,7 @@
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/equality_misuse_probe.cpp:9:17: error: no match for ‘operator==’ (operand types are ‘const galoot::core::basis_change<2>’ and ‘const galoot::core::basis_change<2>’)
+    9 | static_assert(a == b);
+      |               ~ ^~ ~
+      |               |    |
+      |               |    basis_change<[...]>
+      |               basis_change<[...]>
+timed: probe equality_misuse_probe took 0.094 s (exit 1)

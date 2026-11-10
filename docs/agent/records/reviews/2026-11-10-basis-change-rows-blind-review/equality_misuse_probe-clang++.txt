@@ -1,0 +1,5 @@
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/equality_misuse_probe.cpp:9:17: error: invalid operands to binary expression ('const basis_change<2UL>' and 'const basis_change<2UL>')
+    9 | static_assert(a == b);
+      |               ~ ^  ~
+1 error generated.
+timed: probe equality_misuse_probe took 0.121 s (exit 1)

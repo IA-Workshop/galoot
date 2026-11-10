@@ -151,7 +151,9 @@ namespace galoot::core {
 /// its `source` and `target` algebra tags, is a change that change_basis and
 /// change_basis_back apply; basis_change_like says what the tag requires and
 /// what is checked. The function that applies a change is change_basis, a
-/// verb; basis_change is the value that a tag holds.
+/// verb; basis_change is the value that a tag holds. same_rows compares two
+/// values as written; a basis_change has no ==, because two values for one
+/// matrix can differ.
 ///
 /// Requires: N <= mask_bits, checked at compile time with a message that
 /// names it. The values are checked only when a tag that holds them is first
@@ -167,18 +169,23 @@ struct basis_change {
   /// image of e_(i+1).
   std::array<std::array<entry_type, N>, N> rows;
 
-  /// denominators[i] divides every entry of row i. Each must be positive.
+  /// denominators[i] is the denominator of every entry of row i, as
+  /// P_ij = rows[i][j] / denominators[i]. Each must be positive.
   std::array<entry_type, N> denominators;
 
   /// The number of generators of the source and of the target, n.
   static constexpr std::size_t generator_count = N;
-
-  /// Two changes are equal when their rows and their denominators are equal
-  /// entry by entry: == compares the stored rows, not the matrices they stand
-  /// for, so a row scaled together with its denominator gives an unequal
-  /// value for the same matrix P.
-  [[nodiscard]] constexpr bool operator==(const basis_change&) const = default;
 };
+
+/// Whether a and b hold the same rows over the same denominators, entry by
+/// entry, as from_rows given the same arguments makes them. It compares the
+/// values as written, not the matrices they stand for: a row scaled together
+/// with its denominator is the same matrix P, and same_rows says false.
+template <std::size_t N>
+[[nodiscard]] constexpr bool same_rows(const basis_change<N>& a,
+                                       const basis_change<N>& b) noexcept {
+  return a.rows == b.rows && a.denominators == b.denominators;
+}
 
 /// The change whose row i is rows[i] over denominators[i]:
 /// e_(i+1) = (rows[i][0] e'_1 + ... + rows[i][N-1] e'_N) / denominators[i].
@@ -186,7 +193,10 @@ struct basis_change {
 /// e2 = (e'1 - e'2) / 2: from_rows({{1, 1}, {1, -1}}, {1, 2}). The parameters
 /// are C arrays so that N is deduced from the braces. A row need not be
 /// reduced: {{2, 2}, ...} over {2, ...} is the same matrix as {{1, 1}, ...}
-/// over {1, ...}, and the library reduces what it generates.
+/// over {1, ...}. The checks of a tag and the terms it generates divide each
+/// row and its denominator by their greatest common divisor first, so a
+/// common factor costs no range; the value keeps the rows as given, and
+/// same_rows tells the two apart.
 ///
 /// Requires: N rows of N entries and N denominators, or the call does not
 /// match; N <= mask_bits, checked as for basis_change. Nothing else is
@@ -345,6 +355,36 @@ denominators_positive(const basis_change<N>& change) noexcept {
   return true;
 }
 
+// The change with each row and its denominator divided by their greatest
+// common divisor g_i: the same matrix, since rows[i][j] / denominators[i] is
+// unchanged, with a positive denominator wherever the denominator was
+// positive. Each product and sum that the checks and the term generation
+// form from the reduced rows, the values whose range they check, is the one
+// they form from the rows as written divided by a positive integer, because
+// each is built from minors of the rows and from the denominators, and both
+// scale with the g_i. So the reduction can only bring a value into range,
+// and what is generated, which depends on the matrix alone, is unchanged. A
+// row whose divisor is 0 or 1 is kept as it is.
+template <std::size_t N>
+[[nodiscard]] constexpr basis_change<N>
+reduced(const basis_change<N>& change) noexcept {
+  basis_change<N> out = change;
+  for (std::size_t i = 0; i < N; ++i) {
+    coefficient_type common = change.denominators[i];
+    for (const entry_type x : change.rows[i]) {
+      common = change_gcd(common, x);
+    }
+    if (common > 1) {
+      for (entry_type& x : out.rows[i]) {
+        x = static_cast<entry_type>(x / common);
+      }
+      out.denominators[i] =
+          static_cast<entry_type>(out.denominators[i] / common);
+    }
+  }
+  return out;
+}
+
 // The end of a fraction-free Gauss-Jordan elimination of [M | I] for the
 // integer rows M (Bareiss's method, in its Gauss-Jordan form): [p I | p M^-1],
 // with p = det M or -det M by the row swaps made, or p = 0 when M is
@@ -403,7 +443,7 @@ eliminate(const basis_change<N>& change) noexcept {
       ++row;
     }
     if (row == N) {
-      return {.pivot = 0, .scaled_inverse = {}, .fits = true};
+      return {.pivot = 0, .scaled_inverse = {}, .fits = fits};
     }
     if (row != k) {
       std::swap(a[row], a[k]);
@@ -419,7 +459,7 @@ eliminate(const basis_change<N>& change) noexcept {
     previous = a[k][k];
   }
 
-  elimination<N> out{.pivot = previous, .scaled_inverse = {}, .fits = true};
+  elimination<N> out{.pivot = previous, .scaled_inverse = {}, .fits = fits};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       out.scaled_inverse[i][j] = a[i][N + j];
@@ -573,12 +613,14 @@ inline constexpr bool is_basis_change_v<basis_change<N>> = true;
 /// each have N generators; every denominator is positive; the rows are
 /// linearly independent, so the change has an inverse; and P G' P^T = G for
 /// the Gram matrices G of the source and G' of the target, so that the
-/// change keeps every inner product. The last is computed exactly in
-/// integers, as M G' M^T = Δ G Δ for the integer rows M and the diagonal Δ of
-/// the denominators. A value of these checks or of the inverse that does not
-/// fit coefficient_type is reported with a message of its own, and one of
-/// the generated terms fails the constant evaluation with that message, so
-/// neither can pass silently.
+/// change keeps every inner product. Once the denominators are checked, each
+/// row and its denominator are divided by their greatest common divisor,
+/// which leaves P as it is, and the checks after it read the reduced rows.
+/// The last is computed exactly in integers, as M G' M^T = Δ G Δ for the
+/// integer rows M and the diagonal Δ of the denominators. A value of these
+/// checks or of the inverse that does not fit coefficient_type is reported
+/// with a message of its own, and one of the generated terms fails the
+/// constant evaluation with that message, so neither can pass silently.
 template <class C>
 concept basis_change_like =
     metric_like<typename C::source> && metric_like<typename C::target> &&
@@ -621,36 +663,41 @@ struct checked_change_data {
 // inner products because in a degenerate form a singular P can keep them,
 // and the fault is then that it has no inverse. An overflow in any of them
 // is a fault of its own, since a check that overflowed decides nothing.
+// Once the denominators are positive, every check runs on the reduced rows,
+// which are also the forward rows, so that a common factor of a row and its
+// denominator, as in m e'_i over m, overflows nothing.
 template <std::size_t N>
 [[nodiscard]] constexpr checked_change_data<N>
 check_change(const basis_change<N>& change, const metric<N>& source,
              const metric<N>& target) noexcept {
   checked_change_data<N> out{
       .fault = ChangeFault::none,
-      .forward = widened(change),
+      .forward = {},
       .inverse = {},
   };
   if (!denominators_positive(change)) {
     out.fault = ChangeFault::denominator;
     return out;
   }
-  const elimination<N> e = eliminate(change);
+  const basis_change<N> rows = reduced(change);
+  out.forward = widened(rows);
+  const elimination<N> e = eliminate(rows);
   if (!e.fits || e.pivot == 0) {
     out.fault = e.fits ? ChangeFault::dependent : ChangeFault::overflow;
     return out;
   }
-  const identity_check isometry = keeps_inner_products(change, source, target);
+  const identity_check isometry = keeps_inner_products(rows, source, target);
   if (!isometry.holds) {
     out.fault = isometry.fits ? ChangeFault::isometry : ChangeFault::overflow;
     return out;
   }
-  const identity_check inverse_holds = inverts(change, e);
+  const identity_check inverse_holds = inverts(rows, e);
   if (!inverse_holds.holds) {
     out.fault =
         inverse_holds.fits ? ChangeFault::inverse : ChangeFault::overflow;
     return out;
   }
-  const noted_rows<N> inverse = inverse_rows(change, e);
+  const noted_rows<N> inverse = inverse_rows(rows, e);
   if (!inverse.fits) {
     out.fault = ChangeFault::overflow;
     return out;

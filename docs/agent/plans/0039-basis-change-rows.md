@@ -1,6 +1,6 @@
 # 0039 basis_change: `same_rows` for `==`, rows reduced before the checks, and `.fits = fits`
 
-- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`. Merged by its author after the blind review and any delta review (W5), as the brief asks.
+- Status: done 2026-11-10; merged into `develop` by its author after the blind review, as the brief asks. Claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`.
 - Source of scope: decision 0225 items 3 and 4 (the rename of equality on `basis_change` before release; each row reduced by its gcd before the checks, with N2 of the WU12 delta review); decision 0223 item 4 (what `==` compares, documented until then); the WU12 blind review's N3 (`records/reviews/2026-11-09-wu12-blind-review.md`) and the WU12 delta review's N2 and N3 (`records/reviews/2026-11-09-wu12-delta-review.md`); plan 0030's open items; research note 0026 (what a change preserves; nothing here changes it).
 - Branches, from `develop` after this claim (W7):
   - `feature/basis-change-rows`, worktree `.claude/worktrees/basis-change-rows`: the unit. Only this branch merges into `develop`.
@@ -64,13 +64,13 @@ The checks reduce only after the denominator check has passed, so every d_i > 0.
 
 ### 5.3 Every value the checks form shrinks or stays
 
-Claim: each value that a check forms from M′ and Δ′, computed exactly, is the value it forms at the same place from M and Δ divided by a positive integer. So no value grows, and a check that fits on the rows as written fits on the reduced rows.
+Claim: each product and sum that a check or the term generation forms from M′ and Δ′, computed exactly, is the value it forms at the same place from M and Δ divided by a positive integer. These are the values whose range the noting arithmetic and `change_multiply` check. So no checked value grows, and a check that fits on the rows as written fits on the reduced rows. (Corrected after the blind review, its N1: the first wording said every value, but two quotients of `typed_change`, `q / gcd(q, own)` and `q_B / own`, can be larger reduced, as for rows (3, 3) / 6 and (2, −2) / 6. A quotient is not range-checked, it is at most its dividend, and the products that use it scale as the claim says.)
 
 - **The elimination.** Bareiss's method keeps, after step k, entries that are minors of [M | I] on the rows {0, …, k, i} and the columns {0, …, k, j}, and forms each from a difference of two products of such minors, divided by the previous pivot. A minor is linear in each of its rows. In [M | I], row i is (g_i M′_i | e_i); a column of I meets only one row, so a minor that uses the identity's column for row l either is 0 or expands along that column to a minor of M without row l. So each minor of [M | I] is the matching minor of [M′ | I] times the product of g_l over the rows of M it uses: a positive integer t. In the difference a_kk a_ij − a_ik a_kj both products use the same multiset of rows of M (rows 0 to k − 1 twice, k and i once each, less the identity's row of column j in both), so both carry the same factor and so does their difference; where the identity's row is k or i, one of the two products is 0 and the other carries the factor alone. The quotient by the previous pivot is again a minor of [M | I], so its factor is given by the first sentence. Zero minors stay zero, so the pivot search finds the same rows and makes the same swaps. The last pivot is p′ = p / det Γ, with the sign of p.
 - **The inner products.** The check compares M G′ Mᵀ with Δ G Δ entry by entry. (M G′)_il = g_i (M′ G′)_il; each partial sum of (M G′ Mᵀ)_ij is g_i g_j times its reduced counterpart; d_i G_ij = g_i d′_i G_ij and d_i G_ij d_j = g_i g_j d′_i G_ij d′_j. Since Γ is invertible, M G′ Mᵀ = Δ G Δ holds exactly when M′ G′ M′ᵀ = Δ′ G Δ′ does, and both say P G′ Pᵀ = G.
 - **The check of the inverse.** The right block is p M⁻¹, which up to the sign of the swaps is the adjugate of M. Its entry (k, j) is a cofactor of M without row j, so it is the reduced one times det Γ / g_j. A term of (M · p M⁻¹)_ij is then r_ik times that entry, the reduced term times g_i det Γ / g_j, and g_j divides det Γ. The identity M (p M⁻¹) = p I holds for both or neither.
 - **The inverse's rows.** Row i of P⁻¹ = M⁻¹ Δ is formed as (p M⁻¹)_ij d_j over p. As written that is the reduced value times (det Γ / g_j) g_j = det Γ. Both are then divided by the gcd of the row and |p|, which gives row i of P⁻¹ in lowest terms with a positive denominator: the same output from both.
-- **The term generation.** The image of e_A is formed by wedging the rows of A one at a time; each partial coefficient is a minor of M on the rows used so far, so it carries the product of their g_l. The denominator of the image is the product of the d_l of A, which carries the same product. The least common denominator q_B of the terms of a result blade divides the one formed as written, because each reduced denominator divides the one as written. So every intermediate is the written one divided by a positive integer, as before.
+- **The term generation.** The image of e_A is formed by wedging the rows of A one at a time; each partial coefficient is a minor of M on the rows used so far, so it carries the product of their g_l. The denominator of the image is the product of the d_l of A, which carries the same product. The running least common multiple of the terms' denominators, formed as the product `(q / gcd(q, own)) · own`, divides the one formed as written, because each reduced denominator divides the one as written; and each coefficient brought over q_B, `c · (q_B / own)`, is c · q_B / own, the written one times q′_B / q_B. So every product is the written one divided by a positive integer, as before.
 
 ### 5.4 The results do not depend on the reduction
 
@@ -144,7 +144,37 @@ Planner and implementer, Opus high: 250k to 400k tokens. Blind review: 100k to 2
 
 - O1. Whether `detail::inverse_change`, used by one test only, should reduce too, or be removed in favor of the checked rows (section 1 item 5).
 - O2. Remaining spurious overflows of the reduced rows (section 1 item 2): the delta review's option (c), and an isometry check that reduces P G′ Pᵀ entry by entry in fractions.
+- O3. The blind review's N4: `a == b` on two changes gets the compilers' generic error, which does not name `same_rows`. A C++11 `bool operator==(const basis_change&) const = delete;` with a comment naming `same_rows` keeps `std::equality_comparable` false and puts the hint on a note line that both compilers quote. Not applied: it is a non-comment interface change after the review.
 
 ## 13. Outcome
 
-Not yet.
+Done, 2026-11-10. The blind review (`records/reviews/2026-11-10-basis-change-rows-blind-review.md`, cherry-picked with `-x` from `1f2dbdd`) blocked on one layout failure (B1) and approved otherwise; its resolutions are in the record. The fixes after it change comments, one test's layout, and records only, so no delta review was made.
+
+| Commit | What | Kind (W9) |
+| --- | --- | --- |
+| `be3f045` (from `3a6734b`) | the new inputs of `core.basis_change_overflow` and `_overflow_elimination` | test, passing before and after |
+| `70bbcf3` (from `92a0046`) | `same_rows` in the tests, and its `static_assert`s | test, failing when committed, as its message says |
+| `dd67ead` (from `f4d6bf5`) | the reduction's hand values; the three scaled changes against their reduced forms | test, failing when committed, as its message says |
+| `38925ad` | the header: `same_rows`, the reduction in `check_change`, `.fits = fits` | core |
+| `fa86535`, `c7c0f1f` | mutation specs and runs | record |
+| `0d4088d` | the blind review record | record |
+| `b2d5dd7` | B1: the elimination overflow test formatted | test layout |
+| `42b2c22` | N1 and N5: comments of `detail::reduced` and of `denominators`, and section 5.3 | comments, record |
+| `cb345ec`, `d5465b1` | seeds, build cost, the catalogue's places, the review's resolutions | record |
+
+Results against section 4:
+
+- **Criteria 1 to 5.** The `static_assert`s and the test case "rows with a large common factor are the change without it" pass on every preset of the matrix. Every former use of `==` on a change compiles with `same_rows`; the README compares no changes and is unchanged. The replica (`records/mutations/0039-basis-change-rows/witnesses-out.txt`) and the reviewer's own transcription (`scaling_probe.py`, 9,000 random changes, about a million products and sums compared exactly) agree on every stage verdict and on the scaling of section 5.3, corrected for the quotients (N1).
+- **Criteria 6 and 7.** `records/mutations/0039-basis-change-rows/README.md`: the six mutants written for the new tests are killed on both presets, each by the test written for it; `elimination_fits_hard_coded` is equivalent as declared; the gap mutant survives at the branch point and dies at the tip on both presets. Of the 13 mutants of plan 0030 run again, 12 are killed and `elimination_overflow_not_stopping` is now equivalent, as the N2 change makes it.
+- **Criterion 8.** 100 runs, all passing (medians 0.031 s and 0.191 s).
+- **Build cost (definition of done item 6).** `records/performance/basis-change-rows-cost/README.md`: retired instructions within ±0.09% on both compilers, about one range of the repeats; measured pinned to CPU 4 under the timing lock on a loaded machine (load average 4).
+- **Criterion 9.** The P9 matrix at `d5465b1`, from empty build trees (the worktree's `build/` removed first), through `tools/timed` and the shared pool, each row named `gate:<selection>`, all passing: gcc-debug 544 tests (105.2 s), gcc-release 544 (110.0 s), gcc-asan 536 (234.4 s), clang-debug 544 (96.6 s), clang-release 544 (115.7 s), clang-asan 544 (214.3 s), lint 544 (267.0 s, no diagnostic), clang-measure 536 (119.4 s); `format-check` (1.7 s), the trace gate (0.3 s; items 6.1 to 6.4 without a test, as on `develop`), and `tools/runlog check` (2.6 s).
+
+Departures and notes beyond section 1:
+
+- The first mutation run declared a CTest test as each kill's killer, which `tools/mutate` cannot match for a kill at compile time; the rows list that problem and the verdicts stand (mutation record).
+- The cost campaign ran while other workstreams loaded the machine; the instruction counts are the comparison, the wall times are only recorded.
+- Two configure rows of the branch-point worktree went to its own run log before the campaign log was named; they are copied into `branch-point/runs.tsv`.
+- After the matrix, `develop` gained records only, merged in before the merge into `develop`, with `tools/runlog check` on the result.
+
+Open items: O1 to O3 of section 12.

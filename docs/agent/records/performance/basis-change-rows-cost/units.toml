@@ -1,0 +1,25 @@
+# Plan 0039 criterion 6 (W10): the build cost of sources that check and
+# generate changes, before (3ddc371, the branch point) and after the unit.
+# The sources are the same in both trees, so each difference is the header's.
+compilers = ["gcc", "clang"]
+
+# conformal_change<D> for D = 1 to 4, every blade both ways.
+[[unit]]
+name = "basis_change/conformal"
+source = "test/core/basis_change_conformal_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# Random forms of three generators and their diagonalizing changes.
+[[unit]]
+name = "basis_change/random"
+source = "test/core/basis_change_random_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# The Witt forms and their changes to R(m, m, 0).
+[[unit]]
+name = "basis_change/witt"
+source = "test/core/basis_change_witt_test.cpp"
+trees = ["before", "after"]
+kind = "debug"

@@ -1,0 +1,70 @@
+seed 1: 3000 random cases, 338877 intermediate values compared, claims (a) and (b) held on all
+old overflow (k e1, m e'1 / m):
+  as written: overflow (inner products)
+  reduced:    none  (rows [[1]] over [1])
+old overflow_elimination (R(3,0,0), m e'_i / m):
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 0, 0], [0, 1, 0], [0, 0, 1]] over [1, 1, 1])
+probe 2I to R(2,0,0), m(1,1), m(-1,1) / m:
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 1], [-1, 1]] over [1, 1])
+new overflow (diag(k,0), e1 = e'1 + e'2/m):
+  as written: overflow (inner products)
+  reduced:    overflow (inner products)  (rows [[2147483647, 1], [0, 1]] over [2147483647, 1])
+new overflow_elimination (R(0,0,3), m e'_i):
+  as written: overflow (elimination)
+  reduced:    overflow (elimination)  (rows [[2147483647, 0, 0], [0, 2147483647, 0], [0, 0, 2147483647]] over [1, 1, 1])
+overflow_inverse_check:
+  as written: overflow (inverse check)
+  reduced:    overflow (inverse check)  (rows [[65536, 0, 0], [1, -2, 0], [0, 536870912, 524288]] over [2124569019, 2, 1])
+overflow_inverse_rows:
+  as written: overflow (inverse rows)
+  reduced:    overflow (inverse rows)  (rows [[0, 1048576, 0], [0, -16777216, 46341], [2, -378, 0]] over [1, 1073741824, 2147483647])
+the scaling claims also held on each named input
+seed 2: 3000 random cases, 325965 intermediate values compared, claims (a) and (b) held on all
+old overflow (k e1, m e'1 / m):
+  as written: overflow (inner products)
+  reduced:    none  (rows [[1]] over [1])
+old overflow_elimination (R(3,0,0), m e'_i / m):
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 0, 0], [0, 1, 0], [0, 0, 1]] over [1, 1, 1])
+probe 2I to R(2,0,0), m(1,1), m(-1,1) / m:
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 1], [-1, 1]] over [1, 1])
+new overflow (diag(k,0), e1 = e'1 + e'2/m):
+  as written: overflow (inner products)
+  reduced:    overflow (inner products)  (rows [[2147483647, 1], [0, 1]] over [2147483647, 1])
+new overflow_elimination (R(0,0,3), m e'_i):
+  as written: overflow (elimination)
+  reduced:    overflow (elimination)  (rows [[2147483647, 0, 0], [0, 2147483647, 0], [0, 0, 2147483647]] over [1, 1, 1])
+overflow_inverse_check:
+  as written: overflow (inverse check)
+  reduced:    overflow (inverse check)  (rows [[65536, 0, 0], [1, -2, 0], [0, 536870912, 524288]] over [2124569019, 2, 1])
+overflow_inverse_rows:
+  as written: overflow (inverse rows)
+  reduced:    overflow (inverse rows)  (rows [[0, 1048576, 0], [0, -16777216, 46341], [2, -378, 0]] over [1, 1073741824, 2147483647])
+the scaling claims also held on each named input
+seed 3: 3000 random cases, 344627 intermediate values compared, claims (a) and (b) held on all
+old overflow (k e1, m e'1 / m):
+  as written: overflow (inner products)
+  reduced:    none  (rows [[1]] over [1])
+old overflow_elimination (R(3,0,0), m e'_i / m):
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 0, 0], [0, 1, 0], [0, 0, 1]] over [1, 1, 1])
+probe 2I to R(2,0,0), m(1,1), m(-1,1) / m:
+  as written: overflow (elimination)
+  reduced:    none  (rows [[1, 1], [-1, 1]] over [1, 1])
+new overflow (diag(k,0), e1 = e'1 + e'2/m):
+  as written: overflow (inner products)
+  reduced:    overflow (inner products)  (rows [[2147483647, 1], [0, 1]] over [2147483647, 1])
+new overflow_elimination (R(0,0,3), m e'_i):
+  as written: overflow (elimination)
+  reduced:    overflow (elimination)  (rows [[2147483647, 0, 0], [0, 2147483647, 0], [0, 0, 2147483647]] over [1, 1, 1])
+overflow_inverse_check:
+  as written: overflow (inverse check)
+  reduced:    overflow (inverse check)  (rows [[65536, 0, 0], [1, -2, 0], [0, 536870912, 524288]] over [2124569019, 2, 1])
+overflow_inverse_rows:
+  as written: overflow (inverse rows)
+  reduced:    overflow (inverse rows)  (rows [[0, 1048576, 0], [0, -16777216, 46341], [2, -378, 0]] over [1, 1073741824, 2147483647])
+the scaling claims also held on each named input
+probe self-check: mutant reduction caught on 91 of 300 cases

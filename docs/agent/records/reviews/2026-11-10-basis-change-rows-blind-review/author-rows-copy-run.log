@@ -1,0 +1,5 @@
+gcc-debug	rows_not_reduced	killed
+gcc-debug	same_rows_ignores_rows	killed
+gcc-debug: 2 killed, 0 equivalent, 0 survived, 0 unjudged
+problem: gcc-debug rows_not_reduced: declared killer core.basis_change did not kill it
+problem: gcc-debug same_rows_ignores_rows: declared killer core.basis_change did not kill it

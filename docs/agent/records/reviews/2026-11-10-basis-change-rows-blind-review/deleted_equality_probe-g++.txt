@@ -1,0 +1,10 @@
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:11:20: error: use of deleted function ‘bool change<N>::operator==(const change<N>&) const [with int N = 2]’
+   11 | static_assert(a == b);
+      |                    ^
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:7:8: note: declared here
+    7 |   bool operator==(const change&) const = delete; // compare with same_rows(a, b)
+      |        ^~~~~~~~
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:11:20: note: use ‘-fdiagnostics-all-candidates’ to display considered candidates
+   11 | static_assert(a == b);
+      |                    ^
+timed: probe deleted_equality_probe took 0.041 s (exit 1)

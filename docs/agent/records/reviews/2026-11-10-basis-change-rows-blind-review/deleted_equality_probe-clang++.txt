@@ -1,0 +1,9 @@
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:11:17: error: overload resolution selected deleted operator '=='
+   11 | static_assert(a == b);
+      |               ~ ^  ~
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:7:8: note: candidate function has been explicitly deleted
+    7 |   bool operator==(const change&) const = delete; // compare with same_rows(a, b)
+      |        ^
+docs/agent/records/reviews/2026-11-10-basis-change-rows-blind-review/deleted_equality_probe.cpp:7:8: note: candidate function (with reversed parameter order) has been explicitly deleted
+1 error generated.
+timed: probe deleted_equality_probe took 0.051 s (exit 1)
