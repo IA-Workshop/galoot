@@ -2045,6 +2045,78 @@ TEST_CASE("apply gives an empty result where no term exists") {
 
 namespace {
 
+// A value on the layout e42 e43, and values on e1 alone and on e2 alone, of
+// rigid(3).
+template <class T>
+using E42E43 = core::mv<rga3, core::blades<rga3, "e42 e43">, T>;
+template <class T>
+using E1 = core::mv<rga3, core::blades<rga3, "e1">, T>;
+template <class T>
+using E2 = core::mv<rga3, core::blades<rga3, "e2">, T>;
+
+// Constant evaluations of the code that the two cases below run, with the
+// same template arguments, over the test rational, whose zero 0/1 is not all
+// zero bits. GCC 16.2.1 was seen to compile a zero array made at run time
+// wrongly once a constant evaluation of the same declaration had written
+// first into place 2 of it or a later place: from that place on, the
+// run-time zero held zero bits, which for the rational is 0/0. The
+// conversion's first write lands on place 2 of the motor, and the wedge's on
+// place 6. Each is a constexpr variable at namespace scope, so that the
+// evaluation takes place whatever becomes of the cases' assertions.
+constexpr Motor<rational> e42_e43_on_motor =
+    Motor<rational>{E42E43<rational>{rational{1}, rational{2}}};
+constexpr Motor<rational> e1_wedge_e2_on_motor =
+    apply<BinaryOperation::wedge, motor_layout>(E1<rational>{rational{3}},
+                                                E2<rational>{rational{5}});
+
+} // namespace
+
+// Reference: contract: a conversion to a layout that holds every blade of
+//   the source puts each coefficient on its blade, multiplied by the
+//   product of the blade's signs in the two layouts, and gives zero on the
+//   other blades, also at run time after a constant evaluation of the same
+//   conversion in the program: e42 and e43 have sign +1 in both layouts, so
+//   1 e42 + 2 e43 on the motor layout 1 e41 e42 e43 e23 e31 e12 e1234 is
+//   (0, 0, 1, 2, 0, 0, 0, 0), each zero 0/1
+TEST_CASE("A conversion is zero on the blades its source lacks after a "
+          "constant evaluation of it") {
+  constexpr Motor<rational> expected{rational{0}, rational{0}, rational{1},
+                                     rational{2}, rational{0}, rational{0},
+                                     rational{0}, rational{0}};
+  static_assert(e42_e43_on_motor == expected);
+
+  const volatile std::int64_t one = 1;
+  const Motor<rational> m{E42E43<rational>{rational{one}, rational{2}}};
+  CHECK(m == expected);
+  for (const rational& c : m.coefficients) {
+    CHECK(c.denominator == 1);
+  }
+}
+
+// Reference: contract: apply onto a target layout gives each blade of the
+//   target the sum of the terms on it, and zero on a blade that no term
+//   reaches, also at run time after a constant evaluation of the same
+//   product in the program: e1 ^ e2 = e12, which the motor layout holds at
+//   place 6 with sign +1, so (3 e1) ^ (5 e2) on it is (0, 0, 0, 0, 0, 0, 15,
+//   0), each zero 0/1, and no term reaches e1234 at place 7
+TEST_CASE("apply onto a wider target is zero where no term reaches after a "
+          "constant evaluation of it") {
+  constexpr Motor<rational> expected{rational{0},  rational{0}, rational{0},
+                                     rational{0},  rational{0}, rational{0},
+                                     rational{15}, rational{0}};
+  static_assert(e1_wedge_e2_on_motor == expected);
+
+  const volatile std::int64_t three = 3;
+  const Motor<rational> m = apply<BinaryOperation::wedge, motor_layout>(
+      E1<rational>{rational{three}}, E2<rational>{rational{5}});
+  CHECK(m == expected);
+  for (const rational& c : m.coefficients) {
+    CHECK(c.denominator == 1);
+  }
+}
+
+namespace {
+
 // A motor with nothing but a line in it, and one with a scalar and an
 // antiscalar as well, over T.
 template <class T>
