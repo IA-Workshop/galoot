@@ -3,14 +3,14 @@
 Each fault changes one thing and must make validate() report the check it
 targets. Run from the repository root:
 
-  python3 -I docs/agent/workbench/spike-b/fault_injection.py
+  python3 -I docs/agent/records/spikes/spike-b/fault_injection.py
 """
 
 import sys
 from fractions import Fraction
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "test/reference"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[5] / "test/reference"))
 import clifford_reference as ref  # noqa: E402
 
 G = ref.conformal(3)
