@@ -511,6 +511,8 @@ def timed_pool(s):
     check("pool: exit with the FIFO left aside", result.returncode, 2)
     check("pool: refused with the FIFO left aside",
           result.stderr.startswith("timed: refused:"), True)
+    check("pool: the refusal names the FIFO left aside",
+          f"moved aside to {aside}" in result.stderr, True)
     check("pool: not built with the FIFO left aside", built, False)
     check("pool: waited about 2 s with the FIFO left aside",
           1.5 <= seconds < 5.0, True)
