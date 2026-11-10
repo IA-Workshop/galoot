@@ -17,3 +17,16 @@
   - merged into `develop` with a P13 line.
 - Evidence: the scripts' own outputs (V2 for `fault_injection.py`; V1 kind 3 for `diff_reference.py`; the mirror check of `probe.py verify`; the self-check of the cost model).
 - Agent cost estimate: about 250k tokens for the implementer and 60k for the reviewer.
+
+## Outcome
+
+Done, 2026-11-10, merged into `develop` (the merge commit names the checks).
+
+- README (`142f700`): one paragraph after the first change-of-basis example says that the examples' tags are in an anonymous namespace because each is a program of one file, and that a tag copied into a header that several files include goes in a named namespace, since an anonymous one gives each file its own algebra type. `rga3.readme` (7 tests) and `tests.citations` pass on gcc-debug and clang-debug.
+- Repairs (`6a3cf13`): `probe.py` maps `gp` and `antigp` to `geometric_product` and `geometric_antiproduct`. Before, `verify` of a 72-case sample failed 17 cases on Clang, each "no member named 'gp'" or "'antigp'"; after, 0 on both compilers, and the `test` and `maps` sets give the committed verify files. The blind reviewer ran `verify` on all seven sets at `753a334`: 0 differences. `diff_reference.py` and `fault_injection.py` failed on import before (`ModuleNotFoundError`) and pass after: 28 tables agree on gcc and clang; all three faults caught. `run_grid.py`'s `ROOT` named `docs/` too and was repaired with it (one grid point run by the reviewer in a scratch mirror).
+- Reruns at `6a3cf13`: `selfcheck` 0 differences on both compilers' data; `comments` exit 1 on four counts of `product_plan`'s comment that are sizes or a flag value from the scalar-full10-gcc record (recorded in `records/performance/plan-cost-model/README.md`); `jobserver_check.py` gives the results of `b28cc34` with Ninja 1.13.2.
+- Index and deletion (`753a334`, review fixes after it): the review's table carried out; `bits_fault_injection.py` deleted.
+- Review: blind review by Claude Sonnet 5.5 (`records/reviews/2026-11-10-snippets-cleanup-blind-review.md`), approve with four non-blocking findings, resolved there.
+- P9: no file under `include/`, `test/`, `tools/`, `cmake/`, or the build files changed, so the matrix was not rerun; the merge cites the `gate:all` rows at `fe4fb3b`, whose code equals `develop`'s. `format-check`, the trace gate, `tests.citations`, and `tools/runlog check` ran at the final tip.
+- V10: the repaired scripts are verified by their own outputs against the committed records; nothing is validated beyond them.
+- Open for the owner: `cost.py comments` fails on four counts of `plan.hpp` that are not model costs; the two extra rows of `verify-train-gen-*.tsv`.

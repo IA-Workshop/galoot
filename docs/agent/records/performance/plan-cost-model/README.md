@@ -62,12 +62,13 @@ Configurations checked with the canary's six units (decision 0131): clang-releas
 
 ## Rerun at `6a3cf13`
 
-Headers of `develop` at `692d661`, with the compilers above. `probe.py` first had its product names repaired (`gp` and `antigp` are now written as `geometric_product` and `geometric_antiproduct`, the enumerators `plan.hpp` has had since `5c5188f`); before that, every plan probe and every `capacity`, `count`, and `fill` probe of those two products failed to compile. Each run is a row of `runs.tsv` with the selection named here.
+Headers of `develop` at `692d661`, with the compilers above. `probe.py` first had its product names repaired (`gp` and `antigp` are now written as `geometric_product` and `geometric_antiproduct`, the enumerators `plan.hpp` has had since `5c5188f`); before that, every plan probe and every `capacity`, `count`, and `fill` probe of those two products failed to compile. Each run is a row of `runs.tsv` with the selection named here. The `verify` runs were made on the working tree that was then committed as `6a3cf13`, so their rows carry `f5a2698-dirty`; the blind review of plan 0037 repeated them at `753a334` (selections `review:snippets:*`).
 
 | Run | Selection | Outcome |
 | --- | --- | --- |
 | `probe.py verify` of `test` (204 cases), both compilers | `snippets:plan_cost_model:verify-test:<compiler>` | 0 differ; the output equals `verify-test-<compiler>.tsv` row for row |
 | `probe.py verify` of `maps` (52 cases), both compilers | `snippets:plan_cost_model:verify-maps:<compiler>` | 0 differ; equals `verify-maps-<compiler>.tsv` |
+| `probe.py verify` of all seven sets, both compilers, by the reviewer at `753a334` | `review:snippets:verify-<set>:<compiler>` | 0 differ in each. Each output equals the committed file except `verify-train-gen-*.tsv`, which hold two rows (`traingen47-count`, `traingen47-fill`) for cases that `train-gen-cases.tsv` does not have. Both files came in one commit (`cd7dcf2`), so the cause is not traced; the fit reads the case file, not the verify file, so the two extra rows touch no weight |
 | `cost.py selfcheck`, Clang data | `snippets:plan_cost_model:selfcheck-clang` | "1228 measured cases predicted; 9 whole units whose largest evaluation is the metric's check, not compared; 0 differences", exit 0, 88.7 s |
 | `cost.py selfcheck`, GCC data | `snippets:plan_cost_model:selfcheck-gcc` | "1235 measured cases predicted; 9 whole units ... not compared; 0 differences", exit 0, 91.7 s |
 | `cost.py comments include/galoot/core/plan.hpp` with both figures files | `snippets:plan_cost_model:comments` | Exit 1: "4 counts in the comments are not in the figures", all in `product_plan`'s comment |

@@ -110,3 +110,16 @@ Rows are in this worktree's `runs.tsv`. All selections are `review:snippets:*` o
 I built nothing in tracked paths. The job pool was already running; I did not start or stop it.
 
 Resource use: about 150k tokens, about 60 tool calls, wall time about 25 minutes (of which about 4 minutes were selfcheck runs).
+
+## Resolution
+
+By the implementer of plan 0037 (Claude, agent, Opus 5.5). Findings 1 and 3 were checked against `runs.tsv` and the case files before acting.
+
+| Finding | Resolution |
+| --- | --- |
+| 1, the index's "Last checked at `6a3cf13`" for runs whose rows carry `f5a2698-dirty` | Confirmed: the `verify`, `fault_injection`, and `diff_reference` runs were made on the working tree before its commit. The three index rows now say "on the tree committed as `6a3cf13` and again at `753a334`", citing this review's runs, and the cost model record says so above its table |
+| 2, `cost.py comments` exits 1 | Not changed in this unit (the plan leaves the remedy to the owner); listed as an open item with the reviewer's options |
+| 3, `verify-train-gen-*.tsv` hold two rows the case file lacks | Confirmed (`traingen47-count`, `traingen47-fill`: 0 rows in `train-gen-cases.tsv`, present in the verify files). Recorded in the cost model record; both files came in `cd7dcf2`, so the cause is not traced. The fit reads the case file, so no weight is affected. The files are not rewritten here |
+| 4, "kept so that note 0008's commands stay valid" | Reworded: kept so that note 0008's cross-check of the Spike A generator against the reference stays reproducible |
+
+The changes after the review are to the index and the records only, so no delta review is made (W5: no core code changed).
