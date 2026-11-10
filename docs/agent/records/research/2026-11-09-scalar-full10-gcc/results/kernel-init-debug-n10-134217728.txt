@@ -1,0 +1,3 @@
+$ g++ -I <include of 1668070> -std=c++23 -fsyntax-only <gcc-debug flags> -fconstexpr-ops-limit=134217728 product.cpp
+timed: compile scalar-full10:kernel-init-debug-n10-134217728 took 4.746 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 0
