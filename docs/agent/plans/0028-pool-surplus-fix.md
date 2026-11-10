@@ -65,3 +65,15 @@ Open for the owner:
 2. **`tools.jobpool` costs about a minute of mostly sleeping per preset run.** Options:
    - (a) Keep it. Recommended: the race case is the only guard of the invariant.
    - (b) Shorten the load phase, or drop it. The deterministic rounds are the proof.
+
+## Resolution of the review's findings (recorded 2026-11-10, from the repository)
+
+The blind review of this unit is `records/reviews/2026-11-08-pool-surplus-review.md`, made at `a83b066` and merged into `develop` by `2adc87f`. The review record reached `develop` only at this entry, cherry-picked with `-x` from `1af8dc0` (finding MA1 of the M5 audit). Its verdict was to approve with non-blocking findings. The sources of each resolution below are the files at `develop` `2fc19c9`: `tools/jobpool` and `test/tools/jobpool_test.py` have not changed since `6bc4674`, the fix itself (`git diff 6bc4674 2fc19c9 -- tools/jobpool test/tools/jobpool_test.py` is empty), and no later plan, decision, or record names the findings.
+
+| Finding | Resolution | Evidence |
+| --- | --- | --- |
+| L1: the `free != n` gate is untested | **Open.** No recorded resolution. No fix and no acceptance. | `tools/jobpool:182` still has the gate. No test in `test/tools/jobpool_test.py` watches the path of an idle, full pool across polls |
+| L2: the service no longer stops itself after its FIFO is deleted by hand | **Open.** No recorded resolution. Not fixed, not accepted. | `tools/jobpool:181` is still `free=$(free_slots 3>&-) \|\| continue`, and the service has no `[[ -p $fifo ]]` exit |
+| L3: an unreadable `/proc/<pid>/fd` hides a client (pre-existing) | **Open.** No recorded resolution. The review recommended accepting it and stating it in the invariant; that statement was not made. | The "Not covered" list of the invariant above names only the forked child and the process that keeps tokens after closing the FIFO. `count_clients` still skips an entry it cannot read (`tools/jobpool:124` to `127`) |
+
+The review's other findings have no recorded resolution either: L4 (`tools/timed` says "no shared job-slot pool" in the 0.2 s window and could wait while `<fifo>.stopping` exists), I5 (the 0.2 s wait bounds scheduling and proves nothing), I6 (a wrapped header comment and a long docstring line), and I7 (the spike copy of the pool, note 0016, keeps its own count-then-balance design). Its "Open for the owner" items 1 (restart the shared pool after the merge) and 4 (the cost of `tools.jobpool`) also have no resolution in the repository. The owner has not ruled on the follow-up unit it recommended (item 2, option (a)) or on accepting L3 (item 3, option (a)).
