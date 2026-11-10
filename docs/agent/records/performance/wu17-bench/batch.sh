@@ -15,7 +15,7 @@ reading() {
     "load: $(cat /proc/loadavg)" >> "$log"
 }
 reading "before"
-LOCK_OWNER="galoot wu17 E2 benchmarks, env $env" bash "$lock" take 3600 || exit 1
+LOCK_OWNER="galoot wu17 E2 rerun (inline reference), env $env" bash "$lock" take 3600 || exit 1
 trap 'bash "$lock" release; reading "lock released"' EXIT
 reading "lock taken"
 python3 -I $here/drive.py run $here/out --cpu 4 --env "$env" --repeats 11

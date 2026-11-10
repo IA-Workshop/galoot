@@ -31,10 +31,12 @@ run        One batch at one environment size: the program's environment is
            of their operation counts, leaves out the process's start, the
            drawing of operands, and the printing. A pair whose sibling
            thread, or whose pinned CPU beyond the pair's own work, was busy
-           for more than BUSY_LIMIT of the pair's wall time (both processes'
-           busy times over both wall times) is run again once and both are
-           kept; the later one is used, and marked when it was
-           busy too. Appends to <out-dir>/rows.tsv, one row per process.
+           for more than BUSY_TICKS clock ticks of /proc/stat (TICK_S each),
+           summed over its two processes, is run again once and both are
+           kept; the later one is used, and marked when it was busy too.
+           Each process's busy time is a difference of two tick counts, so
+           it can be one tick off with nothing running, and the pair's sum
+           two. Appends to <out-dir>/rows.tsv, one row per process.
 summarize  Writes <out-dir>/results.tsv (per compiler, operation, loop, form,
            and environment size: the median and range over the rounds of the
            nanoseconds, instructions, and cycles per operation) and
@@ -48,10 +50,10 @@ summarize  Writes <out-dir>/results.tsv (per compiler, operation, loop, form,
 stalls     A diagnostic, not a timing: for every (compiler, operation, loop,
            form), a pair of processes at PASSES / SHORT_DIVISOR and PASSES
            passes, each as `taskset -c <cpu> perf stat -e
-           cpu_core/ld_blocks.store_forward/u,
-           cpu_core/br_inst_retired.near_call/u`, giving the loads per
-           operation that a store could not forward to and the calls per
-           operation, from the difference of the pair. Not through tools/timed, whose own eight counters
+           <STALL_EVENTS>`, giving per operation the loads that a store
+           could not forward to, the calls, and the scalar and packed
+           double-precision arithmetic instructions retired, from the
+           difference of the pair. Not through tools/timed, whose own eight counters
            would leave this one multiplexed. Writes <out-dir>/stalls.tsv.
 """
 
@@ -76,7 +78,8 @@ SEED = 20261110
 CALIBRATION_PASSES = 65536
 TARGET_S = 0.8
 SHORT_DIVISOR = 8
-BUSY_LIMIT = 0.01
+TICK_S = 0.01
+BUSY_TICKS = 2
 
 # Passes per (operation, loop), from the calibration (out/calibration.txt):
 # TARGET_S / (128 x the slower compiler's nanoseconds per operation),
@@ -157,14 +160,12 @@ def one_process(out, cpu, env, selection, compiler, operation, form, loop,
 
 def busy_pair(processes):
     """Whether the sibling thread, or other processes on the pinned CPU,
-    were busy for more than BUSY_LIMIT of the processes' wall time."""
+    were busy for more than BUSY_TICKS ticks over the processes."""
     processes = list(processes)
-    walls = [number(p["wall_s"]) for p in processes]
-    if None in walls:
-        return True
     for field in ("sibling_busy_s", "pinned_other_s"):
         busy = [number(p[field]) for p in processes]
-        if None in busy or sum(busy) > BUSY_LIMIT * sum(walls):
+        # The figures have two decimals, whole ticks at 100 Hz.
+        if None in busy or sum(busy) > BUSY_TICKS * TICK_S + 1e-9:
             return True
     return False
 
@@ -175,7 +176,7 @@ def calibrate(args):
     for compiler in COMPILERS:
         for operation in OPERATIONS:
             for loop in loops(operation):
-                selection = (f"wu17-bench:calibrate:{compiler}:{operation}:"
+                selection = (f"wu17-bench-inline:calibrate:{compiler}:{operation}:"
                              f"galoot:{loop}")
                 r = one_process(out, args.cpu, 0, selection, compiler,
                                 operation, "galoot", loop, CALIBRATION_PASSES)
@@ -215,7 +216,7 @@ def pair(writer, f, out, args, rnd, compiler, operation, loop, form):
     for attempt in (1, 2):
         results = {}
         for kind, p in (("short", passes // SHORT_DIVISOR), ("long", passes)):
-            selection = (f"wu17-bench:{compiler}:{operation}:{form}:{loop}:"
+            selection = (f"wu17-bench-inline:{compiler}:{operation}:{form}:{loop}:"
                          f"env{args.env}:r{rnd}:a{attempt}:{kind}")
             results[kind] = one_process(out, args.cpu, args.env, selection,
                                         compiler, operation, form, loop, p)
@@ -238,7 +239,9 @@ def pair(writer, f, out, args, rnd, compiler, operation, loop, form):
 
 
 STALL_EVENTS = ("cpu_core/ld_blocks.store_forward/u",
-                "cpu_core/br_inst_retired.near_call/u")
+                "cpu_core/br_inst_retired.near_call/u",
+                "cpu_core/fp_arith_inst_retired.scalar_double/u",
+                "cpu_core/fp_arith_inst_retired.128b_packed_double/u")
 
 
 def stall_counts(cpu, selection, compiler, operation, form, loop, passes):
@@ -284,7 +287,7 @@ def stalls(args):
                     counts = []
                     for kind, p in (("short", passes // SHORT_DIVISOR),
                                     ("long", passes)):
-                        selection = (f"wu17-bench:stalls:{compiler}:"
+                        selection = (f"wu17-bench-inline:stalls:{compiler}:"
                                      f"{operation}:{form}:{loop}:{kind}")
                         counts.append(stall_counts(args.cpu, selection,
                                                    compiler, operation, form,
@@ -295,7 +298,8 @@ def stalls(args):
                     print(*lines[-1], flush=True)
     write(out / "stalls.tsv", ["compiler", "operation", "loop", "form",
                                "store_forward_blocks_per_op",
-                               "calls_per_op"], lines)
+                               "calls_per_op", "scalar_double_per_op",
+                               "packed_double_per_op"], lines)
     return 0
 
 
