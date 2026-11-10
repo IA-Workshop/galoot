@@ -16,6 +16,8 @@
 #include <array>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
+#include <limits>
 #include <type_traits>
 
 #include <galoot/core/basis_change.hpp>
@@ -283,6 +285,107 @@ static_assert(
     core::change_basis_layout<cga3_to_r410, core::blades<cga3, "e1 e2 e3">> ==
     core::blades<r410, "e1 e2 e3">);
 
+// Guarantees of the checks' reduction: each row and its denominator divided
+// by their greatest common divisor, which leaves the matrix as it was. Here
+// the first row's divisor is 2, the second's 1 (its entries share 2, its
+// denominator does not), and the third's 7.
+static_assert(core::same_rows(
+    core::detail::reduced(core::from_rows({{6, -4, 0}, {2, 4, 0}, {0, 0, 7}},
+                                          {2, 3, 7})),
+    core::from_rows({{3, -2, 0}, {2, 4, 0}, {0, 0, 1}}, {1, 3, 1})));
+
+// Changes whose rows share a large factor with their denominators, m e'_i
+// over m for m = 2^31 - 1, each beside the change with the factor divided
+// out: the identity of R(3, 0, 0); e1 = e'1 on a generator of square k, the
+// largest entry of a form; and the change from 2I to R(2, 0, 0) whose rows
+// are e'1 + e'2 and e'2 - e'1. As written, the checks of the first would
+// form pivots up to m^3 and its image of e123 is m^3 over m^3, and the check
+// of the inner products of the second would form m k m, all beyond
+// std::int64_t.
+inline constexpr core::entry_type m =
+    std::numeric_limits<core::entry_type>::max();
+
+struct r300 {
+  static constexpr auto value = core::R<3, 0, 0>();
+};
+struct r300_scaled {
+  using source = r300;
+  using target = r300;
+  static constexpr auto value =
+      core::from_rows({{m, 0, 0}, {0, m, 0}, {0, 0, m}}, {m, m, m});
+};
+struct r300_identity {
+  using source = r300;
+  using target = r300;
+  static constexpr auto value =
+      core::from_rows({{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}, {1, 1, 1});
+};
+
+struct square_k {
+  static constexpr auto value = core::from_gram({{core::max_form_entry}});
+};
+struct square_k_scaled {
+  using source = square_k;
+  using target = square_k;
+  static constexpr auto value = core::from_rows({{m}}, {m});
+};
+struct square_k_identity {
+  using source = square_k;
+  using target = square_k;
+  static constexpr auto value = core::from_rows({{1}}, {1});
+};
+
+struct twice_identity {
+  static constexpr auto value = core::from_gram({
+      {2, 0},
+      {0, 2},
+  });
+};
+struct r200 {
+  static constexpr auto value = core::R<2, 0, 0>();
+};
+struct twice_scaled {
+  using source = twice_identity;
+  using target = r200;
+  static constexpr auto value = core::from_rows({{m, m}, {-m, m}}, {m, m});
+};
+struct twice_reduced {
+  using source = twice_identity;
+  using target = r200;
+  static constexpr auto value = core::from_rows({{1, 1}, {-1, 1}}, {1, 1});
+};
+
+// Whether the changes A and B generate the same map of the layout S, in the
+// direction Back: the same result blades, the same terms in the same order,
+// and the same denominators, so the same code.
+template <class A, class B, bool Back, core::blade_set S>
+constexpr bool same_map() {
+  constexpr const auto& a = core::detail::change_map_of<A, Back, S>;
+  constexpr const auto& b = core::detail::change_map_of<B, Back, S>;
+  if constexpr (a.result.size() != b.result.size() ||
+                a.terms.size() != b.terms.size()) {
+    return false;
+  } else {
+    bool same = a.result == b.result && a.denominators == b.denominators;
+    for (std::size_t k = 0; k < a.terms.size(); ++k) {
+      const core::detail::kernel_term& s = a.terms.at(k);
+      const core::detail::kernel_term& t = b.terms.at(k);
+      same = same && s.a == t.a && s.b == t.b && s.out == t.out &&
+             s.coefficient == t.coefficient && s.first == t.first;
+    }
+    return same;
+  }
+}
+
+static_assert(same_map<r300_scaled, r300_identity, false, core::full<3>>());
+static_assert(same_map<r300_scaled, r300_identity, true, core::full<3>>());
+static_assert(
+    same_map<square_k_scaled, square_k_identity, false, core::full<1>>());
+static_assert(
+    same_map<square_k_scaled, square_k_identity, true, core::full<1>>());
+static_assert(same_map<twice_scaled, twice_reduced, false, core::full<2>>());
+static_assert(same_map<twice_scaled, twice_reduced, true, core::full<2>>());
+
 } // namespace
 
 // Reference: independent value: the change of basis sends e_A to the sum of
@@ -506,4 +609,39 @@ TEST_CASE("the header's example: a conformal(3) point to R(4, 1, 0) and "
   CHECK(back.coefficients == std::array<double, 2>{1, 0});
   const Origin o2 = core::truncate<Origin>(back);
   CHECK(o2 == Origin{1});
+}
+
+// Reference: proof: P_ij = rows[i][j] / denominators[i] is unchanged when
+//   row i and its denominator are divided by a common factor, and the terms
+//   of a change, the minors of P over the least denominator of each result
+//   blade, depend on P alone, so a change written with a large common factor
+//   in each row maps every value as the change written without it, both ways
+TEST_CASE("rows with a large common factor are the change without it") {
+  using X3 = core::mv<r300, core::full<3>, rational>;
+  X3 x3{};
+  for (std::size_t k = 0; k < X3::component_count; ++k) {
+    x3.coefficients.at(k) = rational{static_cast<std::int64_t>(k) + 1, 3};
+  }
+  CHECK(core::change_basis<r300_scaled>(x3) ==
+        core::change_basis<r300_identity>(x3));
+  CHECK(core::change_basis_back<r300_scaled>(x3) ==
+        core::change_basis_back<r300_identity>(x3));
+  CHECK(core::change_basis<r300_scaled>(x3) == x3);
+
+  using X1 = core::mv<square_k, core::full<1>, rational>;
+  const X1 x1{rational{2}, rational{-5, 7}};
+  CHECK(core::change_basis<square_k_scaled>(x1) ==
+        core::change_basis<square_k_identity>(x1));
+  CHECK(core::change_basis_back<square_k_scaled>(x1) ==
+        core::change_basis_back<square_k_identity>(x1));
+
+  using Twice = core::mv<twice_identity, core::full<2>, rational>;
+  const Twice twice{rational{1}, rational{2}, rational{-3}, rational{1, 2}};
+  CHECK(core::change_basis<twice_scaled>(twice) ==
+        core::change_basis<twice_reduced>(twice));
+  using Diagonal = core::mv<r200, core::full<2>, rational>;
+  const Diagonal diagonal{rational{1}, rational{2}, rational{-3},
+                          rational{1, 2}};
+  CHECK(core::change_basis_back<twice_scaled>(diagonal) ==
+        core::change_basis_back<twice_reduced>(diagonal));
 }
