@@ -16,8 +16,6 @@ void report(const char* vn, const char* xn) {
 #define L(s) core::blades<rga3, s>
 #define R(v, x) report<L(v), L(x)>(v, x)
 int main() {
-  const char* xs[] = {};
-  (void)xs;
 #define ALLX(v) R(v, "e1 e2 e3 e4"); R(v, "e41 e42 e43 e23 e31 e12"); R(v, "e423 e431 e412 e321"); R(v, "1 e41 e42 e43 e23 e31 e12 e1234"); R(v, "e1 e2 e3 e4 e423 e431 e412 e321")
   ALLX("1 e41 e42 e43 e23 e31 e12 e1234");
   ALLX("e23 e31 e12 e1234");
