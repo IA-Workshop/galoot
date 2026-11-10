@@ -111,7 +111,11 @@ constexpr T scalar_of(int i) {
 // The coefficients 1, 2, ..., K as a scalar of type T.
 template <class T, std::size_t K>
 constexpr std::array<T, K> counting() {
-  std::array<T, K> values{};
+  // Value-initialized with (), not {}: GCC 16.2.1 can give a {} of an array
+  // of a type whose zero is not all zero bits, such as the rational, the
+  // wrong value at run time when a constant evaluation of the same
+  // declaration in the program has written into it first.
+  std::array<T, K> values = std::array<T, K>();
   for (std::size_t i = 0; i < K; ++i) {
     values[i] = scalar_of<T>(static_cast<int>(i) + 1);
   }
@@ -1053,7 +1057,8 @@ template <BinaryOperation Op, class Alg, core::blade_set A, core::blade_set B,
 constexpr auto product_by_loop(const std::array<T, A.size()>& x,
                                const std::array<T, B.size()>& y) {
   constexpr const auto& plan = product_plan<Op, Alg, A, B>;
-  std::array<T, plan.result.size()> out{};
+  // Value-initialized with (), not {}, as in counting.
+  std::array<T, plan.result.size()> out = std::array<T, plan.result.size()>();
   for (const core::detail::typed_term& t : plan.terms) {
     out.at(t.out) =
         out.at(t.out) + (T(t.coefficient) * (x.at(t.a) * y.at(t.b)));
@@ -1065,7 +1070,8 @@ constexpr auto product_by_loop(const std::array<T, A.size()>& x,
 template <UnaryOperation Op, class Alg, core::blade_set S, class T>
 constexpr auto map_by_loop(const std::array<T, S.size()>& x) {
   constexpr const auto& map = unary_map<Op, Alg, S>;
-  std::array<T, map.result.size()> out{};
+  // Value-initialized with (), not {}, as in counting.
+  std::array<T, map.result.size()> out = std::array<T, map.result.size()>();
   for (const core::detail::map_term& t : map.terms) {
     out.at(t.out) = out.at(t.out) + (T(t.coefficient) * x.at(t.a));
   }
