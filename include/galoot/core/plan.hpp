@@ -612,8 +612,22 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// blades (for an antiproduct, with the grades of their complements) and
 /// with the number of terms the metric gives the pair. Placing the T terms
 /// on the R blades of the result costs at most a fixed amount times T times
-/// R, and is the largest part for large sets. GCC also stops at a loop of
-/// 262,144 iterations, and so at a plan of that many terms.
+/// R, and is the largest part for large sets. For a small set times a large
+/// one, T and R both grow with the size of the large set, so the placement
+/// grows as its square and can reach the limits with fewer terms than a
+/// product of two large sets. The geometric product of the scalar with
+/// full<10> in R(10,0,0), 1,024 terms on 1,024 blades, fails at GCC 16.2.1's
+/// default limit, though full<6> times full<6>, 4,096 terms on 64 blades,
+/// builds. The largest evaluation of the scalar's plan, the typing of its
+/// terms, needs about 89 million operations, measured with
+/// _GLIBCXX_ASSERTIONS and GCC's cache of constant calls on, and
+/// -fconstexpr-ops-limit=134217728 builds the product at -O0 with
+/// _GLIBCXX_ASSERTIONS and at -O2 without. On Clang 23 the scalar
+/// times full<8> fails at the default steps; -fconstexpr-steps sets Clang's
+/// limit. GCC may report that it ran out of operations as libstdc++'s
+/// std::span bounds check, a __builtin_expect in <span>, being "not a
+/// constant expression", although every index is in range. GCC also stops
+/// at a loop of 262,144 iterations, and so at a plan of that many terms.
 /// The counts below are exact for Clang 23.1, whose classic constant
 /// evaluator allows 1,048,576 steps by default, and for GCC 16.2, which
 /// allows 33,554,432 operations, each with libstdc++ 16 and
