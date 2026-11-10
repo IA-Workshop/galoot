@@ -91,4 +91,35 @@ Planner and implementer, Opus high: 200k to 350k tokens. Blind review: 80k to 15
 
 ## 11. Outcome
 
-Open.
+Done, 2026-11-10: the blind review approved the unit with no must-fix (`records/reviews/2026-11-09-kernel-init-blind-review.md`, cherry-picked with `-x` from `d9ca6c9`), and it is merged into `develop`. The owner's rulings on its open items are decision 0226. The history of the unit follows; the changes after the review are at the end.
+
+| Commit | What | Kind (W9) |
+| --- | --- | --- |
+| `6b8e2b6` | cherry-picked with `-x` from `cc6565c`: the two canaries in `core.mv` | test, failing on GCC when committed, as its message says |
+| `6d1624e` | `zero_places` and the three kernels | core |
+| `19205b8`, `20ae7ae` | the mutation specs, and the target they lacked | record |
+| `d5fafe5` | the mutants at the tip, the gap run, the probes | record |
+| `e8c1fa1`, `b121014` | the cost campaign's units and results | record |
+
+Results:
+
+- **Criteria 1 to 3.** Both canaries fail on gcc-debug and gcc-release at `cc6565c` (the conversion's places 4 to 7 and the product's place 7 read 0/0; no other case of `core_mv_test` fails) and pass on clang-debug; with the fix both pass on all three. The full suite passes on gcc-debug and clang-debug at `6d1624e` (540 of 540 each).
+- **Criterion 4.** `zero_places<T>(std::index_sequence<P...>)` returns `{(static_cast<void>(P), T{})...}`.
+- **Criterion 5.** On GCC (both presets) the `run_map` and `run_product` mutants are killed, each by its own canary alone; on Clang they are equivalent; the `run_sum` mutant is equivalent everywhere. Against the suite without the canaries both killable mutants survive on gcc-debug, so the canaries close the gap. Record: `records/mutations/0032-kernel-init/README.md`.
+- **Criterion 6.** No unit grows by more than 0.82% in retired instructions (GCC, 256 places), at 1,024 places by at most 0.64%, and the existing sources by at most 0.64%: below the reading of section 1 item 4, so form A stays and form B was not measured. Record: `records/performance/kernel-init-cost/README.md`. Three departures from the criterion's wording: "before" is `6b8e2b6` (the old kernels with the canaries), so that `mv_test.cpp` is the same on both sides; Clang builds no `mv` on `full<9>` or `full<10>` at its default limits, so the units on both compilers are at 256 places and the 1,024-place units are GCC's alone; and the product of a scalar and `full<10>` does not build on GCC 16 before or after (the plan's result collection, `plan.hpp:313`, fails in constant evaluation), so `run_product` is measured at 1,024 places through `detail::apply` onto `full<10>` (one term) and with many terms at `full<9>` (512).
+- **Criterion 7.** The P9 matrix at `1c5a9bf`, from empty build trees (the worktree's `build/` removed first), through `tools/timed` and the shared pool, each row named `gate:<selection>`, all passing: gcc-debug 540 tests (93.7 s), clang-debug 540 (90.3 s), gcc-release 540 (103.0 s), clang-release 540 (110.2 s), gcc-asan 532 (219.2 s), clang-asan 540 (185.8 s), clang-measure 532 (105.7 s), lint 540 (246.3 s, no diagnostic); `format-check` (1.7 s), the trace gate (0.3 s; items 6.1 to 6.4 without a test, as on `develop`), and `tools/runlog check` (2.5 s). The commit after `1c5a9bf` adds only these rows and this paragraph.
+
+Departures and notes beyond section 1:
+
+- **A defect found outside the unit** (W9): `geometric_product` of a scalar and a `full<10>` value of R(10,0,0) fails to build on GCC 16.2.1 inside `collect_result` (a `std::span` bounds check in constant evaluation, `plan.hpp:313`); scalar times `full<9>` builds. Whether it is a defect of the plan builder, a limit, or the compiler was not investigated. The documented limits name products of two full layouts, not this case.
+- One configure in the gap worktree went to that worktree's run log and was lost with it; one direct run of `core_mv_test` with a test-case filter, on the tests branch, ran outside `tools/timed`.
+- The probes of `records/performance/kernel-init-cost/probes/` were compiled in scratch space through `tools/timed` with a campaign log, committed as `probes/runs.tsv`.
+
+After the review (W5; comment and test edits only, so no delta review):
+
+- `72b4ed7`: finding S1, comment only. The conversion canary's reference said e42 and e43 have sign +1 in both layouts; they stand for −e24 and −e34 in both, and the conversion uses the product of the signs, +1, so the expected value was right.
+- `fe8a0f2`: note N3, test only. Each canary checks the denominators by index with the place captured, so a failure names the wrong places; the assertions and expected values are unchanged. `core.mv` on gcc-debug and clang-debug, 100 of 100 each.
+- `4f2a3af`: note N9, record only. The unused zero-length array in `probes/reach.cpp` removed; the probe's output is unchanged, and it builds with `-Wpedantic -Werror`.
+- The review record cherry-picked with `-x`; its 56 run rows apply once each, and `tools/runlog check` passes on the result; `format-check` passes. These edits reach only `core.mv` (P8), so the P9 matrix of `1c5a9bf` was not rerun.
+- Lesson 0065 now says the kernels take one initializer per place and names the canaries.
+- Decision 0226: the three IEC 559 arrays of `transform.hpp` stay as they are (O1); the tests' reference kernels in `mv_test.cpp` take the safe form in a small test-only change after this merge (O2); the scalar times `full<10>` failure gets its own short investigation (O3); `minimal.cpp` is retested on each new GCC (F2). The reviewer's residual risk on O1 stands as a note: `rounding_checked_scalar` checks only `numeric_limits`, so a class type that declares itself IEC 559 while holding another member whose zero is not all zero bits would pass the concept.

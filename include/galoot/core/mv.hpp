@@ -319,6 +319,21 @@ constexpr void accumulate(T& out, const T& value) {
   }
 }
 
+// T{} in each of the places P, one initializer per place: the start of a
+// kernel's result. GCC 16.2.1 was seen to compile the shorter
+// `std::array<T, R> out{};` wrongly: once a constant evaluation of a kernel
+// had written first into place 2 or a later place of its result, a run of
+// the same kernel at run time, in the same translation unit, started from an
+// array that held zero bits from that place on. For a scalar whose T{} is not
+// all zero bits, such as a rational's 0/1, a place that no term writes then
+// held a wrong value. One initializer per place was compiled correctly, as
+// for coefficient_storage below.
+template <class T, std::size_t... P>
+constexpr std::array<T, sizeof...(P)>
+zero_places(std::index_sequence<P...> /*places*/) {
+  return {(static_cast<void>(P), T{})...};
+}
+
 // The R coefficients of a result from the terms of Kernel, one statement
 // each, in order, with every position and coefficient a constant; the
 // positions no term reaches are zero. The result is a local array returned
@@ -332,7 +347,8 @@ template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t... K>
 constexpr std::array<T, R> run_map(const std::array<T, KX>& x,
                                    std::index_sequence<K...> /*terms*/) {
-  std::array<T, R> out{};
+  // Not out{}, which GCC can compile wrongly; zero_places says why.
+  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],
                                                       x[Kernel[K].a]),
    ...);
@@ -344,7 +360,8 @@ template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
 constexpr std::array<T, R> run_product(const std::array<T, KX>& x,
                                        const std::array<T, KY>& y,
                                        std::index_sequence<K...> /*terms*/) {
-  std::array<T, R> out{};
+  // Not out{}, which GCC can compile wrongly; zero_places says why.
+  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(
        out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),
    ...);

@@ -1,0 +1,60 @@
+# The blind reviewer's own mutants of plan 0032's fix, written from the
+# header and the tests, not from the implementer's specs: each changes the
+# helper zero_places or the form a kernel starts its result from.
+presets = ["gcc-debug", "gcc-release", "clang-debug"]
+
+[selection.mv]
+targets = [
+  "core_mv_test",
+  "core_mv_part_checking",
+  "core_mv_truncate_mode_0",
+  "core_mv_truncate_mode_1",
+]
+labels = '^core\.mv$'
+
+# The helper itself value-initializes its result, so that each kernel starts
+# from a copy of an array made by the shared initializer. GCC 16.2.1 was seen
+# to compile T t = f() wrongly when f returns T{}; if the canaries guard the
+# helper and not only the kernels' own lines, they kill this on GCC.
+[[mutant]]
+name = "helper_returns_braces"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  return {(static_cast<void>(P), T{})...};''', replacement = '''  return {};''' }]
+expect = "killed"
+killers = ["core.mv"]
+
+# The helper gives one in each place: the tests must see the helper's value
+# on a place no term writes, on every compiler.
+[[mutant]]
+name = "helper_gives_one"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  return {(static_cast<void>(P), T{})...};''', replacement = '''  return {(static_cast<void>(P), static_cast<T>(1))...};''' }]
+expect = "killed"
+killers = ["core.mv"]
+
+# run_map starts from a copy of a braced temporary, T t = T{}, the third
+# form the research record found wrong on GCC.
+[[mutant]]
+name = "run_map_braced_temporary"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],''', replacement = '''  std::array<T, R> out = std::array<T, R>{};
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],''' }]
+expect = "killed"
+killers = ["core.mv"]
+
+# run_product starts from out = {}, the second form found wrong.
+[[mutant]]
+name = "run_product_copy_list"
+selection = "mv"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''  std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(
+       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''', replacement = '''  std::array<T, R> out = {};
+  (accumulate<Kernel[K].coefficient, Kernel[K].first>(
+       out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),''' }]
+expect = "killed"
+killers = ["core.mv"]
