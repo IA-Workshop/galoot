@@ -20,8 +20,7 @@ struct bad {
   using source = r003;
   using target = r003;
   static constexpr auto value = core::from_rows(
-      {{2147483647, 0, 0}, {0, 2147483647, 0}, {0, 0, 2147483647}},
-      {1, 1, 1});
+      {{2147483647, 0, 0}, {0, 2147483647, 0}, {0, 0, 2147483647}}, {1, 1, 1});
 };
 using X = core::mv<r003, core::blades<r003, "e1">, double>;
 
