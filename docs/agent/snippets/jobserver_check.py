@@ -22,8 +22,9 @@ once, and whether Ninja held the FIFO open while it ran.
 Usage: python3 -I docs/agent/snippets/jobserver_check.py [case...]
 
 Written to check token loss and pool restarts with the platform's Ninja,
-and to recheck them when Ninja changes. Last checked on 2026-10-31 at
-b28cc34 (feature/recorder), with Ninja 1.13.2.
+and to recheck them when Ninja changes. Last checked on 2026-11-10 at
+6a3cf13 (feature/snippets-cleanup), with Ninja 1.13.2 and tools/jobpool of
+6bc4674: the same results as the first check, on 2026-10-31 at b28cc34.
 """
 
 import fcntl
