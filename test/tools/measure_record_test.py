@@ -515,7 +515,7 @@ def timed_pool(s):
           f"moved aside to {aside}" in result.stderr, True)
     check("pool: not built with the FIFO left aside", built, False)
     check("pool: waited about 2 s with the FIFO left aside",
-          1.5 <= seconds < 5.0, True)
+          1.5 <= seconds < 3.5, True)
     check("pool: rows of the runs that built",
           [r["selection"] for r in s.rows(RUN_LOG) if r["selection"] in (
               "present", "missing", "moved-back", "stays-aside")],

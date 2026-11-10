@@ -232,6 +232,12 @@ GUARD_INVERTED = [edit("if (x < 0)", "if (x >= 0)")]
 TABLE_GUARD_NARROWED = [edit("if (x >= 8)", "if (x >= 4)")]
 TABLE_OVERFLOW = [edit("    reject_large();\n  }\n  return x;",
                        "    reject_large();\n  }\n  return x * 1000000000;")]
+# The table's first entry overflows and its next one trips the guard: the
+# first error of the object is the overflow, whose notes name no guard.
+OVERFLOW_THEN_GUARD = [
+    edit("if (x >= 8)", "if (x >= 6)"),
+    edit("    reject_large();\n  }\n  return x;",
+         "    reject_large();\n  }\n  return x == 5 ? x * 1000000000 : x;")]
 SURVIVES = "x + x equals 2 * x, which the suite before a gap's tests misses"
 HALVE_EXPECTED_WRONG = [edit("lib::halve(ten) != 5", "lib::halve(ten) != 6")]
 UNUSED_VARIABLE = [edit("  return x / 2;", "  T unused = x;\n  return x / 2;")]
@@ -372,6 +378,16 @@ def expected_row(name, preset):
                              if preset == "gcc-debug"
                              else f"{LIB}:{TABLE_VALUE}:")],
             not_run=["check"], problems=["unjudged"]),
+        # The overflow comes first and the guard's error after it, in the
+        # same object: the object is classed by its first error alone, and
+        # the guard's note belongs to the later error.
+        "overflow_then_guard": dict(
+            verdict="unjudged",
+            build_failures=[(check_obj, "invalid",
+                             f"{LIB}:{LARGE_RETURN}:"
+                             if preset == "gcc-debug"
+                             else f"{LIB}:{TABLE_VALUE}:")],
+            not_run=["check"], problems=["unjudged"]),
         # A run-time change of uses_test alone: its own check fails.
         "uses_wrong": dict(verdict="killed", killers="uses",
                            failed_cases=["halve at run time"]),
@@ -471,11 +487,20 @@ def refusals(repo):
          [mutant("m", TWICE_SAME_VALUE, expect="survived", reason=SURVIVES,
                  killers=["check"])], ()),
     ]
+    # What the refusal must say, where the case is refused only for it.
+    messages = {
+        "unknown_expect": "expect is killed, equivalent, or survived",
+        "survived_without_reason": "is declared survived without a reason",
+        "survived_with_killers": "is declared to survive but names killers",
+    }
     for name, selections, mutants, args in cases:
         write_spec(repo, name, selections, mutants)
         rows = len(repo.mutant_rows())
         result = repo.mutate(name, *args)
         check(f"{name}: exit", result.returncode, 2)
+        if name in messages:
+            check(f"{name}: the refusal names the defect",
+                  messages[name] in result.stderr, True)
         check(f"{name}: no driver row in the run log",
               len(repo.mutant_rows()), rows)
         check(f"{name}: nothing built",
@@ -715,12 +740,15 @@ def library_guard(repo):
     """A library guard that rejects a value during constant evaluation
     kills the mutant that makes it reject a valid one, whether the failed
     evaluation is the test's or a constexpr variable's in the header. An
-    overflow in the header's evaluation is no guard and kills nothing."""
-    names = ["guard_kill", "table_guard_kill", "table_overflow"]
+    overflow in the header's evaluation is no guard and kills nothing, even
+    when a guard fails after it in the same object."""
+    names = ["guard_kill", "table_guard_kill", "table_overflow",
+             "overflow_then_guard"]
     write_spec(repo, "guard", LIB_SELECTION,
                [mutant("guard_kill", GUARD_INVERTED),
                 mutant("table_guard_kill", TABLE_GUARD_NARROWED),
-                mutant("table_overflow", TABLE_OVERFLOW)])
+                mutant("table_overflow", TABLE_OVERFLOW),
+                mutant("overflow_then_guard", OVERFLOW_THEN_GUARD)])
     result = repo.mutate("guard")
     check("guard: exit", result.returncode, 1)
     check_restored(repo, "guard")
@@ -735,8 +763,8 @@ def library_guard(repo):
     check("guard: problem lines",
           {line for line in result.stdout.splitlines()
            if line.startswith("problem: ")},
-          {f"problem: {preset} table_overflow: unjudged"
-           for preset in PRESETS})
+          {f"problem: {preset} {name}: unjudged" for preset in PRESETS
+           for name in ("table_overflow", "overflow_then_guard")})
 
 
 def declared_survivals(repo):

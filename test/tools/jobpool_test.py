@@ -10,9 +10,9 @@ Each pool under test is a transient user service with a unit name of its
 own and a FIFO in the scratch directory, so the machine's shared pool is
 never opened, stopped, or started. The cases with a failing or a slow
 count run a copy of the tool in the scratch directory. The test stops its
-own units directly with systemctl when it ends. Prints one line per failed check and
-exits 1 if there is any, or exits 77 when no user service manager is
-available.
+own units directly with systemctl when it ends. Prints one line per failed
+check and exits 1 if there is any, or exits 77 when no user service manager
+is available.
 """
 
 import contextlib
@@ -259,6 +259,11 @@ def fifo_deleted(tool, directory):
         os.unlink(pool.fifo)
         check("service ended after its FIFO was deleted",
               wait_for(lambda: not pool.active(), 10), True)
+        # Ended with an error, so that the unit shows as failed.
+        failed = subprocess.run(
+            ["systemctl", "--user", "is-failed", "--quiet",
+             f"{pool.unit}.service"], check=False).returncode == 0
+        check("unit failed after its FIFO was deleted", failed, True)
         status = pool.run("status")
         check("status after the FIFO was deleted",
               (status.returncode, status.stdout), (1, "not running\n"))

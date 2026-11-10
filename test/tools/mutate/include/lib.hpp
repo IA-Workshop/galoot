@@ -55,11 +55,13 @@ constexpr int below_eight(int x) {
 
 // below_eight(N), computed once at compile time in a constexpr variable of
 // the header, as a library keeps a table: a guard that fails there stops the
-// build at this header's line, not at the test's.
+// build at this header's line, not at the test's. The entry after it is
+// checked the same way, so that one build can fail at both.
 template <int N>
 constexpr int below_eight_table() {
   static constexpr int value = below_eight(N);
-  return value;
+  static constexpr int next = below_eight(N + 1);
+  return next == value + 1 ? value : -1;
 }
 
 } // namespace lib
