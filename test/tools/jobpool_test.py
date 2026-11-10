@@ -1,17 +1,18 @@
 """tools.jobpool: the job pool's argument checks, the slots it writes back
-and drains when no client holds it, a FIFO path through a symbolic link, a
-count of clients that fails, a client that opens the FIFO just after a
-count, and the idle stop, on pools of its own.
+and drains when no client holds it, an idle, full pool that leaves its FIFO
+in place, a FIFO path through a symbolic link, a count of clients that
+fails, a client that opens the FIFO just after a count, a FIFO deleted by
+hand, and the idle stop, on pools of its own.
 
 Usage: python3 -I jobpool_test.py <tools/jobpool> <scratch directory>
 
 Each pool under test is a transient user service with a unit name of its
 own and a FIFO in the scratch directory, so the machine's shared pool is
 never opened, stopped, or started. The cases with a failing or a slow
-count run a copy of the tool in the scratch directory. The test stops its own units
-directly with systemctl when it ends. Prints one line per failed check and
-exits 1 if there is any, or exits 77 when no user service manager is
-available.
+count run a copy of the tool in the scratch directory. The test stops its
+own units directly with systemctl when it ends. Prints one line per failed
+check and exits 1 if there is any, or exits 77 when no user service manager
+is available.
 """
 
 import contextlib
@@ -220,6 +221,59 @@ def repair(tool, directory):
         check("stop exit", result.returncode, 0)
         check("stopped", wait_for(lambda: not pool.active()), True)
         check("FIFO removed by stop", os.path.exists(pool.fifo), False)
+    finally:
+        pool.remove()
+
+
+def idle_full(tool, directory):
+    """An idle pool with every slot free has nothing to repair, so it never
+    moves its FIFO aside: a build that starts at such a poll finds the pool
+    at its path. The path is watched without opening it, across four polls."""
+    pool = Pool(tool, directory, "idlefull")
+    aside = f"{pool.fifo}.stopping"
+    try:
+        check("start exit, idle and full",
+              pool.run("start", "2", "--idle", "0").returncode, 0)
+        missing = moved = 0
+        end = time.monotonic() + 4.5
+        while time.monotonic() < end:
+            missing += not os.path.exists(pool.fifo)
+            moved += os.path.exists(aside)
+            time.sleep(0.005)
+        check("samples with the FIFO missing, idle and full", missing, 0)
+        check("samples with the FIFO aside, idle and full", moved, 0)
+        check("every slot free, idle and full", free(pool.fifo), 2)
+        check("running, idle and full", pool.active(), True)
+    finally:
+        pool.remove()
+
+
+def fifo_deleted(tool, directory):
+    """A FIFO deleted by hand ends the pool at its next poll with no
+    client, so that status says it is not running and ensure starts a new
+    one, rather than a service that runs on without a FIFO to serve."""
+    pool = Pool(tool, directory, "deleted")
+    try:
+        check("start exit, FIFO deleted",
+              pool.run("start", "2", "--idle", "0").returncode, 0)
+        os.unlink(pool.fifo)
+        check("service ended after its FIFO was deleted",
+              wait_for(lambda: not pool.active(), 10), True)
+        # Ended with an error, so that the unit shows as failed once its
+        # stop has finished (it is not active while it is deactivating).
+        check("unit failed after its FIFO was deleted",
+              wait_for(lambda: subprocess.run(
+                  ["systemctl", "--user", "is-failed", "--quiet",
+                   f"{pool.unit}.service"], check=False).returncode == 0, 10),
+              True)
+        status = pool.run("status")
+        check("status after the FIFO was deleted",
+              (status.returncode, status.stdout), (1, "not running\n"))
+        ensure = pool.run("ensure")
+        check("ensure exit after the FIFO was deleted", ensure.returncode, 0)
+        check("ensure starts a new pool after the FIFO was deleted",
+              ensure.stdout.splitlines()[:1],
+              [f"started: 23 slots free at {pool.fifo}"])
     finally:
         pool.remove()
 
@@ -434,8 +488,8 @@ def main(tool, directory):
         return SKIPPED
     shutil.rmtree(directory, ignore_errors=True)
     os.makedirs(directory)
-    for case in (arguments, repair, symlinked, count_fails,
-                 last_count_fails, surplus_race, idle_stop):
+    for case in (arguments, repair, idle_full, symlinked, count_fails,
+                 last_count_fails, surplus_race, fifo_deleted, idle_stop):
         try:
             case(tool, directory)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:

@@ -32,5 +32,7 @@ int main() {
   // Constant-evaluated, so that checked()'s guard is judged at compile time.
   constexpr int accepted = lib::checked(5);
   check(accepted == 5, "checked accepts a valid value");
+  // Called at run time; the header's table is computed at compile time.
+  check(lib::below_eight_table<5>() == 5, "the table holds a valid value");
   return failures == 0 ? 0 : 1;
 }

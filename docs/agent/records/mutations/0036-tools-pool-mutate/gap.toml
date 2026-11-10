@@ -1,0 +1,34 @@
+# The gap mutants of plan 0036, run against the suite before the unit's
+# tests: test/tools/jobpool_test.py and test/tools/measure_record_test.py as
+# at the branch point, with the tools as at the tip. Each must survive there
+# (W3); tools.toml runs them against the tip's suite, where each must be
+# killed.
+presets = ["gcc-debug"]
+
+[selection.jobpool]
+targets = []
+labels = '^tools\.jobpool$'
+
+[selection.timed]
+targets = []
+labels = '^tools\.measure$'
+
+[[mutant]]
+name = "jobpool_gate_removed"
+selection = "jobpool"
+file = "tools/jobpool"
+edits = [
+  { anchor = '    if ((free != n)) && aside_without_clients "$fifo" 0.2; then', replacement = '    if aside_without_clients "$fifo" 0.2; then' },
+]
+expect = "survived"
+reason = "a gap mutant: no test before this unit judges this line"
+
+[[mutant]]
+name = "timed_missing_fifo_allowed"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '  if [[ -z $fifo || ! -p $fifo ]]; then', replacement = '  if [[ -z $fifo ]]; then' },
+]
+expect = "survived"
+reason = "a gap mutant: no test before this unit judges this line"

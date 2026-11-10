@@ -165,8 +165,14 @@ aside_without_clients() {
 # one, and the tokens are brought back to $2 before the FIFO goes back.
 # With an idle time of $3 seconds, once no client has held the FIFO for that
 # long, it is moved aside the same way, and with no client the service
-# exits, removing it. The poll closes descriptor 3, so its children are not
-# mistaken for clients.
+# exits, removing it. A FIFO missing at a poll that finds no client it can
+# see was removed by someone else (the service puts it back before each
+# poll), so the service exits with an error rather than run on with nothing
+# to serve. Clients that still hold the removed FIFO are not seen, since
+# their descriptors no longer resolve to its path; they keep the old pool
+# among themselves, as after a restart.
+# The poll closes descriptor 3, so its children are not mistaken for
+# clients.
 serve() {
   local fifo=$1 n=$2 idle=$3 poll=$4 quiet=$SECONDS free change
   rm -f -- "$fifo" "$fifo.stopping"
@@ -177,6 +183,10 @@ serve() {
     if ! no_clients "$fifo" $$; then
       quiet=$SECONDS
       continue
+    fi
+    if [[ ! -p $fifo ]]; then
+      echo "$fifo is gone, so the pool stops" >&2
+      exit 1
     fi
     free=$(free_slots 3>&-) || continue
     if ((free != n)) && aside_without_clients "$fifo" 0.2; then

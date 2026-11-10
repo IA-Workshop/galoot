@@ -1,5 +1,6 @@
 """tools.mutate: the mutation driver's refusals, its verdict for each kind of
-mutant, the stale-binary rule, run-time mode and its leaks, restoring the
+mutant, a library guard failing in a test and in a header, declared
+survivals, the stale-binary rule, run-time mode and its leaks, restoring the
 edited files, partial reruns, --check, and one output file per build tree.
 
 Usage: python3 -I mutate_test.py <tools directory> <scratch directory>
@@ -64,6 +65,12 @@ HALVE_RETURN = line_of(LIB, "return x / 2;")
 RUNTIME_RETURN = line_of(LIB, "return x << 1;")
 REJECT_CALL = line_of(LIB, "reject_negative();")
 ACCEPTED = line_of(CHECK, "lib::checked(5)")
+REJECT_LARGE_CALL = line_of(LIB, "reject_large();")
+# below_eight's return, the first "return x;" after its guard's call.
+LARGE_RETURN = next(
+    n for n, line in enumerate(fixture_text(LIB).splitlines(), 1)
+    if n > REJECT_LARGE_CALL and "return x;" in line)
+TABLE_VALUE = line_of(LIB, "static constexpr int value = below_eight(N);")
 
 
 class Repo:
@@ -222,7 +229,18 @@ MESSAGE_CHANGED = [edit('"twice: the argument must be an int"',
 EQUIVALENT = "x + x equals 2 * x for every int the tests use"
 SYNTAX_ERROR = [edit("return x << 1;", "return x << 1")]
 GUARD_INVERTED = [edit("if (x < 0)", "if (x >= 0)")]
+TABLE_GUARD_NARROWED = [edit("if (x >= 8)", "if (x >= 4)")]
+TABLE_OVERFLOW = [edit("    reject_large();\n  }\n  return x;",
+                       "    reject_large();\n  }\n  return x * 1000000000;")]
+# The table's first entry overflows and its next one trips the guard: the
+# first error of the object is the overflow, whose notes name no guard.
+OVERFLOW_THEN_GUARD = [
+    edit("if (x >= 8)", "if (x >= 6)"),
+    edit("    reject_large();\n  }\n  return x;",
+         "    reject_large();\n  }\n  return x == 5 ? x * 1000000000 : x;")]
+SURVIVES = "x + x equals 2 * x, which the suite before a gap's tests misses"
 HALVE_EXPECTED_WRONG = [edit("lib::halve(ten) != 5", "lib::halve(ten) != 6")]
+UNUSED_VARIABLE = [edit("  return x / 2;", "  T unused = x;\n  return x / 2;")]
 
 # The main spec: one mutant of each kind, in this order.
 MAIN = [
@@ -238,8 +256,7 @@ MAIN = [
     mutant("declared_equivalent_killed", TWICE_WRONG_AT_RUN_TIME,
            expect="equivalent", reason="declared so on purpose"),
     mutant("wrong_killer", MESSAGE_CHANGED, killers=["uses"]),
-    mutant("warning_only", [edit("  return x / 2;",
-                                 "  T unused = x;\n  return x / 2;")]),
+    mutant("warning_only", UNUSED_VARIABLE),
     mutant("invalid", SYNTAX_ERROR),
 ]
 MAIN_NAMES = [m["name"] for m in MAIN]
@@ -327,19 +344,64 @@ def expected_row(name, preset):
         # The guard fires for the valid argument the test evaluates at
         # compile time, which is a kill like a failed static_assert. GCC's
         # first error is the call to the non-constexpr function, in the
-        # header; Clang's is the constexpr variable in the test, a test
-        # error.
+        # header; Clang's is the constexpr variable in the test, whose note
+        # names the call to the non-constexpr function. Both are class
+        # assert, at the first error's line.
         "guard_kill": dict(
             verdict="killed",
             killers=(f"{LIB}:{REJECT_CALL}" if preset == "gcc-debug"
                      else f"{CHECK}:{ACCEPTED}"),
             build_failures=[(check_obj, "assert", f"{LIB}:{REJECT_CALL}:")
                             if preset == "gcc-debug" else
-                            (check_obj, "test", f"{CHECK}:{ACCEPTED}:")],
+                            (check_obj, "assert", f"{CHECK}:{ACCEPTED}:")],
             not_run=["check"]),
+        # The same kind of guard, reached only through the header's own
+        # constexpr variable: Clang's first error is that variable, in the
+        # header, which is no test file, so only its note shows the guard.
+        "table_guard_kill": dict(
+            verdict="killed",
+            killers=(f"{LIB}:{REJECT_LARGE_CALL}" if preset == "gcc-debug"
+                     else f"{LIB}:{TABLE_VALUE}"),
+            build_failures=[(check_obj, "assert",
+                             f"{LIB}:{REJECT_LARGE_CALL}:"
+                             if preset == "gcc-debug"
+                             else f"{LIB}:{TABLE_VALUE}:")],
+            not_run=["check"]),
+        # An overflow stops the same constant evaluation, but no check
+        # failed: GCC reports the overflow in the header, and Clang the
+        # header's variable, whose notes name no call to a function that is
+        # not constexpr. Neither is a kill.
+        "table_overflow": dict(
+            verdict="unjudged",
+            build_failures=[(check_obj, "invalid",
+                             f"{LIB}:{LARGE_RETURN}:"
+                             if preset == "gcc-debug"
+                             else f"{LIB}:{TABLE_VALUE}:")],
+            not_run=["check"], problems=["unjudged"]),
+        # The overflow comes first and the guard's error after it, in the
+        # same object: the object is classed by its first error alone, and
+        # the guard's note belongs to the later error.
+        "overflow_then_guard": dict(
+            verdict="unjudged",
+            build_failures=[(check_obj, "invalid",
+                             f"{LIB}:{LARGE_RETURN}:"
+                             if preset == "gcc-debug"
+                             else f"{LIB}:{TABLE_VALUE}:")],
+            not_run=["check"], problems=["unjudged"]),
         # A run-time change of uses_test alone: its own check fails.
         "uses_wrong": dict(verdict="killed", killers="uses",
                            failed_cases=["halve at run time"]),
+        # Declared to survive: a survivor is what was expected, a kill is
+        # not, and a mutant that fails to build is unjudged as any other.
+        "expected_survivor": dict(verdict="survived", expected="survived"),
+        "survivor_killed": dict(
+            verdict="killed", expected="survived", killers="check",
+            failed_cases=["twice at run time"],
+            problems=["expected to survive but killed"]),
+        "survivor_unjudged": dict(
+            verdict="unjudged", expected="survived",
+            build_failures=[(uses_obj, "warning", f"{LIB}:{HALVE_RETURN}:")],
+            not_run=["uses"], problems=["unjudged"]),
     }
     row = dict(mutant=name, preset=preset, expected="killed", killers="-",
                build_failures=[], not_run=[], failed_cases=[], leaks="-",
@@ -414,12 +476,31 @@ def refusals(repo):
         # uses runs uses_test, which the selection does not build.
         ("unbuilt_program", {"partial": (["check_test"], "^lib$")},
          [mutant("m", TWICE_WRONG_AT_RUN_TIME, selection="partial")], ()),
+        ("unknown_expect", LIB_SELECTION,
+         [mutant("m", TWICE_SAME_VALUE, expect="survives", reason=SURVIVES)],
+         ()),
+        # A survival declared without saying why, or with tests that are
+        # to kill it, is a spec defect.
+        ("survived_without_reason", LIB_SELECTION,
+         [mutant("m", TWICE_SAME_VALUE, expect="survived")], ()),
+        ("survived_with_killers", LIB_SELECTION,
+         [mutant("m", TWICE_SAME_VALUE, expect="survived", reason=SURVIVES,
+                 killers=["check"])], ()),
     ]
+    # What the refusal must say, where the case is refused only for it.
+    messages = {
+        "unknown_expect": "expect is killed, equivalent, or survived",
+        "survived_without_reason": "is declared survived without a reason",
+        "survived_with_killers": "is declared to survive but names killers",
+    }
     for name, selections, mutants, args in cases:
         write_spec(repo, name, selections, mutants)
         rows = len(repo.mutant_rows())
         result = repo.mutate(name, *args)
         check(f"{name}: exit", result.returncode, 2)
+        if name in messages:
+            check(f"{name}: the refusal names the defect",
+                  messages[name] in result.stderr, True)
         check(f"{name}: no driver row in the run log",
               len(repo.mutant_rows()), rows)
         check(f"{name}: nothing built",
@@ -657,17 +738,70 @@ def restore_between_files(repo):
 
 def library_guard(repo):
     """A library guard that rejects a value during constant evaluation
-    kills the mutant that makes it reject a valid one."""
+    kills the mutant that makes it reject a valid one, whether the failed
+    evaluation is the test's or a constexpr variable's in the header. An
+    overflow in the header's evaluation is no guard and kills nothing, even
+    when a guard fails after it in the same object."""
+    names = ["guard_kill", "table_guard_kill", "table_overflow",
+             "overflow_then_guard"]
     write_spec(repo, "guard", LIB_SELECTION,
-               [mutant("guard_kill", GUARD_INVERTED)])
+               [mutant("guard_kill", GUARD_INVERTED),
+                mutant("table_guard_kill", TABLE_GUARD_NARROWED),
+                mutant("table_overflow", TABLE_OVERFLOW),
+                mutant("overflow_then_guard", OVERFLOW_THEN_GUARD)])
     result = repo.mutate("guard")
-    check("guard: exit", result.returncode, 0)
+    check("guard: exit", result.returncode, 1)
     check_restored(repo, "guard")
     check_rebuilt(repo, "guard")
     for preset in PRESETS:
         _, rows = repo.output("guard", preset)
-        check_row(f"guard {preset}", rows[0] if rows else None,
-                  expected_row("guard_kill", preset))
+        check(f"guard {preset}: rows", [r.get("mutant") for r in rows], names)
+        by_name = {r.get("mutant"): r for r in rows}
+        for name in names:
+            check_row(f"guard {preset} {name}", by_name.get(name),
+                      expected_row(name, preset))
+    check("guard: problem lines",
+          {line for line in result.stdout.splitlines()
+           if line.startswith("problem: ")},
+          {f"problem: {preset} {name}: unjudged" for preset in PRESETS
+           for name in ("table_overflow", "overflow_then_guard")})
+
+
+def declared_survivals(repo):
+    """A mutant declared to survive, with its reason, is no problem when it
+    survives, and is one when it is killed or unjudged. A spec of expected
+    survivors alone exits 0."""
+    names = ["expected_survivor", "survivor_killed", "survivor_unjudged"]
+    write_spec(repo, "survivals", LIB_SELECTION, [
+        mutant("expected_survivor", TWICE_SAME_VALUE, expect="survived",
+               reason=SURVIVES),
+        mutant("survivor_killed", TWICE_WRONG_AT_RUN_TIME, expect="survived",
+               reason=SURVIVES),
+        mutant("survivor_unjudged", UNUSED_VARIABLE, expect="survived",
+               reason=SURVIVES)])
+    result = repo.mutate("survivals", "--preset", "gcc-debug")
+    check("survivals: exit", result.returncode, 1)
+    check_restored(repo, "survivals")
+    check_rebuilt(repo, "survivals", ["gcc-debug"])
+    _, rows = repo.output("survivals", "gcc-debug")
+    check("survivals: rows", [r.get("mutant") for r in rows], names)
+    by_name = {r.get("mutant"): r for r in rows}
+    for name in names:
+        check_row(f"survivals {name}", by_name.get(name),
+                  expected_row(name, "gcc-debug"))
+    check("survivals: problem lines",
+          {line for line in result.stdout.splitlines()
+           if line.startswith("problem: ")},
+          {"problem: gcc-debug survivor_killed: expected to survive but "
+           "killed", "problem: gcc-debug survivor_unjudged: unjudged"})
+    check("survivals: summary",
+          "gcc-debug: 1 killed, 0 equivalent, 1 survived, 1 unjudged"
+          in result.stdout.splitlines(), True)
+
+    result = repo.mutate("survivals", "--preset", "gcc-debug",
+                         "expected_survivor")
+    check("expected survivor alone: exit", result.returncode, 0)
+    check_restored(repo, "expected survivor alone")
 
 
 def runtime_mode(repo):
@@ -819,8 +953,9 @@ def main(tools, directory):
         return 1
     for case in (refusals, failing_baselines, main_run,
                  rows_in_spec_order, killers_sorted, ctest_without_failures,
-                 restore_between_files, library_guard, runtime_mode,
-                 check_mode, failed_rebuild_reported, stopped_early):
+                 restore_between_files, library_guard, declared_survivals,
+                 runtime_mode, check_mode, failed_rebuild_reported,
+                 stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,

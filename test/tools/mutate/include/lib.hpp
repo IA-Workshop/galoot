@@ -42,6 +42,28 @@ constexpr int checked(int x) {
   return x;
 }
 
+// Not constexpr either: how below_eight() rejects a large argument.
+inline void reject_large() {}
+
+// x, which must be below 8.
+constexpr int below_eight(int x) {
+  if (x >= 8) {
+    reject_large();
+  }
+  return x;
+}
+
+// below_eight(N), computed once at compile time in a constexpr variable of
+// the header, as a library keeps a table: a guard that fails there stops the
+// build at this header's line, not at the test's. The entry after it is
+// checked the same way, so that one build can fail at both.
+template <int N>
+constexpr int below_eight_table() {
+  static constexpr int value = below_eight(N);
+  static constexpr int next = below_eight(N + 1);
+  return next == value + 1 ? value : -1;
+}
+
 } // namespace lib
 
 #endif
