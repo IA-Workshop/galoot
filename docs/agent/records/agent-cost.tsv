@@ -241,3 +241,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-b	math-numerical (ran as sonnet, brief said opus)	sonnet	230909	51	898	derivations and counts on research/spike-e c056f20
 2026-11-10	wu17-part-b-check	independent checker	opus	219475	53	833	check of spike-e counts
 2026-11-10	plan-0039	blind-reviewer	opus	208315	66	1903	blind review of feature/basis-change-rows; reported by harness as subagent_tokens
+2026-11-10	wu17-part-d	doctest/build/performance (one agent)	opus	309215	107	1439	bench harness, reference kernels; branch feature/cost-evidence--bench
+2026-11-10	wu17-part-a	blind-reviewer (token correction for earlier row)	sonnet	64053	8	71	corrects the empty-token row above
+2026-11-10	wu17-part-d	blind-reviewer	opus	201346	67	812	review 4e6a342
+2026-11-10	wu17-part-d	author review-fix pass	opus	34123	17	287	fixes for review 4e1804e; 13 scratch run rows lost (departure recorded)
