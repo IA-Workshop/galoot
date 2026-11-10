@@ -2124,6 +2124,32 @@ foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
     PROPERTIES LABELS "core;core.transform")
 endforeach()
 
+# core.transform_counts_checking and core.transform_counts_unchecked: one
+# program built in each checking mode counts the operations of a transform in
+# a degenerate form whose first stage is restricted, over the counting
+# scalar, against the reference's counts for that mode. The programs take the
+# headers directly, so that the build preset's mode does not reach them.
+foreach(mode IN ITEMS checking unchecked)
+  if(mode STREQUAL "checking")
+    set(checking 1)
+  else()
+    set(checking 0)
+  endif()
+  add_executable(core_transform_counts_${mode} core/transform_counts_test.cpp)
+  target_include_directories(core_transform_counts_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(core_transform_counts_${mode} PRIVATE
+    galoot_doctest_main galoot_golden galoot_test_support)
+  target_compile_features(core_transform_counts_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(core_transform_counts_${mode} PRIVATE
+    GALOOT_CHECKING=${checking})
+  add_test(NAME core.transform_counts_${mode}
+    COMMAND core_transform_counts_${mode})
+  set_tests_properties(core.transform_counts_${mode} PROPERTIES
+    LABELS "core;core.transform_counts"
+    FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+endforeach()
+
 # core.transform_rounding: the rounding check of transform over double and
 # float, against the tracking oracle.
 galoot_add_test(MODULE core COMPONENT transform_rounding)
