@@ -184,7 +184,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-08	plan-0029	part A reference values (math)	opus	365836	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	plan-0029	part B test author	opus	323482	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	plan-0029	part N tolerance record	opus	184931	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; approximate
-2026-11-08	plan-0029	implementer parts C1 to C3, integration, review fixes, P9, merge (cumulative)	opus	530263			as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; one agent resumed across all steps
+2026-11-08	plan-0029	implementer parts C1 to C3, integration, review fixes, P9, merge (cumulative)	opus	530263	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; one agent resumed across all steps
 2026-11-08	plan-0029	seed overflow and O4 test author	opus	279917	145	3510	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	plan-0029	blind reviewer	opus	332061	96	876	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
 2026-11-08	research	math-tools and knowledge-base survey	opus	241458	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
@@ -194,7 +194,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0030	part D interface	opus	298151	62	1018	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	part N tolerance rule	opus	226897	58	1241	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	small	math-tools replay fix	sonnet	52632	9	88	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
-2026-11-09	plan-0031	implementer merge steps (cumulative, replaces earlier 530263 figure)	opus	551312			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0031	implementer merge steps (cumulative)	opus	551312	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; the unit's own figure, an earlier label said it replaced 530263, which is plan 0029's implementer row (corrected 2026-11-10)
 2026-11-09	plan-0030	part A mathematics (a to g)	opus	502235	153	2526	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	small	math-tools replay verify and run.sh branch	sonnet	46243	8	102	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	part B test author	opus	571561	219	3555	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
@@ -202,10 +202,10 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-09	plan-0030	hci reader	opus	201901	46	602	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	Sage cross-check	opus	202657	62	758	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0030	blind reviewer	opus	316678	103	1275	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
-2026-11-09	plan-0030	delta reviewer	opus	270786			as relayed by the coordinator from the harness completion report; recorded 2026-11-09; figure not yet relayed
+2026-11-09	plan-0030	delta reviewer	opus	270786	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; figure not yet relayed
 2026-11-09	research	GCC constexpr initializer scan	opus	314507	133	2251	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
 2026-11-09	small	math-tools sage note	sonnet	48306	5	27	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
-2026-11-09	plan-0030	implementer cumulative to date (replaces 633742)	opus	762362			as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	implementer cumulative to date	opus	762362	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; an earlier label said it replaced 633742, but no 633742 row exists and the earlier figure was not recorded (corrected 2026-11-10)
 2026-11-09	plan-0030	implementer final to date (replaces 762362)	opus	830661			as relayed by the harness completion report; recorded 2026-11-09
 2026-11-09	small	lesson 0065 and KB GCC corrections	sonnet	71312	16	85	as relayed by the harness completion report; recorded 2026-11-09
 2026-11-09	plan-0032	planner and implementer	opus	305111	161	3284	as relayed by the harness completion report; recorded 2026-11-09
@@ -219,3 +219,7 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	M5	auditor fork 2 (decisions, governance, cost, lessons)	opus	250407	34	277	as relayed by the auditor; recorded 2026-11-10
 2026-11-10	M5	auditor	opus	285552	85	1654	as relayed by the harness completion report; recorded 2026-11-10
 2026-11-10	M5	MA1 pool-surplus review fix	sonnet	71805	14	69	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-08	plan-0029	planner (on records/plan-wu14)	opus	not visible	not visible	not visible	no figure was relayed when the plan was written; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	plan-0033	implementer	opus	not visible	not visible	not visible	no separate figure; inferred to be inside the plan 0032 implementer's cumulative row (353558), recorded after the plan 0033 merge; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-09	coordination	coordinator session 2026-11-09	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; plans 0029 and 0030 estimate coordination; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	coordination	coordinator session 2026-11-10	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; row added 2026-11-10 from the M5 audit's finding m13
