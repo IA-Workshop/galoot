@@ -22,8 +22,10 @@ using Motor = rga3::Motor<double>;
 int main(int argc, char** argv) {
   return bench::main<Motor, Motor>(
       "compose_motors", std::span(argv, static_cast<std::size_t>(argc)),
-      [](const Motor& a, const Motor& b) { return Motor{core::compose(a, b)}; },
-      [](const Motor& a, const Motor& b) {
+      [] [[gnu::always_inline]] (const Motor& a, const Motor& b) {
+        return Motor{core::compose(a, b)};
+      },
+      [] [[gnu::always_inline]] (const Motor& a, const Motor& b) {
         return bench::as<Motor>(
             reference_kernels::compose_motors(a.coefficients, b.coefficients));
       });

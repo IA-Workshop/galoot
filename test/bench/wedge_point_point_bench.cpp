@@ -22,8 +22,10 @@ using Line = rga3::Line<double>;
 int main(int argc, char** argv) {
   return bench::main<Point, Point>(
       "wedge_point_point", std::span(argv, static_cast<std::size_t>(argc)),
-      [](const Point& p, const Point& q) { return Line{p ^ q}; },
-      [](const Point& p, const Point& q) {
+      [] [[gnu::always_inline]] (const Point& p, const Point& q) {
+        return Line{p ^ q};
+      },
+      [] [[gnu::always_inline]] (const Point& p, const Point& q) {
         return bench::as<Line>(reference_kernels::wedge_point_point(
             p.coefficients, q.coefficients));
       });

@@ -23,6 +23,9 @@ rigid(3), which shares no code with the library:
   terms that land on x's blades, where the rest of the sandwich is zero.
 - compose(Q2, Q1) is the antiproduct Q2 v Q1, read on the motor's layout.
 
+Each kernel is declared [[gnu::always_inline]], so that the benchmarks time
+it inline, as straight-line code, and not as a call.
+
 Within an output the first term is assigned, negated when its sign is -1, and
 each later one added or subtracted. So over double, for the same operands, a
 kernel and any code that adds the same products in the same order give the
@@ -188,7 +191,7 @@ def signature(name, result, operands):
     params = ",\n".join(f"    const std::array<T, {size}>& {p}"
                         for p, size in operands)
     return ["template <class T>",
-            f"constexpr std::array<T, {result}> {name}(",
+            f"[[gnu::always_inline]] constexpr std::array<T, {result}> {name}(",
             params + ") {"]
 
 
@@ -311,6 +314,12 @@ HEAD = """\
 // e41 e42 e43 e1234 e23 e31 e12 1, where e41 = -e14, e31 = -e13, and
 // e321 = -e123. Within an output the terms come in order of the first
 // operand's coefficient, then the second's.
+//
+// Each kernel is always inlined (gnu::always_inline, which GCC and Clang
+// accept), so that a benchmark times it as the straight-line code it is
+// written as: left to their own heuristics, both compilers kept the
+// kernels of the transforms and of compose out of line, as a call in the
+// timed loop.
 //
 // The generator lays out one term list per line, so clang-format is off.
 // clang-format off

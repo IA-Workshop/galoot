@@ -23,8 +23,10 @@ using Motor = rga3::Motor<double>;
 int main(int argc, char** argv) {
   return bench::main<Plane, Motor>(
       "transform_plane", std::span(argv, static_cast<std::size_t>(argc)),
-      [](const Plane& x, const Motor& q) { return core::transform(x, q); },
-      [](const Plane& x, const Motor& q) {
+      [] [[gnu::always_inline]] (const Plane& x, const Motor& q) {
+        return core::transform(x, q);
+      },
+      [] [[gnu::always_inline]] (const Plane& x, const Motor& q) {
         return bench::as<Plane>(
             reference_kernels::transform_plane(x.coefficients, q.coefficients));
       });

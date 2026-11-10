@@ -29,6 +29,11 @@
 // difference of two runs with different pass counts, divided by the
 // difference of their operation counts, leaves them out. Repeats are
 // separate processes.
+//
+// A program gives each form as a lambda marked gnu::always_inline, which
+// GCC and Clang accept, and the reference kernels carry the same mark, so
+// that neither form adds a call of the program's own to the timed loop: a
+// call that remains is the library's.
 
 #include <array>
 #include <bit>
