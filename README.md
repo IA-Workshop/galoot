@@ -194,11 +194,11 @@ metric. An algebra is a tag: a type whose `static constexpr` member `value`
 holds the metric. `R<p, q, z>()` gives p generators that square to +1, then
 q that square to -1, then z that square to 0, all orthogonal;
 `rigid<D>()` and `conformal<D>()` give the rigid and the conformal algebra
-of D dimensions; and `from_gram` takes any symmetric matrix of integers as
-the inner products e_i · e_j of the generators. A multivector type is
-`mv<Tag, layout, scalar>`, with the layout written by the names of its
-blades, `blades<Tag, "1 e12">`, where `1` is the scalar. A product works
-out the layout of its result.
+of D dimensions; and `from_gram` takes a symmetric matrix of integers,
+within `max_form_entry`, as the inner products e_i · e_j of the generators.
+A multivector type is `mv<Tag, layout, scalar>`, with the layout written by
+the names of its blades, `blades<Tag, "1 e12">`, where `1` is the scalar.
+A product works out the layout of its result.
 
 Two algebras with the same number of generators are isomorphic when a
 change of basis carries the inner products of one to those of the other,
@@ -265,7 +265,8 @@ int main() {}
 The results are exact over `int` because the even layout's image needs no
 division. A layout whose image does is rejected with a message over an
 integer scalar, as `change_basis<witt_to_r110>(g)` is, since e2 maps to
-(e'1 - e'2) / 2; a rational or floating scalar type takes every layout.
+(e'1 - e'2) / 2. A floating scalar type, or a rational type of your own
+whose division is exact, takes every layout.
 
 `conformal_change<D>()` is the change from conformal(D), whose origin
 e(D+1) and point at infinity e(D+2) square to zero with
