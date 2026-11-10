@@ -2075,9 +2075,10 @@ constexpr Motor<rational> e1_wedge_e2_on_motor =
 //   the source puts each coefficient on its blade, multiplied by the
 //   product of the blade's signs in the two layouts, and gives zero on the
 //   other blades, also at run time after a constant evaluation of the same
-//   conversion in the program: e42 and e43 have sign +1 in both layouts, so
-//   1 e42 + 2 e43 on the motor layout 1 e41 e42 e43 e23 e31 e12 e1234 is
-//   (0, 0, 1, 2, 0, 0, 0, 0), each zero 0/1
+//   conversion in the program: e42 and e43 stand for -e24 and -e34 in both
+//   layouts, so each product of signs is +1, and 1 e42 + 2 e43 on the motor
+//   layout 1 e41 e42 e43 e23 e31 e12 e1234 is (0, 0, 1, 2, 0, 0, 0, 0), each
+//   zero 0/1
 TEST_CASE("A conversion is zero on the blades its source lacks after a "
           "constant evaluation of it") {
   constexpr Motor<rational> expected{rational{0}, rational{0}, rational{1},
