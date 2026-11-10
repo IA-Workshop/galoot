@@ -1,0 +1,17 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+jobpool_gate_removed	gcc-debug	6f373e7918cb	killed	killed	tools.jobpool	-	-	-	-	-
+timed_missing_fifo_allowed	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+jobpool_missing_fifo_exit_removed	gcc-debug	6f373e7918cb	killed	killed	tools.jobpool	-	-	-	-	-
+jobpool_missing_fifo_exit_zero	gcc-debug	6f373e7918cb	killed	killed	tools.jobpool	-	-	-	-	-
+timed_wait_removed	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+timed_wait_unconditional	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+timed_wait_short	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+timed_wait_long	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+timed_still_aside_message_removed	gcc-debug	6f373e7918cb	killed	killed	tools.measure_record	-	-	-	-	-
+mutate_guard_note_ignored	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_every_error_with_notes_a_guard	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_notes_past_next_error	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_expected_survivor_a_problem	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_killed_survivor_not_reported	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_survival_reason_optional	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
+mutate_survival_killers_allowed	gcc-debug	6f373e7918cb	killed	killed	tools.mutate	-	-	-	-	-
