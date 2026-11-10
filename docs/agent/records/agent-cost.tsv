@@ -215,3 +215,6 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0032	implementer cumulative to date (replaces 305111)	opus	353558	206		as relayed by the harness completion report; recorded 2026-11-10
 2026-11-10	plan-0034	blind reviewer (placement comments)	sonnet	99557	21	189	as relayed by the implementer from the harness report; recorded 2026-11-10
 2026-11-10	plan-0034	implementer	opus	159678	71	767	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	M5	auditor fork 1 (reviews, W9, W2, W7)	opus	242909	35	316	as relayed by the auditor; recorded 2026-11-10
+2026-11-10	M5	auditor fork 2 (decisions, governance, cost, lessons)	opus	250407	34	277	as relayed by the auditor; recorded 2026-11-10
+2026-11-10	M5	auditor	opus	271709	78	1454	as relayed by the harness completion report (interim figure; final to follow); recorded 2026-11-10
