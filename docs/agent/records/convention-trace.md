@@ -70,6 +70,7 @@ It fails when an item here is missing from CONVENTIONS.md, when an item of CONVE
 | 4.4 | compose(Q2, Q1) applies Q1 first | yes |
 | 4.4 | the transform by V is lambda times an outermorphism | yes |
 | 4.4 | a single mirror maps each vector of the mirror to itself times lambda | yes |
+| 4.4 | each term is one product and each later term on a place one addition | yes |
 | 4.5 | truncate checks that the part it drops is zero | yes |
 | 4.5 | part never checks what it drops | yes |
 | 4.5 | transform checks a rounding scalar's dropped part against its forward error bound | yes |
