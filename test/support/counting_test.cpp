@@ -50,6 +50,7 @@ TEST_CASE("each operation of counting computes its integer result and adds "
           "one to its own count") {
   const counting a{7};
   const counting b{-3};
+  const counting also_seven{7};
 
   test_support::reset_counts();
   const counting sum = a + b;
@@ -73,10 +74,10 @@ TEST_CASE("each operation of counting computes its integer result and adds "
 
   test_support::reset_counts();
   const bool equal = a == b;
-  const bool equal_to_itself = a == a;
+  const bool equal_to_seven = a == also_seven;
   check_counts(test_support::counts(), {.comparisons = 2});
   CHECK_FALSE(equal);
-  CHECK(equal_to_itself);
+  CHECK(equal_to_seven);
 
   test_support::reset_counts();
   const counting from_integer{std::int64_t{5}};
