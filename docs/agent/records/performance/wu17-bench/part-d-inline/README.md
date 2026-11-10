@@ -50,6 +50,19 @@ So on Clang a throughput gap that E2's rerun finds between the library and the r
 - `rga3.benchmark_<operation>_inline` (the demangled symbol table defines no `reference_kernels` function and no lambda of `main`) fails before the change in gcc-debug (7 of 7) and clang-measure (the 4 transforms and compose), and passes after it in gcc-debug, clang-debug, gcc-measure and clang-measure, with `rga3.reference_kernels`, `reference.kernels` and `rga3.benchmark_*` (16 of 16 in each).
 - Mutants `transform_line_kernel_not_always_inline` and `transform_line_reference_lambda_not_always_inline` (`records/mutations/0038-cost-evidence/bench.toml`) are killed by `rga3.benchmark_transform_line_inline` in gcc-debug, clang-debug, gcc-measure and clang-measure.
 
+## Build cost (P1)
+
+The ten translation units under `test/bench/` were rebuilt at `5843ddf` (the code of `0c429d5`) in four presets, their objects deleted first, through `tools/timed build <preset> bench-targets-cost`, from the shared pool (23 of 23 slots free, load average 1.0). The rows are `compile.tsv`, all `shared`. Beside them, the figures of `../part-d-build-cost.md` at `a28504a`, before the inlining and before the smoke test's small-integer draws:
+
+| Preset | Sum of compile time, `a28504a` (s) | Sum at `5843ddf` (s) | Smoke test TU, `a28504a` → `5843ddf` (s) | Largest peak memory at `5843ddf` (MiB) |
+| --- | ---: | ---: | --- | ---: |
+| gcc-debug | 10.49 | 9.94 | 1.52 → 1.07 | 327 |
+| clang-debug | 9.92 | 9.24 | 1.31 → 0.84 | 274 |
+| gcc-measure | 16.99 | 16.04 | 1.45 → 1.51 | 324 |
+| clang-measure | 12.90 | 12.47 | 1.17 → 1.36 | 272 |
+
+The differences are within what unpinned compiles of the shared pool vary by, and two revisions' changes are mixed in them, so no effect of the forced inlining on build cost can be read from them (inferred). At `-O0` the marks make the compilers inline the kernels over the test rational in the smoke test; its compile time did not grow measurably.
+
 ## Departures
 
 - **One author for the tests and the code.** The same agent wrote `rga3.benchmark_<operation>_inline` (on `feature/cost-evidence--bench--inline--tests`, cherry-picked with `-x` as `5d2fb38` and `f6b8276`) and the change it judges. The second test commit was written after the author saw the intermediate state (the kernels inlined, GCC keeping the reference lambda out of line), so the tests are not independent of the code. The blind review (`records/reviews/2026-11-10-wu17-bench-inline-blind.md`) checked their power on its own evidence.
