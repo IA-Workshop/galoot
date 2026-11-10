@@ -918,9 +918,11 @@ keeps_grades(const change_map<R, T>& map,
 }
 
 // Checks the layout once, before anything is generated, so that a misuse
-// gives its own message and no other; reads the checked rows of the tag in
-// the direction asked for; and generates, counts, fills, and types the terms
-// of the layout. A tag that failed its checks gives the empty map, so that a
+// gives its own message and no other, naming the layout the set was given
+// to: only change_basis_layout and change_basis_back_layout take a set that
+// no multivector has checked. Then reads the checked rows of the tag in the
+// direction asked for, and generates, counts, fills, and types the terms of
+// the layout. A tag that failed its checks gives the empty map, so that a
 // call adds no second error. Every local is static constexpr, as in
 // make_product_plan and for the same reason.
 template <basis_change_like C, bool Back, blade_set S>
@@ -930,10 +932,17 @@ template <basis_change_like C, bool Back, blade_set S>
   static constexpr std::size_t n = from::value.generator_count;
   static constexpr bool in_range = all_in_algebra(S, n);
   static constexpr bool valid_signs = signs_valid<S>;
-  static_assert(in_range,
-                "basis change map: the blade set names a generator beyond e_n");
-  static_assert(valid_signs, "basis change map: the blade set holds a sign "
-                             "other than +1 or -1");
+  if constexpr (Back) {
+    static_assert(in_range, "change_basis_back_layout: the blade set names a "
+                            "generator beyond e_n");
+    static_assert(valid_signs, "change_basis_back_layout: the blade set holds "
+                               "a sign other than +1 or -1");
+  } else {
+    static_assert(in_range, "change_basis_layout: the blade set names a "
+                            "generator beyond e_n");
+    static_assert(valid_signs, "change_basis_layout: the blade set holds a "
+                               "sign other than +1 or -1");
+  }
 
   if constexpr (checked.fault == ChangeFault::none && in_range && valid_signs) {
     static constexpr const auto& rows =
@@ -947,8 +956,8 @@ template <basis_change_like C, bool Back, blade_set S>
     static constexpr auto map =
         typed_change<found.size>(generated, found, rows, S.blades);
     static constexpr bool graded = keeps_grades(map, S.blades);
-    static_assert(graded, "basis change map: a term has another grade than "
-                          "its input blade");
+    static_assert(graded, "basis_change: a term has another grade than its "
+                          "input blade");
     return map;
   } else {
     return change_map<0, 0>{};
