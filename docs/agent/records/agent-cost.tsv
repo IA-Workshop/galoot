@@ -258,3 +258,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-d-inline	author (tests and code)	opus	66000	36	538	inline reference kernels, feature/cost-evidence--bench--inline 16c88af (427274 total minus 361124 earlier, rounded)
 2026-11-10	wu17-part-d-inline	blind-reviewer	opus	193131	61	895	review 53d2e01
 2026-11-10	wu17-part-d-inline	author review-fix and merge pass	opus	59364	30	397	F1-F6 fixes, merge 2de0d36 (486638 total minus 427274)
+2026-11-10	wu17-e2-rerun	performance-engineer	opus	79754	53	1748	E2 rerun at 2de0d36 (400239 total minus 320485)
