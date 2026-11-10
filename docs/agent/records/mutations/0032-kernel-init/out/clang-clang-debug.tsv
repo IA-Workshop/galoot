@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+run_map_shared_initializer	clang-debug	20ae7aecc31e	equivalent	equivalent	-	-	-	-	-	-
+run_product_shared_initializer	clang-debug	20ae7aecc31e	equivalent	equivalent	-	-	-	-	-	-
+run_sum_shared_initializer	clang-debug	20ae7aecc31e	equivalent	equivalent	-	-	-	-	-	-
