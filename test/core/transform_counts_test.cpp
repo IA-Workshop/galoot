@@ -67,8 +67,8 @@ void check_counts(const test_support::operation_counts& seen,
 //   e3, e123 and x on e123, restricted with checking off to the middle blades
 //   that the terms of the second stage on e123 read, and the terms of that
 //   times antireverse(V), on e123 and with checking on on the other blades
-TEST_CASE("transform(x, V) in a degenerate form computes only the first-stage "
-          "terms its result reads") {
+TEST_CASE("transform(x, V) in a degenerate form makes the reference's "
+          "operations") {
   // V is the antiscalar, the identity of the antiproduct, so what the
   // transform drops is zero and the check with checking on passes. The
   // values do not change what is computed: the code is straight-line.
