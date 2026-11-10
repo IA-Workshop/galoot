@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+equality_ignores_denominators	clang-debug	3ddc3718eee2	survived	survived	-	-	-	-	-	-

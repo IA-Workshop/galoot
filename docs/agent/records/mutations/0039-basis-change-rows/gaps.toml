@@ -14,4 +14,3 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''  return a.rows == b.rows && a.denominators == b.denominators;''', replacement = '''  return a.rows == b.rows;''' }]
 expect = "killed"
-killers = ["core.basis_change"]

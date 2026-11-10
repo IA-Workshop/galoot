@@ -1,0 +1,125 @@
+# The mutants of plan 0030's records whose code this unit edits
+# (check_change, eliminate) or whose killers it changes (the inputs of
+# core.basis_change_overflow and core.basis_change_overflow_elimination),
+# copied from 0030-basis-change/change.toml, review_fixes.toml, and
+# delta-review/mutants.toml with their names and faults. Two anchors are
+# rewritten for the reduced rows, which check_change now passes where it
+# passed the change as written: isometry_sides_swapped and
+# isometry_check_removed. elimination_overflow_not_stopping is now declared
+# equivalent: with the elimination's returns stating fits, an overflow that
+# does not stop the loop still reaches the result as an overflow.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[[mutant]]
+name = "isometry_sides_swapped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(rows, source, target);''', replacement = '''  const identity_check isometry = keeps_inner_products(rows, target, source);''' }]
+expect = "killed"
+
+[[mutant]]
+name = "isometry_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(rows, source, target);''', replacement = '''  const identity_check isometry{.fits = true, .holds = source.gram.size() == target.gram.size()};''' }]
+expect = "killed"
+
+[[mutant]]
+name = "independence_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!e.fits || e.pivot == 0) {''', replacement = '''  if (!e.fits) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "denominator_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!denominators_positive(change)) {''', replacement = '''  if (!denominators_positive(change) && false) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "checked_arithmetic_unchecked"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x) {''', replacement = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x && magnitude_x < 0) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "elimination_swap_skipped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      std::swap(a[row], a[k]);''', replacement = '''      static_cast<void>(a[row]);''' }]
+expect = "killed"
+
+[[mutant]]
+name = "elimination_division_dropped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
+               previous;''', replacement = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
+               (previous / previous);''' }]
+expect = "killed"
+
+[[mutant]]
+name = "isometry_diagonal_only"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      holds = holds && left == right;''', replacement = '''      holds = holds && (i != j || left == right);''' }]
+expect = "killed"
+killers = ["core.basis_change_pairing_not_kept"]
+
+[[mutant]]
+name = "elimination_overflow_as_dependent"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    out.fault = e.fits ? ChangeFault::dependent : ChangeFault::overflow;''', replacement = '''    out.fault = ChangeFault::dependent;''' }]
+expect = "killed"
+
+[[mutant]]
+name = "elimination_overflow_not_stopping"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    if (!fits) {
+      return {.pivot = 0, .scaled_inverse = {}, .fits = false};
+    }
+''', replacement = '''    static_cast<void>(fits);
+'''}]
+expect = "equivalent"
+reason = "every later return states fits, which stays false once cleared; each pivot used as a divisor is nonzero, and the noting arithmetic keeps every value in range, so the loop ends with the overflow reported"
+
+[[mutant]]
+name = "inverts_overflow_as_self_check"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''        inverse_holds.fits ? ChangeFault::inverse : ChangeFault::overflow;''', replacement = '''        ChangeFault::inverse;''' }]
+expect = "killed"
+
+[[mutant]]
+name = "inverse_rows_overflow_ignored"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!inverse.fits) {
+    out.fault = ChangeFault::overflow;
+    return out;
+  }
+''', replacement = '''''' }]
+expect = "killed"
+
+[[mutant]]
+name = "isometry_overflow_holds"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      holds = holds && left == right;
+    }
+  }
+  return {.fits = fits, .holds = fits && holds};''', replacement = '''      holds = holds && left == right;
+    }
+  }
+  return {.fits = fits, .holds = holds};''' }]
+expect = "killed"
+killers = ["core.basis_change_overflow"]

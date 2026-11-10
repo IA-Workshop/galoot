@@ -16,7 +16,6 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''  const basis_change<N> rows = reduced(change);''', replacement = '''  const basis_change<N> rows = change;''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # The entries are divided and the denominator is not, so P changes: the
 # reduction's hand values and the scaled changes' isometry fail.
@@ -27,7 +26,6 @@ file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''      out.denominators[i] =
           static_cast<entry_type>(out.denominators[i] / common);''', replacement = '''      static_cast<void>(out.denominators[i]);''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # The divisor taken from the entries alone: the row {2, 4, 0} over 3 of the
 # reduction's hand values becomes {1, 2, 0} over 1.
@@ -37,7 +35,6 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''    coefficient_type common = change.denominators[i];''', replacement = '''    coefficient_type common = 0;''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # The checks read the reduced rows, the terms the rows as written: the
 # image of e123 under m e'_i over m is m^3 over m^3.
@@ -47,7 +44,6 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''  out.forward = widened(rows);''', replacement = '''  out.forward = widened(change);''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # same_rows compares the denominators only: other rows over equal
 # denominators compare as the same rows.
@@ -57,7 +53,6 @@ selection = "change"
 file = "include/galoot/core/basis_change.hpp"
 edits = [{ anchor = '''  return a.rows == b.rows && a.denominators == b.denominators;''', replacement = '''  return a.denominators == b.denominators;''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # == defaulted again: basis_change is std::equality_comparable.
 [[mutant]]
@@ -70,7 +65,6 @@ edits = [{ anchor = '''  static constexpr std::size_t generator_count = N;
   [[nodiscard]] constexpr bool operator==(const basis_change&) const = default;
 };''' }]
 expect = "killed"
-killers = ["core.basis_change"]
 
 # true at the elimination's two later returns, as before the unit: the loop
 # returns on !fits before either, so fits is true at both.
