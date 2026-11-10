@@ -920,9 +920,9 @@ keeps_grades(const change_map<R, T>& map,
 // Checks the layout once, before anything is generated, so that a misuse
 // gives its own message and no other, naming the layout the set was given
 // to: only change_basis_layout and change_basis_back_layout take a set that
-// no multivector has checked. Then reads the checked rows of the tag in the
-// direction asked for, and generates, counts, fills, and types the terms of
-// the layout. A tag that failed its checks gives the empty map, so that a
+// no multivector has checked. It then reads the checked rows of the tag in
+// the direction asked for, and generates, counts, fills, and types the terms
+// of the layout. A tag that failed its checks gives the empty map, so that a
 // call adds no second error. Every local is static constexpr, as in
 // make_product_plan and for the same reason.
 template <basis_change_like C, bool Back, blade_set S>
@@ -934,14 +934,20 @@ template <basis_change_like C, bool Back, blade_set S>
   static constexpr bool valid_signs = signs_valid<S>;
   if constexpr (Back) {
     static_assert(in_range, "change_basis_back_layout: the blade set names a "
-                            "generator beyond e_n");
-    static_assert(valid_signs, "change_basis_back_layout: the blade set holds "
-                               "a sign other than +1 or -1");
+                            "generator beyond e_n; use a set whose blades "
+                            "are all in the change's target algebra");
+    static_assert(valid_signs,
+                  "change_basis_back_layout: the blade set holds a sign "
+                  "other than +1 or -1; give each blade of a set written out "
+                  "by hand the sign +1 or -1");
   } else {
     static_assert(in_range, "change_basis_layout: the blade set names a "
-                            "generator beyond e_n");
-    static_assert(valid_signs, "change_basis_layout: the blade set holds a "
-                               "sign other than +1 or -1");
+                            "generator beyond e_n; use a set whose blades are "
+                            "all in the change's source algebra");
+    static_assert(valid_signs,
+                  "change_basis_layout: the blade set holds a sign other "
+                  "than +1 or -1; give each blade of a set written out by "
+                  "hand the sign +1 or -1");
   }
 
   if constexpr (checked.fault == ChangeFault::none && in_range && valid_signs) {
