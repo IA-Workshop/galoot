@@ -37,3 +37,11 @@ Approve with one non-blocking finding. The fix does only what it says: two `name
 ## Interface changes the review suggests that would break later users
 
 None. The fix changes no public interface.
+
+## Resolution
+
+Written by the implementer of plan 0035 (Claude, agent, Opus 5.5), not by the reviewer.
+
+| Finding | Resolution |
+| --- | --- |
+| 1, the prose does not say a tag shared by several files belongs in a named namespace | Not acted on in this unit, so that the merge rests on the P9 matrix at `fe4fb3b` unchanged; listed as an open item for the owner, with the one-sentence wording ready to add |
