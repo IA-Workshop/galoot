@@ -1,6 +1,6 @@
 # 0039 basis_change: `same_rows` for `==`, rows reduced before the checks, and `.fits = fits`
 
-- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`. Merged by its author after the blind review and any delta review (W5), as the brief asks.
+- Status: done 2026-11-10; merged into `develop` by its author after the blind review, as the brief asks. Claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`.
 - Source of scope: decision 0225 items 3 and 4 (the rename of equality on `basis_change` before release; each row reduced by its gcd before the checks, with N2 of the WU12 delta review); decision 0223 item 4 (what `==` compares, documented until then); the WU12 blind review's N3 (`records/reviews/2026-11-09-wu12-blind-review.md`) and the WU12 delta review's N2 and N3 (`records/reviews/2026-11-09-wu12-delta-review.md`); plan 0030's open items; research note 0026 (what a change preserves; nothing here changes it).
 - Branches, from `develop` after this claim (W7):
   - `feature/basis-change-rows`, worktree `.claude/worktrees/basis-change-rows`: the unit. Only this branch merges into `develop`.
@@ -148,4 +148,33 @@ Planner and implementer, Opus high: 250k to 400k tokens. Blind review: 100k to 2
 
 ## 13. Outcome
 
-Not yet.
+Done, 2026-11-10. The blind review (`records/reviews/2026-11-10-basis-change-rows-blind-review.md`, cherry-picked with `-x` from `1f2dbdd`) blocked on one layout failure (B1) and approved otherwise; its resolutions are in the record. The fixes after it change comments, one test's layout, and records only, so no delta review was made.
+
+| Commit | What | Kind (W9) |
+| --- | --- | --- |
+| `be3f045` (from `3a6734b`) | the new inputs of `core.basis_change_overflow` and `_overflow_elimination` | test, passing before and after |
+| `70bbcf3` (from `92a0046`) | `same_rows` in the tests, and its `static_assert`s | test, failing when committed, as its message says |
+| `dd67ead` (from `f4d6bf5`) | the reduction's hand values; the three scaled changes against their reduced forms | test, failing when committed, as its message says |
+| `38925ad` | the header: `same_rows`, the reduction in `check_change`, `.fits = fits` | core |
+| `fa86535`, `c7c0f1f` | mutation specs and runs | record |
+| `0d4088d` | the blind review record | record |
+| `b2d5dd7` | B1: the elimination overflow test formatted | test layout |
+| `42b2c22` | N1 and N5: comments of `detail::reduced` and of `denominators`, and section 5.3 | comments, record |
+| `cb345ec`, `d5465b1` | seeds, build cost, the catalogue's places, the review's resolutions | record |
+
+Results against section 4:
+
+- **Criteria 1 to 5.** The `static_assert`s and the test case "rows with a large common factor are the change without it" pass on every preset of the matrix. Every former use of `==` on a change compiles with `same_rows`; the README compares no changes and is unchanged. The replica (`records/mutations/0039-basis-change-rows/witnesses-out.txt`) and the reviewer's own transcription (`scaling_probe.py`, 9,000 random changes, about a million products and sums compared exactly) agree on every stage verdict and on the scaling of section 5.3, corrected for the quotients (N1).
+- **Criteria 6 and 7.** `records/mutations/0039-basis-change-rows/README.md`: the six mutants written for the new tests are killed on both presets, each by the test written for it; `elimination_fits_hard_coded` is equivalent as declared; the gap mutant survives at the branch point and dies at the tip on both presets. Of the 13 mutants of plan 0030 run again, 12 are killed and `elimination_overflow_not_stopping` is now equivalent, as the N2 change makes it.
+- **Criterion 8.** 100 runs, all passing (medians 0.031 s and 0.191 s).
+- **Build cost (definition of done item 6).** `records/performance/basis-change-rows-cost/README.md`: retired instructions within ±0.09% on both compilers, about one range of the repeats; measured pinned to CPU 4 under the timing lock on a loaded machine (load average 4).
+- **Criterion 9.** The P9 matrix at `d5465b1`, from empty build trees (the worktree's `build/` removed first), through `tools/timed` and the shared pool, each row named `gate:<selection>`, all passing: gcc-debug 544 tests (105.2 s), gcc-release 544 (110.0 s), gcc-asan 536 (234.4 s), clang-debug 544 (96.6 s), clang-release 544 (115.7 s), clang-asan 544 (214.3 s), lint 544 (267.0 s, no diagnostic), clang-measure 536 (119.4 s); `format-check` (1.7 s), the trace gate (0.3 s; items 6.1 to 6.4 without a test, as on `develop`), and `tools/runlog check` (2.6 s).
+
+Departures and notes beyond section 1:
+
+- The first mutation run declared a CTest test as each kill's killer, which `tools/mutate` cannot match for a kill at compile time; the rows list that problem and the verdicts stand (mutation record).
+- The cost campaign ran while other workstreams loaded the machine; the instruction counts are the comparison, the wall times are only recorded.
+- Two configure rows of the branch-point worktree went to its own run log before the campaign log was named; they are copied into `branch-point/runs.tsv`.
+- After the matrix, `develop` gained records only, merged in before the merge into `develop`, with `tools/runlog check` on the result.
+
+Open items: O1 to O3 of section 12.
