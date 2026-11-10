@@ -1544,23 +1544,25 @@ def layout_blades(names):
     return [conv.parse(name) for name in names]
 
 
-def canonical_layout(masks):
+def canonical_layout(masks, n=4):
     """The given blades in the result order, each with orientation +1."""
-    return [(m, 1) for m in result_order(4) if m in masks]
+    return [(m, 1) for m in result_order(n) if m in masks]
 
 
-def blade_terms(op, a, b):
+def blade_terms(op, a, b, n=4):
     """The terms of op(x, y) for x on the layout a and y on the layout b:
     (i, j, mask, c) for each pair of places i of a and j of b, in that
-    order, whose oriented blades give c times the blade of the mask, with c
-    not zero. In rigid(3) a product of two blades is a single blade."""
+    order, and for each blade of the mask that their oriented blades give
+    with a coefficient c other than zero, in the result order. In rigid(3)
+    a product of two blades is a single blade; in a form that is not
+    diagonal it may be several."""
+    order = {m: k for k, m in enumerate(result_order(n))}
     terms = []
     for i, (ma, sa) in enumerate(a):
         for j, (mb, sb) in enumerate(b):
             product = op({ma: sa}, {mb: sb})
-            if len(product) > 1:
-                raise ValueError(f"a product of two blades has {product}")
-            terms += [(i, j, m, c) for m, c in product.items()]
+            terms += [(i, j, m, product[m])
+                      for m in sorted(product, key=order.__getitem__)]
     return terms
 
 
@@ -1642,28 +1644,56 @@ def join_counts(rng):
     return first, second
 
 
-def transform_count(x_names, rng, what):
-    """The counts of transform(x, Q) for x on x_names and a motor Q, with
-    checking off and on. The first stage is the geometric antiproduct of Q
-    and x on the canonical blades
-    of its result, the middle; the second is the middle times
-    antireverse(Q), the terms on x's blades kept on x's places with x's
-    orientations and the others on the dropped blades, canonical. With
-    checking off the first stage keeps only the terms on middle blades that
-    a kept term reads; with it on it keeps all of them, the dropped terms
-    are computed too, and each dropped blade is compared once."""
-    v_names = conv.MOTOR_NAMES
+def rigid_algebra():
+    """rigid(3) as conventions_check.py computes in it: its number of
+    generators, geometric antiproduct, and antireverse."""
+    return 4, conv.antigp, conv.antireverse
+
+
+def degenerate_algebra():
+    """The degenerate form of GP_TABLE_FORMS with e1 . e2 = 1, as
+    clifford_reference.py multiplies in it: the antiproduct is
+    left(right(a) right(b)), with the complements and the antireverse's
+    signs of three generators from their definitions above."""
+    g = next(g for name, _, g in GP_TABLE_FORMS if name == "degenerate_3")
+    alg = ref.Algebra(g)
+    right, left = complements(3)
+    signs = grade_signs(3, right, left)
+
+    def antigp(a, b):
+        return ref.clean(apply_complement(left, ref.clean(alg.mul(
+            apply_complement(right, a), apply_complement(right, b)))))
+
+    def antireverse(x):
+        return {m: c * signs[m][1] for m, c in x.items()}
+
+    return 3, antigp, antireverse
+
+
+def transform_count(v_names, x_names, rng, what, algebra):
+    """The counts of transform(x, V) for x on x_names and an even versor V
+    on v_names, with checking off and on. The first stage is the geometric
+    antiproduct of V and x on the canonical blades of its result, the
+    middle; the second is the middle times antireverse(V), the terms on x's
+    blades kept on x's places with x's orientations and the others on the
+    dropped blades, canonical. With checking off the first stage keeps only
+    the terms on middle blades that a kept term reads; with it on it keeps
+    all of them, the dropped terms are computed too, and each dropped blade
+    is compared once."""
+    n, antigp, antireverse = algebra
     v, x = layout_blades(v_names), layout_blades(x_names)
-    first_terms = blade_terms(conv.antigp, v, x)
-    middle = canonical_layout({m for _, _, m, _ in first_terms})
+    if any((n - ref.popcount(m)) % 2 for m, _ in v):
+        raise ValueError(f"the versor of {what} is not even")
+    first_terms = blade_terms(antigp, v, x, n)
+    middle = canonical_layout({m for _, _, m, _ in first_terms}, n)
     first_all = onto(first_terms, middle)
 
-    reversed_v = [next(iter(conv.antireverse({m: s}).items())) for m, s in v]
-    second_terms = blade_terms(conv.antigp, middle, reversed_v)
+    reversed_v = [next(iter(antireverse({m: s}).items())) for m, s in v]
+    second_terms = blade_terms(antigp, middle, reversed_v, n)
     x_masks = {m for m, _ in x}
     kept = onto([t for t in second_terms if t[2] in x_masks], x)
     dropped_layout = canonical_layout(
-        {m for _, _, m, _ in second_terms if m not in x_masks})
+        {m for _, _, m, _ in second_terms if m not in x_masks}, n)
     dropped = onto([t for t in second_terms if t[2] not in x_masks],
                    dropped_layout)
     read = {i for i, _, _, _ in kept}
@@ -1671,8 +1701,9 @@ def transform_count(x_names, rng, what):
 
     for _ in range(COUNT_TRIALS):
         q, p = random_values(rng, len(v)), random_values(rng, len(x))
-        direct = conv.sandwich(conv.on_names(v_names, q),
-                               conv.on_names(x_names, p))
+        versor = conv.on_names(v_names, q)
+        direct = antigp(antigp(versor, conv.on_names(x_names, p)),
+                        antireverse(versor))
         for first in (first_kept, first_all):
             mid = evaluate(first, q, p, len(middle))
             agree(evaluate(kept, mid, q, len(x)),
@@ -1700,13 +1731,19 @@ def operation_counts():
         "point_join": (summed(point_join),) * 2,
         "plane_join": (summed(point_join, plane_second),) * 2,
         "line_plane_meet": (summed(meet),) * 2,
-        "point_transform": transform_count(conv.POINT_NAMES, rng,
-                                           "transform(p, Q)"),
-        "line_transform": transform_count(conv.LINE_NAMES, rng,
-                                          "transform(l, Q)"),
-        "plane_transform": transform_count(conv.PLANE_NAMES, rng,
-                                           "transform(g, Q)"),
+        "point_transform": transform_count(
+            conv.MOTOR_NAMES, conv.POINT_NAMES, rng, "transform(p, Q)",
+            rigid_algebra()),
+        "line_transform": transform_count(
+            conv.MOTOR_NAMES, conv.LINE_NAMES, rng, "transform(l, Q)",
+            rigid_algebra()),
+        "plane_transform": transform_count(
+            conv.MOTOR_NAMES, conv.PLANE_NAMES, rng, "transform(g, Q)",
+            rigid_algebra()),
         "motor_compose": (summed(compose),) * 2,
+        "degenerate_transform": transform_count(
+            ("e1", "e2", "e3", "e123"), ("e123",), rng,
+            "transform(x, V) in the degenerate form", degenerate_algebra()),
     }
     return {name: Agg(pair) for name, pair in counts.items()}
 
@@ -2159,7 +2196,10 @@ def generate():
                    "motors, on the canonical blades of their results, and "
                    "transform(x, Q) of a point, a line, and a plane by a "
                    "motor as the geometric antiproduct of Q and x and then "
-                   "of that and antireverse(Q). Each "
+                   "of that and antireverse(Q); and transform(x, V) in the "
+                   "degenerate form with e1 . e2 = 1, for V on e1, e2, e3, "
+                   "e123 and x on e123, where the second stage reads only "
+                   "some of the middle blades. Each "
                    "operation's terms are listed from the products of its "
                    "operands' oriented blades, in the order of the first "
                    "operand's place and then the second's, and each list "

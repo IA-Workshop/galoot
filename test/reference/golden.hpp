@@ -7380,10 +7380,12 @@ inline constexpr std::array<matrix3, 332> elements = {{
 // plane, and compose(Q2, Q1), the geometric antiproduct of two motors, on
 // the canonical blades of their results, and transform(x, Q) of a point, a
 // line, and a plane by a motor as the geometric antiproduct of Q and x and
-// then of that and antireverse(Q). Each operation's terms are listed from
-// the products of its operands' oriented blades, in the order of the first
-// operand's place and then the second's, and each list was checked to
-// compute its operation on seeded rationals. Each term is one
+// then of that and antireverse(Q); and transform(x, V) in the degenerate
+// form with e1 . e2 = 1, for V on e1, e2, e3, e123 and x on e123, where the
+// second stage reads only some of the middle blades. Each operation's terms
+// are listed from the products of its operands' oriented blades, in the
+// order of the first operand's place and then the second's, and each list
+// was checked to compute its operation on seeded rationals. Each term is one
 // multiplication, its sign of +1 or -1 carried and not multiplied; the first
 // term on a place is assigned, one negation when its sign is -1, and each
 // later one is one addition or subtraction. With checking on, a transform's
@@ -7407,6 +7409,8 @@ inline constexpr checked_operation_count
     plane_transform = {{48, 36, 5, 0, 0}, {76, 60, 6, 4, 0}};
 inline constexpr checked_operation_count
     motor_compose = {{48, 40, 4, 0, 0}, {48, 40, 4, 0, 0}};
+inline constexpr checked_operation_count
+    degenerate_transform = {{4, 1, 1, 0, 0}, {16, 8, 2, 3, 0}};
 } // namespace operation_counts
 
 } // namespace golden
