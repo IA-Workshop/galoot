@@ -12,6 +12,12 @@
 // e321 = -e123. Within an output the terms come in order of the first
 // operand's coefficient, then the second's.
 //
+// Each kernel is always inlined (gnu::always_inline, which GCC and Clang
+// accept), so that a benchmark times it as the straight-line code it is
+// written as: left to their own heuristics, both compilers kept the
+// kernels of the transforms and of compose out of line, as a call in the
+// timed loop.
+//
 // The generator lays out one term list per line, so clang-format is off.
 // clang-format off
 #ifndef GALOOT_TEST_BENCH_REFERENCE_KERNELS_HPP
@@ -23,7 +29,7 @@ namespace reference_kernels {
 
 // x ^ y, the line through two points, on e41 e42 e43 e23 e31 e12.
 template <class T>
-constexpr std::array<T, 6> wedge_point_point(
+[[gnu::always_inline]] constexpr std::array<T, 6> wedge_point_point(
     const std::array<T, 4>& x,
     const std::array<T, 4>& y) {
   return {
@@ -40,7 +46,7 @@ constexpr std::array<T, 6> wedge_point_point(
 // first p ^ q on the bivectors e12 e13 e14 e23 e24 e34, then that
 // join with r.
 template <class T>
-constexpr std::array<T, 4> wedge_point_point_point(
+[[gnu::always_inline]] constexpr std::array<T, 4> wedge_point_point_point(
     const std::array<T, 4>& p,
     const std::array<T, 4>& q,
     const std::array<T, 4>& r) {
@@ -60,7 +66,7 @@ constexpr std::array<T, 4> wedge_point_point_point(
 
 // x v y, the point where a line meets a plane, on e1 e2 e3 e4.
 template <class T>
-constexpr std::array<T, 4> antiwedge_line_plane(
+[[gnu::always_inline]] constexpr std::array<T, 4> antiwedge_line_plane(
     const std::array<T, 6>& x,
     const std::array<T, 4>& y) {
   return {
@@ -75,7 +81,7 @@ constexpr std::array<T, 4> antiwedge_line_plane(
 // layout e1 e2 e3 e4: first Q v x on the blades the
 // second stage reads, then that times Q with antireverse's signs.
 template <class T>
-constexpr std::array<T, 4> transform_point(
+[[gnu::always_inline]] constexpr std::array<T, 4> transform_point(
     const std::array<T, 4>& x,
     const std::array<T, 8>& q) {
   const T e1 = q[1] * x[2] - q[2] * x[1] + q[3] * x[0] + q[4] * x[3];
@@ -98,7 +104,7 @@ constexpr std::array<T, 4> transform_point(
 // layout e41 e42 e43 e23 e31 e12: first Q v x on the blades the
 // second stage reads, then that times Q with antireverse's signs.
 template <class T>
-constexpr std::array<T, 6> transform_line(
+[[gnu::always_inline]] constexpr std::array<T, 6> transform_line(
     const std::array<T, 6>& x,
     const std::array<T, 8>& q) {
   const T scalar = -(q[0] * x[3]) - q[1] * x[4] - q[2] * x[5] - q[4] * x[0] - q[5] * x[1] - q[6] * x[2];
@@ -123,7 +129,7 @@ constexpr std::array<T, 6> transform_line(
 // layout e423 e431 e412 e321: first Q v x on the blades the
 // second stage reads, then that times Q with antireverse's signs.
 template <class T>
-constexpr std::array<T, 4> transform_plane(
+[[gnu::always_inline]] constexpr std::array<T, 4> transform_plane(
     const std::array<T, 4>& x,
     const std::array<T, 8>& q) {
   const T e1 = q[0] * x[3] + q[5] * x[2] - q[6] * x[1] + q[7] * x[0];
@@ -145,7 +151,7 @@ constexpr std::array<T, 4> transform_plane(
 // compose(x, y) = x v y, the motor that applies y and then x, on
 // e41 e42 e43 e1234 e23 e31 e12 1.
 template <class T>
-constexpr std::array<T, 8> compose_motors(
+[[gnu::always_inline]] constexpr std::array<T, 8> compose_motors(
     const std::array<T, 8>& x,
     const std::array<T, 8>& y) {
   return {

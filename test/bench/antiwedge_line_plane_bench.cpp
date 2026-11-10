@@ -24,8 +24,10 @@ using Plane = rga3::Plane<double>;
 int main(int argc, char** argv) {
   return bench::main<Line, Plane>(
       "antiwedge_line_plane", std::span(argv, static_cast<std::size_t>(argc)),
-      [](const Line& l, const Plane& g) { return Point{l & g}; },
-      [](const Line& l, const Plane& g) {
+      [] [[gnu::always_inline]] (const Line& l, const Plane& g) {
+        return Point{l & g};
+      },
+      [] [[gnu::always_inline]] (const Line& l, const Plane& g) {
         return bench::as<Point>(reference_kernels::antiwedge_line_plane(
             l.coefficients, g.coefficients));
       });

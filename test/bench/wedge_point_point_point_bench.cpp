@@ -24,10 +24,10 @@ int main(int argc, char** argv) {
   return bench::main<Point, Point, Point>(
       "wedge_point_point_point",
       std::span(argv, static_cast<std::size_t>(argc)),
-      [](const Point& p, const Point& q, const Point& r) {
-        return Plane{(p ^ q) ^ r};
-      },
-      [](const Point& p, const Point& q, const Point& r) {
+      [] [[gnu::always_inline]] (const Point& p, const Point& q,
+                                 const Point& r) { return Plane{(p ^ q) ^ r}; },
+      [] [[gnu::always_inline]] (const Point& p, const Point& q,
+                                 const Point& r) {
         return bench::as<Plane>(reference_kernels::wedge_point_point_point(
             p.coefficients, q.coefficients, r.coefficients));
       });

@@ -3,3 +3,5 @@ compose_kernel_sign_flipped	gcc-debug	302e8d2a98d5	killed	killed	rga3.reference_
 transform_line_first_stage_sign_flipped	gcc-debug	302e8d2a98d5	killed	killed	rga3.reference_kernels	-	-	the reference kernel of transform(line, motor) gives the bits of the rga3 transform of a seeded line over double | the reference kernel of transform(line, motor) gives the rga3 transform of a seeded line over the test rational	-	-
 transform_point_term_order_reversed	gcc-debug	302e8d2a98d5	killed	killed	rga3.reference_kernels	-	-	the reference kernel of transform(point, motor) gives the bits of the rga3 transform of a seeded point over double	-	-
 transform_point_sign_on_sum	gcc-debug	302e8d2a98d5	killed	killed	rga3.reference_kernels	-	-	the reference kernel of transform(point, motor) gives the bits of the rga3 transform of a seeded point over double	-	-
+transform_line_kernel_not_always_inline	gcc-debug	0c429d52e66c+dirty	killed	killed	rga3.benchmark_transform_line_inline	-	-	-	-	-
+transform_line_reference_lambda_not_always_inline	gcc-debug	0c429d52e66c+dirty	killed	killed	rga3.benchmark_transform_line_inline	-	-	-	-	-
