@@ -2089,8 +2089,9 @@ TEST_CASE("A conversion is zero on the blades its source lacks after a "
   const volatile std::int64_t one = 1;
   const Motor<rational> m{E42E43<rational>{rational{one}, rational{2}}};
   CHECK(m == expected);
-  for (const rational& c : m.coefficients) {
-    CHECK(c.denominator == 1);
+  for (std::size_t place = 0; place < m.coefficients.size(); ++place) {
+    CAPTURE(place);
+    CHECK(m.coefficients.at(place).denominator == 1);
   }
 }
 
@@ -2111,8 +2112,9 @@ TEST_CASE("apply onto a wider target is zero where no term reaches after a "
   const Motor<rational> m = apply<BinaryOperation::wedge, motor_layout>(
       E1<rational>{rational{three}}, E2<rational>{rational{5}});
   CHECK(m == expected);
-  for (const rational& c : m.coefficients) {
-    CHECK(c.denominator == 1);
+  for (std::size_t place = 0; place < m.coefficients.size(); ++place) {
+    CAPTURE(place);
+    CHECK(m.coefficients.at(place).denominator == 1);
   }
 }
 
