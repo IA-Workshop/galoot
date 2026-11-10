@@ -2407,11 +2407,14 @@ basis_change_rejects(basis_change_type_width
   "basis_change: n is larger than the number of bits in a blade mask")
 
 # A blade set written by hand, given to a layout of a change directly, with a
-# generator beyond the algebra or a sign other than +1 or -1.
-basis_change_rejects(basis_change_layout_beyond_n
-  "basis change map: the blade set names a generator beyond e_n")
-basis_change_rejects(basis_change_layout_bad_sign
-  "basis change map: the blade set holds a sign other than +1 or -1")
+# generator beyond the algebra or a sign other than +1 or -1: the message
+# names the layout as written, change_basis_layout or change_basis_back_layout.
+foreach(layout IN ITEMS change_basis_layout change_basis_back_layout)
+  basis_change_rejects(${layout}_beyond_n
+    "${layout}: the blade set names a generator beyond e_n")
+  basis_change_rejects(${layout}_bad_sign
+    "${layout}: the blade set holds a sign other than +1 or -1")
+endforeach()
 
 # core.format: the formatter of a multivector, against names worked out in
 # the test from each blade's mask and sign, and texts written out there.

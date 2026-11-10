@@ -37,4 +37,4 @@ transform: a dropped coefficient has too many roundings for the margin of the ro
 
 reason: self-checks of the change of basis generator's own output, an inverse that inverts and terms that keep their grade; the change's tests verify that output directly
 basis_change: the computed inverse does not invert the rows
-basis change map: a term has another grade than its input blade
+basis_change: a term has another grade than its input blade
