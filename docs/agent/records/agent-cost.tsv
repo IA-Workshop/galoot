@@ -223,3 +223,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0033	implementer	opus	not visible	not visible	not visible	no separate figure; inferred to be inside the plan 0032 implementer's cumulative row (353558), recorded after the plan 0033 merge; row added 2026-11-10 from the M5 audit's finding m13
 2026-11-09	coordination	coordinator session 2026-11-09	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; plans 0029 and 0030 estimate coordination; row added 2026-11-10 from the M5 audit's finding m13
 2026-11-10	coordination	coordinator session 2026-11-10	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	M5	records agent (gate records, cost rows, lessons)	sonnet	86570	20	114	as relayed by the harness completion report; recorded 2026-11-10
