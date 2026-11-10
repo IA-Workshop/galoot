@@ -45,13 +45,13 @@ Done. All criteria met, with the departures below.
 | `11469a4` | `tools/timed`: waits up to 2 s while `<fifo>.stopping` exists, with its own refusal after (L4) | code |
 | `9c93209` | `tools/mutate`: Clang's guard note makes a first error `assert`; `expect = "survived"` | code |
 | `3d6e68c` | `tools.measure_record`: the refusal names the FIFO left aside | test, after the code (departure 3) |
-| `963ca6a` | decision (now 0230) and the mutation specs | record |
+| `963ca6a` | decision (now 0231) and the mutation specs | record |
 | `57d4319`, `cd01fcb` | the review's B1 and N5: `overflow_then_guard`, the unit's failed state (then waited for, after a race seen once), a 3.5 s bound, refusal texts, a docstring wrap | test |
 | `053179d` | `tools/jobpool`: comment, clients of a removed FIFO are not seen (N4) | comment |
 | `35754cb` | `tools/mutate`: the first error and its notes read from the object's own output; the "constant expression" condition dropped (B1, N2) | code |
 | `6f373e7`, `aa8ba63` | the decision corrected twice, the spec and the mutation records | record |
 | `5bae5db`, `004fcbc` | the blind and delta review records, cherry-picked with `-x` from `records/review-tools-pool-mutate` (`9a4b6b8`) and `records/review-tools-pool-mutate-delta` | record |
-| `53b2ae3` | the decision renumbered 0230, since 0229 on `develop` is the owner's M5 follow-up rulings | record |
+| `53b2ae3` and the next | the decision renumbered 0230, since 0229 on `develop` is the owner's M5 follow-up rulings, then 0231, since 0230 on `develop` is the snippets cleanup rulings | record |
 
 ### Evidence
 
@@ -72,21 +72,21 @@ Done. All criteria met, with the departures below.
 | clang-measure | 532, 114.5 s | 536, 117.1 s |
 | format-check, trace gate, `tools/runlog check` | 1.6 s, 0.3 s, 2.6 s | 1.8 s, 0.4 s, 2.7 s |
 
-The four more tests at `b8ccbda` came with `develop`'s plan 0035. The shared pool read 23 of 23 free before and after both matrices. It was not running when the unit started; it was started once with `tools/jobpool ensure` after `status` said "not running", and never stopped.
+The four more tests at `b8ccbda` came with `develop`'s plan 0035. `develop` then gained plan 0037's merge (README and snippets), so the matrix ran a third time on the merged tree at `3d64842`, all exit 0: 544 tests on six presets and 536 on gcc-asan and clang-measure (gcc-debug 98.1 s, gcc-release 112.1 s, gcc-asan 219.4 s, clang-debug 93.7 s, clang-release 114.4 s, clang-asan 195.1 s, lint 258.5 s, clang-measure 116.0 s; format-check 1.7 s, trace gate 0.3 s, `tools/runlog check` 2.5 s). After it, `develop` gained only decision 0230, a records file; on that last merge the `tests.*` selection (with the citation check), the trace gate, and `tools/runlog check` ran. The shared pool read 23 of 23 free before and after both matrices. It was not running when the unit started; it was started once with `tools/jobpool ensure` after `status` said "not running", and never stopped.
 
 ### Resolution of the review findings
 
 | Finding | Resolution |
 | --- | --- |
 | B1 (blocks): the stop of the notes at the next error untested | Fixed: `overflow_then_guard` (`57d4319`) kills the mutant on clang-debug; confirmed by the delta review and by `tools.toml` |
-| N1: a guard in a `consteval` function from a header is `assert` on Clang, unjudged on GCC | Accepted as a known limit in decision 0230; open item 2 |
+| N1: a guard in a `consteval` function from a header is `assert` on Clang, unjudged on GCC | Accepted as a known limit in decision 0231; open item 2 |
 | N2: the "constant expression" condition and the inner end-of-job stop untested | The condition dropped (`35754cb`); the stop now cuts the whole object's output, still untested (D2) |
 | N3: no wait for a MAKEFLAGS path through a symbolic link | Not fixed; open item 1 |
 | N4: the service ends under clients of a removed FIFO | Comment (`053179d`) |
 | N5: exit status, wait bound, refusal texts not judged | Fixed (`57d4319`, `cd01fcb`); mutants `jobpool_missing_fifo_exit_zero` and `timed_wait_long` killed |
-| N6: a non-check call is `assert` on both compilers | Stated in decision 0230 as a known limit shared with decision 0214 |
+| N6: a non-check call is `assert` on both compilers | Stated in decision 0231 as a known limit shared with decision 0214 |
 | N7: docstring line over the width | Fixed (`57d4319`) |
-| D1: the reason given for dropping the condition is false (`constinit`, `alignas`) | Decision 0230 corrected (`aa8ba63`); `constinit` added as a known limit. The message of `35754cb` keeps the false reason (history is not rewritten) |
+| D1: the reason given for dropping the condition is false (`constinit`, `alignas`) | Decision 0231 corrected (`aa8ba63`); `constinit` added as a known limit. The message of `35754cb` keeps the false reason (history is not rewritten) |
 | D2: the end-of-job cut untested (predates the unit) | Recorded in the mutation README; open item 3 |
 | D3: "the next error" not pinned beyond two errors | Recorded in the mutation README; open item 3 |
 | D4: `output` rebound inside the loop of `build_failures` | Not changed: a rename of code after the delta review would need a third review for no change in behavior; open item 3 |
@@ -100,7 +100,7 @@ The four more tests at `b8ccbda` came with `develop`'s plan 0035. The shared poo
 3. Test commits came after code commits three times (`3d6e68c`, `57d4319`, `cd01fcb`). Each passes at its own revision and judges mutants that earlier tests let survive; none changes an expected value.
 4. The gap run used a detached commit (`46e6c55`), on no branch and not kept; its rows are in the run log.
 5. The "constant expression" condition of the plan's goal 4 was dropped after the review; the class now follows the note alone.
-6. The decision was numbered 0229 on the branch and renumbered 0230 at the merge; the review records and the earlier messages say 0229.
+6. The decision was numbered 0229 on the branch and renumbered 0230 and then 0231 at the merge, as `develop` took both numbers first; the review records and the earlier messages say 0229.
 7. Test-first runs in the tests worktree wrote their rows to the feature worktree's run log with `tools/timed --log`.
 8. The shared pool's service keeps running the tool it was started with (`develop`'s, before this unit) until it next stops; the missing-FIFO stop reaches it only then. No restart, as decision 0228 item 9 rules.
 

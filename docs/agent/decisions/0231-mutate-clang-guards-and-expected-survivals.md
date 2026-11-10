@@ -1,9 +1,9 @@
-# 0230 `tools/mutate`: Clang's report of a guard, and declared survivals
+# 0231 `tools/mutate`: Clang's report of a guard, and declared survivals
 
 - Status: recorded. The owner ruled that both items be done as a tools unit (decisions 0223 item 5 and 0225 item 5, carried by decision 0228 item 9). The forms below are the implementer's choices, open to the review and to the owner (C18).
 - Date: 2026-11-10
 - Recorded by: Claude (agent, Opus 5.5), implementer of plan 0036
-- Number: recorded on its branch as 0229, which decision 0229 (M5 follow-up rulings) took on `develop` first; renumbered 0230 before the merge. The two review records of plan 0036 and the branch's commit messages call it 0229.
+- Number: recorded on its branch as 0229, which decision 0229 (M5 follow-up rulings) took on `develop` first; renumbered 0230, which decision 0230 (snippets cleanup rulings) then took on `develop` too, and so renumbered 0231 before the merge. The two review records of plan 0036 and the branch's commit messages call it 0229 or 0230.
 - Corrected: 2026-11-10, before the merge, after the blind review: item 1 no longer asks that the error speak of a constant expression (finding N2: no test judged the condition), and the known limits of item 1 are stated (findings N1 and N6). Corrected again after the delta review (finding D1): the first correction gave as its reason that Clang writes the note only for errors about a constant expression, so that the condition could not change a class. That is false: Clang also writes it under "variable does not have a constant initializer" (`constinit`) and "'aligned' attribute requires integer constant", which are now `assert` and were not before. The condition stays dropped; the reason is stated below and the `constinit` case is a known limit.
 - Supersedes in part: decision 0214 item 5 (the `assert` class gains Clang's form of a guard) and items 1 and 5 (`expect` gains `survived`). The rest of decision 0214 stands.
 - Bears on: `tools/mutate`, `test/tools/mutate_test.py`, every mutation spec
