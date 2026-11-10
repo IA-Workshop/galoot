@@ -17,8 +17,12 @@ the CTest label regex whose tests judge a mutant), and mutants:
   selection = "motions"
   file = "include/galoot/presets/rga3/motions.hpp"
   edits = [{ anchor = '''x / length''', replacement = '''x''' }]
-  expect = "killed"          # or "equivalent", with reason = "..."
+  expect = "killed"          # or "equivalent" or "survived", with reason
   killers = ["rga3.motions"] # optional: tests that must be among the killers
+"equivalent" declares that no test can tell the mutant from the code, and
+"survived" that the selection is expected to let it live, as a gap's mutant
+does against the suite before the gap's tests; either needs reason = "...",
+and "survived" takes no killers.
 An edit replaces every occurrence of its anchor, which must occur exactly
 `count` times (default 1); a mutant's edits apply in order. [[runtime]]
 tables (file, anchor, replacement, count) are edits of test sources applied
@@ -44,13 +48,14 @@ as failed, one that timed out among them, is a kill; a CTest run that fails
 without naming a test leaves its mutant unjudged.
 
 Each failed object is classified by its first error line: `warning` if it
-carries [-Werror, `assert` if it is a failed static assertion or a call
-to a function that is not constexpr (how a guard stops constant
-evaluation), `test` if it lies in a file under test/, else `invalid`. A mutant is killed if a test
-fails or an object fails as assert or test; else unjudged if an object
-failed (its tests never ran); else equivalent if the spec says so; else
-survived. Under --runtime, a failed static assertion in a file of the
-run-time edits is a leak.
+carries [-Werror; `assert` if it is a failed static assertion or a call to
+a function that is not constexpr (how a guard stops constant evaluation, as
+GCC reports it), or an error about a constant expression whose notes name
+such a call (as Clang reports it); `test` if it lies in a file under test/;
+else `invalid`. A mutant is killed if a test fails or an object fails as
+assert or test; else unjudged if an object failed (its tests never ran);
+else equivalent if the spec says so; else survived. Under --runtime, a
+failed static assertion in a file of the run-time edits is a leak.
 
 --check validates the spec and the anchors and prints each mutant's diff,
 building nothing.
@@ -58,8 +63,9 @@ building nothing.
 Writes out/<spec stem>-<preset>[-runtime].tsv beside the spec, one row per
 mutant in spec order; a later run of some mutants replaces their rows only.
 Exit 0 when no mutant has a problem: each is killed, or declared equivalent
-and found so, each declared killer killed it, no leak was found, and no
-CTest run failed without naming a test; 1 otherwise; 2 when refused.
+or survived and found so, each declared killer killed it, no leak was
+found, and no CTest run failed without naming a test; 1 otherwise; 2 when
+refused.
 """
 
 import argparse
@@ -87,6 +93,12 @@ LOCATION = re.compile(r"^(?P<path>[^\s:][^:]*):(?P<line>\d+):(?:\d+:)? "
 # reports at the call (quoting constexpr with ' or with typographic quotes).
 CHECK_FAILED = re.compile(
     r"static assertion|static_assert|call to non-.?constexpr.? function")
+# Clang reports the same guard as an error about the constant expression it
+# stopped (a constexpr variable that "must be initialized by a constant
+# expression", say), with the call in a note of that error.
+CONSTANT_EXPRESSION = re.compile(r"constant expression")
+GUARD_NOTE = re.compile(r"note: non-constexpr function .* cannot be used in "
+                        r"a constant expression")
 FAILED_TEST = re.compile(r"^\s*\d+ - (\S+) \(", re.MULTILINE)
 CMAKE_ARGUMENT = re.compile(
     r'"((?:[^"\\]|\\.)*)"|\[(=*)\[(.*?)\]\2\]|([^\s()"]+)')
@@ -169,12 +181,17 @@ def load_spec(path):
             raise Refused(f"mutant {name} needs edits")
         mutant["edits"] = [edit(e, f"an edit of mutant {name}")
                            for e in edits]
-        if mutant.get("expect") not in ("killed", "equivalent"):
-            raise Refused(f"mutant {name}: expect is killed or equivalent")
-        if mutant["expect"] == "equivalent" and not mutant.get("reason"):
-            raise Refused(f"mutant {name} is declared equivalent without a "
+        expect = mutant.get("expect")
+        if expect not in ("killed", "equivalent", "survived"):
+            raise Refused(f"mutant {name}: expect is killed, equivalent, or "
+                          "survived")
+        if expect != "killed" and not mutant.get("reason"):
+            raise Refused(f"mutant {name} is declared {expect} without a "
                           "reason")
         strings(mutant.setdefault("killers", []), f"mutant {name}: killers")
+        if expect == "survived" and mutant["killers"]:
+            raise Refused(f"mutant {name} is declared to survive but names "
+                          "killers")
     return spec
 
 
@@ -340,12 +357,18 @@ def build_failures(output, tree, runtime_files):
         failed = FAILED.match(line)
         if not failed:
             continue
-        first = "-"
-        for rest in lines[k + 1:]:
-            if END_OF_JOB.match(rest):
+        first, notes = "-", []
+        for j in range(k + 1, len(lines)):
+            if END_OF_JOB.match(lines[j]):
                 break
-            if "error:" in rest:
-                first = rest
+            if "error:" in lines[j]:
+                first = lines[j]
+                # The notes of the first error: the lines up to the next
+                # error or the end of the object's output.
+                for rest in lines[j + 1:]:
+                    if END_OF_JOB.match(rest) or "error:" in rest:
+                        break
+                    notes.append(rest)
                 break
         match = LOCATION.match(first)
         where = (f"{relative(match['path'], tree)}:{match['line']}"
@@ -353,7 +376,9 @@ def build_failures(output, tree, runtime_files):
         message = first.partition("error:")[2]
         if "[-Werror" in first:
             kind = "warning"
-        elif CHECK_FAILED.search(message):
+        elif CHECK_FAILED.search(message) or (
+                CONSTANT_EXPRESSION.search(message)
+                and any(GUARD_NOTE.search(note) for note in notes)):
             kind = "assert"
         elif where and where.startswith("test/"):
             kind = "test"
@@ -490,19 +515,22 @@ class Run:
             {where for _, kind, _, where in failures
              if kind in ("assert", "test")})
         ctest_failed = status != 0 and not failed
+        expect = mutant["expect"]
         if killers:
             verdict = "killed"
         elif failures or ctest_failed:
             verdict = "unjudged"
         else:
-            verdict = ("equivalent" if mutant["expect"] == "equivalent"
-                       else "survived")
-        problems = [verdict] if verdict in ("survived", "unjudged") else []
+            verdict = "equivalent" if expect == "equivalent" else "survived"
+        problems = [verdict] if verdict == "unjudged" or (
+            verdict == "survived" and expect != "survived") else []
         if ctest_failed:
             problems.append(f"CTest exited {status} without naming a failed "
                             "test")
-        if verdict == "killed" and mutant["expect"] == "equivalent":
+        if verdict == "killed" and expect == "equivalent":
             problems.append("declared equivalent but killed")
+        if verdict == "killed" and expect == "survived":
+            problems.append("expected to survive but killed")
         problems += [f"declared killer {k} did not kill it"
                      for k in mutant["killers"] if k not in killers]
         problems += [f"run-time leak at {leak}" for leak in leaks]
