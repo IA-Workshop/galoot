@@ -239,3 +239,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-a	implementer	sonnet	53692	13	59	cost.py comments list and million pattern
 2026-11-10	wu17-part-a	blind-reviewer	sonnet		14		tokens not reported
 2026-11-10	wu17-part-b	math-numerical (ran as sonnet, brief said opus)	sonnet	230909	51	898	derivations and counts on research/spike-e c056f20
+2026-11-10	wu17-part-b-check	independent checker	opus	219475	53	833	check of spike-e counts
