@@ -47,8 +47,6 @@ namespace core = galoot::core;
 namespace rga3 = galoot::presets::rga3;
 using test_support::rational;
 
-// The seed of every draw in this file.
-constexpr std::uint64_t seed = 20261110;
 constexpr int rational_cases = 100;
 constexpr int double_cases = 1000;
 
@@ -64,7 +62,7 @@ T draw(std::mt19937_64& rng) {
     const auto denominator = static_cast<std::int64_t>(rng() % 4) + 1;
     return rational{numerator, denominator};
   } else {
-    return static_cast<double>(rng() >> 11U) * 0x1p-52 - 1.0;
+    return (static_cast<double>(rng() >> 11U) * 0x1p-52) - 1.0;
   }
 }
 
@@ -78,7 +76,7 @@ Mv drawn(std::mt19937_64& rng) {
 }
 
 // How two results must agree: equal values, or, over double, equal bits.
-enum class Agreement { values, bits };
+enum class Agreement : std::uint8_t { values, bits };
 
 template <Agreement A, class T, std::size_t N>
 bool agree(const std::array<T, N>& a, const std::array<T, N>& b) {
@@ -90,13 +88,14 @@ bool agree(const std::array<T, N>& a, const std::array<T, N>& b) {
   }
 }
 
-// Draws `cases` sets of operands of the types Operands, in order, and checks
-// that the kernel gives on their coefficients what the operation gives on
-// them.
+// Draws `cases` sets of operands of the types Operands, in order, from
+// doctest's seed (--rand-seed), and checks that the kernel gives on their
+// coefficients what the operation gives on them.
 template <Agreement A, class... Operands>
 void check_cases(int cases, const auto& kernel, const auto& operation) {
-  std::mt19937_64 rng{seed};
-  CAPTURE(seed);
+  const unsigned seed = doctest::getContextOptions()->rand_seed;
+  INFO("seed: ", seed);
+  std::mt19937_64 rng(seed);
   for (int k = 0; k < cases; ++k) {
     CAPTURE(k);
     const std::tuple<Operands...> operands{drawn<Operands>(rng)...};
