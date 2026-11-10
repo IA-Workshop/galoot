@@ -1,0 +1,31 @@
+# Mutants of the benchmark reference kernels (part D of plan 0038): a
+# reference kernel with one sign flipped must be killed by the smoke test
+# rga3.reference_kernels, which compares each kernel with the library's
+# operation. One flip is in a product kernel (compose, the e41 output) and
+# one in the first stage of a transform kernel (transform_line, the e14
+# value of Q v x). The regeneration check reference.kernels would also kill
+# both; it is left out of the selection so that the smoke test is shown to
+# kill them on its own. Run from the worktree root, with the job pool
+# exported:
+#   tools/mutate docs/agent/records/mutations/0038-cost-evidence/bench.toml
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.smoke]
+targets = ["rga3_reference_kernels_test"]
+labels = '^rga3\.reference_kernels$'
+
+[[mutant]]
+name = "compose_kernel_sign_flipped"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''      x[0] * y[3] + x[1] * y[2] - x[2] * y[1] + x[3] * y[0], // e41''', replacement = '''      x[0] * y[3] - x[1] * y[2] - x[2] * y[1] + x[3] * y[0], // e41''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
+
+[[mutant]]
+name = "transform_line_first_stage_sign_flipped"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''  const T e14 = -(q[1] * x[2]) + q[2] * x[1] - q[3] * x[0];''', replacement = '''  const T e14 = -(q[1] * x[2]) - q[2] * x[1] - q[3] * x[0];''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
