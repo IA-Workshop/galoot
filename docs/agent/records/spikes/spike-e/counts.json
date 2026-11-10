@@ -1,0 +1,415 @@
+{
+ "point": {
+  "A_K": {
+   "mul": 48,
+   "add": 25,
+   "sub": 11,
+   "neg": 3
+  },
+  "dropped_K": {
+   "mul": 20,
+   "add": 10,
+   "sub": 6,
+   "neg": 3,
+   "compare": 4
+  },
+  "checking_K": {
+   "mul": 68,
+   "add": 35,
+   "sub": 17,
+   "neg": 6
+  },
+  "A": {
+   "mul": 48,
+   "add": 36,
+   "neg": 0,
+   "scl": 0,
+   "fused": 36,
+   "MA": 48,
+   "setup": {
+    "mul": 0,
+    "add": 0,
+    "neg": 0,
+    "scl": 0,
+    "MA": 0
+   },
+   "object": {
+    "mul": 48,
+    "add": 36,
+    "neg": 0,
+    "scl": 0,
+    "MA": 48
+   }
+  },
+  "B": {
+   "mul": 35,
+   "add": 35,
+   "neg": 0,
+   "scl": 9,
+   "fused": 18,
+   "MA": 52,
+   "setup": {
+    "mul": 22,
+    "add": 26,
+    "neg": 0,
+    "scl": 9,
+    "MA": 39
+   },
+   "object": {
+    "mul": 13,
+    "add": 9,
+    "neg": 0,
+    "scl": 0,
+    "MA": 13
+   }
+  },
+  "C-call": {
+   "mul": 22,
+   "add": 18,
+   "neg": 0,
+   "scl": 3,
+   "fused": 15,
+   "MA": 25,
+   "setup": {
+    "mul": 0,
+    "add": 0,
+    "neg": 0,
+    "scl": 0,
+    "MA": 0
+   },
+   "object": {
+    "mul": 22,
+    "add": 18,
+    "neg": 0,
+    "scl": 3,
+    "MA": 25
+   }
+  },
+  "C-pre": {
+   "mul": 22,
+   "add": 18,
+   "neg": 0,
+   "scl": 4,
+   "fused": 18,
+   "MA": 22,
+   "setup": {
+    "mul": 0,
+    "add": 0,
+    "neg": 0,
+    "scl": 4,
+    "MA": 0
+   },
+   "object": {
+    "mul": 22,
+    "add": 18,
+    "neg": 0,
+    "scl": 0,
+    "MA": 22
+   }
+  }
+ },
+ "line": {
+  "A_K": {
+   "mul": 72,
+   "add": 19,
+   "sub": 39,
+   "neg": 9
+  },
+  "dropped_K": {
+   "mul": 12,
+   "add": 4,
+   "sub": 6,
+   "neg": 1,
+   "compare": 2
+  },
+  "checking_K": {
+   "mul": 84,
+   "add": 23,
+   "sub": 45,
+   "neg": 10
+  },
+  "A": {
+   "mul": 72,
+   "add": 58,
+   "neg": 0,
+   "scl": 0,
+   "fused": 58,
+   "MA": 72,
+   "setup": {
+    "mul": 0,
+    "add": 0,
+    "neg": 0,
+    "scl": 0,
+    "MA": 0
+   },
+   "object": {
+    "mul": 72,
+    "add": 58,
+    "neg": 0,
+    "scl": 0,
+    "MA": 72
+   }
+  },
+  "B": {
+   "mul": 53,
+   "add": 62,
+   "neg": 0,
+   "scl": 15,
+   "fused": 22,
+   "MA": 93,
+   "setup": {
+    "mul": 26,
+    "add": 41,
+    "neg": 0,
+    "scl": 15,
+    "MA": 66
+   },
+   "object": {
+    "mul": 27,
+    "add": 21,
+    "neg": 0,
+    "scl": 0,
+    "MA": 27
+   }
+  },
+  "C-call": {
+   "mul": 48,
+   "add": 39,
+   "neg": 0,
+   "scl": 9,
+   "fused": 33,
+   "MA": 54,
+   "setup": {
+    "mul": 12,
+    "add": 9,
+    "neg": 0,
+    "scl": 3,
+    "MA": 12
+   },
+   "object": {
+    "mul": 36,
+    "add": 30,
+    "neg": 0,
+    "scl": 6,
+    "MA": 42
+   }
+  },
+  "C-pre": {
+   "mul": 48,
+   "add": 39,
+   "neg": 0,
+   "scl": 7,
+   "fused": 39,
+   "MA": 48,
+   "setup": {
+    "mul": 12,
+    "add": 9,
+    "neg": 0,
+    "scl": 7,
+    "MA": 12
+   },
+   "object": {
+    "mul": 36,
+    "add": 30,
+    "neg": 0,
+    "scl": 0,
+    "MA": 36
+   }
+  }
+ },
+ "plane": {
+  "A_K": {
+   "mul": 48,
+   "add": 19,
+   "sub": 17,
+   "neg": 5
+  },
+  "dropped_K": {
+   "mul": 28,
+   "add": 16,
+   "sub": 8,
+   "neg": 1,
+   "compare": 4
+  },
+  "checking_K": {
+   "mul": 76,
+   "add": 35,
+   "sub": 25,
+   "neg": 6
+  },
+  "A": {
+   "mul": 48,
+   "add": 36,
+   "neg": 0,
+   "scl": 0,
+   "fused": 36,
+   "MA": 48,
+   "setup": {
+    "mul": 0,
+    "add": 0,
+    "neg": 0,
+    "scl": 0,
+    "MA": 0
+   },
+   "object": {
+    "mul": 48,
+    "add": 36,
+    "neg": 0,
+    "scl": 0,
+    "MA": 48
+   }
+  },
+  "B": {
+   "mul": 35,
+   "add": 35,
+   "neg": 0,
+   "scl": 9,
+   "fused": 18,
+   "MA": 52,
+   "setup": {
+    "mul": 22,
+    "add": 26,
+    "neg": 0,
+    "scl": 9,
+    "MA": 39
+   },
+   "object": {
+    "mul": 13,
+    "add": 9,
+    "neg": 0,
+    "scl": 0,
+    "MA": 13
+   }
+  },
+  "C-call": {
+   "mul": 30,
+   "add": 24,
+   "neg": 0,
+   "scl": 6,
+   "fused": 21,
+   "MA": 33,
+   "setup": {
+    "mul": 12,
+    "add": 9,
+    "neg": 0,
+    "scl": 3,
+    "MA": 12
+   },
+   "object": {
+    "mul": 18,
+    "add": 15,
+    "neg": 0,
+    "scl": 3,
+    "MA": 21
+   }
+  },
+  "C-pre": {
+   "mul": 30,
+   "add": 24,
+   "neg": 0,
+   "scl": 7,
+   "fused": 24,
+   "MA": 30,
+   "setup": {
+    "mul": 12,
+    "add": 9,
+    "neg": 0,
+    "scl": 7,
+    "MA": 12
+   },
+   "object": {
+    "mul": 18,
+    "add": 15,
+    "neg": 0,
+    "scl": 0,
+    "MA": 18
+   }
+  }
+ },
+ "point^point": {
+  "A_K_typed": [
+   12,
+   4,
+   2,
+   4
+  ],
+  "A_K_canonical": [
+   12,
+   0,
+   6,
+   0
+  ],
+  "monomials": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2
+  ]
+ },
+ "line v plane": {
+  "A_K_typed": [
+   12,
+   3,
+   5,
+   1
+  ],
+  "A_K_canonical": [
+   12,
+   3,
+   5,
+   1
+  ],
+  "monomials": [
+   3,
+   3,
+   3,
+   3
+  ]
+ },
+ "point^point^point": {
+  "A_K_typed": [
+   24,
+   4,
+   10,
+   2
+  ],
+  "A_K_canonical": [
+   24,
+   4,
+   10,
+   0
+  ],
+  "monomials": [
+   6,
+   6,
+   6,
+   6
+  ]
+ },
+ "compose": {
+  "A_K_typed": [
+   48,
+   26,
+   14,
+   4
+  ],
+  "A_K_canonical": [
+   48,
+   16,
+   24,
+   4
+  ],
+  "monomials": [
+   4,
+   4,
+   4,
+   4,
+   8,
+   8,
+   8,
+   8
+  ]
+ }
+}

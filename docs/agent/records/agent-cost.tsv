@@ -236,3 +236,20 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0036	implementer	opus	334159	134	7569	as relayed by the harness completion report; recorded 2026-11-10
 2026-11-10	cleanup	worktree cleanup	sonnet	73790	15	119	as relayed by the harness completion report; recorded 2026-11-10
 2026-11-10	plan-0038	planner	opus	261185	72	941	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	wu17-part-a	implementer	sonnet	53692	13	59	cost.py comments list and million pattern
+2026-11-10	wu17-part-a	blind-reviewer	sonnet		14		tokens not reported
+2026-11-10	wu17-part-b	math-numerical (ran as sonnet, brief said opus)	sonnet	230909	51	898	derivations and counts on research/spike-e c056f20
+2026-11-10	wu17-part-b-check	independent checker	opus	219475	53	833	check of spike-e counts
+2026-11-10	plan-0039	blind-reviewer	opus	208315	66	1903	blind review of feature/basis-change-rows; reported by harness as subagent_tokens
+2026-11-10	wu17-part-d	doctest/build/performance (one agent)	opus	309215	107	1439	bench harness, reference kernels; branch feature/cost-evidence--bench
+2026-11-10	wu17-part-a	blind-reviewer (token correction for earlier row)	sonnet	64053	8	71	corrects the empty-token row above
+2026-11-10	wu17-part-d	blind-reviewer	opus	201346	67	812	review 4e6a342
+2026-11-10	wu17-part-d	author review-fix pass	opus	34123	17	287	fixes for review 4e1804e; 13 scratch run rows lost (departure recorded)
+2026-11-10	basis-change-rows	implementer	opus	338565	141	5202	plan 0039 unit, merged 7b85b33 (token figure is the agent total)
+2026-11-10	wu17-part-d	delta-reviewer	opus	112484	37	404	delta review 8573247
+2026-11-10	wu17-part-c	doctest/cpp (one agent)	opus	334093	133	3090	counting scalar, op_counts; feature/cost-evidence--counting b1be3e9
+2026-11-10	wu17-part-d	author merge and lesson pass	opus	17786	12	142	R1-R4 fixes, merge 3e5c4f5, lesson 0072
+2026-11-10	wu17-part-c	blind-reviewer	opus	229428	74	1180	review 9b5a47d
+2026-11-10	wu17-part-c	author review-fix pass	opus	107604	91	4249	fixes M1-M3 L1-L4 N1; tip 0dfc35a (441697 total minus 334093 earlier)
+2026-11-10	wu17-part-c	delta-reviewer	opus	167497	71	1100	delta review c1104d1
+2026-11-10	wu17-part-c	author merge pass	opus	15065	15	524	R1-R3, merge fe4791b (456762 total minus 441697)

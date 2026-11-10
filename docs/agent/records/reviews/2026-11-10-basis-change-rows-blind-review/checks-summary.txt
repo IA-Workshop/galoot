@@ -1,0 +1,14 @@
+Checks of the blind review of plan 0039 at fa86535, each run through tools/timed in the reviewer's worktree (rows in docs/agent/records/performance/runs.tsv).
+test-gcc-debug.log: 100% tests passed out of 544 (Total Test time (real) = 64.04 sec)
+test-clang-debug.log: 100% tests passed out of 544 (Total Test time (real) = 63.26 sec)
+workflow-gcc-asan.log: 100% tests passed out of 536 (Total Test time (real) = 63.86 sec)
+workflow-clang-asan.log: 100% tests passed out of 544 (Total Test time (real) = 63.15 sec)
+workflow-clang-measure.log: 100% tests passed out of 536 (Total Test time (real) = 64.05 sec)
+workflow-gcc-release.log: 100% tests passed out of 544 (Total Test time (real) = 63.68 sec)
+workflow-clang-release.log: 100% tests passed out of 544 (Total Test time (real) = 64.58 sec)
+
+lint workflow (clang-tidy on every target, then format-check), and the lint build again with -k 0: the only failure is format-check:
+test/core/basis_change_overflow_elimination_fail.cpp:23:68: error: code should be clang-formatted [-Wclang-format-violations]
+      {{2147483647, 0, 0}, {0, 2147483647, 0}, {0, 0, 2147483647}},
+                                                                   ^
+[60/61] Building CXX object test/CMakeFiles/galoot_golden_verify_interface_header_sets.dir/galoot_golden_verify_interface_header_sets/reference/golden.hpp.cxx.o

@@ -1,0 +1,83 @@
+# Mutants written by the blind reviewer of plan 0039, beside the author's
+# rows.toml: each lets one later stage of check_change, or one row of the
+# reduction, read the rows as written while the others read the reduced
+# rows, and one changes the reduction's threshold. Run at the tip on both
+# debug presets.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+# The elimination reads the rows as written, the rest the reduced rows: the
+# scaled identity of R(3, 0, 0) overflows the elimination again.
+[[mutant]]
+name = "elimination_as_written"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const elimination<N> e = eliminate(rows);''', replacement = '''  const elimination<N> e = eliminate(change);''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# The check of the inner products reads the rows as written: k e1 = m e'1 / m
+# overflows m k m again.
+[[mutant]]
+name = "isometry_as_written"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''keeps_inner_products(rows, source, target);''', replacement = '''keeps_inner_products(change, source, target);''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# The check of the inverse multiplies the rows as written by the reduced
+# elimination's block: M (p' M'^-1) is not p' I for a scaled row.
+[[mutant]]
+name = "inverse_check_as_written"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const identity_check inverse_holds = inverts(rows, e);''', replacement = '''  const identity_check inverse_holds = inverts(change, e);''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# The inverse's rows take the denominators as written with the reduced
+# block: P^-1 of the scaled identity comes out as m I, so the maps back
+# differ.
+[[mutant]]
+name = "inverse_rows_as_written"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const noted_rows<N> inverse = inverse_rows(rows, e);''', replacement = '''  const noted_rows<N> inverse = inverse_rows(change, e);''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# The last row is never reduced.
+[[mutant]]
+name = "last_row_kept"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  basis_change<N> out = change;
+  for (std::size_t i = 0; i < N; ++i) {''', replacement = '''  basis_change<N> out = change;
+  for (std::size_t i = 0; i + 1 < N; ++i) {''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# A divisor of 2 is not divided out.
+[[mutant]]
+name = "divisor_two_kept"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    if (common > 1) {''', replacement = '''    if (common > 2) {''' }]
+expect = "killed"
+killers = ["core.basis_change"]
+
+# The reduction made before the denominator check: a negative or zero
+# denominator keeps its sign under division by a positive gcd, and a zero
+# denominator over zero entries has divisor 0, which is kept, so the
+# denominator check sees the same signs.
+[[mutant]]
+name = "reduced_before_denominator_check"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!denominators_positive(change)) {''', replacement = '''  if (!denominators_positive(reduced(change))) {''' }]
+expect = "equivalent"
+reason = "dividing by a positive gcd keeps the sign of each denominator, and a zero denominator stays zero"

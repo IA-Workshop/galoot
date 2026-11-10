@@ -1,0 +1,31 @@
+old overflow: k e1 against itself, m e'1 over m
+  as written -> overflow (inner products)
+  reduced -> none
+    rows [[1]] dens [1] inverse [([1], 1)]
+  reduced rows: ([[1]], [1])
+old overflow_elimination: R(3,0,0), m e'_i over m
+  as written -> overflow (elimination)
+  reduced -> none
+    rows [[1, 0, 0], [0, 1, 0], [0, 0, 1]] dens [1, 1, 1] inverse [([1, 0, 0], 1), ([0, 1, 0], 1), ([0, 0, 1], 1)]
+  reduced rows: ([[1, 0, 0], [0, 1, 0], [0, 0, 1]], [1, 1, 1])
+overflow_inverse_check: R(0,0,3)
+  as written -> overflow (inverse check)
+  reduced -> overflow (inverse check)
+  reduced rows: ([[65536, 0, 0], [1, -2, 0], [0, 536870912, 524288]], [2124569019, 2, 1])
+overflow_inverse_rows: R(0,0,3)
+  as written -> overflow (inverse rows)
+  reduced -> overflow (inverse rows)
+  reduced rows: ([[0, 1048576, 0], [0, -16777216, 46341], [2, -378, 0]], [1, 1073741824, 2147483647])
+probe: 2I to R(2,0,0), rows m(1,1), m(-1,1) over m
+  as written -> overflow (elimination)
+  reduced -> none
+    rows [[1, 1], [-1, 1]] dens [1, 1] inverse [([1, -1], 2), ([1, 1], 2)]
+  reduced rows: ([[1, 1], [-1, 1]], [1, 1])
+new overflow: diag(k, 0) against itself, e1 = e'1 + e'2 / m
+  as written -> overflow (inner products)
+  reduced -> overflow (inner products)
+  reduced rows: ([[2147483647, 1], [0, 1]], [2147483647, 1])
+new overflow_elimination: R(0,0,3), m e'_i over 1
+  as written -> overflow (elimination)
+  reduced -> overflow (elimination)
+  reduced rows: ([[2147483647, 0, 0], [0, 2147483647, 0], [0, 0, 2147483647]], [1, 1, 1])

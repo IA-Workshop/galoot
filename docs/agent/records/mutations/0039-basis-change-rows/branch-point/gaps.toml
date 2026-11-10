@@ -1,0 +1,20 @@
+# Plan 0039 section 8: the gap of the denominator test at the branch point
+# (3ddc371, whose include/ and test/ are those of ca6939d), with == comparing
+# the rows only. The suite before the unit's tests compares changes whose
+# rows differ, or whose rows and denominators are both equal, so it lets
+# this mutant live.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[[mutant]]
+name = "equality_ignores_denominators"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  [[nodiscard]] constexpr bool operator==(const basis_change&) const = default;''', replacement = '''  [[nodiscard]] constexpr bool operator==(const basis_change& other) const {
+    return rows == other.rows;
+  }''' }]
+expect = "survived"
+reason = "no test of the suite before the unit compares equal rows over other denominators"
