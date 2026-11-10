@@ -1,0 +1,28 @@
+# 0229 `tools/mutate`: Clang's report of a guard, and declared survivals
+
+- Status: recorded. The owner ruled that both items be done as a tools unit (decisions 0223 item 5 and 0225 item 5, carried by decision 0228 item 9). The forms below are the implementer's choices, open to the review and to the owner (C18).
+- Date: 2026-11-10
+- Recorded by: Claude (agent, Opus 5.5), implementer of plan 0036
+- Supersedes in part: decision 0214 item 5 (the `assert` class gains Clang's form of a guard) and items 1 and 5 (`expect` gains `survived`). The rest of decision 0214 stands.
+- Bears on: `tools/mutate`, `test/tools/mutate_test.py`, every mutation spec
+
+## Context
+
+1. **Clang's guard.** GCC reports a guard such as `GALOOT_ASSERT` that stops constant evaluation as "call to non-constexpr function", at the call; decision 0214 item 5 classes that `assert`, wherever it lies. Clang reports the same failure as an error about the constant expression that stopped, at the place that asked for it: in a test, "constexpr variable 'accepted' must be initialized by a constant expression", which the driver classed `test`, a kill; in a `static constexpr` variable of a library header, the same error in the header, which it classed `invalid`. The call is named only in a note: "non-constexpr function 'assertion_failed' cannot be used in a constant expression". So the WU12 blind review's mutants `image_capacity_full_grade` and `lcm_as_product` were killed on GCC and unjudged on Clang (finding N6, `records/reviews/2026-11-09-wu12-blind-review.md`).
+2. **Expected survivals.** A spec could expect only `killed` or `equivalent`. W3 judges a gap's mutant by its survival against the suite before the gap's tests, and the units since (plans 0030 and 0032, and the blind review of plan 0032) ran such specs with `expect = "killed"` and read the exit status of 1 as the expected result by hand. The same holds for a form that one compiler compiles correctly and the other does not.
+
+## Decision
+
+1. **Class `assert`** also covers an error whose message speaks of a constant expression (the text holds "constant expression") and whose notes, the lines after it up to the next error or the end of the object's output, include Clang's "non-constexpr function '…' cannot be used in a constant expression". The location stays the error's own line, so the killer named for a Clang build is the variable that asked for the constant, not the call. A constant evaluation stopped by anything else (an overflow, a read outside an object's lifetime) keeps its old class: `test` in a test file, else `invalid`, on both compilers.
+2. **`expect = "survived"`** declares that the selection is expected to let the mutant live. It needs a `reason`, as `equivalent` does, and is refused with `killers`. A survivor so declared is no problem; a kill is, as "expected to survive but killed"; an unjudged mutant is a problem as before. The verdicts themselves are unchanged: such a mutant is still reported `survived`, and its `expected` cell says `survived`.
+
+## Options weighed
+
+- For item 1: match the note's function name, `assertion_failed` (the WU12 review's suggestion), which ties a general tool to one library's spelling and misses the tests' fixtures and any other guard; or class every Clang constant-expression error `assert`, which would count an overflow in a library's table, a defect of the mutant rather than a check, as a kill on Clang and not on GCC. The chosen rule is the Clang counterpart of the GCC rule decision 0214 already uses, so the two compilers agree on the fixture's three cases (the guard reached from a test, from a header's variable, and an overflow there).
+- For item 1's location: the note's line, which would name the same killer on both compilers. Not chosen: the class is read from the first error line, and moving the location to a note would make the killer of a Clang build depend on which note is read first; the rows of existing specs would also change.
+- For item 2: a second spec expecting `killed` read by hand (the practice so far), or a per-preset `expect` table. The table is not needed by any record yet; a unit that needs it adds it.
+
+## Consequences
+
+- A Clang row that was `test` for a guard reached from a test is now `assert`, at the same line and with the same killer (`tools.mutate`'s `guard_kill`). Its verdict is unchanged. A Clang row that was `invalid` for a guard in a header is now `assert`, and its mutant is killed.
+- The records that read a Clang survival or an unjudged Clang guard by hand stay as written; a later run of their specs may show the new verdicts.

@@ -1,0 +1,183 @@
+# The mutants of plan 0036's changes to tools/jobpool, tools/timed, and
+# tools/mutate, judged by the tools' own CTests on gcc-debug. Each test
+# copies or runs the mutated tool afresh, so each mutant is judged by a
+# fresh process. The selections build nothing.
+presets = ["gcc-debug"]
+
+[selection.jobpool]
+targets = []
+labels = '^tools\.jobpool$'
+
+[selection.timed]
+targets = []
+labels = '^tools\.measure$'
+
+[selection.mutate]
+targets = []
+labels = '^tools\.mutate$'
+
+# The gap mutants: existing code that no test judged before this unit.
+# gap.toml runs them against the suite before the unit's tests.
+
+# The repair gate dropped: an idle, full pool moves its FIFO aside at every
+# poll that finds no client.
+[[mutant]]
+name = "jobpool_gate_removed"
+selection = "jobpool"
+file = "tools/jobpool"
+edits = [
+  { anchor = '    if ((free != n)) && aside_without_clients "$fifo" 0.2; then', replacement = '    if aside_without_clients "$fifo" 0.2; then' },
+]
+expect = "killed"
+
+# A missing FIFO no longer refused: only an empty MAKEFLAGS is.
+[[mutant]]
+name = "timed_missing_fifo_allowed"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '  if [[ -z $fifo || ! -p $fifo ]]; then', replacement = '  if [[ -z $fifo ]]; then' },
+]
+expect = "killed"
+
+# The mutants written for the unit's new tests.
+
+# The service runs on without its FIFO.
+[[mutant]]
+name = "jobpool_missing_fifo_exit_removed"
+selection = "jobpool"
+file = "tools/jobpool"
+edits = [
+  { anchor = '''
+    if [[ ! -p $fifo ]]; then
+      echo "$fifo is gone, so the pool stops" >&2
+      exit 1
+    fi
+''', replacement = "\n" },
+]
+expect = "killed"
+
+# No wait while the FIFO is aside.
+[[mutant]]
+name = "timed_wait_removed"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '''
+  for _ in {1..20}; do
+    [[ -n $fifo && ! -p $fifo && -e $fifo.stopping ]] || break
+    sleep 0.1
+  done
+''', replacement = "\n" },
+]
+expect = "killed"
+
+# The wait made whenever the FIFO is missing, moved aside or not.
+[[mutant]]
+name = "timed_wait_unconditional"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '    [[ -n $fifo && ! -p $fifo && -e $fifo.stopping ]] || break', replacement = '    [[ -n $fifo && ! -p $fifo ]] || break' },
+]
+expect = "killed"
+
+# A wait of 0.2 s, shorter than the idle check's 1 s.
+[[mutant]]
+name = "timed_wait_short"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '  for _ in {1..20}; do', replacement = '  for _ in {1..2}; do' },
+]
+expect = "killed"
+
+# The refusal after the wait says there is no pool.
+[[mutant]]
+name = "timed_still_aside_message_removed"
+selection = "timed"
+file = "tools/timed"
+edits = [
+  { anchor = '''
+  if [[ -n $fifo && ! -p $fifo && -e $fifo.stopping ]]; then
+    echo "timed: refused: the job-slot pool's FIFO is still moved aside to $fifo.stopping after 2 s." >&2
+    echo "timed: check with tools/jobpool status" >&2
+    exit 2
+  fi
+''', replacement = "\n" },
+]
+expect = "killed"
+
+# Clang's note ignored: a guard failing in a header's constexpr variable
+# is invalid again.
+[[mutant]]
+name = "mutate_guard_note_ignored"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '        elif CHECK_FAILED.search(message) or (', replacement = '        elif CHECK_FAILED.search(message) or False and (' },
+]
+expect = "killed"
+
+# Every error about a constant expression counted as a failed check.
+[[mutant]]
+name = "mutate_every_constant_expression_error"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '                and any(GUARD_NOTE.search(note) for note in notes)):', replacement = '                and True):' },
+]
+expect = "killed"
+
+# The notes read past the next error, into another diagnostic's notes.
+[[mutant]]
+name = "mutate_notes_past_next_error"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '                    if END_OF_JOB.match(rest) or "error:" in rest:', replacement = '                    if END_OF_JOB.match(rest):' },
+]
+expect = "killed"
+
+# An expected survivor reported as a problem.
+[[mutant]]
+name = "mutate_expected_survivor_a_problem"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '            verdict == "survived" and expect != "survived") else []', replacement = '            verdict == "survived") else []' },
+]
+expect = "killed"
+
+# A killed survivor not reported.
+[[mutant]]
+name = "mutate_killed_survivor_not_reported"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        if verdict == "killed" and expect == "survived":
+            problems.append("expected to survive but killed")
+''', replacement = "\n" },
+]
+expect = "killed"
+
+# A declared survival with no reason accepted.
+[[mutant]]
+name = "mutate_survival_reason_optional"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '        if expect != "killed" and not mutant.get("reason"):', replacement = '        if expect == "equivalent" and not mutant.get("reason"):' },
+]
+expect = "killed"
+
+# A declared survival with killers accepted.
+[[mutant]]
+name = "mutate_survival_killers_allowed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '        if expect == "survived" and mutant["killers"]:', replacement = '        if False:' },
+]
+expect = "killed"
