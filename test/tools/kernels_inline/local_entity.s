@@ -5,3 +5,4 @@ _Z5firstRKd:
 	ret
 _Z6secondv:
 	ret
+	movl	$0, %eax

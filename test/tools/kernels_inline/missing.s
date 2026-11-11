@@ -2,3 +2,4 @@
 	.text
 _Z5firstRKd:
 	ret
+	movl	$0, %eax
