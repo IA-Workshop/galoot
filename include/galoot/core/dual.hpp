@@ -311,7 +311,7 @@ inline constexpr auto bulk_dual_layout =
     geometric_product_layout<Alg, S, detail::antiscalar_layout<Alg>>;
 
 /// The layout of weight_dual(x), as for bulk_layout. A rigid(3) point gives
-/// the scalar alone.
+/// e123 alone.
 template <metric_like Alg, blade_set S>
 inline constexpr auto weight_dual_layout =
     bulk_layout<Alg, right_complement_layout<Alg, S>>;
