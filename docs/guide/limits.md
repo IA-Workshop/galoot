@@ -53,23 +53,24 @@ struct r12 {
   static constexpr auto value = core::R<12, 0, 0>();
 };
 
-// e1, e2, and e12 (the twelfth generator), as masks.
+// The generators e1, e2, and the twelfth, g12, as masks: no name such as
+// e12 can stand for the twelfth generator, since e12 is e1 e2.
 constexpr core::mask_t e1 = 1U << 0U;
 constexpr core::mask_t e2 = 1U << 1U;
-constexpr core::mask_t e12 = 1U << 11U;
-constexpr core::blade_set<3> vectors{{{{e1, 1}, {e2, 1}, {e12, 1}}}};
+constexpr core::mask_t g12 = 1U << 11U;
+constexpr core::blade_set<3> vectors{{{{e1, 1}, {e2, 1}, {g12, 1}}}};
 using Vector = core::mv<r12, vectors, int>;
 
 constexpr Vector a{1, 2, 0};
 constexpr Vector b{0, 0, 3};
 
 // The wedge of two such vectors is on the three bivectors they can reach,
-// in canonical order: e1 e2, then e1 e12, then e2 e12. Here
-// a ^ b = 3 (e1 ^ e12) + 6 (e2 ^ e12), with 0 on e1 e2.
+// in canonical order: e1 e2, then e1 g12, then e2 g12. Here
+// a ^ b = 3 (e1 ^ g12) + 6 (e2 ^ g12), with 0 on e1 e2.
 constexpr auto ab = a ^ b;
 static_assert(ab.component_count == 3);
 static_assert(ab.layout.blades[0].mask == (e1 | e2));
-static_assert(ab.layout.blades[1].mask == (e1 | e12));
+static_assert(ab.layout.blades[1].mask == (e1 | g12));
 static_assert(ab.coefficients[0] == 0 && ab.coefficients[1] == 3 &&
               ab.coefficients[2] == 6);
 
@@ -180,8 +181,9 @@ layout builds:
   without optimization, unless `_GLIBCXX_NO_ASSERTIONS` is defined, so an
   optimized build of that antiproduct fails. `-fconstexpr-steps=1200000`
   builds it, and so do smaller layouts, such as full<5> with the vectors,
-  Clang with libc++, and GCC at its default limits. GCC builds the dense
-  five-generator products too.
+  and GCC at its default limits. It was also seen to build on Clang with
+  libc++, a standard library Galoot is not tested with, so that is not a
+  claim. GCC builds the dense five-generator products too.
 - The code that applies a plan is one fold expression over its terms, and
   Clang stops a fold at 2,048 terms; no plan that Clang builds at its default
   limits has more than 1,024 terms. The code builds wherever its plan builds,
@@ -357,15 +359,14 @@ Each compiler takes a flag that raises its limit on constant evaluation:
 | GCC 16 | operations of constant evaluation | 33,554,432 | `-fconstexpr-ops-limit=<n>` |
 | GCC 16 | iterations of one loop | 262,144 | `-fconstexpr-loop-limit=<n>` |
 
-A raised limit costs compile time and memory in proportion to the work it
-admits. Two measured cases: `-fconstexpr-steps=1200000` builds the geometric
+Two measured cases: `-fconstexpr-steps=1200000` builds the geometric
 antiproduct of two full<5> multivectors of conformal(3) on Clang without
 libstdc++'s assertions, and `-fconstexpr-ops-limit=134217728` builds the
 geometric product of the scalar with full<10> on GCC. Defining
 `_GLIBCXX_ASSERTIONS` lowers both compilers' counts of a plan, since
-libstdc++ then checks a subscript without a function call. The other remedy is a smaller
-layout: name the blades an object can hold rather than taking every blade,
-and convert to the larger type before a sum.
+libstdc++ then checks a subscript without a function call. The other remedy
+is a smaller layout: name the blades an object can hold rather than taking
+every blade, and convert to the larger type before a sum.
 
 ## The rounding check
 
@@ -416,7 +417,8 @@ what `transform` drops is zero only because the versor is one, as for the
 antiscalar part of a conformal(3) vector, that error can exceed the bound and
 the check aborts. Composing conformal(3) motors in floating point lets the
 defect grow with the chain: for motors of two random flat planes each,
-composed in `double`, the check fired for 0.2% of chains of 2 motors, 2.2% of
+composed in `double` in a build without fused multiply-add, the check fired
+for 0.2% of chains of 2 motors, 2.2% of
 8, 11.4% of 64, and 22.7% of 128, while versors whose components were each
 rounded once never fired. Rebuild or renormalize such a motor, or turn
 checking off. In rigid(3), for a point, a line, a plane, a motor, or a

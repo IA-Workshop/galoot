@@ -116,10 +116,14 @@
 | Transform and compose | `transform.hpp` 66-82 |
 | Change of basis | `basis_change.hpp` 103-124 |
 | Raising the limits: defaults and flags | `plan.hpp` 625-640; `product.hpp` 354; `plan.hpp` 621-623 |
+| A Clang build with libc++ was seen to build the conformal(3) antiproduct, and is not a tested configuration | `product.hpp` 355-356 (the result); the page's "Toolchains" (not tested); reworded after the blind review's finding 3 |
+| (Dropped) "A raised limit costs compile time and memory in proportion to the work it admits" | no source; removed after the blind review's finding 1 |
 | Rounding check: bound, padding, types checked, floor, assumptions, chains | `transform.hpp` 720-766, 100-113, 416-419, 545-548; CONVENTIONS 4.5 |
+| The chain rates hold for a build without fused multiply-add | `records/numerical/0040-contraction-check.md`, departures item 6 ("research note 0022's rates are for uncontracted builds") and section 6's table (chains under contraction untested); the rates are `transform.hpp` 746-751 |
 | Contraction, L1 and L2 | `records/numerical/0040-contraction-check.md` section 7.2, verbatim, at the coordinator's instruction (decision 0243) |
 | Presets build baseline x86-64 with `-ffp-contract=off` | `CMakePresets.json` 46, 54, 62 (no `-march` in any preset) |
 | Toolchains; bare and `-fno-exceptions` compiles; CMake 4.4 | `CMakePresets.json`; the tests `core.bare_compile*`, `rga3.bare_compile*`; `CMakeLists.txt` 5 |
+| C++23 with compiler extensions off | `CMakeLists.txt` 11 (`CMAKE_CXX_EXTENSIONS OFF`); the bare compiles' `-pedantic-errors`; STYLE S2 |
 | rga3 objects far below the limits; transform drops zero in rigid(3) for the five objects | `transform.hpp` 704-707, 754-756; `product.hpp` 46-47 |
 | `rotation` length range | `motions.hpp` 52-56 |
 
@@ -130,6 +134,7 @@
 | Status: core close to a stable release, preset versioned separately and below its first stable release; no version | plan 0041 section 4.2; decision 0240 items 3 and 5 |
 | No `install()`, no `find_package`; CMake 4.4 | decision 0240 item 5; decision 0241 item 5; `CMakeLists.txt` 5 |
 | The target carries the include path and C++23, and Galoot's tests are not built as a subproject | `CMakeLists.txt` 16-35, 41-49 (`PROJECT_IS_TOP_LEVEL`) |
+| Uses no compiler extensions | `CMakeLists.txt` 11 (`CMAKE_CXX_EXTENSIONS OFF`); the bare compiles' `-pedantic-errors`; STYLE S2 |
 | Compiles with `-fno-exceptions` | `core.bare_compile_no_exceptions`, `rga3.bare_compile_no_exceptions` |
 
 ## Defects of wording found while tracing
