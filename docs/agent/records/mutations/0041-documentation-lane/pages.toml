@@ -66,3 +66,23 @@ add_executable(my_program main.cpp)
 target_link_libraries(my_program PRIVATE galoot::presets::rga4)''' }]
 expect = "killed"
 killers = ["rga3.readme_cmake_1"]
+
+# Every program of the five pages, and every test labelled core.docs or
+# rga3.docs, the rejected tests among them.
+[selection.docs]
+targets = ["rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3", "rga3_start_example_1", "rga3_start_example_2", "rga3_start_example_3", "rga3_start_example_4", "rga3_start_example_5", "rga3_start_example_6", "rga3_start_example_7", "rga3_start_example_8", "rga3_start_example_9", "core_core_guide_example_1", "core_core_guide_example_2", "core_core_guide_example_3", "core_core_guide_example_4", "core_core_guide_example_5", "core_core_guide_example_6", "core_core_guide_example_7", "core_core_guide_example_8", "core_core_guide_example_9", "core_core_guide_example_10", "core_core_guide_example_11", "core_core_guide_example_12", "core_core_guide_example_13", "core_core_guide_example_14", "core_core_guide_example_15", "core_core_guide_example_16", "core_core_guide_example_17", "core_core_guide_example_18", "core_core_guide_example_19", "core_core_guide_example_20", "core_core_guide_example_21", "rga3_rga3_guide_example_1", "rga3_rga3_guide_example_2", "rga3_rga3_guide_example_3", "rga3_rga3_guide_example_4", "rga3_rga3_guide_example_5", "rga3_rga3_guide_example_6", "core_limits_example_1", "core_limits_example_2"]
+labels = '^(core|rga3)\.docs$'
+
+# The tool reads a cpp rejected block as a cpp block, against the pages'
+# rejected tests: each of the seven rejected blocks is then extracted as a
+# program, numbered among the page's programs, and its own static_assert
+# stops its build (programs 2, 3 and 8 of the first page, 4, 11 and 17 of
+# the core guide, 2 of the limits page, all among the selection's targets).
+# Its rejected test is no longer registered, so no test is named as a killer:
+# the kill is the failed static assertion of each block built as a program.
+[[mutant]]
+name = "rejected_ignored"
+selection = "docs"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''        return "rejected" if words[1:2] == ["rejected"] else "cpp"''', replacement = '''        return "cpp"''' }]
+expect = "killed"
