@@ -69,3 +69,34 @@ file = "test/tools/kernels_inline.py"
 edits = [{ anchor = '''        if len(found) != 1:''', replacement = '''        if len(found) > 1:''' }]
 expect = "killed"
 killers = ["tools.kernels_inline_alone_rejects_missing_function"]
+
+# check.toml's three mutants, run again on the script as it is now, with
+# their anchors rewritten for it.
+
+# Jumps of every kind are not read as branches, only calls.
+[[mutant]]
+name = "check_ignores_jmp"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(call[lq]?|j[a-z]+)''', replacement = '''(call[lq]?)''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_jmp"]
+
+# The symbol must end the operand, so a call through the PLT or the global
+# offset table is not read as one.
+[[mutant]]
+name = "check_ignores_plt"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''6galoot[\w.$]*")''', replacement = '''6galoot[\w.$]*$")''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_plt"]
+
+# A function missing from the output is not reported.
+[[mutant]]
+name = "check_skips_missing"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        if not any(label.startswith(prefix) for label in labels):''', replacement = '''        if False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_missing_function"]

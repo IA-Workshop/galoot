@@ -78,3 +78,27 @@ Each new or changed test is among the killers of the mutant written for it.
 | `subsection_ends_section` | a deeper heading ends the section | killed | `test_count_in_a_deeper_heading_of_the_section_is_read` |
 
 Each refusal and each rule of the section's extent is killed by the test written for it, as in `99beea3`'s message.
+
+## After the blind review's M1: every attribute again, and the check's new rules
+
+The blind review found that the forced chain left the public products out of line on GCC, where they had been inlined before. The fix forces eleven public functions too, and the structure check gains a second test, `rga3.kernels_inline_alone`, which compiles each of the probe's 48 functions in a unit of its own. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040) on 2026-11-11 with `tools/mutate` at `d47e8f9` (the attributes; the tests at `3a74650`), in the `--public-ops` worktree, with only records dirty; pool 23 of 23 free before and after.
+
+`attributes-public-gcc.toml` and `attributes-public-clang.toml` remove one of the 24 attributes at a time, judged by both structure tests. The thirteen of part A keep their first run's verdicts as expectations. The eleven new ones expect a kill where a structure test showed the call on that compiler.
+
+| Attribute removed from | gcc-debug | clang-debug | First run (old probe), gcc / clang |
+| --- | --- | --- | --- |
+| `run_map` | survived | survived | survived / survived |
+| `run_product` | **killed** | killed | survived / killed |
+| binary `apply` with a target | killed | killed | killed / killed |
+| unary `apply` with a target | survived | survived | survived / survived |
+| `run_sum`, `sum`, `run_change`, `transform_outer` | survived | survived | survived / survived |
+| `transform_middle` | survived | killed | survived / killed |
+| `compose` | killed | killed | killed / killed |
+| `transform` | killed | killed | killed / killed |
+| `geometric_product`, `wedge`, `geometric_antiproduct`, `antiwedge`, and `*`, `^`, `%`, `&` | killed | killed | new |
+| `weight`, `left_weight_dual`, `antidot` | killed (by the alone test only) | survived, as declared | new |
+| the two `apply` overloads with no target layout | equivalent | equivalent | equivalent |
+
+The only verdict that differs from its expectation is `run_product` on GCC, now killed (so `tools/mutate` exits 1 on the GCC spec): with the public products forced, GCC keeps `run_product` out of line when it alone is left unforced. Each of the eleven new attributes is killed on GCC, so each is needed on at least one compiler; none was added that a test did not show. Of part A's thirteen, `run_map`, the unary `apply`, `run_sum`, `sum`, `run_change` and `transform_outer` survive on both compilers and `transform_middle` on GCC; they stay as guards.
+
+`check-review.toml` holds the mutants of the check's rules added after the review's m2 and M1, and `check.toml`'s three with their anchors rewritten for the script as it is now. On both presets each is killed by the fixture test written for it, except `check_keeps_overwritten_register`, declared equivalent and found so: no fixture overwrites a register that holds a library address before a call through it, and the fault could only cause a false report, not miss a call.
