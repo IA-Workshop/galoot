@@ -20,6 +20,8 @@ The question: for the five operations of the cost criterion (point ^ point, poin
 | `COUNTING-RULE.md` | the counting rule, in prose |
 | `derivations.txt` | the output polynomials and the run's log |
 | `counts.md`, `counts.json` | the tables of the run |
+| `bench/` | part F: the forms timed against each other on both compilers, with the batch sweep (its README) |
+| `proto/` | part F: the collection-pass prototype and its compile cost (its README) |
 
 Command, from a Galoot checkout, with the math-tools Python environment (sympy 1.14):
 
