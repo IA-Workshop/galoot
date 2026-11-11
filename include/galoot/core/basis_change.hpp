@@ -152,8 +152,9 @@ namespace galoot::core {
 /// change_basis_back apply; basis_change_like says what the tag requires and
 /// what is checked. The function that applies a change is change_basis, a
 /// verb; basis_change is the value that a tag holds. same_rows compares two
-/// values as written; a basis_change has no ==, because two values for one
-/// matrix can differ.
+/// values as written. The == of basis_change is deleted, because two values
+/// for one matrix can differ, so a == b does not compile, and the error
+/// shows the deleted declaration, which names same_rows.
 ///
 /// Requires: N <= mask_bits, checked at compile time with a message that
 /// names it. The values are checked only when a tag that holds them is first
@@ -175,6 +176,14 @@ struct basis_change {
 
   /// The number of generators of the source and of the target, n.
   static constexpr std::size_t generator_count = N;
+
+  /// Deleted, and with it !=, which the language rewrites as the negation
+  /// of ==: two values for one matrix can differ, as a row and its
+  /// denominator scaled by one factor do, so a comparison of the values
+  /// would not say whether two changes are one. same_rows(a, b) compares
+  /// two values as written. The comment at the end of the line is for the
+  /// reader of a compiler's error, which shows this line.
+  bool operator==(const basis_change&) const = delete; // use same_rows(a, b)
 };
 
 /// Whether a and b hold the same rows over the same denominators, entry by
@@ -527,29 +536,6 @@ inverse_rows(const basis_change<N>& change, const elimination<N>& e) noexcept {
     out.rows.denominators[i] = magnitude / common;
   }
   return out;
-}
-
-/// The inverse of the change, as rows over positive denominators, each row
-/// reduced: row i writes the target's generator e'_(i+1) in the source's
-/// generators.
-///
-/// Requires: the rows are linearly independent, checked by GALOOT_ASSERT.
-/// Every intermediate of the elimination and of the rows fits
-/// coefficient_type, checked by GALOOT_ASSERT.
-/// Guarantees: the rows times the change's rows, each over its denominator,
-/// are the identity.
-template <std::size_t N>
-[[nodiscard]] constexpr change_rows<N>
-inverse_change(const basis_change<N>& change) noexcept {
-  const elimination<N> e = eliminate(change);
-  check_fits(e.fits);
-  GALOOT_ASSERT(e.pivot != 0,
-                "basis_change: the rows are linearly dependent, so the change "
-                "has no inverse; the images of the source's generators must "
-                "be independent");
-  const noted_rows<N> inverse = inverse_rows(change, e);
-  check_fits(inverse.fits);
-  return inverse.rows;
 }
 
 // Whether P G' P^T = G, in integers as M G' M^T = Δ G Δ for the integer rows
