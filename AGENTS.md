@@ -1,6 +1,6 @@
 # Working on Galoot
 
-Galoot is a header-only C++23 library that generates algebraic structures, starting with geometric algebras, from compact declarations. Its design reference is [docs/galoot-design-study.md](docs/galoot-design-study.md).
+Galoot is a header-only C++23 library that generates algebraic structures, starting with geometric algebras, from compact declarations. Its first design record is the design study, [docs/agent/research-notes/0000-design-study.md](docs/agent/research-notes/0000-design-study.md), kept as history; the roadmap of record is [plan 0001](docs/agent/plans/0001-core-v1-roadmap.md). User documentation starts at the [README](README.md) and the [guide](docs/guide/README.md).
 
 ## Read before working
 
