@@ -4,7 +4,8 @@ dump.cpp prints), and the tools/compiles spec that measures them.
     python3 -I units.py
 
 For each case, into units/:
-  <case>.baseline.cpp  the algebra and the two layouts, no evaluation
+  <case>.baseline.cpp  the algebra and the two layouts, read by one trivial
+                       evaluation
   <case>.plan.cpp      the transform's two kernels: the library's plans of
                        both antiproducts and the kernels drawn from them
   <case>.pass.cpp      the plan, and the collection pass on its kernels
@@ -57,6 +58,10 @@ def prelude(case, include_pass, layouts=True):
     return "\n".join(lines) + "\n"
 
 
+BASELINE = """\
+static_assert(versor.size() + object.size() > 0);
+"""
+
 PLAN = """\
 static_assert(detail::first_kernel<alg, versor, object, false>.size() > 0);
 static_assert(detail::second_kernel<alg, versor, object, true>.size() > 0);
@@ -92,7 +97,7 @@ def main():
             'flags_from = "core.assert_consteval"', ""]
     for name, case in cases.items():
         units = {
-            "baseline": prelude(case, False),
+            "baseline": prelude(case, False) + BASELINE,
             "plan": prelude(case, False) + PLAN,
             "pass": prelude(case, True) + PLAN + PASS,
             "literal": literal(case, True),

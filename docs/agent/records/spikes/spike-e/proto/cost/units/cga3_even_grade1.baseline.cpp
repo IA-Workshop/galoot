@@ -13,3 +13,4 @@ struct alg {
 constexpr auto versor = core::blade_set<16>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}, {16U, 1}, {7U, 1}, {11U, 1}, {19U, 1}, {13U, 1}, {21U, 1}, {25U, 1}, {14U, 1}, {22U, 1}, {26U, 1}, {28U, 1}, {31U, 1}}}};
 constexpr auto object = core::blade_set<5>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}, {16U, 1}}}};
 
+static_assert(versor.size() + object.size() > 0);
