@@ -93,7 +93,7 @@
     },
     {
       "name": "gcc-asan",
-      "displayName": "GCC, -O1, ASan and UBSan, checking on",
+      "displayName": "GCC, -O1, ASan and UBSan, checking on, forced inlining off",
       "inherits": [
         "measured",
         "gcc",
@@ -102,7 +102,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_FLAGS_DEBUG": "-O1 -g",
-        "GALOOT_CHECKING": "ON"
+        "GALOOT_CHECKING": "ON",
+        "GALOOT_FORCE_INLINE": "OFF"
       }
     },
     {
@@ -121,7 +122,7 @@
     },
     {
       "name": "clang-release",
-      "displayName": "Clang, -O2, checking off",
+      "displayName": "Clang, -O2, checking off, forced inlining off",
       "inherits": [
         "measured",
         "clang",
@@ -130,12 +131,13 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_FLAGS_RELEASE": "-O2",
-        "GALOOT_CHECKING": "OFF"
+        "GALOOT_CHECKING": "OFF",
+        "GALOOT_FORCE_INLINE": "OFF"
       }
     },
     {
       "name": "clang-asan",
-      "displayName": "Clang, -O1, ASan and UBSan, checking on",
+      "displayName": "Clang, -O1, ASan and UBSan, checking on, forced inlining off",
       "inherits": [
         "measured",
         "clang",
@@ -144,7 +146,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_FLAGS_DEBUG": "-O1 -g",
-        "GALOOT_CHECKING": "ON"
+        "GALOOT_CHECKING": "ON",
+        "GALOOT_FORCE_INLINE": "OFF"
       }
     },
     {
@@ -192,7 +195,7 @@
     },
     {
       "name": "clang-measure",
-      "displayName": "Clang, -O2, for reading generated code and benchmarks, no assertions",
+      "displayName": "Clang, -O2, for reading generated code and benchmarks, no assertions, forced inlining off",
       "inherits": [
         "measurement",
         "measured",
@@ -201,7 +204,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_CXX_FLAGS_RELEASE": "-O2",
-        "GALOOT_CHECKING": "OFF"
+        "GALOOT_CHECKING": "OFF",
+        "GALOOT_FORCE_INLINE": "OFF"
       }
     },
     {

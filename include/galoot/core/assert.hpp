@@ -17,11 +17,33 @@
 #error "GALOOT_CHECKING must be 0 or 1"
 #endif
 
+// GALOOT_FORCE_INLINE selects whether the core forces its operations inline
+// (GALOOT_ALWAYS_INLINE, below). It is 1, the default, to force them, and 0
+// to leave inlining to the compiler's own heuristics. Forcing them makes
+// every call of an operation carry the operation's body, so a unit with many
+// calls, such as a test that checks many identities, can take much longer
+// and much more memory to compile, most of all with sanitizers or at -O2 on
+// Clang. With 0 such a unit compiles faster, and an operation may then
+// compile to a call. Over an exact scalar the values do not depend on the
+// mode, nor over a rounding scalar without multiply-add contraction
+// (-ffp-contract=off); with contraction, which products a compiler fuses can
+// depend on what it inlines.
+#ifndef GALOOT_FORCE_INLINE
+// A macro, because users set the mode with -D and the preprocessor tests it.
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define GALOOT_FORCE_INLINE 1
+#endif
+
+#if GALOOT_FORCE_INLINE != 0 && GALOOT_FORCE_INLINE != 1
+#error "GALOOT_FORCE_INLINE must be 0 or 1"
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 
 /// Makes a function inline at every call: [[gnu::always_inline]] on GCC
-/// and Clang, and nothing on another compiler.
+/// and Clang when GALOOT_FORCE_INLINE is 1, and nothing when it is 0 or on
+/// another compiler.
 ///
 /// The core puts it on each function between a public operation and the
 /// generated code of the operation's terms, and on those public operations
@@ -32,7 +54,8 @@
 /// share of the operation's time. That no call is left is checked for a
 /// list of the rga3 preset's operations, on its own types and on
 /// multivectors of all sixteen of its blades, over double, at -O2 without
-/// the checking mode, on x86-64. It is not promised elsewhere: on other layouts
+/// the checking mode, on x86-64, with GALOOT_FORCE_INLINE 1. It is not
+/// promised elsewhere: with GALOOT_FORCE_INLINE 0, on other layouts
 /// and algebras (some operations on conformal(3) multivectors of all or of even
 /// blades still compile to a call), at other optimization levels such as -Os,
 /// and in a checking build, where transform calls its checks out of line by
@@ -47,8 +70,8 @@
 /// such an operation from a function built for the file's own target, or put
 /// the fallback in a file of its own built for the fallback's target.
 // A macro, because the attribute is written only for the compilers that
-// know it.
-#if defined(__GNUC__) || defined(__clang__)
+// know it, and only in the forced-inline mode.
+#if GALOOT_FORCE_INLINE == 1 && (defined(__GNUC__) || defined(__clang__))
 #define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]
 #else
 #define GALOOT_ALWAYS_INLINE

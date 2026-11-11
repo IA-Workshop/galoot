@@ -94,6 +94,20 @@ set(GALOOT_CHECKING "${GALOOT_CHECKING}" CACHE BOOL
 target_compile_definitions(galoot_core INTERFACE
   $<BUILD_INTERFACE:GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>>)
 
+# The forced-inline mode. ON leaves the header's default, which forces the
+# operations inline; OFF passes GALOOT_FORCE_INLINE=0 to every target that
+# links galoot::core in this build, for the presets whose units with many
+# operations cost far more to compile when forced. Unlike the checking mode
+# it changes no value a test checks, so it has a default. ON passes nothing,
+# so that a target may fix the mode 0 for itself in any build; a second,
+# identical definition is no error. The structure tests in test/bench fix
+# their own flags and do not see this option.
+option(GALOOT_FORCE_INLINE
+  "ON forces the core's operations inline; OFF leaves inlining to the compiler"
+  ON)
+target_compile_definitions(galoot_core INTERFACE
+  $<BUILD_INTERFACE:$<$<NOT:$<BOOL:${GALOOT_FORCE_INLINE}>>:GALOOT_FORCE_INLINE=0>>)
+
 # Per-translation-unit cost record: each compile runs through tools/measure,
 # which appends a row naming GALOOT_PRESET to GALOOT_COMPILE_RECORD. Every
 # build preset but lint sets GALOOT_PRESET, since a compile under clang-tidy
