@@ -93,4 +93,9 @@ Tip reviewed: `b517977`.
 
 ## Resolution
 
-To be filled in by the implementer.
+- **m1** (nothing guards against a cascade of errors): fixed; the compile-fail test now includes the whole core.
+- **m2** (mutation spec not run): fixed; the spec ran on gcc-debug and clang-debug, both mutants killed, and the mutation README describes it.
+- **m3** (owner's ruling not cited): fixed; plan 0040 section 17 and decision 0244 item 17 cite decision 0246 item 1.
+- **n1** (helper macros stay defined): left for the next change to `assert.hpp`.
+- **n2** (guide wording): deferred to the post-1.0 backlog.
+

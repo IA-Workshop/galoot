@@ -78,4 +78,9 @@ Tip reviewed: `048aac5`.
 
 ## Resolution
 
-To be filled in by the implementer.
+- **M1** (forced code never run under sanitizers or optimized Clang): fixed by the forced twin test `rga3.reference_kernels_forced`, forced in every preset.
+- **M2** (measure presets inconsistent): fixed; clang-measure is forced again.
+- **m1** (`-DGALOOT_FORCE_INLINE=ON` silently mode 0): fixed by the strict check and compile-fail tests; the guide claim is corrected.
+- **m2, m5, m6**: deferred past 1.0 by the owner (decision 0246 item 1).
+- **Note on decision 0245**: decision 0246 records the owner's ruling and supersedes decision 0245 item 1.
+
