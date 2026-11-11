@@ -7,25 +7,31 @@ Usage:
 Runs the command, which writes x86-64 assembly in the AT&T syntax to its
 standard output (a compile with -S -o -), and checks three things:
 
-- the output is x86-64 assembly: some instruction names a 64-bit register,
-  %rax to %r15, %rip, or %rsp, so that the output of another target, whose
-  calls this check would not read, is refused rather than passed;
+- the output is x86-64 assembly: some instruction names a register of
+  x86-64 (%rax, %eax, %r8d, %xmm0 and the like), or every instruction is a
+  return, so that the output of another target, whose calls this check
+  would not read, is refused rather than passed (the build registers the
+  tests only for an x86-64 target; this refusal is a second guard);
 - every named function is defined in the output: some label is its mangled
   name, _Z, the length of the name, then the name, as the compilers mangle a
   function at namespace scope, so that a function the compiler dropped or
   renamed cannot pass by having no code to check;
 - no call (call, callq, calll), jump (jmp, jmpq) or conditional jump (jne
-  and the other j<cc>) has a symbol of namespace galoot as its target:
-  named directly, through the PLT (sym@PLT), through the global offset table
-  (*sym@GOTPCREL(%rip)), or through a register that an earlier lea or mov
-  in the same function loaded with the symbol's address. Such a symbol's
+  and the other j<cc>), with or without a notrack or bnd prefix, has a
+  symbol of namespace galoot as its target: named directly, through the
+  PLT (sym@PLT), through the global offset table (*sym@GOTPCREL(%rip)), or
+  through a register that an earlier lea or mov in the same function loaded
+  with the symbol's address (sym(%rip), or $sym as an immediate), into the
+  register or a narrower part of it. Such a symbol's
   mangled name starts with _ZN, then any of the qualifiers K, V, r, R, O
   and H that a member function's cv-, ref- and explicit-object
   qualification add, then 6galoot; or, for a lambda or another entity local
   to a function of the library, with _ZZN and the same. A call to any other
   symbol, such as one of the standard library, and a jump to a local label
-  (.L...) are allowed. A call through a register loaded in any other way,
-  or through memory, is not read.
+  (.L...) are allowed. Not read: a call through a register loaded in any
+  other way (copied from another register, or computed), a call through
+  memory other than the global offset table, and a branch with a prefix
+  other than notrack or bnd.
 
 With --alone, the command is a compile without its source, and each named
 function is compiled in a unit of its own: the text of the source without
@@ -51,16 +57,32 @@ import tempfile
 # comment.
 LABEL = re.compile(r"^([A-Za-z_.$][\w.$@]*):\s*(?:#.*)?$")
 # An instruction that transfers control, with its operand.
-BRANCH = re.compile(r"^\s+(call[lq]?|j[a-z]+)\s+(\S+)")
+BRANCH = re.compile(r"^\s+(?:(?:notrack|bnd)\s+)?(call[lq]?|j[a-z]+)\s+(\S+)")
 # An instruction that loads a register from an operand: lea or mov, in any
 # of their suffixed forms, with the register last.
 LOAD = re.compile(r"^\s+(?:lea|mov)[a-z]*\s+(\S+),\s*(%\w+)\s*(?:#.*)?$")
 # The mangled name of a symbol in namespace galoot, or of an entity local to
 # one of its functions, anywhere in an operand: after a * for an indirect
 # call, after a $ for an immediate, and before a suffix such as @PLT.
-LIBRARY = re.compile(r"(?<![\w.$])_ZZ?N[KVrROH]*6galoot[\w.$]*")
-# A 64-bit register of x86-64, as an instruction's operand names it.
-X86_64 = re.compile(r"%(?:r(?:[abcd]x|[sd]i|[sb]p|ip|[89]|1[0-5])[dwb]?)\b")
+LIBRARY = re.compile(r"(?<![\w.])_ZZ?N[KVrROH]*6galoot[\w.$]*")
+# A register of x86-64, of any width, as an instruction's operand names it.
+X86_64 = re.compile(r"%(?:[re]?(?:[abcd]x|[sd]i|[sb]p|ip)|[abcd][lh]|[sd]il|"
+                    r"[sb]pl|r(?:[89]|1[0-5])[dwb]?|[xyz]mm\d+|k[0-7])\b")
+# An instruction that only returns.
+RETURN = re.compile(r"^\s+(?:rep\s+)?retq?\s*(?:#.*)?$")
+# The 64-bit register that holds a narrower one: %eax, %ax and %al are parts
+# of %rax, %r8d of %r8.
+WIDE = {f"%{low}": f"%r{base}" for base in ("ax", "bx", "cx", "dx")
+        for low in (f"e{base}", base, f"{base[0]}l", f"{base[0]}h")}
+WIDE |= {f"%{low}": f"%r{base}" for base in ("si", "di", "bp", "sp")
+         for low in (f"e{base}", base, f"{base}l")}
+WIDE |= {f"%r{n}{suffix}": f"%r{n}" for n in range(8, 16)
+         for suffix in ("d", "w", "b")}
+
+
+def wide(register):
+    """The 64-bit register that `register` names or is a part of."""
+    return WIDE.get(register, register)
 
 
 def check(assembly, functions):
@@ -71,6 +93,7 @@ def check(assembly, functions):
     current = "(no function)"
     loaded = {}
     x86_64 = False
+    only_returns = True
     for number, line in enumerate(assembly.splitlines(), start=1):
         label = LABEL.match(line)
         if label:
@@ -79,15 +102,18 @@ def check(assembly, functions):
                 current = label.group(1)
                 loaded = {}
             continue
-        if not line.lstrip().startswith((".", "#")) and X86_64.search(line):
-            x86_64 = True
+        instruction = line.strip() and not line.lstrip().startswith(
+            (".", "#"))
+        if instruction:
+            x86_64 = x86_64 or X86_64.search(line) is not None
+            only_returns = only_returns and RETURN.match(line) is not None
         load = LOAD.match(line)
         if load:
             symbol = LIBRARY.search(load.group(1))
             if symbol:
-                loaded[load.group(2)] = symbol.group(0)
+                loaded[wide(load.group(2))] = symbol.group(0)
             else:
-                loaded.pop(load.group(2), None)
+                loaded.pop(wide(load.group(2)), None)
             continue
         branch = BRANCH.match(line)
         if not branch:
@@ -96,16 +122,16 @@ def check(assembly, functions):
         where = f"line {number}, in {current}: {line.strip()}"
         if LIBRARY.search(operand):
             offending.append(where)
-        elif operand.startswith("*%") and operand[1:] in loaded:
+        elif operand.startswith("*%") and wide(operand[1:]) in loaded:
             offending.append(f"{where}, through {operand[1:]}, which holds "
-                             f"{loaded[operand[1:]]}")
+                             f"{loaded[wide(operand[1:])]}")
 
     missing = []
     for function in functions:
         prefix = f"_Z{len(function)}{function}"
         if not any(label.startswith(prefix) for label in labels):
             missing.append(function)
-    return offending, missing, x86_64
+    return offending, missing, x86_64 or only_returns
 
 
 def run(command, functions, context=""):
@@ -121,7 +147,7 @@ def run(command, functions, context=""):
     offending, missing, x86_64 = check(result.stdout, functions)
     if not x86_64:
         print(f"{context}the output is not x86-64 assembly: no instruction "
-              "names a 64-bit register, so its calls cannot be read")
+              "names a register of x86-64, so its calls cannot be read")
         return False
     for line in offending:
         print(f"{context}a call into the library: {line}")
