@@ -289,6 +289,21 @@ Not yet recorded: the merge gate writes it when this unit merges into `develop`.
 
 - **m5 of the blind review** (the hint of the deleted `==` reaches the user only in the source line the compiler echoes, and is lost where the excerpt is not shown). Not a defect of this unit: it is the form decision 0236 item 3 chose, and C++26's `= delete("reason")` would put the hint on the error line, which STYLE S2 allows only in an optional header. Deferred to the owner, for after 1.0 or for a move to C++26.
 
+### The delta review of section 18 (`records/reviews/2026-11-11-pre-release-core-pass-inline-opt-out-review.md`)
+
+Done on `feature/pre-release-core-pass--inline-opt-out` after the review:
+
+- **m1, with m4.** The mode is checked by its spelling: any other word or whole number, and an empty value, stops the compile with the literal message, and `core.force_inline_on` and `core.force_inline_empty` join `core.force_inline_value`. The guide's sentence on other values is corrected, and the README and the header comment now say that every translation unit of a program must use the same mode.
+- **M1.** `rga3.reference_kernels_forced` builds the reference-kernel test with the header's default in every preset, so the forced code runs under gcc-asan, clang-asan and clang-release too.
+- **M2.** clang-measure is forced again, as clang-measure-o3, gcc-measure and gcc-measure-o3 are; gcc-asan, clang-asan and clang-release stay OFF.
+- **m3.** Section 18.2 item 3 now names `core.force_inline_build`.
+
+Deferred to after the release, as the owner asked for the least change before it:
+
+- **m2.** The cache option `GALOOT_FORCE_INLINE` is not validated as `GALOOT_CHECKING` is, so a configure value such as `2` or `foo` reads as ON with no message, and the presets that keep the default do not declare it.
+- **m5.** The mutation record says the presets' opt-out is checked by `core.force_inline_build` in each tree where it runs, but in the ON trees where the mutants ran, losing the CMake definition cannot be caught; no mutant of `CMakeLists.txt` was run on an OFF tree.
+- **m6.** A `convention-trace` row at `81c923136055` exits 1 and the next, 0.1 s later, exits 0, with no record of why; the cause is not traced.
+
 ## 18. Addendum: an opt-out of the forced inlining (after gate 2)
 
 - Status: added 2026-11-11 by Claude (agent, Opus 5.5), implementer of this addendum, on `feature/pre-release-core-pass--inline-opt-out`, worktree `.claude/worktrees/pre-release-core-pass--inline-opt-out`, from `merge/pre-release-core-pass-gate2` at `54f2487`. This addendum is the claim of the unit (W3, W7); it merges into `merge/pre-release-core-pass-gate2`, never directly into `develop`.
@@ -301,8 +316,8 @@ Gate 2 ran the P9 matrix at `a310a2f`. With the public operations forced (decisi
 ### 18.2 Goal and definition of done
 
 1. A public macro, documented where `GALOOT_CHECKING` is (the README and the core guide), turns `GALOOT_ALWAYS_INLINE` into nothing. It follows `GALOOT_CHECKING`'s form: a value of 0 or 1, 1 by default, any other value an `#error`.
-2. The build passes the opt-out to every target that links `galoot::core` when a cache option says so, and the presets gcc-asan, clang-asan, clang-release and clang-measure say so. No other preset changes. The structure tests `rga3.kernels_inline` and `rga3.kernels_inline_alone` keep their fixed flags and do not see the opt-out, in any preset.
-3. Tests first (W2): the opt-out makes the attribute expand to nothing and the default keeps it (a program built in each mode); the code gives the same values with the opt-out (the reference-kernel test built again with it); a value other than 0 or 1 stops the compile with one error; and `core.smoke` checks that the mode the build declares reaches the code.
+2. The build passes the opt-out to every target that links `galoot::core` when a cache option says so, and the presets gcc-asan, clang-asan, clang-release and clang-measure say so (clang-measure was set back to the default after the delta review; see section 17). No other preset changes. The structure tests `rga3.kernels_inline` and `rga3.kernels_inline_alone` keep their fixed flags and do not see the opt-out, in any preset.
+3. Tests first (W2): the opt-out makes the attribute expand to nothing and the default keeps it (a program built in each mode); the code gives the same values with the opt-out (the reference-kernel test built again with it); a value other than 0 or 1 stops the compile with one error; and a program built with the mode the build declares checks that the mode reaches the code (done as `core.force_inline_build`; `core.smoke`, named here first, is unchanged).
 4. W10: the six identity units of the gate's evidence (`identities_rounding_test`, `identities_five_diagonal`, `identities_four`, `identities_conformal3`, `identities_five_drawn`, `identities_five_dense`) built under gcc-asan, clang-release and clang-asan with the opt-out, through `tools/timed` and the compile-cost launcher, with time and peak memory recorded under `records/performance/pre-release-core-pass/opt-out/` against the gate's figures and those of `ed9288f`. A compile above 20 GiB, or free memory below 20 GiB, stops the run, which is then reported.
 5. Records: decision 0244 gains an item for the opt-out and one for the bare `git stash` of part D1; the Resolution sections of the four review records are filled in.
 

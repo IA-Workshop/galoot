@@ -1,0 +1,21 @@
+# After the delta review of plan 0040 section 18: a mutant for the new
+# compile-fail tests of the forced-inline mode's spelling, on both debug
+# presets. It counts when the tests it was written for are among those it
+# fails.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.assert]
+targets = ["core_assert_mode_0", "core_assert_mode_1",
+  "core_force_inline_off", "core_force_inline_default",
+  "core_force_inline_build"]
+labels = '^core\.assert$'
+
+# The numeric check of before: ON reads as 0 and passes, and an empty value
+# gets the preprocessor's error instead of the literal.
+[[mutant]]
+name = "spelling_unchecked"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#if !GALOOT_DETAIL_PASTE(GALOOT_DETAIL_FORCE_INLINE_IS_, GALOOT_FORCE_INLINE)''', replacement = '''#if GALOOT_FORCE_INLINE != 0 && GALOOT_FORCE_INLINE != 1''' }]
+expect = "killed"
+killers = ["core.force_inline_on", "core.force_inline_empty"]
