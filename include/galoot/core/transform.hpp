@@ -755,10 +755,19 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// to the scalar's own precision, to nearest, with gradual underflow, and
 /// IEEE 754's NaN and infinity: a build that flushes subnormal numbers to
 /// zero is outside it, and a checking build under -ffast-math or
-/// -ffinite-math-only does not compile. Other scalars that are not exact,
-/// such as std::complex<double>, are not checked.
-/// Guarantees: on x's layout; with an exact scalar the result is exact, and
-/// the result is the same with and without the check.
+/// -ffinite-math-only does not compile. A multiply-add that the compiler
+/// fuses under -ffp-contract counts as one operation: fusing only removes
+/// roundings that K counts, so the bound, and the check's verdict on a
+/// versor, hold however the compiler contracts, provided the fused operation
+/// rounds once to the scalar's own precision. Other scalars that are not
+/// exact, such as std::complex<double>, are not checked.
+/// Guarantees: on x's layout; with an exact scalar the result is exact; and
+/// the result is the same with and without the check, and in a constant
+/// evaluation, when the build does not fuse multiply-adds across statements
+/// (-ffp-contract=off or on). Under -ffp-contract=fast, GCC's default on a
+/// target with fused multiply-add, the compiler may fuse the two paths
+/// differently, and their results can then differ in the last bits, each
+/// within the operation's forward error bound.
 template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
 GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, X, T>
 transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {
