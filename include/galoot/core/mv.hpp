@@ -940,8 +940,8 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B,
           ring_scalar T>
 GALOOT_ALWAYS_INLINE
-    [[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
-    apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
+[[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
 }
 
@@ -976,8 +976,8 @@ apply(const mv<Alg, S, T>& x) {
 /// The map Op of x on the blade set of its result, the map's result set.
 template <UnaryOperation Op, metric_like Alg, blade_set S, ring_scalar T>
 GALOOT_ALWAYS_INLINE
-    [[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
-    apply(const mv<Alg, S, T>& x) {
+[[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
+apply(const mv<Alg, S, T>& x) {
   return apply<Op, unary_map<Op, Alg, S>.result>(x);
 }
 

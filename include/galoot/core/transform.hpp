@@ -659,8 +659,8 @@ inline constexpr auto compose_layout = geometric_antiproduct_layout<Alg, A, B>;
 /// Guarantees: on compose_layout<Alg, A, B>. Never checks: it drops nothing.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
 GALOOT_ALWAYS_INLINE
-    [[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
-    compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
+[[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
   constexpr bool each_operand_has_one_parity =
       detail::antigrade_parity<Alg, A> != detail::Parity::mixed &&
       detail::antigrade_parity<Alg, B> != detail::Parity::mixed;
