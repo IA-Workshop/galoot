@@ -1,6 +1,6 @@
 # 0008 WU4: oriented blade sets
 
-- Status: done, pending W5 review and the merge into `develop`; branch `feature/core-blade-set`, worktree `.claude/worktrees/core-blade-set`; decision numbers 0090 to 0099 (0090 and 0091 used).
+- Status: closed; the unit merged into `develop` by `08de241` on 2026-10-31 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: done, pending W5 review and the merge into `develop`; branch `feature/core-blade-set`, worktree `.claude/worktrees/core-blade-set`; decision numbers 0090 to 0099 (0090 and 0091 used).
 - Goal: `include/galoot/core/blade_set.hpp`, the storage layout of a named type as an ordered list of oriented blades, with the canonical result order and the name parser (CONVENTIONS 1.1, 1.6, 1.7).
 - Content, in `galoot::core`:
   - `oriented_blade`: a mask and a sign of plus or minus one, as a structural value.

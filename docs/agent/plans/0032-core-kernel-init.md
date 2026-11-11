@@ -1,6 +1,6 @@
 # 0032 Kernel initializers: one initializer per place in run_map, run_product, and run_sum
 
-- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert role), planner and implementer, from `develop` at `7cc0825`. Not merged by its author; it stops for a blind review (W5).
+- Status: closed; the unit merged into `develop` by `5edf616` on 2026-11-09, after a blind review (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert role), planner and implementer, from `develop` at `7cc0825`. Not merged by its author; it stops for a blind review (W5).
 - Source of scope: decision 0225 item 2 (the owner chose form A), on the evidence of `records/research/2026-11-09-gcc-constexpr-init-bug.md` and its directory.
 - Branches, from `develop` after this claim (W7):
   - `feature/core-kernel-init`, worktree `.claude/worktrees/core-kernel-init`: the unit. Only this branch merges into `develop`.

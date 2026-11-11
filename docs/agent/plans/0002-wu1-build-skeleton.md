@@ -1,6 +1,6 @@
 # 0002 WU1: build skeleton
 
-- Status: implemented on `feature/build` (2026-10-31). The W5 review (`docs/agent/records/reviews/2026-10-31-wu1-build-skeleton.md`) asked for B1 to B3 and N1 to N4, which section 15 records as done. Criteria 1 to 14 are met; criterion 15 is the merge into `develop`, made by the coordinating session.
+- Status: closed; the unit merged into `develop` by `eb9a8fa` on 2026-10-31 (criterion 15) (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: implemented on `feature/build` (2026-10-31). The W5 review (`docs/agent/records/reviews/2026-10-31-wu1-build-skeleton.md`) asked for B1 to B3 and N1 to N4, which section 15 records as done. Criteria 1 to 14 are met; criterion 15 is the merge into `develop`, made by the coordinating session.
 - Unit: WU1 of plan 0001 (milestone M0). Branch: `feature/build`, in the worktree `.claude/worktrees/build`.
 - Written by: Claude (agent, build-expert, Opus 5.5), 2026-10-31, against `develop` at 2862040, where P13 already includes the decision 0018 sentence. Inputs: the governance (CONSTITUTION, WORKFLOW, PERFORMANCE, STYLE, VVUQ), research notes 0001 and 0002, plan 0001, and decisions 0006, 0011 to 0014, and 0018.
 - Probes: the facts marked "probed" below come from throwaway runs in `docs/agent/workbench/` on 2026-10-31. They were deleted afterward and are not V1 evidence; WU1 repeats what it relies on (V10).

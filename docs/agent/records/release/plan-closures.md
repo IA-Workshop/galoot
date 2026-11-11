@@ -1,6 +1,6 @@
 # Plan closures for DoD-28 (draft)
 
-- Status: draft. Records only (decision 0240 item 11). I did not edit any plan.
+- Status: applied 2026-11-11 to every plan except 0001, 0038 and 0042 (plan 0042 unit U5): status lines corrected from merge commits, and outcomes added to plans 0024, 0027 and 0028. Plans 0040 and 0041, written after this draft, got the same status correction. The table below is the draft as written and is kept as history. Open items that no record resolves stay open in the plans' outcomes (plans 0027 and 0028).
 - Written: 2026-11-10 by Claude (agent, Sonnet 5.5) at `develop` `1ed0e6a`, from the status line, headings, and end of each of the 39 plans in `docs/agent/plans/`, and `git log --merges` on `develop` for merge state.
 - DoD-28 asks for "plans closed with outcomes". W3 wants each plan to end with an outcome.
 
