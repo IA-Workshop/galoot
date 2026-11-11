@@ -270,3 +270,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-merge-gate	merge-gate runner	opus	111830	46	1502	gate merge 20fe261, full P9 matrix, plus about 21 minutes of pool time
 2026-11-10	wu18-records-drafts	records drafter	sonnet	177972	42	285	records/wu18-drafts e49c58e
 2026-11-10	kb-collected-sandwich	researcher-writer	opus	117817	25	344	kb/collected-sandwich-error merged in the knowledge base
+2026-11-10	plan-0041	planner	opus	246707	59	884	plan 0041 documentation lane, branch plan/documentation-lane aaba2f5, merged 4c95a7c
