@@ -67,19 +67,10 @@
 // V ⟇ x and then that with V, each a plan built once for each pair of
 // layouts a program uses, so they have the antiproduct's limits, which the
 // comment of geometric_antiproduct gives. Typed layouts such as a point, a
-// line, a plane, a motor, or a flector are far below them. Measured on GCC 16
-// and Clang 23 with libstdc++, at the default limits, the same with and
-// without libstdc++'s assertions, for x a full<n> multivector of R(n,0,0)
-// and V on every blade of even antigrade, the largest layout of one parity:
-// transform builds up to n = 5 on Clang and n = 6 on GCC, and compose of two
-// such versors up to n = 5 on Clang and n = 7, the largest tried, on GCC.
-// Both build for full<5> of conformal(3). In a dense form of five generators,
-// where every pair of generators is coupled, neither builds on Clang, and
-// both build on GCC. A failure is reported inside a plan's generation, on
-// Clang as "constexpr variable 'count' must be initialized by a constant
-// expression" and on GCC as an operation count over the limit or a
-// libstdc++ assertion that is not a constant expression, followed by errors
-// that do not name the operation.
+// line, a plane, a motor, or a flector are far below them. Clang's
+// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+// the sizes measured on each compiler, with how a failure is reported, are
+// in docs/guide/limits.md, under 'Compile-time limits: transform and compose'.
 
 #include <array>
 #include <concepts>

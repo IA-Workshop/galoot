@@ -725,8 +725,9 @@ set_tests_properties(tools.evaluated_once_passes
   tools.evaluated_once_rejects_twice tools.evaluated_once_rejects_few
   PROPERTIES LABELS "tools;tools.evaluated_once")
 
-# core.plan_cost_model.<unit>: the costs that plan.hpp states for its plans
-# and maps are what the compiler counts. Each core/plan_cost_<unit>.cpp reads
+# core.plan_cost_model.<unit>: the costs of the plans and maps that
+# docs/guide/limits.md states, under 'Steps and operations of each plan',
+# are what the compiler counts. Each core/plan_cost_<unit>.cpp reads
 # one plan or map, and its threshold below is the smallest limit on constant
 # evaluation under which it compiles: Clang's -fconstexpr-steps, or GCC's
 # -fconstexpr-ops-limit with GCC's cache of constant calls turned off, so
@@ -739,7 +740,7 @@ set_tests_properties(tools.evaluated_once_passes
 # for Clang 23.1 and GCC 16.2 with libstdc++ 16. A different compiler or
 # standard library, or a change to the generators on a path that some unit's
 # largest evaluation takes, changes such a count, and then these tests fail
-# until the thresholds and the costs stated in plan.hpp are worked out again.
+# until the thresholds and the costs stated on that page are worked out again.
 # The counts hold only with _GLIBCXX_ASSERTIONS defined, as the stated costs
 # say, so the tests are registered only in builds that define it; and GCC's
 # sanitizers add checks that its constant evaluation counts too, 2% to 4%
