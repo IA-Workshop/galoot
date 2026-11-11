@@ -24,13 +24,20 @@
 /// and Clang, and nothing on another compiler.
 ///
 /// The core puts it on each function between a public operation and the
-/// generated code of the operation's terms, and on the public operations
-/// that a compiler would otherwise keep out of line, so that an operation
+/// generated code of the operation's terms, and on those public operations
+/// that GCC or Clang was found to keep out of line, so that an operation
 /// compiles to the straight-line arithmetic of its terms at its call site, as
 /// a hand-written form would. Left to its own heuristics, a compiler can keep
-/// some of those functions out of line at -O2, and the call then takes a
-/// large share of the operation's time. It is not part of the interface: a
-/// program neither uses nor defines it.
+/// some of those functions out of line, and the call then takes a large
+/// share of the operation's time. That no call is left is checked for the
+/// operations of the rga3 preset, on its own types and on multivectors of
+/// all sixteen of its blades, over double, at -O2 without the checking mode,
+/// on x86-64. It is not promised elsewhere: on other layouts and algebras
+/// (some operations on conformal(3) multivectors of all blades still compile
+/// to a call), at other optimization levels such as -Os, and in a checking
+/// build, where transform calls its checks out of line by design, a compiler
+/// may still call an operation. It is not part of the interface: a program
+/// neither uses nor defines it.
 ///
 /// A function forced inline cannot be inlined into a caller compiled for
 /// fewer instruction-set features than its translation unit, and both
