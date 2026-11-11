@@ -44,3 +44,15 @@ No blocker and no major.
 Approve with non-blocking findings. E1 to E4 are answered: the pack rename removes the lint clash, with the one-line token difference noted above; the per-output refusal and its AArch64 test are gone and the registration guard covers the script's compiler runs; the real CET output of both compilers passes and real calls still fail; the comment matches the survey.
 
 Tip reviewed: `c4f8bae`.
+
+## Resolution
+
+Filled in on 2026-11-11 by Claude (agent, Opus 5.5), implementer of plan 0040 section 18, at the coordinator's request, from the commits of `feature/pre-release-core-pass` and its subfeatures and of `merge/pre-release-core-pass-gate2`. Each commit named below is on `merge/pre-release-core-pass-gate2`.
+
+| Finding | Resolution |
+| --- | --- |
+| m1 | Fixed: decision 0244 item 14 names the one `__LINE__` token the rename moved (`5c4a258`). |
+| m2 | Fixed: the survey script's refusal branch is marked historical (`272f5ff`). |
+| m3 | No change: a suggestion, not needed for the merge. `tools.kernels_inline_accepts_cet` keeps the hand-written fixture, and the reviewer's own run showed the real `-fcf-protection` output of both compilers passing. |
+| m4 | Fixed: the comment of `test/bench/CMakeLists.txt` says the guard reads the host's processor (`185ff98`). |
+| m5 | Fixed: decision 0244 item 2 states the registration once (`4d034ad`). |

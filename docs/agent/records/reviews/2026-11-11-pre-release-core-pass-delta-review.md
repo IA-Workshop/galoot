@@ -117,4 +117,15 @@ The interface does not change: no name, signature, or result changes, and the at
 
 ## Resolution
 
-To be filled in by the coordinator: each finding's resolution, and for D1 the delta review of its fix.
+Filled in on 2026-11-11 by Claude (agent, Opus 5.5), implementer of plan 0040 section 18, at the coordinator's request, from the commits of `feature/pre-release-core-pass` and its subfeatures and of `merge/pre-release-core-pass-gate2`. Each commit named below is on `merge/pre-release-core-pass-gate2`.
+
+| Finding | Resolution |
+| --- | --- |
+| D1 | Fixed by option (a) of the first open item, at the coordinator's ruling: `project` and `antiproject` are forced (`390b55e`) and the probe projects full multivectors and motors (`617aab0`, labelled failing). The conformal(3) operations still called at `-O2` are recorded as not claimed (decision 0244 item 1). Its delta review, `2026-11-11-pre-release-core-pass-delta2-review.md`, approved. |
+| D2 | Fixed: the macro's comment says which functions carry it and what is checked and what is not (`b5d7ad0`, `4a9c2bb`), and decision 0244 item 1 is amended with the surveys recorded under `records/performance/pre-release-core-pass/survey/` (`c89ada0`). |
+| D3 | Fixed: bare returns are accepted (`c49f39a`, fixture `bare_return.s` in `617aab0`); the per-output guess of the target was later dropped altogether (`36575d5`). |
+| D4 | Fixed: immediates, narrower registers and `notrack` are read (`c49f39a`, fixtures in `617aab0`). |
+| D5 | Fixed: the structure tests are registered only where `CMAKE_SYSTEM_PROCESSOR` is x86-64 (`617aab0`). |
+| D6 | Fixed: the fixture `overwritten.s` and the `--alone` fixture `alone_twice.cpp` (`617aab0`), and the mutants rewritten in `check-d1.toml` (`8ba0e08`). |
+| Open item 2 (O2) | Ruled by the owner after gate 2: the opt-out macro `GALOOT_FORCE_INLINE`, set in gcc-asan, clang-asan, clang-release and clang-measure (decision 0244 item 16). |
+| Open item 3 | As recommended: the build decides the target (D5). |

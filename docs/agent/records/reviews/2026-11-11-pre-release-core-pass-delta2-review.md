@@ -94,4 +94,12 @@ No name, signature or result changes. The pack rename is invisible to users exce
 
 ## Resolution
 
-To be filled in by the coordinator: each finding's resolution, and, if E1 is fixed under `include/`, the delta review of that fix.
+Filled in on 2026-11-11 by Claude (agent, Opus 5.5), implementer of plan 0040 section 18, at the coordinator's request, from the commits of `feature/pre-release-core-pass` and its subfeatures and of `merge/pre-release-core-pass-gate2`. Each commit named below is on `merge/pre-release-core-pass-gate2`.
+
+| Finding | Resolution |
+| --- | --- |
+| E1 | Fixed by option (a): the packs are `Xs` and `Ys` (`fe839fc`), and the linted user unit names `l` and `ls` (`e59cd1f`, labelled failing). Its delta review, `2026-11-11-pre-release-core-pass-delta3-review.md`, approved. |
+| E2 | Fixed by option (a): the per-output refusal is dropped (`36575d5`), with a `-fcf-protection` fixture (`6fcb3fc`, labelled failing). |
+| E3 | Fixed in a comment (`ee05a66`). |
+| E4 | Fixed: the comment is reflowed and names every narrower register (`36575d5`). |
+| Open item 4 (O2) | Ruled by the owner after gate 2 (decision 0244 item 16). |

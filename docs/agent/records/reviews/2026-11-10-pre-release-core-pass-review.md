@@ -149,4 +149,18 @@ Tasks, from the examples: (1) decide whether two change tags hold the same matri
 
 ## Resolution
 
-To be filled in by the coordinator: each finding's resolution, and for M1 the delta review of its fix.
+Filled in on 2026-11-11 by Claude (agent, Opus 5.5), implementer of plan 0040 section 18, at the coordinator's request, from the commits of `feature/pre-release-core-pass` and its subfeatures and of `merge/pre-release-core-pass-gate2`. Each commit named below is on `merge/pre-release-core-pass-gate2`.
+
+| Finding | Resolution |
+| --- | --- |
+| M1 | Fixed. The probe reaches the public operations, alone too (`ce70998`, `edf0994`, `fdba160`, labelled failing); the attribute goes on the four products, their operators, `weight`, `left_weight_dual` and `antidot` (`d47e8f9`). Its delta review, `2026-11-11-pre-release-core-pass-delta-review.md`, blocked on D1 (`project` and `antiproject`), fixed by `390b55e`; the second delta review approved. |
+| M2 | Fixed in a comment: `apply`'s guarantee is qualified as `transform`'s is (`ad56c9b`). |
+| m1 | Fixed in a comment: the macro's comment states the target-mismatch error and how to avoid it (`fa482be`). |
+| m2 | Fixed. The check reads conditional jumps, calls through a register and `H` members (`c0e33e4`); the structure tests are registered only where `CMAKE_SYSTEM_PROCESSOR` is x86-64 (`617aab0`), and the per-output guess of the target is dropped (`36575d5`). |
+| m3 | Fixed in comments: each pointer names the flags and the right heading, and the fold sentence again says the fold's limit does not bind first (`ad56c9b`). |
+| m4 | Closed: the documentation lane's `docs/guide/limits.md` is on `develop`, and came into this branch with `ebe7336`. |
+| m5 | Deferred, to the owner (plan 0040 section 17, "Deferred from the review records"). It is the form decision 0236 item 3 chose; a hint on the error line needs C++26's `= delete("reason")`. |
+| m6 | Fixed: the object-size record states that `data` is 8 bytes on GCC at `-O0` only and that the GCC `-O0` size depends on the include path, and decision 0244's first consequence is reworded to what the probe reaches (`414879e`, then `c89ada0`). The first delta review confirmed both. |
+| m7 | Fixed: the wording of `mv.hpp` (`ad56c9b`) and of the two compile-fail sources (`a6f3196`). The nit on where `GALOOT_ALWAYS_INLINE` lives: no change, since `assert.hpp` is the header every core header includes; the configuration macro `GALOOT_FORCE_INLINE` added after gate 2 sits beside `GALOOT_CHECKING` there. |
+| Before release: `GALOOT_ALWAYS_INLINE` visible to includers | No change. Its comment says it is not part of the interface; the public control is `GALOOT_FORCE_INLINE` (decision 0244 item 16), documented in the README and the core guide. |
+| Before release: m1 reachable from more call sites | Recorded in decision 0244's consequences. |
