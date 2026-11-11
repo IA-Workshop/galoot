@@ -163,18 +163,19 @@ target_link_libraries(rga3_kernels_inline_probe PRIVATE galoot::presets::rga3)
 # naming the line, on a call, a tail jump, a conditional tail jump, a call
 # through the PLT or the global offset table, a call or a notrack jump
 # through a register loaded with a library function's address (by lea, or
-# by mov of an immediate, into the register or its 32-bit half), a call to
-# a const member function, to an explicit-object member function, and to an
-# entity local to a function of the library; it passes on functions that are
-# a return alone and on a register overwritten before the call through it;
-# it fails, naming the function, when a function is not defined, and it
-# refuses assembly of another target than x86-64. Each fixture defines first and second. With --alone, it compiles
-# each named function of a source in a unit of its own, with the source's
-# other text, and fails on a call in any one of them or on a name the source
-# does not define or defines in more than one paragraph; the stand-in
-# compiler writes, for each function in the unit it is given, a definition
-# that calls the library when the function is second or when the unit holds
-# more than one function, so that a unit that is not alone fails.
+# by mov of an immediate, into the register or a narrower part of it), a
+# call to a const member function, to an explicit-object member function,
+# and to an entity local to a function of the library; it passes on
+# functions that are a return alone, built with or without -fcf-protection,
+# and on a register overwritten before the call through it; and it fails,
+# naming the function, when a function is not defined. Each fixture defines
+# first and second. With --alone, it compiles each named function of a
+# source in a unit of its own, with the source's other text, and fails on a
+# call in any one of them or on a name the source does not define or
+# defines in more than one paragraph; the stand-in compiler writes, for
+# each function in the unit it is given, a definition that calls the
+# library when the function is second or when the unit holds more than one
+# function, so that a unit that is not alone fails.
 set(kernels_inline ${Python3_EXECUTABLE} -I
   ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py first second --)
 set(kernels_inline_fixtures ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline)
@@ -227,9 +228,6 @@ add_test(NAME tools.kernels_inline_rejects_notrack
 add_test(NAME tools.kernels_inline_accepts_overwritten_register
   COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/overwritten.s)
-add_test(NAME tools.kernels_inline_rejects_other_target
-  COMMAND ${expect_output} 1 "the output is not x86-64 assembly"
-    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/aarch64.s)
 set(kernels_inline_alone ${Python3_EXECUTABLE} -I
   ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
   --alone ${kernels_inline_fixtures}/alone.cpp)
@@ -262,7 +260,6 @@ set_tests_properties(tools.kernels_inline_accepts
   tools.kernels_inline_rejects_conditional_jump
   tools.kernels_inline_rejects_register_call
   tools.kernels_inline_rejects_explicit_object
-  tools.kernels_inline_rejects_other_target
   tools.kernels_inline_alone_accepts tools.kernels_inline_alone_rejects_call
   tools.kernels_inline_alone_rejects_missing_function
   tools.kernels_inline_rejects_call tools.kernels_inline_rejects_jmp

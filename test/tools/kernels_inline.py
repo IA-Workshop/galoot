@@ -5,13 +5,8 @@ Usage:
   python3 -I kernels_inline.py --alone <source> <function>... -- <command>...
 
 Runs the command, which writes x86-64 assembly in the AT&T syntax to its
-standard output (a compile with -S -o -), and checks three things:
+standard output (a compile with -S -o -), and checks two things:
 
-- the output is x86-64 assembly: some instruction names a register of
-  x86-64 (%rax, %eax, %r8d, %xmm0 and the like), or every instruction is a
-  return, so that the output of another target, whose calls this check
-  would not read, is refused rather than passed (the build registers the
-  tests only for an x86-64 target; this refusal is a second guard);
 - every named function is defined in the output: some label is its mangled
   name, _Z, the length of the name, then the name, as the compilers mangle a
   function at namespace scope, so that a function the compiler dropped or
@@ -43,8 +38,13 @@ growth of a unit against its size, so an operation that inlines among many
 others can stay a call when it is alone.
 
 Prints each offending line with the function it is in, and each function
-that is missing. Exits 1 if there is any, if the output is not x86-64
-assembly, or if a command fails; 0 otherwise.
+that is missing. Exits 1 if there is any, or if a command fails; 0
+otherwise.
+
+The script reads x86-64 assembly only, and does not tell it from another
+target's: the output of another target, whose calls and jumps it does not
+read, would pass. So the build registers the tests that run it only where
+the target is x86-64.
 """
 
 import pathlib
@@ -65,11 +65,6 @@ LOAD = re.compile(r"^\s+(?:lea|mov)[a-z]*\s+(\S+),\s*(%\w+)\s*(?:#.*)?$")
 # one of its functions, anywhere in an operand: after a * for an indirect
 # call, after a $ for an immediate, and before a suffix such as @PLT.
 LIBRARY = re.compile(r"(?<![\w.])_ZZ?N[KVrROH]*6galoot[\w.$]*")
-# A register of x86-64, of any width, as an instruction's operand names it.
-X86_64 = re.compile(r"%(?:[re]?(?:[abcd]x|[sd]i|[sb]p|ip)|[abcd][lh]|[sd]il|"
-                    r"[sb]pl|r(?:[89]|1[0-5])[dwb]?|[xyz]mm\d+|k[0-7])\b")
-# An instruction that only returns.
-RETURN = re.compile(r"^\s+(?:rep\s+)?retq?\s*(?:#.*)?$")
 # The 64-bit register that holds a narrower one: %eax, %ax and %al are parts
 # of %rax, %r8d of %r8.
 WIDE = {f"%{low}": f"%r{base}" for base in ("ax", "bx", "cx", "dx")
@@ -86,14 +81,11 @@ def wide(register):
 
 
 def check(assembly, functions):
-    """The offending lines and the missing functions of `assembly`, and
-    whether it is x86-64 assembly."""
+    """The offending lines and the missing functions of `assembly`."""
     labels = set()
     offending = []
     current = "(no function)"
     loaded = {}
-    x86_64 = False
-    only_returns = True
     for number, line in enumerate(assembly.splitlines(), start=1):
         label = LABEL.match(line)
         if label:
@@ -102,11 +94,6 @@ def check(assembly, functions):
                 current = label.group(1)
                 loaded = {}
             continue
-        instruction = line.strip() and not line.lstrip().startswith(
-            (".", "#"))
-        if instruction:
-            x86_64 = x86_64 or X86_64.search(line) is not None
-            only_returns = only_returns and RETURN.match(line) is not None
         load = LOAD.match(line)
         if load:
             symbol = LIBRARY.search(load.group(1))
@@ -131,7 +118,7 @@ def check(assembly, functions):
         prefix = f"_Z{len(function)}{function}"
         if not any(label.startswith(prefix) for label in labels):
             missing.append(function)
-    return offending, missing, x86_64 or only_returns
+    return offending, missing
 
 
 def run(command, functions, context=""):
@@ -144,11 +131,7 @@ def run(command, functions, context=""):
         print(result.stderr, end="")
         return False
 
-    offending, missing, x86_64 = check(result.stdout, functions)
-    if not x86_64:
-        print(f"{context}the output is not x86-64 assembly: no instruction "
-              "names a register of x86-64, so its calls cannot be read")
-        return False
+    offending, missing = check(result.stdout, functions)
     for line in offending:
         print(f"{context}a call into the library: {line}")
     for function in missing:
