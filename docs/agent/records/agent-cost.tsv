@@ -287,3 +287,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0040-review	blind-reviewer	opus	252836	74	936	blind review of feature/pre-release-core-pass 721afe7, review/pre-release-core-pass db8271e: blocked on M1
 2026-11-11	plan-0040-gate-run-1	merge runner	opus	77274	27	435	stopped by the coordinator before reporting, after the review found M1 (matrix at 721afe7 would be superseded by the fix)
 2026-11-11	plan-0040-comments2	implementer 2	opus	34801	27	375	blind-review comment fixes M2, m3, m7 on feature/pre-release-core-pass--comments2 45d79dd (345330 total minus 310529 recorded earlier, which includes about 6000 unrecorded from the previous stage)
+2026-11-11	plan-0040-comments2	implementer 2	opus	3789	3	58	duplicate hand-back (349119 total minus 345330)
