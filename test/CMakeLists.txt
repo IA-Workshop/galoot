@@ -1711,6 +1711,12 @@ endforeach()
 galoot_add_test(MODULE core COMPONENT linear)
 target_link_libraries(core_linear_test PRIVATE galoot_test_support)
 
+# A user's unit that names a line l and negates it, compiled in every build,
+# so that the lint preset's check of confusable identifiers sees the
+# library's names that a user's short names could be taken for.
+add_library(core_linear_user_names OBJECT core/linear_user_names.cpp)
+target_link_libraries(core_linear_user_names PRIVATE galoot::presets::rga3)
+
 # core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
 # from two algebras or with two scalar types fails to compile with one
 # error, the message of the operation as written.

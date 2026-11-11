@@ -5,3 +5,4 @@ _Z5firstRKd:
 	ret
 _Z6secondv:
 	ret
+	movq	%rdi, %rax

@@ -1,0 +1,122 @@
+gp_motor_motor	g++	call geometric_product
+gp_motor_motor	clang++	jmp geometric_product
+times_motor_motor	g++	call geometric_product
+times_motor_motor	clang++	jmp geometric_product
+gp_full	g++	call geometric_product
+gp_full	clang++	jmp geometric_product
+times_full	g++	call geometric_product
+times_full	clang++	jmp geometric_product
+wedge_line_point	g++	inline
+wedge_line_point	clang++	inline
+caret_line_point	g++	inline
+caret_line_point	clang++	inline
+wedge_full	g++	call wedge
+wedge_full	clang++	jmp wedge
+caret_full	g++	call wedge
+caret_full	clang++	jmp wedge
+antigp_motor_motor	g++	call geometric_antiproduct
+antigp_motor_motor	clang++	jmp geometric_antiproduct
+antigp_motor_flector	g++	call geometric_antiproduct
+antigp_motor_flector	clang++	jmp geometric_antiproduct
+percent_motor_flector	g++	call geometric_antiproduct
+percent_motor_flector	clang++	jmp geometric_antiproduct
+percent_motor_motor	g++	call geometric_antiproduct
+percent_motor_motor	clang++	jmp geometric_antiproduct
+antigp_full	g++	call geometric_antiproduct
+antigp_full	clang++	jmp geometric_antiproduct
+antiwedge_line_plane	g++	inline
+antiwedge_line_plane	clang++	inline
+amp_line_plane	g++	inline
+amp_line_plane	clang++	inline
+antiwedge_full	g++	call antiwedge
+antiwedge_full	clang++	jmp antiwedge
+amp_full	g++	call antiwedge
+amp_full	clang++	jmp antiwedge
+compose_motor_flector	g++	inline
+compose_motor_flector	clang++	inline
+compose_motor_motor	g++	inline
+compose_motor_motor	clang++	inline
+transform_point_flector	g++	inline
+transform_point_flector	clang++	inline
+transform_line_motor	g++	inline
+transform_line_motor	clang++	inline
+reverse_motor	g++	inline
+reverse_motor	clang++	inline
+tilde_motor	g++	inline
+tilde_motor	clang++	inline
+reverse_full	g++	inline
+reverse_full	clang++	inline
+antireverse_motor	g++	inline
+antireverse_motor	clang++	inline
+antireverse_full	g++	inline
+antireverse_full	clang++	inline
+grade_involution_full	g++	inline
+grade_involution_full	clang++	inline
+right_complement_flector	g++	inline
+right_complement_flector	clang++	inline
+bang_flector	g++	inline
+bang_flector	clang++	inline
+right_complement_full	g++	inline
+right_complement_full	clang++	inline
+left_complement_full	g++	inline
+left_complement_full	clang++	inline
+plus_motor	g++	inline
+plus_motor	clang++	inline
+minus_motor	g++	inline
+minus_motor	clang++	inline
+plus_full	g++	inline
+plus_full	clang++	inline
+minus_full	g++	inline
+minus_full	clang++	inline
+plus_line_point	g++	inline
+plus_line_point	clang++	inline
+scale_left_full	g++	inline
+scale_left_full	clang++	inline
+scale_right_full	g++	inline
+scale_right_full	clang++	inline
+divide_full	g++	inline
+divide_full	clang++	inline
+bulk_full	g++	inline
+bulk_full	clang++	inline
+weight_full	g++	inline
+weight_full	clang++	inline
+bulk_dual_full	g++	inline
+bulk_dual_full	clang++	inline
+weight_dual_full	g++	inline
+weight_dual_full	clang++	inline
+left_bulk_dual_full	g++	inline
+left_bulk_dual_full	clang++	inline
+left_weight_dual_full	g++	inline
+left_weight_dual_full	clang++	inline
+bulk_dual_flector	g++	inline
+bulk_dual_flector	clang++	inline
+dot_full	g++	inline
+dot_full	clang++	inline
+antidot_full	g++	jmp antidot
+antidot_full	clang++	inline
+dot_line	g++	inline
+dot_line	clang++	inline
+project_point_plane	g++	inline
+project_point_plane	clang++	inline
+antiproject_plane_point	g++	inline
+antiproject_plane_point	clang++	inline
+project_line_plane	g++	inline
+project_line_plane	clang++	inline
+change_basis_motor	g++	inline
+change_basis_motor	clang++	inline
+change_basis_back_motor	g++	inline
+change_basis_back_motor	clang++	inline
+change_basis_full	g++	inline
+change_basis_full	clang++	inline
+change_basis_back_full	g++	inline
+change_basis_back_full	clang++	inline
+convert_line_to_motor	g++	inline
+convert_line_to_motor	clang++	inline
+convert_motor_to_full	g++	inline
+convert_motor_to_full	clang++	inline
+truncate_full_to_motor	g++	inline
+truncate_full_to_motor	clang++	inline
+part_full_to_motor	g++	inline
+part_full_to_motor	clang++	inline
+part_motor_to_line	g++	inline
+part_motor_to_line	clang++	inline

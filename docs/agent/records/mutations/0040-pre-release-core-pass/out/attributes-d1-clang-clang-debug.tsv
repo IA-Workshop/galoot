@@ -1,0 +1,27 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+run_map_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+run_product_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+apply_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+apply_result_layout_not_forced	clang-debug	8ba0e08dec9d	equivalent	equivalent	-	-	-	-	-	-
+unary_apply_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+unary_apply_result_layout_not_forced	clang-debug	8ba0e08dec9d	equivalent	equivalent	-	-	-	-	-	-
+run_sum_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+sum_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+run_change_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+transform_middle_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+transform_outer_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+compose_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+transform_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+geometric_product_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+wedge_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+times_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+caret_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+geometric_antiproduct_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+antiwedge_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+percent_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+ampersand_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+weight_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+left_weight_dual_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+antidot_not_forced	clang-debug	8ba0e08dec9d	survived	survived	-	-	-	-	-	-
+project_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+antiproject_not_forced	clang-debug	8ba0e08dec9d	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-

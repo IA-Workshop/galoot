@@ -152,15 +152,17 @@ inline constexpr auto second_operand_kernel =
 // with every position and coefficient a constant, as for run_map.
 // NOLINTBEGIN(readability-redundant-parentheses): as for run_map.
 template <const auto& KX, const auto& KY, std::size_t R, class T,
-          std::size_t NX, std::size_t NY, std::size_t... I, std::size_t... J>
+          std::size_t NX, std::size_t NY, std::size_t... Xs, std::size_t... Ys>
 GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
 run_sum(const std::array<T, NX>& x, const std::array<T, NY>& y,
-        std::index_sequence<I...> /*x_terms*/,
-        std::index_sequence<J...> /*y_terms*/) {
+        std::index_sequence<Xs...> /*x_terms*/,
+        std::index_sequence<Ys...> /*y_terms*/) {
   // Not out{}, which GCC can compile wrongly; zero_places says why.
   std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
-  (accumulate<KX[I].coefficient, KX[I].first>(out[KX[I].out], x[KX[I].a]), ...);
-  (accumulate<KY[J].coefficient, KY[J].first>(out[KY[J].out], y[KY[J].a]), ...);
+  (accumulate<KX[Xs].coefficient, KX[Xs].first>(out[KX[Xs].out], x[KX[Xs].a]),
+   ...);
+  (accumulate<KY[Ys].coefficient, KY[Ys].first>(out[KY[Ys].out], y[KY[Ys].a]),
+   ...);
   return out;
 }
 // NOLINTEND(readability-redundant-parentheses)

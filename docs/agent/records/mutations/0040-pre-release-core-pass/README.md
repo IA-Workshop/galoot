@@ -78,3 +78,42 @@ Each new or changed test is among the killers of the mutant written for it.
 | `subsection_ends_section` | a deeper heading ends the section | killed | `test_count_in_a_deeper_heading_of_the_section_is_read` |
 
 Each refusal and each rule of the section's extent is killed by the test written for it, as in `99beea3`'s message.
+
+## After the blind review's M1: every attribute again, and the check's new rules
+
+The blind review found that the forced chain left the public products out of line on GCC, where they had been inlined before. The fix forces eleven public functions too, and the structure check gains a second test, `rga3.kernels_inline_alone`, which compiles each of the probe's 48 functions in a unit of its own. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040) on 2026-11-11 with `tools/mutate` at `d47e8f9` (the attributes; the tests at `3a74650`), in the `--public-ops` worktree, with only records dirty; pool 23 of 23 free before and after.
+
+`attributes-public-gcc.toml` and `attributes-public-clang.toml` remove one of the 24 attributes at a time, judged by both structure tests. The thirteen of part A keep their first run's verdicts as expectations. The eleven new ones expect a kill where a structure test showed the call on that compiler.
+
+| Attribute removed from | gcc-debug | clang-debug | First run (old probe), gcc / clang |
+| --- | --- | --- | --- |
+| `run_map` | survived | survived | survived / survived |
+| `run_product` | **killed** | killed | survived / killed |
+| binary `apply` with a target | killed | killed | killed / killed |
+| unary `apply` with a target | survived | survived | survived / survived |
+| `run_sum`, `sum`, `run_change`, `transform_outer` | survived | survived | survived / survived |
+| `transform_middle` | survived | killed | survived / killed |
+| `compose` | killed | killed | killed / killed |
+| `transform` | killed | killed | killed / killed |
+| `geometric_product`, `wedge`, `geometric_antiproduct`, `antiwedge`, and `*`, `^`, `%`, `&` | killed | killed | new |
+| `weight`, `left_weight_dual`, `antidot` | killed (by the alone test only) | survived, as declared | new |
+| the two `apply` overloads with no target layout | equivalent | equivalent | equivalent |
+
+The only verdict that differs from its expectation is `run_product` on GCC, now killed (so `tools/mutate` exits 1 on the GCC spec): with the public products forced, GCC keeps `run_product` out of line when it alone is left unforced. Each of the eleven new attributes is killed on GCC, so each is needed on at least one compiler; none was added that a test did not show. Of part A's thirteen, `run_map`, the unary `apply`, `run_sum`, `sum`, `run_change` and `transform_outer` survive on both compilers and `transform_middle` on GCC; they stay as guards.
+
+`check-review.toml` holds the mutants of the check's rules added after the review's m2 and M1, and `check.toml`'s three with their anchors rewritten for the script as it is now. On both presets each is killed by the fixture test written for it, except `check_keeps_overwritten_register`, declared equivalent there. That was wrong: the mutant changes behavior (it reports a call after the register holding a library address is overwritten), and no fixture killed it, so it marked a gap in the tests, not an equivalent mutant (the delta review's D6). The next section closes it.
+
+## After the delta review's D1 to D6: 26 attributes, and the check's mutants again
+
+The delta review found `project` and `antiproject` called out of line by GCC on rga3's full multivectors and motors once `wedge` and `antiwedge` were forced, and Clang calling them there at every revision (its D1); the fix forces both, and the probe gains four projections. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040) on 2026-11-11 with `tools/mutate` at `b5d7ad0` (the specs committed at `8ba0e08`), in the `--public-ops` worktree, with only records dirty; pool 23 of 23 free before and 22 of 23 after.
+
+`attributes-d1-gcc.toml` and `attributes-d1-clang.toml` remove each of the 26 attributes alone, judged by both structure tests, with the run before's verdicts as expectations and a kill expected for `project` and `antiproject`. Every verdict is as declared (`tools/mutate` exits 0 on both):
+
+- gcc-debug: 17 killed, among them `project` and `antiproject` (by both structure tests) and `weight`, `left_weight_dual` and `antidot` (by `rga3.kernels_inline_alone`); 7 survive (`run_map`, the unary `apply`, `run_sum`, `sum`, `run_change`, `transform_middle`, `transform_outer`); the two `apply` overloads with no target layout equivalent.
+- clang-debug: 15 killed, `project` and `antiproject` among them; 9 survive (those six without `transform_middle`, and `weight`, `left_weight_dual`, `antidot`, which were added for GCC); 2 equivalent.
+
+`check-d1.toml` holds `check-review.toml`'s ten with their anchors rewritten for the script as it is now, and five for the rules added after the delta review: `check_ignores_immediate`, `check_ignores_register_width` (both killed by `tools.kernels_inline_rejects_immediate`), `check_ignores_notrack` (`_rejects_notrack`), `check_refuses_bare_return` (`_accepts_bare_return`), and `alone_accepts_twice` (`_alone_rejects_twice`, the branch of `--alone` that had no test). `check_keeps_overwritten_register` is now declared killed, and `_accepts_overwritten_register` kills it. All 15 are killed on both presets, each by the test written for it.
+
+## After the second delta review
+
+The per-output refusal of assembly that names no x86-64 register is dropped from the script (the second delta review's E2), since the build registers the structure tests only where the target is x86-64. Two mutants of `check-d1.toml` were of that refusal, `check_accepts_other_target` and `check_refuses_bare_return`; their code is gone, so their anchors no longer match and the spec is the record of its run at `b5d7ad0`, not a spec to run again. The new fixture `cet.s` (two bare returns built with `-fcf-protection`, and the numeric labels of `.note.gnu.property`) guards against a refusal or a label rule that misreads such output; no mutant is written for it, since the script now has no rule that reads those lines. No attribute changed in this round, so the attribute mutants and the W10 campaign were not run again.

@@ -2,3 +2,4 @@
 	.text
 _Z5firstRKd:
 	ret
+	movq	%rdi, %rax

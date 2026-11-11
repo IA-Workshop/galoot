@@ -7,3 +7,4 @@ _Z5firstRKd:
 _Z6secondv:
 	call	*_ZN6galoot4core3sumIdEEvv@GOTPCREL(%rip)
 	ret
+	movq	%rdi, %rax

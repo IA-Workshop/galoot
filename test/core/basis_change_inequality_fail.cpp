@@ -1,6 +1,6 @@
 // Two values of a change compared with !=, which the language rewrites as
-// the negation of ==, which basis_change does not define: the error must
-// point at same_rows, as for ==.
+// the negation of ==, which basis_change deletes: the error must point at
+// same_rows, as for ==.
 // This file must not compile.
 #include <galoot/core/basis_change.hpp>
 
