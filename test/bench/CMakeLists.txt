@@ -48,6 +48,25 @@ set_tests_properties(rga3.reference_kernels_unforced PROPERTIES
   LABELS "rga3;rga3.reference_kernels"
   FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
 
+# rga3.reference_kernels_forced: the same test with no forced-inline mode
+# given, so that the header's default forces the operations inline in every
+# preset, those that turn the forcing off included. It takes the core's
+# headers directly instead of linking galoot::core, whose build interface
+# carries the build's mode, so the forced code a user gets by default also
+# runs under the sanitizers and at -O2 on Clang.
+add_executable(rga3_reference_kernels_forced_test reference_kernels_test.cpp)
+target_include_directories(rga3_reference_kernels_forced_test PRIVATE
+  ${PROJECT_SOURCE_DIR}/include)
+target_compile_definitions(rga3_reference_kernels_forced_test PRIVATE
+  GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
+target_link_libraries(rga3_reference_kernels_forced_test PRIVATE
+  galoot_reference_kernels galoot_test_support galoot_doctest_main)
+add_test(NAME rga3.reference_kernels_forced
+  COMMAND rga3_reference_kernels_forced_test)
+set_tests_properties(rga3.reference_kernels_forced PROPERTIES
+  LABELS "rga3;rga3.reference_kernels"
+  FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+
 # The harness, which needs the rga3 preset; it too compiles on its own in
 # all_verify_interface_header_sets.
 add_library(galoot_bench_harness INTERFACE)
