@@ -1,0 +1,35 @@
+# Delta review 2 of plan 0040: one of check-d1.toml's mutants, copied
+# unchanged, and two of the reviewer's own on the refusal of another target.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.check]
+targets = []
+labels = '^tools\.kernels_inline$'
+
+[[mutant]]
+name = "check_ignores_register_width"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    return WIDE.get(register, register)''', replacement = '''    return register''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_immediate"]
+
+
+# The refusal is dropped: every output counts as x86-64.
+[[mutant]]
+name = "check_accepts_any_target"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    return offending, missing, x86_64 or only_returns''', replacement = '''    return offending, missing, True''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_other_target"]
+
+# Any instruction counts as a return, so an output that names no x86-64
+# register passes.
+[[mutant]]
+name = "check_any_instruction_returns"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''            only_returns = only_returns and RETURN.match(line) is not None''', replacement = '''            only_returns = only_returns''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_other_target"]

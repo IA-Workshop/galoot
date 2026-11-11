@@ -1,0 +1,11 @@
+== g++ -O2 -march=x86-64-v3 at 414879e
+exit 0
+== g++ -O2 -march=x86-64-v3 at 26f1b62
+include/galoot/core/dual.hpp:616:1: error: inlining failed in call to ‘always_inline’ ‘constexpr galoot::core::mv<Alg, project_layout<Alg, A, B>, T> galoot::core::project(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg = galoot::presets::rga3::algebra; b
+exit 1
+== clang++ -O2 -march=x86-64-v3 at 414879e
+exit 0
+== clang++ -O2 -march=x86-64-v3 at 26f1b62
+target_project.cpp:6:87: error: always_inline function 'project' requires target feature 'movbe', but would be inlined into function 'fallback' that is compiled without support for 'movbe'
+target_project.cpp:6:87: error: always_inline function 'project' requires target feature 'sse3', but would be inlined into function 'fallback' that is compiled without support for 'sse3'
+exit 1

@@ -1,0 +1,46 @@
+# Delta review 2 of plan 0040: four of attributes-d1-gcc.toml's mutants,
+# copied unchanged, rerun at 26f1b62.
+presets = ["gcc-debug"]
+
+[selection.inline]
+targets = ["rga3_kernels_inline_probe"]
+labels = '^rga3\.kernels_inline$'
+
+[[mutant]]
+name = "project_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, project_layout<Alg, A, B>, T>
+project(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, project_layout<Alg, A, B>, T>
+project(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiproject_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, antiproject_layout<Alg, A, B>, T>
+antiproject(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, antiproject_layout<Alg, A, B>, T>
+antiproject(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "weight_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
+weight(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
+weight(const mv<Alg, S, T>& x) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "transform_middle_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_middle(const std::array<T, V.size()>& v,''', replacement = '''[[nodiscard]] constexpr auto
+transform_middle(const std::array<T, V.size()>& v,''' }]
+expect = "survived"
+reason = "it survived its earlier runs"

@@ -1,0 +1,21 @@
+== g++ -O2 -DGALOOT_CHECKING=0 -ffp-contract=off : kernels_inline.py at 26f1b62 on bare_return_cet.cpp
+1 functions defined, none calls into the library
+exit 0
+== g++ -O2 -DGALOOT_CHECKING=0 -ffp-contract=off -fcf-protection=full: kernels_inline.py at 26f1b62 on bare_return_cet.cpp
+the output is not x86-64 assembly: no instruction names a register of x86-64, so its calls cannot be read
+exit 1
+== clang++ -O2 -DGALOOT_CHECKING=0 -ffp-contract=off : kernels_inline.py at 26f1b62 on bare_return_cet.cpp
+1 functions defined, none calls into the library
+exit 0
+== clang++ -O2 -DGALOOT_CHECKING=0 -ffp-contract=off -fcf-protection=full: kernels_inline.py at 26f1b62 on bare_return_cet.cpp
+the output is not x86-64 assembly: no instruction names a register of x86-64, so its calls cannot be read
+exit 1
+== g++ -fcf-protection=full: the function's instructions and the numeric labels of .note.gnu.property
+_Z6dot_pp...:
+	endbr64
+	ret
+0:
+1:
+2:
+3:
+4:
