@@ -210,12 +210,28 @@ add_test(NAME core.bare_compile
     -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
     ${CMAKE_CURRENT_SOURCE_DIR}/core/bare_user.cpp)
 
+# core.bare_compile_no_exceptions: the same with exceptions disabled, so the
+# core throws nothing. Both compilers reject a throw in a function that is
+# not a template; in a template, GCC rejects one when the file instantiates
+# it, and Clang one that does not depend on a template parameter. The format
+# test does the same for the printing header, which the umbrella header
+# leaves out.
+add_test(NAME core.bare_compile_no_exceptions
+  COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors -fno-exceptions
+    -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/bare_user.cpp)
+add_test(NAME core.bare_compile_format_no_exceptions
+  COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors -fno-exceptions
+    -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
+    ${CMAKE_CURRENT_SOURCE_DIR}/docs/bare_format.cpp)
+
 # core.include_scan: the core includes only standard and core headers, with
 # no cycle, guards named from paths, and snake_case names.
 add_test(NAME core.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
     ${PROJECT_SOURCE_DIR}/include core)
-set_tests_properties(core.bare_compile core.include_scan PROPERTIES
+set_tests_properties(core.bare_compile core.bare_compile_no_exceptions
+  core.bare_compile_format_no_exceptions core.include_scan PROPERTIES
   LABELS "core;core.headers")
 
 # tools.include_scan_rejects: the scan reports each fixture's defect, in the
@@ -2523,13 +2539,20 @@ add_test(NAME rga3.bare_compile
     -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
     ${CMAKE_CURRENT_SOURCE_DIR}/presets/rga3/bare_user.cpp)
 
+# rga3.bare_compile_no_exceptions: the same with exceptions disabled, so the
+# preset throws nothing.
+add_test(NAME rga3.bare_compile_no_exceptions
+  COMMAND ${CMAKE_CXX_COMPILER} -std=c++23 -pedantic-errors -fno-exceptions
+    -I ${PROJECT_SOURCE_DIR}/include -fsyntax-only
+    ${CMAKE_CURRENT_SOURCE_DIR}/presets/rga3/bare_user.cpp)
+
 # rga3.include_scan: the preset includes only standard, core, and preset
 # headers, with no cycle, guards named from paths, and snake_case names.
 add_test(NAME rga3.include_scan
   COMMAND ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/include_scan.py
     ${PROJECT_SOURCE_DIR}/include presets/rga3)
-set_tests_properties(rga3.bare_compile rga3.include_scan PROPERTIES
-  LABELS "rga3;rga3.headers")
+set_tests_properties(rga3.bare_compile rga3.bare_compile_no_exceptions
+  rga3.include_scan PROPERTIES LABELS "rga3;rga3.headers")
 
 # The examples of the README and the guide, compiled and run, and the checks
 # that keep every page and its examples under test.
