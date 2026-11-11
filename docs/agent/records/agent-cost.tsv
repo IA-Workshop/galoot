@@ -264,3 +264,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-f-bench	performance-engineer	opus	81042	37	1635	activity after the hand-back (429812 total minus 348770); not described in its report
 2026-11-10	wu17-part-f-note	researcher-writer	opus	211986	53	588	note 0027 on research/spike-e--note 88585ab
 2026-11-10	wu17-part-f-check	independent-checker	opus	202593	53	717	check of note 0027 on research/spike-e--check 9544c4d
+2026-11-10	wu17-part-f-check	independent-checker	opus	19186	9	299	activity after the hand-back (221779 total minus 202593)
