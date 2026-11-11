@@ -96,3 +96,74 @@ foreach(operation IN LISTS bench_operations)
     rga3.benchmark_${operation}_inline PROPERTIES
     LABELS "rga3;rga3.benchmarks")
 endforeach()
+
+# rga3.kernels_inline: each function of kernels_inline.cpp, one operation of
+# the rga3 preset over double, compiles at -O2 to code that calls or jumps
+# to no function of the library (tools/kernels_inline.py states the rule).
+# The flags are fixed rather than the build's: those of an optimized build
+# without the checking mode, which is the code users build for speed, with
+# the warnings of every build; the include directories and the language
+# standard are read as galoot_compile_command reads them, the standard being
+# the last of its arguments. So the test gives one answer for each compiler
+# whatever the preset. It runs the compiler itself, outside the compile-cost
+# launcher, since its output is assembly and not an object. The probe is
+# also compiled once with the build's own flags, so that every build's
+# warnings and the static checks see it.
+set(kernels_inline_functions wedge_point_point wedge_point_point_point
+  antiwedge_line_plane transform_point transform_line transform_plane
+  compose_motors sum_lines reverse_line dot_points change_point)
+galoot_compile_command(compile)
+list(GET compile -1 kernels_inline_standard)
+add_test(NAME rga3.kernels_inline
+  COMMAND ${Python3_EXECUTABLE} -I
+    ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
+    ${kernels_inline_functions}
+    -- ${CMAKE_CXX_COMPILER}
+      $<LIST:TRANSFORM,$<TARGET_PROPERTY:galoot::core,INTERFACE_INCLUDE_DIRECTORIES>,PREPEND,-I>
+      ${kernels_inline_standard} -DGALOOT_CHECKING=0 -O2 -ffp-contract=off
+      -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror
+      -S -o - ${CMAKE_CURRENT_SOURCE_DIR}/kernels_inline.cpp
+  COMMAND_EXPAND_LISTS)
+set_tests_properties(rga3.kernels_inline PROPERTIES
+  LABELS "rga3;rga3.kernels_inline")
+add_library(rga3_kernels_inline_probe OBJECT kernels_inline.cpp)
+target_link_libraries(rga3_kernels_inline_probe PRIVATE galoot::presets::rga3)
+
+# tools.kernels_inline_*: the check passes on assembly whose only jumps are
+# local and whose calls are to other symbols than the library's, and fails,
+# naming the line, on a call, a tail jump, a call through the PLT or the
+# global offset table, a call to a const member function, and a call to an
+# entity local to a function of the library; it fails, naming the function,
+# when a function is not defined. Each fixture defines first and second.
+set(kernels_inline ${Python3_EXECUTABLE} -I
+  ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py first second --)
+set(kernels_inline_fixtures ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline)
+add_test(NAME tools.kernels_inline_accepts
+  COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/accepts.s)
+add_test(NAME tools.kernels_inline_rejects_call
+  COMMAND ${expect_output} 1 "line 4, in _Z5firstRKd: callq"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/call.s)
+add_test(NAME tools.kernels_inline_rejects_jmp
+  COMMAND ${expect_output} 1 "line 6, in _Z6secondv: jmp"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/jmp.s)
+add_test(NAME tools.kernels_inline_rejects_plt
+  COMMAND ${expect_output} 1 "_ZN6galoot4core5applyIdEEvv@PLT"
+    "*_ZN6galoot4core3sumIdEEvv@GOTPCREL(%rip)"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/plt.s)
+add_test(NAME tools.kernels_inline_rejects_const_member
+  COMMAND ${expect_output} 1 "_ZNK6galoot4core2mvIdE4sizeEv"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/const_member.s)
+add_test(NAME tools.kernels_inline_rejects_local_entity
+  COMMAND ${expect_output} 1 "_ZZN6galoot4core3fooEvENKUlvE_clEv"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/local_entity.s)
+add_test(NAME tools.kernels_inline_rejects_missing_function
+  COMMAND ${expect_output} 1 "not defined in the output: second"
+    FORBID "not defined in the output: first"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/missing.s)
+set_tests_properties(tools.kernels_inline_accepts
+  tools.kernels_inline_rejects_call tools.kernels_inline_rejects_jmp
+  tools.kernels_inline_rejects_plt tools.kernels_inline_rejects_const_member
+  tools.kernels_inline_rejects_local_entity
+  tools.kernels_inline_rejects_missing_function
+  PROPERTIES LABELS "tools;tools.kernels_inline")
