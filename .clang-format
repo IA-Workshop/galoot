@@ -9,6 +9,8 @@ PointerAlignment: Left
 ReferenceAlignment: Left
 DerivePointerAlignment: false
 AlwaysBreakTemplateDeclarations: Yes
+# Read as an attribute, so a declaration it opens keeps the usual layout.
+AttributeMacros: [GALOOT_ALWAYS_INLINE]
 RequiresClausePosition: OwnLine
 InsertNewlineAtEOF: true
 IncludeBlocks: Regroup

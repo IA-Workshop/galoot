@@ -1,0 +1,17 @@
+# The second run of gap.toml's mutant on gcc-debug: rga3.kernels_inline
+# alone. Expected to survive: GCC made no call in E1's seven functions
+# without the attribute. A kill here, from one of the four functions the
+# probe adds, is recorded as a finding.
+presets = ["gcc-debug"]
+
+[selection.inline]
+targets = ["rga3_kernels_inline_probe"]
+labels = '^rga3\.kernels_inline$'
+
+[[mutant]]
+name = "macro_empty"
+selection = "inline"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]''', replacement = '''#define GALOOT_ALWAYS_INLINE''' }]
+expect = "survived"
+reason = "GCC made no call in E1's seven functions without the attribute; a kill is recorded as a finding"

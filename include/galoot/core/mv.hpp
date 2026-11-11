@@ -345,8 +345,8 @@ zero_places(std::index_sequence<P...> /*places*/) {
 // NOLINTBEGIN(readability-redundant-parentheses)
 template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t... K>
-constexpr std::array<T, R> run_map(const std::array<T, KX>& x,
-                                   std::index_sequence<K...> /*terms*/) {
+GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_map(const std::array<T, KX>& x, std::index_sequence<K...> /*terms*/) {
   // Not out{}, which GCC can compile wrongly; zero_places says why.
   std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(out[Kernel[K].out],
@@ -357,9 +357,9 @@ constexpr std::array<T, R> run_map(const std::array<T, KX>& x,
 
 template <const auto& Kernel, std::size_t R, class T, std::size_t KX,
           std::size_t KY, std::size_t... K>
-constexpr std::array<T, R> run_product(const std::array<T, KX>& x,
-                                       const std::array<T, KY>& y,
-                                       std::index_sequence<K...> /*terms*/) {
+GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_product(const std::array<T, KX>& x, const std::array<T, KY>& y,
+            std::index_sequence<K...> /*terms*/) {
   // Not out{}, which GCC can compile wrongly; zero_places says why.
   std::array<T, R> out = zero_places<T>(std::make_index_sequence<R>{});
   (accumulate<Kernel[K].coefficient, Kernel[K].first>(
@@ -909,8 +909,8 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// evaluation and a run-time call give the same result.
 template <BinaryOperation Op, blade_set Target, metric_like Alg, blade_set A,
           blade_set B, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, Target, T> apply(const mv<Alg, A, T>& x,
-                                                 const mv<Alg, B, T>& y) {
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   constexpr bool target_holds_result =
       holds_every_mask(Target, product_plan<Op, Alg, A, B>.result);
   constexpr bool scalar_holds_every_coefficient_of_the_product =
@@ -939,6 +939,7 @@ template <BinaryOperation Op, blade_set Target, metric_like Alg, blade_set A,
 /// result set: apply<Op, product_plan<Op, Alg, A, B>.result>(x, y).
 template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B,
           ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
 apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
@@ -955,7 +956,8 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 /// Guarantees: as for a product.
 template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
           ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, Target, T> apply(const mv<Alg, S, T>& x) {
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, S, T>& x) {
   constexpr bool target_holds_result =
       holds_every_mask(Target, unary_map<Op, Alg, S>.result);
   static_assert(target_holds_result,
@@ -973,6 +975,7 @@ template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
 
 /// The map Op of x on the blade set of its result, the map's result set.
 template <UnaryOperation Op, metric_like Alg, blade_set S, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
 apply(const mv<Alg, S, T>& x) {
   return apply<Op, unary_map<Op, Alg, S>.result>(x);

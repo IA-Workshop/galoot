@@ -1,0 +1,145 @@
+# Plan 0040 section 8, the attribute mutants on clang-debug: each removes
+# the attribute from one function of the chain, at the tip of part A. The
+# expected verdicts are the plan's, from E1 and the advisory report's
+# experiment; one that differs is a finding, recorded in README.md.
+# rga3.kernels_inline compiles its probe with fixed flags, so the tree's
+# preset matters only for the compiler; the probe's object library is the
+# target, so that a mutant that breaks the build is classified.
+presets = ["clang-debug"]
+
+[selection.inline]
+targets = ["rga3_kernels_inline_probe"]
+labels = '^rga3\.kernels_inline$'
+
+[[mutant]]
+name = "apply_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+killers = ["rga3.kernels_inline"]
+
+[[mutant]]
+name = "run_product_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_product(''', replacement = '''constexpr std::array<T, R>
+run_product(''' }]
+expect = "killed"
+killers = ["rga3.kernels_inline"]
+
+[[mutant]]
+name = "transform_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, X, T>
+transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, X, T>
+transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {''' }]
+expect = "killed"
+killers = ["rga3.kernels_inline"]
+
+[[mutant]]
+name = "run_map_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_map(''', replacement = '''constexpr std::array<T, R>
+run_map(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "unary_apply_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, S, T>& x) {''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "run_sum_not_forced"
+selection = "inline"
+file = "include/galoot/core/linear.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_sum(''', replacement = '''constexpr std::array<T, R>
+run_sum(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "sum_not_forced"
+selection = "inline"
+file = "include/galoot/core/linear.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+sum(''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+sum(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "run_change_not_forced"
+selection = "inline"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, sizeof...(R)>
+run_change(''', replacement = '''constexpr std::array<T, sizeof...(R)>
+run_change(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "transform_middle_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_middle(''', replacement = '''[[nodiscard]] constexpr auto
+transform_middle(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "transform_outer_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_outer(''', replacement = '''[[nodiscard]] constexpr auto
+transform_outer(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "compose_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+    [[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+    compose(''', replacement = '''[[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+compose(''' }]
+expect = "survived"
+reason = "the compilers inline it at -O2 without the attribute, which then guards against a later inliner; a kill is evidence that it is needed now"
+
+[[mutant]]
+name = "apply_result_layout_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+    [[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
+    apply(''', replacement = '''[[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
+apply(''' }]
+expect = "equivalent"
+reason = "no function of the library calls this overload, so no probe function reaches it"
+
+[[mutant]]
+name = "unary_apply_result_layout_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+    [[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
+    apply(''', replacement = '''[[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
+apply(''' }]
+expect = "equivalent"
+reason = "no function of the library calls this overload, so no probe function reaches it"
