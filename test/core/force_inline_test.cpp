@@ -21,8 +21,11 @@
 
 namespace {
 
-constexpr std::string_view expansion =
-    GALOOT_TEST_EXPANSION(GALOOT_ALWAYS_INLINE);
+// A function rather than a variable, since a variable initialized from ""
+// reads as a redundant initialization to the static checks.
+constexpr std::string_view expansion() {
+  return GALOOT_TEST_EXPANSION(GALOOT_ALWAYS_INLINE);
+}
 
 } // namespace
 
@@ -31,10 +34,10 @@ constexpr std::string_view expansion =
 //   is 0, as the comments in galoot/core/assert.hpp state
 TEST_CASE("GALOOT_ALWAYS_INLINE is the always_inline attribute exactly when "
           "the forced-inline mode is on") {
-  CAPTURE(expansion);
+  CAPTURE(expansion());
   if constexpr (GALOOT_EXPECTED_FORCE_INLINE == 1) {
-    CHECK(expansion == "[[gnu::always_inline]]");
+    CHECK(expansion() == "[[gnu::always_inline]]");
   } else {
-    CHECK(expansion.empty());
+    CHECK(expansion().empty());
   }
 }
