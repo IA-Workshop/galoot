@@ -275,3 +275,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0040-D1	implementer 2	opus	234397	105	884	part D1 on feature/pre-release-core-pass--comments 75c94ca (interim notice figure; final may be higher)
 2026-11-10	plan-0040-D1	implementer 2	opus	8697	6	96	activity after the interim notice (243094 total minus 234397)
 2026-11-10	plan-0041-tooling	build-expert	opus	250622	89	1115	--tooling on feature/documentation-lane--tooling 2cbf950, merged 818eb4c
+2026-11-10	plan-0040-AB	implementer 1	opus	292606	135	2190	parts A and B on feature/pre-release-core-pass--code f4a7e3a
