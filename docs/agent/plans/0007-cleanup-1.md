@@ -1,6 +1,6 @@
 # 0007 Cleanup 1: citations, gate hardening, test gaps, snippets review
 
-- Status: closed (outcome below), awaiting the W5 review and the merge; branch `feature/cleanup-1`, worktree `.claude/worktrees/cleanup-1`; decision numbers 0080 to 0089 (0080 to 0082 used).
+- Status: closed; the unit merged into `develop` by `6857058` on 2026-10-31 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: closed (outcome below), awaiting the W5 review and the merge; branch `feature/cleanup-1`, worktree `.claude/worktrees/cleanup-1`; decision numbers 0080 to 0089 (0080 to 0082 used).
 - Goal: bring the files merged so far into line with the style ruling and the review findings that were deferred, so the next units start from a clean base, and close M0.
 - Scope:
   1. Remove every citation of a governance provision or of agent work from human-facing files: `include/`, `test/` (sources, CMake, test names, comments, messages), `cmake/`, `CMakeLists.txt`, `CMakePresets.json`, `tools/` (comments and docstrings), and generated files. State the reason in place. The deliberate pointer text in the rejecting fixtures under `test/tools/test_references/` stays and is excluded from the new check.

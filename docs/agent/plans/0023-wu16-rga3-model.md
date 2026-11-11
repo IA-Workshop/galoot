@@ -1,6 +1,6 @@
 # 0023 WU16: the rga3 model, its V8 cases, and the README example
 
-- Status: planned 2026-11-07 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, hci-expert, and numerical-expert judgement; implementers and reviewers to be named by the coordinator at branching). Claimed by this plan's merge into `develop`. Nothing in section 4 after step 0 starts until the owner has ruled on O1 to O9 (section 10).
+- Status: closed; the unit merged into `develop` by `9097500` on 2026-11-07 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: planned 2026-11-07 (planner: Claude, agent, Opus 5.5, planner role with math-expert, cpp-expert, hci-expert, and numerical-expert judgement; implementers and reviewers to be named by the coordinator at branching). Claimed by this plan's merge into `develop`. Nothing in section 4 after step 0 starts until the owner has ruled on O1 to O9 (section 10).
 - Branches, from `develop` at `d68881f` or later, named by W7 as amended (decision 0188):
   - `feature/rga3`, worktree `.claude/worktrees/rga3`: the unit. Only this branch merges into `develop`.
   - `feature/rga3--math`, worktree `.claude/worktrees/rga3--math`: the math-expert's readings, reference script, and conventions checks (step 1), branched from `feature/rga3` at its first commit and merged back into it (W7's subfeature row), since its commits build and pass on their own.

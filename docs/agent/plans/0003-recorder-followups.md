@@ -1,6 +1,6 @@
 # 0003 Recorder follow-ups (WU1b)
 
-- Status: closed 2026-10-31 (outcome below); awaiting the W5 review and the merge into `develop`
+- Status: closed; the unit merged into `develop` by `c2e0163` on 2026-10-31 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: closed 2026-10-31 (outcome below); awaiting the W5 review and the merge into `develop`
 - Branch: `feature/recorder` (worktree `.claude/worktrees/recorder`)
 - Goal: carry out items 1 to 3 of decision 0032 in the recorder.
 - Definition of done: (1) every run and compile row records the effective compiler options in an `options` column; (2) pinned rows record other-process busy time on the pinned CPU; (3) readers treat nine-cell rows as `--` for the missing cells, with a test; (4) the header extension is done once, in place, with `runs_tsv_merge.py` updated to match; (5) the smoke path and the existing recorder checks still pass on both compilers.

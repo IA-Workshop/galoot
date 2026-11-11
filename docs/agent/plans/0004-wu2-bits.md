@@ -1,6 +1,6 @@
 # 0004 WU2: bits
 
-- Status: done, pending W5 review and merge; branch `feature/core-bits`, worktree `.claude/worktrees/core-bits`
+- Status: closed; the unit merged into `develop` by `507a747` on 2026-10-31 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: done, pending W5 review and merge; branch `feature/core-bits`, worktree `.claude/worktrees/core-bits`
 - Goal: `include/galoot/core/bits.hpp`, the constexpr functions on blade masks that every later part uses.
 - Content: `mask_t` (`std::uint32_t`, decision 0004), `grade`, `antigrade(mask, n)`, `reorder_sign(a, b)`, the complement mask, the right and left complement signs (CONVENTIONS 3.1), and the reverse, antireverse, and grade-involution signs (2.1). All in `galoot::core`, usable at compile time and at run time (decision 0021 and note 0008).
 - Definition of done: the functions exist with `///` comments (S11) and are self-contained (the header-set check); tests pin CONVENTIONS 1.1, 1.5, 2.1, and 3.1.

@@ -1,6 +1,6 @@
 # 0005 WU3: metric
 
-- Status: closed 2026-10-31 with the outcome below (implementation done on `feature/core-metric`; the W5 review and the merge into `develop` are the coordinator's); branch `feature/core-metric`, worktree `.claude/worktrees/core-metric`
+- Status: closed; the unit merged into `develop` by `47efa71` on 2026-10-31 (status corrected 2026-11-11, from `git log --merges` on `develop`). Status text as written before that correction, kept as history: closed 2026-10-31 with the outcome below (implementation done on `feature/core-metric`; the W5 review and the merge into `develop` are the coordinator's); branch `feature/core-metric`, worktree `.claude/worktrees/core-metric`
 - Goal: `include/galoot/core/metric.hpp`, the signature as data (C2, C5).
 - Content: a symmetric integer Gram matrix over N generators held in a structural value, with the signature carried by a tag type that holds its value (decision 0021, STYLE S7); the largest N is a template parameter, not a constant (decision 0004), with 1 ≤ n ≤ 16 as the v1 default and n = 0 rejected; elements are `int`, not `int8_t` (note 0010); factories `R(p, q, r)`, `rigid(d)`, and `conformal(d)` (CONVENTIONS 1.2 to 1.4); a concept `metric_like` and accessors; no basis names inside the metric (architecture finding, plan 0001).
 - Definition of done: the header exists, is self-contained, documented (S11), and the tests pin 1.2, 1.3, and 1.4.
