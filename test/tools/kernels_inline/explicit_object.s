@@ -3,7 +3,7 @@
 	.text
 _Z5firstRKd:
 	call	_ZNH6galoot4core3fooIdEEvRKNS0_2mvIdEE
-	movl	$0, %eax
+	movq	%rdi, %rax
 	ret
 _Z6secondv:
 	ret

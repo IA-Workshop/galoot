@@ -166,7 +166,8 @@ target_link_libraries(rga3_kernels_inline_probe PRIVATE galoot::presets::rga3)
 # other text, and fails on a call in any one of them or on a name the source
 # does not define; the stand-in compiler writes, for each function in the
 # unit it is given, a definition that calls the library when the function is
-# second or when the unit holds more than one function.
+# second or when the unit holds more than one function, so that a unit that
+# is not alone fails.
 set(kernels_inline ${Python3_EXECUTABLE} -I
   ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py first second --)
 set(kernels_inline_fixtures ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline)
@@ -197,7 +198,7 @@ add_test(NAME tools.kernels_inline_rejects_conditional_jump
   COMMAND ${expect_output} 1 "line 6, in _Z6secondv: jne"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/conditional.s)
 add_test(NAME tools.kernels_inline_rejects_register_call
-  COMMAND ${expect_output} 1 "line 5, in _Z5firstRKd: call"
+  COMMAND ${expect_output} 1 "line 6, in _Z5firstRKd: call"
     "through %rax, which holds _ZN6galoot4core3fooEv"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/register.s)
 add_test(NAME tools.kernels_inline_rejects_explicit_object
@@ -212,8 +213,10 @@ set(kernels_inline_alone ${Python3_EXECUTABLE} -I
 set(kernels_inline_stand_in ${Python3_EXECUTABLE} -I
   ${kernels_inline_fixtures}/stand_in_compiler.py)
 add_test(NAME tools.kernels_inline_alone_accepts
-  COMMAND ${expect_output} 0 "1 functions compiled alone, none calls into the library"
-    -- ${kernels_inline_alone} first -- ${kernels_inline_stand_in})
+  COMMAND ${expect_output} 0 "2 functions compiled alone, none calls into the library"
+    -- ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
+      --alone ${kernels_inline_fixtures}/alone_inline.cpp first third
+      -- ${kernels_inline_stand_in})
 add_test(NAME tools.kernels_inline_alone_rejects_call
   COMMAND ${expect_output} 1 "compiled alone: a call into the library: line"
     "in _Z6secondv"
