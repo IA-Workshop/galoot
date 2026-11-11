@@ -1,6 +1,6 @@
 # 0039 basis_change: `same_rows` for `==`, rows reduced before the checks, and `.fits = fits`
 
-- Status: done 2026-11-10; merged into `develop` by its author after the blind review, as the brief asks. Claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`.
+- Status: done 2026-11-10; merged into `develop` by `7b85b33` on 2026-11-10, by its author after the blind review, as the brief asks (merge named 2026-11-11, from `git log --merges` on `develop`). Claimed 2026-11-10 by Claude (agent, Opus 5.5, cpp-expert and numerical-expert roles), planner and implementer, from `develop` at `ca6939d`.
 - Source of scope: decision 0225 items 3 and 4 (the rename of equality on `basis_change` before release; each row reduced by its gcd before the checks, with N2 of the WU12 delta review); decision 0223 item 4 (what `==` compares, documented until then); the WU12 blind review's N3 (`records/reviews/2026-11-09-wu12-blind-review.md`) and the WU12 delta review's N2 and N3 (`records/reviews/2026-11-09-wu12-delta-review.md`); plan 0030's open items; research note 0026 (what a change preserves; nothing here changes it).
 - Branches, from `develop` after this claim (W7):
   - `feature/basis-change-rows`, worktree `.claude/worktrees/basis-change-rows`: the unit. Only this branch merges into `develop`.

@@ -1,7 +1,7 @@
 # V10 table skeleton for the 1.0.0 release record (draft)
 
 - Status: draft. Records only (decision 0240 item 11). Every result cell is empty on purpose: a cell is filled only by a run at the final release revision (DoD-18, DoD-29).
-- Written: 2026-11-10 by Claude (agent, Sonnet 5.5) at `develop` `1ed0e6a`. Rows come from the V10 tables of the M3, M4, and M5 gate reports (`records/gates/2026-11-04-M3.md`, `2026-11-08-M4-audit.md`, `2026-11-10-M5-audit.md`), the item list of `records/convention-trace.md`, and DoD-10, DoD-16, DoD-17, DoD-22 to DoD-25 of plan 0001.
+- Written: 2026-11-10 by Claude (agent, Sonnet 5.5) at `develop` `1ed0e6a`. Header block brought up to decision 0248 on 2026-11-11 (plan 0042 unit U6): the eleven presets, the cheap gates and `plan_cost_model` checks, DoD-22's mode, the errata row's state. Rows unchanged; plan 0042 section 3.4 holds the M7 rows U9 starts from. Rows come from the V10 tables of the M3, M4, and M5 gate reports (`records/gates/2026-11-04-M3.md`, `2026-11-08-M4-audit.md`, `2026-11-10-M5-audit.md`), the item list of `records/convention-trace.md`, and DoD-10, DoD-16, DoD-17, DoD-22 to DoD-25 of plan 0001.
 - V10 requires, for every result: whether verification was performed and whether it passed, whether validation was performed and whether it passed, and the revision, command, and seed. A result that lacks either is labeled unverified or unvalidated.
 
 ## Departures and unknowns, first (C20)
@@ -18,10 +18,11 @@
 
 - Release revision: ____
 - CONVENTIONS version implemented: ____ (1.17 at `1ed0e6a`)
-- Presets run, each from a new empty tree: gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint, clang-measure: ____
+- Presets run, each from a new empty tree: all eleven, gcc-debug, gcc-release, gcc-asan, clang-debug, clang-release, clang-asan, lint, gcc-measure, gcc-measure-o3, clang-measure, clang-measure-o3 (decision 0248 item 9, O5): ____
 - Commands: `cmake --preset P && cmake --build --preset P && ctest --preset P`, or `cmake --workflow --preset P`, each through `tools/timed ... gate:all@<rev>`: ____
 - Seeds: doctest default 0; the identity-program campaign ____ to ____; `conventions_check.py` 20261031; fixed seeds of `golden.py` and `clifford_reference.py`: ____
-- Also: trace gate ____, `format-check` ____, `tools/runlog check` ____, `tests.citations` ____.
+- Also: trace gate ____, `format-check` ____, `tools/runlog check` ____, `tests.citations` ____, `tests.citations_guide` ____; `plan_cost_model`'s `selfcheck`, `comments`, `comments_test.py` and `jobserver_check.py` (decision 0248 item 7) ____.
+- DoD-22's rows: shared mode, with the P14 note of the release record (decision 0248 item 5).
 
 ## 1. Convention families
 
@@ -65,7 +66,7 @@ Columns: Verification (performed? passed? kinds per V1), Validation (performed? 
 | Dual sign | | The Terathon side not tested: confirm | | |
 | Partner of a circle | not implemented (6.4) | | | |
 | Conformal duals (confirmed by the owner 2026-11-09) | | | | |
-| Errata-naming row (owner to add, decision 0240 item 12) | | | | |
+| Errata-naming row (the owner adds it as 1.18, decision 0248 item 2; text in `records/performance/core-unit-w10-index.md`) | | | | |
 
 ## 2. Identity families (DoD-10)
 

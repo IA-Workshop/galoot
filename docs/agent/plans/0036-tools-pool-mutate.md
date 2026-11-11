@@ -1,6 +1,6 @@
 # 0036 Tools: the pool review's L1, L2 and L4, and two `tools/mutate` items
 
-- Status: done 2026-11-10 (outcome below). Claimed 2026-11-10 by Claude (agent, Opus 5.5), implementer, from `develop` at `aa644c2`. Merged by its author after an independent review (W5) and a delta review of any non-comment fix after it (plan 0026's rule for tool fixes).
+- Status: done 2026-11-10 (outcome below); merged into `develop` by `80f4c6e` on 2026-11-10 (merge named 2026-11-11, from `git log --merges` on `develop`). Claimed 2026-11-10 by Claude (agent, Opus 5.5), implementer, from `develop` at `aa644c2`. Merged by its author after an independent review (W5) and a delta review of any non-comment fix after it (plan 0026's rule for tool fixes).
 - Source of scope: decision 0228 item 9 (L1, L2 and L4 of `records/reviews/2026-11-08-pool-surplus-review.md`), decisions 0223 item 5 and 0225 item 5 (`tools/mutate`), the M5 audit's table of ruled work still to do.
 - Branches, from `develop` after this claim (W7): `feature/tools-pool-mutate`, worktree `.claude/worktrees/tools-pool-mutate`; the test commits on `feature/tools-pool-mutate--tests`, worktree `.claude/worktrees/tools-pool-mutate--tests`, cherry-picked with `-x`.
 - Record location: `records/mutations/0036-tools-pool-mutate/`, free on every branch at this commit.

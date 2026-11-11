@@ -22,14 +22,12 @@ Sets (run any of them, in order):
           by both compilers under bare -std=c++23 -pedantic-errors (limits
           raised). Not pinned.
   trace   evaluation counts. Clang: -ftime-trace with granularity 0, then
-          count (count_evals.py, since deleted; recover it with
-          `git show 3a2aa32:docs/agent/records/spikes/spike-cdf/count_evals.py`
-          to rerun this set) the outermost Evaluate* events longer than
-          20 ms, which are
-          the plan fills (the size pass takes about half as long and is
-          counted separately by its variable name, `size`). GCC: -ftime-report
-          "constant expression evaluation" time and memory. Not pinned; every
-          compile still runs under tools/timed. Rows go to out/memo/trace.tsv.
+          count (count_evals.py) the outermost Evaluate* events longer than
+          20 ms, which are the plan fills (the size pass takes about half as
+          long and is counted separately by its variable name, `size`). GCC:
+          -ftime-report "constant expression evaluation" time and memory. Not
+          pinned; every compile still runs under tools/timed. Rows go to
+          out/memo/trace.tsv.
 
 Every compile uses -std=c++23 with the S4 warnings, -Werror, and
 -ffp-contract=off. Constant-evaluation limits are raised as in Spike A
@@ -46,6 +44,10 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+# count_evals.py was deleted, so this import fails and no set runs. To run the
+# script again, restore it first:
+#   git show 3a2aa32:docs/agent/records/spikes/spike-cdf/count_evals.py \
+#       > docs/agent/records/spikes/spike-cdf/count_evals.py
 from count_evals import outermost_evaluations  # noqa: E402
 from pinned import FIELDS, ROOT, measure  # noqa: E402
 

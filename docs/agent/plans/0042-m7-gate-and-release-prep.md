@@ -49,23 +49,25 @@ D8 is decided: decision 0239 item 1 takes note 0027's option (a), under which `t
 
 ### 3.4 V10 table for M7, from the evidence at `6de1beb`
 
+Corrected 2026-11-11 by unit U6, from the M7 gate audit's m1: the benchmark row's Gap cell, the Spike E row's Validation cell and the DoD-4 row's Evidence and Gap cells; the U1 gaps of DoD-22 and DoD-23, since closed, now name what closed them.
+
 Performance rows are track-only (C14): "performed" means recorded; validation does not apply to cost. Seeds are given where a run has one.
 
 | Requirement | Verification | Validation | Evidence | Gap |
 | --- | --- | --- | --- | --- |
 | DoD-22: per-TU time and peak memory, both compilers, release revision | Not performed at a 1.0 candidate; newest committed rows at `c799821` (2026-11-07), shared | n/a | `records/performance/compile.tsv` | Copy from the release matrix's debug trees (U8), shared mode |
-| DoD-22: before and after for each core unit (W10) | Performed unit by unit | n/a | `records/performance/*-cost/`; `pre-release-core-pass/{cost,cost-public-ops,cost-d1,opt-out}/` | No index from unit to record; gaps unnamed (U1) |
+| DoD-22: before and after for each core unit (W10) | Performed unit by unit | n/a | `records/performance/*-cost/`; `pre-release-core-pass/{cost,cost-public-ops,cost-d1,opt-out}/` | Index: `core-unit-w10-index.md` (U1). Gaps: WU9 (plan 0018), plan 0009 partial, accepted as past gaps (decision 0248 item 4) |
 | DoD-23: fixed use against n = 4, 8, 16 | Performed at `18849b5`, `--cpu 4`, three repeats | n/a | `wu17-growth/README.md`, "Fixed use against n" | Before the forced inlining; antiwedge's use is empty for n ≥ 6 (its caveat 2) |
 | DoD-23: n = 4 against 1, 4, 16 operations | Performed at `18849b5` | n/a | same, "Fixed n = 4 against distinct operations" | Before the forced inlining |
-| DoD-23: growth exceptions | Antiproduct entered against 0141; `bulk_dual` found | n/a | `wu17-growth`; decisions 0141, 0237 item 5 | `bulk_dual` decision not written (U1) |
+| DoD-23: growth exceptions | Antiproduct entered against 0141; `bulk_dual` found | n/a | `wu17-growth`; decisions 0141, 0237 item 5 | `bulk_dual`: decision 0247, beside 0141 |
 | DoD-24: counts equal the reference's | Performed, passed in every preset at `2438604` (gate 3), checking on and off | n/a | `rga3.op_counts_<mode>`; `golden.py`; `records/spikes/spike-e/COUNTING-RULE.md` | Form A's counts, by 0233 item 2 |
 | DoD-24: no call at `-O2` | Performed, passed at `2438604`: 52 functions, both compilers, in one unit and alone | n/a | `rga3.kernels_inline`, `rga3.kernels_inline_alone` | x86-64 and `-O2` only; conformal(3) calls remain (0244, not claimed) |
 | DoD-24: no blade branch, no allocation | Performed at `18849b5` (E1), passed | n/a | `wu17-asm/README.md`, "Findings" | Not re-read after the forced inlining; at release, inferred |
-| DoD-24: pinned benchmark against the straight-line form | Performed at `2de0d36`, CPU 4, lock, seed 20261110 | n/a | `wu17-bench/README.md` | Measures code before the forced inlining (Clang slower on three transforms and `compose`); the release claims no benchmark of its own code |
+| DoD-24: pinned benchmark against the straight-line form | Performed at `2de0d36`, CPU 4, lock, seed 20261110 | n/a | `wu17-bench/README.md` | Measures code before the forced inlining. Galoot slower on Clang in the three transforms and `compose` (both loops), and on GCC in p ∧ q throughput, `compose` (both loops) and transform(l, Q) latency at the smallest size; 10 of 22 loops slower and 6 faster under the strict reading. The release claims no benchmark of its own code |
 | DoD-25: history baseline committed | Partly: era `ebdd06d09289` (rows 2026-10-31 to 2026-11-01); no WU17 baseline | n/a | `history/eras.tsv` | Release record states the dates (0246 item 2) |
 | DoD-25: `runs.tsv` keeps P13's rows | Performed, passed at `2438604` (`tools/runlog check`) | n/a | gate 3 rows | Rerun at R (U8) |
-| Spike E, D8 | Performed: forms A, B, C derived and counted; benchmarks, bounds, prototype; both halves checked | Published counts recomputed against the errata page (secondary; book unread, V9) | note 0027; `records/spikes/spike-e/`; decision 0234 | None for 1.0 |
-| DoD-4, repeated inputs | Declared-output check, by 0239 | n/a | `core.transform_rounding`, the checking-mode abort test (DoD-20) | Auditor confirms the tests named |
+| Spike E, D8 | Performed: forms A, B, C derived and counted; benchmarks, bounds, prototype; both halves checked | Performed; not reproduced as a pair (54 in one arrangement for the line, 35 in none for the plane), recorded as a counting-rule difference; secondary (the errata page; book unread, V9) | note 0027; `records/spikes/spike-e/`; decision 0234 | None for 1.0 |
+| DoD-4, repeated inputs | Declared-output check, by 0239 | n/a | `core.transform_nonzero_int64` and `core.transform_nonzero_rational` (abort with "transform: v does not act as a versor on x" when checking is on); `core.transform_consteval_nonzero` and `core.transform_consteval_nonzero_rational` (the constant evaluation ends); `core.transform_checking_recorded` (compares exactly the dropped coefficients); the `core.transform_unchecked_*` twins; `core.transform_rounding` over double and float (`test/CMakeLists.txt`, the transform section) | Passed in gate 3's workflows at `2438604`, inferred from their exit 0 (rows are per preset, not per test) |
 | 0230 item 2, cost model refresh (G) | Not performed | n/a | `snippets/plan_cost_model/` | Deferred (0246 item 2) |
 
 ## 4. WU18 (M8): what the release needs
