@@ -60,3 +60,21 @@ By the plan's reading, a kill of a mutant declared to survive is evidence that t
 | `equality_defaulted` | `= default` in place of `= delete` | the two compile-fail tests (they compile), and the `static_assert` of `basis_change_test.cpp:187`, `!std::equality_comparable` | the same, and the type's guarantee |
 
 Each new or changed test is among the killers of the mutant written for it.
+
+## Part D1: the hand mutants of `cost.py comments`
+
+`comments_test.py` is not a CTest test, so `tools/mutate` cannot judge these; `cost-comments/run.py` runs them, each as one edit of `cost.py` in a temporary copy of `docs/agent/snippets/plan_cost_model/` under the checkout's git-ignored `build/` (inside the checkout, because `harness.py` asks git for the root), never in the snippet itself. The mutants are those implementer 2 ran by hand for the D1 commit (`99beea3`), in place with a saved copy, with the same anchors and edits. Run again by implementer 1 at `7a27f76` through `tools/timed` (selection `cost-comments-hand-mutants`, exit 0); rows in `out/cost-comments.tsv`.
+
+| Mutant | Edit | Verdict | Killed by (among others) |
+| --- | --- | --- | --- |
+| `control_unmutated` | none | survived, as a control must | none |
+| `section_ignored` | the whole page read | killed | `test_unlisted_count_outside_the_section_passes`, the plan's `section_ignored` |
+| `missing_section_accepted` | the refusal of a page without the section removed | killed | `test_page_without_the_section_is_refused` |
+| `twice_accepted` | the refusal of a section named twice removed | killed | `test_section_named_twice_is_refused` |
+| `empty_section_accepted` | the refusal of a section with no count removed | killed | `test_section_without_a_count_is_refused` |
+| `markdown_without_section_accepted` | a Markdown page read without `--section` | killed | `test_markdown_page_without_a_section_is_refused` |
+| `fence_ignored` | a heading inside a code block ends the section | killed | `test_heading_in_a_code_block_does_not_end_the_section` |
+| `section_never_ends` | the section runs to the end of the page | killed | `test_unlisted_count_outside_the_section_passes` |
+| `subsection_ends_section` | a deeper heading ends the section | killed | `test_count_in_a_deeper_heading_of_the_section_is_read` |
+
+Each refusal and each rule of the section's extent is killed by the test written for it, as in `99beea3`'s message.
