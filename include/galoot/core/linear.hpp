@@ -58,8 +58,9 @@
 // Compile cost: a sum or a difference of two layouts merges them once for
 // each pair of layouts, a constant evaluation whose cost grows with the
 // square of their sizes, so the compilers' limits bound it below the size
-// of a multivector. sum_layout's comment gives the workaround, and the sizes
-// measured on each compiler are in docs/guide/limits.md, under
+// of a multivector. Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit
+// raise those limits, sum_layout's comment gives the workaround, and the
+// sizes measured on each compiler are in docs/guide/limits.md, under
 // 'Compile-time limits: blade sets'. A sum of one type, a scaling, and a
 // negation cost no constant evaluation beyond the multivector's own.
 

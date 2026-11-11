@@ -585,8 +585,9 @@ inline constexpr auto full = detail::make_full<N>();
 /// lexicographic order of their index lists.
 ///
 /// Requires: 1 <= N <= mask_bits and 0 <= K <= N, checked at compile time.
-/// The limits on constant evaluation bound the size as for full, and the
-/// sizes measured on each compiler are in docs/guide/limits.md, under
+/// The limits on constant evaluation bound the size as for full. Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+/// the sizes measured on Clang are in docs/guide/limits.md, under
 /// 'Compile-time limits: blade sets'.
 /// Guarantees: of_grade<N, K>.size() is the binomial coefficient C(N, K).
 template <std::size_t N, int K>
@@ -601,9 +602,10 @@ inline constexpr auto of_grade = detail::make_of_grade<N, K>();
 /// keep only one of the two orientations. Each is checked at compile time.
 /// Each blade is inserted into a list kept in canonical order, so the cost
 /// grows with the square of the sizes and depends on their order. The
-/// compiler's limits on constant evaluation bound the sizes it merges, and
-/// the sizes measured on each compiler are in docs/guide/limits.md, under
-/// 'Compile-time limits: blade sets'.
+/// compiler's limits on constant evaluation bound the sizes it merges;
+/// Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those
+/// limits, and the sizes measured on each compiler are in
+/// docs/guide/limits.md, under 'Compile-time limits: blade sets'.
 /// Guarantees: the size is the number of distinct masks in A and B.
 template <blade_set A, blade_set B>
 inline constexpr auto merge = detail::make_merge<A, B>();
