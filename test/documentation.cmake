@@ -136,6 +136,8 @@ galoot_add_doc_examples(PAGE README.md MODULE rga3 NAME readme
   LINK galoot::presets::rga3)
 galoot_add_doc_examples(PAGE docs/guide/README.md MODULE rga3 NAME start
   LINK galoot::presets::rga3)
+galoot_add_doc_examples(PAGE docs/guide/core.md MODULE core NAME core_guide
+  LINK galoot::core)
 
 # tests.docs_pages: every Markdown page under docs/, outside the agent/
 # notes, is registered above, so that a new page nobody registered fails
