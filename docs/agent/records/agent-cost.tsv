@@ -284,3 +284,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0040-merge-code	merge runner	opus	10770	10	284	activity after the report (110506 total minus 99736)
 2026-11-10	plan-0040-CDE	implementer 2	opus	67435	53	1030	parts C, D2, E and dual.hpp fix, --comments 7226b2c (310529 total minus 243094)
 2026-11-10	plan-0040-evidence	implementer 1	opus	85254	68	1183	merge of --comments, W10 campaign, scan, mutants, decision 0244; feature/pre-release-core-pass 721afe7 (377860 total minus 292606)
+2026-11-11	plan-0040-review	blind-reviewer	opus	252836	74	936	blind review of feature/pre-release-core-pass 721afe7, review/pre-release-core-pass db8271e: blocked on M1
+2026-11-11	plan-0040-gate-run-1	merge runner	opus	77274	27	435	stopped by the coordinator before reporting, after the review found M1 (matrix at 721afe7 would be superseded by the fix)
