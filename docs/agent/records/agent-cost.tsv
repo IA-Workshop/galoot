@@ -289,3 +289,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0040-comments2	implementer 2	opus	34801	27	375	blind-review comment fixes M2, m3, m7 on feature/pre-release-core-pass--comments2 45d79dd (345330 total minus 310529 recorded earlier, which includes about 6000 unrecorded from the previous stage)
 2026-11-11	plan-0040-comments2	implementer 2	opus	3789	3	58	duplicate hand-back (349119 total minus 345330)
 2026-11-11	plan-0040-public-ops	implementer 1	opus	149626	31	1650	M1 fix and m1, m2, m6, m7 on feature/pre-release-core-pass--public-ops 414879e (527486 total minus 377860)
+2026-11-11	plan-0041-review	blind-reviewer	sonnet	162333	50	295	blind review of feature/documentation-lane 6c278df, review/documentation-lane 98c5304: approve with six minors
