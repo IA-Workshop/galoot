@@ -27,9 +27,10 @@ killers = ["core.bare_compile_no_exceptions",
            "rga3.bare_compile_no_exceptions",
            "core.bare_compile_format_no_exceptions"]
 
-# The checking branch of transform, which the rga3 bare user instantiates.
-# GCC rejects the throw only there; Clang rejects it in the template's
-# definition, which the core bare user includes too.
+# The checking branch of transform, which the rga3 bare user instantiates
+# and the core bare user does not. The branch lies inside an if constexpr on
+# the template's parameters, so both compilers reject the throw only where
+# transform is instantiated.
 [[mutant]]
 name = "throw_in_transform"
 selection = "headers"
