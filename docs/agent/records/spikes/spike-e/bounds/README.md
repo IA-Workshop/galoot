@@ -207,7 +207,7 @@ A form C as `transform` itself would change the exact values of every test with 
 From a checkout root, with the math-tools Python environment (`<env>` = `/home/brianm/projects/utils/math-core/math-tools/toolset/env/py/.venv`; sympy 1.14.0, python-flint 0.9.0, mpmath as sympy's):
 
     <env>/bin/python -B docs/agent/records/spikes/spike-e/bounds/derive_bounds.py    # about 1 s
-    <env>/bin/python -B docs/agent/records/spikes/spike-e/bounds/drift.py            # about 3 min
+    <env>/bin/python -B docs/agent/records/spikes/spike-e/bounds/drift.py            # about 10 min
     <env>/bin/python -B docs/agent/records/spikes/spike-e/bounds/drift.py --small-steps
     tools/timed --log docs/agent/records/spikes/spike-e/bounds/runs.tsv probe - spike-e-bounds:probe-build -- \
       g++ -std=c++23 -O2 -ffp-contract=off -DGALOOT_CHECKING=0 -Iinclude \
