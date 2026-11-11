@@ -1,0 +1,112 @@
+# The mutants of plan 0041's tooling part: a throw in the core, the preset,
+# and the printing header against the bare compiles without exceptions, and
+# edits of tools/doc_examples.py's new modes against the tool's fixture tests.
+# Every test here is new, so each mutant counts when the test written for it
+# is among its killers. The selections build nothing: the bare compiles run
+# the compiler themselves, and the fixture tests run the tool.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.headers]
+targets = []
+labels = '^(core|rga3)\.headers$'
+
+[selection.tool]
+targets = []
+labels = '^tools\.doc_examples$'
+
+# The failure path of GALOOT_ASSERT, which every bare user includes through
+# the core. A function that is not a template, so both compilers reject the
+# throw when exceptions are off, and accept it when they are on.
+[[mutant]]
+name = "throw_in_assert"
+selection = "headers"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''  std::abort();''', replacement = '''  throw 0;''' }]
+expect = "killed"
+killers = ["core.bare_compile_no_exceptions",
+           "rga3.bare_compile_no_exceptions",
+           "core.bare_compile_format_no_exceptions"]
+
+# The checking branch of transform, which the rga3 bare user instantiates.
+# GCC rejects the throw only there; Clang rejects it in the template's
+# definition, which the core bare user includes too.
+[[mutant]]
+name = "throw_in_transform"
+selection = "headers"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''        return out;''', replacement = '''        throw 0;''' }]
+expect = "killed"
+killers = ["rga3.bare_compile_no_exceptions"]
+
+# The formatter, which neither bare user includes; the format bare user
+# prints a value through it.
+[[mutant]]
+name = "throw_in_format"
+selection = "headers"
+file = "include/galoot/core/format.hpp"
+edits = [{ anchor = '''    *out++ = '}';
+    return out;''', replacement = '''    *out++ = '}';
+    throw 0;''' }]
+expect = "killed"
+killers = ["core.bare_compile_format_no_exceptions"]
+
+[[mutant]]
+name = "rejected_ignored"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''        return "rejected" if words[1:2] == ["rejected"] else "cpp"''', replacement = '''        return "cpp"''' }]
+expect = "killed"
+killers = ["tools.doc_examples_accepts_kinds",
+           "tools.doc_examples_extracts_kinds",
+           "tools.doc_examples_rejects_no_literal",
+           "tools.doc_examples_rejects_two_literals"]
+
+[[mutant]]
+name = "rejected_literal_unchecked"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''                if count != 1:''', replacement = '''                if False:''' }]
+expect = "killed"
+killers = ["tools.doc_examples_rejects_no_literal",
+           "tools.doc_examples_rejects_two_literals"]
+
+[[mutant]]
+name = "rejected_literal_at_least_one"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''                if count != 1:''', replacement = '''                if count < 1:''' }]
+expect = "killed"
+killers = ["tools.doc_examples_rejects_two_literals"]
+
+[[mutant]]
+name = "cmake_not_extracted"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''"cmake": ("cmake",)}''', replacement = '''"cmake": ()}''' }]
+expect = "killed"
+killers = ["tools.doc_examples_extracts_cmake"]
+
+[[mutant]]
+name = "cmake_extracted_with_programs"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''EXTRACTED = {"cpp": ("cpp", "rejected"),''', replacement = '''EXTRACTED = {"cpp": ("cpp", "rejected", "cmake"),''' }]
+expect = "killed"
+killers = ["tools.doc_examples_extracts_kinds"]
+
+[[mutant]]
+name = "pages_registration_ignored"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''                if os.path.realpath(path) not in known:''', replacement = '''                if False:''' }]
+expect = "killed"
+killers = ["tools.doc_examples_rejects_unregistered"]
+
+[[mutant]]
+name = "pages_agent_read"
+selection = "tool"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''            subdirectories.remove("agent")  # The maintainers' notes.''', replacement = '''            pass''' }]
+expect = "killed"
+killers = ["tools.doc_examples_rejects_unregistered",
+           "tools.doc_examples_accepts_registered"]
