@@ -157,9 +157,3 @@ name = "cga3_even_grade2/plan"
 source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade2.plan.cpp"
 trees = ["after"]
 kind = "debug"
-
-[[unit]]
-name = "cga3_even_grade2/pass"
-source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade2.pass.cpp"
-trees = ["after"]
-kind = "debug"

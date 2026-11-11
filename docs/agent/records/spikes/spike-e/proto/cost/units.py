@@ -15,7 +15,8 @@ For each case, into units/:
   <case>.kernels.cpp   the kernels as literals only: the literal unit's
                        baseline
 and units.toml, the spec of `tools/compiles cost` for the baseline, plan,
-and pass units of every case, from the debug trees.
+and pass units of every case, from the debug trees, with units-gcc.toml
+for the one unit Clang refuses at its default step limit.
 """
 
 import json
@@ -89,12 +90,17 @@ def literal(case, with_pass):
     return text
 
 
+CLANG_REFUSES = {("cga3_even_grade2", "pass")}
+
+
 def main():
     cases = json.loads((HERE / "cases.json").read_text())
     UNITS.mkdir(exist_ok=True)
     spec = ['# Written by units.py; do not edit.',
             'compilers = ["gcc", "clang"]',
             'flags_from = "core.assert_consteval"', ""]
+    gcc_only = ['# Written by units.py; do not edit.', 'compilers = ["gcc"]',
+                'flags_from = "core.assert_consteval"', ""]
     for name, case in cases.items():
         units = {
             "baseline": prelude(case, False) + BASELINE,
@@ -108,10 +114,16 @@ def main():
         for kind in ("baseline", "plan", "pass"):
             source = (UNITS / f"{name}.{kind}.cpp").relative_to(
                 HERE.parents[6])
-            spec += ["[[unit]]", f'name = "{name}/{kind}"',
-                     f'source = "{source}"', 'trees = ["after"]',
-                     'kind = "debug"', ""]
+            unit = ["[[unit]]", f'name = "{name}/{kind}"',
+                    f'source = "{source}"', 'trees = ["after"]',
+                    'kind = "debug"', ""]
+            # Clang refuses this one at its default step limit.
+            if (name, kind) in CLANG_REFUSES:
+                gcc_only += unit
+            else:
+                spec += unit
     (HERE / "units.toml").write_text("\n".join(spec))
+    (HERE / "units-gcc.toml").write_text("\n".join(gcc_only))
     print(f"{len(cases)} cases, {5 * len(cases)} units")
 
 
