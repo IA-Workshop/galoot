@@ -135,10 +135,10 @@ endfunction()
 galoot_add_doc_examples(PAGE README.md MODULE rga3 NAME readme
   LINK galoot::presets::rga3)
 
-# tests.docs_pages: every Markdown page under docs/, outside its agent/ notes, is
-# registered above, so that a new page nobody registered fails rather than
-# going untested. It reads the tree when it runs, so a page added after
-# configuring is found.
+# tests.docs_pages: every Markdown page under docs/, outside the agent/
+# notes, is registered above, so that a new page nobody registered fails
+# rather than going untested. It reads the tree when it runs, so a page added
+# after configuring is found.
 get_property(doc_pages GLOBAL PROPERTY galoot_doc_pages)
 add_test(NAME tests.docs_pages
   COMMAND ${doc_examples} pages ${PROJECT_SOURCE_DIR}/docs ${doc_pages})
