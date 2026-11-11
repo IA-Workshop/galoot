@@ -5,5 +5,6 @@ int helper = 0;
 int first() { return helper; }
 
 int second() {
-  return helper + 1;
+  const int base = helper;
+  return base + 1;
 }
