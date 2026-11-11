@@ -22,7 +22,9 @@ Sets (run any of them, in order):
           by both compilers under bare -std=c++23 -pedantic-errors (limits
           raised). Not pinned.
   trace   evaluation counts. Clang: -ftime-trace with granularity 0, then
-          count (count_evals.py) the outermost Evaluate* events longer than
+          count (count_evals.py, since deleted; recover it with
+          `git show 3a2aa32:docs/agent/records/spikes/spike-cdf/count_evals.py`
+          to rerun this set) the outermost Evaluate* events longer than
           20 ms, which are
           the plan fills (the size pass takes about half as long and is
           counted separately by its variable name, `size`). GCC: -ftime-report
