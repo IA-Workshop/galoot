@@ -239,4 +239,44 @@ Each with its default if the owner does not rule.
 
 ## 13. Outcome
 
-Not started.
+Merged into `develop` on 2026-11-11 by fast-forward to the merge that closes `feature/documentation-lane`, after the P9 matrix below. Recorded by Claude (agent, Opus 5.5), merge-gate runner.
+
+### Departures from this plan
+
+1. **The first page's fourth fact is taught differently from section 4.3 item 4.** "Write `(p ^ q) == l`" holds only for an `l` of the join's own canonical layout: values of different layouts have no `==`, so against a `Line` the parenthesized form does not compile either. The page says that `p ^ q == l` means `p ^ (q == l)` and compares a join with a `Line` after converting it, `Line{p ^ q} == l`. The claim trace (`records/mutations/0041-documentation-lane/claim-trace.md`) records the reading, and the blind review confirmed that both forms are rejected on both compilers.
+2. **The example mechanism is decision 0242**, which supersedes decision 0199 items 1, 2 and 4 (item 3 stands under the new names) and records section 5.1 as built. The counts in its consequences are those of the pages part's tip. At the merge, the five pages give 55 tests on each preset (41 programs, 7 rejected blocks, 2 CMake projects, 5 page checks), plus `tests.docs_pages` and `tests.citations_guide`.
+3. **The cold read** took one round: `records/reviews/2026-11-10-first-page-cold-read-1.md`. Reader: Sonnet 5.5, given only the two READMEs. All five tasks compiled after the reader's own fixes, each fix taken from the page, and the page's wording was fixed where the reader stumbled. No second reader was needed.
+4. **The blind review** is `records/reviews/2026-11-11-documentation-lane-review.md` (blind-reviewer role, Sonnet 5.5). Verdict: approve with six minor findings, no blocker or major. Findings 1 to 5 are fixed in the pages and the claim trace (the merge of `--pages` at `4483b6d`). Finding 6 is the coordinator's. The release record draft on `develop` now lists the `FetchContent` placeholders as a must-fill. The page's figures that the core pass removes from the headers are traced to `limits-removed.md`, which is on the core pass's branch, so the limits diff of section 9 is read at the later of the two merges (item 7).
+5. **The lint round.** The first matrix at `6ca81ad` failed only under `lint`: clang-tidy rejected twelve programs of the guide, which the pages part had checked on gcc-debug and clang-debug only. The findings were designated initializers for `oriented_blade`, static members read through an instance, two redundant expressions, a variable `l` confusable with a header's pack `I`, external linkage of a helper, and an unused include. The pages author fixed each in its page at `00f10f0`, without switching any check off, and the matrix below was rerun from empty trees. The `l` against `I` finding is reported inside `include/galoot/core/linear.hpp`, so any user who runs that check and names a variable `l` meets it; a rename of the pack is left to the core, which this lane does not touch.
+6. **Mutants.** `throw_in_format` is killed, not surviving as section 8 expected, because decision 0241 item 5 added the third bare compile (`test/docs/bare_format.cpp`). Six mutants of the tool's new modes were added. `rejected_ignored` was first judged on the tool's fixtures only; at `6ca81ad` it also ran against the pages, where each of the seven rejected blocks, read as a program, stops its own build at the static assertion its literal quotes. It names no killer test, since the mutant unregisters the rejected tests. The record is `records/mutations/0041-documentation-lane/README.md`.
+7. **Step 5 had nothing to recheck.** `git diff 77cd947..develop -- include` was empty at both merges of `develop`, since the core pass had not merged. The limits diff of section 9 and the recheck of guide claims against changed headers move to the core pass's merge, or to this lane's successor if that merge comes first.
+8. **The matrix ran nine configurations**, the plan's eight and gcc-measure.
+9. **Not yet done:** the removal of the worktrees and branches of this lane after their content is verified on `develop` (definition of done item 8), which the coordinator does.
+
+### The P9 matrix
+
+`gate:all` from empty build trees at `ed9288f`, all through `tools/timed`. The shared pool showed 23 of 23 slots free before; at the end another workstream held 11. No timing lock.
+
+| Check | Result | Wall time |
+| --- | --- | --- |
+| gcc-debug | 626 of 626 pass | 101.7 s |
+| gcc-release | 626 of 626 pass | 149.6 s |
+| gcc-asan | 618 of 618 pass | 248.4 s |
+| clang-debug | 626 of 626 pass | 98.3 s |
+| clang-release | 626 of 626 pass | 118.5 s |
+| clang-asan | 626 of 626 pass | 207.2 s |
+| lint | 626 of 626 pass | 260.7 s |
+| gcc-measure | 618 of 618 pass | 110.5 s |
+| clang-measure | 618 of 618 pass | 116.1 s |
+| format-check | pass | 3.4 s |
+| trace gate | pass | 0.5 s |
+| `tools/runlog check` | pass | 4.6 s |
+
+The workflows took 1411 s together. Mutants at `6ca81ad`, on gcc-debug and clang-debug: `tooling.toml` 10 killed and `pages.toml` 5 killed on each, both exit 0. The lint fixes left the pages' anchors and block counts as they were, and `tools/mutate --check` accepts `pages.toml` at `ed9288f`.
+
+### Evidence for the release record (V10)
+
+- **DoD-21.** `core.bare_compile_no_exceptions`, `rga3.bare_compile_no_exceptions`, and `core.bare_compile_format_no_exceptions` pass on both compilers. They run `-std=c++23 -pedantic-errors -fno-exceptions -I include -fsyntax-only` on the core's and the preset's bare users and on `test/docs/bare_format.cpp`. The mutants `throw_in_assert`, `throw_in_transform` and `throw_in_format` are killed. Sentence for the record: the core and the preset throw nothing and compile without exceptions; Galoot's own test runner uses exceptions.
+- **DoD-27.** Every fenced example of `README.md` and of the four pages under `docs/guide/` is a test on every preset. A `cpp` block is a program built and run against its `// prints:` lines. A `cpp rejected` block must fail with one error holding its literal. A `cmake` block of the README is a consumer project configured and built offline. `tests.docs_pages` fails on a page nobody registered, and `tests.citations` and `tests.citations_guide` keep process records out of the pages. The mechanism is decision 0242.
+- **The design study's move** (decision 0241 item 2): a link scan of every tracked Markdown file found 1 broken relative link before the move (this plan's proposed CONVENTIONS link, to the new path) and 0 after, and the blind review's own scan found 0 at its revision.
+- **DoD-2.** Every row of `records/release/dod-2-inventory.md` names a heading of the guide in its "Doc page" column, checked by script against the pages.

@@ -1,0 +1,88 @@
+# The mutants of plan 0041's pages part: a page left unregistered, a wrong
+# printed value, a changed rejection literal, and a broken CMake block. Each
+# edits a file that CMake reads at configure time, so each selection names
+# targets: building them makes Ninja re-run CMake, which extracts the
+# mutated page or reads the mutated registration before the tests run.
+# Every test here is new, so each mutant counts when the test written for it
+# is among its killers.
+presets = ["gcc-debug", "clang-debug"]
+
+# Every program of the rga3 pages (the README, the first page, the rga3
+# guide), since the label rga3.docs selects all their tests, the rejected
+# and CMake tests among them, which run the compiler and CMake themselves.
+[selection.rga3_docs]
+targets = ["rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3", "rga3_start_example_1", "rga3_start_example_2", "rga3_start_example_3", "rga3_start_example_4", "rga3_start_example_5", "rga3_start_example_6", "rga3_start_example_7", "rga3_start_example_8", "rga3_start_example_9", "rga3_rga3_guide_example_1", "rga3_rga3_guide_example_2", "rga3_rga3_guide_example_3", "rga3_rga3_guide_example_4", "rga3_rga3_guide_example_5", "rga3_rga3_guide_example_6"]
+labels = '^rga3\.docs$'
+
+# tests.docs_pages reads the registration at configure time and the tree
+# when it runs; one target is enough to make Ninja reconfigure.
+[selection.pages]
+targets = ["rga3_start_example_1"]
+labels = '^tests\.docs$'
+
+# The rga3 guide's registration removed: the page is still under docs/, so
+# the pages check must name it.
+[[mutant]]
+name = "page_unregistered"
+selection = "pages"
+file = "test/documentation.cmake"
+edits = [{ anchor = '''galoot_add_doc_examples(PAGE docs/guide/rga3.md MODULE rga3 NAME rga3_guide
+  LINK galoot::presets::rga3)
+''', replacement = '' }]
+expect = "killed"
+killers = ["tests.docs_pages"]
+
+# The first page's second program prints (1.540, 0.841, 2.000); its comment
+# claims another third coordinate.
+[[mutant]]
+name = "prints_wrong"
+selection = "rga3_docs"
+file = "docs/guide/README.md"
+edits = [{ anchor = '''  // prints: (1.540, 0.841, 2.000)''', replacement = '''  // prints: (1.540, 0.841, 2.001)''' }]
+expect = "killed"
+killers = ["rga3.start_example_2"]
+
+# One word of the first rejected block's literal changed, so that the
+# library's message no longer holds it.
+[[mutant]]
+name = "rejected_message_changed"
+selection = "rga3_docs"
+file = "docs/guide/README.md"
+edits = [{ anchor = '''the second of the two types shown''', replacement = '''the first of the two types shown''' }]
+expect = "killed"
+killers = ["rga3.start_rejected_1"]
+
+# The README's add_subdirectory block links a target that does not exist.
+[[mutant]]
+name = "cmake_block_broken"
+selection = "rga3_docs"
+file = "README.md"
+edits = [{ anchor = '''add_subdirectory(galoot)
+
+add_executable(my_program main.cpp)
+target_link_libraries(my_program PRIVATE galoot::presets::rga3)''', replacement = '''add_subdirectory(galoot)
+
+add_executable(my_program main.cpp)
+target_link_libraries(my_program PRIVATE galoot::presets::rga4)''' }]
+expect = "killed"
+killers = ["rga3.readme_cmake_1"]
+
+# Every program of the five pages, and every test labelled core.docs or
+# rga3.docs, the rejected tests among them.
+[selection.docs]
+targets = ["rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3", "rga3_start_example_1", "rga3_start_example_2", "rga3_start_example_3", "rga3_start_example_4", "rga3_start_example_5", "rga3_start_example_6", "rga3_start_example_7", "rga3_start_example_8", "rga3_start_example_9", "core_core_guide_example_1", "core_core_guide_example_2", "core_core_guide_example_3", "core_core_guide_example_4", "core_core_guide_example_5", "core_core_guide_example_6", "core_core_guide_example_7", "core_core_guide_example_8", "core_core_guide_example_9", "core_core_guide_example_10", "core_core_guide_example_11", "core_core_guide_example_12", "core_core_guide_example_13", "core_core_guide_example_14", "core_core_guide_example_15", "core_core_guide_example_16", "core_core_guide_example_17", "core_core_guide_example_18", "core_core_guide_example_19", "core_core_guide_example_20", "core_core_guide_example_21", "rga3_rga3_guide_example_1", "rga3_rga3_guide_example_2", "rga3_rga3_guide_example_3", "rga3_rga3_guide_example_4", "rga3_rga3_guide_example_5", "rga3_rga3_guide_example_6", "core_limits_example_1", "core_limits_example_2"]
+labels = '^(core|rga3)\.docs$'
+
+# The tool reads a cpp rejected block as a cpp block, against the pages'
+# rejected tests: each of the seven rejected blocks is then extracted as a
+# program, numbered among the page's programs, and its own static_assert
+# stops its build (programs 2, 3 and 8 of the first page, 4, 11 and 17 of
+# the core guide, 2 of the limits page, all among the selection's targets).
+# Its rejected test is no longer registered, so no test is named as a killer:
+# the kill is the failed static assertion of each block built as a program.
+[[mutant]]
+name = "rejected_ignored"
+selection = "docs"
+file = "tools/doc_examples.py"
+edits = [{ anchor = '''        return "rejected" if words[1:2] == ["rejected"] else "cpp"''', replacement = '''        return "cpp"''' }]
+expect = "killed"

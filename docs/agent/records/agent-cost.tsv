@@ -272,3 +272,31 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	kb-collected-sandwich	researcher-writer	opus	117817	25	344	kb/collected-sandwich-error merged in the knowledge base
 2026-11-10	plan-0041	planner	opus	246707	59	884	plan 0041 documentation lane, branch plan/documentation-lane aaba2f5, merged 4c95a7c
 2026-11-10	plan-0040	planner	opus	336982	86	1391	plan 0040 pre-release core pass, branch plan/pre-release-core-pass a15d53b, merged f801c06
+2026-11-10	plan-0040-D1	implementer 2	opus	234397	105	884	part D1 on feature/pre-release-core-pass--comments 75c94ca (interim notice figure; final may be higher)
+2026-11-10	plan-0040-D1	implementer 2	opus	8697	6	96	activity after the interim notice (243094 total minus 234397)
+2026-11-10	plan-0041-tooling	build-expert	opus	250622	89	1115	--tooling on feature/documentation-lane--tooling 2cbf950, merged 818eb4c
+2026-11-10	plan-0040-AB	implementer 1	opus	292606	135	2190	parts A and B on feature/pre-release-core-pass--code f4a7e3a
+2026-11-10	plan-0040-E-derivation	numerical-expert	opus	237766	61	1314	contraction derivation on records/contraction-check 11809c5, merged
+2026-11-10	plan-0041-pages	hci-expert author	opus	424951	121	1839	--pages on feature/documentation-lane--pages 7f1d720, merged 13bde56
+2026-11-10	plan-0041-cold-read-1	cold reader	sonnet	55469	6	65	first-page cold read, review/documentation-first-page 9ea89c2 (figures as notified; the 6 tool calls look low for five programs)
+2026-11-10	plan-0041-pages	hci-expert author	opus	13338	0	106	cold-read fixes 4348bae, merged 6c278df (438289 total minus 424951; tool-call count not given)
+2026-11-10	plan-0040-merge-code	merge runner	opus	99736	40	2022	--code merged into feature/pre-release-core-pass c6efd1f, nine presets
+2026-11-10	plan-0040-merge-code	merge runner	opus	10770	10	284	activity after the report (110506 total minus 99736)
+2026-11-10	plan-0040-CDE	implementer 2	opus	67435	53	1030	parts C, D2, E and dual.hpp fix, --comments 7226b2c (310529 total minus 243094)
+2026-11-10	plan-0040-evidence	implementer 1	opus	85254	68	1183	merge of --comments, W10 campaign, scan, mutants, decision 0244; feature/pre-release-core-pass 721afe7 (377860 total minus 292606)
+2026-11-11	plan-0040-review	blind-reviewer	opus	252836	74	936	blind review of feature/pre-release-core-pass 721afe7, review/pre-release-core-pass db8271e: blocked on M1
+2026-11-11	plan-0040-gate-run-1	merge runner	opus	77274	27	435	stopped by the coordinator before reporting, after the review found M1 (matrix at 721afe7 would be superseded by the fix)
+2026-11-11	plan-0040-comments2	implementer 2	opus	34801	27	375	blind-review comment fixes M2, m3, m7 on feature/pre-release-core-pass--comments2 45d79dd (345330 total minus 310529 recorded earlier, which includes about 6000 unrecorded from the previous stage)
+2026-11-11	plan-0040-comments2	implementer 2	opus	3789	3	58	duplicate hand-back (349119 total minus 345330)
+2026-11-11	plan-0040-public-ops	implementer 1	opus	149626	31	1650	M1 fix and m1, m2, m6, m7 on feature/pre-release-core-pass--public-ops 414879e (527486 total minus 377860)
+2026-11-11	plan-0041-review	blind-reviewer	sonnet	162333	50	295	blind review of feature/documentation-lane 6c278df, review/documentation-lane 98c5304: approve with six minors
+2026-11-11	plan-0041-pages	hci-expert author	opus	15827	11	144	review fixes 55e175b, merged 4483b6d (454116 total minus 438289)
+2026-11-11	plan-0040-delta-review	blind-reviewer	opus	257448	83	958	delta review of 721afe7..414879e, review/pre-release-core-pass-delta 2e51bac: blocked on D1
+2026-11-11	plan-0041-gate-run-1	merge runner	opus	133829	39	1486	documentation lane gate at 6ca81ad: lint red on guide examples, develop not moved; mutants all killed
+2026-11-11	plan-0041-pages	hci-expert author	opus	23449	12	209	lint fixes 00f10f0, merged 6d7d7b4 (477565 total minus 454116)
+2026-11-11	plan-0041-gate-run-1	merge runner	opus	18642	11	226	activity after the first report (152471 total minus 133829)
+2026-11-11	plan-0040-public-ops	implementer 1	opus	138799	60	2200	delta-review round: D1 to D6, pack rename, third W10 campaign, feature/pre-release-core-pass--public-ops 26f1b62 (666285 total minus 527486)
+2026-11-11	plan-0041-gate-run-2	merge runner	opus	9488	9	300	documentation lane gate rerun, merged to develop af5c34b (161959 total minus 152471 recorded)
+2026-11-11	plan-0041-gate-run-2	merge runner	opus	13314	9	100	final figures after the second report (175273 total minus 161959)
+2026-11-11	plan-0040-delta2-review	blind-reviewer	opus	231648	84	964	second delta review 414879e..26f1b62, review/pre-release-core-pass-delta2 c186af1: approve with minors
+2026-11-11	plan-0040-public-ops	implementer 1	opus	29747	21	502	E1 to E4 round, feature/pre-release-core-pass--public-ops c4f8bae (696032 total minus 666285)

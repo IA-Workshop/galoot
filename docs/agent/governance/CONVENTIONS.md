@@ -6,7 +6,7 @@ This specification fixes the conventions that every part of Galoot shares: how g
 
 - Checked: verified exactly by [`test/reference/conventions_check.py`](../../../test/reference/conventions_check.py), which shares no code with the library.
 - Confirmed: read in Lengyel's wikis or posters and found to agree, as recorded in research note [0005](../research-notes/0005-lengyel-sources.md) (VVUQ V9).
-- Study: taken from the design study ([galoot-design-study.md](../../galoot-design-study.md)); the original source has not yet been read to confirm it (VVUQ V9).
+- Study: taken from the design study ([0000-design-study.md](../research-notes/0000-design-study.md)); the original source has not yet been read to confirm it (VVUQ V9).
 - Proposed: a choice with no external source, made for consistency.
 
 Sources rank as follows. The design study is the most canonical reference for Galoot. For mathematical conventions, Lengyel's wikis ([rigidgeometricalgebra.org](https://rigidgeometricalgebra.org), [conformalgeometricalgebra.org](https://conformalgeometricalgebra.org)) are the preferred source. Colapinto's thesis and the Versor library inform generic-programming technique, not conventions. A disagreement between ranked sources is recorded in section 8 (constitution C11), and the owner decides it.

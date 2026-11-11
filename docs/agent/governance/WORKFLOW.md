@@ -40,11 +40,11 @@ A change merges to `develop` only after four checks pass: the mechanical style c
 | `docs/agent/decisions/` | One file per decision (C18): context, options weighed, decision, consequences, and status. Any contributor enters a decision record without the owner's approval. A recorded decision is not rewritten; a later decision supersedes it, and both stay. |
 | `docs/agent/plans/` | Plans under W3, each closed with its outcome. |
 | `docs/agent/records/` | Measurements, including the performance history of PERFORMANCE.md P7 and the run log of P13, and review records (W5) in `reviews/`. |
-| `docs/agent/research-notes/` | Findings from sources: the claim, the source, who checked it and how, and what was confirmed as opposed to inferred (V9). |
+| `docs/agent/research-notes/` | Findings from sources: the claim, the source, who checked it and how, and what was confirmed as opposed to inferred (V9). The design study of 2026-10-30, the project's first design record, is kept here as `0000-design-study.md`. |
 | `docs/agent/lessons-learned/` | Mistakes and surprises: what happened, the cause, and what now detects it. |
 | `docs/agent/snippets/` | Reusable tools coalesced from the workbench and spikes, with the milestone reviews that maintain them. |
 | `docs/agent/workbench/` | Scratch work. Nothing relied upon lives here, and it may be cleared at any time. |
-| `docs/` | Documentation for users, including the design study. |
+| `docs/` | Documentation for users: the README's sequel, the guide under `docs/guide/`. |
 
 Record files carry a sortable prefix and a short descriptive name, such as `0001-dual-sign-convention.md`.
 
