@@ -106,9 +106,11 @@ endforeach()
 # standard are read as galoot_compile_command reads them, the standard being
 # the last of its arguments. So the test gives one answer for each compiler
 # whatever the preset. It runs the compiler itself, outside the compile-cost
-# launcher, since its output is assembly and not an object. The probe is
-# also compiled once with the build's own flags, so that every build's
-# warnings and the static checks see it.
+# launcher, since its output is assembly and not an object. The script reads
+# x86-64 assembly, so the two tests exist only where the target is x86-64; on
+# another target they are not registered, rather than fail on assembly they
+# cannot read. The probe is also compiled once with the build's own flags,
+# so that every build's warnings and the static checks see it.
 set(kernels_inline_functions wedge_point_point wedge_point_point_point
   antiwedge_line_plane transform_point transform_line transform_plane
   compose_motors sum_lines reverse_line dot_points change_point
@@ -119,55 +121,60 @@ set(kernels_inline_functions wedge_point_point wedge_point_point_point
   grade_involution_full right_complement_full bang_full left_complement_full
   plus_full minus_full bulk_full weight_full bulk_dual_full weight_dual_full
   left_bulk_dual_full left_weight_dual_full dot_full antidot_full
-  project_point_plane antiproject_plane_point change_full change_back_full
+  project_point_plane antiproject_plane_point project_full antiproject_full
+  project_motors project_motor_flector change_full change_back_full
   convert_motor truncate_full part_full)
-galoot_compile_command(compile)
-list(GET compile -1 kernels_inline_standard)
-add_test(NAME rga3.kernels_inline
-  COMMAND ${Python3_EXECUTABLE} -I
-    ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
-    ${kernels_inline_functions}
-    -- ${CMAKE_CXX_COMPILER}
-      $<LIST:TRANSFORM,$<TARGET_PROPERTY:galoot::core,INTERFACE_INCLUDE_DIRECTORIES>,PREPEND,-I>
-      ${kernels_inline_standard} -DGALOOT_CHECKING=0 -O2 -ffp-contract=off
-      -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror
-      -S -o - ${CMAKE_CURRENT_SOURCE_DIR}/kernels_inline.cpp
-  COMMAND_EXPAND_LISTS)
-# rga3.kernels_inline_alone: the same functions, each compiled in a unit of
-# its own, the probe's other text and that one function, as a user's small
-# file would hold one operation. A compiler weighs the growth of a unit
-# against its size, so an operation that inlines among many others can stay
-# a call when it is alone.
-add_test(NAME rga3.kernels_inline_alone
-  COMMAND ${Python3_EXECUTABLE} -I
-    ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
-    --alone ${CMAKE_CURRENT_SOURCE_DIR}/kernels_inline.cpp
-    ${kernels_inline_functions}
-    -- ${CMAKE_CXX_COMPILER}
-      $<LIST:TRANSFORM,$<TARGET_PROPERTY:galoot::core,INTERFACE_INCLUDE_DIRECTORIES>,PREPEND,-I>
-      ${kernels_inline_standard} -DGALOOT_CHECKING=0 -O2 -ffp-contract=off
-      -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -S -o -
-  COMMAND_EXPAND_LISTS)
-set_tests_properties(rga3.kernels_inline rga3.kernels_inline_alone PROPERTIES
-  LABELS "rga3;rga3.kernels_inline")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$")
+  galoot_compile_command(compile)
+  list(GET compile -1 kernels_inline_standard)
+  add_test(NAME rga3.kernels_inline
+    COMMAND ${Python3_EXECUTABLE} -I
+      ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
+      ${kernels_inline_functions}
+      -- ${CMAKE_CXX_COMPILER}
+        $<LIST:TRANSFORM,$<TARGET_PROPERTY:galoot::core,INTERFACE_INCLUDE_DIRECTORIES>,PREPEND,-I>
+        ${kernels_inline_standard} -DGALOOT_CHECKING=0 -O2 -ffp-contract=off
+        -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror
+        -S -o - ${CMAKE_CURRENT_SOURCE_DIR}/kernels_inline.cpp
+    COMMAND_EXPAND_LISTS)
+  # rga3.kernels_inline_alone: the same functions, each compiled in a unit of
+  # its own, the probe's other text and that one function, as a user's small
+  # file would hold one operation. A compiler weighs the growth of a unit
+  # against its size, so an operation that inlines among many others can stay
+  # a call when it is alone.
+  add_test(NAME rga3.kernels_inline_alone
+    COMMAND ${Python3_EXECUTABLE} -I
+      ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
+      --alone ${CMAKE_CURRENT_SOURCE_DIR}/kernels_inline.cpp
+      ${kernels_inline_functions}
+      -- ${CMAKE_CXX_COMPILER}
+        $<LIST:TRANSFORM,$<TARGET_PROPERTY:galoot::core,INTERFACE_INCLUDE_DIRECTORIES>,PREPEND,-I>
+        ${kernels_inline_standard} -DGALOOT_CHECKING=0 -O2 -ffp-contract=off
+        -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -S -o -
+    COMMAND_EXPAND_LISTS)
+  set_tests_properties(rga3.kernels_inline rga3.kernels_inline_alone PROPERTIES
+    LABELS "rga3;rga3.kernels_inline")
+endif()
 add_library(rga3_kernels_inline_probe OBJECT kernels_inline.cpp)
 target_link_libraries(rga3_kernels_inline_probe PRIVATE galoot::presets::rga3)
 
 # tools.kernels_inline_*: the check passes on assembly whose only jumps are
 # local and whose calls are to other symbols than the library's, and fails,
 # naming the line, on a call, a tail jump, a conditional tail jump, a call
-# through the PLT or the global offset table, a call through a register
-# loaded with a library function's address, a call to a const member
-# function, to an explicit-object member function, and to an entity local
-# to a function of the library; it fails, naming the function, when a
-# function is not defined, and it refuses assembly of another target than
-# x86-64. Each fixture defines first and second. With --alone, it compiles
+# through the PLT or the global offset table, a call or a notrack jump
+# through a register loaded with a library function's address (by lea, or
+# by mov of an immediate, into the register or its 32-bit half), a call to
+# a const member function, to an explicit-object member function, and to an
+# entity local to a function of the library; it passes on functions that are
+# a return alone and on a register overwritten before the call through it;
+# it fails, naming the function, when a function is not defined, and it
+# refuses assembly of another target than x86-64. Each fixture defines first and second. With --alone, it compiles
 # each named function of a source in a unit of its own, with the source's
 # other text, and fails on a call in any one of them or on a name the source
-# does not define; the stand-in compiler writes, for each function in the
-# unit it is given, a definition that calls the library when the function is
-# second or when the unit holds more than one function, so that a unit that
-# is not alone fails.
+# does not define or defines in more than one paragraph; the stand-in
+# compiler writes, for each function in the unit it is given, a definition
+# that calls the library when the function is second or when the unit holds
+# more than one function, so that a unit that is not alone fails.
 set(kernels_inline ${Python3_EXECUTABLE} -I
   ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py first second --)
 set(kernels_inline_fixtures ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline)
@@ -204,6 +211,19 @@ add_test(NAME tools.kernels_inline_rejects_register_call
 add_test(NAME tools.kernels_inline_rejects_explicit_object
   COMMAND ${expect_output} 1 "_ZNH6galoot4core3fooIdEEvRKNS0_2mvIdEE"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/explicit_object.s)
+add_test(NAME tools.kernels_inline_accepts_bare_return
+  COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/bare_return.s)
+add_test(NAME tools.kernels_inline_rejects_immediate
+  COMMAND ${expect_output} 1 "through %rax, which holds _ZN6galoot4core3fooEv"
+    "through %rdx, which holds _ZN6galoot4core3barEv"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/immediate.s)
+add_test(NAME tools.kernels_inline_rejects_notrack
+  COMMAND ${expect_output} 1 "line 6, in _Z5firstRKd: notrack jmp"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/notrack.s)
+add_test(NAME tools.kernels_inline_accepts_overwritten_register
+  COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/overwritten.s)
 add_test(NAME tools.kernels_inline_rejects_other_target
   COMMAND ${expect_output} 1 "the output is not x86-64 assembly"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/aarch64.s)
@@ -225,7 +245,16 @@ add_test(NAME tools.kernels_inline_alone_rejects_call
 add_test(NAME tools.kernels_inline_alone_rejects_missing_function
   COMMAND ${expect_output} 1 "the source defines no function third"
     -- ${kernels_inline_alone} first third -- ${kernels_inline_stand_in})
+add_test(NAME tools.kernels_inline_alone_rejects_twice
+  COMMAND ${expect_output} 1 "the source defines first in 2 paragraphs"
+    -- ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/test/tools/kernels_inline.py
+      --alone ${kernels_inline_fixtures}/alone_twice.cpp first
+      -- ${kernels_inline_stand_in})
 set_tests_properties(tools.kernels_inline_accepts
+  tools.kernels_inline_accepts_bare_return tools.kernels_inline_rejects_immediate
+  tools.kernels_inline_rejects_notrack
+  tools.kernels_inline_accepts_overwritten_register
+  tools.kernels_inline_alone_rejects_twice
   tools.kernels_inline_rejects_conditional_jump
   tools.kernels_inline_rejects_register_call
   tools.kernels_inline_rejects_explicit_object

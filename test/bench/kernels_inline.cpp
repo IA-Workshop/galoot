@@ -165,6 +165,20 @@ auto antiproject_plane_point(const Plane& g, const Point& p) {
   return core::antiproject(g, p);
 }
 
+auto project_full(const Full& a, const Full& b) { return core::project(a, b); }
+
+auto antiproject_full(const Full& a, const Full& b) {
+  return core::antiproject(a, b);
+}
+
+auto project_motors(const Motor& a, const Motor& b) {
+  return core::project(a, b);
+}
+
+auto project_motor_flector(const Motor& a, const Flector& b) {
+  return core::project(a, b);
+}
+
 auto change_full(const Full& a) { return core::change_basis<doubled_e4>(a); }
 
 auto change_back_full(const Full& a) {
