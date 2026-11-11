@@ -283,7 +283,7 @@ The coordinator merges this plan into `develop` and rules K1 to K11 (the default
 
 ## 17. Outcome
 
-Not yet recorded: the merge gate writes it when this unit merges into `develop`.
+Merged into `develop` on 2026-11-11 by fast-forward to `merge/pre-release-core-pass-gate3`, after the P9 matrix below. The merge was assembled on `merge/pre-release-core-pass-gate3` from `feature/pre-release-core-pass--inline-opt-out` at `b517977`, the opt-out of section 18. That branch grew from `merge/pre-release-core-pass-gate2` at `54f2487`, which holds `feature/pre-release-core-pass` at `721afe7` (parts A, B, C, D1, D2 and E, with the code merge and the comments merge already in) and gate 2's records. Recorded by Claude (agent, Opus 5.5), merge-gate runner.
 
 ### Deferred from the review records
 
@@ -298,16 +298,84 @@ Done on `feature/pre-release-core-pass--inline-opt-out` after the review:
 - **M2.** clang-measure is forced again, as clang-measure-o3, gcc-measure and gcc-measure-o3 are; gcc-asan, clang-asan and clang-release stay OFF.
 - **m3.** Section 18.2 item 3 now names `core.force_inline_build`.
 
-Deferred to after the release, as the owner asked for the least change before it:
+Deferred to after the release, as the owner ruled (decision 0246 item 1, which keeps the change before the release to the strict value check, one forced twin and the measure presets forced, and defers the remaining minors to this section):
 
 - **m2.** The cache option `GALOOT_FORCE_INLINE` is not validated as `GALOOT_CHECKING` is, so a configure value such as `2` or `foo` reads as ON with no message, and the presets that keep the default do not declare it.
 - **m5.** The mutation record says the presets' opt-out is checked by `core.force_inline_build` in each tree where it runs, but in the ON trees where the mutants ran, losing the CMake definition cannot be caught; no mutant of `CMakeLists.txt` was run on an OFF tree.
 - **m6.** A `convention-trace` row at `81c923136055` exits 1 and the next, 0.1 s later, exits 0, with no record of why; the cause is not traced.
 
+### Departures from this plan
+
+1. **Two gate runs before this one were not merged.**
+   - `merge/pre-release-core-pass-gate` (worktree `pre-release-core-pass-gate`) merged `develop` into the feature tip at `175c668` and started the matrix at `5b0210a`. gcc-debug (141.3 s) and gcc-release (162.4 s) passed as `gate:all` before the run was stopped. The blind review, committed minutes later, blocked on M1 and reopened `include/`. Its rows and its last commit stay on that branch. The last commit's note, that implementer 2 once used a bare `git stash` in part D1, is now decision 0244 item 15.
+   - `merge/pre-release-core-pass-gate2` (worktree `pre-release-core-pass-gate2`) ran the matrix from empty trees at `a310a2f`. Every configuration that finished passed, but the forced public operations made the identity test units far costlier under the sanitizers and in Clang's optimized builds: gcc-asan 5,367.6 s against 248.4 s at `ed9288f`, with one compile at 22.0 GB; clang-release 665.1 s against 118.5 s; clang-measure 666.0 s against 116.1 s; and clang-asan was stopped at 216 of 237 build steps, with 8 to 16 GB per compile and 8 GiB of the machine left. `develop` was not moved. The owner's ruling on that result (decision 0245 item 1, reopened; decision 0246 item 1) added the opt-out of section 18, and this gate merged it.
+2. **Four review rounds on the core pass and two on the opt-out.** Each record was cherry-picked with `-x` from its review branch:
+   - The blind review, `records/reviews/2026-11-10-pre-release-core-pass-review.md` (at `721afe7`), blocked on **M1**: once the chain was forced, GCC at `-O2` called some public rga3 operations out of line where it had inlined them before, and the probe did not reach them. Its other findings were M2 (`apply`'s same-result guarantee under contraction) and m1 to m7. M2, m3 and m7 were fixed in comments on `--comments2` (`ad56c9b`). m1 (`fa482be`), m2 (by the x86-64 registration) and m7's test-source part (`a6f3196`) were fixed on `--public-ops`. m5 is deferred to the owner (above, "Deferred from the review records"); m6 awaits the coordinator's resolution. m4, that the headers' pointers named a page not yet on `develop`, is closed by this merge.
+   - The first delta review, `records/reviews/2026-11-11-pre-release-core-pass-delta-review.md` (`721afe7..414879e`), blocked on **D1**: `project` and `antiproject` are now called on GCC. It also raised D2 to D6, on the macro's comment, on the check script's target refusal, immediates, registers and `notrack`, on hosts other than x86-64, and on a gap mutant. D1 is fixed by `390b55e`, and D2 to D6 by `b5d7ad0`, `4a9c2bb`, `c49f39a` and the x86-64 registration.
+   - The second delta review, `records/reviews/2026-11-11-pre-release-core-pass-delta2-review.md` (`414879e..26f1b62`), approved with **E1 to E4**. E1, that the pack `Is` is confusable with a user's `ls`, is fixed by renaming the packs `Xs` and `Ys` (`fe839fc`) and by the linted user unit naming `l` and `ls`. E2 is fixed by dropping the per-output target refusal (`36575d5`), E3 by a comment (`ee05a66`), and E4 by the reflow.
+   - The third delta review, `records/reviews/2026-11-11-pre-release-core-pass-delta3-review.md` (`26f1b62..c4f8bae`, Sonnet 5.5), approved with minors m1 to m5. Four of them were fixed on gate 2's branch in records and comments only, with no change under `include/`: m1 in decision 0244 item 14 (`5c4a258`), m5 in item 2 (`4d034ad`), m2 in the survey script, marked historical (`272f5ff`), and m4 in the comment of `test/bench/CMakeLists.txt` (`185ff98`). m3, a registered test on real `-fcf-protection` output, is a suggestion and is not taken.
+   - The delta review of section 18, `records/reviews/2026-11-11-pre-release-core-pass-inline-opt-out-review.md` (`54f2487..048aac5`), approved with non-blocking findings M1, M2 and m1 to m6. What was done and what is deferred is listed above under "The delta review of section 18".
+   - The second delta review of section 18, `records/reviews/2026-11-11-pre-release-core-pass-inline-opt-out-delta2-review.md` (`048aac5..b517977`), approved with non-blocking findings m1 to m3, n1 and n2. m1, that nothing tested the absence of the cascade decision 0244 item 17 relies on, is fixed in the test only: `core.force_inline_on` includes the whole core (`4b87d8c`), and the new mutant `cascade_after_error` is killed by it. m2: `opt-out-spelling.toml` ran on both debug presets, both mutants killed (`105507f`). m3: this section and decision 0244 item 17 cite decision 0246 item 1. n1 (the four helper macros of the spelling check stay defined in every user's unit) and n2 (the guide's sentence on edge spellings such as `1+0`) are not taken; the review recommends n1's `#undef` with the next change to `assert.hpp`.
+   - The forced set grew from the plan's thirteen chain functions to twenty-six attributes: the thirteen, the four products and their four operators, `antidot`, `weight`, `left_weight_dual`, `project` and `antiproject`. Decision 0244 item 1 records why. Its items 4 and 14 record the five attributes the plan held to be guards that are needed, and the two renames of the pack.
+3. **O2 was ruled by the owner, after gate 2: (b), the opt-out.** Section 9's criterion was met in all three W10 runs on debug builds: `records/performance/pre-release-core-pass/cost/` at `7a27f76`, `cost-public-ops/` at `a6f3196`, and `cost-d1/` at `d2568e3` (the last on a loaded machine, so its instruction counts are comparable and its wall times are not). At `a6f3196`, six debug units grow by more than 5% and by more than twice their repeats' range:
+   - on GCC, `product_test.cpp` +80.5% (4.32 s against 2.18 s, 830 MiB against 418 MiB), `transform_test.cpp` +35.8%, `chains_test.cpp` +17.4%, and E1's probe +8.4%;
+   - on Clang, `product_test.cpp` +17.5% and `chains_test.cpp` +5.0%.
+
+   The owner first kept (a), no knob, on that debug-build evidence (decision 0245 item 1 as first written). Gate 2's sanitizer and Clang-optimized costs reopened it, and decision 0246 item 1 rules the opt-out: `GALOOT_FORCE_INLINE`, 1 by default, 0 to turn the attribute off, any other spelling an `#error` (section 18, decision 0244 items 16 and 17). gcc-asan, clang-asan and clang-release set it to 0; every other preset, the measure presets among them, keeps the default. The debug-build growth above stays as known friction for the release record. With the opt-out, the six identity units cost what they cost at `ed9288f` to within 1% in instructions and peak memory (`records/performance/pre-release-core-pass/opt-out/`).
+4. **Decisions 0243 and 0244.** Decision 0243 (contraction and the checked and unchecked paths) came from `develop` with the contraction record `records/numerical/0040-contraction-check.md`. Part E's `transform` comment states its T1 and T2, and the limits page states its L1 and L2. The blind review's M2 extended the same qualification to the binary `apply`. Decision 0244 records the implementers' and the merge runners' choices, through the delta review of section 18 (items 16 and 17).
+5. **The limits diff of plan 0041 section 9 ran on gate 2's branch**, as that lane's outcome deferred it. Record: `records/performance/pre-release-core-pass/limits-diff/`. Every number and flag removed from the header comments since `77cd947` is on `docs/guide/limits.md`, or is listed as dropped in `limits-removed.md`; the only such figure is the "114 lines on GCC" of part C. Each of the six headings that the fifteen pointers name is a heading of the page. The page's figures still hold of the final headers, and the cases whose code generation the attribute changes were compiled to objects on both compilers. The page is unchanged; the opt-out added no figure to it.
+6. **The catalogue** was regenerated on gate 2's branch at `ebe7336`. The counts are unchanged: 182 messages, 160 pinned, 22 internal, and three assertions without a message. The places moved in `dual.hpp`, `linear.hpp`, `mv.hpp` and `product.hpp`, and the guide's seven rejected blocks now pin one message each. `--check` and `pinned` pass on both listings. The opt-out's `#error` is a build-mode message of `assert.hpp`, pinned by its own compile-fail tests (`core.force_inline_value`, `core.force_inline_on`, `core.force_inline_empty`); the catalogue was not regenerated for it here.
+7. **This gate's matrix ran nine configurations** from empty trees at ``2438604``: the plan's eight, gcc-measure, and clang-measure. Gate 2's tree was not reused.
+8. **Records-only merges of `develop`**: `ebe7336` (the documentation lane, decisions 0241 to 0243) and `a310a2f` (one cost row) on gate 2's branch; `2438604` (decisions 0245 and 0246, four cost rows) on this one.
+9. **Where section 18 merged, and what changed after the matrix.** Section 18 said the addendum merges into `merge/pre-release-core-pass-gate2`. At the coordinator's direction, gate 3 was instead branched from the addendum's tip, which holds all of gate 2's history, and gate 2's branch is left as it was. After the matrix the gate branch gained one test change and records only, with no change under `include/`, the build files or the presets: the record of the second delta review; `core.force_inline_on`'s source and its registration's comment (`4b87d8c`), after which that test was rerun in all nine build trees and passed in each, and the lint preset's build, which runs the format check, passed; the mutation run; and these records. The test's commit was amended once, before anything used it, because clang-format orders the two includes the other way; the run rows of the first form, at `038d732`, stay in the run log, the lint build among them failing on that format check.
+
+### What is claimed and what is not
+
+Decision 0244's consequences state both. Each of the 52 functions of `test/bench/kernels_inline.cpp` compiles to straight-line arithmetic with no call or jump into the library. This holds on GCC 16.2.1 and Clang 23.1.4 at `-O2` with the structure test's flags (checking off, `-ffp-contract=off`, x86-64), both in one unit and alone. The structure tests take fixed flags and do not see `GALOOT_FORCE_INLINE`, so they check the forced mode in every preset, the three that turn it off included. With `GALOOT_FORCE_INLINE` 0 the attribute expands to nothing and the code computes the same values: `rga3.reference_kernels` runs unforced and `rga3.reference_kernels_forced` forced in every preset.
+
+**Not claimed:**
+- other layouts and algebras: conformal(3) multivectors of all or of even blades still compile to calls for some operations, three of them on GCC new against the branch point;
+- `-Os`, where both compilers call rga3 operations, and `-O3`, which is untested;
+- checking builds;
+- other scalar types, compilers, or versions;
+- a caller compiled for fewer instruction-set features than its unit, which cannot call a forced operation;
+- a program whose translation units use different values of `GALOOT_FORCE_INLINE`, which gives the core's functions two definitions.
+
+At `-O0`, E1's probe's text grows 12.0% on GCC and 1.8% on Clang.
+
+### The P9 matrix
+
+All `gate:all`, from empty build trees at `2438604`, one preset at a time on the shared pool, which read 23 of 23 slots free before and after each preset. The machine kept at least 92.6 GiB available throughout; a watchdog would have stopped a sanitizer build below 15 GiB available or above 20 GiB in one process, and never fired. Peak memory is the largest resident size of one process, from the run log; the largest compile is read from each tree's `compile.tsv`. The comparison columns are gate 2's matrix and the documentation lane's at `ed9288f`, the last `develop` before the forced inlining.
+
+| Configuration | Forced inlining | Tests | Wall (s) | Gate 2, `a310a2f` (s) | `ed9288f` (s) | Peak of one process (GiB) |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| gcc-debug | on | 657 of 657 | 162.8 | 163.5 | 101.7 | 5.93 |
+| gcc-release | on | 657 of 657 | 155.9 | 152.8 | 149.6 | 1.96 |
+| gcc-asan | off | 649 of 649 | 231.5 | 5,367.6 | 248.4 | 4.75 |
+| clang-debug | on | 657 of 657 | 104.0 | 102.0 | 98.3 | 1.52 |
+| clang-release | off | 657 of 657 | 113.7 | 665.1 | 118.5 | 1.03 |
+| clang-asan | off | 657 of 657 | 198.8 | stopped | 207.2 | 2.69 |
+| lint | on | 657 of 657 | 267.3 | 265.4 | 260.7 | 1.51 |
+| gcc-measure | on | 649 of 649 | 154.5 | 156.5 | 110.5 | 1.85 |
+| clang-measure | on | 649 of 649 | 664.0 | 666.0 | 116.1 | 1.81 |
+
+- `format-check` 1.8 s, the trace gate 0.3 s ("items with no test: 6.1, 6.2, 6.3, 6.4", as before), and `tools/runlog check` 2.6 s pass at `2438604`. After the records of this outcome, `tools/runlog check` and the trace gate passed again on the final tree.
+- The largest compiles: `transform_identities_test.cpp` in gcc-debug (5.93 GiB, 94.9 s), gcc-asan (4.75 GiB, 154.3 s), clang-asan (2.69 GiB, 127.4 s) and clang-release (1.03 GiB, 45.6 s); `identities_rounding_test.cpp` in clang-measure (599.0 s, 1.81 GiB), the one forced unit that still dominates a preset. gcc-debug's peak was 6.19 GB at gate 2 and 2.49 GB at `ed9288f`.
+- In gcc-asan, clang-release and clang-asan, under the test presets' `ASAN_OPTIONS` and `UBSAN_OPTIONS`, `core.force_inline_off`, `_default`, `_build`, `_value`, `_on` and `_empty` pass, and so does `rga3.reference_kernels_forced`, which runs the default forced code there; the structure tests `rga3.kernels_inline` and `rga3.kernels_inline_alone` pass in every preset. The documentation tests (the README's and the guide pages' examples, `tests.docs_pages`, `tests.citations_guide`) are part of each preset's suite and pass in each.
+- The mutants of the mode's spelling (`opt-out-spelling.toml`, 6.4 s on gcc-debug and clang-debug at `4b87d8c`): both killed on both presets.
+
+### Evidence
+
+- Mutants: `records/mutations/0040-pre-release-core-pass/` (each attribute removed alone, after M1 and after D1; the check script's mutants; `basis-change.toml`; the opt-out's `opt-out.toml` and `opt-out-spelling.toml`).
+- Build cost (W10): `records/performance/pre-release-core-pass/cost/`, `cost-public-ops/`, `cost-d1/`, and the opt-out's `opt-out/`. Object sizes: `object-sizes/`. Surveys: `survey/`. Removed limit text: `limits-removed.md`. Limits diff: `limits-diff/`.
+- The deleted `==`: `records/diagnostics/pre-release-core-pass-equality.md`. The catalogue: `records/diagnostics/catalogue/scan-output.md` and the result line of `misuse-catalogue.md`.
+- Reviews: the six records above, with their run rows and probes in their directories.
+- Not yet done: the coordinator fills in the review records' "Resolution" sections that are still open from the list above. The coordinator also removes this unit's worktrees and branches, the two unmerged gates' among them, once their content is verified on `develop` (decision 0245 item 2, decision 0246 item 4). Plan 0038's E1 and E2 reruns and WU17's G and H are deferred past 1.0 (decision 0246 item 2).
+
 ## 18. Addendum: an opt-out of the forced inlining (after gate 2)
 
 - Status: added 2026-11-11 by Claude (agent, Opus 5.5), implementer of this addendum, on `feature/pre-release-core-pass--inline-opt-out`, worktree `.claude/worktrees/pre-release-core-pass--inline-opt-out`, from `merge/pre-release-core-pass-gate2` at `54f2487`. This addendum is the claim of the unit (W3, W7); it merges into `merge/pre-release-core-pass-gate2`, never directly into `develop`.
-- Source of scope: the owner's ruling on the gate 2 result (decision 0245 item 1, reopened), accepting recommendation (a): a documented macro that turns the forced-inline attribute off, used in the sanitizer presets and in Clang's optimized presets.
+- Source of scope: the owner's ruling on the gate 2 result (decision 0245 item 1, reopened; decision 0246 item 1), accepting recommendation (a): a documented macro that turns the forced-inline attribute off, used in the sanitizer presets and in Clang's optimized presets.
 
 ### 18.1 Why
 
