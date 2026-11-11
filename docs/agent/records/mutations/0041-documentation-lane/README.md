@@ -15,6 +15,9 @@ Run by the tooling part's implementer (Claude, agent, Opus 5.5, build-expert rol
 
 - **`pages.toml` at `f44b332`: 4 killed on each preset, exit 0** (19.6 s for both presets, the row `mutate - pages.toml`). Each mutant is killed by the one test written for it, and by no other test of its selection: `page_unregistered` by `tests.docs_pages`, `prints_wrong` by `rga3.start_example_2`, `rejected_message_changed` by `rga3.start_rejected_1`, and `cmake_block_broken` by `rga3.readme_cmake_1`. Each selection names targets, so the driver's build re-ran CMake on the mutated page or registration before the tests ran.
 
+- **Both specs rerun against the final pages at `6ca81ad`** (the feature branch after the blind review's fixes and a merge of `develop`), by the merge-gate runner (Claude, agent, Opus 5.5), on the gcc-debug and clang-debug trees of that revision's P9 matrix: `tooling.toml` 10 killed on each preset (16.7 s, the row `mutate - tooling.toml`), `pages.toml` 5 killed on each preset (40.1 s, the row `mutate - pages.toml`), both exit 0, each mutant killed by the tests its spec names. `out/*.tsv` hold these rows and replace the earlier ones.
+- **`rejected_ignored` against the pages**, added to `pages.toml` at `6ca81ad` with a selection of every program and every `core.docs` and `rga3.docs` test: killed on both presets as the plan expects. Each of the seven `cpp rejected` blocks, read as a program, stops its own build at the static assertion its `// rejected:` line quotes (first page programs 2, 3 and 8; core guide 4, 11 and 17; limits page 2), and its rejected test is no longer registered, so the spec names no test as a killer.
+
 What the bare-compile mutants show, on both compilers:
 
 | Mutant | Killed by |
@@ -28,7 +31,7 @@ What the bare-compile mutants show, on both compilers:
 - **`throw_in_format` is killed, where the plan expected it to survive.** The plan's open item on `format.hpp` was ruled in favor of a third bare compile that prints one value, `test/docs/bare_format.cpp`, so the mutant now has a test written for it.
 - **Six mutants were added** for the tool's new modes (`rejected_literal_unchecked`, `rejected_literal_at_least_one`, `cmake_not_extracted`, `cmake_extracted_with_programs`, `pages_registration_ignored`, `pages_agent_read`), so that each rejection the fixture tests show is seen to fail. `rejected_ignored` is the plan's mutant, killed here by the fixture tests; the plan also expects it to fail the pages' rejected tests, which do not exist yet.
 - **Four mutants of the plan waited for the pages**, because what they edit did not exist at the tooling part's revision: `page_unregistered` (no `docs/guide/rga3.md`), `prints_wrong` (no first page), `rejected_message_changed` (no `cpp rejected` block in any page), and `cmake_block_broken` (no `cmake` block in the README). The pages part ran them from `pages.toml`, above.
-- **`rejected_ignored` was not rerun against the pages' rejected tests.** The plan also expects it to fail those tests; the pages part's brief listed only the four mutants above, and the tooling run's fixture kills stand.
+- **`rejected_ignored` against the pages' rejected tests** was not run by the pages part, whose brief listed only the four mutants above; the merge-gate runner ran it at `6ca81ad` (Results, above). It is killed by the blocks' failed builds, not by a named test, since the mutant unregisters the rejected tests.
 
 ## Notes for the pages' mutants
 
