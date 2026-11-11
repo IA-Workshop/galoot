@@ -31,11 +31,12 @@ using Full = core::mv<rga3::algebra, core::full<4>, double>;
 namespace {
 
 // A change of rigid(3) to itself that doubles e4, so that its image of a
-// point is the point with its e4 coefficient doubled.
+// point is the point with its e4 coefficient doubled. Maybe unused, since a
+// unit that holds one function alone uses it only for a change of basis.
 struct doubled_e4 {
   using source = rga3::algebra;
   using target = rga3::algebra;
-  static constexpr auto value = core::from_rows(
+  [[maybe_unused]] static constexpr auto value = core::from_rows(
       {
           {1, 0, 0, 0},
           {0, 1, 0, 0},
