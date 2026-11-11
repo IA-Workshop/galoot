@@ -876,10 +876,11 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// within min() to max(), an unsigned one, whose arithmetic is modular, when
 /// |c| is at most max(), and a binary floating type when the odd part of |c|
 /// fits its digits and |c| is below 2^max_exponent): each checked at compile
-/// time with its own message. A scalar without
-/// a specialization, such as std::complex<float>, must hold the coefficients
-/// exactly without a check, and so must one whose specialization lacks a
-/// member these checks read, which counts as no specialization. The code is one fold expression over the terms, and
+/// time with its own message. A scalar without a specialization, such as
+/// std::complex<float>, must hold the coefficients exactly without a check,
+/// and so must one whose specialization lacks a member these checks read,
+/// which counts as no specialization. The code is one fold expression over
+/// the terms, and
 /// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
 /// default limits has more than 1,024 terms. Measured at the default limits, at
 /// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
