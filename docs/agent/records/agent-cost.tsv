@@ -272,3 +272,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	kb-collected-sandwich	researcher-writer	opus	117817	25	344	kb/collected-sandwich-error merged in the knowledge base
 2026-11-10	plan-0041	planner	opus	246707	59	884	plan 0041 documentation lane, branch plan/documentation-lane aaba2f5, merged 4c95a7c
 2026-11-10	plan-0040	planner	opus	336982	86	1391	plan 0040 pre-release core pass, branch plan/pre-release-core-pass a15d53b, merged f801c06
+2026-11-10	plan-0040-D1	implementer 2	opus	234397	105	884	part D1 on feature/pre-release-core-pass--comments 75c94ca (interim notice figure; final may be higher)
