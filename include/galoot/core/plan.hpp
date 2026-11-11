@@ -615,56 +615,12 @@ template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B>
 /// R, and is the largest part for large sets. For a small set times a large
 /// one, T and R both grow with the size of the large set, so the placement
 /// grows as its square and can reach the limits with fewer terms than a
-/// product of two large sets. The geometric product of the scalar with
-/// full<10> in R(10,0,0), 1,024 terms on 1,024 blades, fails at GCC 16.2.1's
-/// default limit, though full<6> times full<6>, 4,096 terms on 64 blades,
-/// builds. The largest evaluation of the scalar's plan, the typing of its
-/// terms, needs about 89 million operations, measured with
-/// _GLIBCXX_ASSERTIONS and GCC's cache of constant calls on, and
-/// -fconstexpr-ops-limit=134217728 builds the product at -O0 with
-/// _GLIBCXX_ASSERTIONS and at -O2 without. On Clang 23 the scalar
-/// times full<8> fails at the default steps; -fconstexpr-steps sets Clang's
-/// limit. GCC may report that it ran out of operations as libstdc++'s
-/// std::span bounds check, a __builtin_expect in <span>, being "not a
-/// constant expression", although every index is in range. GCC also stops
-/// at a loop of 262,144 iterations, and so at a plan of that many terms.
-/// The counts below are exact for Clang 23.1, whose classic constant
-/// evaluator allows 1,048,576 steps by default, and for GCC 16.2, which
-/// allows 33,554,432 operations, each with libstdc++ 16 and
-/// _GLIBCXX_ASSERTIONS defined, which libstdc++ 16 defines by itself in a
-/// build without optimization unless _GLIBCXX_NO_ASSERTIONS is defined.
-/// GCC's counts are taken with its cache of constant calls turned off; with
-/// the cache on, as GCC builds by default, the count is never higher, so a
-/// GCC count over the limit does not mean that the plan fails to build.
-/// Without _GLIBCXX_ASSERTIONS, libstdc++ checks each subscript through a
-/// function call, which both compilers count as more; GCC's sanitizers add
-/// checks that GCC counts too, about 2% to 4% more; and another compiler
-/// version, evaluator, or standard library counts differently. The counts are
-/// those of the plan's own evaluations: a translation unit also evaluates
-/// other things, such as the check of an algebra's metric, done once for each
-/// algebra. For full<n> with full<n>, in steps on Clang and operations on
-/// GCC:
-/// - geometric product, R(n,0,0): n = 5, 655,239 and 3,611,426; n = 6,
-///   5,110,503 (over Clang's limit) and 25,853,002; n = 7, 203,069,770 on
-///   GCC (over its limit).
-/// - geometric product, the form with 2 on the diagonal and 1 elsewhere:
-///   n = 4, 681,823 and 3,645,825; n = 5, 8,319,054 and 44,407,055 (over
-///   both limits).
-/// - wedge, any metric: n = 5, 216,396 and 1,093,326; n = 6, 1,309,448
-///   (over Clang's limit) and 6,558,946; n = 7, 39,732,810 on GCC (over
-///   its limit).
-/// - geometric antiproduct, R(n,0,0): n = 5, 883,839 and 4,768,546 (in
-///   conformal(3), 947,839 steps on Clang); n = 6, 5,076,962 (over Clang's
-///   limit) and 25,775,777.
-/// - antiwedge, any metric: n = 5, 271,653 and 1,393,084; n = 6, 1,108,607
-///   (over Clang's limit) and 5,695,232; n = 7, 23,415,628 on GCC.
-/// Sets of a few blades cost what they use, except through an antiproduct,
-/// which multiplies the complements, whose grades grow with n: {1, e1, e_n,
-/// e1 e_n} with {e1, e2, e_n} in R(n-1,0,1) cost 3,136 steps and 18,252
-/// operations at every n from 4 to 16 through the geometric product, and
-/// 9,137 and 49,347 at n = 4 but 77,513 and 443,211 at n = 16 through the
-/// geometric antiproduct. At n = 16 the check of the algebra's metric costs
-/// more than the geometric product's plan of these sets.
+/// product of two large sets. Sets of a few blades cost what they use,
+/// except through an antiproduct, which multiplies the complements, whose
+/// grades grow with n. Clang's -fconstexpr-steps and GCC's
+/// -fconstexpr-ops-limit and -fconstexpr-loop-limit raise those limits, and
+/// the sizes measured on each compiler, with how each reports a failure, are
+/// in docs/guide/limits.md, under 'Compile-time limits: products and plans'.
 /// Guarantees: generated once in each translation unit for each Op, Alg, A,
 /// and B that it uses, because the generator keeps its steps in static
 /// constexpr locals (checked on Clang, where plain locals would generate it
@@ -971,14 +927,9 @@ template <UnaryOperation Op, metric_like Alg, blade_set S>
 /// its own term, and the two may land on one position of the result. The map
 /// is a constant evaluation, and typing it costs at most a fixed amount times
 /// the square of the size of S, so the compiler's limits bound S in
-/// practice. Counted as for product_plan, for the map of every blade,
-/// full<n>, in steps on Clang 23.1 and operations on GCC 16.2:
-/// - the reverse, the antireverse, and the grade involution: n = 7, 313,635
-///   and 1,577,666; n = 8, 1,251,192 (over Clang's limit) and 6,270,700;
-///   n = 9, 25,009,582 on GCC; n = 10, 99,912,902 on GCC (over its limit).
-/// - the right and the left complement: n = 8, 813,090 and 5,717,129;
-///   n = 9, 3,199,010 (over Clang's limit) and 22,509,577; n = 10,
-///   89,321,225 on GCC (over its limit).
+/// practice. The flags that raise them are those of product_plan, and the
+/// sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
 /// Guarantees: generated once in each translation unit for each Op, Alg, and
 /// S that it uses, as product_plan is. Term a is that of the blade at
 /// position a of S, on its own blade for the reverse, the antireverse, and
