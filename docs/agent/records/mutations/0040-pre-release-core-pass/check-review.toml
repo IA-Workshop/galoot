@@ -1,0 +1,71 @@
+# The mutants of the structure check's rules added after the blind
+# review's m2 and M1, each written for one of the fixture tests. The script
+# reads no compiler, so the two presets give one answer; both run.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.check]
+targets = []
+labels = '^tools\.kernels_inline$'
+
+# Conditional jumps are not read as branches.
+[[mutant]]
+name = "check_ignores_conditional_jump"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(call[lq]?|j[a-z]+)''', replacement = '''(call[lq]?|jmpq?)''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_conditional_jump"]
+
+# A call through a register is never reported.
+[[mutant]]
+name = "check_ignores_register_call"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        elif operand.startswith("*%") and operand[1:] in loaded:''', replacement = '''        elif False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_register_call"]
+
+# A register keeps the library's address after another load overwrites it.
+[[mutant]]
+name = "check_keeps_overwritten_register"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''                loaded.pop(load.group(2), None)''', replacement = '''                pass''' }]
+expect = "equivalent"
+reason = "no fixture loads a library address into a register and then overwrites it before a call through it; a false report, not a missed call, is all this fault can cause"
+
+# The explicit-object qualifier H is not read.
+[[mutant]]
+name = "check_ignores_explicit_object"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''_ZZ?N[KVrROH]*6galoot''', replacement = '''_ZZ?N[KVrRO]*6galoot''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_explicit_object"]
+
+# Assembly of another target is read as if it were x86-64.
+[[mutant]]
+name = "check_accepts_other_target"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    if not x86_64:''', replacement = '''    if False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_other_target"]
+
+# --alone puts every function of the source in every unit.
+[[mutant]]
+name = "alone_not_alone"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    common = [p for p in paragraphs if p not in owners.values()]''', replacement = '''    common = [p for p in paragraphs if p is not None]''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_alone_accepts"]
+
+# --alone does not refuse a name the source does not define.
+[[mutant]]
+name = "alone_skips_missing"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        if len(found) != 1:''', replacement = '''        if len(found) > 1:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_alone_rejects_missing_function"]

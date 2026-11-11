@@ -1,0 +1,248 @@
+# The attribute-removal mutants of plan 0040 section 8, run again after the
+# blind review's M1 on gcc-debug: one per attribute of GALOOT_ALWAYS_INLINE,
+# the thirteen of part A and the eleven the fix added, each judged by
+# rga3.kernels_inline and rga3.kernels_inline_alone. The thirteen keep the
+# verdicts of their first run as expectations; the eleven expect a kill
+# where a structure test showed the call, on this compiler.
+presets = ["gcc-debug"]
+
+[selection.inline]
+targets = ["rga3_kernels_inline_probe"]
+labels = '^rga3\.kernels_inline$'
+
+[[mutant]]
+name = "run_map_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_map(const std::array<T, KX>& x, std::index_sequence<K...> /*terms*/) {''', replacement = '''constexpr std::array<T, R>
+run_map(const std::array<T, KX>& x, std::index_sequence<K...> /*terms*/) {''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "run_product_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_product(const std::array<T, KX>& x, const std::array<T, KY>& y,''', replacement = '''constexpr std::array<T, R>
+run_product(const std::array<T, KX>& x, const std::array<T, KY>& y,''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "apply_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "apply_result_layout_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
+apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "equivalent"
+reason = "no function of the library calls this overload, so no probe function reaches it"
+
+[[mutant]]
+name = "unary_apply_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+apply(const mv<Alg, S, T>& x) {''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "unary_apply_result_layout_not_forced"
+selection = "inline"
+file = "include/galoot/core/mv.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
+apply(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
+apply(const mv<Alg, S, T>& x) {''' }]
+expect = "equivalent"
+reason = "no function of the library calls this overload, so no probe function reaches it"
+
+[[mutant]]
+name = "run_sum_not_forced"
+selection = "inline"
+file = "include/galoot/core/linear.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, R>
+run_sum(const std::array<T, NX>& x, const std::array<T, NY>& y,''', replacement = '''constexpr std::array<T, R>
+run_sum(const std::array<T, NX>& x, const std::array<T, NY>& y,''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "sum_not_forced"
+selection = "inline"
+file = "include/galoot/core/linear.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
+sum(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, Target, T>
+sum(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "run_change_not_forced"
+selection = "inline"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE constexpr std::array<T, sizeof...(R)>
+run_change(const std::array<T, K>& x, std::index_sequence<R...> /*result*/) {''', replacement = '''constexpr std::array<T, sizeof...(R)>
+run_change(const std::array<T, K>& x, std::index_sequence<R...> /*result*/) {''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "transform_middle_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_middle(const std::array<T, V.size()>& v,''', replacement = '''[[nodiscard]] constexpr auto
+transform_middle(const std::array<T, V.size()>& v,''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "transform_outer_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_outer(const std::array<T, M>& middle,''', replacement = '''[[nodiscard]] constexpr auto
+transform_outer(const std::array<T, M>& middle,''' }]
+expect = "survived"
+reason = "it survived its first run, before the public operations were forced"
+
+[[mutant]]
+name = "compose_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "transform_not_forced"
+selection = "inline"
+file = "include/galoot/core/transform.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, X, T>
+transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, X, T>
+transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "geometric_product_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+geometric_product(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+geometric_product(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "wedge_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+wedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+wedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "times_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+operator*(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+operator*(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "caret_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+operator^(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+operator^(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "geometric_antiproduct_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antiwedge_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+antiwedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+antiwedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "percent_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
+operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "ampersand_not_forced"
+selection = "inline"
+file = "include/galoot/core/product.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+operator&(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
+operator&(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "weight_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
+weight(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
+weight(const mv<Alg, S, T>& x) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "left_weight_dual_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, left_weight_dual_layout<Alg, S>, T>
+left_weight_dual(const mv<Alg, S, T>& x) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, left_weight_dual_layout<Alg, S>, T>
+left_weight_dual(const mv<Alg, S, T>& x) {''' }]
+expect = "killed"
+
+[[mutant]]
+name = "antidot_not_forced"
+selection = "inline"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''GALOOT_ALWAYS_INLINE
+[[nodiscard]] constexpr mv<Alg, antidot_layout<Alg, A, B>, T>
+antidot(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''', replacement = '''[[nodiscard]] constexpr mv<Alg, antidot_layout<Alg, A, B>, T>
+antidot(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {''' }]
+expect = "killed"

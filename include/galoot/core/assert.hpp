@@ -24,12 +24,21 @@
 /// and Clang, and nothing on another compiler.
 ///
 /// The core puts it on each function between a public operation and the
-/// generated code of the operation's terms, so that an operation compiles to
-/// the straight-line arithmetic of its terms at its call site, as a
-/// hand-written form would. Left to its own heuristics, a compiler can keep
+/// generated code of the operation's terms, and on the public operations
+/// that a compiler would otherwise keep out of line, so that an operation
+/// compiles to the straight-line arithmetic of its terms at its call site, as
+/// a hand-written form would. Left to its own heuristics, a compiler can keep
 /// some of those functions out of line at -O2, and the call then takes a
 /// large share of the operation's time. It is not part of the interface: a
 /// program neither uses nor defines it.
+///
+/// A function forced inline cannot be inlined into a caller compiled for
+/// fewer instruction-set features than its translation unit, and both
+/// compilers then stop with an error rather than call it. For example, in a
+/// file built with -march=x86-64-v3, a fallback declared
+/// [[gnu::target("arch=x86-64")]] that calls transform does not compile. Call
+/// such an operation from a function built for the file's own target, or put
+/// the fallback in a file of its own built for the fallback's target.
 // A macro, because the attribute is written only for the compilers that
 // know it.
 #if defined(__GNUC__) || defined(__clang__)
