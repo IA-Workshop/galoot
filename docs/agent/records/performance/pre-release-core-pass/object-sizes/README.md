@@ -25,3 +25,7 @@ bash docs/agent/records/performance/pre-release-core-pass/object-sizes/run.sh 80
 At `-O2` the code does not grow on either compiler. On Clang it shrinks, inferred to be the out-of-line `transform` and `run_product` bodies and E1's five calls to them, which `rga3.kernels_inline` shows gone; the objects were not compared function by function. On GCC, which already inlined them, the size is about the same. At `-O0` GCC's object grows by a tenth, because every call of a forced function now carries its body at `-O0` too, while Clang's shrinks a little. The advisory report's one-compile observation of assembly size at `-O0 -g` on a five-function probe (GCC +4.6%, Clang -2%) has the same direction; this is the object's text, on E1's seven functions, without `-g`.
 
 These are sizes, which do not vary between runs; one compile each. Build time and memory are the W10 campaign's (`../cost/`), at the feature tip.
+
+## At the feature tip
+
+Run again at `7a27f76`, after the merge of the comment parts (C, D and E), from a copy of `run.sh` writing to a scratch directory: every size is the same as at `d382516`, as expected of a change to comments only. Its eight compile rows are appended to `runs.tsv`.
