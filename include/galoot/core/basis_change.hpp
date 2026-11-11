@@ -1042,7 +1042,7 @@ constexpr void divide_by(T& out) {
 // redundant once the fold is expanded.
 // NOLINTBEGIN(readability-redundant-parentheses)
 template <const auto& Map, class T, std::size_t K, std::size_t... R>
-constexpr std::array<T, sizeof...(R)>
+GALOOT_ALWAYS_INLINE constexpr std::array<T, sizeof...(R)>
 run_change(const std::array<T, K>& x, std::index_sequence<R...> /*result*/) {
   std::array<T, sizeof...(R)> out = run_map<Map.terms, sizeof...(R)>(
       x, std::make_index_sequence<Map.terms.size()>{});
