@@ -1,6 +1,6 @@
 # 0038 WU17 (M7): cost evidence, Spike E, and the inherited cost-model items
 
-- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5), planner, with the performance-engineer's and numerical-expert's questions worked in by the planner (no separate specialist agent was run for this plan). From `develop` at `3199ab1`. No implementation has started.
+- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5), planner, with the performance-engineer's and numerical-expert's questions worked in by the planner (no separate specialist agent was run for this plan). From `develop` at `3199ab1`. Closed 2026-11-11 with parts A to F done and merged (`5444671`, `fd2ccd9`, `fe4791b`, `3e5c4f5` and `2de0d36`, `c31415d`, `1e573ad`); the E1 and E2 reruns after the forced inlining and parts G and H are deferred past 1.0 (decision 0246 item 2). Outcome in section 14.
 - Source of scope: plan 0001 (section 4, DoD-22 to DoD-25; section 6, the M7 row and the phase mapping, "phase 4 is M7 (collected plans only; SIMD lane packs are extension scalars)", and "'within 10% of Terathon' becomes DoD-24 and is recorded, not gated"; section 8, WU17 "Cost evidence: P2 grid, P4 assembly reads, benchmark harness, first performance records, Spike E"; section 9, Spike E; the addenda through 2026-11-10); decisions 0005 (P2's reading), 0008 (D8, collected plans decided at M7), 0013 (track, never assert), 0014 (owned harness under `test/bench/`), 0080 and its two amendments (the compile-record copy), 0141 item 4 (antiproduct cost at n = 4 and the largest n), 0215 item 10 (the evaluation counter stays for WU17), 0229 item 3 and 0230 items 1 and 2 (the `cost.py comments` list and the verify files at WU17's refit); handoff 2026-11-07-second item 10 (the 0080 copy at the final revision; the unexplained Clang 49-against-48 count of `compose`); plan 0021 sections R5, 8 and its outcome (the restricted kernels' counts as Spike E's baseline); plan 0023 (DoD-24's rga3 items stay with M7); the snippets review `snippets/reviews/M5.md`.
 - Feature branch: `feature/cost-evidence`, worktree `.claude/worktrees/cost-evidence`, from `develop` after this claim. Parts (W7, decision 0188), each with its own worktree under `.claude/worktrees/`:
   - `feature/cost-evidence--model`: the `cost.py comments` list (part A) and, last, the cost model's verify refresh (part G);
@@ -148,3 +148,44 @@ About 2.3 M tokens in all: A 80k; B 400k (two specialists); C 450k (tests, code,
 ## 13. Next step
 
 The coordinator puts O2 to O10 to the owner, then launches A and B (they need no ruling under the defaults). Nothing under `include/` changes in this unit.
+
+## 14. Outcome
+
+Recorded 2026-11-11 by Claude (agent, Sonnet 5.5), records implementer, from the repository at `3a2aa32`. Parts A to F were done between 2026-11-10 and 2026-11-11; this section reports each criterion against the files, and does not repeat their figures.
+
+### Departures from this plan
+
+1. **Parts G and H were not done, and the E1 and E2 reruns were not done after the forced inlining.** Decision 0238 item 1 ordered them after a core inlining unit, and decision 0240 item 1 moved that unit (plan 0040) before the M7 gate. Decision 0246 item 2 then deferred the reruns of E1 and E2 (with the probe's added functions), G and H past 1.0, since the release makes no claim that depends on them. The release record states the date of every baseline it cites. Criteria 9 and 10 are therefore open by ruling, and `records/performance/wu17-baseline/` does not exist.
+2. **E1, E2 and E3 measure the code before the forced inlining.** E1 and E3 ran at `18849b5` and E2 at `2de0d36` (the inline reference kernels; `include/` is the same at both). The core pass changed the kernels afterward (decisions 0244 and 0246).
+3. **DoD-24's reading** is decision 0233 item 2 (the counts of the kernels as specified, form A, collected counts beside them). D8 is decision 0239 item 1: collected plans are deferred past 1.0.
+4. **Clang's out-of-line calls** (decision 0233 item 3). E2's inline rerun found the condition for a core inlining unit met (`wu17-bench/README.md`, "For decision 0237 item 3"); decision 0238 item 1 ordered the unit, and it ran as plan 0040. The calls were not re-read afterward for the seven operations beyond the structural test of plan 0040; plan 0042 states what remains unclaimed.
+5. **Part B's author ran as Sonnet** by an error in the launch (decision 0234 item 8); the independent check ran as Opus and agreed with every count.
+6. **The reference kernels were first measured out of line.** E2's first run is kept as `wu17-bench/first-run-out-of-line/`; decision 0237 item 2 added the inline unit (`2de0d36`, reviewed in `records/reviews/2026-11-10-wu17-bench-inline-blind.md`).
+7. **Benchmark method.** The plan listed a decision record for the benchmark method and its difference criterion. None was written; the method is in section 4 item 6 and in the protocol of `wu17-bench/README.md`, fixed before the run.
+8. **The evaluation counter** was not used (decision 0233 item 7); the M7 snippets review deletes it.
+
+### Criteria
+
+| Criterion | State | Where |
+| --- | --- | --- |
+| 1. A, `cost.py comments` list | Done; blind review | merge `5444671`; `records/reviews/2026-11-10-wu17-part-a-blind.md` |
+| 2. B, derivations and counts | Done; checked independently, every count reproduced; the 54 and 35 errata counts are not reproduced as a pair, recorded as a counting-rule difference | merge `fd2ccd9`; `records/spikes/spike-e/`; `records/reviews/2026-11-10-wu17-part-b-check.md`; decision 0234 |
+| 3. C, counting scalar and operation counts | Done; passes in every preset; blind and delta reviews | merge `fe4791b`; `records/reviews/2026-11-10-wu17-part-c-blind.md`, `-delta.md` |
+| 4. D, harness, reference kernels, smoke tests | Done; blind and delta reviews, and one for the inline change | merges `3e5c4f5`, `2de0d36`; `records/reviews/2026-11-10-wu17-part-d-blind.md`, `-delta.md`, `2026-11-10-wu17-bench-inline-blind.md`; `wu17-bench/part-d-build-cost.md` |
+| 5. E1, assembly read | Done at `18849b5`: no blade branch, no allocation; Clang's 49 for `compose` traced to a padding lane; Clang's calls recorded as found | `records/performance/wu17-asm/` |
+| 6. E2, benchmarks | Done at `18849b5` (first run, out of line) and `2de0d36` (inline rerun), CPU 4, under the lock, seed 20261110. Under the strict reading Galoot is slower in 10 of 22 loops and faster in 6 | `records/performance/wu17-bench/`; decisions 0237, 0238 |
+| 7. E3, growth grid | Done at `18849b5`, repeated; the antiproduct's figures are entered against decision 0141, and `bulk_dual`'s growth is found and now recorded as decision 0247 | `records/performance/wu17-growth/`; decisions 0237 item 5, 0247 |
+| 8. F, Spike E | Done; independent check; D8 ruled: no collected plans in 1.0 | merge `c31415d`; `research-notes/0027-collected-plans-spike-e.md`; `records/reviews/2026-11-10-spike-e-note-check.md`; decision 0239 |
+| 9. G, cost model refresh | Not done, deferred past 1.0 | decision 0246 item 2 |
+| 10. H, compile record and baseline | Not done, deferred past 1.0; DoD-22's rows come from the release matrix in shared mode | decision 0246 item 2; plan 0042 section 1 item 5 |
+| 11. Mutants | Done for parts C and D: gap mutants and the new tests' mutants, with the verdicts of the gap and tip runs | `records/mutations/0038-cost-evidence/` |
+| 12. Review and merges | Each feature part reviewed; `develop` took the merge `43cc6da`, the research merge `c31415d` and the measurements merge `1e573ad` | the merge messages carry the P13 lines |
+| 13. Records | Decisions 0233 to 0239; this outcome; agent cost rows in `records/agent-cost.tsv` | |
+
+### Verification and validation
+
+Verification: the counts are checked in every preset by `rga3.op_counts_<mode>` against `golden.py`, which shares no code with the library, and the reference kernels equal the library's operations in `rga3.reference_kernels` and the benchmark smoke tests. Validation: the published counts of the errata page were recomputed (secondary; the book is unread, V9). Performance figures are track-only (C14) and are recorded, not validated.
+
+### Left for after 1.0
+
+The E1 and E2 reruns on the forced-inline code, G, H, the baseline directory, the batch-under-one-motor interface (decision 0239 item 1) and the growth of `bulk_dual` and the antiproduct under decisions 0247 and 0141.
