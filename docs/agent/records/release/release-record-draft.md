@@ -64,3 +64,10 @@ Each is a departure the owner has accepted or deferred. None is a blocking defec
 - Owner walkthrough: ____. Open blocking defects: ____.
 - Plans closed (DoD-28): see `plan-closures.md`: ____.
 - Version and tag: owner.
+
+## Must fill before the release commit
+
+- The README's `FetchContent` block carries the placeholders `<galoot-repository-url>` and `<release-tag>`: owner supplies both (decision 0241 item 4): ____.
+- `CMakeLists.txt` `VERSION` (now 0.1.0): ____.
+- The study byline, if the owner names an author (decision 0241 item 3): ____.
+- Known friction to state: debug-build compile cost after forced inlining (the pre-release core pass's cost records), `-Os` builds still calling into the library, the one-blade conversion message (the compiler's own error), and contraction changing the last bits under `-ffp-contract=fast` (decision 0243).
