@@ -233,7 +233,11 @@ double direction_z() { return short_line.coefficients[2]; }
 Values of the same type compare with `==` and `!=`, coefficient by
 coefficient and exactly; over a floating scalar that is IEEE equality, so
 −0.0 equals +0.0 and a NaN makes two values unequal. Values of different
-layouts, algebras, or scalar types have no `==`: convert one first. A
+layouts, algebras, or scalar types have no `==`: convert one first. The
+compiler then reports no match for `operator==` between two `mv<...>`
+types printed in full, each with its layout spelled as a `blade_set` of
+masks and signs; two types that differ only in that list are two layouts of
+one algebra. A
 multivector has no `<<`; see [printing](#printing).
 
 ## Reading and writing coefficients
@@ -524,9 +528,11 @@ C++ fixes the precedence of each operator, and two of them surprise. `^` and
 `&` bind more loosely than `==`, `+`, and `*`, so `p ^ q == l` means
 `p ^ (q == l)` and `a ^ b + c` means `a ^ (b + c)`: parenthesize every join
 and meet that stands beside another operator. `%` binds as `*` does, left to
-right. `!x` is a multivector, not a `bool`, so `if (!x)` does not compile;
-write a comparison as `(!x) == y`, since GCC warns that `!x == y` may mean
-`!(x == y)`.
+right. `!x` is a multivector, not a `bool`, so `if (!x)` does not compile.
+Like a product's, its result is on its own canonical layout, so compare it
+with a named type after converting it, `Plane{!x} == y`, and with a value of
+its own layout in parentheses, `(!x) == y`, since GCC warns that `!x == y`
+may mean `!(x == y)`.
 
 ```cpp
 #include <galoot/core.hpp>
