@@ -304,3 +304,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0040-gate2	gate runner	opus	259346	134	8493	gate2 merge/pre-release-core-pass-gate2 54f2487: matrix red, clang-asan stopped for memory, gcc-asan 5368 s; develop not moved
 2026-11-11	plan-0040-inline-opt-out	implementer	opus	291888	114	1423	feature/pre-release-core-pass--inline-opt-out 048aac5: GALOOT_FORCE_INLINE macro, cache option, four presets
 2026-11-11	plan-0040-opt-out-delta-review	blind-reviewer	opus	202791	50	649	delta review 54f2487..048aac5, review/pre-release-core-pass-inline-opt-out 3deebff: approve with minors
+2026-11-11	plan-0040-opt-out-fixes	implementer	opus	190502	75	750	feature/pre-release-core-pass--inline-opt-out b517977: strict macro check, forced twin, clang-measure forced
