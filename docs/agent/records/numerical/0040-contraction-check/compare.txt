@@ -1,0 +1,35 @@
+Checked against unchecked, and mode against mode: coefficients whose bits differ
+  gcc-off-c0 vs gcc-off-c1: 0 of 204000
+  gcc-on-c0 vs gcc-on-c1: 0 of 204000
+  gcc-fast-c0 vs gcc-fast-c1: 29110 of 204000 (cga3-bivector-2flat d 6133/30000; cga3-bivector-2flat f 6632/30000; cga3-vector-1hyp d 4305/15000; cga3-vector-1hyp f 4524/15000; cga3-vector-2flat d 934/15000; cga3-vector-2flat f 2000/15000; rga3-plane d 2823/12000; rga3-plane f 765/12000; rga3-point d 994/12000)
+  gcc-fastnv-c0 vs gcc-fastnv-c1: 10253 of 204000 (cga3-bivector-2flat d 2409/30000; cga3-bivector-2flat f 2484/30000; cga3-vector-1hyp d 1526/15000; cga3-vector-1hyp f 1553/15000; cga3-vector-2flat d 611/15000; cga3-vector-2flat f 1670/15000)
+  clang-off-c0 vs clang-off-c1: 0 of 204000
+  clang-on-c0 vs clang-on-c1: 0 of 204000
+  clang-fast-c0 vs clang-fast-c1: 21024 of 204000 (cga3-bivector-2flat d 2219/30000; cga3-bivector-2flat f 2249/30000; cga3-vector-1hyp d 6232/15000; cga3-vector-1hyp f 4306/15000; cga3-vector-2flat d 1560/15000; cga3-vector-2flat f 1665/15000; rga3-plane d 2793/12000)
+  clang-fastnv-c0 vs clang-fastnv-c1: 10825 of 204000 (cga3-bivector-2flat d 2219/30000; cga3-bivector-2flat f 2249/30000; cga3-vector-1hyp d 1548/15000; cga3-vector-1hyp f 1584/15000; cga3-vector-2flat d 1560/15000; cga3-vector-2flat f 1665/15000)
+  gcc-off-c0 vs clang-off-c0: 0 of 204000
+  gcc-off-c0 vs gcc-on-c0: 0 of 204000
+  clang-off-c0 vs clang-on-c0: 0 of 204000
+  gcc-off-c0 vs gcc-fast-c0: 101171 of 204000 (cga3-bivector-2flat d 14975/30000; cga3-bivector-2flat f 15813/30000; cga3-vector-1hyp d 7637/15000; cga3-vector-1hyp f 7519/15000; cga3-vector-2flat d 6089/15000; cga3-vector-2flat f 6351/15000; rga3-line d 9968/18000; rga3-line f 9915/18000; rga3-plane d 6042/12000; rga3-plane f 6062/12000; rga3-point d 5434/12000; rga3-point f 5366/12000)
+  clang-off-c0 vs clang-fast-c0: 95741 of 204000 (cga3-bivector-2flat d 14690/30000; cga3-bivector-2flat f 15224/30000; cga3-vector-1hyp d 7504/15000; cga3-vector-1hyp f 6753/15000; cga3-vector-2flat d 6190/15000; cga3-vector-2flat f 6433/15000; rga3-line d 8585/18000; rga3-line f 7843/18000; rga3-plane d 4644/12000; rga3-plane f 6308/12000; rga3-point d 5811/12000; rga3-point f 5756/12000)
+  gcc-fast-c0 vs clang-fast-c0: 53655 of 204000 (cga3-bivector-2flat d 7116/30000; cga3-bivector-2flat f 8024/30000; cga3-vector-1hyp d 4673/15000; cga3-vector-1hyp f 5689/15000; cga3-vector-2flat d 749/15000; cga3-vector-2flat f 749/15000; rga3-line d 7047/18000; rga3-line f 8032/18000; rga3-plane d 4431/12000; rga3-plane f 3576/12000; rga3-point d 1852/12000; rga3-point f 1717/12000)
+  gcc-fastnv-c0 vs gcc-fast-c0: 24908 of 204000 (cga3-bivector-2flat d 4426/30000; cga3-bivector-2flat f 4983/30000; cga3-vector-1hyp d 3546/15000; cga3-vector-1hyp f 3676/15000; cga3-vector-2flat d 323/15000; cga3-vector-2flat f 330/15000; rga3-plane d 2823/12000; rga3-plane f 2874/12000; rga3-point d 994/12000; rga3-point f 933/12000)
+  clang-fastnv-c0 vs clang-fast-c0: 26745 of 204000 (cga3-vector-1hyp d 3096/15000; cga3-vector-1hyp f 3312/15000; rga3-line d 7330/18000; rga3-line f 8317/18000; rga3-plane d 4690/12000)
+
+Constant evaluation against run time (32 cases per family and scalar): coefficients whose bits differ
+  clang-fast-c0: 1005 of 2176
+  clang-fast-c1: 946 of 2176
+  clang-fastnv-c0: 1066 of 2176
+  clang-fastnv-c1: 1033 of 2176
+  clang-off-c0: 0 of 2176
+  clang-off-c1: 0 of 2176
+  clang-on-c0: 0 of 2176
+  clang-on-c1: 0 of 2176
+  gcc-fast-c0: 1039 of 2176
+  gcc-fast-c1: 1022 of 2176
+  gcc-fastnv-c0: 1061 of 2176
+  gcc-fastnv-c1: 1024 of 2176
+  gcc-off-c0: 0 of 2176
+  gcc-off-c1: 0 of 2176
+  gcc-on-c0: 0 of 2176
+  gcc-on-c1: 0 of 2176

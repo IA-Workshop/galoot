@@ -1,0 +1,7 @@
+# 0243 Contraction and the checked and unchecked paths
+
+Date: 2026-11-10. Source: `docs/agent/records/numerical/0040-contraction-check.md`.
+
+1. **Addendum to decision 0180 item 1.** The bound and the check's verdict on a versor hold under any multiply-add contraction (derived, and checked with GCC 16.2.1 and Clang 23.1.4). The statement that the kept coefficients are bitwise those of the unchecked path holds only when the build does not fuse multiply-adds across statements (`-ffp-contract=off` or `on`). Under `-ffp-contract=fast`, GCC's default for C++ on a target with fused multiply-add, the two paths can differ in the last bits, each within the forward error bound: 10% to 14% of coefficients between a checking and a non-checking build, 43% to 49% between constant evaluation and run time, in the record's measurements. The project's presets build for baseline x86-64, where nothing is fused.
+2. **Wording.** The `transform` comment states the record's sentences T1 and T2 (T2 as written, not the weaker form), and the limits page states L1 and L2 beside each other, so the variation is declared (V14). Part E of the pre-release core pass carries the comment; the documentation lane carries the page.
+3. **No contraction build in the test matrix for 1.0.** The claim rests on the derivation and the record; the owner may add a contraction preset at the M6 revisit of the check. (Owner item, recommended as stated.)
