@@ -109,7 +109,10 @@ endforeach()
 # launcher, since its output is assembly and not an object. The script reads
 # x86-64 assembly, so the two tests exist only where the target is x86-64; on
 # another target they are not registered, rather than fail on assembly they
-# cannot read. The probe is also compiled once with the build's own flags,
+# cannot read. The guard reads the host's CMAKE_SYSTEM_PROCESSOR, so an
+# x86-64 host that cross-builds for another target without a toolchain file
+# that sets it registers the tests, and the script then passes that target's
+# assembly unread. The probe is also compiled once with the build's own flags,
 # so that every build's warnings and the static checks see it.
 set(kernels_inline_functions wedge_point_point wedge_point_point_point
   antiwedge_line_plane transform_point transform_line transform_plane
