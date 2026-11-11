@@ -283,4 +283,40 @@ The coordinator merges this plan into `develop` and rules K1 to K11 (the default
 
 ## 17. Outcome
 
-Not started.
+Not yet recorded: the merge gate writes it when this unit merges into `develop`.
+
+### Deferred from the review records
+
+- **m5 of the blind review** (the hint of the deleted `==` reaches the user only in the source line the compiler echoes, and is lost where the excerpt is not shown). Not a defect of this unit: it is the form decision 0236 item 3 chose, and C++26's `= delete("reason")` would put the hint on the error line, which STYLE S2 allows only in an optional header. Deferred to the owner, for after 1.0 or for a move to C++26.
+
+## 18. Addendum: an opt-out of the forced inlining (after gate 2)
+
+- Status: added 2026-11-11 by Claude (agent, Opus 5.5), implementer of this addendum, on `feature/pre-release-core-pass--inline-opt-out`, worktree `.claude/worktrees/pre-release-core-pass--inline-opt-out`, from `merge/pre-release-core-pass-gate2` at `54f2487`. This addendum is the claim of the unit (W3, W7); it merges into `merge/pre-release-core-pass-gate2`, never directly into `develop`.
+- Source of scope: the owner's ruling on the gate 2 result (decision 0245 item 1, reopened), accepting recommendation (a): a documented macro that turns the forced-inline attribute off, used in the sanitizer presets and in Clang's optimized presets.
+
+### 18.1 Why
+
+Gate 2 ran the P9 matrix at `a310a2f`. With the public operations forced (decision 0244 item 1), the identity test units cost far more in the sanitizer and the optimized Clang builds than at `ed9288f`, the last `develop` before this unit: gcc-asan 5,367.6 s against 248.4 s, one compile (`identities_four_test.cpp`) at 22.0 GB peak; clang-asan stopped at 216 of 237 build steps with 8 to 16 GB per compile; clang-release 665.1 s against 118.5 s (`identities_rounding_test.cpp` 600.0 s); clang-measure 666.0 s against 116.1 s. gcc-debug, gcc-release, clang-debug, lint and gcc-measure stayed within about 1.6 times their `ed9288f` times, so they keep the attribute.
+
+### 18.2 Goal and definition of done
+
+1. A public macro, documented where `GALOOT_CHECKING` is (the README and the core guide), turns `GALOOT_ALWAYS_INLINE` into nothing. It follows `GALOOT_CHECKING`'s form: a value of 0 or 1, 1 by default, any other value an `#error`.
+2. The build passes the opt-out to every target that links `galoot::core` when a cache option says so, and the presets gcc-asan, clang-asan, clang-release and clang-measure say so. No other preset changes. The structure tests `rga3.kernels_inline` and `rga3.kernels_inline_alone` keep their fixed flags and do not see the opt-out, in any preset.
+3. Tests first (W2): the opt-out makes the attribute expand to nothing and the default keeps it (a program built in each mode); the code gives the same values with the opt-out (the reference-kernel test built again with it); a value other than 0 or 1 stops the compile with one error; and `core.smoke` checks that the mode the build declares reaches the code.
+4. W10: the six identity units of the gate's evidence (`identities_rounding_test`, `identities_five_diagonal`, `identities_four`, `identities_conformal3`, `identities_five_drawn`, `identities_five_dense`) built under gcc-asan, clang-release and clang-asan with the opt-out, through `tools/timed` and the compile-cost launcher, with time and peak memory recorded under `records/performance/pre-release-core-pass/opt-out/` against the gate's figures and those of `ed9288f`. A compile above 20 GiB, or free memory below 20 GiB, stops the run, which is then reported.
+5. Records: decision 0244 gains an item for the opt-out and one for the bare `git stash` of part D1; the Resolution sections of the four review records are filled in.
+
+### 18.3 Acceptance criteria
+
+- The new tests and the selection P8 gives the change (the core and rga3 suites, the docs tests of the README and the core guide, the format check, `tools/runlog check`) pass on gcc-debug and clang-debug, and the lint preset passes on the changed files.
+- The new tests fail on the mutants of 18.4 (`records/mutations/0040-pre-release-core-pass/opt-out.toml`).
+- The six units' records exist for the three presets, or the run is reported as stopped under item 4's rule.
+- The full P9 matrix is not run here; the next gate runner runs it.
+
+### 18.4 Mutants
+
+`opt_out_ignored` (the macro's value is not read, so the attribute stays on) must be killed by the program built with the opt-out; `opt_out_always` (the attribute is never on) by the program built with the default; `value_unchecked` (the `#error` removed) by the compile-fail test. Run with `tools/mutate` on gcc-debug and clang-debug.
+
+### 18.5 Agent cost estimate
+
+About 300k to 500k tokens of Opus 5.5, most of it in reading the records and in the W10 runs.
