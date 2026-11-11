@@ -8,8 +8,23 @@ about ten minutes to read.
 
 The examples use the rga3 preset, the rigid geometric algebra of three
 dimensions. A point is written (x, y, z, w), with weight w; e1, e2, and e3
-are the axes and e4 is the projective generator, which squares to zero. The
-rest of the guide is in three pages: [the core](core.md), [the rga3
+are the axes and e4 is the projective generator, which squares to zero.
+Each object is constructed from its coefficients in the order its layout
+lists its blades:
+
+| Object | Coefficients, in order | On the blades |
+| --- | --- | --- |
+| `Point<T>` | x, y, z, w | e1, e2, e3, e4 |
+| `Line<T>` | direction vx, vy, vz, then moment mx, my, mz | e41, e42, e43, then e23, e31, e12 |
+| `Plane<T>` | normal gx, gy, gz, then offset gw | e423, e431, e412, then e321 |
+| `Motor<T>` | vx, vy, vz, vw, then mx, my, mz, mw | e41, e42, e43, e1234, then e23, e31, e12, 1 |
+| `Flector<T>` | px, py, pz, pw, then gx, gy, gz, gw | e1, e2, e3, e4, then e423, e431, e412, e321 |
+
+So `Line<double>{0, 0, 1, 0, 0, 0}` is the z axis through the origin, and a
+point (x, y, z, w) lies on the plane (gx, gy, gz, gw) when
+gx x + gy y + gz z + gw w = 0. A motor holds half of each angle and
+distance; [the rga3 guide](rga3.md) gives each object's meaning. The rest
+of the guide is in three pages: [the core](core.md), [the rga3
 preset](rga3.md), and [the limits](limits.md).
 
 ## 1. Results live on their own layouts
@@ -17,10 +32,17 @@ preset](rga3.md), and [the limits](limits.md).
 A product does not return a named type such as `Line`. Its result is stored
 on the blades the product can reach, each with its canonical orientation
 (indices in increasing order, sign +1), and that layout has no name of its
-own. Convert the result to a named type with braces: `Line{p ^ q}`,
-`Motor{compose(b, a)}`. The conversion is explicit, so
-`const Motor m = compose(b, a);` does not compile; the compiler reports
-that no conversion exists. With `auto`, the value keeps the canonical
+own. The same holds for the meet `l & g`, the right complement `!x`, the
+antiproduct `a % b`, and `compose`. Convert the result to a named type with
+braces: `Line{p ^ q}`, `Point{l & g}`, `Plane{!p}`, `Motor{compose(b, a)}`.
+The conversion is explicit, so `const Motor m = compose(b, a);` does not
+compile; the compiler reports that no conversion exists. Values compare
+with `==` only on one layout, so convert before comparing:
+`Line{p ^ q} == l`. A mismatch is reported as no match for `operator==`,
+or no conversion, between two `mv<...>` types that the compiler prints in
+full: each type spells its layout as a `blade_set` of masks and signs, and
+two types that differ only in that list are two layouts of one algebra,
+one of which must be converted. With `auto`, the value keeps the canonical
 layout, and is read and printed by canonical names: the join of two points
 holds its direction on e14, e24, e34, where a `Line` holds it on e41, e42,
 e43, with the opposite signs.
@@ -64,10 +86,14 @@ More: [result layouts](core.md#result-layouts) and
 ## 2. Scalars must match exactly
 
 A multivector over `double` is scaled only by a `double`. `2 * line` is
-rejected, with a message that says to write `2.0`; the same holds for
-`a * s` and `a / s`. The rga3 constructors follow the same rule:
-`translation(1.0, 0, 2)` and `rotation(line, 1)` are rejected, and
-`translation(1.0, 0.0, 2.0)` and `rotation(line, 1.0)` are accepted. A
+rejected, with a message that says to convert 2 to the multivector's scalar
+type, as 2.0 for 2 over `double`; the same holds for `a * s` and `a / s`.
+The rga3 constructors follow the same rule, each with its own message.
+`translation(1.0, 0, 2)` is rejected because its three numbers are not of
+one type, and `translation(1, 2, 3)`, all `int`, because halving a distance
+would truncate in an integer type. `rotation(line, 1)` is rejected because
+the angle is not of the line's scalar type. `translation(1.0, 0.0, 2.0)` and
+`rotation(line, 1.0)` are accepted. A
 coefficient written in braces is the exception, as in brace initialization
 anywhere: `Line<double>{0, 0, 1, 0, 0, 0}` takes integer literals.
 
@@ -80,7 +106,19 @@ using Line = galoot::presets::rga3::Line<double>;
 Line twice(const Line& line) { return 2 * line; }
 ```
 
-Written with `double` values throughout, the same work compiles:
+```cpp rejected
+// rejected: translation: dx, dy, and dz are not all of one scalar type, the types shown
+#include <galoot/presets/rga3.hpp>
+
+using Motor = galoot::presets::rga3::Motor<double>;
+
+Motor up_and_over() { return galoot::presets::rga3::translation(1.0, 0, 2); }
+```
+
+Written with `double` values throughout, the same work compiles. The
+examples qualify `rotation` as `rga3::rotation`, as they must
+`translation`, so that both motions read alike; argument-dependent lookup
+would also find `rotation` unqualified, through its `Line` argument:
 
 ```cpp
 #include <print>
@@ -96,7 +134,7 @@ int main() {
 
   // rotation divides the axis by the length of its direction, so the
   // doubled axis turns by the same 1 radian as z_axis would.
-  const rga3::Motor<double> turn = rotation(doubled, 1.0);
+  const rga3::Motor<double> turn = rga3::rotation(doubled, 1.0);
   const rga3::Motor<double> move = rga3::translation(1.0, 0.0, 2.0);
   const rga3::Motor<double> motion{core::compose(move, turn)};
 
@@ -123,8 +161,11 @@ complement, fixed on each blade u by u ∧ !u = e1234. So `!x` is a
 multivector, not a `bool`: `if (!x)` does not compile. And `!!x` is not x:
 it is x with each blade multiplied by (−1) to the power of its grade times
 its antigrade, so in rigid(3), where a point's blades have grade 1 and
-antigrade 3, `!!p` is `-p`. Parenthesize a complement in a comparison,
-`(!x) == y`; GCC warns that `!x == y` may mean `!(x == y)`.
+antigrade 3, `!!p` is `-p`. Like a product, `!x` is on a layout of its
+own, the complements of x's blades in canonical order, so convert it before
+comparing it with a named type: `Plane{!p} == g`. To compare it with a value
+of its own layout, parenthesize it, `(!x) == y`, since GCC warns that
+`!x == y` may mean `!(x == y)`.
 
 ```cpp
 #include <galoot/presets/rga3.hpp>

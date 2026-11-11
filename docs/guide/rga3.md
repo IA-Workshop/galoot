@@ -171,8 +171,10 @@ d = (dx, dy, dz), with d / 2 on e23, e31, e12 and 1 on e1234. A point of
 weight w moves by w d, so a direction is unchanged. Its three arguments have
 one type, and an integer type is rejected, since halving d would truncate.
 It takes plain numbers, which name no namespace of the preset, so it is
-always called by its full name, `galoot::presets::rga3::translation`;
-`rotation` is found through its `Line` argument.
+always called by its full name, `galoot::presets::rga3::translation`.
+`rotation` is found through its `Line` argument, so it works unqualified as
+well; the examples write `rga3::rotation`, as the README does, so that the
+two motions read alike.
 
 Both build unitized motors, for which `transform` keeps the weight of what
 it moves.
@@ -205,7 +207,7 @@ int main() {
 
   // About it, (2, 0, 0) is 1 from the axis along x, and a quarter turn takes
   // that offset to 1 along y: (1, 1, 0). The weight stays 1.
-  show(core::transform(Point{2, 0, 0, 1}, rotation(axis, quarter)));
+  show(core::transform(Point{2, 0, 0, 1}, rga3::rotation(axis, quarter)));
   // prints: (1.000, 1.000, 0.000) at weight 1.000
 
   // A move by (1, 2, 3) shifts the point (1, 0, 0) and leaves the direction
@@ -239,7 +241,7 @@ using Motor = rga3::Motor<double>;
 
 int main() {
   const Line z_axis{0, 0, 1, 0, 0, 0};
-  const Motor turn = rotation(z_axis, std::numbers::pi / 2);
+  const Motor turn = rga3::rotation(z_axis, std::numbers::pi / 2);
   const Motor move = rga3::translation(1.0, 0.0, 0.0);
   const Point p{1, 0, 0, 1};
 
