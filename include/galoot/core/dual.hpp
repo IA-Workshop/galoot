@@ -611,6 +611,7 @@ constexpr std::remove_cvref_t<X> antidot(const X& /*a*/, const Y& /*b*/) {
 /// with a message that names project.
 /// Guarantees: on project_layout<Alg, A, B>.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, project_layout<Alg, A, B>, T>
 project(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
   constexpr bool scalar_holds_every_coefficient_of_the_projection =
@@ -648,6 +649,7 @@ constexpr std::remove_cvref_t<X> project(const X& /*a*/, const Y& /*b*/) {
 /// Guarantees: on antiproject_layout<Alg, A, B>, canonical; read it back
 /// under a named layout, as Plane{antiproject(g, p)}.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, antiproject_layout<Alg, A, B>, T>
 antiproject(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
   constexpr bool scalar_holds_every_coefficient_of_the_antiprojection =
