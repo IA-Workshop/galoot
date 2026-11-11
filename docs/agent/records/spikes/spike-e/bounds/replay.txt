@@ -1,0 +1,11 @@
+PASS dropped K of point: library [12, 5, 5, 5], script [12, 5, 5, 5]
+PASS dropped K of line: library [14, 7], script [14, 7]
+PASS dropped K of plane: library [12, 12, 12, 7], script [12, 12, 12, 7]
+PASS double compose: 2400 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS double line: 1800 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS double plane: 1200 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS double point: 1200 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS float compose: 2400 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS float line: 1800 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS float plane: 1200 coefficients, 0 differ in value, 0 zeros differ in sign
+PASS float point: 1200 coefficients, 0 differ in value, 0 zeros differ in sign

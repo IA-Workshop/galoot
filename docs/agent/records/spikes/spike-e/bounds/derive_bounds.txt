@@ -1,0 +1,77 @@
+== 1. Counts of roundings K (core rule / exact doubling) and magnitudes M
+PASS point: form A computes the sandwich
+PASS point: form B computes the sandwich
+point x: A K=12/12; B K=8/8; C-pre K=9/8; C-post K=9/8
+point y: A K=12/12; B K=8/8; C-pre K=9/8; C-post K=9/8
+point z: A K=12/12; B K=7/7; C-pre K=9/8; C-post K=9/8
+point w: A K=5/5; B K=5/5; C-pre K=0/0; C-post K=0/0
+PASS point: M_A = M_B as polynomials for every output (collection combines no like terms of opposite sign)
+PASS point x: 20 raw paths, 12 monomials whose |coefficients| sum to 20 = paths
+PASS point y: 20 raw paths, 12 monomials whose |coefficients| sum to 20 = paths
+PASS point z: 20 raw paths, 12 monomials whose |coefficients| sum to 20 = paths
+PASS point w: 4 raw paths, 4 monomials whose |coefficients| sum to 4 = paths
+PASS line: form A computes the sandwich
+PASS line: form B computes the sandwich
+line vx: A K=7/7; B K=7/7; C-pre K=7/6; C-post K=7/6
+line vy: A K=7/7; B K=7/7; C-pre K=7/6; C-post K=7/6
+line vz: A K=7/7; B K=6/6; C-pre K=7/6; C-post K=7/6
+line mx: A K=14/14; B K=11/10; C-pre K=14/12; C-post K=14/12
+line my: A K=14/14; B K=11/10; C-pre K=14/12; C-post K=14/12
+line mz: A K=14/14; B K=11/10; C-pre K=14/12; C-post K=14/12
+PASS line: M_A = M_B as polynomials for every output (collection combines no like terms of opposite sign)
+PASS line vx: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS line vy: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS line vz: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS line mx: 36 raw paths, 20 monomials whose |coefficients| sum to 36 = paths
+PASS line my: 36 raw paths, 20 monomials whose |coefficients| sum to 36 = paths
+PASS line mz: 36 raw paths, 20 monomials whose |coefficients| sum to 36 = paths
+PASS plane: form A computes the sandwich
+PASS plane: form B computes the sandwich
+plane gx: A K=7/7; B K=7/7; C-pre K=7/6; C-post K=7/6
+plane gy: A K=7/7; B K=7/7; C-pre K=7/6; C-post K=7/6
+plane gz: A K=7/7; B K=6/6; C-pre K=7/6; C-post K=7/6
+plane gw: A K=12/12; B K=9/8; C-pre K=15/13; C-post K=15/13
+PASS plane: M_A = M_B as polynomials for every output (collection combines no like terms of opposite sign)
+PASS plane gx: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS plane gy: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS plane gz: 12 raw paths, 8 monomials whose |coefficients| sum to 12 = paths
+PASS plane gw: 28 raw paths, 16 monomials whose |coefficients| sum to 28 = paths
+== 2. Structure of the magnitudes (the norm lemma)
+PASS point: every coefficient of M is lambda, a rotation pair sum, or a rotation-bulk bijection sum {'lambda': 4, 'pair': 6, 'bijection': 3}
+PASS line: every coefficient of M is lambda, a rotation pair sum, or a rotation-bulk bijection sum {'lambda': 6, 'pair': 12, 'bijection': 9}
+PASS plane: every coefficient of M is lambda, a rotation pair sum, or a rotation-bulk bijection sum {'lambda': 4, 'pair': 6, 'bijection': 3}
+== 3. The sandwich off the constraints
+PASS point: bulk += alpha * weight leaves the sandwich unchanged (it does not depend on h)
+PASS line: bulk += alpha * weight leaves the direction and adds 2 alpha R_lambda(d) to the moment
+PASS plane: bulk += alpha * weight leaves the sandwich unchanged (it does not depend on h)
+PASS h(bulk + alpha weight) = h + alpha lambda
+PASS T(bulk + alpha weight) = T
+PASS |T|^2 = 4 (lambda |bulk|^2 - h^2), so 2 sqrt(lambda) |bulk| = |T| when h = 0
+PASS point: S = (R_lambda u + w T, lambda w) for any motor
+PASS plane: S = (R_lambda n, lambda g_w) - (0, R_lambda(n) . T) / lambda, i.e. lambda S_w = lambda^2 g_w - R_lambda(n) . T
+PASS line: S_d = R_lambda d and lambda S_k = lambda R_lambda k + T x R_lambda d + 2 h R_lambda d for any motor
+PASS R_lambda u . R_lambda w = lambda^2 u . w (R_lambda / lambda is a rotation for any lambda > 0)
+PASS line: S_d . S_k = lambda^2 (d . k) + 2 h lambda |d|^2 (the Plücker defect of the image)
+== 4. Form C minus the sandwich, as polynomials in lambda - 1 and h
+PASS point C-pre: S - C = (lambda - 1) p
+PASS point C-post: S - C = (lambda - 1) p
+PASS line C-pre: S_d - C_d = (lambda - 1) d and S_k - C_k = (lambda - 1)(k + T x d - T x R^ d) + 2 h R^ d
+PASS line C-post: S_d - C_d = (lambda - 1) d and S_k - C_k = (lambda - 1)(k + T x d - T x R^ d) + 2 h R^ d
+PASS plane C-pre: S_n - C_n = (lambda - 1) n and S_w - C_w = (lambda - 1)(g_w - n . T + R^(n) . T), R^ = R_lambda / lambda
+PASS plane C-post: S_n - C_n = (lambda - 1) n and S_w - C_w = (lambda - 1)(g_w - n . T + R^(n) . T), R^ = R_lambda / lambda
+Euclidean reading for a point of weight w = 1: C's image minus the image under the motion S represents is (lambda - 1) times that point's displacement (from S - C = (lambda - 1) p; README).
+== 5. M_C / M_A at exact unit motors (rotation then translation, 200 samples, objects with |coefficients| in [1/8, 1])
+point C-pre: largest M_C / M_A per output x 1.762, y 1.717, z 2.132, w 1.000
+point C-post: largest M_C / M_A per output x 1.762, y 1.717, z 2.132, w 1.000
+line C-pre: largest M_C / M_A per output vx 2.060, vy 3.000, vz 3.000, mx 2.657, my 3.076, mz 2.754
+line C-post: largest M_C / M_A per output vx 2.060, vy 3.000, vz 3.000, mx 2.657, my 3.076, mz 2.754
+plane C-pre: largest M_C / M_A per output gx 2.292, gy 2.576, gz 2.455, gw 3.961
+plane C-post: largest M_C / M_A per output gx 2.292, gy 2.576, gz 2.455, gw 3.961
+== 6. Coefficients transform drops in checking mode (form A)
+point: dropped blades ['0b111', '0b1011', '0b1101', '0b1110'], K = [12, 5, 5, 5]
+PASS point: every dropped coefficient is 0 as a polynomial, so a collected form has nothing to drop or check
+line: dropped blades ['0b0', '0b1111'], K = [14, 7]
+PASS line: every dropped coefficient is 0 as a polynomial, so a collected form has nothing to drop or check
+plane: dropped blades ['0b1', '0b10', '0b100', '0b1000'], K = [12, 12, 12, 7]
+PASS plane: every dropped coefficient is 0 as a polynomial, so a collected form has nothing to drop or check
+all checks passed
