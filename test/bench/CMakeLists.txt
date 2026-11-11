@@ -214,6 +214,9 @@ add_test(NAME tools.kernels_inline_rejects_explicit_object
 add_test(NAME tools.kernels_inline_accepts_bare_return
   COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
     -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/bare_return.s)
+add_test(NAME tools.kernels_inline_accepts_cet
+  COMMAND ${expect_output} 0 "2 functions defined, none calls into the library"
+    -- ${kernels_inline} ${CMAKE_COMMAND} -E cat ${kernels_inline_fixtures}/cet.s)
 add_test(NAME tools.kernels_inline_rejects_immediate
   COMMAND ${expect_output} 1 "through %rax, which holds _ZN6galoot4core3fooEv"
     "through %rdx, which holds _ZN6galoot4core3barEv"
@@ -251,7 +254,8 @@ add_test(NAME tools.kernels_inline_alone_rejects_twice
       --alone ${kernels_inline_fixtures}/alone_twice.cpp first
       -- ${kernels_inline_stand_in})
 set_tests_properties(tools.kernels_inline_accepts
-  tools.kernels_inline_accepts_bare_return tools.kernels_inline_rejects_immediate
+  tools.kernels_inline_accepts_bare_return tools.kernels_inline_accepts_cet
+  tools.kernels_inline_rejects_immediate
   tools.kernels_inline_rejects_notrack
   tools.kernels_inline_accepts_overwritten_register
   tools.kernels_inline_alone_rejects_twice
