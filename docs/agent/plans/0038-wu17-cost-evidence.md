@@ -1,6 +1,6 @@
 # 0038 WU17 (M7): cost evidence, Spike E, and the inherited cost-model items
 
-- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5), planner, with the performance-engineer's and numerical-expert's questions worked in by the planner (no separate specialist agent was run for this plan). From `develop` at `3199ab1`. Closed 2026-11-11 with parts A to F done and merged (`5444671`, `fd2ccd9`, `fe4791b`, `3e5c4f5` and `2de0d36`, `c31415d`, `1e573ad`); the E1 and E2 reruns after the forced inlining and parts G and H are deferred past 1.0 (decision 0246 item 2). Outcome in section 14.
+- Status: claimed 2026-11-10 by Claude (agent, Opus 5.5), planner, with the performance-engineer's and numerical-expert's questions worked in by the planner (no separate specialist agent was run for this plan). From `develop` at `3199ab1`. Closed 2026-11-11 with parts A to F done and merged: the part merges `5444671`, `fe4791b`, `3e5c4f5` and `2de0d36` into `feature/cost-evidence`, which merged into `develop` by `43cc6da`; the research merges `fd2ccd9` and `c31415d`; and the measurements merge `1e573ad`; the E1 and E2 reruns after the forced inlining and parts G and H are deferred past 1.0 (decision 0246 item 2). Outcome in section 14.
 - Source of scope: plan 0001 (section 4, DoD-22 to DoD-25; section 6, the M7 row and the phase mapping, "phase 4 is M7 (collected plans only; SIMD lane packs are extension scalars)", and "'within 10% of Terathon' becomes DoD-24 and is recorded, not gated"; section 8, WU17 "Cost evidence: P2 grid, P4 assembly reads, benchmark harness, first performance records, Spike E"; section 9, Spike E; the addenda through 2026-11-10); decisions 0005 (P2's reading), 0008 (D8, collected plans decided at M7), 0013 (track, never assert), 0014 (owned harness under `test/bench/`), 0080 and its two amendments (the compile-record copy), 0141 item 4 (antiproduct cost at n = 4 and the largest n), 0215 item 10 (the evaluation counter stays for WU17), 0229 item 3 and 0230 items 1 and 2 (the `cost.py comments` list and the verify files at WU17's refit); handoff 2026-11-07-second item 10 (the 0080 copy at the final revision; the unexplained Clang 49-against-48 count of `compose`); plan 0021 sections R5, 8 and its outcome (the restricted kernels' counts as Spike E's baseline); plan 0023 (DoD-24's rga3 items stay with M7); the snippets review `snippets/reviews/M5.md`.
 - Feature branch: `feature/cost-evidence`, worktree `.claude/worktrees/cost-evidence`, from `develop` after this claim. Parts (W7, decision 0188), each with its own worktree under `.claude/worktrees/`:
   - `feature/cost-evidence--model`: the `cost.py comments` list (part A) and, last, the cost model's verify refresh (part G);
@@ -180,11 +180,27 @@ Recorded 2026-11-11 by Claude (agent, Sonnet 5.5), records implementer, from the
 | 10. H, compile record and baseline | Not done, deferred past 1.0; DoD-22's rows come from the release matrix in shared mode | decision 0246 item 2; plan 0042 section 1 item 5 |
 | 11. Mutants | Done for parts C and D: gap mutants and the new tests' mutants, with the verdicts of the gap and tip runs | `records/mutations/0038-cost-evidence/` |
 | 12. Review and merges | Each feature part reviewed; `develop` took the merge `43cc6da`, the research merge `c31415d` and the measurements merge `1e573ad` | the merge messages carry the P13 lines |
-| 13. Records | Decisions 0233 to 0239; this outcome; agent cost rows in `records/agent-cost.tsv` | |
+| 13. Records | Decisions 0233, 0234 and 0236 to 0239 (0235 is plan 0039's `basis_change` rows decision, and 0236 also holds plan 0039's open items); this outcome; agent cost rows in `records/agent-cost.tsv` | |
 
 ### Verification and validation
 
-Verification: the counts are checked in every preset by `rga3.op_counts_<mode>` against `golden.py`, which shares no code with the library, and the reference kernels equal the library's operations in `rga3.reference_kernels` and the benchmark smoke tests. Validation: the published counts of the errata page were recomputed (secondary; the book is unread, V9). Performance figures are track-only (C14) and are recorded, not validated.
+Per criterion, as section 8 asks (corrected 2026-11-11 by plan 0042 unit U6, from the M7 gate audit's m2; the first form of this section stated them once for the whole unit). Cost figures are track-only (C14): "recorded" means measured and kept, and validation does not apply to them. A pass in every preset is read from gate 3's workflows at `2438604`, each exit 0, whose rows are per preset, not per test.
+
+| Criterion | Verification | Validation |
+| --- | --- | --- |
+| 1. A | Performed, passed: `comments_test.py`, written first and failing before the change; `cost.py comments` on `plan.hpp` exit 0; Sonnet blind review | Not applicable (a tool's check) |
+| 2. B | Performed, passed: the forms checked equal to the sandwich as polynomials by exact arithmetic (form C under its constraints only); every count reproduced by the independent check | Performed against the errata page's 54 and 35 (secondary; the book is unread, V9): not reproduced as a pair (54 in one arrangement for the line, 35 in none for the plane), recorded as a difference of counting rule |
+| 3. C | Performed, passed in every preset: `rga3.op_counts_<mode>` against `golden.py`, which shares no code with the library; the mutants of criterion 11 | Not applicable |
+| 4. D | Performed, passed: the reference kernels equal the library's operations exactly over the test rational, and over double give the same values, or for a transform the same bits (`rga3.reference_kernels`, since split into `_unforced` and `_forced`, and the `rga3.benchmark_*` smoke tests) | Not applicable |
+| 5. E1 | Recorded at `18849b5`, the code before the forced inlining | Not applicable (cost) |
+| 6. E2 | Recorded at `18849b5` and `2de0d36`, the code before the forced inlining | Not applicable (cost) |
+| 7. E3 | Recorded at `18849b5`, repeated in a second campaign that agrees within 0.8% | Not applicable (cost) |
+| 8. F | Performed, passed: the independent check reproduced the counts, the bounds and one benchmark cell | As criterion 2 for the counts; the benchmarks are cost |
+| 9. G | Not performed (deferred) | Not applicable |
+| 10. H | Not performed (deferred) | Not applicable |
+| 11. Mutants | Performed, passed: both `tools/mutate` runs exited 0, every verdict as declared | Not applicable |
+| 12. Reviews and merges | Performed: the reviews named in the criteria table, each finding resolved before its merge | Not applicable |
+| 13. Records | Not applicable | Not applicable |
 
 ### Left for after 1.0
 
