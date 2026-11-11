@@ -94,7 +94,7 @@ arithmetic of its terms where it is called. A file with very many calls,
 such as a large test, then takes much longer and more memory to compile,
 most of all with sanitizers. Defining `GALOOT_FORCE_INLINE` as 0
 (`-DGALOOT_FORCE_INLINE=0`) leaves inlining to the compiler; by default it
-is 1.
+is 1. Every file of a program must be compiled with the same value.
 
 ## An example
 
