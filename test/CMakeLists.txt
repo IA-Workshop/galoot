@@ -2389,6 +2389,20 @@ basis_change_rejects(basis_change_swapped "${not_isometry}")
 basis_change_rejects(basis_change_transposed "${not_isometry}")
 basis_change_rejects(basis_change_pairing_not_kept "${not_isometry}")
 
+# Two values compared with == or !=: the deleted == is chosen, and each
+# compiler, in its own words, rejects it and shows its declaration, whose
+# line ends with the comment that names same_rows.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(deleted_equality "overload resolution selected deleted operator '=='")
+else()
+  set(deleted_equality "use of deleted function")
+endif()
+set(equality_hint "// use same_rows(a, b)")
+basis_change_rejects(basis_change_equality "${deleted_equality}"
+  REQUIRE "${equality_hint}")
+basis_change_rejects(basis_change_inequality "${deleted_equality}"
+  REQUIRE "${equality_hint}")
+
 # An exact value of the change's checks that does not fit coefficient_type:
 # the checks note it rather than stop, and report it as one error with its
 # message first; here in the check of the inner products.
