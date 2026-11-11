@@ -134,6 +134,20 @@ galoot_add_compile_fail_test(NAME force_inline_value
   SOURCE core/force_inline_value_fail.cpp
   MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
   ONE_ERROR)
+# core.force_inline_on: the same for ON, a name the preprocessor does not
+# know, which a plain #if would read as 0.
+galoot_add_compile_fail_test(NAME force_inline_on
+  MODULE core COMPONENT assert
+  SOURCE core/force_inline_on_fail.cpp
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
+  ONE_ERROR)
+# core.force_inline_empty: the same message for a mode defined with no value.
+# The header's later #if on the mode then has no left operand, which the
+# compiler reports as a second error, so this test does not ask for one.
+galoot_add_compile_fail_test(NAME force_inline_empty
+  MODULE core COMPONENT assert
+  SOURCE core/force_inline_empty_fail.cpp
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1")
 
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
