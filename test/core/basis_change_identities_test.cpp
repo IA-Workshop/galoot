@@ -220,8 +220,9 @@ findings check_change(const core::metric<N>& source,
                       const core::metric<N>& target,
                       const core::basis_change<N>& change) {
   const auto phi = images_of<N>(change);
-  const auto inverse = core::detail::inverse_change(change);
-  const auto back = images_of<N>(inverse);
+  const auto checked = core::detail::check_change(change, source, target);
+  REQUIRE(checked.fault == core::detail::ChangeFault::none);
+  const auto back = images_of<N>(checked.inverse);
   constexpr core::mask_t all = blade_count(N) - 1;
 
   findings f;

@@ -1,0 +1,15 @@
+# The second run of gap.toml's mutant on clang-debug: rga3.kernels_inline
+# alone, the test that closes the gap.
+presets = ["clang-debug"]
+
+[selection.inline]
+targets = ["rga3_kernels_inline_probe"]
+labels = '^rga3\.kernels_inline$'
+
+[[mutant]]
+name = "macro_empty"
+selection = "inline"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]''', replacement = '''#define GALOOT_ALWAYS_INLINE''' }]
+expect = "killed"
+killers = ["rga3.kernels_inline"]

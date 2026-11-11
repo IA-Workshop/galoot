@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+macro_empty	gcc-debug	d382516a7961	survived	survived	-	-	-	-	-	-

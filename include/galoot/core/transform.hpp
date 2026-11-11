@@ -382,7 +382,7 @@ inline constexpr auto second_kernel = make_second_kernel<Alg, V, X, Kept>();
 
 // The middle coefficients of a transform, by the first kernel of All.
 template <metric_like Alg, blade_set V, blade_set X, bool All, class T>
-[[nodiscard]] constexpr auto
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
 transform_middle(const std::array<T, V.size()>& v,
                  const std::array<T, X.size()>& x) {
   constexpr const auto& kernel = first_kernel<Alg, V, X, All>;
@@ -394,8 +394,9 @@ transform_middle(const std::array<T, V.size()>& v,
 // coefficients, on X when Kept and on the dropped blades when not.
 template <metric_like Alg, blade_set V, blade_set X, bool Kept, class T,
           std::size_t M>
-[[nodiscard]] constexpr auto transform_outer(const std::array<T, M>& middle,
-                                             const std::array<T, V.size()>& v) {
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr auto
+transform_outer(const std::array<T, M>& middle,
+                const std::array<T, V.size()>& v) {
   constexpr const auto& kernel = second_kernel<Alg, V, X, Kept>;
   constexpr std::size_t size =
       Kept ? X.size() : dropped_blade_count<Alg, V, X>();
@@ -657,8 +658,9 @@ inline constexpr auto compose_layout = geometric_antiproduct_layout<Alg, A, B>;
 /// geometric_antiproduct or %.
 /// Guarantees: on compose_layout<Alg, A, B>. Never checks: it drops nothing.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
-compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
+GALOOT_ALWAYS_INLINE
+    [[nodiscard]] constexpr mv<Alg, compose_layout<Alg, A, B>, T>
+    compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
   constexpr bool each_operand_has_one_parity =
       detail::antigrade_parity<Alg, A> != detail::Parity::mixed &&
       detail::antigrade_parity<Alg, B> != detail::Parity::mixed;
@@ -767,8 +769,8 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// Guarantees: on x's layout; with an exact scalar the result is exact, and
 /// the result is the same with and without the check.
 template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, X, T> transform(const mv<Alg, X, T>& x,
-                                                const mv<Alg, V, T>& v) {
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, X, T>
+transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {
   constexpr bool versor_has_one_parity =
       detail::antigrade_parity<Alg, V> != detail::Parity::mixed;
   static_assert(versor_has_one_parity,
