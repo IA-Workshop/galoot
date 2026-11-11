@@ -84,8 +84,56 @@ add_test(NAME tools.doc_examples_accepts_output
   COMMAND ${expect_output} 0 "first line"
     -- ${doc_examples} run ${doc_fixtures}/prints.txt
       ${CMAKE_COMMAND} -E echo "first line")
+
+# tools.doc_examples_*_kinds: a cpp block is extracted as a program and a
+# cpp rejected block as a rejection, numbered apart, and neither as CMake;
+# with --info cmake only the cmake block is extracted. The check fails on a
+# rejected block without exactly one "// rejected:" line, which names the
+# message its compile must fail with.
+set(doc_fixtures_out ${CMAKE_CURRENT_BINARY_DIR}/tools/doc_examples)
+add_test(NAME tools.doc_examples_accepts_kinds
+  COMMAND ${expect_output} 0
+    "kinds.md: 1 ```cpp block(s) and 1 ```cpp rejected block(s)"
+    -- ${doc_examples} check ${doc_fixtures}/kinds.md)
+add_test(NAME tools.doc_examples_extracts_kinds
+  COMMAND ${expect_output} 0 "/cpp/example_1.cpp" "/cpp/rejected_1.cpp"
+    FORBID "example_2" "rejected_2" ".cmake"
+    -- ${doc_examples} extract ${doc_fixtures}/kinds.md ${doc_fixtures_out}/cpp)
+add_test(NAME tools.doc_examples_extracts_cmake
+  COMMAND ${expect_output} 0 "/cmake/example_1.cmake"
+    FORBID "example_2" ".cpp"
+    -- ${doc_examples} extract --info cmake ${doc_fixtures}/kinds.md
+      ${doc_fixtures_out}/cmake)
+add_test(NAME tools.doc_examples_rejects_no_literal
+  COMMAND ${expect_output} 1
+    "rejected_no_literal.md:3: a cpp rejected block needs one line" "has 0"
+    -- ${doc_examples} check ${doc_fixtures}/rejected_no_literal.md)
+add_test(NAME tools.doc_examples_rejects_two_literals
+  COMMAND ${expect_output} 1
+    "rejected_two_literals.md:3: a cpp rejected block needs one line" "has 2"
+    -- ${doc_examples} check ${doc_fixtures}/rejected_two_literals.md)
+
+# tools.doc_examples_*_registered: every Markdown page under the documentation
+# directory, outside its agent/ directory, must be registered; a page left
+# out is named, and the agent notes and files that are not Markdown are not.
+set(doc_fixture_pages ${doc_fixtures}/pages)
+add_test(NAME tools.doc_examples_rejects_unregistered
+  COMMAND ${expect_output} 1 "guide/extra.md: no test registers this page"
+    FORBID "note.md" "figure.txt" "start.md"
+    -- ${doc_examples} pages ${doc_fixture_pages}
+      ${doc_fixture_pages}/guide/start.md)
+add_test(NAME tools.doc_examples_accepts_registered
+  COMMAND ${expect_output} 0 "2 pages, each registered"
+    -- ${doc_examples} pages ${doc_fixture_pages}
+      ${doc_fixture_pages}/guide/start.md ${doc_fixture_pages}/guide/extra.md)
+
 set_tests_properties(tools.doc_examples_rejects_no_block
   tools.doc_examples_rejects_other_name
   tools.doc_examples_rejects_unclosed tools.doc_examples_rejects_exit
   tools.doc_examples_rejects_output tools.doc_examples_accepts_output
+  tools.doc_examples_accepts_kinds tools.doc_examples_extracts_kinds
+  tools.doc_examples_extracts_cmake tools.doc_examples_rejects_no_literal
+  tools.doc_examples_rejects_two_literals
+  tools.doc_examples_rejects_unregistered
+  tools.doc_examples_accepts_registered
   PROPERTIES LABELS "tools;tools.doc_examples")
