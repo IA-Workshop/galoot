@@ -1,0 +1,2 @@
+compiler	unit	tree	repeats	inst_mean	inst_range	wall_mean_s	maxrss_max_kib	command
+gcc	cga3_even_grade2/pass	after	3	10017421837	83863331	0.599	192292	/usr/bin/g++ -DGALOOT_CHECKING=1 -Iinclude -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -O0 -g -std=c++23 -c -o docs/agent/records/spikes/spike-e/proto/cost/out-gcc/objects/gcc_cga3_even_grade2_pass_after.o docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade2.pass.cpp

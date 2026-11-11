@@ -1,0 +1,30 @@
+point: 200 random and 200 unit motors; forms a, b, bp equal the sandwich on all, c on every unit motor, c differs on 200 of 200 random motors
+  pass: 64 composed terms; setup mul 22 add 27 neg 0 scl 9 literal 0; apply mul 13 add 9 neg 0
+line: 200 random and 200 unit motors; forms a, b, bp equal the sandwich on all, c on every unit motor, c differs on 200 of 200 random motors
+  pass: 144 composed terms; setup mul 26 add 42 neg 0 scl 15 literal 0; apply mul 27 add 21 neg 0
+plane: 200 random and 200 unit motors; forms a, b, bp equal the sandwich on all, c on every unit motor, c differs on 200 of 200 random motors
+  pass: 64 composed terms; setup mul 22 add 27 neg 0 scl 9 literal 0; apply mul 13 add 9 neg 0
+conformal(3) motor, x of grade 1 (5 blades): the pass equals transform on 50 of 50
+  pass: 100 composed terms; setup mul 26 add 39 neg 0 scl 13 literal 0; apply mul 18 add 13 neg 0
+conformal(3) motor, x of grade 2 (10 blades): the pass equals transform on 50 of 50
+  pass: 376 composed terms; setup mul 36 add 92 neg 0 scl 30 literal 6; apply mul 61 add 51 neg 0
+conformal(3) motor, x of grade 3 (10 blades): the pass equals transform on 50 of 50
+  pass: 376 composed terms; setup mul 36 add 86 neg 0 scl 28 literal 6; apply mul 61 add 51 neg 0
+conformal(3) motor, x of grade 4 (5 blades): the pass equals transform on 50 of 50
+  pass: 100 composed terms; setup mul 26 add 39 neg 0 scl 13 literal 0; apply mul 18 add 13 neg 0
+failures: 0
+transform_point galoot largest relative difference from galoot: 0.000e+00
+transform_point a largest relative difference from galoot: 0.000e+00
+transform_point b largest relative difference from galoot: 9.013e-16
+transform_point bp largest relative difference from galoot: 9.013e-16
+transform_point c largest relative difference from galoot: 1.079e-15
+transform_line galoot largest relative difference from galoot: 0.000e+00
+transform_line a largest relative difference from galoot: 0.000e+00
+transform_line b largest relative difference from galoot: 1.161e-15
+transform_line bp largest relative difference from galoot: 1.161e-15
+transform_line c largest relative difference from galoot: 2.268e-15
+transform_plane galoot largest relative difference from galoot: 0.000e+00
+transform_plane a largest relative difference from galoot: 0.000e+00
+transform_plane b largest relative difference from galoot: 1.141e-15
+transform_plane bp largest relative difference from galoot: 1.141e-15
+transform_plane c largest relative difference from galoot: 2.549e-15
