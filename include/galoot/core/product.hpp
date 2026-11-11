@@ -52,6 +52,7 @@
 #include <concepts>
 #include <type_traits>
 
+#include <galoot/core/assert.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -226,6 +227,7 @@ inline constexpr auto antiwedge_layout =
 /// floating type within its digits); otherwise the call is rejected at
 /// compile time with a message that names it.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
 geometric_product(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   constexpr bool scalar_holds_every_coefficient_of_the_product =
@@ -262,7 +264,7 @@ constexpr std::remove_cvref_t<X> geometric_product(const X& /*x*/,
 /// otherwise the call is rejected at compile time. Every coefficient of the
 /// wedge of two blades is +1, -1, or 0, so every scalar type holds them.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
 wedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return detail::apply<detail::BinaryOperation::wedge, wedge_layout<Alg, A, B>>(
       x, y);
@@ -280,6 +282,7 @@ constexpr std::remove_cvref_t<X> wedge(const X& /*x*/, const Y& /*y*/) {
 /// x * y is geometric_product(x, y). A scalar that cannot hold one of the
 /// product's coefficients is rejected with a message that names x * y.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
 operator*(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   constexpr bool scalar_holds_every_coefficient_of_the_product =
@@ -308,7 +311,7 @@ constexpr std::remove_cvref_t<X> operator*(const X& /*x*/, const Y& /*y*/) {
 
 /// x ^ y is wedge(x, y). Parenthesize it next to ==, which binds tighter.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, wedge_layout<Alg, A, B>, T>
 operator^(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return wedge(x, y);
 }
@@ -342,6 +345,7 @@ constexpr std::remove_cvref_t<X> operator^(const X& /*x*/, const Y& /*y*/) {
 /// each compiler, with how a failure is reported, are in
 /// docs/guide/limits.md, under 'Compile-time limits: products and plans'.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
 geometric_antiproduct(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   constexpr bool scalar_holds_every_coefficient_of_the_antiproduct =
@@ -381,6 +385,7 @@ constexpr std::remove_cvref_t<X> geometric_antiproduct(const X& /*x*/,
 ///
 /// Cost: as for geometric_antiproduct.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
 antiwedge(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return detail::apply<detail::BinaryOperation::antiwedge,
@@ -401,6 +406,7 @@ constexpr std::remove_cvref_t<X> antiwedge(const X& /*x*/, const Y& /*y*/) {
 /// rejected with a message that names x % y. The limits that
 /// geometric_antiproduct states apply here too.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T>
 operator%(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   constexpr bool scalar_holds_every_coefficient_of_the_antiproduct =
@@ -430,6 +436,7 @@ constexpr std::remove_cvref_t<X> operator%(const X& /*x*/, const Y& /*y*/) {
 /// x & y is antiwedge(x, y). Like ^, it binds below ==, so parenthesize it:
 /// (p & g) == s.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, antiwedge_layout<Alg, A, B>, T>
 operator&(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return antiwedge(x, y);

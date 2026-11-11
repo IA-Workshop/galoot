@@ -95,6 +95,7 @@
 #include <type_traits>
 #include <utility>
 
+#include <galoot/core/assert.hpp>
 #include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
@@ -399,7 +400,7 @@ bulk(const mv<Alg, S, T>& x) {
 /// right complement of x, as for bulk; otherwise the call is rejected at
 /// compile time with a message that names weight.
 template <metric_like Alg, blade_set S, ring_scalar T>
-[[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
+GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, weight_layout<Alg, S>, T>
 weight(const mv<Alg, S, T>& x) {
   constexpr bool scalar_holds_every_coefficient_of_the_weight =
       detail::weight_coefficients_exact<Alg, S, T>;
@@ -491,6 +492,7 @@ left_bulk_dual(const mv<Alg, S, T>& x) {
 ///
 /// Requires: as for weight, with the message naming left_weight_dual.
 template <metric_like Alg, blade_set S, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, left_weight_dual_layout<Alg, S>, T>
 left_weight_dual(const mv<Alg, S, T>& x) {
   constexpr bool scalar_holds_every_coefficient_of_the_left_weight_dual =
@@ -567,6 +569,7 @@ constexpr std::remove_cvref_t<X> dot(const X& /*a*/, const Y& /*b*/) {
 /// only the terms the dot of the complements keeps.
 /// Guarantees: on antidot_layout<Alg, A, B>, the antiscalar or no blade.
 template <metric_like Alg, blade_set A, blade_set B, ring_scalar T>
+GALOOT_ALWAYS_INLINE
 [[nodiscard]] constexpr mv<Alg, antidot_layout<Alg, A, B>, T>
 antidot(const mv<Alg, A, T>& a, const mv<Alg, B, T>& b) {
   constexpr bool scalar_holds_every_coefficient_of_the_antidot =
