@@ -148,7 +148,7 @@ class SectionTest(unittest.TestCase):
         text = page("3,611,426 operations.", heading="Steps of each plan")
         with self.assertRaises(ValueError) as caught:
             run_page(text)
-        self.assertIn(SECTION, str(caught.exception))
+        self.assertIn(f"has no section {SECTION!r}", str(caught.exception))
 
     def test_section_named_twice_is_refused(self):
         text = page("3,611,426 operations.") + f"\n### {SECTION}\n\n1.\n"
@@ -181,7 +181,7 @@ class SectionTest(unittest.TestCase):
             self.assertEqual(found.returncode, 0, found.stdout + found.stderr)
             missing = command("No such heading")
             self.assertEqual(missing.returncode, 1)
-            self.assertIn("No such heading", missing.stderr)
+            self.assertIn("has no section 'No such heading'", missing.stderr)
 
 
 if __name__ == "__main__":
