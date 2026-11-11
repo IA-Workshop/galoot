@@ -1,0 +1,22 @@
+env 0 calibrate before 2026-11-10T17:13:29Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.04 1.62 2.14 2/1755 2722975
+env 0 calibrate lock taken 2026-11-10T17:13:29Z
+env 0 calibrate lock released 2026-11-10T17:13:33Z
+env 0 calibrate after 2026-11-10T17:13:33Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.12 1.63 2.14 3/1755 2723376
+env 0 before 2026-11-10T17:14:51Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.10 1.50 2.05 2/1716 2724949
+env 0 lock taken 2026-11-10T17:14:51Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.10 1.50 2.05 2/1716 2724985
+env 0 lock released, exit 0 2026-11-10T17:26:16Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.05 2.06 2.09 3/1719 2778455
+env 1352 before 2026-11-10T17:26:56Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.73 1.97 2.06 2/1707 2779654
+env 1352 lock taken 2026-11-10T17:26:56Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.73 1.97 2.06 2/1707 2779690
+env 1352 lock released, exit 0 2026-11-10T17:37:26Z pool: not running load: 2.00 2.07 2.07 4/1715 2803714
+env 2768 before 2026-11-10T17:37:42Z pool: not running load: 1.78 2.01 2.06 3/1718 2803818
+env 2768 lock taken 2026-11-10T17:37:42Z pool: not running load: 1.78 2.01 2.06 2/1718 2803839
+env 2768 lock released, exit 0 2026-11-10T17:48:04Z pool: not running load: 1.06 1.52 1.83 2/1670 2827456
+stalls before 2026-11-10T17:49:09Z pool: not running load: 1.44 1.54 1.82 2/1700 2830691
+stalls lock taken 2026-11-10T17:49:09Z
+stalls lock released, exit 1 2026-11-10T17:49:09Z pool: not running load: 1.44 1.54 1.82 3/1700 2830734
+stalls before 2026-11-10T17:49:32Z pool: not running load: 1.31 1.51 1.80 2/1707 2830853
+stalls lock taken 2026-11-10T17:49:32Z
+stalls lock released, exit 0 2026-11-10T17:50:09Z pool: not running load: 1.65 1.57 1.81 3/1698 2831172
+stalls+calls before 2026-11-10T17:52:59Z pool: not running load: 1.39 1.49 1.74 2/1701 2834918
+stalls+calls lock taken 2026-11-10T17:52:59Z
+stalls+calls lock released, exit 0 2026-11-10T17:53:36Z pool: not running load: 1.78 1.58 1.76 3/1699 2835239
