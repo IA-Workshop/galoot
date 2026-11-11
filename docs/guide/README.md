@@ -183,9 +183,11 @@ constexpr Point p{1, 2, 3, 1};
 // The antiscalar is the identity of the antiproduct.
 static_assert(Point{Antiscalar{1} % p} == p);
 
-// compose(b, a) is b % a.
+// compose(b, a) is b % a: here a quarter turn about the z axis, then a
+// move by (2, 0, 0).
+constexpr Motor turn{0, 0, 1, 1, 0, 0, 0, 0};
 constexpr Motor move{0, 0, 0, 1, 1, 0, 0, 0};
-static_assert(Motor{move % move} == Motor{core::compose(move, move)});
+static_assert(Motor{move % turn} == Motor{core::compose(move, turn)});
 
 // u ^ !u = e1234 gives !e1 = e234 = e423, !e2 = -e134 = e431,
 // !e3 = e124 = e412, and !e4 = -e123 = e321: the right complement of the
@@ -224,8 +226,8 @@ constexpr Point q{1, 2, 0, 1};
 
 // The line from p to q: its direction q - p = (0, 2, 0) on e41, e42, e43,
 // and its moment p x q = (0, 0, 2) on e23, e31, e12.
-constexpr Line l{0, 2, 0, 0, 0, 2};
-static_assert(Line{p ^ q} == l);
+constexpr Line line{0, 2, 0, 0, 0, 2};
+static_assert(Line{p ^ q} == line);
 
 // Two values of the join's own layout compare directly, in parentheses.
 constexpr auto join = p ^ q;
@@ -310,11 +312,14 @@ struct r12 {
   static constexpr auto value = core::R<12, 0, 0>();
 };
 
-// The vectors e1 and e10, as masks: bit 0 stands for e1, bit 9 for e10.
-constexpr core::blade_set<2> layout{{{{0b1, 1}, {0b10'0000'0000, 1}}}};
+// The vectors of the first and the tenth generator, as masks with sign +1:
+// bit 0 stands for the first, bit 9 for the tenth.
+constexpr core::oriented_blade first{.mask = 1U << 0U, .sign = 1};
+constexpr core::oriented_blade tenth{.mask = 1U << 9U, .sign = 1};
+constexpr core::blade_set<2> layout{.blades = {{first, tenth}}};
 using Vector = core::mv<r12, layout, int>;
 
-// v v is the scalar 3^2 + 4^2 = 25, with zero on the bivector e1 e10. The
+// v v is the scalar 3^2 + 4^2 = 25, with zero on the bivector of the two. The
 // product's layout is canonical, the scalar first, so it is position 0.
 constexpr Vector v{3, 4};
 static_assert((v * v).coefficients[0] == 25);

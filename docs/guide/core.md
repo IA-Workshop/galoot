@@ -67,7 +67,7 @@ struct witt {
 };
 
 static_assert(core::metric_like<e3> && core::metric_like<witt>);
-static_assert(e3::value.generator_count == 3 && e3::value.is_diagonal());
+static_assert(e3::value.gram.size() == 3 && e3::value.is_diagonal());
 
 // e4 of rigid(3) squares to zero; e1 does not.
 static_assert(pga3::value.is_null(3) && !pga3::value.is_null(0));
@@ -78,7 +78,7 @@ static_assert(witt::value.gram[0][1] == 1 && witt::value.gram[0][0] == 0);
 
 // Twenty generators need a raised bound, and are not tested.
 static_assert(core::max_generators == 16);
-static_assert(core::R<20, 0, 0, 32>().generator_count == 20);
+static_assert(core::R<20, 0, 0, 32>().gram.size() == 20);
 
 } // namespace
 
@@ -136,7 +136,8 @@ constexpr auto line_layout = core::blades<pga3, "e41 e42 e43 e23 e31 e12">;
 static_assert(line_layout.size() == 6);
 
 // e41 = -e14: the mask of e1 and e4, 0b1001, with sign -1.
-static_assert(line_layout.blades[0] == core::oriented_blade{0b1001, -1});
+static_assert(line_layout.blades[0] ==
+              core::oriented_blade{.mask = 0b1001, .sign = -1});
 // e23 is already canonical, and stands at position 3.
 static_assert(core::index_of<line_layout, 0b0110> == 3);
 
@@ -151,7 +152,9 @@ static_assert(core::merge<core::blades<pga3, "e1 e2">,
                           core::blades<pga3, "e2 e3">>.size() == 3);
 
 // The same as blades<pga3, "e1 e4">, written as masks.
-constexpr core::blade_set<2> by_masks{{{{0b0001, 1}, {0b1000, 1}}}};
+constexpr core::oriented_blade e1{.mask = 0b0001, .sign = 1};
+constexpr core::oriented_blade e4{.mask = 0b1000, .sign = 1};
+constexpr core::blade_set<2> by_masks{.blades = {{e1, e4}}};
 static_assert(by_masks == core::blades<pga3, "e1 e4">);
 
 } // namespace
@@ -471,10 +474,10 @@ constexpr Vector b{3, 1, 0};
 static_assert(Even{a * b} == Even{5, -5, 0, 0});
 static_assert(Bivector{a ^ b} == Bivector{-5, 0, 0});
 
-// The wedge is antisymmetric on vectors, and a vector wedged with itself is
-// zero.
+// The wedge is antisymmetric on vectors, and a vector wedged with a multiple
+// of itself is zero.
 static_assert(Bivector{a ^ b} == -Bivector{b ^ a});
-static_assert(Bivector{a ^ a} == Bivector{});
+static_assert(Bivector{a ^ (3 * a)} == Bivector{});
 
 struct pga3 {
   static constexpr auto value = core::rigid<3>();
@@ -1007,6 +1010,8 @@ in the source line the compiler echoes.
 ```cpp
 #include <galoot/core/assert.hpp>
 
+namespace {
+
 // In a constant evaluation a failed check stops the compile; at run time it
 // aborts in checking mode.
 constexpr int half_of_even(int n) {
@@ -1015,6 +1020,8 @@ constexpr int half_of_even(int n) {
 }
 
 static_assert(half_of_even(6) == 3);
+
+} // namespace
 
 int main() { return half_of_even(4) == 2 ? 0 : 1; }
 ```
@@ -1270,6 +1277,7 @@ cases need one:
 
 ```cpp
 #include <algorithm>
+#include <array>
 
 #include <galoot/core.hpp>
 
@@ -1287,11 +1295,14 @@ using Bivector = core::mv<e3, core::blades<e3, "e12 e13 e23">, int>;
 int main() {
   using namespace std::ranges;
 
-  // reverse is std::ranges::reverse here, so Galoot's is named in full. The
-  // reverse of a bivector is its negation.
+  // Unqualified, reverse is std::ranges::reverse here: it reverses a range.
+  std::array<int, 3> values{1, 2, 3};
+  reverse(values);
+
+  // So Galoot's is named in full. The reverse of a bivector is its negation.
   const Bivector b{1, 2, 3};
   const Bivector r = galoot::core::reverse(b);
-  return (r == -b && ~b == r) ? 0 : 1;
+  return (values[0] == 3 && r == -b && ~b == r) ? 0 : 1;
 }
 ```
 

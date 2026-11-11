@@ -127,14 +127,14 @@ using Plane = rga3::Plane<int>;
 
 constexpr Point p{1, 0, 0, 1};
 constexpr Point q{1, 2, 0, 1};
-constexpr Line l{p ^ q};
+constexpr Line line{p ^ q};
 
 // Reversing the points reverses the line.
-static_assert(Line{q ^ p} == -l);
+static_assert(Line{q ^ p} == -line);
 
 // The plane y = 1 is (0, 1, 0, -1). It meets the line at (1, 1, 0), here
 // with weight -2: the point (-2, -2, 0, -2).
-static_assert(Point{l & Plane{0, 1, 0, -1}} == Point{-2, -2, 0, -2});
+static_assert(Point{line & Plane{0, 1, 0, -1}} == Point{-2, -2, 0, -2});
 
 // The planes x = 0 and y = 0 meet in the z axis. With the complements
 // right(e423) = -e1 and right(e431) = -e2, their meet is
@@ -144,7 +144,7 @@ static_assert(Line{Plane{1, 0, 0, 0} & Plane{0, 1, 0, 0}} ==
 
 // p, q, and the origin span the plane z = 0, with the normal
 // (q - p) x (origin - p) = (0, 2, 0) x (-1, 0, 0) = (0, 0, 2).
-static_assert(Plane{l ^ Point{0, 0, 0, 1}} == Plane{0, 0, 2, 0});
+static_assert(Plane{line ^ Point{0, 0, 0, 1}} == Plane{0, 0, 2, 0});
 
 int main() {}
 ```
@@ -289,8 +289,8 @@ static_assert(core::transform(Point{1, 2, 3, 1}, mirror) ==
 // The line from (1, 0, 0) to (1, 2, 0) reflects to the line from (-1, 0, 0)
 // to (-1, 2, 0): direction (0, 2, 0) and moment
 // (-1, 0, 0) x (-1, 2, 0) = (0, 0, -2).
-constexpr Line l{Point{1, 0, 0, 1} ^ Point{1, 2, 0, 1}};
-static_assert(core::transform(l, mirror) == Line{0, 2, 0, 0, 0, -2});
+constexpr Line line{Point{1, 0, 0, 1} ^ Point{1, 2, 0, 1}};
+static_assert(core::transform(line, mirror) == Line{0, 2, 0, 0, 0, -2});
 
 // In the plane z = 0, the plane z = 1, (0, 0, 1, -1), reflects to z = -1,
 // spanned by the reflected points in the same order: (0, 0, 1, 1).
@@ -332,19 +332,19 @@ using Line = rga3::Line<int>;
 using Plane = rga3::Plane<int>;
 
 // The line x = 1, z = 0, along y, and the plane z = 0.
-constexpr Line l{Point{1, 0, 0, 1} ^ Point{1, 2, 0, 1}};
+constexpr Line line{Point{1, 0, 0, 1} ^ Point{1, 2, 0, 1}};
 constexpr Plane ground{0, 0, 1, 0};
 
 static_assert(core::get<"1">(Point{5, 7, 0, 1} & ground) == 0);
 static_assert(core::get<"1">(Point{5, 7, 1, 1} & ground) == 1);
 
 // (1, 1, 0) is on the line, (2, 1, 0) is not.
-static_assert(Plane{Point{1, 1, 0, 1} ^ l} == Plane{});
-static_assert(Plane{Point{2, 1, 0, 1} ^ l} != Plane{});
+static_assert(Plane{Point{1, 1, 0, 1} ^ line} == Plane{});
+static_assert(Plane{Point{2, 1, 0, 1} ^ line} != Plane{});
 
 // The line lies in the ground plane, but not in the plane z = 1.
-static_assert(Point{l & ground} == Point{});
-static_assert(Point{l & Plane{0, 0, 1, -1}} != Point{});
+static_assert(Point{line & ground} == Point{});
+static_assert(Point{line & Plane{0, 0, 1, -1}} != Point{});
 
 int main() {}
 ```
