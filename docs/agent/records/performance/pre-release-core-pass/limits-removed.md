@@ -624,3 +624,134 @@ Now:
 ```
 
 Heading: none. The page need not carry this figure; the release record's known-friction item for the one-blade message may.
+
+## Fixes after the blind review
+
+Comments only, on `feature/pre-release-core-pass--comments2`, for the review's findings M2, m3 and m7 (`docs/agent/records/reviews/2026-11-10-pre-release-core-pass-review.md` on `review/pre-release-core-pass`). Lines at `721afe7` and now; no figure leaves a header here, and no new one enters.
+
+### blade_set.hpp, of_grade, lines 588 to 589
+
+Now lines 588 to 590. m3: names the flags, and says the page's sizes are Clang's, which is all the page gives for of_grade.
+
+```cpp
+/// The limits on constant evaluation bound the size as for full, and the
+/// sizes measured on each compiler are in docs/guide/limits.md, under
+```
+
+Now:
+
+```cpp
+/// The limits on constant evaluation bound the size as for full. Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+/// the sizes measured on Clang are in docs/guide/limits.md, under
+```
+
+### blade_set.hpp, merge, lines 604 to 606
+
+Now lines 605 to 608. m3: names the flags.
+
+```cpp
+/// compiler's limits on constant evaluation bound the sizes it merges, and
+/// the sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: blade sets'.
+```
+
+Now:
+
+```cpp
+/// compiler's limits on constant evaluation bound the sizes it merges;
+/// Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those
+/// limits, and the sizes measured on each compiler are in
+/// docs/guide/limits.md, under 'Compile-time limits: blade sets'.
+```
+
+### linear.hpp, The header comment, lines 61 to 62
+
+Now lines 61 to 63. m3: names the flags.
+
+```cpp
+// of a multivector. sum_layout's comment gives the workaround, and the sizes
+// measured on each compiler are in docs/guide/limits.md, under
+```
+
+Now:
+
+```cpp
+// of a multivector. Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit
+// raise those limits, sum_layout's comment gives the workaround, and the
+// sizes measured on each compiler are in docs/guide/limits.md, under
+```
+
+### mv.hpp, coefficient_storage's one-value constructor, lines 397 to 397
+
+Now lines 397 to 398. m7: "which it now reports as false" no longer says "now".
+
+```cpp
+  // true for such a source, which it now reports as false.
+```
+
+Now:
+
+```cpp
+  // true for such a source, for which it is false while no constructor
+  // accepts the source.
+```
+
+### mv.hpp, The binary apply, lines 882 to 892
+
+Now lines 883 to 899. m3: the fold sentence again says that the fold's limit is not the one reached first (the meaning of the D2 record's removed "no plan that Clang 23 builds at its default limits has more than 1,024 terms ... apply builds wherever its plan builds"), and the flags are named, with the page's 'Raising the limits' for the table. M2: the guarantee that a constant evaluation and a run-time call give the same result is qualified as transform's T2 is: it holds when the build does not fuse multiply-adds across statements, and under -ffp-contract=fast the two can differ in the last bits. T2's clause on the forward error bound is not repeated, since apply's comment states no bound.
+
+```cpp
+/// the terms, so a compiler's limit on the length of a fold bounds it as
+/// well as the limits that bound its plan. A plan's cost grows with its
+/// terms times the blades of its result, not with its terms alone, so the
+/// size of a plan that builds depends on its sets. The sizes measured on each
+/// compiler, the fold's limit, how a failure is reported, and the flags that
+/// raise the limits are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
+/// Guarantees: the coefficient of each blade of Target is the sum over the
+/// terms on it, multiplied by the blade's sign in Target, evaluated in the
+/// order stated; with an exact scalar the result is exact. A constant
+/// evaluation and a run-time call give the same result.
+```
+
+Now:
+
+```cpp
+/// the terms, so a compiler's limit on the length of a fold bounds it too,
+/// but in every measurement on the limits page the plan's limits are reached
+/// first: the code builds wherever its plan builds. A plan's cost grows with
+/// its terms times the blades of its result, not with its terms alone, so
+/// the size of a plan that builds depends on its sets. Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise the plan's limits,
+/// as docs/guide/limits.md shows under 'Raising the limits', and the sizes
+/// measured on each compiler, the fold's limit, and how a failure is reported
+/// are under 'Compile-time limits: products and plans'.
+/// Guarantees: the coefficient of each blade of Target is the sum over the
+/// terms on it, multiplied by the blade's sign in Target, evaluated in the
+/// order stated; with an exact scalar the result is exact; and a constant
+/// evaluation and a run-time call give the same result when the build does
+/// not fuse multiply-adds across statements (-ffp-contract=off or on). Under
+/// -ffp-contract=fast, GCC's default on a target with fused multiply-add, the
+/// compiler may fuse the run-time code where the constant evaluation does
+/// not, and their results can then differ in the last bits.
+```
+
+### mv.hpp, The unary apply, lines 936 to 937
+
+Now lines 943 to 947. m3: says what bounds the size and names the flags.
+
+```cpp
+/// compile time with its message. The sizes measured on each compiler are in
+/// docs/guide/limits.md, under 'Compile-time limits: products and plans'.
+```
+
+Now:
+
+```cpp
+/// compile time with its message. The map is a constant evaluation, so the
+/// compilers' limits on constant evaluation bound its size; Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+/// the sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
+```

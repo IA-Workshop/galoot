@@ -394,7 +394,8 @@ struct coefficient_storage {
   // integer is explicit, matches no constructor and gets the compiler's own
   // error, a long one. No catch-all gives it a short message, as the other
   // misuses of mv have, because a catch-all would make std::is_constructible
-  // true for such a source, which it now reports as false.
+  // true for such a source, for which it is false while no constructor
+  // accepts the source.
   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
     requires(sizeof...(Ts) > 0)
       : coefficients{values...} {}
@@ -879,17 +880,23 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// std::complex<float>, must hold the coefficients exactly without a check,
 /// and so must one whose specialization lacks a member these checks read,
 /// which counts as no specialization. The code is one fold expression over
-/// the terms, so a compiler's limit on the length of a fold bounds it as
-/// well as the limits that bound its plan. A plan's cost grows with its
-/// terms times the blades of its result, not with its terms alone, so the
-/// size of a plan that builds depends on its sets. The sizes measured on each
-/// compiler, the fold's limit, how a failure is reported, and the flags that
-/// raise the limits are in docs/guide/limits.md, under
-/// 'Compile-time limits: products and plans'.
+/// the terms, so a compiler's limit on the length of a fold bounds it too,
+/// but in every measurement on the limits page the plan's limits are reached
+/// first: the code builds wherever its plan builds. A plan's cost grows with
+/// its terms times the blades of its result, not with its terms alone, so
+/// the size of a plan that builds depends on its sets. Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise the plan's limits,
+/// as docs/guide/limits.md shows under 'Raising the limits', and the sizes
+/// measured on each compiler, the fold's limit, and how a failure is reported
+/// are under 'Compile-time limits: products and plans'.
 /// Guarantees: the coefficient of each blade of Target is the sum over the
 /// terms on it, multiplied by the blade's sign in Target, evaluated in the
-/// order stated; with an exact scalar the result is exact. A constant
-/// evaluation and a run-time call give the same result.
+/// order stated; with an exact scalar the result is exact; and a constant
+/// evaluation and a run-time call give the same result when the build does
+/// not fuse multiply-adds across statements (-ffp-contract=off or on). Under
+/// -ffp-contract=fast, GCC's default on a target with fused multiply-add, the
+/// compiler may fuse the run-time code where the constant evaluation does
+/// not, and their results can then differ in the last bits.
 template <BinaryOperation Op, blade_set Target, metric_like Alg, blade_set A,
           blade_set B, ring_scalar T>
 GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, Target, T>
@@ -933,8 +940,11 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 /// assignment of the coefficient or of its negation.
 ///
 /// Requires: Target holds every blade of the map's result, checked at
-/// compile time with its message. The sizes measured on each compiler are in
-/// docs/guide/limits.md, under 'Compile-time limits: products and plans'.
+/// compile time with its message. The map is a constant evaluation, so the
+/// compilers' limits on constant evaluation bound its size; Clang's
+/// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+/// the sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
 /// Guarantees: as for a product.
 template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
           ring_scalar T>
