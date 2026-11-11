@@ -261,3 +261,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-e2-rerun	performance-engineer	opus	79754	53	1748	E2 rerun at 2de0d36 (400239 total minus 320485)
 2026-11-10	wu17-part-f-bounds	numerical-expert	opus	334585	95	1918	bounds on research/spike-e--bounds 5897365
 2026-11-10	wu17-part-f-bench	performance-engineer	opus	348770	101	3144	benchmarks and prototype on research/spike-e--bench ae09ba3
+2026-11-10	wu17-part-f-bench	performance-engineer	opus	81042	37	1635	activity after the hand-back (429812 total minus 348770); not described in its report
