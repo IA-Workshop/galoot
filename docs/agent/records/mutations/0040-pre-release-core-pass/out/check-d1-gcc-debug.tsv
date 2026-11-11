@@ -1,0 +1,16 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+check_ignores_conditional_jump	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_conditional_jump	-	-	-	-	-
+check_ignores_register_call	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate tools.kernels_inline_rejects_notrack tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_keeps_overwritten_register	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_accepts_overwritten_register	-	-	-	-	-
+check_ignores_explicit_object	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_explicit_object	-	-	-	-	-
+check_accepts_other_target	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_other_target	-	-	-	-	-
+alone_not_alone	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_accepts tools.kernels_inline_alone_rejects_call	-	-	-	-	-
+alone_skips_missing	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_rejects_missing_function	-	-	-	-	-
+check_ignores_jmp	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_conditional_jump tools.kernels_inline_rejects_jmp tools.kernels_inline_rejects_notrack	-	-	-	-	-
+check_ignores_plt	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_notrack tools.kernels_inline_rejects_plt tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_skips_missing	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_missing_function	-	-	-	-	-
+check_ignores_immediate	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate	-	-	-	-	-
+check_ignores_register_width	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate	-	-	-	-	-
+check_ignores_notrack	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_notrack	-	-	-	-	-
+check_refuses_bare_return	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_accepts_bare_return	-	-	-	-	-
+alone_accepts_twice	gcc-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_rejects_twice	-	-	-	-	-
