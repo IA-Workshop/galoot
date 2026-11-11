@@ -389,11 +389,12 @@ struct coefficient_storage {
 
   // Not declared for an empty layout, where it would be the default
   // constructor.
-  // TODO: a one-blade value built from a source that converts only
-  // explicitly gets the compiler's own error, 114 lines on GCC. A catch-all
-  // with a short message would fix that, but it changes three
-  // std::is_constructible answers that the tests pin, so it waits until the
-  // long message becomes a problem for a user.
+  // A one-blade value built from a source that converts to T only
+  // explicitly, such as an int for a rational whose constructor from an
+  // integer is explicit, matches no constructor and gets the compiler's own
+  // error, a long one. No catch-all gives it a short message, as the other
+  // misuses of mv have, because a catch-all would make std::is_constructible
+  // true for such a source, which it now reports as false.
   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
     requires(sizeof...(Ts) > 0)
       : coefficients{values...} {}
@@ -721,11 +722,8 @@ namespace detail {
 // Whether std::numeric_limits<T> describes an integer type with its range,
 // or a floating type of radix 2 with its digits and exponent range. A
 // program's own specialization may define fewer members; a member it lacks
-// makes the answer no, not an error.
-// TODO: a specialization that defines only some members is no longer
-// checked beyond this test. A conforming specialization defines every
-// member, so this matters only for non-conforming code; revisit if a user
-// reports it.
+// makes the answer no, not an error, so the coefficients of such a scalar are
+// not checked. A conforming specialization defines every member.
 template <class T>
 concept integer_limits = requires {
   requires std::numeric_limits<T>::is_specialized;
@@ -880,7 +878,8 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// fits its digits and |c| is below 2^max_exponent): each checked at compile
 /// time with its own message. A scalar without
 /// a specialization, such as std::complex<float>, must hold the coefficients
-/// exactly without a check. The code is one fold expression over the terms, and
+/// exactly without a check, and so must one whose specialization lacks a
+/// member these checks read, which counts as no specialization. The code is one fold expression over the terms, and
 /// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
 /// default limits has more than 1,024 terms. Measured at the default limits, at
 /// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
