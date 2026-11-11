@@ -1,0 +1,87 @@
+# Mutants of the benchmark reference kernels (part D of plan 0038). A
+# reference kernel with one sign flipped must be killed by the smoke test
+# rga3.reference_kernels, which compares each kernel with the library's
+# operation. One flip is in a product kernel (compose, the e41 output) and
+# one in the first stage of a transform kernel (transform_line, the e14
+# value of Q v x). The regeneration check reference.kernels would also kill
+# both; it is left out of the selection so that the smoke test is shown to
+# kill them on its own. Run from the worktree root, with the job pool
+# exported:
+#   tools/mutate docs/agent/records/mutations/0038-cost-evidence/bench.toml
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.smoke]
+targets = ["rga3_reference_kernels_test"]
+labels = '^rga3\.reference_kernels$'
+
+[[mutant]]
+name = "compose_kernel_sign_flipped"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''      x[0] * y[3] + x[1] * y[2] - x[2] * y[1] + x[3] * y[0], // e41''', replacement = '''      x[0] * y[3] - x[1] * y[2] - x[2] * y[1] + x[3] * y[0], // e41''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
+
+[[mutant]]
+name = "transform_line_first_stage_sign_flipped"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''  const T e14 = -(q[1] * x[2]) + q[2] * x[1] - q[3] * x[0];''', replacement = '''  const T e14 = -(q[1] * x[2]) - q[2] * x[1] - q[3] * x[0];''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
+
+# The two mutants below change no rational value, so only the double cases,
+# with their zero tolerance, can kill them.
+#
+# The terms of transform_point's e1 output in reverse order, the order that
+# a reversed order of the middle blades gives: the same products, summed in
+# another order, so they round differently on uniform draws.
+[[mutant]]
+name = "transform_point_term_order_reversed"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''      e1 * q[3] - e2 * q[2] + e3 * q[1] + e4 * q[4] + e123 * q[0] - e124 * q[5] - e134 * q[6] - e234 * q[7], // e1''', replacement = '''      -(e234 * q[7]) - e134 * q[6] - e124 * q[5] + e123 * q[0] + e4 * q[4] + e3 * q[1] - e2 * q[2] + e1 * q[3], // e1''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
+
+# transform_point's e3 output with its first term's sign carried on the
+# whole sum, -(a - b - ...) for -a + b + ...: equal values, but a zero result
+# becomes -0. Only the small-integer draws give exact zeros, so the test
+# before those draws let this mutant live.
+[[mutant]]
+name = "transform_point_sign_on_sum"
+selection = "smoke"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''      -(e1 * q[1]) + e2 * q[0] + e3 * q[3] + e4 * q[6] + e123 * q[2] - e124 * q[7] + e134 * q[4] + e234 * q[5], // e3''', replacement = '''      -(e1 * q[1] - e2 * q[0] - e3 * q[3] - e4 * q[6] - e123 * q[2] + e124 * q[7] - e134 * q[4] - e234 * q[5]), // e3''' }]
+expect = "killed"
+killers = ["rga3.reference_kernels"]
+
+# The inlining marks: without one of them a compiler may keep the kernel or
+# the reference lambda out of line, a call in the timed loop, and
+# rga3.benchmark_transform_line_inline must kill the mutant by finding its
+# symbol. On gcc-debug and clang-debug nothing is inlined unless marked, so
+# both must be killed there; run also with --preset gcc-measure --preset
+# clang-measure, where the compilers' own heuristics decide.
+[selection.inline]
+targets = ["bench_wedge_point_point", "bench_wedge_point_point_point",
+  "bench_antiwedge_line_plane", "bench_transform_point", "bench_transform_line",
+  "bench_transform_plane", "bench_compose_motors"]
+labels = '^rga3\.benchmarks$'
+
+[[mutant]]
+name = "transform_line_kernel_not_always_inline"
+selection = "inline"
+file = "test/bench/reference_kernels.hpp"
+edits = [{ anchor = '''[[gnu::always_inline]] constexpr std::array<T, 6> transform_line(''', replacement = '''constexpr std::array<T, 6> transform_line(''' }]
+expect = "killed"
+killers = ["rga3.benchmark_transform_line_inline"]
+
+[[mutant]]
+name = "transform_line_reference_lambda_not_always_inline"
+selection = "inline"
+file = "test/bench/transform_line_bench.cpp"
+edits = [{ anchor = '''      [] [[gnu::always_inline]] (const Line& x, const Motor& q) {
+        return bench::as<Line>(''', replacement = '''      [](const Line& x, const Motor& q) {
+        return bench::as<Line>(''' }]
+expect = "killed"
+killers = ["rga3.benchmark_transform_line_inline"]

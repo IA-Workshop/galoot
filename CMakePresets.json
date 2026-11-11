@@ -283,7 +283,7 @@
       },
       "filter": {
         "exclude": {
-          "label": "^runlog$"
+          "label": "^(runlog|bench)$"
         }
       }
     },

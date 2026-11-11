@@ -23,6 +23,9 @@ set_target_properties(galoot_doctest_main PROPERTIES SKIP_LINTING ON)
 set(expect_output
   ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/expect_output.cmake --)
 
+# The benchmarks, their reference kernels, and the tests of both.
+add_subdirectory(bench)
+
 # core.smoke: the runner, labels, launcher, and both core headers together.
 galoot_add_test(MODULE core COMPONENT smoke)
 # The mode the configuration declares, passed to the test directly rather
@@ -938,8 +941,8 @@ set_property(TARGET galoot_golden PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
 add_library(galoot_test_support INTERFACE)
 target_sources(galoot_test_support INTERFACE
   FILE_SET HEADERS BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES support/diagonalize.hpp support/rational.hpp support/scalar_faults.hpp
-      support/tracked.hpp)
+    FILES support/counting.hpp support/diagonalize.hpp support/rational.hpp
+      support/scalar_faults.hpp support/tracked.hpp)
 target_compile_features(galoot_test_support INTERFACE cxx_std_23)
 set_property(TARGET galoot_test_support
   PROPERTY VERIFY_INTERFACE_HEADER_SETS ON)
@@ -1002,6 +1005,12 @@ target_link_libraries(support_diagonalize_test PRIVATE galoot_test_support)
 # beyond it.
 galoot_add_test(MODULE support COMPONENT tracked)
 target_link_libraries(support_tracked_test PRIVATE galoot_test_support)
+
+# support.counting: the counting scalar is an exact ring scalar with ==, and
+# each of its operations computes its integer result and counts once, in its
+# own kind.
+galoot_add_test(MODULE support COMPONENT counting)
+target_link_libraries(support_counting_test PRIVATE galoot_test_support)
 
 # support.tracked_rejects_<case>: a double that the rational cannot hold, by
 # its magnitude or its denominator, aborts exact_rational at run time with
@@ -2118,6 +2127,32 @@ foreach(case IN ITEMS recorded rigid_int64 rigid_rational)
     PROPERTIES LABELS "core;core.transform")
 endforeach()
 
+# core.transform_counts_checking and core.transform_counts_unchecked: one
+# program built in each checking mode counts the operations of a transform in
+# a degenerate form whose first stage is restricted, over the counting
+# scalar, against the reference's counts for that mode. The programs take the
+# headers directly, so that the build preset's mode does not reach them.
+foreach(mode IN ITEMS checking unchecked)
+  if(mode STREQUAL "checking")
+    set(checking 1)
+  else()
+    set(checking 0)
+  endif()
+  add_executable(core_transform_counts_${mode} core/transform_counts_test.cpp)
+  target_include_directories(core_transform_counts_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(core_transform_counts_${mode} PRIVATE
+    galoot_doctest_main galoot_golden galoot_test_support)
+  target_compile_features(core_transform_counts_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(core_transform_counts_${mode} PRIVATE
+    GALOOT_CHECKING=${checking})
+  add_test(NAME core.transform_counts_${mode}
+    COMMAND core_transform_counts_${mode})
+  set_tests_properties(core.transform_counts_${mode} PROPERTIES
+    LABELS "core;core.transform_counts"
+    FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+endforeach()
+
 # core.transform_rounding: the rounding check of transform over double and
 # float, against the tracking oracle.
 galoot_add_test(MODULE core COMPONENT transform_rounding)
@@ -2589,6 +2624,31 @@ target_link_libraries(rga3_chains_test PRIVATE galoot::presets::rga3
 galoot_add_test(MODULE rga3 COMPONENT incidence DIRECTORY presets/rga3)
 target_link_libraries(rga3_incidence_test PRIVATE galoot::presets::rga3
   galoot_golden galoot_test_support)
+
+# rga3.op_counts_checking and rga3.op_counts_unchecked: one program built in
+# each checking mode runs the joins, the meet, the transforms, and the
+# composition once over the counting scalar and compares its counts with the
+# reference's counts for that mode. The programs take the headers directly,
+# so that the build preset's mode does not reach them.
+foreach(mode IN ITEMS checking unchecked)
+  if(mode STREQUAL "checking")
+    set(checking 1)
+  else()
+    set(checking 0)
+  endif()
+  add_executable(rga3_op_counts_${mode} presets/rga3/op_counts_test.cpp)
+  target_include_directories(rga3_op_counts_${mode} PRIVATE
+    ${PROJECT_SOURCE_DIR}/include)
+  target_link_libraries(rga3_op_counts_${mode} PRIVATE galoot_doctest_main
+    galoot_golden galoot_test_support)
+  target_compile_features(rga3_op_counts_${mode} PRIVATE cxx_std_23)
+  target_compile_definitions(rga3_op_counts_${mode} PRIVATE
+    GALOOT_CHECKING=${checking})
+  add_test(NAME rga3.op_counts_${mode} COMMAND rga3_op_counts_${mode})
+  set_tests_properties(rga3.op_counts_${mode} PROPERTIES
+    LABELS "rga3;rga3.op_counts"
+    FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+endforeach()
 
 # Each misuse of rotation and translation is one error with its message, and
 # the line a reader sees first names no internal name.

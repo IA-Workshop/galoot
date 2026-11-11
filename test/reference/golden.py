@@ -20,7 +20,10 @@ chains of joints, and point groups are each computed by
 conventions_check.py and by rigid_motions.py and written only when the two
 agree exactly; the orders of the point groups must also equal the published
 ones. The diagonal and rigid signatures have no second route; their squares
-are written from the definition as clifford_reference.py states it.
+are written from the definition as clifford_reference.py states it. The
+operation counts of the rga3 operations are counted from lists of terms
+built from products of blades, each list checked to compute its operation,
+by conventions_check.py's products of whole multivectors, on seeded inputs.
 
 Usage, with the interpreter isolated as for every reference script:
 
@@ -1107,6 +1110,26 @@ struct joint_chain {
   std::array<point, @CHAIN_POINTS@> images;
 };
 
+/// The arithmetic of one operation's generated terms over a scalar: each
+/// term is one multiplication; each term after the first on its place one
+/// addition, or a subtraction for a term of sign -1 (counted together); and
+/// a first term of sign -1 one negation. Then the comparisons of a check,
+/// and the integer constants formed, one for each term whose coefficient is
+/// other than +1 or -1.
+struct operation_count {
+  int multiplications;
+  int additions;
+  int negations;
+  int comparisons;
+  int integer_constants;
+};
+
+/// The counts of one operation with checking off and with it on.
+struct checked_operation_count {
+  operation_count unchecked;
+  operation_count checking;
+};
+
 /// A crystallographic point group by its Hermann-Mauguin symbol: its order,
 /// its first `generator_count` generators (the rest are zero), and the index
 /// of its first element in the array of elements.
@@ -1501,6 +1524,228 @@ def point_groups():
                            len(elements))))
         elements += [Arr(fractions(row) for row in m) for m in matrices]
     return groups, elements
+
+
+# The operation counts follow the rule that a straight-line evaluation of
+# an operation's terms makes, one statement per term in the order of the
+# first operand's place and then the second's: each term is one product of
+# a coefficient of each operand, whose coefficient of +1 or -1 is a sign
+# carried by the statement, not a multiplication; the first term on a place
+# assigns its product, negated when its sign is -1, and each later one adds
+# or subtracts it. The terms are listed here from the products of blades,
+# and each list is checked to compute its operation on seeded inputs.
+
+COUNT_SEED = 20261110
+COUNT_TRIALS = 20
+
+
+def layout_blades(names):
+    """A layout by its oriented names: (mask, sign) for each place."""
+    return [conv.parse(name) for name in names]
+
+
+def canonical_layout(masks, n=4):
+    """The given blades in the result order, each with orientation +1."""
+    return [(m, 1) for m in result_order(n) if m in masks]
+
+
+def blade_terms(op, a, b, n=4):
+    """The terms of op(x, y) for x on the layout a and y on the layout b:
+    (i, j, mask, c) for each pair of places i of a and j of b, in that
+    order, and for each blade of the mask that their oriented blades give
+    with a coefficient c other than zero, in the result order. In rigid(3)
+    a product of two blades is a single blade; in a form that is not
+    diagonal it may be several."""
+    order = {m: k for k, m in enumerate(result_order(n))}
+    terms = []
+    for i, (ma, sa) in enumerate(a):
+        for j, (mb, sb) in enumerate(b):
+            product = op({ma: sa}, {mb: sb})
+            terms += [(i, j, m, product[m])
+                      for m in sorted(product, key=order.__getitem__)]
+    return terms
+
+
+def onto(terms, target):
+    """The terms on the places of target, (i, j, place, c) with c times
+    the orientation of the blade there; a term on a blade target lacks is
+    an error."""
+    places = {m: (k, sign) for k, (m, sign) in enumerate(target)}
+    return [(i, j, places[m][0], c * places[m][1]) for i, j, m, c in terms]
+
+
+def rule_count(kernel):
+    """The multiplications, additions and subtractions, and negations of one
+    list of terms (i, j, place, c), in order. A coefficient other than +1
+    or -1 would also be an integer constant and a second multiplication,
+    which the rule does not price, so it stops the script."""
+    mul = add = neg = 0
+    written = set()
+    for _, _, place, c in kernel:
+        if abs(c) != 1:
+            raise ValueError(f"a coefficient {c}, which this rule does not "
+                             "price")
+        mul += 1
+        if place in written:
+            add += 1
+        else:
+            written.add(place)
+            neg += 1 if c < 0 else 0
+    return {"mul": mul, "add": add, "neg": neg}
+
+
+def summed(*counts, comparisons=0):
+    """An operation_count of several lists' counts. Every coefficient is +1
+    or -1, as rule_count checks, so no integer constant is formed."""
+    total = {key: sum(c[key] for c in counts) for key in ("mul", "add", "neg")}
+    return Agg((total["mul"], total["add"], total["neg"], comparisons, 0))
+
+
+def evaluate(kernel, x, y, size):
+    """The values of the places of a list of terms on the values x and y."""
+    out = [Fraction(0)] * size
+    for i, j, place, c in kernel:
+        out[place] += c * x[i] * y[j]
+    return out
+
+
+def random_values(rng, size):
+    return [Fraction(rng.randint(-9, 9), rng.randint(1, 4))
+            for _ in range(size)]
+
+
+def product_count(op, a_names, b_names, rng, what):
+    """The counts of op(x, y) for x on a_names and y on b_names, onto the
+    canonical blades of its result; its terms are checked against op on
+    seeded multivectors."""
+    a, b = layout_blades(a_names), layout_blades(b_names)
+    terms = blade_terms(op, a, b)
+    result = canonical_layout({m for _, _, m, _ in terms})
+    kernel = onto(terms, result)
+    for _ in range(COUNT_TRIALS):
+        x, y = random_values(rng, len(a)), random_values(rng, len(b))
+        direct = op(conv.on_names(a_names, x), conv.on_names(b_names, y))
+        agree(evaluate(kernel, x, y, len(result)),
+              [direct.get(m, 0) for m, _ in result], f"the terms of {what}")
+    return rule_count(kernel)
+
+
+def join_counts(rng):
+    """(p ^ q) and ((p ^ q) ^ r): the second wedge reads the canonical
+    blades of the first."""
+    first = product_count(conv.wedge, conv.POINT_NAMES, conv.POINT_NAMES,
+                          rng, "p ^ q")
+    line_names = [ref.blade_name(m) for m, _ in canonical_layout(
+        {m for _, _, m, _ in blade_terms(
+            conv.wedge, layout_blades(conv.POINT_NAMES),
+            layout_blades(conv.POINT_NAMES))})]
+    second = product_count(conv.wedge, line_names, conv.POINT_NAMES, rng,
+                           "(p ^ q) ^ r")
+    return first, second
+
+
+def rigid_algebra():
+    """rigid(3) as conventions_check.py computes in it: its number of
+    generators, geometric antiproduct, and antireverse."""
+    return 4, conv.antigp, conv.antireverse
+
+
+def degenerate_algebra():
+    """The degenerate form of GP_TABLE_FORMS with e1 . e2 = 1, as
+    clifford_reference.py multiplies in it: the antiproduct is
+    left(right(a) right(b)), with the complements and the antireverse's
+    signs of three generators from their definitions above."""
+    g = next(g for name, _, g in GP_TABLE_FORMS if name == "degenerate_3")
+    alg = ref.Algebra(g)
+    right, left = complements(3)
+    signs = grade_signs(3, right, left)
+
+    def antigp(a, b):
+        return ref.clean(apply_complement(left, ref.clean(alg.mul(
+            apply_complement(right, a), apply_complement(right, b)))))
+
+    def antireverse(x):
+        return {m: c * signs[m][1] for m, c in x.items()}
+
+    return 3, antigp, antireverse
+
+
+def transform_count(v_names, x_names, rng, what, algebra):
+    """The counts of transform(x, V) for x on x_names and an even versor V
+    on v_names, with checking off and on. The first stage is the geometric
+    antiproduct of V and x on the canonical blades of its result, the
+    middle; the second is the middle times antireverse(V), the terms on x's
+    blades kept on x's places with x's orientations and the others on the
+    dropped blades, canonical. With checking off the first stage keeps only
+    the terms on middle blades that a kept term reads; with it on it keeps
+    all of them, the dropped terms are computed too, and each dropped blade
+    is compared once."""
+    n, antigp, antireverse = algebra
+    v, x = layout_blades(v_names), layout_blades(x_names)
+    if any((n - ref.popcount(m)) % 2 for m, _ in v):
+        raise ValueError(f"the versor of {what} is not even")
+    first_terms = blade_terms(antigp, v, x, n)
+    middle = canonical_layout({m for _, _, m, _ in first_terms}, n)
+    first_all = onto(first_terms, middle)
+
+    reversed_v = [next(iter(antireverse({m: s}).items())) for m, s in v]
+    second_terms = blade_terms(antigp, middle, reversed_v, n)
+    x_masks = {m for m, _ in x}
+    kept = onto([t for t in second_terms if t[2] in x_masks], x)
+    dropped_layout = canonical_layout(
+        {m for _, _, m, _ in second_terms if m not in x_masks}, n)
+    dropped = onto([t for t in second_terms if t[2] not in x_masks],
+                   dropped_layout)
+    read = {i for i, _, _, _ in kept}
+    first_kept = [t for t in first_all if t[2] in read]
+
+    for _ in range(COUNT_TRIALS):
+        q, p = random_values(rng, len(v)), random_values(rng, len(x))
+        versor = conv.on_names(v_names, q)
+        direct = antigp(antigp(versor, conv.on_names(x_names, p)),
+                        antireverse(versor))
+        for first in (first_kept, first_all):
+            mid = evaluate(first, q, p, len(middle))
+            agree(evaluate(kept, mid, q, len(x)),
+                  conv.coeffs(direct, x_names), f"the terms of {what}")
+        mid = evaluate(first_all, q, p, len(middle))
+        agree(evaluate(dropped, mid, q, len(dropped_layout)),
+              [direct.get(m, 0) for m, _ in dropped_layout],
+              f"the dropped terms of {what}")
+
+    unchecked = summed(rule_count(first_kept), rule_count(kept))
+    checking = summed(rule_count(first_all), rule_count(kept),
+                      rule_count(dropped), comparisons=len(dropped_layout))
+    return unchecked, checking
+
+
+def operation_counts():
+    """Each operation's counts with checking off and on, by name."""
+    rng = random.Random(COUNT_SEED)
+    point_join, plane_second = join_counts(rng)
+    meet = product_count(conv.antiwedge, conv.LINE_NAMES, conv.PLANE_NAMES,
+                         rng, "l v g")
+    compose = product_count(conv.antigp, conv.MOTOR_NAMES, conv.MOTOR_NAMES,
+                            rng, "compose(Q2, Q1)")
+    counts = {
+        "point_join": (summed(point_join),) * 2,
+        "plane_join": (summed(point_join, plane_second),) * 2,
+        "line_plane_meet": (summed(meet),) * 2,
+        "point_transform": transform_count(
+            conv.MOTOR_NAMES, conv.POINT_NAMES, rng, "transform(p, Q)",
+            rigid_algebra()),
+        "line_transform": transform_count(
+            conv.MOTOR_NAMES, conv.LINE_NAMES, rng, "transform(l, Q)",
+            rigid_algebra()),
+        "plane_transform": transform_count(
+            conv.MOTOR_NAMES, conv.PLANE_NAMES, rng, "transform(g, Q)",
+            rigid_algebra()),
+        "motor_compose": (summed(compose),) * 2,
+        "degenerate_transform": transform_count(
+            ("e1", "e2", "e3", "e123"), ("e123",), rng,
+            "transform(x, V) in the degenerate form", degenerate_algebra()),
+    }
+    return {name: Agg(pair) for name, pair in counts.items()}
 
 
 def generate():
@@ -1940,6 +2185,37 @@ def generate():
     emit_values(out, "point_group", "groups", groups)
     emit_values(out, "matrix3", "elements", elements)
     close_namespace(out, "point_groups")
+
+    open_namespace(out, "operation_counts",
+                   "each term is one product and each later term on a place "
+                   "one addition",
+                   "The arithmetic of the rga3 operations over a scalar, "
+                   "with checking off and on: p ^ q and (p ^ q) ^ r of "
+                   "points, the antiwedge l v g of a line and a plane, and "
+                   "compose(Q2, Q1), the geometric antiproduct of two "
+                   "motors, on the canonical blades of their results, and "
+                   "transform(x, Q) of a point, a line, and a plane by a "
+                   "motor as the geometric antiproduct of Q and x and then "
+                   "of that and antireverse(Q); and transform(x, V) in the "
+                   "degenerate form with e1 . e2 = 1, for V on e1, e2, e3, "
+                   "e123 and x on e123, where the second stage reads only "
+                   "some of the middle blades. Each "
+                   "operation's terms are listed from the products of its "
+                   "operands' oriented blades, in the order of the first "
+                   "operand's place and then the second's, and each list "
+                   "was checked to compute its operation on seeded "
+                   "rationals. Each term is one multiplication, its sign of "
+                   "+1 or -1 carried and not multiplied; the first term on "
+                   "a place is assigned, one negation when its sign is -1, "
+                   "and each later one is one addition or subtraction. With "
+                   "checking on, a transform's first stage keeps every term, "
+                   "its terms on the blades x lacks are computed, and each "
+                   "of those blades is compared with zero once; with it "
+                   "off, the first stage keeps the terms on the middle "
+                   "blades that the kept terms read.")
+    for name, value in operation_counts().items():
+        declare(out, "checked_operation_count", name, literal(value) + ";")
+    close_namespace(out, "operation_counts")
 
     out += ["", "} // namespace golden", "", "// clang-format on",
             "#endif // GALOOT_TEST_REFERENCE_GOLDEN_HPP"]
