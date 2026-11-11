@@ -196,12 +196,12 @@ struct collected {
   std::array<term, AT> apply_terms;
 };
 
-// The summary written as three kernels, each sum starting from a positive
-// term where it has one.
-template <core::metric_like Alg, core::blade_set V, core::blade_set X>
+// The summary S of a versor on V places and an x on X places written as
+// three kernels, each sum starting from a positive term where it has one.
+template <const auto& S, std::size_t V, std::size_t X>
 consteval auto make_collected() {
-  constexpr const auto& s = transform_summary<Alg, V, X>;
-  constexpr std::size_t n = V.size();
+  constexpr const auto& s = S;
+  constexpr std::size_t n = V;
   constexpr std::size_t pairs = n * n;
   collected<s.products, s.entry_terms, s.entries, s.apply_terms> out{};
 
@@ -242,18 +242,18 @@ consteval auto make_collected() {
   }
 
   k = 0;
-  for (std::size_t o = 0; o < X.size(); ++o) {
+  for (std::size_t o = 0; o < X; ++o) {
     std::size_t lead = none;
-    for (std::size_t j = 0; j < X.size() && lead == none; ++j) {
-      const std::size_t cell = (o * X.size()) + j;
+    for (std::size_t j = 0; j < X && lead == none; ++j) {
+      const std::size_t cell = (o * X) + j;
       if (s.entry_of[cell] != none && s.sign_of[cell] > 0) {
         lead = j;
       }
     }
     bool first = true;
     for (std::size_t pass = 0; pass < 2; ++pass) {
-      for (std::size_t j = 0; j < X.size(); ++j) {
-        const std::size_t cell = (o * X.size()) + j;
+      for (std::size_t j = 0; j < X; ++j) {
+        const std::size_t cell = (o * X) + j;
         if (s.entry_of[cell] == none || (pass == 0) != (j == lead)) {
           continue;
         }
@@ -271,7 +271,8 @@ consteval auto make_collected() {
 }
 
 template <core::metric_like Alg, core::blade_set V, core::blade_set X>
-inline constexpr auto collected_transform = make_collected<Alg, V, X>();
+inline constexpr auto collected_transform =
+    make_collected<transform_summary<Alg, V, X>, V.size(), X.size()>();
 
 // Each kernel apart, so that it can be a template argument of its own.
 template <core::metric_like Alg, core::blade_set V, core::blade_set X>
