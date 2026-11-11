@@ -1,6 +1,6 @@
-// Two values of a change compared with ==, which basis_change does not
-// define: two values for one matrix can differ, as these two do, so the
-// error must point at same_rows, which compares them as written.
+// Two values of a change compared with ==, which basis_change deletes: two
+// values for one matrix can differ, as these two do, so the error must point
+// at same_rows, which compares them as written.
 // This file must not compile.
 #include <galoot/core/basis_change.hpp>
 
