@@ -53,12 +53,12 @@ struct r12 {
   static constexpr auto value = core::R<12, 0, 0>();
 };
 
-// The generators e1, e2, and the twelfth, g12, as masks: no name such as
-// e12 can stand for the twelfth generator, since e12 is e1 e2.
-constexpr core::mask_t e1 = 1U << 0U;
-constexpr core::mask_t e2 = 1U << 1U;
-constexpr core::mask_t g12 = 1U << 11U;
-constexpr core::blade_set<3> vectors{{{{e1, 1}, {e2, 1}, {g12, 1}}}};
+// The generators e1, e2, and the twelfth, g12, as masks with sign +1: no
+// name such as e12 can stand for the twelfth generator, since e12 is e1 e2.
+constexpr core::oriented_blade e1{.mask = 1U << 0U, .sign = 1};
+constexpr core::oriented_blade e2{.mask = 1U << 1U, .sign = 1};
+constexpr core::oriented_blade g12{.mask = 1U << 11U, .sign = 1};
+constexpr core::blade_set<3> vectors{.blades = {{e1, e2, g12}}};
 using Vector = core::mv<r12, vectors, int>;
 
 constexpr Vector a{1, 2, 0};
@@ -67,10 +67,12 @@ constexpr Vector b{0, 0, 3};
 // The wedge of two such vectors is on the three bivectors they can reach,
 // in canonical order: e1 e2, then e1 g12, then e2 g12. Here
 // a ^ b = 3 (e1 ^ g12) + 6 (e2 ^ g12), with 0 on e1 e2.
+// The core names that layout wedge_layout.
 constexpr auto ab = a ^ b;
-static_assert(ab.component_count == 3);
-static_assert(ab.layout.blades[0].mask == (e1 | e2));
-static_assert(ab.layout.blades[1].mask == (e1 | g12));
+constexpr auto bivectors = core::wedge_layout<r12, vectors, vectors>;
+static_assert(bivectors.size() == 3 && ab.coefficients.size() == 3);
+static_assert(bivectors.blades[0].mask == (e1.mask | e2.mask));
+static_assert(bivectors.blades[1].mask == (e1.mask | g12.mask));
 static_assert(ab.coefficients[0] == 0 && ab.coefficients[1] == 3 &&
               ab.coefficients[2] == 6);
 
