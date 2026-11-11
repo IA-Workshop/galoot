@@ -2531,73 +2531,9 @@ add_test(NAME rga3.include_scan
 set_tests_properties(rga3.bare_compile rga3.include_scan PROPERTIES
   LABELS "rga3;rga3.headers")
 
-# rga3.readme_example_<n>: the n-th cpp block of README.md, extracted into
-# the build tree at configure time, builds with the test flags and runs to
-# exit 0, printing what its "// prints:" comments say. rga3.readme_has_example
-# reads the README itself and fails when it has no cpp block, so that a lost
-# fence cannot pass; a malformed README extracts no example and fails it too.
-set(readme ${PROJECT_SOURCE_DIR}/README.md)
-set(readme_examples
-  ${Python3_EXECUTABLE} -I ${PROJECT_SOURCE_DIR}/tools/readme_examples.py)
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${readme}
-  ${PROJECT_SOURCE_DIR}/tools/readme_examples.py)
-execute_process(
-  COMMAND ${readme_examples} extract ${readme} ${CMAKE_CURRENT_BINARY_DIR}/readme
-  OUTPUT_VARIABLE readme_sources ERROR_VARIABLE readme_defect
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-if(readme_defect)
-  message(WARNING "README.md: no example extracted: ${readme_defect}")
-endif()
-string(REPLACE "\n" ";" readme_sources "${readme_sources}")
-add_test(NAME rga3.readme_has_example
-  COMMAND ${readme_examples} check ${readme})
-set(readme_tests rga3.readme_has_example)
-foreach(source IN LISTS readme_sources)
-  cmake_path(GET source STEM example)
-  add_executable(rga3_readme_${example} ${source})
-  target_link_libraries(rga3_readme_${example} PRIVATE galoot::presets::rga3)
-  # An example's main may let std::format_error from std::println escape, as
-  # a user's would; a try block around it would only hide what it shows.
-  if(CMAKE_CXX_CLANG_TIDY)
-    set_target_properties(rga3_readme_${example} PROPERTIES CXX_CLANG_TIDY
-      "${CMAKE_CXX_CLANG_TIDY};--checks=-bugprone-exception-escape")
-  endif()
-  add_test(NAME rga3.readme_${example} COMMAND ${readme_examples} run
-    ${source} $<TARGET_FILE:rga3_readme_${example}>)
-  list(APPEND readme_tests rga3.readme_${example})
-endforeach()
-set_tests_properties(${readme_tests} PROPERTIES LABELS "rga3;rga3.readme")
-
-# tools.readme_examples_*: the README check fails on a README with no cpp
-# block, on a C++ block marked c++, and on a fence never closed; a run fails
-# when the program exits nonzero or prints other than its "// prints:" lines.
-set(readme_fixtures ${CMAKE_CURRENT_SOURCE_DIR}/tools/readme_examples)
-add_test(NAME tools.readme_examples_rejects_no_block
-  COMMAND ${expect_output} 1 "no_block.md: no ```cpp block"
-    -- ${readme_examples} check ${readme_fixtures}/no_block.md)
-add_test(NAME tools.readme_examples_rejects_other_name
-  COMMAND ${expect_output} 1 "other_name.md:3: the block is marked c++"
-    -- ${readme_examples} check ${readme_fixtures}/other_name.md)
-add_test(NAME tools.readme_examples_rejects_unclosed
-  COMMAND ${expect_output} 1 "unclosed.md:5: the fence opened here is never"
-    -- ${readme_examples} check ${readme_fixtures}/unclosed.md)
-add_test(NAME tools.readme_examples_rejects_exit
-  COMMAND ${expect_output} 1 "the program exited 1, not 0"
-    -- ${readme_examples} run ${readme_fixtures}/prints.txt
-      ${CMAKE_COMMAND} -E false)
-add_test(NAME tools.readme_examples_rejects_output
-  COMMAND ${expect_output} 1 "but its // prints: comments say"
-    -- ${readme_examples} run ${readme_fixtures}/prints.txt
-      ${CMAKE_COMMAND} -E echo "other text")
-add_test(NAME tools.readme_examples_accepts_output
-  COMMAND ${expect_output} 0 "first line"
-    -- ${readme_examples} run ${readme_fixtures}/prints.txt
-      ${CMAKE_COMMAND} -E echo "first line")
-set_tests_properties(tools.readme_examples_rejects_no_block
-  tools.readme_examples_rejects_other_name
-  tools.readme_examples_rejects_unclosed tools.readme_examples_rejects_exit
-  tools.readme_examples_rejects_output tools.readme_examples_accepts_output
-  PROPERTIES LABELS "tools;tools.readme_examples")
+# The examples of the README and the guide, compiled and run, and the checks
+# that keep every page and its examples under test.
+include(${CMAKE_CURRENT_SOURCE_DIR}/documentation.cmake)
 
 # rga3.motions: translation and rotation against hand values, the
 # reference's rotations, and the formula of the rotor written out in the

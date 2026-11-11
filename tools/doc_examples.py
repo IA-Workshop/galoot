@@ -1,10 +1,11 @@
-"""Extract the C++ examples of a Markdown file and check what they print, so
-that every example a reader copies from the README compiles and runs.
+"""Extract the C++ examples of a Markdown page and check what they print, so
+that every example a reader copies from the README or the guide compiles and
+runs.
 
 Usage:
-  python3 -I tools/readme_examples.py extract <readme> <out-dir>
-  python3 -I tools/readme_examples.py check <readme>
-  python3 -I tools/readme_examples.py run <example> <program> [<arg>...]
+  python3 -I tools/doc_examples.py extract <page> <out-dir>
+  python3 -I tools/doc_examples.py check <page>
+  python3 -I tools/doc_examples.py run <example> <program> [<arg>...]
 
 An example is a fenced code block whose info string is cpp:
 
@@ -18,14 +19,14 @@ indented, as in a list item; that indentation is removed from the lines of
 the block.
 
 `extract` writes the n-th example to <out-dir>/example_<n>.cpp, with a #line
-directive so that the compiler reports its lines as lines of <readme>, and
+directive so that the compiler reports its lines as lines of <page>, and
 prints the path of each file written, one per line. A file whose text has
 not changed is left alone, so that the build does not compile it again, and
-an example_<n>.cpp beyond the last example is removed. When the README is
+an example_<n>.cpp beyond the last example is removed. When the page is
 malformed it writes nothing, removes every example, prints the defect, and
 exits 1.
 
-`check` exits 1, naming the defect, when <readme> has no example, so that a
+`check` exits 1, naming the defect, when <page> has no example, so that a
 fence lost from it fails rather than leaving an example nobody compiles. It
 also fails on a fence that is never closed, and on a block marked as C++
 with another info string, such as c++ or cxx, which would be shown as C++
@@ -98,16 +99,16 @@ def remove_examples(out_dir, keep):
             os.remove(os.path.join(out_dir, name))
 
 
-def extract(readme, out_dir):
+def extract(page, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     try:
-        found = examples(readme)
+        found = examples(page)
     except ValueError as defect:
         remove_examples(out_dir, 0)
         print(defect, file=sys.stderr)
         return 1
 
-    source = os.path.abspath(readme).replace("\\", "\\\\").replace('"', '\\"')
+    source = os.path.abspath(page).replace("\\", "\\\\").replace('"', '\\"')
     for n, (first_line, text) in enumerate(found, start=1):
         target = os.path.join(out_dir, f"example_{n}.cpp")
         content = f'#line {first_line} "{source}"\n{text}'
@@ -124,17 +125,17 @@ def extract(readme, out_dir):
     return 0
 
 
-def check(readme):
+def check(page):
     try:
-        found = examples(readme)
+        found = examples(page)
     except ValueError as defect:
         print(defect)
         return 1
     if not found:
-        print(f"{readme}: no ```cpp block, so no example is compiled; a "
+        print(f"{page}: no ```cpp block, so no example is compiled; a "
               f"C++ example needs a fence marked cpp")
         return 1
-    print(f"{readme}: {len(found)} ```cpp block(s)")
+    print(f"{page}: {len(found)} ```cpp block(s)")
     return 0
 
 
@@ -162,9 +163,9 @@ def main(argv):
         return check(argv[1])
     if len(argv) >= 3 and argv[0] == "run":
         return run(argv[1], argv[2:])
-    sys.exit("usage: readme_examples.py extract <readme> <out-dir>\n"
-             "       readme_examples.py check <readme>\n"
-             "       readme_examples.py run <example> <program> [<arg>...]")
+    sys.exit("usage: doc_examples.py extract <page> <out-dir>\n"
+             "       doc_examples.py check <page>\n"
+             "       doc_examples.py run <example> <program> [<arg>...]")
 
 
 if __name__ == "__main__":
