@@ -136,6 +136,9 @@ def one(compiler, opt, case):
             if m:
                 targets.append(f"{short(m.group(1)) if m.group(1).startswith('_ZN') else 'user'}->{m.group(2)} {short(m.group(3))}")
         detail = "; ".join(sorted(set(targets)))
+        # Historical: the check script printed this refusal when the survey
+        # ran at 390b55e; from 36575d5 it prints no refusal, so on a later
+        # tree this branch cannot fire.
         if "not x86-64" in r.stdout:
             status = "REFUSED"
         if "failed" in r.stdout:
