@@ -266,3 +266,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	wu17-part-f-check	independent-checker	opus	202593	53	717	check of note 0027 on research/spike-e--check 9544c4d
 2026-11-10	wu17-part-f-check	independent-checker	opus	19186	9	299	activity after the hand-back (221779 total minus 202593)
 2026-11-10	wu17-part-f-note	researcher-writer	opus	35037	30	253	note 0027 amendment 37d2641 (247023 total minus 211986)
+2026-11-10	fable-advisory	advisor	fable	unknown	unknown	unknown	advisory report 03770dc; token figures not visible to the agent or in its notification
