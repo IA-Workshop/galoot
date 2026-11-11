@@ -1,0 +1,22 @@
+# Spike E, part F: benchmarks of the transform's forms
+
+Plan 0038 part F (section 4 item 8), performance-engineer half, run by Claude (agent, Opus 5.5) on 2026-11-10 in the worktree `.claude/worktrees/spike-e--bench`, branch `research/spike-e--bench` from `develop` at `d0bbe49`. Recorded, never asserted (decision 0013). The results and their reading are added below this protocol after the runs.
+
+## The protocol, fixed before the first timed process
+
+- **Forms**, for transform(point, motor), transform(line, motor), transform(plane, motor) in rigid(3), over double, each a struct of two always-inlined functions, `setup(q)` (what reads only the motor) and `apply(m, q, x)`:
+  - `galoot`: `galoot::core::transform` itself, as the library is at `d0bbe49`.
+  - `a`: form A (the library's restricted terms, the same terms in the same order, signs carried into subtractions) as straight-line code, generated from `../forms.py` by `gen_forms.py` into `forms.hpp`.
+  - `b`: form B, collected, from `../forms.py`'s `form_B(grouped=True)`, the form whose counts are `../counts.md`'s B rows.
+  - `bp`: form B as `../proto/collect.hpp` derives it at compile time from the library's two kernels (the collection-pass prototype), run by always-inlined fold expressions.
+  - `c`: form C, "motor doubled first" (`../forms.py`'s `form_C_*(True)`), which assumes |v|² + s² = 1 and v · m + s t = 0.
+- **Loops** (`harness.hpp`): `throughput` (independent calls), `latency` (each result is the next call's x), and `batch` (setup once per motor, then 1,024 objects under it). A call of a form is `apply(setup(q), q, x)`, so per call `b` and `bp` pay their motor work every time.
+- **Inputs:** 128 motors and 128 objects drawn from seed 20261110 at run time (motors unitized as part D's harness does, so form C applies to them up to rounding), a batch's 1,024 objects drawn after them; every result added as bits into a printed checksum.
+- **Build:** `build.sh`, g++ 16.2.1 and clang++ 23.1.4 with libstdc++ 16, the flags CMake gives a test source under the `gcc-measure` and `clang-measure` presets (`-DGALOOT_CHECKING=0 -Iinclude -Itest -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -O2 -std=c++23`), linked with lld, every compile through `tools/timed` into `runs.tsv` here.
+- **Method:** E2's (`records/performance/wu17-bench/` on `records/cost-evidence-measurements`, `drive.py` there): every process `taskset -c 4 tools/timed --log out/runs.tsv bench <preset> spike-e-bench:... -- env -i [BENCH_ENV_PAD=...] <program> <form> <loop> <passes> 20261110 [1024]`; CPU 4 pinned with its sibling CPU 5 left idle by this work; pairs of processes at 1/8 and all of the passes, instructions and cycles per transform from the pair's difference; eleven rounds per environment size, interleaved, compilers and forms reversed on every other round; environment sizes 0, 1352, 2768; the lock taken and released per batch with `lock.sh` by `batch.sh`, the pool and load read before and after.
+- **Passes** (`drive.py`'s `PASSES`, from `out/calibration.txt`): long runs of 0.5 s for the slowest (compiler, form) of each (operation, loop), the same for every form and compiler; the batch loop four times that (its fastest form would otherwise run 0.035 s). So long runs take from about 0.14 s to 2 s.
+- **Busy rule, in ticks** (decision 0237 item 4): a pair whose sibling thread's busy time, or its CPU's busy time beyond its own, summed over its two processes, is more than 2 ticks (0.02 s) is repeated once, both kept, the later used and marked if busy again. For the pair lengths above, 2 ticks is from 1% to 13% of a pair's wall time.
+- **Criterion** (E2's): a difference is called when the medians differ by more than twice the larger of the two ranges, with the same form faster, at every environment size (strict) or at the smallest with the same order at all three (weaker). Compared pairs: `drive.py`'s `COMPARED`.
+- **Break-even sweep** (a reduced protocol): the batch loop at 1, 2, 3, 4, 6, 8, 16 objects per motor for `galoot`, `a`, `b`, `c`, environment size 0 only, five rounds, a quarter of the batch loop's transforms at each size.
+- **Diagnostic** (`drive.py stalls`): per form and loop, calls, store-forward blocks, scalar and packed double arithmetic retired per transform, under `perf stat`, not through `tools/timed`.
+- **Correctness before timing:** `check.cpp` (exact, over the test rational) and each program's `check` (double, relative difference from `galoot` at most 1e-12) must pass on both compilers.

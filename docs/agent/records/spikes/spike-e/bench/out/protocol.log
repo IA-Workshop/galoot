@@ -1,0 +1,3 @@
+calibrate  before 2026-11-11T00:24:37Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.47 1.37 0.93 2/1683 2995626
+calibrate  lock taken 2026-11-11T00:24:37Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.47 1.37 0.93 2/1683 2995662
+calibrate  lock released, exit 0 2026-11-11T00:24:51Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 1.65 1.42 0.96 3/1671 2997107
