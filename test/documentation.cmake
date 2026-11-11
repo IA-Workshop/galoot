@@ -140,6 +140,8 @@ galoot_add_doc_examples(PAGE docs/guide/core.md MODULE core NAME core_guide
   LINK galoot::core)
 galoot_add_doc_examples(PAGE docs/guide/rga3.md MODULE rga3 NAME rga3_guide
   LINK galoot::presets::rga3)
+galoot_add_doc_examples(PAGE docs/guide/limits.md MODULE core NAME limits
+  LINK galoot::core)
 
 # tests.docs_pages: every Markdown page under docs/, outside the agent/
 # notes, is registered above, so that a new page nobody registered fails
