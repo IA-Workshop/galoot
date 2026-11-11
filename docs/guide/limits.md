@@ -36,8 +36,8 @@ one grows as 2^n.
 Blade names have one decimal digit per index, so they exist only for
 algebras of up to 9 generators, `max_compact_generators`: in a larger
 algebra, e123 could mean e1 e23 or e12 e3. Above 9 generators, `blades<Tag,
-"...">`, `get<"...">`, `has_name`, and printing are each rejected with a
-message. There, a layout is written as a `blade_set` of masks, in which bit
+"...">`, `get<"...">`, and printing are each rejected with a message, and
+`has_name` answers false. There, a layout is written as a `blade_set` of masks, in which bit
 i − 1 stands for e_i, or built by `full`, `of_grade`, and `merge`, and a
 coefficient is read by its position in `coefficients`. A product's result is
 in canonical order, by grade and then lexicographically by index list.

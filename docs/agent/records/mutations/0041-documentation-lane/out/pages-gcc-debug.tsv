@@ -1,0 +1,5 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+page_unregistered	gcc-debug	f44b332705b6	killed	killed	tests.docs_pages	-	-	-	-	-
+prints_wrong	gcc-debug	f44b332705b6	killed	killed	rga3.start_example_2	-	-	-	-	-
+rejected_message_changed	gcc-debug	f44b332705b6	killed	killed	rga3.start_rejected_1	-	-	-	-	-
+cmake_block_broken	gcc-debug	f44b332705b6	killed	killed	rga3.readme_cmake_1	-	-	-	-	-
