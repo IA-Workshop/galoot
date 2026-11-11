@@ -1,6 +1,6 @@
-# Plan 0040 mutants: the forced inlining (part A)
+# Plan 0040 mutants: the forced inlining (part A) and `basis_change` (part B)
 
-Plan 0040 section 8. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040) on 2026-11-10 with `tools/mutate`, on gcc-debug (g++ 16.2.1) and clang-debug (clang++ 23.1.4, both with libstdc++ 16), at `d382516` (part A2) in the `--code` worktree, with only records dirty. Rows: `out/<spec>-<preset>.tsv`; the runs are the rows `mutant:<name>`, `mutant:baseline` and `mutant:restore` of `records/performance/runs.tsv`. The job pool read 23 of 23 slots free before the first runs; before `gap.toml` it read 0 of 23 free, with two other workstreams' `ctest` as clients, so its wall times are those of a loaded pool.
+Plan 0040 section 8. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040) on 2026-11-10 with `tools/mutate`, on gcc-debug (g++ 16.2.1) and clang-debug (clang++ 23.1.4, both with libstdc++ 16), at `d382516` (part A2) for part A and at `09bebcd` (part B3) for part B, in the `--code` worktree, with only records dirty. Rows: `out/<spec>-<preset>.tsv`; the runs are the rows `mutant:<name>`, `mutant:baseline` and `mutant:restore` of `records/performance/runs.tsv`. The job pool read 23 of 23 slots free before the first runs; before `gap.toml` it read 0 of 23 free, with two other workstreams' `ctest` as clients, so its wall times are those of a loaded pool.
 
 `rga3.kernels_inline` compiles its probe with fixed flags (`-O2`, checking off), so a tree's preset matters to the attribute mutants only for its compiler; their selection's one target is the probe's object library, built with the tree's flags, so that a mutant breaking the build would be classified.
 
@@ -12,6 +12,7 @@ Plan 0040 section 8. Run by Claude (agent, Opus 5.5, implementer 1 of plan 0040)
 | `check.toml` | 3 | 3 killed | 3 killed |
 | `gap.toml` (the suite without the check) | 1 | survived, as declared | survived, as declared |
 | `gap-gcc.toml`, `gap-clang.toml` (the check alone) | 1 | survived, as declared | killed, as declared |
+| `basis-change.toml` | 3 | 3 killed | 3 killed |
 
 None was unjudged. `tools/mutate` exited 1 on both attribute specs, for the four kills below that the plan expected to survive; every other verdict is as declared.
 
@@ -49,3 +50,13 @@ By the plan's reading, a kill of a mutant declared to survive is evidence that t
 ## The check's own mutants
 
 `check_ignores_jmp` (the branch pattern loses `jmp` and `jmpq`), `check_ignores_plt` (the symbol must end the operand, so `@PLT` and `@GOTPCREL` forms are missed), and `check_skips_missing` (a missing function is not reported) are each killed on both presets by the fixture test written for it: `tools.kernels_inline_rejects_jmp`, `_rejects_plt`, `_rejects_missing_function`.
+
+## Part B
+
+| Mutant | Edit | Killed by, both presets | Written for |
+| --- | --- | --- | --- |
+| `inverse_rows_sign` | entry (0, 0) of the checked inverse negated | `core.basis_change_identities`, `core.basis_change` | the identities test, which now reads `check_change`'s inverse |
+| `equality_hint_removed` | the deleted `==` removed | `core.basis_change_equality`, `core.basis_change_inequality` (the generic error, without the hint) | the two compile-fail tests |
+| `equality_defaulted` | `= default` in place of `= delete` | the two compile-fail tests (they compile), and the `static_assert` of `basis_change_test.cpp:187`, `!std::equality_comparable` | the same, and the type's guarantee |
+
+Each new or changed test is among the killers of the mutant written for it.
