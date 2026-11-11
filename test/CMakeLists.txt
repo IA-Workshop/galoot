@@ -135,7 +135,8 @@ galoot_add_compile_fail_test(NAME force_inline_value
   MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
   ONE_ERROR)
 # core.force_inline_on: the same for ON, a name the preprocessor does not
-# know, which a plain #if would read as 0.
+# know, which a plain #if would read as 0, with the whole core included, so
+# that no header adds an error of its own.
 galoot_add_compile_fail_test(NAME force_inline_on
   MODULE core COMPONENT assert
   SOURCE core/force_inline_on_fail.cpp
