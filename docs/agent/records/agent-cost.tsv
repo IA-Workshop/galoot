@@ -296,3 +296,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0041-pages	hci-expert author	opus	23449	12	209	lint fixes 00f10f0, merged 6d7d7b4 (477565 total minus 454116)
 2026-11-11	plan-0041-gate-run-1	merge runner	opus	18642	11	226	activity after the first report (152471 total minus 133829)
 2026-11-11	plan-0040-public-ops	implementer 1	opus	138799	60	2200	delta-review round: D1 to D6, pack rename, third W10 campaign, feature/pre-release-core-pass--public-ops 26f1b62 (666285 total minus 527486)
+2026-11-11	plan-0041-gate-run-2	merge runner	opus	9488	9	300	documentation lane gate rerun, merged to develop af5c34b (161959 total minus 152471 recorded)
