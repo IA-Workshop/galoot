@@ -99,6 +99,42 @@ galoot_add_compile_fail_test(NAME assert_checking_value
   MESSAGE "GALOOT_CHECKING must be 0 or 1"
   ONE_ERROR)
 
+# core.force_inline_off, core.force_inline_default and core.force_inline_build:
+# one source built with the forced-inline mode 0, with no mode, so that the
+# header's default of 1 applies, and with the mode this build declares. The
+# first two take the core's headers directly instead of linking galoot::core,
+# whose build interface carries the build's mode; the third links it, so that
+# a mode lost between the cache option and the code fails.
+foreach(mode IN ITEMS off default build)
+  set(program core_force_inline_${mode})
+  add_executable(${program} core/force_inline_test.cpp)
+  target_link_libraries(${program} PRIVATE galoot_doctest_main)
+  add_test(NAME core.force_inline_${mode} COMMAND ${program})
+  set_tests_properties(core.force_inline_${mode} PROPERTIES
+    LABELS "core;core.assert"
+    FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+endforeach()
+foreach(program IN ITEMS core_force_inline_off core_force_inline_default)
+  target_include_directories(${program} PRIVATE ${PROJECT_SOURCE_DIR}/include)
+  target_compile_definitions(${program} PRIVATE
+    GALOOT_CHECKING=$<BOOL:${GALOOT_CHECKING}>)
+endforeach()
+target_compile_definitions(core_force_inline_off PRIVATE
+  GALOOT_FORCE_INLINE=0 GALOOT_EXPECTED_FORCE_INLINE=0)
+target_compile_definitions(core_force_inline_default PRIVATE
+  GALOOT_EXPECTED_FORCE_INLINE=1)
+target_link_libraries(core_force_inline_build PRIVATE galoot::core)
+target_compile_definitions(core_force_inline_build PRIVATE
+  GALOOT_EXPECTED_FORCE_INLINE=$<BOOL:${GALOOT_FORCE_INLINE}>)
+
+# core.force_inline_value: a forced-inline mode other than 0 or 1 stops the
+# compile with one error that says which values the mode takes.
+galoot_add_compile_fail_test(NAME force_inline_value
+  MODULE core COMPONENT assert
+  SOURCE core/force_inline_value_fail.cpp
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
+  ONE_ERROR)
+
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
 galoot_add_test(MODULE core COMPONENT bits)

@@ -31,6 +31,23 @@ galoot_add_test(MODULE rga3 COMPONENT reference_kernels DIRECTORY .)
 target_link_libraries(rga3_reference_kernels_test PRIVATE
   galoot::presets::rga3 galoot_reference_kernels galoot_test_support)
 
+# rga3.reference_kernels_unforced: the same test built with the forced-inline
+# mode 0, so that the operations are shown to give the same values, and the
+# same bits for a transform, without the attribute. A build whose mode is
+# already 0 passes the same definition through galoot::core, and an identical
+# second definition is no error.
+add_executable(rga3_reference_kernels_unforced_test reference_kernels_test.cpp)
+target_link_libraries(rga3_reference_kernels_unforced_test PRIVATE
+  galoot::presets::rga3 galoot_reference_kernels galoot_test_support
+  galoot_doctest_main)
+target_compile_definitions(rga3_reference_kernels_unforced_test PRIVATE
+  GALOOT_FORCE_INLINE=0)
+add_test(NAME rga3.reference_kernels_unforced
+  COMMAND rga3_reference_kernels_unforced_test)
+set_tests_properties(rga3.reference_kernels_unforced PROPERTIES
+  LABELS "rga3;rga3.reference_kernels"
+  FAIL_REGULAR_EXPRESSION "${GALOOT_ZERO_CASES_REGEX}")
+
 # The harness, which needs the rga3 preset; it too compiles on its own in
 # all_verify_interface_header_sets.
 add_library(galoot_bench_harness INTERFACE)
