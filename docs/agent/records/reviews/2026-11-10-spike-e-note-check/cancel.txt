@@ -1,0 +1,9 @@
+rigid3_motor_point: V=8 X=4 first=20 second=28 paths=64 sum|C|=64 monomials=40 mixed-sign=0 cancel-to-zero=0
+rigid3_motor_line: V=8 X=6 first=36 second=36 paths=144 sum|C|=144 monomials=84 mixed-sign=0 cancel-to-zero=0
+rigid3_motor_plane: V=8 X=4 first=28 second=20 paths=64 sum|C|=64 monomials=40 mixed-sign=0 cancel-to-zero=0
+cga3_motor_grade1: V=8 X=5 first=40 second=40 paths=100 sum|C|=100 monomials=60 mixed-sign=0 cancel-to-zero=0
+cga3_motor_grade2: V=8 X=10 first=80 second=80 paths=376 sum|C|=376 monomials=196 mixed-sign=0 cancel-to-zero=0
+cga3_motor_grade3: V=8 X=10 first=80 second=80 paths=376 sum|C|=376 monomials=196 mixed-sign=0 cancel-to-zero=0
+cga3_motor_grade4: V=8 X=5 first=40 second=40 paths=100 sum|C|=100 monomials=60 mixed-sign=0 cancel-to-zero=0
+cga3_even_grade1: V=16 X=5 first=80 second=80 paths=400 sum|C|=384 monomials=212 mixed-sign=8 cancel-to-zero=8
+cga3_even_grade2: V=16 X=10 first=160 second=160 paths=1600 sum|C|=1456 monomials=744 mixed-sign=72 cancel-to-zero=72

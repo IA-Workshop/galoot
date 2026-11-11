@@ -1,0 +1,17 @@
+compiler	operation	loop	objects	form	env	runs	ns_median	ns_range	inst_median	inst_range	cycles_median	cycles_range	busy_again
+clang	transform_line	batch	1024	a	0	11	4.341	0.144	118.556	0.000	25.438	0.162	0
+clang	transform_line	batch	1024	b	0	11	1.742	0.056	52.232	0.000	10.166	0.017	0
+clang	transform_line	batch	1024	c	0	11	2.454	0.083	64.601	0.000	14.439	0.128	0
+clang	transform_line	batch	1024	galoot	0	11	10.745	0.047	292.011	0.000	62.946	0.238	0
+clang	transform_point	batch	1024	a	0	11	2.748	0.014	72.560	0.000	16.208	0.007	0
+clang	transform_point	batch	1024	b	0	11	0.886	0.004	23.150	0.000	5.188	0.005	0
+clang	transform_point	batch	1024	c	0	11	1.471	0.008	37.070	0.000	8.663	0.009	0
+clang	transform_point	batch	1024	galoot	0	11	8.266	0.116	185.011	0.000	49.038	0.100	0
+gcc	transform_line	batch	1024	a	0	11	11.530	0.048	229.019	0.000	68.434	0.156	0
+gcc	transform_line	batch	1024	b	0	11	8.774	0.028	93.159	0.000	52.083	0.057	0
+gcc	transform_line	batch	1024	c	0	11	9.344	0.156	107.056	0.000	55.416	1.150	0
+gcc	transform_line	batch	1024	galoot	0	11	9.617	0.266	260.007	0.000	56.736	1.804	0
+gcc	transform_point	batch	1024	a	0	11	9.336	0.021	147.019	0.000	55.463	0.034	0
+gcc	transform_point	batch	1024	b	0	11	4.416	0.021	43.105	0.000	26.231	0.072	0
+gcc	transform_point	batch	1024	c	0	11	5.250	0.022	73.024	0.000	31.130	0.149	0
+gcc	transform_point	batch	1024	galoot	0	11	8.417	0.043	204.007	0.000	49.758	0.401	0
