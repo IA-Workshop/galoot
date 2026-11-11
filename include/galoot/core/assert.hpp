@@ -39,13 +39,13 @@
 // The mode is pasted onto a name defined only for 0 and 1, because a numeric
 // #if reads a name it does not know, such as ON, as 0, takes 01 and 0x1 for
 // 1, and reports an empty value with an error of its own.
-// NOLINTBEGIN(cppcoreguidelines-macro-usage): only the preprocessor can test
-// the spelling of a macro's value.
+// NOLINTBEGIN(*-macro-usage,*-macro-to-enum): only the preprocessor can test
+// the spelling of a macro's value, and #if cannot see an enumerator.
 #define GALOOT_DETAIL_PASTE_(a, b) a##b
 #define GALOOT_DETAIL_PASTE(a, b) GALOOT_DETAIL_PASTE_(a, b)
 #define GALOOT_DETAIL_FORCE_INLINE_IS_0 1
 #define GALOOT_DETAIL_FORCE_INLINE_IS_1 1
-// NOLINTEND(cppcoreguidelines-macro-usage)
+// NOLINTEND(*-macro-usage,*-macro-to-enum)
 #if !GALOOT_DETAIL_PASTE(GALOOT_DETAIL_FORCE_INLINE_IS_, GALOOT_FORCE_INLINE)
 #error "GALOOT_FORCE_INLINE must be 0 or 1"
 #endif
