@@ -1,0 +1,47 @@
+# Plan 0040 section 8, the gap of the structure check: GALOOT_ALWAYS_INLINE
+# defined empty, so that no function of the chain is forced inline. Judged
+# first by the core and rga3 suites as they stand without the check (every
+# component label of the two modules but rga3.kernels_inline), where it
+# must survive, since no other test reads where the library's code is
+# placed; then by rga3.kernels_inline alone, the one test the gap adds:
+# killed on Clang, where E1's calls come back. GCC's answer is in
+# gap-gcc.toml.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.suite]
+targets = ["bench_antiwedge_line_plane", "bench_compose_motors",
+  "bench_transform_line", "bench_transform_plane", "bench_transform_point",
+  "bench_wedge_point_point", "bench_wedge_point_point_point",
+  "core_assert_mode_0", "core_assert_mode_1",
+  "core_basis_change_identities_test", "core_basis_change_test",
+  "core_bits_assert_fail", "core_bits_test",
+  "core_blade_product_assert_fail", "core_blade_product_test",
+  "core_blade_set_name_assert", "core_blade_set_test",
+  "core_dual_identities_test", "core_dual_test",
+  "core_format_outside_core_test", "core_format_test",
+  "core_identities_rounding_test", "core_identities_test",
+  "core_linear_divide_assert_fail", "core_linear_test",
+  "core_metric_is_null_checking", "core_metric_test",
+  "core_mv_part_checking", "core_mv_test", "core_mv_truncate_mode_0",
+  "core_mv_truncate_mode_1", "core_plan_test", "core_product_test",
+  "core_rounding_test", "core_smoke_test", "core_transform_counts_checking",
+  "core_transform_counts_unchecked", "core_transform_identities_test",
+  "core_transform_mode_0", "core_transform_mode_1",
+  "core_transform_rounding_mode_0", "core_transform_rounding_mode_1",
+  "core_transform_rounding_test", "core_transform_test", "core_unary_test",
+  "rga3_chains_test", "rga3_format_test", "rga3_incidence_test",
+  "rga3_motions_test", "rga3_objects_test", "rga3_op_counts_checking",
+  "rga3_op_counts_unchecked", "rga3_point_groups_test",
+  "rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3",
+  "rga3_readme_example_4", "rga3_readme_example_5",
+  "rga3_reference_kernels_test", "rga3_rotation_mode_0",
+  "rga3_rotation_mode_1"]
+labels = '^(core\.assert|core\.basis_change|core\.basis_change_identities|core\.bits|core\.blade_product|core\.blade_set|core\.dual|core\.dual_identities|core\.format|core\.format_outside_core|core\.headers|core\.identities|core\.identities_rounding|core\.linear|core\.metric|core\.mv|core\.plan|core\.product|core\.rounding|core\.runner|core\.smoke|core\.transform|core\.transform_counts|core\.transform_identities|core\.unary|rga3\.benchmarks|rga3\.chains|rga3\.format|rga3\.headers|rga3\.incidence|rga3\.motions|rga3\.objects|rga3\.op_counts|rga3\.point_groups|rga3\.readme|rga3\.reference_kernels)$'
+
+[[mutant]]
+name = "macro_empty"
+selection = "suite"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]''', replacement = '''#define GALOOT_ALWAYS_INLINE''' }]
+expect = "survived"
+reason = "no test of the suite without the structure check reads where the library's code is placed; the values are the same inline or not"
