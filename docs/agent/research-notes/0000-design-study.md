@@ -1,6 +1,17 @@
+# 0000 The design study of 2026-10-30
+
+- Date of the study: 2026-10-30.
+- Author: not recorded; added by the owner on 2026-10-31 (commit `9a4e0cd`). The byline below named an account handle, which is dropped here (decision 0241 item 3).
+- Status: the project's first design record, kept as history. It is not the roadmap: the roadmap of record is plan 0001 (decision 0001), which superseded the study's phases 1 to 4.
+- Found wrong or ungoverned, as plan 0001 section 2 records: "dyadic coefficients"; `static_assert` messages that print blade names; `basis_names` inside `metric` and a fixed 16 × 16 matrix in every type; the `algebra<M, T>` layer; the fourteen-repository split and graded signatures in the first phases; the "GCC 15+ / Clang 19+" floor; "within 10% of Terathon" and failing CI on compile-time regressions; masks up to 32 against a 16 × 16 matrix.
+- Conventions: a convention taken from the study is confirmed only where CONVENTIONS labels it Confirmed or Checked; the label Study marks one taken from here and not yet confirmed at its source.
+- Moved from `docs/galoot-design-study.md` on 2026-11-10 by the documentation lane (plan 0041, decision 0240 item 3), since `docs/` outside `docs/agent/` is documentation for users. The text below is the study as the owner added it, unchanged but for the byline. Its own links are absolute, so the move breaks none of them.
+
+---
+
 # Galoot: Design Study for a Modern Header-Only Geometric Algebra Library
 
-Oct 30, 2026 · @Lord Voldemort
+Oct 30, 2026
 
 ## Executive summary
 
