@@ -279,3 +279,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-10	plan-0040-E-derivation	numerical-expert	opus	237766	61	1314	contraction derivation on records/contraction-check 11809c5, merged
 2026-11-10	plan-0041-pages	hci-expert author	opus	424951	121	1839	--pages on feature/documentation-lane--pages 7f1d720, merged 13bde56
 2026-11-10	plan-0041-cold-read-1	cold reader	sonnet	55469	6	65	first-page cold read, review/documentation-first-page 9ea89c2 (figures as notified; the 6 tool calls look low for five programs)
+2026-11-10	plan-0041-pages	hci-expert author	opus	13338	0	106	cold-read fixes 4348bae, merged 6c278df (438289 total minus 424951; tool-call count not given)
