@@ -127,8 +127,8 @@ timing run(std::string_view loop, std::uint64_t passes, const motors& q,
   } else if (loop == "throughput") {
     for (std::uint64_t pass = 0; pass < passes; ++pass) {
       for (std::size_t j = 0; j < pool; ++j) {
-        checksum += bits_of(
-            Form::apply(Form::setup(q[j]), q[j], x[(j + pass) % pool]));
+        checksum +=
+            bits_of(Form::apply(Form::setup(q[j]), q[j], x[(j + pass) % pool]));
       }
     }
   } else {
@@ -182,16 +182,16 @@ int main(std::string_view name, std::span<char*> args) {
   std::uint64_t passes = 0;
   std::uint64_t seed = 0;
   std::uint64_t count = 1;
-  const bool check = words.size() == 2 && words[0] == "check" &&
-                     number(words[1], seed);
+  const bool check =
+      words.size() == 2 && words[0] == "check" && number(words[1], seed);
   const bool known = ((words.size() >= 1 && words[0] == Forms::name) || ...);
-  const bool timed =
-      known &&
-      ((words.size() == 4 &&
-        (words[1] == "throughput" || words[1] == "latency")) ||
-       (words.size() == 5 && words[1] == "batch" && number(words[4], count) &&
-        count > 0)) &&
-      number(words[2], passes) && number(words[3], seed) && passes > 0;
+  const bool timed = known &&
+                     ((words.size() == 4 &&
+                       (words[1] == "throughput" || words[1] == "latency")) ||
+                      (words.size() == 5 && words[1] == "batch" &&
+                       number(words[4], count) && count > 0)) &&
+                     number(words[2], passes) && number(words[3], seed) &&
+                     passes > 0;
   if (!check && !timed) {
     std::println(stderr,
                  "usage: {} <form> throughput|latency <passes> <seed>\n"
@@ -238,8 +238,8 @@ int main(std::string_view name, std::span<char*> args) {
         if (words[0] == Forms::name) {
           const timing t = run<Forms>(words[1], passes, q, x, batch);
           std::println("{} {} {} {} {} {:.3f} {:#018x} {}", name, Forms::name,
-                       words[1], t.transforms, seed, t.nanoseconds,
-                       t.checksum, words[1] == "batch" ? count : 1);
+                       words[1], t.transforms, seed, t.nanoseconds, t.checksum,
+                       words[1] == "batch" ? count : 1);
         }
       }(),
       ...);

@@ -1,3 +1,6 @@
 compiles before 2026-11-11T01:20:16Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 6.36 5.70 3.54 2/1709 3267650
 compiles lock taken 2026-11-11T01:20:16Z load: 6.36 5.70 3.54 2/1709 3267666
 compiles lock released, exit 1 2026-11-11T01:20:29Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 5.39 5.52 3.52 3/1701 3268615
+compiles (second) before 2026-11-11T01:21:12Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 3.25 4.95 3.41 2/1704 3268896
+compiles (second) lock taken 2026-11-11T01:21:12Z load: 3.25 4.95 3.41 2/1704 3268912
+compiles (second) lock released, exit 0 0 2026-11-11T01:21:50Z pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo load: 2.79 4.61 3.36 3/1692 3271658

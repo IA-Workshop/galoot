@@ -276,8 +276,7 @@ inline constexpr auto collected_transform =
 
 // Each kernel apart, so that it can be a template argument of its own.
 template <core::metric_like Alg, core::blade_set V, core::blade_set X>
-inline constexpr auto product_terms =
-    collected_transform<Alg, V, X>.products;
+inline constexpr auto product_terms = collected_transform<Alg, V, X>.products;
 
 template <core::metric_like Alg, core::blade_set V, core::blade_set X>
 inline constexpr auto entry_terms = collected_transform<Alg, V, X>.entry_terms;
@@ -382,28 +381,26 @@ run_scales(const std::array<T, E>& e, std::index_sequence<M...> /*entries*/) {
 
 /// The entries of M(v), the part of a collected transform of x on X by v on
 /// V that reads only v.
-template <core::metric_like Alg, core::blade_set V, core::blade_set X,
-          class T>
-[[gnu::always_inline]] constexpr auto
-setup(const std::array<T, V.size()>& v) {
+template <core::metric_like Alg, core::blade_set V, core::blade_set X, class T>
+[[gnu::always_inline]] constexpr auto setup(const std::array<T, V.size()>& v) {
   constexpr const auto& products = product_terms<Alg, V, X>;
   constexpr const auto& sums = entry_terms<Alg, V, X>;
   constexpr const auto& scales = entry_scales<Alg, V, X>;
   const auto p = run_products<products, products.size()>(
       v, v, std::make_index_sequence<products.size()>{});
-  const auto e = run_sums<sums, scales.size()>(
-      p, std::make_index_sequence<sums.size()>{});
+  const auto e =
+      run_sums<sums, scales.size()>(p, std::make_index_sequence<sums.size()>{});
   return run_scales<scales>(e, std::make_index_sequence<scales.size()>{});
 }
 
 /// M(v) x from the entries that setup gave.
-template <core::metric_like Alg, core::blade_set V, core::blade_set X,
-          class T, std::size_t E>
+template <core::metric_like Alg, core::blade_set V, core::blade_set X, class T,
+          std::size_t E>
 [[gnu::always_inline]] constexpr std::array<T, X.size()>
 apply(const std::array<T, E>& entries, const std::array<T, X.size()>& x) {
   constexpr const auto& terms = apply_terms<Alg, V, X>;
-  return run_products<terms, X.size()>(entries, x,
-                                       std::make_index_sequence<terms.size()>{});
+  return run_products<terms, X.size()>(
+      entries, x, std::make_index_sequence<terms.size()>{});
 }
 
 } // namespace collect

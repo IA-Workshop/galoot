@@ -24,10 +24,9 @@
 #include <galoot/core.hpp>
 #include <galoot/presets/rga3.hpp>
 
-#include <support/rational.hpp>
-
 #include "../proto/collect.hpp"
 #include "forms.hpp"
+#include <support/rational.hpp>
 
 namespace {
 
@@ -66,10 +65,10 @@ Motor unit_motor(std::mt19937_64& rng) {
   const rational n2 = (a * a) + (b * b) + (c * c);
   const rational k = one / (one + n2);
   const Motor rotor{two * a * k, two * b * k, two * c * k, (n2 - one) * k,
-                    rational{}, rational{}, rational{}, rational{}};
-  const Motor translator{rational{}, rational{},       rational{},
-                         one,        small(rng, 3, 2), small(rng, 3, 2),
-                         small(rng, 3, 2), rational{}};
+                    rational{},  rational{},  rational{},  rational{}};
+  const Motor translator{
+      rational{},       rational{},       rational{},       one,
+      small(rng, 3, 2), small(rng, 3, 2), small(rng, 3, 2), rational{}};
   return Motor{core::compose(translator, rotor)};
 }
 
@@ -128,10 +127,10 @@ void check_rigid(const char* name, std::mt19937_64& rng, int draws) {
       bool outside = false;
       const auto s = sandwich(x, v, outside);
       const auto& q = v.coefficients;
-      const auto bp = collect::apply<rga3::algebra, rga3::motor_layout,
-                                     X::layout>(
-          collect::setup<rga3::algebra, rga3::motor_layout, X::layout>(q),
-          x.coefficients);
+      const auto bp =
+          collect::apply<rga3::algebra, rga3::motor_layout, X::layout>(
+              collect::setup<rga3::algebra, rga3::motor_layout, X::layout>(q),
+              x.coefficients);
       expect(!outside, "the sandwich has a part off x's blades");
       expect(core::transform(x, v).coefficients == s, "library != sandwich");
       expect(run<A>(q, x.coefficients) == s, "form a != sandwich");

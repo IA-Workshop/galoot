@@ -13,10 +13,9 @@
 // NOLINTNEXTLINE(bugprone-exception-escape)
 int main(int argc, char** argv) {
   using X = galoot::presets::rga3::Line<double>;
-  return spike_bench::main<6, spike_bench::library<X>,
-                           forms::transform_line_a<double>,
-                           forms::transform_line_b<double>,
-                           spike_bench::collected<X>,
-                           forms::transform_line_c<double>>(
+  return spike_bench::main<
+      6, spike_bench::library<X>, forms::transform_line_a<double>,
+      forms::transform_line_b<double>, spike_bench::collected<X>,
+      forms::transform_line_c<double>>(
       "transform_line", std::span(argv, static_cast<std::size_t>(argc)));
 }
