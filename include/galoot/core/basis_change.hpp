@@ -108,20 +108,11 @@
 // number of nonzero entries in those rows and, for a dense P, with the
 // binomial coefficients C(n, j) for j up to k. conformal_change has at most
 // two entries per row, so its images have at most two terms for each null
-// generator they hold. Measured on GCC 16.2 and Clang 23.1 with libstdc++
-// 16, at the default limits, without optimization and with
-// _GLIBCXX_ASSERTIONS, which libstdc++ 16 defines by itself in such a build,
-// both ways for each:
-// - conformal_change<D> maps full<D+2> up to D = 5 on Clang and D = 6 on
-//   GCC.
-// - a change whose every entry is nonzero maps full<n> up to n = 5 on Clang
-//   and n = 7 on GCC, the bivectors up to n = 8 on Clang (n = 7 with
-//   _GLIBCXX_NO_ASSERTIONS) and n = 12 on GCC, and the vectors at every n
-//   up to 16, the largest that the factories build by default.
-// A failure there is reported inside the generation, on Clang as a constexpr
-// variable that "must be initialized by a constant expression" with the note
-// "constexpr evaluation hit maximum step limit", and on GCC as an operation
-// count over the limit, followed by errors that do not name the change.
+// generator they hold. The compilers' limits on constant evaluation bound
+// these costs; Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit
+// raise those limits, and the sizes measured on each compiler, with how a
+// failure is reported, are in docs/guide/limits.md, under
+// 'Compile-time limits: change of basis'.
 
 #include <array>
 #include <bit>

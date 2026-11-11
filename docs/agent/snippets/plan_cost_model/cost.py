@@ -38,16 +38,21 @@ Usage:
       per-loop limit. "not certified" does not mean that it fails: the
       certificate is a sufficient condition.
   cost.py figures <weights.tsv>
-      The figures that the library's comments state and the thresholds of
-      its reference units (FIGURES below), each with its largest phase and
-      the next largest.
+      The figures that the limits page states for the plans and maps and
+      the thresholds of the library's reference units (FIGURES below),
+      each with its largest phase and the next largest.
   cost.py comments <header> <figures.txt>...
-      Checks that every count in the /// comments of the header is the
-      threshold of a row of the figures files, one of the compilers'
-      default limits, or an entry of NON_COST below (a size or flag value,
-      each with the record it comes from); counts written as "<digits>
-      million" are read too. Prints each that is not and exits 1 if there
-      is one.
+  cost.py comments <page.md> --section <heading> <figures.txt>...
+      Checks that every count in the /// comments of the header, or in the
+      section of the Markdown page under the heading named (its text
+      without the #s, the section running to the next heading of its level
+      or above), is the threshold of a row of the figures files, one of the
+      compilers' default limits, or an entry of NON_COST below (a size or
+      flag value, each with the record it comes from); counts written as
+      "<digits> million" are read too. Prints each that is not and exits 1
+      if there is one. A page without the section, with it twice, or whose
+      section holds no count is refused, as is a Markdown page given
+      without --section, so that the check cannot pass on nothing.
   cost.py selfcheck <weights.tsv> <figures.txt> --train <c>:<t>...
           --check <c>:<t>...
       Refits from the training files and compares every weight and
@@ -422,8 +427,10 @@ def figure_cases():
     return out
 
 
-# The figures stated in the comments of product_plan and unary_map and the
-# reference units of the canary test: (label, op, form, n, a, b).
+# The figures of product_plan and unary_map that docs/guide/limits.md states
+# under "Steps and operations of each plan" (until plan 0040 they were in
+# those functions' comments in plan.hpp), and the reference units of the
+# canary test: (label, op, form, n, a, b).
 FIGURES = [
     ("gp-r-5", "gp", "r", 5, "full", "full"),
     ("gp-r-6", "gp", "r", 6, "full", "full"),
@@ -472,11 +479,11 @@ def figures_text(weights_path):
     return "\n".join(lines) + "\n"
 
 
-# Numbers the comments state that are limits, not counts.
+# Numbers the comments or the page state that are limits, not counts.
 LIMITS = (1 << 20, 1 << 25, GCC_LOOP_LIMIT)
 
-# Counts the comments state that are sizes or flag values, not costs of the
-# model, each with the record it comes from.
+# Counts the comments or the page state that are sizes or flag values, not
+# costs of the model, each with the record it comes from.
 SCALAR_FULL10 = "records/research/2026-11-09-scalar-full10-gcc.md"
 NON_COST = (
     (1024, SCALAR_FULL10),
@@ -508,26 +515,73 @@ def listed_counts(non_cost):
     return values
 
 
-def comments(header_path, figures_paths, non_cost=NON_COST):
-    """Checks that every count in the /// comments of `header_path` is the
+HEADING = re.compile(r" {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
+FENCE = re.compile(r" {0,3}(```|~~~)")
+
+
+def section_lines(path, lines, section):
+    """The (line number, line) pairs of the section of the Markdown `lines`
+    under the heading `section`, up to the next heading of its level or
+    above; a line in a fenced code block is never a heading. Refuses a page
+    without the section or with it twice."""
+    read = []
+    times_found = 0
+    level = None  # the section's heading level while inside it
+    fence = None  # the fence of the open code block
+    for number, line in enumerate(lines, 1):
+        marker = FENCE.match(line)
+        if marker and fence is None:
+            fence = marker.group(1)
+        elif marker and marker.group(1) == fence:
+            fence = None
+        heading = None if fence or marker else HEADING.match(line)
+        if heading:
+            depth, text = len(heading.group(1)), heading.group(2)
+            if level is not None and depth <= level:
+                level = None
+            if text == section:
+                times_found += 1
+                level = depth
+                continue
+        if level is not None:
+            read.append((number, line))
+    if times_found == 0:
+        raise ValueError(f"{path} has no section {section!r}")
+    if times_found > 1:
+        raise ValueError(f"{path}: the section {section!r} appears "
+                         f"{times_found} times")
+    return read
+
+
+def comments(path, figures_paths, non_cost=NON_COST, section=None):
+    """Checks that every count in the /// comments of the header `path`, or
+    in its section `section` when `path` is a Markdown page, is the
     threshold of some row of the figures files, a limit, or a count of the
-    list `non_cost`."""
+    list `non_cost`. Refuses a Markdown page without a section named, and a
+    section that holds no count."""
     known = set(LIMITS) | listed_counts(non_cost)
-    for path in figures_paths:
-        for line in pathlib.Path(path).read_text(
+    for figures_path in figures_paths:
+        for line in pathlib.Path(figures_path).read_text(
                 encoding="utf-8").splitlines()[2:]:
             known.add(int(line.split("\t")[4]))
-    unknown = []
-    for number, line in enumerate(pathlib.Path(header_path).read_text(
-            encoding="utf-8").splitlines(), 1):
-        if not line.lstrip().startswith("///"):
-            continue
-        for text in COUNT.findall(line):
-            if count_value(text) not in known:
-                unknown.append(f"{header_path}:{number}: {text}")
+    lines = pathlib.Path(path).read_text(encoding="utf-8").splitlines()
+    if section is not None:
+        read = section_lines(path, lines, section)
+    elif path.endswith(".md"):
+        raise ValueError(f"{path} is a Markdown page: name the section to "
+                         "read with --section")
+    else:
+        read = [(n, line) for n, line in enumerate(lines, 1)
+                if line.lstrip().startswith("///")]
+    found = [(n, text) for n, line in read for text in COUNT.findall(line)]
+    if section is not None and not found:
+        raise ValueError(f"{path}: the section {section!r} holds no count")
+    unknown = [f"{path}:{n}: {text}" for n, text in found
+               if count_value(text) not in known]
     for u in unknown:
         print(u)
-    print(f"{len(unknown)} counts in the comments are not in the figures")
+    where = "the comments" if section is None else f"{section!r}"
+    print(f"{len(unknown)} counts in {where} are not in the figures")
     return not unknown
 
 
@@ -629,7 +683,16 @@ def main(argv):
     elif len(argv) in (6, 7) and argv[0] == "predict":
         predict(*argv[1:])
     elif len(argv) >= 3 and argv[0] == "comments":
-        sys.exit(0 if comments(argv[1], argv[2:]) else 1)
+        section, figures_paths = None, argv[2:]
+        if argv[2] == "--section":
+            if len(argv) < 5:
+                sys.exit(__doc__)
+            section, figures_paths = argv[3], argv[4:]
+        try:
+            passed = comments(argv[1], figures_paths, section=section)
+        except ValueError as refusal:
+            sys.exit(f"cost.py comments: {refusal}")
+        sys.exit(0 if passed else 1)
     elif len(argv) == 2 and argv[0] == "figures":
         sys.stdout.write(figures_text(argv[1]))
     elif len(argv) >= 5 and argv[0] == "selfcheck":

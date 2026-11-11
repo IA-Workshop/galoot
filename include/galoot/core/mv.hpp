@@ -389,11 +389,12 @@ struct coefficient_storage {
 
   // Not declared for an empty layout, where it would be the default
   // constructor.
-  // TODO: a one-blade value built from a source that converts only
-  // explicitly gets the compiler's own error, 114 lines on GCC. A catch-all
-  // with a short message would fix that, but it changes three
-  // std::is_constructible answers that the tests pin, so it waits until the
-  // long message becomes a problem for a user.
+  // A one-blade value built from a source that converts to T only
+  // explicitly, such as an int for a rational whose constructor from an
+  // integer is explicit, matches no constructor and gets the compiler's own
+  // error, a long one. No catch-all gives it a short message, as the other
+  // misuses of mv have, because a catch-all would make std::is_constructible
+  // true for such a source, which it now reports as false.
   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
     requires(sizeof...(Ts) > 0)
       : coefficients{values...} {}
@@ -485,12 +486,11 @@ concept holds_several_values =
 /// generators accepts it. Generic code that only names mv<A, B, std::string> is
 /// told that it is a type; it fails when used. The repeated-mask check compares
 /// every pair of blades, so the compiler's limits on constant evaluation bound
-/// the size of a layout. Measured at the default limits, alike at -O0 and -O2
-/// and with or without _GLIBCXX_ASSERTIONS: mv<R(n,0,0), full<n>, double>
-/// builds for n up to 8 (256 blades) on Clang 23 and up to 10 (1,024 blades) on
-/// GCC 16. A product with such a multivector can fail where its layout
-/// builds: in R(n,0,0), the geometric product of the scalar with full<10>
-/// fails on GCC 16 at its default limits, and with full<8> on Clang 23.
+/// the size of a layout, and a product can fail on a layout that builds.
+/// Clang's -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those
+/// limits, and the sizes measured on each compiler, for a layout and for a
+/// product with it, are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
 /// Guarantees: not an aggregate; trivially copyable and standard-layout when
 /// T is, with sizeof equal to the number of blades times sizeof(T) for a
 /// nonempty layout; usable as a template argument when T is a structural
@@ -721,11 +721,8 @@ namespace detail {
 // Whether std::numeric_limits<T> describes an integer type with its range,
 // or a floating type of radix 2 with its digits and exponent range. A
 // program's own specialization may define fewer members; a member it lacks
-// makes the answer no, not an error.
-// TODO: a specialization that defines only some members is no longer
-// checked beyond this test. A conforming specialization defines every
-// member, so this matters only for non-conforming code; revisit if a user
-// reports it.
+// makes the answer no, not an error, so the coefficients of such a scalar are
+// not checked. A conforming specialization defines every member.
 template <class T>
 concept integer_limits = requires {
   requires std::numeric_limits<T>::is_specialized;
@@ -878,31 +875,17 @@ inline constexpr auto map_kernel = make_map_kernel<Op, Alg, S, Target>();
 /// within min() to max(), an unsigned one, whose arithmetic is modular, when
 /// |c| is at most max(), and a binary floating type when the odd part of |c|
 /// fits its digits and |c| is below 2^max_exponent): each checked at compile
-/// time with its own message. A scalar without
-/// a specialization, such as std::complex<float>, must hold the coefficients
-/// exactly without a check. The code is one fold expression over the terms, and
-/// Clang 23 stops a fold at 2,048 terms; no plan that Clang 23 builds at its
-/// default limits has more than 1,024 terms. Measured at the default limits, at
-/// -O0 and -O2, with and without _GLIBCXX_ASSERTIONS: apply builds wherever its
-/// plan builds. A plan's cost grows with its terms times the blades of its
-/// result, not with its terms alone, so the size of a plan that builds
-/// depends on its sets. In R(n,0,0), the plan of the geometric product of the
-/// scalar with full<10> has 1,024 terms on 1,024 blades and fails at GCC
-/// 16.2.1's default limit, and that of the scalar with full<8> fails at Clang
-/// 23's, although mv on full<10> builds on GCC and mv on full<8> on Clang.
-/// -fconstexpr-ops-limit=134217728 builds the product with full<10> on GCC,
-/// and GCC may report the failure as libstdc++'s std::span bounds check
-/// being "not a constant expression" rather than as its operation limit.
-/// For a full layout times itself, the plans build up to full<6> times
-/// full<6> (4,096 terms, on 64 blades) on GCC 16, and up to full<5> times
-/// full<5> on Clang 23, with two exceptions there: dense five-generator
-/// forms, whose products do not build on Clang at all, and the geometric
-/// antiproduct of full<5> in conformal(3), which builds
-/// only with _GLIBCXX_ASSERTIONS, which libstdc++ defines by itself only
-/// without optimization, because without it each subscript is a function call
-/// that Clang counts, and the plan then needs more than Clang's default steps
-/// (-fconstexpr-steps=1200000 is enough). product_plan's comment gives the
-/// counts, taken with _GLIBCXX_ASSERTIONS.
+/// time with its own message. A scalar without a specialization, such as
+/// std::complex<float>, must hold the coefficients exactly without a check,
+/// and so must one whose specialization lacks a member these checks read,
+/// which counts as no specialization. The code is one fold expression over
+/// the terms, so a compiler's limit on the length of a fold bounds it as
+/// well as the limits that bound its plan. A plan's cost grows with its
+/// terms times the blades of its result, not with its terms alone, so the
+/// size of a plan that builds depends on its sets. The sizes measured on each
+/// compiler, the fold's limit, how a failure is reported, and the flags that
+/// raise the limits are in docs/guide/limits.md, under
+/// 'Compile-time limits: products and plans'.
 /// Guarantees: the coefficient of each blade of Target is the sum over the
 /// terms on it, multiplied by the blade's sign in Target, evaluated in the
 /// order stated; with an exact scalar the result is exact. A constant
@@ -950,9 +933,8 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
 /// assignment of the coefficient or of its negation.
 ///
 /// Requires: Target holds every blade of the map's result, checked at
-/// compile time with its message. Measured as for a product: apply builds
-/// wherever the map builds, up to full<8> for the complements and full<7>
-/// for the other maps on Clang 23, and full<9> on GCC 16.
+/// compile time with its message. The sizes measured on each compiler are in
+/// docs/guide/limits.md, under 'Compile-time limits: products and plans'.
 /// Guarantees: as for a product.
 template <UnaryOperation Op, blade_set Target, metric_like Alg, blade_set S,
           ring_scalar T>

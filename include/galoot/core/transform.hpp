@@ -67,19 +67,10 @@
 // V ⟇ x and then that with V, each a plan built once for each pair of
 // layouts a program uses, so they have the antiproduct's limits, which the
 // comment of geometric_antiproduct gives. Typed layouts such as a point, a
-// line, a plane, a motor, or a flector are far below them. Measured on GCC 16
-// and Clang 23 with libstdc++, at the default limits, the same with and
-// without libstdc++'s assertions, for x a full<n> multivector of R(n,0,0)
-// and V on every blade of even antigrade, the largest layout of one parity:
-// transform builds up to n = 5 on Clang and n = 6 on GCC, and compose of two
-// such versors up to n = 5 on Clang and n = 7, the largest tried, on GCC.
-// Both build for full<5> of conformal(3). In a dense form of five generators,
-// where every pair of generators is coupled, neither builds on Clang, and
-// both build on GCC. A failure is reported inside a plan's generation, on
-// Clang as "constexpr variable 'count' must be initialized by a constant
-// expression" and on GCC as an operation count over the limit or a
-// libstdc++ assertion that is not a constant expression, followed by errors
-// that do not name the operation.
+// line, a plane, a motor, or a flector are far below them. Clang's
+// -fconstexpr-steps and GCC's -fconstexpr-ops-limit raise those limits, and
+// the sizes measured on each compiler, with how a failure is reported, are
+// in docs/guide/limits.md, under 'Compile-time limits: transform and compose'.
 
 #include <array>
 #include <concepts>
@@ -764,10 +755,19 @@ compose(const mv<Alg, A, T>& q2, const mv<Alg, B, T>& q1) {
 /// to the scalar's own precision, to nearest, with gradual underflow, and
 /// IEEE 754's NaN and infinity: a build that flushes subnormal numbers to
 /// zero is outside it, and a checking build under -ffast-math or
-/// -ffinite-math-only does not compile. Other scalars that are not exact,
-/// such as std::complex<double>, are not checked.
-/// Guarantees: on x's layout; with an exact scalar the result is exact, and
-/// the result is the same with and without the check.
+/// -ffinite-math-only does not compile. A multiply-add that the compiler
+/// fuses under -ffp-contract counts as one operation: fusing only removes
+/// roundings that K counts, so the bound, and the check's verdict on a
+/// versor, hold however the compiler contracts, provided the fused operation
+/// rounds once to the scalar's own precision. Other scalars that are not
+/// exact, such as std::complex<double>, are not checked.
+/// Guarantees: on x's layout; with an exact scalar the result is exact; and
+/// the result is the same with and without the check, and in a constant
+/// evaluation, when the build does not fuse multiply-adds across statements
+/// (-ffp-contract=off or on). Under -ffp-contract=fast, GCC's default on a
+/// target with fused multiply-add, the compiler may fuse the two paths
+/// differently, and their results can then differ in the last bits, each
+/// within the operation's forward error bound.
 template <metric_like Alg, blade_set X, blade_set V, ring_scalar T>
 GALOOT_ALWAYS_INLINE [[nodiscard]] constexpr mv<Alg, X, T>
 transform(const mv<Alg, X, T>& x, const mv<Alg, V, T>& v) {

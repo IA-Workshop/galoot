@@ -573,8 +573,10 @@ consteval auto make_blades_of_tag() {
 ///
 /// Requires: 1 <= N <= mask_bits, checked at compile time. The set holds 2^N
 /// blades, so the compiler's limits on constant evaluation bound N in
-/// practice well below mask_bits: at their default limits, Clang 23 builds
-/// full<13> but not full<14>, and GCC 16 builds full<15> but not full<16>.
+/// practice well below mask_bits. Clang's -fconstexpr-steps and GCC's
+/// -fconstexpr-ops-limit raise those limits, and the sizes measured on each
+/// compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: blade sets'.
 /// Guarantees: full<N>.size() is 2^N.
 template <std::size_t N>
 inline constexpr auto full = detail::make_full<N>();
@@ -583,9 +585,9 @@ inline constexpr auto full = detail::make_full<N>();
 /// lexicographic order of their index lists.
 ///
 /// Requires: 1 <= N <= mask_bits and 0 <= K <= N, checked at compile time.
-/// The limits on constant evaluation bound the size as for full: at its
-/// default limits, Clang 23 builds of_grade<32, 3>, with 4,960 blades, but
-/// not of_grade<16, 8> or of_grade<32, 4>, with 12,870 and 35,960.
+/// The limits on constant evaluation bound the size as for full, and the
+/// sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: blade sets'.
 /// Guarantees: of_grade<N, K>.size() is the binomial coefficient C(N, K).
 template <std::size_t N, int K>
 inline constexpr auto of_grade = detail::make_of_grade<N, K>();
@@ -598,11 +600,10 @@ inline constexpr auto of_grade = detail::make_of_grade<N, K>();
 /// mask is in both sets with opposite signs, because the merged set could
 /// keep only one of the two orientations. Each is checked at compile time.
 /// Each blade is inserted into a list kept in canonical order, so the cost
-/// grows with the square of the sizes and depends on their order. Measured at
-/// the default limits on constant evaluation: Clang 23 merges full<7> with
-/// itself and two disjoint sets of 64 blades, but not two disjoint sets of
-/// 128; GCC 16 merges full<9> with itself and two disjoint sets of 256, but
-/// not two disjoint sets of 512, nor full<9> listed in reverse with itself.
+/// grows with the square of the sizes and depends on their order. The
+/// compiler's limits on constant evaluation bound the sizes it merges, and
+/// the sizes measured on each compiler are in docs/guide/limits.md, under
+/// 'Compile-time limits: blade sets'.
 /// Guarantees: the size is the number of distinct masks in A and B.
 template <blade_set A, blade_set B>
 inline constexpr auto merge = detail::make_merge<A, B>();
