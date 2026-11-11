@@ -1,0 +1,7 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+run_product_not_forced	gcc-debug	414879e2712c	killed	survived	rga3.kernels_inline	-	-	-	-	expected to survive but killed
+weight_not_forced	gcc-debug	414879e2712c	killed	killed	rga3.kernels_inline_alone	-	-	-	-	-
+antidot_not_forced	gcc-debug	414879e2712c	killed	killed	rga3.kernels_inline_alone	-	-	-	-	-
+geometric_product_not_forced	clang-debug	414879e2712c	killed	killed	rga3.kernels_inline rga3.kernels_inline_alone	-	-	-	-	-
+weight_not_forced	clang-debug	414879e2712c	survived	survived	-	-	-	-	-	-
+antidot_not_forced	clang-debug	414879e2712c	survived	survived	-	-	-	-	-	-
