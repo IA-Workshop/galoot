@@ -1,0 +1,37 @@
+# Plan 0040 section 18.4: a mutant for each new test of the forced-inline
+# mode, run at the code commit of the opt-out on both debug presets. Each
+# counts when the test it was written for is among those it fails.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.assert]
+targets = ["core_assert_mode_0", "core_assert_mode_1",
+  "core_force_inline_off", "core_force_inline_default",
+  "core_force_inline_build"]
+labels = '^core\.assert$'
+
+# The mode is not read: the attribute stays on with GALOOT_FORCE_INLINE 0.
+[[mutant]]
+name = "opt_out_ignored"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#if GALOOT_FORCE_INLINE == 1 && (defined(__GNUC__) || defined(__clang__))''', replacement = '''#if defined(__GNUC__) || defined(__clang__)''' }]
+expect = "killed"
+killers = ["core.force_inline_off"]
+
+# The attribute is never on, whatever the mode.
+[[mutant]]
+name = "opt_out_always"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]''', replacement = '''#define GALOOT_ALWAYS_INLINE''' }]
+expect = "killed"
+killers = ["core.force_inline_default", "core.force_inline_build"]
+
+# A value other than 0 or 1 is accepted, and read as 0.
+[[mutant]]
+name = "value_unchecked"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#error "GALOOT_FORCE_INLINE must be 0 or 1"''', replacement = '''''' }]
+expect = "killed"
+killers = ["core.force_inline_value"]
