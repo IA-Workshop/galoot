@@ -293,3 +293,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0041-pages	hci-expert author	opus	15827	11	144	review fixes 55e175b, merged 4483b6d (454116 total minus 438289)
 2026-11-11	plan-0040-delta-review	blind-reviewer	opus	257448	83	958	delta review of 721afe7..414879e, review/pre-release-core-pass-delta 2e51bac: blocked on D1
 2026-11-11	plan-0041-gate-run-1	merge runner	opus	133829	39	1486	documentation lane gate at 6ca81ad: lint red on guide examples, develop not moved; mutants all killed
+2026-11-11	plan-0041-pages	hci-expert author	opus	23449	12	209	lint fixes 00f10f0, merged 6d7d7b4 (477565 total minus 454116)
+2026-11-11	plan-0041-gate-run-1	merge runner	opus	18642	11	226	activity after the first report (152471 total minus 133829)
