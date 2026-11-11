@@ -89,6 +89,13 @@ Preconditions that the types cannot express are checked at run time when
 `GALOOT_CHECKING` is defined as 1 (`-DGALOOT_CHECKING=1`). By default it is
 0, and they are checked only during constant evaluation.
 
+The core forces its operations inline, so that each compiles to the
+arithmetic of its terms where it is called. A file with very many calls,
+such as a large test, then takes much longer and more memory to compile,
+most of all with sanitizers. Defining `GALOOT_FORCE_INLINE` as 0
+(`-DGALOOT_FORCE_INLINE=0`) leaves inlining to the compiler; by default it
+is 1.
+
 ## An example
 
 Points are written as (x, y, z, w), as in homogeneous coordinates: a point

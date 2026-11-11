@@ -1026,6 +1026,30 @@ static_assert(half_of_even(6) == 3);
 int main() { return half_of_even(4) == 2 ? 0 : 1; }
 ```
 
+## Forced inlining
+
+The core marks its four products and their operators, `transform`,
+`compose`, `project`, `antiproject` and a few others, and the functions they
+call, to be inlined at every call, with GCC's and Clang's `always_inline`
+attribute, so that an operation on the rga3 types compiles
+at `-O2` to the arithmetic of its terms where it is called, as code written
+by hand would. The cost is paid at compile time: every call carries the
+operation's body, so a file with very many calls, such as a test that
+checks identities over many algebras, can take much longer and much more
+memory to compile, most of all with sanitizers or at `-O2` with Clang, and
+at `-O0` an object grows.
+
+The macro `GALOOT_FORCE_INLINE` turns this off. It is 1 by default; defined
+as 0, as with `-DGALOOT_FORCE_INLINE=0`, it leaves every inlining decision to
+the compiler, and an operation may then compile to a call. Any other value
+stops the compile with "GALOOT_FORCE_INLINE must be 0 or 1". Results over an
+exact scalar are the same in both modes, and so are results over `float`
+or `double` when the compiler does not contract a multiply and an add into
+one instruction (`-ffp-contract=off`); with contraction, which products are
+fused can depend on what is inlined. Every translation unit of a program
+should use the same mode, since the two modes give the core's functions
+different definitions.
+
 ## Printing
 
 `<galoot/core/format.hpp>` gives every multivector a `std::formatter`, so
@@ -1419,6 +1443,12 @@ before each declaration states its full requirements and guarantees.
 0, the default, for an unchecked one. `GALOOT_ASSERT(condition, message)`
 checks a precondition in every constant evaluation and, when
 `GALOOT_CHECKING` is 1, at run time. See [checking mode](#checking-mode).
+
+### `GALOOT_FORCE_INLINE`
+
+`<galoot/core/assert.hpp>`. 1, the default, forces the core's operations
+inline on GCC and Clang; 0 leaves inlining to the compiler. See
+[forced inlining](#forced-inlining).
 
 ### `mask_t` and `mask_bits`
 
