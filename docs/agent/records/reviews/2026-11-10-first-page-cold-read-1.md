@@ -100,8 +100,8 @@ braces). Final `Plane{!p} == g` is `true`, against `Plane{1,2,3,2}` is
 ## Missing or misleading
 
 1. The guide never says, in the sentence about `==`, that the complement `!x`
-   is also on a canonical layout; section 3 shows `Plane{!p}` only in a code
-   comment-less static_assert. A reader comparing `!p == plane` gets the
+   is also on a canonical layout; section 3 shows `Plane{!p}` only inside a code
+   example, without saying why. A reader comparing `!p == plane` gets the
    long layout error. Add to section 3: "`!x` also has its own layout, so
    convert it, `Plane{!p}`, before comparing."
 2. Section 3 says to write `(!x) == y` ("Parenthesize a complement in a
