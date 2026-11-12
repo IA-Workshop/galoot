@@ -1,6 +1,6 @@
 # DoD-2 inventory: the public interface of core 1.0.0
 
-- Status: re-grepped at `develop` `a73cd4e` (2026-11-11), for the release record. Records only. U9 of plan 0042 re-reads it at the release revision R, where only the placeholders of the release commit should have changed (README, `CMakeLists.txt`), none of them an entry here.
+- Status: re-grepped at `develop` `a73cd4e` (2026-11-11), for the release record. Records only. U9 of plan 0042 re-reads it at the release revision R, where only the placeholders of the release commit should have changed (README, `CMakeLists.txt`), none of them an entry here. Checked at R `7580e88` by U9 on 2026-11-12: `git diff --stat a73cd4e 7580e88 -- include/` prints nothing, and the release commit changed only `CMakeLists.txt` and the README, so every row holds at R.
 - Written first: 2026-11-10 by Claude (agent, Sonnet 5.5) at `develop` `1ed0e6a`; doc-page column filled the same day by the documentation lane (plan 0041). Re-grepped and rewritten: 2026-11-11 by Claude (agent, Opus 5.5), planner, plan 0042 unit U6, on branch `records/release-prep`.
 - Source of the requirement: plan 0001, DoD-2. Rulings applied: decision 0187 (the `*_layout` names are public), decision 0241 item 6 (`GALOOT_ASSERT` public and documented, `GALOOT_ALWAYS_INLINE` not interface), decision 0244 item 16 (`GALOOT_FORCE_INLINE` public), decision 0248 item 9 (O1 (a): the six helpers stay public, 0241 item 6's move to `detail` superseded; O2: `basis_change.hpp` stays in `core.hpp`).
 
