@@ -20,8 +20,8 @@ them in the layouts of Eric Lengyel's rigid geometric algebra
 coefficients of its published formulas carry over in the order and with the
 signs in which they are written there.
 
-This is the 1.0.0 release of the core. The rga3 preset is versioned
-separately from the core and has not reached its first stable release.
+This is the 1.0.0 release of the core. The rga3 preset ships in the same
+tree but is below 1.0, and its interface may still change.
 
 ## Using Galoot
 
