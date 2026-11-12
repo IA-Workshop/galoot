@@ -313,3 +313,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0042-u1-records	implementer	sonnet	170396	44	236	records/m7-gate c43fb63 merged
 2026-11-11	plan-0042-u3-m7-audit	auditor	opus	306512	113	1021	gate/m7 6a0f027 merged: no blocking, 2 major
 2026-11-11	plan-0042-u6-release-records	planner	opus	286255	112	1155	records/release-prep 421d572 merged
+2026-11-12	plan-0042-u7-release-commit	implementer	sonnet	52540	10	40	feature/release-1.0.0 7580e88 (R)
