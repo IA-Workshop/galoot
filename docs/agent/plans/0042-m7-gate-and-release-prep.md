@@ -2,7 +2,7 @@
 
 - Status: proposed 2026-11-11 by Claude (agent, Opus 5.5), planner. From `develop` at `6de1beb`. Committed straight to `develop`, which is the claim (W3, W7). No unit below has started.
 - Source of scope: plan 0001 (sections 4 and 6: the M7 and M8 rows, DoD-2, DoD-4, DoD-18, DoD-22 to DoD-29; section 8: WU17, WU18); plan 0038 (WU17) and its rulings (decisions 0233, 0234, 0236 to 0239); plans 0040 and 0041 and their outcomes; decisions 0240, 0241, 0243 to 0246. **Decision 0246 binds this plan**: accelerate; the E1 and E2 reruns and WU17 parts G and H are deferred past 1.0; the release record states the date of every baseline it cites; a green matrix, the V10 table, the release audit, the owner's walkthrough, and the owner's merge and tag are not waived.
-- Drafts this plan finishes: `records/release/release-record-draft.md`, `v10-table-skeleton.md`, `dod-2-inventory.md`, `plan-closures.md` (decision 0240 item 11). The next free decision number is 0247.
+- Drafts this plan finishes: `records/release/release-record-draft.md`, `v10-table-skeleton.md`, `dod-2-inventory.md`, `plan-closures.md` (decision 0240 item 11). U9 finished the first two as `records/release/release-record.md` and `v10-table.md`. The next free decision number is 0247.
 - Shared resources: the job pool reads "not running" at `6de1beb`. A unit that builds reads `tools/jobpool status` before and after; it starts the pool with `tools/jobpool ensure` only when the status says it is stopped, never twice, and never stops it. Timed runs take the lock through `math-tools/exercises/performance/pe-common/lock.sh take` and `release`. No processor configuration is touched or proposed. No web request, no third-party contact, no Terathon source.
 
 ## 1. Departures, ambiguities, and readings (C20)
@@ -169,4 +169,55 @@ Validation of the `GALOOT_FORCE_INLINE` cache option; a CMake-setting mutant on 
 
 ## 11. Outcome
 
-Not started.
+Draft written 2026-11-12 by Claude (agent, Opus 5.5), U9, for U11. Cells marked **[coordinator]** hold the merge facts that exist only after U10 and U11.
+
+### Departures and readings (C20)
+
+1. **The README changed after R.** Decision 0249 item 2 put the rga3 sentence's rewording in the records tip T (`1cd7ac8`), so section 1 item 4's rule, "`git diff --stat R T -- . ':!docs/agent'` is empty", does not hold as written. The release record's "The tip T" replaces it: from R to T nothing outside `docs/agent/` changes except that sentence, and the README's tests passed after it on both compilers.
+2. **The repository URL is a placeholder at release** (decision 0249 item 1), against decision 0245 item 3 and section 4's "Placeholders"; stated as known friction.
+3. **U8's rows name `7276f82`**, R plus one run row, with an empty code diff from R (the matrix record, departure 1).
+4. **Untimed runs in U9.** The README's tests after `1cd7ac8` ran directly, since the pool had stopped itself and `tools/timed` refuses a build or test step without it (release record, departure 3).
+
+### Per unit
+
+| Unit | Result | Where |
+| --- | --- | --- |
+| U1 | Plan 0038 outcome and status; decision 0247; the W10 index; the errata row drafted | `records/m7-gate` `c43fb63`, merged `655ad63` |
+| U2 | M7 snippets review; `count_evals.py` deleted | `records/m7-snippets` `53bbb28`, merged `316af44`, with `e4bd07d` |
+| U5 | Plan closures (DoD-28) | `records/plan-closures` `e730ed3`, merged `985c9db` |
+| U3 | M7 audit at `f15632b`: 0 blocking, 2 major (MA1 the errata row's draft, MA2 decision 0245's edit), 10 minor, 9 info | `gate/m7` `6a0f027`, merged `d9c48dc`; `records/gates/2026-11-11-M7-audit.md` |
+| U4 | M7 accepted; O1 to O6 ruled as recommended | decision 0248 (`a73cd4e`); plan 0001 addendum (`c41ed75`) |
+| U6 | Audit minors m1 to m3, m5, m6, m9 fixed; DoD-2 inventory re-grepped; release record rewritten | `records/release-prep` `421d572`, merged `036dd40` |
+| U7 | Release commit R `7580e88`: VERSION 1.0.0, README status, `GIT_TAG "1.0.0"`, URL placeholder kept; blind review approve, 3 minors | `feature/release-1.0.0`; review `b64e1c4`, merged `a35eec8`; decision 0249 (`36b270a`) |
+| U8 | Release matrix: all eleven presets passed from empty trees on R's code (657 of 657 on six, 649 of 649 on five), 2,883.7 s; trace gate, `format-check`, `conventions_check.py`, `tools/runlog check`, `plan_cost_model` checks and `jobserver_check.py` passed; campaign 300 of 300; benchmarks once, 22 of 22 per compiler, checksums agree; 944 DoD-22 rows, shared mode | `7276f82..ab6836a` (`4e7d4aa` the record, `ab6836a` the final checks and the correction of `4e7d4aa`'s preset count); `records/gates/2026-11-12-release-matrix.md` |
+| U9 | `develop` merged in (`eea9132`); README rga3 sentence (`1cd7ac8`); snippets index and `jobserver_check.py` header refreshed (`7bad7b2`); V10 table and release record filled and renamed (`records/release/v10-table.md`, `release-record.md`); this draft | `feature/release-1.0.0`, tip **[coordinator]** `________` |
+| U10 | Release audit of `1aa1e40..T` | **[coordinator]** branch, merge, findings `________` |
+| U11 | `develop` fast-forwarded to T | **[coordinator]** `________` |
+
+### Definition of done (section 2)
+
+1. M7 accepted: met (decision 0248 item 1; plan 0001 addendum).
+2. Matrix green on all configurations at R: met (U8).
+3. V10 table with a filled row for every requirement, gaps stated: met (`records/release/v10-table.md`).
+4. Release audit with no blocking finding: **[coordinator]** `________`.
+5. Owner walkthrough, merge and tag: **[coordinator]** `________` (the owner's).
+6. This outcome: this section, finished at U11.
+
+### The tip T
+
+T is the commit the owner merges. It qualifies when the five rules of the release record's "The tip T" hold; the coordinator checks rules 1 and 3 at U11 with:
+
+```bash
+git diff --stat 1cd7ac8 T -- . ':!docs/agent'          # must print nothing
+git diff --stat 7580e88 1cd7ac8 -- . ':!docs/agent'     # README.md only
+tools/timed check - gate:runlog@T -- tools/runlog check
+tools/timed trace - gate:trace@T -- python3 -I tools/test_references.py trace \
+  docs/agent/records/convention-trace.md docs/agent/governance/CONVENTIONS.md \
+  test/reference/golden.hpp test
+```
+
+T: **[coordinator]** `________`. Fast-forward of `develop`: **[coordinator]** `________`. Tag and its commit: **[coordinator]** `________` (the owner's).
+
+### Cost
+
+Agent tokens recorded in `agent-cost.tsv` for this plan before U9: about 1.48 M (planner 216k, U1 170k, U2 72k, U5 88k, U3 307k, U6 286k, U7 53k and its review 52k, U8 234k), against the estimate of 2.0 M for all units. U9, U10 and the coordinator: **[coordinator]** `________`. Machine time: U8's matrix 48 minutes, the campaign 19 minutes, the benchmarks under a second, within section 10's estimate.
