@@ -320,3 +320,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-12	plan-0042-u10-release-audit	auditor	opus	282191	112	1055	gate/release-1.0.0 5bfb3a3 merged: no blocking, 3 major
 2026-11-11	plan-0042-u4-rulings	coordinator	sonnet	not tracked	not tracked	not tracked	direct work on develop: decision 0248 (a73cd4e) and the plan 0001 M7 addendum (c41ed75), both with a Sonnet 5.5 trailer; the coordinator did not track this work apart from its session; row added 2026-11-12 by plan 0042 U11 from the release audit m9
 2026-11-12	plan-0042-18eb677-readme-rows	coordinator	sonnet	not visible	not visible	not visible	feature/release-1.0.0 18eb677: run rows 21958 and 21959 (gate:docs@8118033), run by the coordinator, commit trailer Sonnet 5.5; the tokens are unknown; row added 2026-11-12 by plan 0042 U11 from the release audit m5
+2026-11-12	plan-0042-u11-release-records	planner	opus	326712	137	1250	feature/release-1.0.0 ff1d49f (T) fast-forwarded into develop

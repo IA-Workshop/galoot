@@ -233,10 +233,10 @@ tools/timed trace - gate:trace@T -- python3 -I tools/test_references.py trace \
 
 T is the commit that adds, to U11's last records commit, only the run rows of the gates above, run on that records commit's tree (rule 3, its second form). A commit cannot hold its own hash, so both hashes are in T's commit message and U11's hand-back, and the coordinator writes them here:
 
-- U11's last records commit: **[coordinator]** `________`; T: **[coordinator]** `________`.
+- U11's last records commit: `8882890`; T: `ff1d49f`.
 - At U11's records commit (run by U11, outputs as printed): `git diff --stat 1cd7ac8 <records commit> -- . ':!docs/agent'` printed nothing; `git diff --stat 7580e88 1cd7ac8 -- . ':!docs/agent'` printed ` README.md | 4 ++--` and ` 1 file changed, 2 insertions(+), 2 deletions(-)`; rules 2, 4 and 5 hold (no README change after `1cd7ac8`; no CONVENTIONS edit yet; nothing under `include/`, `test/`, `tools/`, `cmake/`, `docs/guide/` or the build files after R).
 - Closing gates (rows in T): `gate:runlog@U11`, `gate:trace@U11`, `gate:citations@U11`, `gate:citations-guide@U11`, and `check:trace-1.18-draft@U11`, the trace gate over a scratch copy of CONVENTIONS with the 1.18 text applied (`records/release/conventions-1.18-owner-text.md`).
-- Merge of U11 into `develop`: **[coordinator]** `________`. The tag and its commit: the owner's (`1.0.0` on the `--no-ff` merge commit M, decision 0250 item 4).
+- Merge of U11 into `develop`: fast-forward to `ff1d49f` (no merge commit). The tag and its commit: the owner's (`1.0.0` on the `--no-ff` merge commit M, decision 0250 item 4).
 
 ### Cost
 
