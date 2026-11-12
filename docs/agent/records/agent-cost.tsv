@@ -315,3 +315,4 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0042-u6-release-records	planner	opus	286255	112	1155	records/release-prep 421d572 merged
 2026-11-12	plan-0042-u7-release-commit	implementer	sonnet	52540	10	40	feature/release-1.0.0 7580e88 (R)
 2026-11-12	plan-0042-u7-blind-review	blind-reviewer	sonnet	51785	7	44	review of R 7580e88: approve, 3 minors
+2026-11-12	plan-0042-u8-release-matrix	gate-runner	opus	234275	145	4741	feature/release-1.0.0 ab6836a: eleven presets pass at R 7580e88
