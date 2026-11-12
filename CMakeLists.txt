@@ -3,7 +3,7 @@
 # options rather than leaving them to defaults, so that every result can be
 # traced to a setting someone chose.
 cmake_minimum_required(VERSION 4.4)
-project(galoot VERSION 0.1.0 LANGUAGES CXX)
+project(galoot VERSION 1.0.0 LANGUAGES CXX)
 
 # Compiler extensions off, so the code stays standard C++23. Module scanning
 # off: Galoot ships headers, not modules, and the scan would otherwise run for
