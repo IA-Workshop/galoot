@@ -204,3 +204,33 @@ M5 (non-diagonal forms and change of basis: WU12, with WU14, the WU14 follow-ups
 ## Addendum, 2026-11-11: after the M7 gate
 
 M7 (cost evidence: WU17 parts A to F, the pre-release core pass, the forced-inline opt-out) was accepted by the owner on 2026-11-11 at the rulings of decision 0248 (`records/gates/2026-11-11-M7-audit.md`; no blocking finding). WU17 parts G and H and the E1 and E2 reruns are deferred past 1.0 (decision 0246 item 2). Section 3's public list is amended to the real exports in `records/release/dod-2-inventory.md` (decision 0248 item 9). Next: the release commit and matrix, the release audit, and the owner's walkthrough, merge and tag (plan 0042).
+
+## Outcome
+
+Written 2026-11-12 by Claude (agent, Opus 5.5), plan 0042 unit U11, records only, at the release of core 1.0.0. W11 records each gate's acceptance here; the addenda above hold M0 to M7.
+
+### Departures, first (C20)
+
+1. **M8 is not yet accepted.** Its exit evidence is in place (the matrix at R, DoD-27, the V10 table, the release audit with no blocking finding), and the owner's walkthrough, merge to `master` and tag are pending (W13). The owner adds the acceptance here, or the coordinator records it from the owner's answer.
+2. **Sections 3, 7 and 11 are not edited.** Section 3's public list is the DoD-2 inventory (decision 0248 item 9); section 7's D7 and D8 were decided later (decisions 0211 and 0239); section 11 is stale since the 2026-11-01 addendum. Each is read through the records named below, not rewritten.
+
+### Milestones
+
+| Milestone | Result | Record |
+| --- | --- | --- |
+| M0, M1 | Accepted 2026-11-01 | decision 0094; `records/gates/2026-10-31-M0-M1.md` |
+| M2 | Accepted 2026-11-02 | decision 0163; `records/gates/2026-11-02-M2.md` |
+| M3 | Accepted 2026-11-07 | decision 0182; `records/gates/2026-11-04-M3.md` |
+| M4 | Accepted 2026-11-08 | decision 0215; `records/gates/2026-11-08-M4-audit.md` |
+| M5 | Accepted 2026-11-10 | decision 0228; `records/gates/2026-11-10-M5-audit.md` |
+| M6 (optional, cga3) | Deferred past v1: named algebras are layers on the core, and cga3 ships after 1.0 | decision 0211 (D7) |
+| M7 | Accepted 2026-11-11; D8 decided: no collected plans in 1.0, DoD-4 on the declared-output check | decisions 0248 and 0239 item 1; `records/gates/2026-11-11-M7-audit.md` |
+| M8 | Release candidate ready for the owner's walkthrough: the matrix green on all eleven presets at R `7580e88`; the release audit 0 blocking, its owner items ruled | `records/release/release-record.md`; `records/gates/2026-11-12-release-audit.md`; decision 0250. Acceptance pending (departure 1) |
+
+### The definition of done (section 4)
+
+Each of DoD-1 to DoD-29, with its evidence and status, is in `records/release/dod-1-to-29.md`; DoD-3's operation map is `records/release/dod-3-operation-map.md` (decision 0250 item 1). In short: 17 met, 11 met with an exception (ruled, or a reading stated there), and DoD-29's merge and tag pending the owner. Two gaps no ruling covers are listed there for the owner: DoD-5's named test-only model, never placed, and DoD-28's lessons, of which none was written in the M7 and release windows.
+
+### Cost
+
+Agent cost is per unit in `records/agent-cost.tsv`; each plan states its own.

@@ -1,6 +1,6 @@
 # 0042 The M7 gate and the release of core 1.0.0 (WU18, M8)
 
-- Status: proposed 2026-11-11 by Claude (agent, Opus 5.5), planner. From `develop` at `6de1beb`. Committed straight to `develop`, which is the claim (W3, W7). No unit below has started.
+- Status: proposed 2026-11-11 by Claude (agent, Opus 5.5), planner. From `develop` at `6de1beb`. Committed straight to `develop`, which is the claim (W3, W7). Units U1 to U10 are done, and U11's records are on `feature/release-1.0.0` (2026-11-12; section 11). Open: the coordinator's merge of U11 into `develop`, the owner's CONVENTIONS 1.18 edit, the walkthrough, and the merge to `master` and the tag (section 8). Status corrected 2026-11-12 by U11, from the release audit's m7; it read "No unit below has started" until then.
 - Source of scope: plan 0001 (sections 4 and 6: the M7 and M8 rows, DoD-2, DoD-4, DoD-18, DoD-22 to DoD-29; section 8: WU17, WU18); plan 0038 (WU17) and its rulings (decisions 0233, 0234, 0236 to 0239); plans 0040 and 0041 and their outcomes; decisions 0240, 0241, 0243 to 0246. **Decision 0246 binds this plan**: accelerate; the E1 and E2 reruns and WU17 parts G and H are deferred past 1.0; the release record states the date of every baseline it cites; a green matrix, the V10 table, the release audit, the owner's walkthrough, and the owner's merge and tag are not waived.
 - Drafts this plan finishes: `records/release/release-record-draft.md`, `v10-table-skeleton.md`, `dod-2-inventory.md`, `plan-closures.md` (decision 0240 item 11). U9 finished the first two as `records/release/release-record.md` and `v10-table.md`. The next free decision number is 0247.
 - Shared resources: the job pool reads "not running" at `6de1beb`. A unit that builds reads `tools/jobpool status` before and after; it starts the pool with `tools/jobpool ensure` only when the status says it is stopped, never twice, and never stops it. Timed runs take the lock through `math-tools/exercises/performance/pe-common/lock.sh take` and `release`. No processor configuration is touched or proposed. No web request, no third-party contact, no Terathon source.
@@ -143,19 +143,31 @@ On `develop` at T, from `/home/brianm/projects/utils/math-core/galoot`:
 5. See the build-mode message: add `-DGALOOT_FORCE_INLINE=ON` to step 3's command.
 6. Decide the CONVENTIONS sentence, then say whether the release goes ahead.
 
-To release, keeping the main checkout on `develop`:
+To release, keeping the main checkout on `develop`. Corrected 2026-11-12 by U11 from the release audit's m1 and the owner's rulings (decision 0250 items 4 to 6); the first form had no check that `develop` holds the audited T and named CONVENTIONS 1.17 in the tag.
+
+Before these commands, the owner's CONVENTIONS 1.18 edit lands on `develop` as a commit of that file alone, and the trace gate and `tools/runlog check` run on that commit and their rows are committed after it (release record, "The tip T", rule 4; the text and the commands are in `docs/agent/records/release/conventions-1.18-owner-text.md`). `develop` cannot equal T itself at the merge: that commit, its gate rows and the coordinator's records after U11 all come after T. So the first checks show that `develop` holds T and that nothing but records changed after it, and the next ones that the trace gate passed on the 1.18 commit.
 
 ```bash
 cd /home/brianm/projects/utils/math-core/galoot
-git merge-base --is-ancestor master develop && echo ok        # must print ok
+T=________                                                      # the hash of T from section 11; as printed, every check below fails
+git merge-base --is-ancestor "$T" develop && echo ok             # must print ok: develop holds T
+git diff --stat "$T" develop -- . ':!docs/agent'                 # must print nothing: no code, test, tool, build or user page after T
+git diff --name-only "$T" develop -- docs/agent/governance       # must print only docs/agent/governance/CONVENTIONS.md
+git log --oneline "$T"..develop                                  # read: each commit is a records commit
+git show develop:docs/agent/governance/CONVENTIONS.md | sed -n 's/^Status: version \([0-9.]*\),.*/\1/p'   # must print 1.18
+C=$(git rev-parse --short=12 "$(git log -1 --format=%H develop -- docs/agent/governance/CONVENTIONS.md)")
+git show develop:docs/agent/records/performance/runs.tsv \
+  | awk -F'\t' -v c="$C" '$2 == c && $4 == "trace" && $8 == 0' | wc -l   # must print 1 or more: the trace gate passed on the 1.18 commit
+git merge-base --is-ancestor master develop && echo ok           # must print ok
 git worktree add /home/brianm/projects/utils/math-core/galoot-master master
 git -C /home/brianm/projects/utils/math-core/galoot-master merge --no-ff develop -m "Release galoot core 1.0.0"
-git diff develop master --stat                                 # must print nothing
-git tag -a 1.0.0 master -m "galoot core 1.0.0, CONVENTIONS 1.17"
+git diff develop master --stat                                   # must print nothing
+git tag -a 1.0.0 master -m "galoot core 1.0.0, CONVENTIONS 1.18"
 git worktree remove /home/brianm/projects/utils/math-core/galoot-master
+git show -s --format='%h %p %s' '1.0.0^{commit}'                 # the merge commit M; its second parent is develop's tip
 ```
 
-The tag message names the CONVENTIONS version in force at T (1.18 if the errata row is added). To publish, push `master`, `develop` and the tag to the repository the README names.
+Nothing is pushed. The tag names the `--no-ff` merge commit M, whose tree is `develop`'s (decision 0250 item 4). If the owner declines 1.18, the `governance` line must print nothing, the version line prints `1.17`, the trace-row check is skipped, and the tag message names CONVENTIONS 1.17. To publish, push `master`, `develop` and the tag to the repository the README names, once it exists (decision 0249 item 1).
 
 ## 9. Post-1.0 backlog (not scheduled)
 
@@ -169,14 +181,17 @@ Validation of the `GALOOT_FORCE_INLINE` cache option; a CMake-setting mutant on 
 
 ## 11. Outcome
 
-Draft written 2026-11-12 by Claude (agent, Opus 5.5), U9, for U11. Cells marked **[coordinator]** hold the merge facts that exist only after U10 and U11.
+Draft written 2026-11-12 by Claude (agent, Opus 5.5), U9, for U11; finished 2026-11-12 by Claude (agent, Opus 5.5), U11, on `feature/release-1.0.0`. The cells still marked **[coordinator]** hold the facts of U11's merge into `develop`, which exist only after this hand-back; the owner's are marked so.
 
 ### Departures and readings (C20)
 
 1. **The README changed after R.** Decision 0249 item 2 put the rga3 sentence's rewording in the records tip T (`1cd7ac8`), so section 1 item 4's rule, "`git diff --stat R T -- . ':!docs/agent'` is empty", does not hold as written. The release record's "The tip T" replaces it: from R to T nothing outside `docs/agent/` changes except that sentence, and the README's tests passed after it on both compilers.
 2. **The repository URL is a placeholder at release** (decision 0249 item 1), against decision 0245 item 3 and section 4's "Placeholders"; stated as known friction.
 3. **U8's rows name `7276f82`**, R plus one run row, with an empty code diff from R (the matrix record, departure 1).
-4. **Untimed runs in U9.** The README's tests after `1cd7ac8` ran directly, since the pool had stopped itself and `tools/timed` refuses a build or test step without it (release record, departure 3).
+4. **Untimed runs in U9.** The README's tests after `1cd7ac8` ran directly, since the pool had stopped itself and `tools/timed` refuses a build or test step without it (release record, departure 3). They were rerun through `tools/timed` at `8118033` (rows 21958, 21959, committed by the coordinator in `18eb677`) and by U10 at `18eb677`.
+5. **U11 ran as an agent on the release branch, not as the coordinator on `develop`** (section 5's row). Its brief gave it the records of the release audit's rulings (decision 0250) and the final T; the merge into `develop` stays the coordinator's. `develop` was merged into the branch first (a fast-forward to `300f6b4`: the audit, its rows and the U9 and U10 cost rows).
+6. **`develop` cannot be T at the owner's merge.** The owner's CONVENTIONS 1.18 commit and its gate rows, and the coordinator's records after U11, land after T. Section 8's commands check that `develop` holds T and that only records changed after it (decision 0250 item 6).
+7. **No build or test ran in U11.** Its gates are `tools/runlog check`, the trace gate and the citation checks, none a build or test step, so the job pool (stopped when U11 began: `tools/jobpool status` printed "not running") was neither needed nor started.
 
 ### Per unit
 
@@ -190,22 +205,22 @@ Draft written 2026-11-12 by Claude (agent, Opus 5.5), U9, for U11. Cells marked 
 | U6 | Audit minors m1 to m3, m5, m6, m9 fixed; DoD-2 inventory re-grepped; release record rewritten | `records/release-prep` `421d572`, merged `036dd40` |
 | U7 | Release commit R `7580e88`: VERSION 1.0.0, README status, `GIT_TAG "1.0.0"`, URL placeholder kept; blind review approve, 3 minors | `feature/release-1.0.0`; review `b64e1c4`, merged `a35eec8`; decision 0249 (`36b270a`) |
 | U8 | Release matrix: all eleven presets passed from empty trees on R's code (657 of 657 on six, 649 of 649 on five), 2,883.7 s; trace gate, `format-check`, `conventions_check.py`, `tools/runlog check`, `plan_cost_model` checks and `jobserver_check.py` passed; campaign 300 of 300; benchmarks once, 22 of 22 per compiler, checksums agree; 944 DoD-22 rows, shared mode | `7276f82..ab6836a` (`4e7d4aa` the record, `ab6836a` the final checks and the correction of `4e7d4aa`'s preset count); `records/gates/2026-11-12-release-matrix.md` |
-| U9 | `develop` merged in (`eea9132`); README rga3 sentence (`1cd7ac8`); snippets index and `jobserver_check.py` header refreshed (`7bad7b2`); V10 table and release record filled and renamed (`records/release/v10-table.md`, `release-record.md`); this draft | `feature/release-1.0.0`, tip **[coordinator]** `________` |
-| U10 | Release audit of `1aa1e40..T` | **[coordinator]** branch, merge, findings `________` |
-| U11 | `develop` fast-forwarded to T | **[coordinator]** `________` |
+| U9 | `develop` merged in (`eea9132`); README rga3 sentence (`1cd7ac8`); snippets index and `jobserver_check.py` header refreshed (`7bad7b2`); V10 table and release record filled and renamed (`records/release/v10-table.md`, `release-record.md`); this draft | `feature/release-1.0.0`: records `2e9d7ed`, its closing gates' rows `8118033` (the U9 tip); the coordinator's README rows `18eb677` |
+| U10 | Release audit of `1aa1e40..18eb677`: 0 blocking, 3 major (MA1 DoD coverage, MA2 P9's history, MA3 the quoting of 0248 and 0249), 9 minor, 10 info; owner items O-A to O-G, all ruled as recommended (decision 0250) | `gate/release-1.0.0` `5bfb3a3`, merged into `develop` at `9075620`; cost row `300f6b4`; `records/gates/2026-11-12-release-audit.md` |
+| U11 | `develop` merged in; decision 0250 with its addendum; the DoD table and DoD-3's map; the CONVENTIONS 1.18 text for the owner; release record (departures 3, 8 to 10, rule 4, exception 12, friction 10 to 13, the U10 and coordinator cells) and V10 table (departure 6, the header) completed; section 8's commands corrected; plan 0001's outcome; the status lines of plans 0019 and 0042; the cost rows of U4 and `18eb677`; the closing gates at T | `feature/release-1.0.0`, T as below. Merge into `develop`: **[coordinator]** `________` |
 
 ### Definition of done (section 2)
 
 1. M7 accepted: met (decision 0248 item 1; plan 0001 addendum).
 2. Matrix green on all configurations at R: met (U8).
-3. V10 table with a filled row for every requirement, gaps stated: met (`records/release/v10-table.md`).
-4. Release audit with no blocking finding: **[coordinator]** `________`.
-5. Owner walkthrough, merge and tag: **[coordinator]** `________` (the owner's).
-6. This outcome: this section, finished at U11.
+3. V10 table with a filled row for every requirement, gaps stated: met at U11 (`records/release/v10-table.md`, with every DoD in `records/release/dod-1-to-29.md`). U9 wrote "met" for the V10 table alone; the release audit's MA1 found that DoD-3, DoD-8 and DoD-13 had no row, which the DoD table closes (decision 0250 item 1).
+4. Release audit with no blocking finding: met (U10, `records/gates/2026-11-12-release-audit.md`; its owner items ruled, decision 0250).
+5. Owner walkthrough, merge and tag: pending, the owner's (section 8), after the owner's CONVENTIONS 1.18 edit.
+6. This outcome: this section, finished at U11 except the merge facts of U11 and the owner's.
 
 ### The tip T
 
-T is the commit the owner merges. It qualifies when the five rules of the release record's "The tip T" hold; the coordinator checks rules 1 and 3 at U11 with:
+T is the audited records tip that the owner's commands check `develop` against (section 8). It qualifies when the five rules of the release record's "The tip T" hold; U11 checked rules 1 and 3 with:
 
 ```bash
 git diff --stat 1cd7ac8 T -- . ':!docs/agent'          # must print nothing
@@ -216,8 +231,13 @@ tools/timed trace - gate:trace@T -- python3 -I tools/test_references.py trace \
   test/reference/golden.hpp test
 ```
 
-T: **[coordinator]** `________`. Fast-forward of `develop`: **[coordinator]** `________`. Tag and its commit: **[coordinator]** `________` (the owner's).
+T is the commit that adds, to U11's last records commit, only the run rows of the gates above, run on that records commit's tree (rule 3, its second form). A commit cannot hold its own hash, so both hashes are in T's commit message and U11's hand-back, and the coordinator writes them here:
+
+- U11's last records commit: **[coordinator]** `________`; T: **[coordinator]** `________`.
+- At U11's records commit (run by U11, outputs as printed): `git diff --stat 1cd7ac8 <records commit> -- . ':!docs/agent'` printed nothing; `git diff --stat 7580e88 1cd7ac8 -- . ':!docs/agent'` printed ` README.md | 4 ++--` and ` 1 file changed, 2 insertions(+), 2 deletions(-)`; rules 2, 4 and 5 hold (no README change after `1cd7ac8`; no CONVENTIONS edit yet; nothing under `include/`, `test/`, `tools/`, `cmake/`, `docs/guide/` or the build files after R).
+- Closing gates (rows in T): `gate:runlog@U11`, `gate:trace@U11`, `gate:citations@U11`, `gate:citations-guide@U11`, and `check:trace-1.18-draft@U11`, the trace gate over a scratch copy of CONVENTIONS with the 1.18 text applied (`records/release/conventions-1.18-owner-text.md`).
+- Merge of U11 into `develop`: **[coordinator]** `________`. The tag and its commit: the owner's (`1.0.0` on the `--no-ff` merge commit M, decision 0250 item 4).
 
 ### Cost
 
-Agent tokens recorded in `agent-cost.tsv` for this plan before U9: about 1.48 M (planner 216k, U1 170k, U2 72k, U5 88k, U3 307k, U6 286k, U7 53k and its review 52k, U8 234k), against the estimate of 2.0 M for all units. U9, U10 and the coordinator: **[coordinator]** `________`. Machine time: U8's matrix 48 minutes, the campaign 19 minutes, the benchmarks under a second, within section 10's estimate.
+Agent tokens recorded in `agent-cost.tsv` for this plan before U9: about 1.48 M (planner 216k, U1 170k, U2 72k, U5 88k, U3 307k, U6 286k, U7 53k and its review 52k, U8 234k), against the estimate of 2.0 M for all units. U9 228k and U10 282k, so about 1.99 M recorded for the plan (1,988,134 tokens over eleven rows). Not counted: the coordinator's U4 (not tracked) and `18eb677` (not visible), both rows added at U11, and U11 itself, whose cost is not visible to it: **[coordinator]** `________`. Machine time: U8's matrix 48 minutes, the campaign 19 minutes, the benchmarks under a second, within section 10's estimate.
