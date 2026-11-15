@@ -238,6 +238,10 @@ T is the commit that adds, to U11's last records commit, only the run rows of th
 - Closing gates (rows in T): `gate:runlog@U11`, `gate:trace@U11`, `gate:citations@U11`, `gate:citations-guide@U11`, and `check:trace-1.18-draft@U11`, the trace gate over a scratch copy of CONVENTIONS with the 1.18 text applied (`records/release/conventions-1.18-owner-text.md`).
 - Merge of U11 into `develop`: fast-forward to `ff1d49f` (no merge commit). The tag and its commit: the owner's (`1.0.0` on the `--no-ff` merge commit M, decision 0250 item 4).
 
+### Tag
+
+The owner ran `records/release/close-out-v1.sh` on 2026-11-15: `develop` at `a4cd99d` (CONVENTIONS 1.18 at `68f77fc`, its gate rows at `a4cd99d`) was merged `--no-ff` into `master` as `2383e6d`, and the annotated tag `1.0.0` names that commit. `git diff develop master` is empty. Nothing was pushed (decision 0249). Lessons 0073 and 0074 close DoD-28's gap (decision 0251 item 3).
+
 ### Cost
 
 Agent tokens recorded in `agent-cost.tsv` for this plan before U9: about 1.48 M (planner 216k, U1 170k, U2 72k, U5 88k, U3 307k, U6 286k, U7 53k and its review 52k, U8 234k), against the estimate of 2.0 M for all units. U9 228k and U10 282k, so about 1.99 M recorded for the plan (1,988,134 tokens over eleven rows). Not counted: the coordinator's U4 (not tracked) and `18eb677` (not visible), both rows added at U11, and U11 itself, whose cost is not visible to it: **[coordinator]** `________`. Machine time: U8's matrix 48 minutes, the campaign 19 minutes, the benchmarks under a second, within section 10's estimate.
