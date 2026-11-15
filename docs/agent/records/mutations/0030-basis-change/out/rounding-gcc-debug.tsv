@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+division_per_term	gcc-debug	752fdea249c2	killed	killed	core.basis_change	-	-	a change of basis over double is within its forward error bound on wide integer inputs | a diagonalizing change over double rounds only its division on small dyadic inputs	-	-
+division_rounding_uncounted	gcc-debug	752fdea249c2	killed	killed	core.basis_change	-	-	a change of basis over double is within its forward error bound on wide integer inputs	-	-
+double_results_scaled	gcc-debug	752fdea249c2	killed	killed	core.basis_change	-	-	conformal_change over double, float, and complex is exact on small dyadic inputs	-	-

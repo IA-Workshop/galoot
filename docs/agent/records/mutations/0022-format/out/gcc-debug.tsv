@@ -1,0 +1,41 @@
+mutant	build_exit	build_failures	failed_tests
+minus_dropped	0	-	core.format
+tag_name_for_either_orientation	0	-	core.format
+tag_names_ignored	0	-	core.format
+canonical_index_order_reversed	0	-	core.format
+wide_algebra_printed	0	-	core.format_wide_algebra core.format_wide_algebra_auto
+zeros_skipped	0	-	core.format
+canonical_order_for_layout_order	0	-	core.format
+specification_not_forwarded	0	-	core.format
+colon_changed	0	-	core.format
+comma_changed	0	-	core.format
+empty_layout_writes_nothing	0	-	core.format
+scalar_rejection_removed	0	-	core.format_scalar_without_formatter core.format_scalar_without_formatter_auto core.format_scalar_without_formatter_print
+wide_rejection_removed	0	-	core.format_wide_algebra core.format_wide_algebra_auto
+not_a_blade_rejection_removed	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator
+named_twice_rejection_removed	0	-	core.format_names_twice core.format_names_twice_opposite
+scalar_and_wide_messages_swapped	0	-	core.format_scalar_without_formatter core.format_scalar_without_formatter_auto core.format_scalar_without_formatter_print core.format_wide_algebra core.format_wide_algebra_auto
+names_messages_swapped	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator core.format_names_twice core.format_names_twice_opposite
+scalar_formatter_by_formattable	1	format: include/galoot/core/format.hpp:217:21: error: static assertion failed: format: the scalar type has no std::formatter; give it a std::formatter, as double has	-
+parse_skip_removed	0	-	core.format_scalar_without_formatter_spec
+names_checked_as_none	0	-	core.format_names_not_e core.format_names_not_e_auto core.format_names_bare_e core.format_names_letter_index core.format_names_index_zero core.format_names_index_above_n core.format_names_repeated_generator core.format_names_twice core.format_names_twice_opposite
+other_source_widened_to_same_types	0	-	-
+other_source_scalar_only	1	mv: test/core/mv_test.cpp:2446:22: error: static assertion failed	core.mv_other_algebra_brace core.mv_other_algebra_paren core.mv_other_algebra_cast core.mv_other_algebra_auto core.mv_other_algebra_layout core.mv_other_algebra_derived core.mv_other_algebra_and_scalar
+other_source_algebra_only	1	mv: test/core/mv_test.cpp:2345:22: error: static assertion failed	core.mv_other_scalar_brace core.mv_other_scalar_paren core.mv_other_scalar_cast core.mv_other_scalar_auto core.mv_other_scalar_layout core.mv_other_scalar_lossy core.mv_other_scalar_one_blade core.mv_other_scalar_derived
+other_algebra_rejection_removed	0	-	core.mv_other_algebra_brace core.mv_other_algebra_paren core.mv_other_algebra_cast core.mv_other_algebra_auto core.mv_other_algebra_layout core.mv_other_algebra_derived core.mv_other_algebra_and_scalar
+other_scalar_rejection_removed	0	-	core.mv_other_scalar_brace core.mv_other_scalar_paren core.mv_other_scalar_cast core.mv_other_scalar_auto core.mv_other_scalar_layout core.mv_other_scalar_lossy core.mv_other_scalar_one_blade core.mv_other_scalar_derived
+other_source_messages_swapped	0	-	core.mv_other_scalar_brace core.mv_other_scalar_paren core.mv_other_scalar_cast core.mv_other_scalar_auto core.mv_other_scalar_layout core.mv_other_scalar_lossy core.mv_other_scalar_one_blade core.mv_other_scalar_derived core.mv_other_algebra_brace core.mv_other_algebra_paren core.mv_other_algebra_cast core.mv_other_algebra_auto core.mv_other_algebra_layout core.mv_other_algebra_derived core.mv_other_algebra_and_scalar
+number_operand_any_type	1	linear: test/core/linear_test.cpp:478:17: error: static assertion failed	core.linear_mixed_algebras_plus core.linear_mixed_scalars_plus core.linear_mixed_algebras_minus core.linear_mixed_scalars_minus
+number_operand_multivectors_too	1	linear: include/galoot/core/mv.hpp:70:25: error: satisfaction of atomic constraint ‘requires(const T& a, const T& b) {{a + b} -> decltype(auto) [requires std::convertible_to<<placeholder>, T>];} [with T = galoot::core::mv<<unnamed>::rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, long int>]’ depends on itself	core.linear_mixed_algebras_plus core.linear_mixed_scalars_plus core.linear_mixed_algebras_minus core.linear_mixed_scalars_minus
+number_operand_arithmetic_only	0	-	core.linear_plus_number_rational
+number_operand_not_ring	1	linear: test/core/linear_test.cpp:562:17: error: static assertion failed	-
+plus_number_right_removed	0	-	core.linear_plus_number_right core.linear_plus_number_other_type core.linear_plus_number_auto core.linear_plus_number_derived
+plus_number_left_removed	0	-	core.linear_plus_number_left core.linear_plus_number_left_other_type
+minus_number_right_removed	0	-	core.linear_minus_number_right core.linear_minus_number_other_type
+minus_number_left_removed	0	-	core.linear_minus_number_left core.linear_minus_number_left_other_type core.linear_minus_number_derived
+plus_and_minus_messages_swapped	0	-	core.linear_plus_number_right core.linear_plus_number_left core.linear_plus_number_other_type core.linear_plus_number_left_other_type core.linear_plus_number_auto core.linear_plus_number_derived core.linear_minus_number_right core.linear_minus_number_left core.linear_minus_number_other_type core.linear_minus_number_left_other_type core.linear_minus_number_derived
+blades_constrained_by_metric_like	0	-	core.blade_set_blades_not_metric_like core.blade_set_blades_tag_without_value core.blade_set_blades_value_not_metric core.blade_set_names_zero
+no_generators_case_lost	0	-	core.blade_set_names_zero
+not_an_algebra_rejection_removed	0	-	core.blade_set_blades_not_metric_like core.blade_set_blades_tag_without_value core.blade_set_blades_value_not_metric
+no_generators_rejection_removed	0	-	core.blade_set_names_zero
+blades_messages_swapped	0	-	core.blade_set_blades_not_metric_like core.blade_set_blades_tag_without_value core.blade_set_blades_value_not_metric core.blade_set_names_zero

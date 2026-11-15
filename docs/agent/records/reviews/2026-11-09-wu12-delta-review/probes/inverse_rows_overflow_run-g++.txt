@@ -1,0 +1,25 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverse_rows_overflow_run.cpp:5:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_checked_change() [with C = bad]’:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:720:62:   required from ‘constexpr const auto galoot::core::detail::checked_change<bad>’
+  720 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:928:42:   required from ‘consteval auto galoot::core::detail::make_change_map() [with C = bad; bool Back = true; blade_set<...auto...> S = galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}}}]’
+  928 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:964:66:   required from ‘constexpr const auto galoot::core::detail::change_map_of<bad, true, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}}}>’
+  964 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1065:13:   required from ‘constexpr const auto galoot::core::change_basis_back_layout<bad, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}}}>’
+ 1065 |     detail::change_map_of<C, true, S>.result;
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1138:48:   required by substitution of ‘template<class C, blade_set<...auto...> S, class T>  requires (basis_change_like<C>) && (ring_scalar<T>) constexpr galoot::core::mv<typename C::source, change_basis_back_layout<C, S>, T> galoot::core::change_basis_back(const mv<typename C::target, S, T>&) [with C = bad; blade_set<...auto...> S = galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade, 3>{std::__array_traits<galoot::core::oriented_blade, 3>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}}}}; T = double]’
+ 1138 | [[nodiscard]] constexpr mv<typename C::source, change_basis_back_layout<C, S>,
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/inverse_rows_overflow_run.cpp:19:48:   required from here
+   19 |     const auto x = core::change_basis_back<bad>(y);
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:695:21: error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+  695 |       static_assert(fits, "basis_change: an exact value the change computes "
+      |                     ^~~~
+  • ‘fits’ evaluates to false
+timed: probe inverse_rows_overflow_run-g++ took 0.127 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

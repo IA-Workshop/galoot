@@ -1,0 +1,213 @@
+seed 20261110; python 3.14.9; sympy 1.14.0
+PASS geometric product table of rigid3.py equals clifford_reference.py on all 256 blade pairs
+PASS the products land on the layouts' blades only
+
+== point ^ point (line: vx vy vz mx my mz) ==
+  vx = wp*xq - wq*xp
+  vy = wp*yq - wq*yp
+  vz = wp*zq - wq*zp
+  mx = yp*zq - yq*zp
+  my = -xp*zq + xq*zp
+  mz = xp*yq - xq*yp
+
+== point ^ point ^ point (plane: gx gy gz gw) ==
+  gx = wp*yq*zr - wp*yr*zq - wq*yp*zr + wq*yr*zp + wr*yp*zq - wr*yq*zp
+  gy = -wp*xq*zr + wp*xr*zq + wq*xp*zr - wq*xr*zp - wr*xp*zq + wr*xq*zp
+  gz = wp*xq*yr - wp*xr*yq - wq*xp*yr + wq*xr*yp + wr*xp*yq - wr*xq*yp
+  gw = -xp*yq*zr + xp*yr*zq + xq*yp*zr - xq*yr*zp - xr*yp*zq + xr*yq*zp
+
+== line v plane (point: x y z w) ==
+  x = gwg*vxl - gyg*mzl + gzg*myl
+  y = gwg*vyl + gxg*mzl - gzg*mxl
+  z = gwg*vzl - gxg*myl + gyg*mxl
+  w = -gxg*vxl - gyg*vyl - gzg*vzl
+PASS point^point: direction w_p q - w_q p, moment p x q
+PASS point^point^point: coefficient j is the cofactor det[e_j; p; q; r] (the plane's value at x is det[x; p; q; r]), one overall sign +1 fixed by gx and the same for gy, gz, gw
+PASS (p^q) v g = (g.p) q - (g.q) p  (the knowledge base's form)
+PASS line v plane: point = (gw d - n x k, -n.d) on a general line
+
+== transform(point, motor): output i = sum_j M_ij x_j ==
+  x' =
+      xp   * ( Qvw**2 + Qvx**2 - Qvy**2 - Qvz**2 )
+      yp   * ( -2*Qvw*Qvz + 2*Qvx*Qvy )
+      zp   * ( 2*Qvw*Qvy + 2*Qvx*Qvz )
+      wp   * ( -2*Qmw*Qvx + 2*Qmx*Qvw - 2*Qmy*Qvz + 2*Qmz*Qvy )
+  y' =
+      xp   * ( 2*Qvw*Qvz + 2*Qvx*Qvy )
+      yp   * ( Qvw**2 - Qvx**2 + Qvy**2 - Qvz**2 )
+      zp   * ( -2*Qvw*Qvx + 2*Qvy*Qvz )
+      wp   * ( -2*Qmw*Qvy + 2*Qmx*Qvz + 2*Qmy*Qvw - 2*Qmz*Qvx )
+  z' =
+      xp   * ( -2*Qvw*Qvy + 2*Qvx*Qvz )
+      yp   * ( 2*Qvw*Qvx + 2*Qvy*Qvz )
+      zp   * ( Qvw**2 - Qvx**2 - Qvy**2 + Qvz**2 )
+      wp   * ( -2*Qmw*Qvz - 2*Qmx*Qvy + 2*Qmy*Qvx + 2*Qmz*Qvw )
+  w' =
+      wp   * ( Qvw**2 + Qvx**2 + Qvy**2 + Qvz**2 )
+
+== transform(line, motor): output i = sum_j M_ij x_j ==
+  vx' =
+      vxl  * ( Qvw**2 + Qvx**2 - Qvy**2 - Qvz**2 )
+      vyl  * ( -2*Qvw*Qvz + 2*Qvx*Qvy )
+      vzl  * ( 2*Qvw*Qvy + 2*Qvx*Qvz )
+  vy' =
+      vxl  * ( 2*Qvw*Qvz + 2*Qvx*Qvy )
+      vyl  * ( Qvw**2 - Qvx**2 + Qvy**2 - Qvz**2 )
+      vzl  * ( -2*Qvw*Qvx + 2*Qvy*Qvz )
+  vz' =
+      vxl  * ( -2*Qvw*Qvy + 2*Qvx*Qvz )
+      vyl  * ( 2*Qvw*Qvx + 2*Qvy*Qvz )
+      vzl  * ( Qvw**2 - Qvx**2 - Qvy**2 + Qvz**2 )
+  mx' =
+      vxl  * ( 2*Qmw*Qvw + 2*Qmx*Qvx - 2*Qmy*Qvy - 2*Qmz*Qvz )
+      vyl  * ( -2*Qmw*Qvz + 2*Qmx*Qvy + 2*Qmy*Qvx - 2*Qmz*Qvw )
+      vzl  * ( 2*Qmw*Qvy + 2*Qmx*Qvz + 2*Qmy*Qvw + 2*Qmz*Qvx )
+      mxl  * ( Qvw**2 + Qvx**2 - Qvy**2 - Qvz**2 )
+      myl  * ( -2*Qvw*Qvz + 2*Qvx*Qvy )
+      mzl  * ( 2*Qvw*Qvy + 2*Qvx*Qvz )
+  my' =
+      vxl  * ( 2*Qmw*Qvz + 2*Qmx*Qvy + 2*Qmy*Qvx + 2*Qmz*Qvw )
+      vyl  * ( 2*Qmw*Qvw - 2*Qmx*Qvx + 2*Qmy*Qvy - 2*Qmz*Qvz )
+      vzl  * ( -2*Qmw*Qvx - 2*Qmx*Qvw + 2*Qmy*Qvz + 2*Qmz*Qvy )
+      mxl  * ( 2*Qvw*Qvz + 2*Qvx*Qvy )
+      myl  * ( Qvw**2 - Qvx**2 + Qvy**2 - Qvz**2 )
+      mzl  * ( -2*Qvw*Qvx + 2*Qvy*Qvz )
+  mz' =
+      vxl  * ( -2*Qmw*Qvy + 2*Qmx*Qvz - 2*Qmy*Qvw + 2*Qmz*Qvx )
+      vyl  * ( 2*Qmw*Qvx + 2*Qmx*Qvw + 2*Qmy*Qvz + 2*Qmz*Qvy )
+      vzl  * ( 2*Qmw*Qvw - 2*Qmx*Qvx - 2*Qmy*Qvy + 2*Qmz*Qvz )
+      mxl  * ( -2*Qvw*Qvy + 2*Qvx*Qvz )
+      myl  * ( 2*Qvw*Qvx + 2*Qvy*Qvz )
+      mzl  * ( Qvw**2 - Qvx**2 - Qvy**2 + Qvz**2 )
+
+== transform(plane, motor): output i = sum_j M_ij x_j ==
+  gx' =
+      gxg  * ( Qvw**2 + Qvx**2 - Qvy**2 - Qvz**2 )
+      gyg  * ( -2*Qvw*Qvz + 2*Qvx*Qvy )
+      gzg  * ( 2*Qvw*Qvy + 2*Qvx*Qvz )
+  gy' =
+      gxg  * ( 2*Qvw*Qvz + 2*Qvx*Qvy )
+      gyg  * ( Qvw**2 - Qvx**2 + Qvy**2 - Qvz**2 )
+      gzg  * ( -2*Qvw*Qvx + 2*Qvy*Qvz )
+  gz' =
+      gxg  * ( -2*Qvw*Qvy + 2*Qvx*Qvz )
+      gyg  * ( 2*Qvw*Qvx + 2*Qvy*Qvz )
+      gzg  * ( Qvw**2 - Qvx**2 - Qvy**2 + Qvz**2 )
+  gw' =
+      gxg  * ( 2*Qmw*Qvx - 2*Qmx*Qvw - 2*Qmy*Qvz + 2*Qmz*Qvy )
+      gyg  * ( 2*Qmw*Qvy + 2*Qmx*Qvz - 2*Qmy*Qvw - 2*Qmz*Qvx )
+      gzg  * ( 2*Qmw*Qvz - 2*Qmx*Qvy + 2*Qmy*Qvx - 2*Qmz*Qvw )
+      gwg  * ( Qvw**2 + Qvx**2 + Qvy**2 + Qvz**2 )
+PASS point: sandwich equals (s^2-|v|^2)u + 2(v.u)v + 2s v x u + wT, w' = lambda w, T = 2(s m - t v + v x m)  (no constraint used)
+PASS the dropped blades of every transform are zero as polynomials (motor layout, any coefficients)
+PASS compose(Qa, Qb) lands on the motor's eight blades
+
+== compose(Qa, Qb) = Qa antiproduct Qb (Qb applies first) ==
+  Qvx = Qvwa*Qvxb + Qvwb*Qvxa + Qvya*Qvzb - Qvyb*Qvza
+  Qvy = Qvwa*Qvyb + Qvwb*Qvya - Qvxa*Qvzb + Qvxb*Qvza
+  Qvz = Qvwa*Qvzb + Qvwb*Qvza + Qvxa*Qvyb - Qvxb*Qvya
+  Qvw = Qvwa*Qvwb - Qvxa*Qvxb - Qvya*Qvyb - Qvza*Qvzb
+  Qmx = Qmwa*Qvxb + Qmwb*Qvxa + Qmxa*Qvwb + Qmxb*Qvwa + Qmya*Qvzb - Qmyb*Qvza - Qmza*Qvyb + Qmzb*Qvya
+  Qmy = Qmwa*Qvyb + Qmwb*Qvya - Qmxa*Qvzb + Qmxb*Qvza + Qmya*Qvwb + Qmyb*Qvwa + Qmza*Qvxb - Qmzb*Qvxa
+  Qmz = Qmwa*Qvzb + Qmwb*Qvza + Qmxa*Qvyb - Qmxb*Qvya - Qmya*Qvxb + Qmyb*Qvxa + Qmza*Qvwb + Qmzb*Qvwa
+  Qmw = Qmwa*Qvwb + Qmwb*Qvwa - Qmxa*Qvxb - Qmxb*Qvxa - Qmya*Qvyb - Qmyb*Qvya - Qmza*Qvzb - Qmzb*Qvza
+PASS transform(x, compose(Qa, Qb)) = transform(transform(x, Qb), Qa) as polynomials, for a point
+
+== forms for transform(point, motor) ==
+PASS A(point): the restricted terms equal the sandwich exactly
+PASS B(point, grouped=False): collected matrix form equals the sandwich exactly
+PASS B(point, grouped=True): collected matrix form equals the sandwich exactly
+PASS C(point, doubled result): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, True]; modulo h alone: [False, False, False, False]
+PASS C(point, doubled motor): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, True]; modulo h alone: [False, False, False, False]
+   off the constraints: a versor with lambda = 4 (h = 0): lambda=4, h=0, C - sandwich = [0, 2, -3, -3/2]
+   off the constraints: lambda = 1 and h != 0: lambda=1, h=-108/1855, C - sandwich = [0, 0, 0, 0]
+   off the constraints: a random element of the layout: lambda=92/9, h=35/9, C - sandwich = [0, 166/27, -83/9, -83/18]
+PASS C(point) equals the sandwich at a rational unit versor (lambda = 1, h = 0)
+
+== forms for transform(line, motor) ==
+PASS A(line): the restricted terms equal the sandwich exactly
+PASS B(line, grouped=False): collected matrix form equals the sandwich exactly
+PASS B(line, grouped=True): collected matrix form equals the sandwich exactly
+PASS C(line, doubled result): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, False, False, False]; modulo h alone: [False, False, False, False, False, False]
+PASS C(line, doubled motor): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, False, False, False]; modulo h alone: [False, False, False, False, False, False]
+   off the constraints: a versor with lambda = 4 (h = 0): lambda=4, h=0, C - sandwich = [12, 2, -2, 11933959/132250, -446314/13225, -17910331/66125]
+   off the constraints: lambda = 1 and h != 0: lambda=1, h=789/8050, C - sandwich = [0, 0, 0, 12925398/190109375, -204444628/266153125, -310089098/1330765625]
+   off the constraints: a random element of the layout: lambda=28, h=13, C - sandwich = [108, 18, -18, -11663/6, 1810, 11231/3]
+PASS C(line) equals the sandwich at a rational unit versor (lambda = 1, h = 0)
+
+== forms for transform(plane, motor) ==
+PASS A(plane): the restricted terms equal the sandwich exactly
+PASS B(plane, grouped=False): collected matrix form equals the sandwich exactly
+PASS B(plane, grouped=True): collected matrix form equals the sandwich exactly
+PASS C(plane, doubled result): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, True]; modulo h alone: [False, False, False, False]
+PASS C(plane, doubled motor): equals the sandwich modulo (lambda - 1, h): the remainder of every output on division by the Groebner basis is 0
+   difference vanishes modulo lambda - 1 alone, per output: [True, True, True, True]; modulo h alone: [False, False, False, False]
+   off the constraints: a versor with lambda = 4 (h = 0): lambda=4, h=0, C - sandwich = [-9, -9, 0, -404/3]
+   off the constraints: lambda = 1 and h != 0: lambda=1, h=13/378, C - sandwich = [0, 0, 0, 0]
+   off the constraints: a random element of the layout: lambda=409/9, h=-169/9, C - sandwich = [-400/3, -400/3, 0, 3200/3]
+PASS C(plane) equals the sandwich at a rational unit versor (lambda = 1, h = 0)
+
+== counts (mul, add+sub, neg, scl, fused; MA = mul + add - fused) ==
+PASS A(point) by the kernels' accumulation on sympy: equals the sandwich; the terms onto dropped blades sum to zero
+PASS A(point) kernel accumulation on counting numbers tallies as the term lists say
+   A(point) kernel terms: stage 1 20, stage 2 28, middle blades 8, dropped-blade terms 20; rule K counts mul/add/sub/neg = (48, 25, 11, 3)
+PASS A(point): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS A(point): fused count of counter 1 equals the separate tally from the text
+   A(point): total (48, 36, 0, 0) fused 36 MA 48; motor-only (0, 0, 0, 0) MA 0; per-object (48, 36, 0, 0) MA 48
+PASS B(point): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS B(point): fused count of counter 1 equals the separate tally from the text
+   B(point): total (35, 35, 0, 9) fused 18 MA 52; motor-only (22, 26, 0, 9) MA 39; per-object (13, 9, 0, 0) MA 13
+PASS C-call(point): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-call(point): fused count of counter 1 equals the separate tally from the text
+   C-call(point): total (22, 18, 0, 3) fused 15 MA 25; motor-only (0, 0, 0, 0) MA 0; per-object (22, 18, 0, 3) MA 25
+PASS C-pre(point): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-pre(point): fused count of counter 1 equals the separate tally from the text
+   C-pre(point): total (22, 18, 0, 4) fused 18 MA 22; motor-only (0, 0, 0, 4) MA 0; per-object (22, 18, 0, 0) MA 22
+PASS A(line) by the kernels' accumulation on sympy: equals the sandwich; the terms onto dropped blades sum to zero
+PASS A(line) kernel accumulation on counting numbers tallies as the term lists say
+   A(line) kernel terms: stage 1 36, stage 2 36, middle blades 8, dropped-blade terms 12; rule K counts mul/add/sub/neg = (72, 19, 39, 9)
+PASS A(line): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS A(line): fused count of counter 1 equals the separate tally from the text
+   A(line): total (72, 58, 0, 0) fused 58 MA 72; motor-only (0, 0, 0, 0) MA 0; per-object (72, 58, 0, 0) MA 72
+PASS B(line): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS B(line): fused count of counter 1 equals the separate tally from the text
+   B(line): total (53, 62, 0, 15) fused 22 MA 93; motor-only (26, 41, 0, 15) MA 66; per-object (27, 21, 0, 0) MA 27
+PASS C-call(line): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-call(line): fused count of counter 1 equals the separate tally from the text
+   C-call(line): total (48, 39, 0, 9) fused 33 MA 54; motor-only (12, 9, 0, 3) MA 12; per-object (36, 30, 0, 6) MA 42
+PASS C-pre(line): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-pre(line): fused count of counter 1 equals the separate tally from the text
+   C-pre(line): total (48, 39, 0, 7) fused 39 MA 48; motor-only (12, 9, 0, 7) MA 12; per-object (36, 30, 0, 0) MA 36
+PASS A(plane) by the kernels' accumulation on sympy: equals the sandwich; the terms onto dropped blades sum to zero
+PASS A(plane) kernel accumulation on counting numbers tallies as the term lists say
+   A(plane) kernel terms: stage 1 28, stage 2 20, middle blades 8, dropped-blade terms 28; rule K counts mul/add/sub/neg = (48, 19, 17, 5)
+PASS A(plane): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS A(plane): fused count of counter 1 equals the separate tally from the text
+   A(plane): total (48, 36, 0, 0) fused 36 MA 48; motor-only (0, 0, 0, 0) MA 0; per-object (48, 36, 0, 0) MA 48
+PASS B(plane): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS B(plane): fused count of counter 1 equals the separate tally from the text
+   B(plane): total (35, 35, 0, 9) fused 18 MA 52; motor-only (22, 26, 0, 9) MA 39; per-object (13, 9, 0, 0) MA 13
+PASS C-call(plane): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-call(plane): fused count of counter 1 equals the separate tally from the text
+   C-call(plane): total (30, 24, 0, 6) fused 21 MA 33; motor-only (12, 9, 0, 3) MA 12; per-object (18, 15, 0, 3) MA 21
+PASS C-pre(plane): counter 1 equals counter 2 (execution of the generated text), and the executed values equal the polynomial
+PASS C-pre(plane): fused count of counter 1 equals the separate tally from the text
+   C-pre(plane): total (30, 24, 0, 7) fused 24 MA 30; motor-only (12, 9, 0, 7) MA 12; per-object (18, 15, 0, 0) MA 18
+PASS B(point) recounted from the polynomials: 22 distinct quadratic monomials = setup multiplications, 13 nonzero entries = per-object multiplications, 9 row additions = per-object additions
+PASS B(line) recounted from the polynomials: 26 distinct quadratic monomials = setup multiplications, 27 nonzero entries = per-object multiplications, 21 row additions = per-object additions
+PASS B(plane) recounted from the polynomials: 22 distinct quadratic monomials = setup multiplications, 13 nonzero entries = per-object multiplications, 9 row additions = per-object additions
+PASS hand count: a cross product is 6 mul, 3 sub, 6 multiply-adds
+PASS hand count: a dot product of 3-vectors is 3 mul, 2 add, 3 multiply-adds
+   point^point: kernel counts (mul, add, sub, neg) typed (12, 4, 2, 4), canonical (12, 0, 6, 0); monomials per output [2, 2, 2, 2, 2, 2]
+   line v plane: kernel counts (mul, add, sub, neg) typed (12, 3, 5, 1), canonical (12, 3, 5, 1); monomials per output [3, 3, 3, 3]
+   point^point^point: kernel counts (mul, add, sub, neg) typed (24, 4, 10, 2), canonical (24, 4, 10, 0); monomials per output [6, 6, 6, 6]
+   compose: kernel counts (mul, add, sub, neg) typed (48, 26, 14, 4), canonical (48, 16, 24, 4); monomials per output [4, 4, 4, 4, 8, 8, 8, 8]
+PASS A's multiplications equal the restricted counts of the plan probes: 48, 72, 48, compose 48
+PASS point^point and line v plane and compose: the number of monomials of the output polynomials equals the number of terms of form A (no like terms to collect)
+
+failures: none

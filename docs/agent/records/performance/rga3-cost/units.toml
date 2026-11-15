@@ -1,0 +1,49 @@
+# The units of measure.py, for tools/compiles cost, named so that the text
+# units are written to the same file names: the core's includer
+# before and after, the preset's includer after, with the flags of the
+# measure trees (the command of a compile-fail test there), and the five
+# rga3 test units after, each with its own command from the debug trees.
+compilers = ["gcc", "clang"]
+flags_from = "rga3.translation_mixed"
+
+[[unit]]
+name = "core_only"
+text = "#include <galoot/core.hpp>\n"
+trees = ["before", "after"]
+kind = "measure"
+
+[[unit]]
+name = "rga3_only"
+text = "#include <galoot/presets/rga3.hpp>\n"
+trees = ["after"]
+kind = "measure"
+
+[[unit]]
+name = "rga3_objects"
+source = "test/presets/rga3/objects_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rga3_motions"
+source = "test/presets/rga3/motions_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rga3_point_groups"
+source = "test/presets/rga3/point_groups_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rga3_chains"
+source = "test/presets/rga3/chains_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rga3_incidence"
+source = "test/presets/rga3/incidence_test.cpp"
+trees = ["after"]
+kind = "debug"

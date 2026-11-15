@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+check_ignores_register_width	gcc-debug	26f1b6234900	killed	killed	tools.kernels_inline_rejects_immediate	-	-	-	-	-
+check_accepts_any_target	gcc-debug	26f1b6234900	killed	killed	tools.kernels_inline_rejects_other_target	-	-	-	-	-
+check_any_instruction_returns	gcc-debug	26f1b6234900	killed	killed	tools.kernels_inline_rejects_other_target	-	-	-	-	-

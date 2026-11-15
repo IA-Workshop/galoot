@@ -1,0 +1,15 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:20: error: no matching function for call to ‘gp(const cdf::rga3_types::Point&, const R400Vector&)’
+   51 |   const auto r = gp(p, v);
+      |                  ~~^~~~~~
+  • there is 1 candidate
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+    • candidate 1: ‘template<class Alg, blade_set<...auto...> A, blade_set<...auto...> B, class T>  requires  ring_scalar<T> constexpr cdf::mv<Alg, gp_blades<Alg, A, B>(), T> cdf::gp(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:331:46:
+        331 | constexpr mv<Alg, gp_blades<Alg, A, B>(), T> gp(const mv<Alg, A, T>& a,
+            |                                              ^~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting types for parameter ‘Alg’ (‘cdf::rga3’ and ‘cdf::r400’)
+          /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:20:
+             51 |   const auto r = gp(p, v);
+                |                  ~~^~~~~~

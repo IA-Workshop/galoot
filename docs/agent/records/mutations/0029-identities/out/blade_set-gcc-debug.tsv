@@ -1,0 +1,37 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+parse_sign	gcc-debug	a1546f9894ee	killed	killed	test/core/blade_set_test.cpp:579	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:579:20: error: static assertion failed	core.blade_set	-	-	-
+parse_sign_trivectors	gcc-debug	a1546f9894ee	killed	killed	core.blade_set	-	-	The oriented names of rigid(3) parse to their masks and signs | merge of the line and the plane of rigid(3) keeps the sign of each oriented blade	-	-
+canonical_tie	gcc-debug	a1546f9894ee	killed	killed	core.blade_set	-	-	canonical_less orders masks by grade and then by index list | merge and index_of agree with the union of 30 random pairs of sets | merge of e2 with e3 e1 e2 is e1 e2 e3 | merge of every pair of sets of blades of up to two generators reorders their union and keeps each sign | merge of the blades of grades j and k is their union in canonical order, for n from 1 to 6 | merge of the line and the plane of rigid(3) keeps the sign of each oriented blade	-	-
+full_grade_order	gcc-debug	a1546f9894ee	killed	killed	test/core/blade_set_test.cpp:587	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:587:10: error: static assertion failed	core.blade_set	-	-	-
+binomial	gcc-debug	a1546f9894ee	killed	killed	/usr/include/c++/16/array:210	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: /usr/include/c++/16/array:210:9: error: call to non-‘constexpr’ function ‘void std::__glibcxx_assert_fail(const char*, int, const char*, const char*)’	core.blade_set	-	-	-
+binomial_larger	gcc-debug	a1546f9894ee	killed	killed	test/core/blade_set_test.cpp:584	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:584:20: error: static assertion failed	core.blade_set	-	-	-
+merge_duplicates	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_merge_opposite_signs core.blade_set_merge_repeated_after_shift core.blade_set_merge_repeated_in_second core.blade_set_merge_repeated_in_second_empty_first core.blade_set_merge_repeated_in_second_only core.blade_set_merge_repeated_in_second_signs core.blade_set_merge_repeated_mask test/core/blade_set_test.cpp:827	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: test: test/core/blade_set_test.cpp:827:40: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::oriented_blade, 12>&>’ and ‘const std::array<galoot::core::oriented_blade, 6>’)	core.blade_set	-	-	-
+merge_numeric_order	gcc-debug	a1546f9894ee	killed	killed	core.blade_set	-	-	merge and index_of agree with the union of 30 random pairs of sets | merge of the blades of grades j and k is their union in canonical order, for n from 1 to 6 | merge of the line and the plane of rigid(3) keeps the sign of each oriented blade	-	-
+merge_conflict	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_merge_opposite_signs	-	-	-	-	-
+index_check	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_index_of_absent	-	-	-	-	-
+index_position	gcc-debug	a1546f9894ee	killed	killed	core.blade_set core.blade_set_index_of_repeated_adjacent	-	-	index_of finds a blade of an oriented set by its mask | index_of finds every blade of full<N> and of_grade<N, K> at its canonical position, for n from 1 to 6 | merge and index_of agree with the union of 30 random pairs of sets	-	-
+set_size	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_index_of_absent test/core/blade_set_test.cpp:606	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:606:52: error: static assertion failed	core.blade_set	-	-	-
+no_names	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_no_names	-	-	-	-	-
+not_a_name	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_not_a_name_digit core.blade_set_not_a_name_letter	-	-	-	-	-
+digit_zero	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_bad_index_zero	-	-	-	-	-
+digit_letter	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_bad_index_letter	-	-	-	-	-
+no_index	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_no_index	-	-	-	-	-
+index_above_n	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_index_above_n	-	-	-	-	-
+repeated_generator	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_repeated_generator	-	-	-	-	-
+repeated_blade	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_repeated_name core.blade_set_same_blade	-	-	-	-	-
+names_above_9_assert	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_names_above_9	-	-	-	-	-
+names_above_9_guard	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_names_above_9	-	-	-	-	-
+zero_assert	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_full_zero core.blade_set_of_grade_zero	-	-	-	-	-
+zero_guard	gcc-debug	a1546f9894ee	equivalent	equivalent	-	-	-	-	-	-
+wide_assert	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_full_wide	-	-	-	-	-
+grade_above_n	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_of_grade_above_n	-	-	-	-	-
+grade_negative	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_of_grade_negative	-	-	-	-	-
+name_assert	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_name_assert core.blade_set_name_beyond_e9	-	-	-	-	-
+name_digit	gcc-debug	a1546f9894ee	killed	killed	core.blade_set	-	-	canonical_name lists the indices of a mask in increasing order	-	-
+merge_sign_check	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_merge_bad_sign core.blade_set_merge_bad_sign_no_conflict core.blade_set_merge_bad_sign_second core.blade_set_merge_bad_sign_second_shared	-	-	-	-	-
+merge_repeat_check	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_merge_repeated_after_shift core.blade_set_merge_repeated_in_second core.blade_set_merge_repeated_in_second_empty_first core.blade_set_merge_repeated_in_second_only core.blade_set_merge_repeated_in_second_signs core.blade_set_merge_repeated_mask	-	-	-	-	-
+index_sign_check	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_index_of_bad_sign	-	-	-	-	-
+index_repeat_check	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_index_of_repeated_adjacent core.blade_set_index_of_repeated_mask	-	-	-	-	-
+widest_count	gcc-debug	a1546f9894ee	killed	killed	test/core/blade_set_test.cpp:606	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:606:52: error: static assertion failed	core.blade_set	-	-	-
+names_above_9_tail	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_names_above_9	-	-	-	-	-
+separator	gcc-debug	a1546f9894ee	killed	killed	core.blade_set_bad_index_zero core.blade_set_index_above_n core.blade_set_no_index core.blade_set_not_a_name_digit core.blade_set_not_a_name_letter core.blade_set_repeated_name core.blade_set_same_blade test/core/blade_set_test.cpp:579	test/CMakeFiles/core_blade_set_test.dir/core/blade_set_test.cpp.o: assert: test/core/blade_set_test.cpp:579:20: error: static assertion failed	core.blade_set	-	-	-

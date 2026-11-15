@@ -1,0 +1,2 @@
+mutation	file	preset	build_exit	test_exit	failed_tests	killed	kind	static_assert_lines	checks_fired	failed_cases	first_build_error
+map_output_unbounded	plan.hpp	clang-debug	0	8	core.plan	killed	test	-	-	generate_map writes only the places of its output	-

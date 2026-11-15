@@ -1,0 +1,4 @@
+timed: compile scalar-full10:runtime-check-gcc took 0.242 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+capacity 512, terms 1024, result blades 1024, ordered 1, typed inside 1
+timed: run scalar-full10:runtime-check-gcc took 0.037 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 1

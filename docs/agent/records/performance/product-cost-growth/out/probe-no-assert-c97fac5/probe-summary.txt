@@ -1,0 +1,13 @@
+Headers at 45c2153; instructions on the pinned core, mean of 3 repeats; plans minus the baseline, in M; units without static_assert(core::metric_like<alg>)
+gcc as-is 1 plan(s): n=4 48.1, n=8 51.8, n=12 57.5, n=16 65.7
+gcc as-is 4 plan(s): n=4 183.3, n=8 186.8, n=12 193.0, n=16 201.3
+gcc as-is baseline: n=4 803.2, n=8 803.4, n=12 803.8, n=16 804.1
+gcc type-only 1 plan(s): n=4 45.7, n=8 45.9, n=12 45.7, n=16 45.5
+gcc type-only 4 plan(s): n=4 180.2, n=8 181.2, n=12 180.8, n=16 180.9
+gcc type-only baseline: n=4 803.4, n=8 803.2, n=12 803.9, n=16 804.0
+clang as-is 1 plan(s): n=4 127.6, n=8 131.1, n=12 137.8, n=16 147.6
+clang as-is 4 plan(s): n=4 345.5, n=8 349.2, n=12 356.7, n=16 366.7
+clang as-is baseline: n=4 743.9, n=8 744.1, n=12 744.8, n=16 745.9
+clang type-only 1 plan(s): n=4 124.4, n=8 124.2, n=12 122.1, n=16 123.6
+clang type-only 4 plan(s): n=4 341.4, n=8 342.1, n=12 339.5, n=16 341.7
+clang type-only baseline: n=4 744.7, n=8 744.2, n=12 746.2, n=16 745.4

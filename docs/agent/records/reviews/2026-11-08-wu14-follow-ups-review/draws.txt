@@ -1,0 +1,21 @@
+0	core_identities_test	the De Morgan laws hold on multivectors over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+0	core_identities_test	the antiproducts are associative over many forms	old=450	new=468	extra=18	prefix	exit=0/0
+0	core_identities_test	the involutions follow their product rules over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+0	core_identities_test	the products are associative with the scalar 1 as identity over many forms	old=450	new=468	extra=18	prefix	exit=0/0
+0	core_identities_test	vectors anticommute to twice their inner product over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+0	core_identities_test	the involutions follow their antiproduct rules over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+0	core_identities_test	the laws hold on every pair and triple of basis blades over many forms	old=0	new=0	extra=0	prefix	exit=0/0
+0	core_dual_identities_test	the duals compose to det g over many forms	old=162	new=168	extra=6	prefix	exit=0/0
+0	core_dual_identities_test	the dot and the antidot are symmetric De Morgan pairs over many forms	old=366	new=378	extra=12	prefix	exit=0/0
+0	core_dual_identities_test	the bulk and the weight in diagonal and conformal forms	old=123	new=123	extra=0	prefix	exit=0/0
+12345	core_identities_test	the De Morgan laws hold on multivectors over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+12345	core_identities_test	the antiproducts are associative over many forms	old=450	new=468	extra=18	prefix	exit=0/0
+12345	core_identities_test	the involutions follow their product rules over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+12345	core_identities_test	the products are associative with the scalar 1 as identity over many forms	old=450	new=468	extra=18	prefix	exit=0/0
+12345	core_identities_test	vectors anticommute to twice their inner product over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+12345	core_identities_test	the involutions follow their antiproduct rules over many forms	old=300	new=312	extra=12	prefix	exit=0/0
+12345	core_identities_test	the laws hold on every pair and triple of basis blades over many forms	old=0	new=0	extra=0	prefix	exit=0/0
+12345	core_dual_identities_test	the duals compose to det g over many forms	old=162	new=168	extra=6	prefix	exit=0/0
+12345	core_dual_identities_test	the dot and the antidot are symmetric De Morgan pairs over many forms	old=366	new=378	extra=12	prefix	exit=0/0
+12345	core_dual_identities_test	the bulk and the weight in diagonal and conformal forms	old=123	new=123	extra=0	prefix	exit=0/0
+timed: probe draws-probe took 64.365 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu14-follow-ups-review/docs/agent/records/reviews/2026-11-08-wu14-follow-ups-review/runs.tsv

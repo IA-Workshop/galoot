@@ -1,0 +1,25 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:54:35: error: no matching function for call to ‘make<Point>(int, int, int)’
+   54 |   const Point s = apx::make<Point>(1, 2, 3);
+      |                   ~~~~~~~~~~~~~~~~^~~~~~~~~
+  • there is 1 candidate
+In file included from program.cpp:5:
+    • candidate 1: ‘template<class X, class ... A>  requires  coefficients_for<X, A ...> constexpr X apx::make(A ...)’
+      fixture.hpp:226:13:
+        226 | constexpr X make(A... a) {
+            |             ^~~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • fixture.hpp: In substitution of ‘template<class X, class ... A>  requires  coefficients_for<X, A ...> constexpr X apx::make(A ...) [with X = apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>; A = {int, int, int}]’:
+          • required from here
+            program.cpp:54:35:   
+               54 |   const Point s = apx::make<Point>(1, 2, 3);
+                  |                   ~~~~~~~~~~~~~~~~^~~~~~~~~
+          • required for the satisfaction of ‘coefficients_for<X, A ...>’ [with X = apx::mvn<rga3, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>; A = {int, int, int}]
+            fixture.hpp:220:9:   
+              220 | concept coefficients_for =
+                  |         ^~~~~~~~~~~~~~~~
+          • the expression ‘sizeof ... (A ...) == (X::set).size() [with A = {int, int, int}; X = apx::mvn<rga3, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>]’ evaluated to ‘false’
+            fixture.hpp:221:36:
+              221 |     multivector<X> && sizeof...(A) == X::set.size() &&
+                  |                       ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~

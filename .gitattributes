@@ -1,0 +1,3 @@
+# Run and measurement logs are appended from several worktrees; a union
+# merge keeps every line from both sides instead of conflicting.
+/docs/agent/records/**/*.tsv merge=union

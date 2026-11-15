@@ -1,0 +1,58 @@
+# Third delta review of plan 0040: `26f1b62..c4f8bae`
+
+- Reviewer: blind-reviewer (Claude Sonnet 5.5), 2026-11-11. Range `26f1b62..c4f8bae` on `feature/pre-release-core-pass--public-ops`, reviewed from a worktree on `review/pre-release-core-pass-delta3` at `c4f8bae`.
+- The brief carried no verdict and no author summary. I did not read the author's report. I read the commit messages of the range, as the procedure's `git log` step requires; they carry claims, which I checked and did not rely on.
+- Scope: the previous review's findings E1 to E4 as answered by this range.
+
+## What I checked, and how
+
+**1. Pack rename (`fe839fc`).** Preprocessed output (`-E -P`, C++23, rga3 preset header) of the tree at `26f1b62` against `c4f8bae`, whitespace-split into tokens, with g++ and clang++, each with `GALOOT_CHECKING=0` and `=1` (four diffs), include paths normalized. Identical in all four: the only differences are `Is`/`J` becoming `Xs`/`Ys` in the 24 occurrences of `run_sum` (declaration 2, `index_sequence` 2, six `KX[..]` and six `KY[..]` uses, each counted once per token), plus one other token, an integer `415` becoming `416`: a `__LINE__`-derived source line passed with the `linear.hpp` path (the assertion location), shifted by the one line the rewrap of `run_sum`'s second fold added. Not a semantic change.
+Lint of a user unit: I compiled a unit naming `l, ls, I, O, Xs, Ys, X, Y` (plus `p`, `q`, a negated line) with clang-tidy under the repo's `.clang-tidy`, with `-Iinclude`. Fired: `misc-confusable-identifiers` on the user's `I` against the user's own `l` (my unit, not the library), and on `l` at `include/galoot/core/basis_change.hpp:542:22` against `I` (the known header clash). `readability-identifier-naming` fired on my constexpr names (style only). Nothing fired for `ls`, `Xs`, `Ys`, `X`, `Y`, `O`. The same unit against the tree at `26f1b62` additionally fires `'Is' is confusable with 'ls'` at `linear.hpp:154:58`, so the unit does detect the old name. A wider scan (about 150 names: all single letters, two-letter combinations of `l I i O o x X y Y 1` with `s S l I 1 x X`, `rn`, `m`, `ll`, `II`) with only `misc-confusable-identifiers` and the header filter on `include/galoot` finds exactly two header clashes: `basis_change.hpp:542` (`l`) and `bits.hpp:171` (`m` against `rn`), as decision 0244 item 14 says. clang-tidy reports the first match per identifier, so a hidden third clash behind one of these is not excluded. The lint preset builds `core_linear_user_names` and `rga3_kernels_inline_probe` at the tip (exit 0).
+
+**2. Test changes.**
+- Guard: `test/bench/CMakeLists.txt:~113` registers `rga3.kernels_inline` and `rga3.kernels_inline_alone` only under `CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$"`. The 19 `tools.kernels_inline_*` fixture tests are outside the guard, run `cmake -E cat` on fixtures, and need no x86-64 host. So the guard covers every place the script runs a compiler. It is host-keyed: an x86-64 host cross-compiling for another target without a toolchain file that sets the processor would run the script on non-x86 output, which now passes unread. I judge this sufficient for the project's stated scope (GCC and Clang on x86-64), and note it as m4.
+- The script still fails on real calls: compiled a unit with a real call to `galoot::core::ext` with g++ and clang++, with and without `-fcf-protection=full`: exit 1 each time (`jmp _ZN6galoot4core3extEd@PLT`). It passes the same unit's bare returns when the call is removed, in all four configurations, and passes the real 52-function probe (`kernels_inline.cpp`, the CMake list) in all four with `-fcf-protection=full` on and off. `endbr64` and a `.note.gnu.property` section were present in the CET outputs (2 and 1 occurrences counted).
+- `tools.kernels_inline_accepts_cet` runs `cet.s`, a hand-written fixture shaped like GCC's CET output, not compiler output; the real CET output is accepted as shown above, but no registered test compiles with `-fcf-protection` (m3). The fixture is also a real failing test: the script at `6fcb3fc` exits 1 on it with the dropped message, as the commit says.
+- Fixtures against lines: `call`, `jmp`, `conditional`, `register`, `notrack` demand `line N, in <function>: <instruction>`. `plt`, `const_member`, `local_entity`, `explicit_object` and `immediate` demand the symbol (and register) text of the one offending line each (two for `plt` and `immediate`, both demanded), which names the instruction's operand, so a rule that stopped reading that form would lose the match. `missing` also forbids the other function's message. Each fixture has one rule under test. No finding.
+- The refusal's removal leaves no reference in the code; the CMake comment (`:~160`) and the script docstring agree with it. One reader remains, see m2.
+
+**3. Comment and records.**
+- `assert.hpp:26-40`: "those public operations that the structure test found out of line" is true of the 13 (the structure test's probe and the same script run by the surveys are the evidence); "some operations on conformal(3) multivectors of all or of even blades still compile to a call" is true against `survey/out/O2-390b55e.tsv` (GCC: `bulk`, duals, `dot` on `CFull` and `CEven`, `project` and `antiproject` of `CFull`; Clang: unary operations, `bulk`, duals, `+`, `-`, `dot` on `CFull`). "Other optimization levels such as -Os" is in the README's table.
+- S11 over the diff of `include/` and `test/`: no decision, plan, review, record or agent citation, and no provision number in any added line (searched the added lines for decision, plan, review, delta, survey, D/E/M/C/S/P numbers, agent, record). The new comments state the behavior and the reason. No finding.
+- Decision 0244 items 2, 3, 14 as amended: item 2 (per-output refusal dropped, guard stated, CET fixture required, docstring says other targets pass unread) is true of the script and CMake; item 3's count (19 fixture tests, 6 of the plan's, 13 listed: nine single-fixture plus four `--alone`) is true (19 `add_test` of `tools.kernels_inline*`); item 14: six `I` became six `Is`, then six `Is` became `Xs` and six `J` became `Ys` (confirmed), the names contain none of `I l 1 O 0 rn m`, the unit names `l` and `ls` and not `I` or `rn`, and the two remaining clashes are as stated. The only inexact word is "only the pack names changed" (the `__LINE__` token above, m1).
+- Process: failing-test commits `e59cd1f` and `6fcb3fc` precede the fixes and are labelled; test changes are separate from the code change (W9); commits name the model that did the work.
+
+## Mechanical checks
+
+- `tools/timed` (default log, `runs.tsv` rows appended and committed unedited), after `eval "$(tools/jobpool env)"`; the pool was running, 23 of 23 slots free, and I did not start or stop it. `cmake --workflow --preset gcc-debug` and `clang-debug`: exit 0. `ctest --preset gcc-debug` and `--preset clang-debug`: 588 tests each (`ctest -N` says 588), exit 0. The 21 `kernels_inline` and `user_names` selection run on both again: all passed.
+- Convention trace gate: exit 0 (prints "items with no test: 6.1, 6.2, 6.3, 6.4", as the gate does).
+- Lint preset: `core_linear_user_names` and `rga3_kernels_inline_probe` build, exit 0. I did not run the whole lint preset, the sanitizer presets, or the mutation specs (not rerun by the author either; no attribute changed).
+- Not checked: Windows or macOS configurations (out of scope), a real cross-compile for another target, and clang-tidy versions other than the installed one.
+
+## Findings
+
+No blocker and no major.
+
+- **m1 (minor), `docs/agent/decisions/0244-...md` item 14 and the `fe839fc` message.** "Token comparisons show only the pack names changed" is slightly inexact: one `__LINE__`-derived assertion line number in `run_sum`'s file shifts by one (`415` to `416`) because the second fold was rewrapped onto two lines at `linear.hpp:160-161`. No behavior changes. Say "only the pack names and a source line number".
+- **m2 (minor), `docs/agent/records/performance/pre-release-core-pass/survey/survey.py:139`.** `if "not x86-64" in r.stdout: status = "REFUSED"` reads the message the script no longer prints; the branch cannot fire. A rerun of the survey would be unaffected, but the dead branch suggests a refusal that no longer exists. Delete it or note it in the README.
+- **m3 (minor, suggestion), `test/bench/CMakeLists.txt:~215`.** `tools.kernels_inline_accepts_cet` runs a hand-written `cet.s`. If a toolchain changes how it writes CET output, nothing registered notices. A registered test that compiles a two-function unit with `-fcf-protection=full` and pipes it to the script would run real output; the build is cheap (under 0.2 s here). Not needed for the merge.
+- **m4 (minor, plausible), `test/bench/CMakeLists.txt:~113`.** The guard reads the host's `CMAKE_SYSTEM_PROCESSOR`. With the per-output refusal gone, a cross-build on an x86-64 host that does not set the processor would register the tests and pass them on another target's assembly. Acceptable for the stated scope; worth one sentence in the `CMakeLists.txt` comment, which says only "where the target is x86-64".
+- **m5 (minor), `0244` item 2.** The sentence "registered only when `CMAKE_SYSTEM_PROCESSOR` is x86-64" appears twice in the item (once as "which is the guard", once with "(the delta review's D5)"); one can go.
+
+## Outcome
+
+Approve with non-blocking findings. E1 to E4 are answered: the pack rename removes the lint clash, with the one-line token difference noted above; the per-output refusal and its AArch64 test are gone and the registration guard covers the script's compiler runs; the real CET output of both compilers passes and real calls still fail; the comment matches the survey.
+
+Tip reviewed: `c4f8bae`.
+
+## Resolution
+
+Filled in on 2026-11-11 by Claude (agent, Opus 5.5), implementer of plan 0040 section 18, at the coordinator's request, from the commits of `feature/pre-release-core-pass` and its subfeatures and of `merge/pre-release-core-pass-gate2`. Each commit named below is on `merge/pre-release-core-pass-gate2`.
+
+| Finding | Resolution |
+| --- | --- |
+| m1 | Fixed: decision 0244 item 14 names the one `__LINE__` token the rename moved (`5c4a258`). |
+| m2 | Fixed: the survey script's refusal branch is marked historical (`272f5ff`). |
+| m3 | No change: a suggestion, not needed for the merge. `tools.kernels_inline_accepts_cet` keeps the hand-written fixture, and the reviewer's own run showed the real `-fcf-protection` output of both compilers passing. |
+| m4 | Fixed: the comment of `test/bench/CMakeLists.txt` says the guard reads the host's processor (`185ff98`). |
+| m5 | Fixed: decision 0244 item 2 states the registration once (`4d034ad`). |

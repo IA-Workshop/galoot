@@ -1,0 +1,11 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:65:18: error: static_cast from 'const Motor' (aka 'const mv<rga3, blades_of<rga3, "1", "e41", "e42", "e43", "e23", "e31", "e12", "e1234">>') to 'Point' (aka 'mv<rga3, blades_of<rga3, "e1", "e2", "e3", "e4">>') uses deleted function
+   65 |   const auto r = static_cast<Point>(q);
+      |                  ^~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:268:13: note: candidate function [with To = blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}] has been explicitly deleted
+  268 |   constexpr operator mv<Alg, To, T>() const = delete;
+      |             ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit copy constructor)
+  237 | template <algebra Alg, blade_set B, class T = double> struct mv {
+      |                                                              ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit move constructor)
+1 error generated.

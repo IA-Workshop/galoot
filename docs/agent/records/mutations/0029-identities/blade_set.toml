@@ -1,0 +1,285 @@
+# The mutants of blade_set.hpp, ported from ../0008-blade-set/mutate.py with
+# their names, anchors, and replacements unchanged except for the four
+# re-anchored below, whose old text the header no longer has. Judged by the
+# blade-set suite: blade_set_test.cpp, the abort test
+# core.blade_set_name_assert, and the compile-fail tests
+# core.blade_set_<case>. The old driver counted any failed build as a kill;
+# here a build stopped only by a warning made an error leaves its mutant
+# unjudged. No --runtime edits: the static_asserts of blade_set_test.cpp
+# state type properties (the stored layout, trivially copyable, aggregate,
+# the size of the widest grades), which no run-time check can replace.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.blade_set]
+targets = ["core_blade_set_test", "core_blade_set_name_assert"]
+labels = '^core\.blade_set$'
+
+[[mutant]]
+name = "parse_sign"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "blade.sign *= reorder_sign(blade.mask, generator);", replacement = "blade.sign *= reorder_sign(generator, blade.mask);" }]
+expect = "killed"
+
+[[mutant]]
+name = "parse_sign_trivectors"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "blade.sign *= reorder_sign(blade.mask, generator);", replacement = "blade.sign *= grade(blade.mask) < 2 ? reorder_sign(blade.mask, generator) : 1;" }]
+expect = "killed"
+
+[[mutant]]
+name = "canonical_tie"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "return ((a >> first_difference) & 1U) == 1U;", replacement = "return ((a >> first_difference) & 1U) == 0U;" }]
+expect = "killed"
+
+[[mutant]]
+name = "full_grade_order"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "      append_grade(set.blades, at, N, k);\n    }\n    return set;", replacement = "      append_grade(set.blades, at, N, N - k);\n    }\n    return set;" }]
+expect = "killed"
+
+[[mutant]]
+name = "binomial"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "count = count * (n - i) / (i + 1);", replacement = "count = count * (n - i) / (i + 2);" }]
+expect = "killed"
+
+# Added beside binomial, whose smaller count makes append_grade write past
+# the end of the set: GCC stops that on the standard library's bounds
+# assertion and Clang on the constant evaluation in the header, before any
+# test runs. A count one too large for k = 1 leaves the set's size wrong
+# instead, which the test's static_assert on of_grade's size can judge.
+[[mutant]]
+name = "binomial_larger"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "count = count * (n - i) / (i + 1);", replacement = "count = count * (n - i + 1) / (i + 1);" }]
+expect = "killed"
+
+[[mutant]]
+name = "merge_duplicates"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (at < u.size && u.blades[at].mask == blade.mask) {", replacement = "if (false && at < u.size && u.blades[at].mask == blade.mask) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "merge_numeric_order"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "while (at < u.size && canonical_less(u.blades[at].mask, blade.mask)) {", replacement = "while (at < u.size && u.blades[at].mask < blade.mask) {" }]
+expect = "killed"
+
+# The old anchor set the conflict flag from a sign comparison; the flag is
+# now set in a branch, so the same fault is the branch never setting it.
+[[mutant]]
+name = "merge_conflict"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "u.opposite_signs = true;", replacement = "u.opposite_signs = false;" }]
+expect = "killed"
+
+[[mutant]]
+name = "index_check"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(at < S.size(),", replacement = "static_assert(true || at < S.size()," }]
+expect = "killed"
+
+[[mutant]]
+name = "index_position"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "while (at < K && set.blades[at].mask != mask) {", replacement = "while (at < K && set.blades[at].mask < mask) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "set_size"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "constexpr std::size_t size() const noexcept { return K; }", replacement = "constexpr std::size_t size() const noexcept { return K + 1; }" }]
+expect = "killed"
+
+[[mutant]]
+name = "no_names"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "return count == 0 ? NameError::no_names : NameError::none;", replacement = "return count == 0 ? NameError::none : NameError::none;" }]
+expect = "killed"
+
+[[mutant]]
+name = "not_a_name"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (name.front() != 'e') {", replacement = "if (false && name.front() != 'e') {" }]
+expect = "killed"
+
+[[mutant]]
+name = "digit_zero"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (digit < '1' || digit > '9') {", replacement = "if (digit < '0' || digit > '9') {" }]
+expect = "killed"
+
+[[mutant]]
+name = "digit_letter"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (digit < '1' || digit > '9') {", replacement = "if (digit < '1') {" }]
+expect = "killed"
+
+[[mutant]]
+name = "no_index"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (name.size() == 1) {", replacement = "if (false && name.size() == 1) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "index_above_n"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (index > n) {", replacement = "if (index > n + 1) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "repeated_generator"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if ((blade.mask & generator) != 0) {", replacement = "if (false && (blade.mask & generator) != 0) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "repeated_blade"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (named[parsed.blade.mask]) {", replacement = "if (false && named[parsed.blade.mask]) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "names_above_9_assert"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(N <= max_compact_generators,\n", replacement = "static_assert(true || N <= max_compact_generators,\n" }]
+expect = "killed"
+
+# The guard has lost its first clause since the old driver; the fault is the
+# same, the body evaluated for any n.
+[[mutant]]
+name = "names_above_9_guard"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if constexpr (N <= max_compact_generators) {", replacement = "if constexpr (true) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "zero_assert"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(N >= 1, \"blade_set:", replacement = "static_assert(N >= 0, \"blade_set:" }]
+expect = "killed"
+
+# Equivalent since blades<Alg, "..."> takes an algebra tag and rejects a
+# metric of no generators by its own message: the guard is now reached only
+# from full<N> and of_grade<N, K>, whose bodies are well formed at n = 0, so
+# with or without the clause the static_assert N >= 1 gives the one error.
+[[mutant]]
+name = "zero_guard"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "return N >= 1 && N <= mask_bits;", replacement = "return N <= mask_bits;" }]
+expect = "equivalent"
+reason = "at n = 0 the guarded bodies are well formed, and the static_assert N >= 1 gives the same single error"
+
+[[mutant]]
+name = "wide_assert"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(N <= mask_bits, \"blade_set:", replacement = "static_assert(N <= mask_bits + 1, \"blade_set:" }]
+expect = "killed"
+
+[[mutant]]
+name = "grade_above_n"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(K >= 0 && std::cmp_less_equal(K, N),", replacement = "static_assert(K >= 0," }]
+expect = "killed"
+
+[[mutant]]
+name = "grade_negative"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_assert(K >= 0 && std::cmp_less_equal(K, N),", replacement = "static_assert(std::cmp_less_equal(K, N)," }]
+expect = "killed"
+
+[[mutant]]
+name = "name_assert"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "GALOOT_ASSERT(compact,", replacement = "GALOOT_ASSERT(true || compact," }]
+expect = "killed"
+
+[[mutant]]
+name = "name_digit"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "static_cast<char>('1' + bit)", replacement = "static_cast<char>('0' + bit)" }]
+expect = "killed"
+
+[[mutant]]
+name = "merge_sign_check"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "u.bad_sign = u.bad_sign || !is_sign(blade.sign);", replacement = "u.bad_sign = u.bad_sign || false;" }]
+expect = "killed"
+
+[[mutant]]
+name = "merge_repeat_check"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "        u.repeated_mask = true;\n", replacement = "        u.repeated_mask = false;\n" }]
+expect = "killed"
+
+# index_of now checks the signs through all_signs; the same fault is a sign
+# that is neither +1 nor -1 never reported.
+[[mutant]]
+name = "index_sign_check"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "    if (!is_sign(blade.sign)) {\n      return false;", replacement = "    if (false && !is_sign(blade.sign)) {\n      return false;" }]
+expect = "killed"
+
+# index_of now looks for a repeat after the position found, in
+# repeats_after; the same fault is a mask listed twice never reported.
+[[mutant]]
+name = "index_repeat_check"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "if (set.blades[j].mask == set.blades[at].mask) {", replacement = "if (false && set.blades[j].mask == set.blades[at].mask) {" }]
+expect = "killed"
+
+[[mutant]]
+name = "widest_count"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "  return N >= 1 && N <= mask_bits;", replacement = "  return N >= 1 && N < mask_bits;" }]
+expect = "killed"
+
+[[mutant]]
+name = "names_above_9_tail"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "\"are read only for n up to 9, and a larger algebra takes \"", replacement = "\"are read only for n up to 9, and a larger algebra needs \"" }]
+expect = "killed"
+
+[[mutant]]
+name = "separator"
+selection = "blade_set"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = "while (at < text.size() && text[at] == ' ') {", replacement = "while (false && at < text.size() && text[at] == ' ') {" }]
+expect = "killed"

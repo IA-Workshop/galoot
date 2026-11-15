@@ -1,0 +1,25 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:18: error: call to deleted function 'gp'
+   74 |   const auto r = gp(a, a);
+      |                  ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:381:6: note: candidate function [with X = cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>, Y = cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>] has been explicitly deleted
+  381 | void gp(const X&, const Y&) = delete;
+      |      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:331:46: note: candidate template ignored: constraints not satisfied [with Alg = cdf::rga3, A = blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, B = blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, T = length]
+  331 | constexpr mv<Alg, gp_blades<Alg, A, B>(), T> gp(const mv<Alg, A, T>& a,
+      |                                              ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:330:48: note: because 'length' does not satisfy 'ring_scalar'
+  330 | template <class Alg, blade_set A, blade_set B, ring_scalar T>
+      |                                                ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:233:7: note: because 'a * b' would be invalid: invalid operands to binary expression ('length' and 'length')
+  233 |   { a * b } -> std::convertible_to<T>;
+      |       ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:375:6: note: candidate template ignored: constraints not satisfied [with X = Vector<length>, Y = Vector<length>]
+  375 | void gp(const X&, const Y&) = delete;
+      |      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:374:12: note: because '!same_algebra<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>, cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, length>>' evaluated to false
+  374 |   requires(!same_algebra<X, Y>)
+      |            ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:14: error: variable has incomplete type 'const void'
+   74 |   const auto r = gp(a, a);
+      |              ^
+2 errors generated.

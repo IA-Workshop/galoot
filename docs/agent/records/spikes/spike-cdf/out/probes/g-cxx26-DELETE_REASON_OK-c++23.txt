@@ -1,0 +1,4 @@
+probes/cxx26.cpp:37:21: error: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+   37 | void g(int) = delete("g: integers are not accepted");
+      |                     ^
+cc1plus: all warnings being treated as errors

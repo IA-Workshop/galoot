@@ -1,0 +1,79 @@
+== assert.hpp, comments stripped, not expanded (g++ -fpreprocessed -dD -E -P), 414879e against 26f1b62
+== dual.hpp, comments stripped, not expanded (g++ -fpreprocessed -dD -E -P), 414879e against 26f1b62
+2783a2784
+> GALOOT_ALWAYS_INLINE
+2982a2984
+> GALOOT_ALWAYS_INLINE
+== linear.hpp, comments stripped, not expanded (g++ -fpreprocessed -dD -E -P), 414879e against 26f1b62
+428c428
+< I
+---
+> Is
+478c478
+< I
+---
+> Is
+525c525
+< I
+---
+> Is
+532c532
+< I
+---
+> Is
+542c542
+< I
+---
+> Is
+552c552
+< I
+---
+> Is
+== whole unit (core headers and rga3), g++ -E -P, GALOOT_CHECKING=0: changed tokens, counted, with the two checkout paths and __LINE__ values that __FILE__/__LINE__ in GALOOT_ASSERT expand to
+      2 > ::
+      4 > [
+      4 > ]
+     23 > 26f1b62
+      1 < 414
+     23 < 414879e
+      1 > 415
+      2 > always_inline
+      2 > gnu
+      6 < I
+      6 > Is
+== whole unit (core headers and rga3), g++ -E -P, GALOOT_CHECKING=1: changed tokens, counted, with the two checkout paths and __LINE__ values that __FILE__/__LINE__ in GALOOT_ASSERT expand to
+      2 > ::
+      4 > [
+      4 > ]
+     23 > 26f1b62
+      1 < 414
+     23 < 414879e
+      1 > 415
+      2 > always_inline
+      2 > gnu
+      6 < I
+      6 > Is
+== whole unit (core headers and rga3), clang++ -E -P, GALOOT_CHECKING=0: changed tokens, counted, with the two checkout paths and __LINE__ values that __FILE__/__LINE__ in GALOOT_ASSERT expand to
+      2 > ::
+      4 > [
+      4 > ]
+     23 > 26f1b62
+      1 < 414
+     23 < 414879e
+      1 > 415
+      2 > always_inline
+      2 > gnu
+      6 < I
+      6 > Is
+== whole unit (core headers and rga3), clang++ -E -P, GALOOT_CHECKING=1: changed tokens, counted, with the two checkout paths and __LINE__ values that __FILE__/__LINE__ in GALOOT_ASSERT expand to
+      2 > ::
+      4 > [
+      4 > ]
+     23 > 26f1b62
+      1 < 414
+     23 < 414879e
+      1 > 415
+      2 > always_inline
+      2 > gnu
+      6 < I
+      6 > Is

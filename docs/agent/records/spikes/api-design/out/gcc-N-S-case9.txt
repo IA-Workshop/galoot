@@ -1,0 +1,35 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr bool apx::operator==(const X&, const Y&) [with X = mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>; Y = mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>]’:
+program.cpp:80:11:   required from here
+   80 |   r += (p == v) ? 1 : 0;
+      |        ~~~^~~~~
+fixture.hpp:269:22: error: static assertion failed: ==: the operands belong to different algebras
+  269 |   static_assert(std::same_as<typename X::algebra, typename Y::algebra>,
+      |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from ../../../../../include/galoot/core/blade_set.hpp:27,
+                 from fixture.hpp:20:
+    • required for the satisfaction of ‘__same_as<_Tp, _Up>’ [with _Tp = rga3; _Up = r400]
+      /usr/include/c++/16/concepts:59:15:   
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |               ^~~~~~~~~
+    • the expression ‘is_same_v<_Tp, _Up> [with _Tp = rga3; _Up = r400]’ evaluated to ‘false’
+      /usr/include/c++/16/concepts:59:32:
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |                           ~~~~~^~~~~~~~~~~~~~~~~~~
+    • ‘struct rga3’ is not the same as ‘struct r400’
+fixture.hpp:271:22: error: static assertion failed: ==: the operands have different blade sets or scalars
+  271 |   static_assert(std::same_as<X, Y>,
+      |                 ~~~~~^~~~~~~~~~~~~
+  • constraints not satisfied
+    • required for the satisfaction of ‘__same_as<_Tp, _Up>’ [with _Tp = apx::mvn<rga3, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>; _Up = apx::mvn<r400, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>]
+      /usr/include/c++/16/concepts:59:15:   
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |               ^~~~~~~~~
+    • the expression ‘is_same_v<_Tp, _Up> [with _Tp = apx::mvn<rga3, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>; _Up = apx::mvn<r400, galoot::core::detail::name_list<12>{{"e1 e2 e3 e4"}}, double>]’ evaluated to ‘false’
+      /usr/include/c++/16/concepts:59:32:
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |                           ~~~~~^~~~~~~~~~~~~~~~~~~
+    • ‘struct apx::mvn<rga3, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’ is not the same as ‘struct apx::mvn<r400, galoot::core::detail::name_list<12>{std::array<char, 12>{"e1 e2 e3 e4"}}>’

@@ -1,0 +1,45 @@
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+../../../../../include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, std::vector<double> >’:
+first_user.cpp:251:20:   required from here
+  251 |   const VectorLine s{};
+      |                    ^
+../../../../../include/galoot/core/mv.hpp:187:17: error: static assertion failed: mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+  187 |   static_assert(ring_scalar<T>,
+      |                 ^~~~~~~~~~~~~~
+  • constraints not satisfied
+    • required by the constraints of ‘template<class T> concept galoot::core::ring_scalar’
+      ../../../../../include/galoot/core/mv.hpp:53:9:   
+         53 | concept ring_scalar = std::semiregular<T> && requires(const T& a, const T& b) {
+            |         ^~~~~~~~~~~
+    • in requirements with ‘const T& a’, ‘const T& b’ [with T = std::vector<double, std::allocator<double> >]
+      ../../../../../include/galoot/core/mv.hpp:53:46:   
+         53 | concept ring_scalar = std::semiregular<T> && requires(const T& a, const T& b) {
+            |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         54 |   { a + b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+         55 |   { a - b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+         56 |   { a * b } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~        
+         57 |   { -a } -> std::convertible_to<T>;
+            |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~           
+         58 | } && std::constructible_from<T, coefficient_type>;
+            | ~                                             
+    • the required expression ‘(a + b)’ is invalid
+      ../../../../../include/galoot/core/mv.hpp:54:7:
+         54 |   { a + b } -> std::convertible_to<T>;
+            |     ~~^~~
+    • the required expression ‘(a - b)’ is invalid
+      ../../../../../include/galoot/core/mv.hpp:55:7:
+         55 |   { a - b } -> std::convertible_to<T>;
+            |     ~~^~~
+    • the required expression ‘(a * b)’ is invalid
+      ../../../../../include/galoot/core/mv.hpp:56:7:
+         56 |   { a * b } -> std::convertible_to<T>;
+            |     ~~^~~
+    • the required expression ‘- a’ is invalid
+      ../../../../../include/galoot/core/mv.hpp:57:5:
+         57 |   { -a } -> std::convertible_to<T>;
+            |     ^~
+    • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail

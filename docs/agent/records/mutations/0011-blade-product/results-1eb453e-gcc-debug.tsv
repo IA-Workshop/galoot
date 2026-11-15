@@ -1,0 +1,40 @@
+# revision 1eb453e; python3 -I docs/agent/records/mutations/0011-blade-product/mutate.py gcc-debug (the version committed with these results, without the term_list_not_structural mutant), from the worktree root with the job pool exported. A mutant is killed when the build or any test fails; static_assert_lines are the lines of blade_product_test.cpp whose static_assert failed in the build. The transposed reads of g and sum_guard_branch are equivalent mutants.
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_sign_side	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+wedge_sign_dropped	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+contraction_first_sign	gcc-debug	1	8	core.blade_product	killed	555,833	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+contraction_sign_constant	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+correction_sign	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+correction_sign_constant	gcc-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | Every product of four forms equals the golden product tables | The pseudoscalar squares to (-1)^(n(n-1)/2) det g	-
+correction_dropped	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+contraction_transposed	gcc-debug	0	0	-	SURVIVED	-	-	-
+correction_transposed	gcc-debug	0	0	-	SURVIVED	-	-	-
+lowest_generator_highest	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+scalar_scale_dropped	gcc-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g	-
+generator_scale_dropped	gcc-debug	1	8	core.blade_product,core.blade_product_rejects_beyond_n,core.blade_product_rejects_capacity,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below,core.blade_product_rejects_product_above,core.blade_product_rejects_product_below_second	killed	-	-	include/galoot/core/blade_product.hpp:196:55: error: unused parameter ‘scale’ [-Werror=unused-parameter]
+zero_kept	gcc-debug	0	8	core.blade_product	killed	-	Term lists are in canonical order, merge repeated blades, and drop zero sums	-
+zero_sum_kept	gcc-debug	1	8	core.blade_product	killed	531,555	-	test/core/blade_product_test.cpp:531:73: error: static assertion failed
+trailing_place_kept	gcc-debug	1	8	core.blade_product	killed	555	-	test/core/blade_product_test.cpp:555:75: error: static assertion failed
+merge_dropped	gcc-debug	1	8	core.blade_product,core.blade_product_overflow,core.blade_product_sum_overflow,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below	killed	531,555	-	test/core/blade_product_test.cpp:531:73: error: static assertion failed
+append	gcc-debug	1	8	core.blade_product,core.blade_product_overflow,core.blade_product_sum_overflow,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below	killed	531,533,555	-	test/core/blade_product_test.cpp:531:73: error: static assertion failed
+numeric_order	gcc-debug	1	8	core.blade_product	killed	534	-	test/core/blade_product_test.cpp:534:43: error: static assertion failed
+capacity_check_removed	gcc-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+capacity_off_by_one	gcc-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+product_guard_removed	gcc-debug	1	8	core.blade_product,core.blade_product_overflow,core.blade_product_rejects_beyond_n,core.blade_product_rejects_capacity,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below,core.blade_product_rejects_product_above,core.blade_product_rejects_product_below,core.blade_product_rejects_product_below_second	killed	-	-	include/galoot/core/blade_product.hpp:87:30: error: unused variable ‘max’ [-Werror=unused-variable]
+product_guard_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+product_magnitude_x	gcc-debug	1	8	core.blade_product	killed	-	-	test/core/blade_product_test.cpp:555:75: error: non-constant condition for static assertion
+product_magnitude_y	gcc-debug	0	8	core.blade_product_rejects_product_below_second	killed	-	-	-
+sum_guard_removed	gcc-debug	1	8	core.blade_product,core.blade_product_sum_overflow,core.blade_product_rejects_beyond_n,core.blade_product_rejects_capacity,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below,core.blade_product_rejects_product_above,core.blade_product_rejects_product_below,core.blade_product_rejects_product_below_second	killed	-	-	include/galoot/core/blade_product.hpp:70:30: error: unused variable ‘max’ [-Werror=unused-variable]
+sum_guard_upper_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_minimum	gcc-debug	0	8	core.blade_product_rejects_sum_below	killed	-	-	-
+sum_guard_branch	gcc-debug	0	0	-	SURVIVED	-	-	-
+range_check_removed	gcc-debug	0	8	core.blade_product_beyond_n,core.blade_product_rejects_beyond_n	killed	-	-	-
+range_shift_off_by_one	gcc-debug	0	8	core.blade_product_beyond_n,core.blade_product_rejects_beyond_n	killed	-	-	-
+range_widest_shifted	gcc-debug	1	8	core.blade_product	killed	-	-	include/galoot/core/blade_product.hpp:284:25: error: right shift count >= width of type [-Werror=shift-count-overflow]
+capacity_formula	gcc-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+capacity_scalar	gcc-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+term_not_trivially_copyable	gcc-debug	1	8	core.blade_product	killed	539,541	-	test/core/blade_product_test.cpp:539:20: error: static assertion failed
+term_list_not_trivially_copyable	gcc-debug	1	8	core.blade_product	killed	541	-	test/core/blade_product_test.cpp:541:20: error: static assertion failed
+term_not_aggregate	gcc-debug	1	8	core.blade_product,core.blade_product_capacity,core.blade_product_overflow,core.blade_product_sum_overflow,core.blade_product_rejects_beyond_n,core.blade_product_rejects_capacity,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below,core.blade_product_rejects_product_above,core.blade_product_rejects_product_below_second	killed	538	-	include/galoot/core/blade_product.hpp:164:15: error: no match for ‘operator=’ (operand types are ‘std::array<galoot::core::detail::term, 1>::value_type’ {aka ‘galoot::core::detail::term’} and ‘<brace-
+term_list_not_aggregate	gcc-debug	1	8	core.blade_product	killed	540	-	test/core/blade_product_test.cpp:540:20: error: static assertion failed

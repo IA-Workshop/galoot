@@ -1,0 +1,8 @@
+start 2026-11-11T07:07:48Z
+ 02:07:48 up 4 days,  7:53,  1 user,  load average: 1.41, 4.45, 7.30
+running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+end 2026-11-11T07:08:08Z
+ 02:08:08 up 4 days,  7:53,  1 user,  load average: 1.58, 4.29, 7.19
+running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client

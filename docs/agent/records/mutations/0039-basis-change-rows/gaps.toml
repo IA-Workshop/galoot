@@ -1,0 +1,16 @@
+# Plan 0039 section 8: the gap of the denominator test. At the tip,
+# same_rows comparing the rows only must be killed; branch-point/gaps.toml
+# runs the same fault in operator== against the suite before the unit's
+# tests, where it must survive.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[[mutant]]
+name = "same_rows_ignores_denominators"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  return a.rows == b.rows && a.denominators == b.denominators;''', replacement = '''  return a.rows == b.rows;''' }]
+expect = "killed"

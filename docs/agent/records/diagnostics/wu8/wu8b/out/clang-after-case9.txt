@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:546:19: error: static assertion failed: conversion drops blades of its input: it is lossy, so request it with truncate<Type>(x)
+  546 |     static_assert(false, "conversion drops blades of its input: it is "
+      |                   ^~~~~
+program.cpp:53:15: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<blade_set<8>{{{{0, 1}, {9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}, {15, 1}}}}>' requested here
+   53 |   const Point s{q};
+      |               ^
+1 error generated.

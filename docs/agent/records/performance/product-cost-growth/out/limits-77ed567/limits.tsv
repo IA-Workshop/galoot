@@ -1,0 +1,120 @@
+compiler	config	unit	n	exit	limit
+clang++	galoot-O0	full	12	0	-
+clang++	galoot-O0	full	13	0	-
+clang++	galoot-O0	full	14	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O0	r	4	0	-
+clang++	galoot-O0	r	5	0	-
+clang++	galoot-O0	r	6	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O0	rigid	4	0	-
+clang++	galoot-O0	rigid	5	0	-
+clang++	galoot-O0	rigid	6	1	include/galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O0	conformal	4	0	-
+clang++	galoot-O0	conformal	5	0	-
+clang++	galoot-O0	conformal	6	1	include/galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O0	dense	3	0	-
+clang++	galoot-O0	dense	4	0	-
+clang++	galoot-O0	dense	5	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O2	full	12	0	-
+clang++	galoot-O2	full	13	0	-
+clang++	galoot-O2	full	14	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O2	r	4	0	-
+clang++	galoot-O2	r	5	0	-
+clang++	galoot-O2	r	6	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O2	rigid	4	0	-
+clang++	galoot-O2	rigid	5	0	-
+clang++	galoot-O2	rigid	6	1	include/galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O2	conformal	4	0	-
+clang++	galoot-O2	conformal	5	0	-
+clang++	galoot-O2	conformal	6	1	include/galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	galoot-O2	dense	3	0	-
+clang++	galoot-O2	dense	4	0	-
+clang++	galoot-O2	dense	5	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O0	full	12	0	-
+clang++	bare-O0	full	13	0	-
+clang++	bare-O0	full	14	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:195:31: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O0	r	4	0	-
+clang++	bare-O0	r	5	0	-
+clang++	bare-O0	r	6	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O0	rigid	4	0	-
+clang++	bare-O0	rigid	5	0	-
+clang++	bare-O0	rigid	6	1	include/galoot/core/blade_product.hpp:239:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O0	conformal	4	0	-
+clang++	bare-O0	conformal	5	0	-
+clang++	bare-O0	conformal	6	1	include/galoot/core/assert.hpp:47:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O0	dense	3	0	-
+clang++	bare-O0	dense	4	0	-
+clang++	bare-O0	dense	5	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/bit:435:7: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O2	full	12	0	-
+clang++	bare-O2	full	13	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h:592:5: note: constexpr evaluation hit maximum step 
+clang++	bare-O2	r	4	0	-
+clang++	bare-O2	r	5	0	-
+clang++	bare-O2	r	6	1	include/galoot/core/assert.hpp:48:5: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O2	rigid	4	0	-
+clang++	bare-O2	rigid	5	0	-
+clang++	bare-O2	rigid	6	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h:589:3: note: constexpr evaluation hit maximum step 
+clang++	bare-O2	conformal	4	0	-
+clang++	bare-O2	conformal	5	0	-
+clang++	bare-O2	conformal	6	1	include/galoot/core/blade_product.hpp:91:3: note: constexpr evaluation hit maximum step limit; possible infinite loop?
+clang++	bare-O2	dense	3	0	-
+clang++	bare-O2	dense	4	0	-
+clang++	bare-O2	dense	5	1	/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/limits:1214:37: note: constexpr evaluation hit maximum step limit; possible infinite loo
+g++	galoot-O0	full	14	0	-
+g++	galoot-O0	full	15	0	-
+g++	galoot-O0	full	16	1	include/galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the l
+g++	galoot-O0	r	6	0	-
+g++	galoot-O0	r	7	0	-
+g++	galoot-O0	r	8	1	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	galoot-O0	rigid	6	0	-
+g++	galoot-O0	rigid	7	0	-
+g++	galoot-O0	rigid	8	1	include/galoot/core/blade_product.hpp:166:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	galoot-O0	conformal	6	0	-
+g++	galoot-O0	conformal	7	0	-
+g++	galoot-O0	conformal	8	1	/usr/include/c++/16/array:219:9: error: ‘__builtin_expect((__n >= ((const std::array<galoot::core::detail::term, 128>*)this)->std::array<galoot::core::detail::t
+g++	galoot-O0	dense	4	0	-
+g++	galoot-O0	dense	5	0	-
+g++	galoot-O0	dense	6	1	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	galoot-O2	full	14	0	-
+g++	galoot-O2	full	15	0	-
+g++	galoot-O2	full	16	1	include/galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the l
+g++	galoot-O2	r	6	0	-
+g++	galoot-O2	r	7	0	-
+g++	galoot-O2	r	8	1	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	galoot-O2	rigid	6	0	-
+g++	galoot-O2	rigid	7	0	-
+g++	galoot-O2	rigid	8	1	include/galoot/core/blade_product.hpp:166:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	galoot-O2	conformal	6	0	-
+g++	galoot-O2	conformal	7	0	-
+g++	galoot-O2	conformal	8	1	/usr/include/c++/16/array:219:9: error: ‘__builtin_expect((__n >= ((const std::array<galoot::core::detail::term, 128>*)this)->std::array<galoot::core::detail::t
+g++	galoot-O2	dense	4	0	-
+g++	galoot-O2	dense	5	0	-
+g++	galoot-O2	dense	6	1	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	bare-O0	full	14	0	-
+g++	bare-O0	full	15	0	-
+g++	bare-O0	full	16	1	include/galoot/core/blade_set.hpp:206:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the l
+g++	bare-O0	r	6	0	-
+g++	bare-O0	r	7	0	-
+g++	bare-O0	r	8	1	/usr/include/c++/16/span:289:38: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	bare-O0	rigid	6	0	-
+g++	bare-O0	rigid	7	0	-
+g++	bare-O0	rigid	8	1	include/galoot/core/blade_product.hpp:166:5: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	bare-O0	conformal	6	0	-
+g++	bare-O0	conformal	7	0	-
+g++	bare-O0	conformal	8	1	/usr/include/c++/16/array:219:9: error: ‘__builtin_expect((__n >= ((const std::array<galoot::core::detail::term, 128>*)this)->std::array<galoot::core::detail::t
+g++	bare-O0	dense	4	0	-
+g++	bare-O0	dense	5	0	-
+g++	bare-O0	dense	6	1	include/galoot/core/blade_product.hpp:164:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase t
+g++	bare-O2	full	14	0	-
+g++	bare-O2	full	15	0	-
+g++	bare-O2	full	16	1	/usr/include/c++/16/array:211:24: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	bare-O2	r	6	0	-
+g++	bare-O2	r	7	0	-
+g++	bare-O2	r	8	1	/usr/include/c++/16/span:289:24: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	bare-O2	rigid	6	0	-
+g++	bare-O2	rigid	7	0	-
+g++	bare-O2	rigid	8	1	/usr/include/c++/16/span:254:42: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	bare-O2	conformal	6	0	-
+g++	bare-O2	conformal	7	0	-
+g++	bare-O2	conformal	8	1	/usr/include/c++/16/array:221:16: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+g++	bare-O2	dense	4	0	-
+g++	bare-O2	dense	5	0	-
+g++	bare-O2	dense	6	1	include/galoot/core/blade_product.hpp:146:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase 

@@ -1,0 +1,2 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+mirror_read_twice	clang-debug	runtime	0	8	killed	core.metric	-	-	At n = 3, the single pass that metric_like stores agrees with the requirement and with is_symmetric() && entries_in_range() on every matrix over the six sample entries, and accepts 64	-

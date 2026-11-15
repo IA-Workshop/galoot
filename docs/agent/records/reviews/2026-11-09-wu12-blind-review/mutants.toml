@@ -1,0 +1,116 @@
+# The blind reviewer's own mutants of the change of basis, written before
+# reading the authors' specs' results, against the revision under review.
+# Header mutants are judged by the label core.basis_change (both programs and
+# the compile-fail tests of the change's messages); edits of the test's
+# expected factors are judged by core.basis_change_identities, the program
+# whose kernel groups state those factors.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[selection.identities]
+targets = ["core_basis_change_identities_test"]
+labels = '^core\.basis_change_identities$'
+
+# P^-1 = M^-1 D scales column j by D_j; the mutant scales row i by D_i, the
+# inverse of D M, a plausible slip of the order of the factors.
+[[mutant]]
+name = "inverse_scaled_by_row_denominator"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      out.rows[i][j] = change_multiply(sign * e.scaled_inverse[i][j],
+                                       change.denominators[j]);''', replacement = '''      out.rows[i][j] = change_multiply(sign * e.scaled_inverse[i][j],
+                                       change.denominators[i]);''' }]
+expect = "killed"
+
+# The sign of the pivot is not moved into the rows, so the inverse can carry
+# a negative denominator, against the guarantee that every denominator is
+# positive. The values are unchanged for a scalar with exact division; what
+# can see it is a layout whose q_B becomes -1, which then counts as a
+# division and rejects an integer scalar.
+[[mutant]]
+name = "inverse_sign_not_moved"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const coefficient_type sign = e.pivot < 0 ? -1 : 1;''', replacement = '''  const coefficient_type sign = e.pivot < 0 ? 1 : 1;''' }]
+expect = "killed"
+
+# The isometry check compares only the squares, P G' P^T = G on the
+# diagonal, so a change that keeps every square but not the pairings, such
+# as conformal(d) with e(d+1) . e(d+2) = +1, would be accepted.
+[[mutant]]
+name = "isometry_diagonal_only"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      if (left != right) {''', replacement = '''      if (i == j && left != right) {''' }]
+expect = "killed"
+
+# The capacity C(n, k) in place of C(n, min(k, n / 2)): too small for a
+# partial wedge of a dense change above half the grade.
+[[mutant]]
+name = "image_capacity_full_grade"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''binomial(n, k < n / 2 ? k : n / 2)''', replacement = '''binomial(n, k)''' }]
+expect = "killed"
+
+# The one division replaced by a product with the reciprocal, which rounds
+# twice over a floating scalar when q_B is not a power of two.
+[[mutant]]
+name = "division_as_reciprocal_product"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    out = static_cast<T>(out / static_cast<T>(Q));''', replacement = '''    out = static_cast<T>(out * (static_cast<T>(1) / static_cast<T>(Q)));''' }]
+expect = "killed"
+
+# The rows of a blade's generators wedged from the highest generator down,
+# which multiplies the image of a blade of grade k by (-1)^(k(k-1)/2).
+[[mutant]]
+name = "fold_order_reversed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  for (mask_t rest = a; rest != 0; rest &= rest - 1) {
+    const auto i = static_cast<std::size_t>(std::countr_zero(rest));''', replacement = '''  for (mask_t rest = a; rest != 0;
+       rest &= ~(mask_t{1} << (31 - std::countl_zero(rest)))) {
+    const auto i = static_cast<std::size_t>(31 - std::countl_zero(rest));''' }]
+expect = "killed"
+
+# The least common multiple of the terms' denominators replaced by their
+# product. The final reduction by the gcd still leaves the least q_B (any
+# common multiple reduces to it), so the values do not change; the product
+# can leave coefficient_type for the dense forms, which the checked
+# arithmetic then reports. Killed only through that overflow, if at all.
+[[mutant]]
+name = "lcm_as_product"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''        change_multiply(q / change_gcd(q, own[k]), own[k]);''', replacement = '''        change_multiply(q, own[k]);''' }]
+expect = "killed"
+
+# The test's expected factor of the left bulk dual, d, replaced by 1 / d.
+[[mutant]]
+name = "test_left_bulk_dual_factor_inverse"
+selection = "identities"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''    CHECK(scaled_difference(core::change_basis<C>(core::left_bulk_dual(a)), d,''', replacement = '''    CHECK(scaled_difference(core::change_basis<C>(core::left_bulk_dual(a)), inverse_d,''' }]
+expect = "killed"
+
+# The test's expected factor of the antidot, 1 / d, replaced by d.
+[[mutant]]
+name = "test_antidot_factor_d"
+selection = "identities"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''      CHECK(scaled_difference(core::change_basis<C>(core::antidot(a, b)),
+                              inverse_d,''', replacement = '''      CHECK(scaled_difference(core::change_basis<C>(core::antidot(a, b)),
+                              d,''' }]
+expect = "killed"
+
+# The test's expected factor of transform, 1 / d^2, replaced by d^2.
+[[mutant]]
+name = "test_transform_factor_d_squared"
+selection = "identities"
+file = "test/core/basis_change_checks.hpp"
+edits = [{ anchor = '''              rational{1} / (d * d),''', replacement = '''              d * d,''' }]
+expect = "killed"

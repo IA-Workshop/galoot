@@ -1,0 +1,25 @@
+# drive.py calibrate out --cpu 4, at 18849b5, 2026-11-10T17:13:29Z, under the
+# timing lock; library form, 65536 passes x 128 operand sets.
+# compiler operation loop ns_per_op wall_s sibling_busy_s pinned_other_s
+gcc wedge_point_point throughput 4.861 0.104 0.01 0.01
+gcc wedge_point_point_point throughput 2.909 0.065 0.00 0.02
+gcc antiwedge_line_plane throughput 5.008 0.078 0.00 0.00
+gcc transform_point throughput 7.805 0.106 0.00 0.00
+gcc transform_point latency 7.519 0.101 0.00 0.02
+gcc transform_line throughput 9.562 0.124 0.00 -0.00
+gcc transform_line latency 12.842 0.155 0.00 0.01
+gcc transform_plane throughput 7.442 0.118 0.00 0.00
+gcc transform_plane latency 7.402 0.101 0.00 -0.00
+gcc compose_motors throughput 10.108 0.126 0.00 0.01
+gcc compose_motors latency 10.655 0.128 0.00 0.00
+clang wedge_point_point throughput 1.432 0.039 0.00 0.00
+clang wedge_point_point_point throughput 2.750 0.067 0.00 -0.01
+clang antiwedge_line_plane throughput 1.528 0.043 0.00 -0.00
+clang transform_point throughput 7.820 0.108 0.00 -0.00
+clang transform_point latency 11.260 0.134 0.00 0.01
+clang transform_line throughput 10.344 0.127 0.00 -0.01
+clang transform_line latency 16.208 0.169 0.00 0.00
+clang transform_plane throughput 5.812 0.088 0.00 0.00
+clang transform_plane latency 9.523 0.119 0.00 0.00
+clang compose_motors throughput 9.130 0.129 0.00 -0.00
+clang compose_motors latency 12.691 0.139 0.00 -0.01

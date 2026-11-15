@@ -1,0 +1,7 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:274:15: error: ‘scalar_type’ in ‘using Line = struct galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’ {aka ‘struct galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’} does not name a type
+  274 |   const Line::scalar_type v = 1.0;
+      |               ^~~~~~~~~~~
+first_user.cpp:275:8: error: ‘v’ was not declared in this scope
+  275 |   r += v;
+      |        ^

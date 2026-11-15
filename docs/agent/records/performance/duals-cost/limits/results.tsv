@@ -1,0 +1,264 @@
+antidot_cga3	g++	O2	0	
+antidot_cga3	g++	O0	0	
+antidot_cga3	clang++	O2	0	
+antidot_cga3	clang++	O0	0	
+antidot_dense5	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_dense5	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_r4	g++	O2	0	
+antidot_r4	g++	O0	0	
+antidot_r4	clang++	O0	0	
+antidot_r4	clang++	O2	0	
+antidot_r5	g++	O2	0	
+antidot_r5	g++	O0	0	
+antidot_dense5	g++	O2	0	
+antidot_dense5	g++	O0	0	
+antidot_r5	clang++	O0	0	
+antidot_r5	clang++	O2	0	
+antidot_r6	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_r6	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+antidot_r6	g++	O2	0	
+antidot_r6	g++	O0	0	
+bulk_cga3	g++	O0	0	
+bulk_cga3	g++	O2	0	
+bulk_cga3	clang++	O0	0	
+bulk_cga3	clang++	O2	0	
+bulk_dense5	g++	O0	0	
+bulk_dense5	g++	O2	0	
+bulk_dual_cga3	g++	O2	0	
+bulk_dual_cga3	g++	O0	0	
+bulk_dense5	clang++	O0	0	
+bulk_dense5	clang++	O2	0	
+bulk_dual_cga3	clang++	O0	0	
+bulk_dual_cga3	clang++	O2	0	
+bulk_dual_dense5	g++	O0	0	
+bulk_dual_dense5	g++	O2	0	
+bulk_dual_r4	g++	O0	0	
+bulk_dual_r4	g++	O2	0	
+bulk_dual_dense5	clang++	O0	0	
+bulk_dual_dense5	clang++	O2	0	
+bulk_dual_r4	clang++	O0	0	
+bulk_dual_r4	clang++	O2	0	
+bulk_dual_r5	g++	O2	0	
+bulk_dual_r5	g++	O0	0	
+bulk_dual_r5	clang++	O0	0	
+bulk_dual_r5	clang++	O2	0	
+bulk_dual_r6	g++	O2	0	
+bulk_dual_r6	g++	O0	0	
+bulk_dual_r6	clang++	O0	0	
+bulk_dual_r6	clang++	O2	0	
+bulk_dual_r7	g++	O2	0	
+bulk_dual_r7	g++	O0	0	
+bulk_dual_r7	clang++	O0	0	
+bulk_dual_r7	clang++	O2	0	
+bulk_dual_r8	g++	O2	0	
+bulk_dual_r8	g++	O0	0	
+bulk_dual_r8	clang++	O2	1	constexpr variable 'plan' must be initialized by a constant expression
+bulk_dual_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+antidot_r7	g++	O2	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+antidot_r7	g++	O0	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+bulk_r4	g++	O0	0	
+bulk_r4	g++	O2	0	
+bulk_r4	clang++	O0	0	
+bulk_r4	clang++	O2	0	
+bulk_dual_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+bulk_r5	g++	O0	0	
+bulk_r5	g++	O2	0	
+bulk_dual_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+bulk_r5	clang++	O0	0	
+bulk_r5	clang++	O2	0	
+bulk_r6	g++	O0	0	
+bulk_r6	g++	O2	0	
+bulk_r6	clang++	O0	0	
+bulk_r6	clang++	O2	0	
+bulk_r7	g++	O0	0	
+bulk_r7	g++	O2	0	
+bulk_r7	clang++	O0	0	
+bulk_r7	clang++	O2	0	
+bulk_dual_r9	g++	O2	0	
+bulk_dual_r9	g++	O0	0	
+bulk_r8	g++	O2	0	
+bulk_r8	clang++	O2	1	constexpr variable 'plan' must be initialized by a constant expression
+bulk_r8	g++	O0	0	
+dot_cga3	g++	O0	0	
+bulk_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+bulk_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+bulk_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+dot_cga3	g++	O2	0	
+dot_cga3	clang++	O0	0	
+dot_cga3	clang++	O2	0	
+dot_dense5	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+dot_dense5	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+dot_r4	g++	O0	0	
+dot_r4	g++	O2	0	
+dot_r4	clang++	O0	0	
+dot_dense5	g++	O0	0	
+dot_r4	clang++	O2	0	
+dot_dense5	g++	O2	0	
+dot_r5	g++	O0	0	
+dot_r5	g++	O2	0	
+dot_r5	clang++	O0	0	
+dot_r5	clang++	O2	0	
+dot_r6	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+dot_r6	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+bulk_r9	g++	O2	0	
+bulk_r9	g++	O0	0	
+dot_r6	g++	O0	0	
+dot_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+dot_r6	g++	O2	0	
+left_bulk_dual_cga3	g++	O0	0	
+left_bulk_dual_cga3	g++	O2	0	
+dot_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+left_bulk_dual_cga3	clang++	O0	0	
+left_bulk_dual_cga3	clang++	O2	0	
+left_bulk_dual_dense5	g++	O0	0	
+left_bulk_dual_dense5	g++	O2	0	
+left_bulk_dual_r4	g++	O0	0	
+left_bulk_dual_r4	g++	O2	0	
+left_bulk_dual_dense5	clang++	O0	0	
+left_bulk_dual_r4	clang++	O0	0	
+left_bulk_dual_dense5	clang++	O2	0	
+left_bulk_dual_r4	clang++	O2	0	
+left_bulk_dual_r5	g++	O0	0	
+left_bulk_dual_r5	g++	O2	0	
+left_bulk_dual_r5	clang++	O0	0	
+left_bulk_dual_r5	clang++	O2	0	
+left_bulk_dual_r6	g++	O0	0	
+left_bulk_dual_r6	g++	O2	0	
+left_bulk_dual_r6	clang++	O0	0	
+left_bulk_dual_r6	clang++	O2	0	
+left_bulk_dual_r7	g++	O0	0	
+left_bulk_dual_r7	g++	O2	0	
+left_bulk_dual_r7	clang++	O0	0	
+left_bulk_dual_r7	clang++	O2	0	
+left_bulk_dual_r8	clang++	O2	1	constexpr variable 'plan' must be initialized by a constant expression
+left_bulk_dual_r8	g++	O2	0	
+left_bulk_dual_r8	g++	O0	0	
+left_bulk_dual_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+dot_r7	g++	O2	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+dot_r7	g++	O0	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+left_bulk_dual_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+left_weight_dual_cga3	g++	O0	0	
+left_weight_dual_cga3	g++	O2	0	
+left_weight_dual_cga3	clang++	O0	0	
+left_weight_dual_cga3	clang++	O2	0	
+left_bulk_dual_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+left_weight_dual_dense5	g++	O0	0	
+left_weight_dual_dense5	g++	O2	0	
+left_weight_dual_r4	g++	O0	0	
+left_weight_dual_r4	g++	O2	0	
+left_weight_dual_dense5	clang++	O0	0	
+left_weight_dual_dense5	clang++	O2	0	
+left_weight_dual_r4	clang++	O0	0	
+left_weight_dual_r4	clang++	O2	0	
+left_weight_dual_r5	g++	O0	0	
+left_weight_dual_r5	g++	O2	0	
+left_weight_dual_r5	clang++	O0	0	
+left_weight_dual_r5	clang++	O2	0	
+left_weight_dual_r6	g++	O0	0	
+left_weight_dual_r6	g++	O2	0	
+left_weight_dual_r6	clang++	O0	0	
+left_weight_dual_r6	clang++	O2	0	
+left_weight_dual_r7	g++	O0	0	
+left_weight_dual_r7	g++	O2	0	
+left_weight_dual_r7	clang++	O0	0	
+left_weight_dual_r7	clang++	O2	0	
+left_bulk_dual_r9	g++	O2	0	
+left_weight_dual_r8	clang++	O2	1	constexpr variable 'mapped' must be initialized by a constant expression
+left_bulk_dual_r9	g++	O0	0	
+left_weight_dual_r8	g++	O2	0	
+left_weight_dual_r8	g++	O0	0	
+left_weight_dual_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+left_weight_dual_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+project_cga3	g++	O0	0	
+left_weight_dual_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+project_cga3	g++	O2	0	
+project_cga3	clang++	O0	0	
+project_cga3	clang++	O2	0	
+project_dense5	g++	O0	0	
+project_dense5	g++	O2	0	
+project_r4	g++	O0	0	
+project_r4	g++	O2	0	
+project_r4	clang++	O0	0	
+project_dense5	clang++	O0	0	
+project_r4	clang++	O2	0	
+project_dense5	clang++	O2	0	
+project_r5	g++	O2	0	
+project_r5	g++	O0	0	
+project_r5	clang++	O0	0	
+project_r5	clang++	O2	0	
+project_r6	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+project_r6	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+project_r6	g++	O2	0	
+project_r6	g++	O0	0	
+project_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+left_weight_dual_r9	g++	O2	0	
+project_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+weight_cga3	g++	O0	0	
+weight_cga3	g++	O2	0	
+weight_cga3	clang++	O0	0	
+weight_cga3	clang++	O2	0	
+left_weight_dual_r9	g++	O0	0	
+weight_dense5	g++	O0	0	
+weight_dense5	g++	O2	0	
+weight_dual_cga3	g++	O0	0	
+weight_dense5	clang++	O0	0	
+weight_dual_cga3	g++	O2	0	
+weight_dense5	clang++	O2	0	
+weight_dual_cga3	clang++	O0	0	
+weight_dual_cga3	clang++	O2	0	
+weight_dual_dense5	g++	O0	0	
+weight_dual_dense5	g++	O2	0	
+weight_dual_r4	g++	O0	0	
+weight_dual_r4	g++	O2	0	
+weight_dual_dense5	clang++	O0	0	
+weight_dual_dense5	clang++	O2	0	
+weight_dual_r4	clang++	O0	0	
+weight_dual_r4	clang++	O2	0	
+weight_dual_r5	g++	O0	0	
+weight_dual_r5	g++	O2	0	
+weight_dual_r5	clang++	O0	0	
+weight_dual_r5	clang++	O2	0	
+project_r7	g++	O2	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+weight_dual_r6	g++	O0	0	
+project_r7	g++	O0	1	‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::cor
+weight_dual_r6	g++	O2	0	
+weight_dual_r6	clang++	O0	0	
+weight_dual_r6	clang++	O2	0	
+weight_dual_r7	g++	O2	0	
+weight_dual_r7	g++	O0	0	
+weight_dual_r7	clang++	O0	0	
+weight_dual_r7	clang++	O2	0	
+weight_dual_r8	clang++	O2	1	constexpr variable 'mapped' must be initialized by a constant expression
+weight_dual_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+weight_dual_r8	g++	O2	0	
+weight_dual_r8	g++	O0	0	
+weight_r4	g++	O0	0	
+weight_r4	g++	O2	0	
+weight_r4	clang++	O0	0	
+weight_r4	clang++	O2	0	
+weight_dual_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+weight_dual_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+weight_r5	g++	O2	0	
+weight_r5	g++	O0	0	
+weight_r5	clang++	O0	0	
+weight_r5	clang++	O2	0	
+weight_r6	g++	O2	0	
+weight_r6	g++	O0	0	
+weight_r6	clang++	O0	0	
+weight_r6	clang++	O2	0	
+weight_r7	g++	O2	0	
+weight_r7	g++	O0	0	
+weight_r7	clang++	O0	0	
+weight_r7	clang++	O2	0	
+weight_r8	clang++	O2	1	constexpr variable 'mapped' must be initialized by a constant expression
+weight_r8	g++	O2	0	
+weight_r8	g++	O0	0	
+weight_r8	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+weight_r9	clang++	O0	1	constexpr variable 'found' must be initialized by a constant expression
+weight_dual_r9	g++	O2	0	
+weight_r9	clang++	O2	1	constexpr variable 'found' must be initialized by a constant expression
+weight_dual_r9	g++	O0	0	
+weight_r9	g++	O2	0	
+weight_r9	g++	O0	0	

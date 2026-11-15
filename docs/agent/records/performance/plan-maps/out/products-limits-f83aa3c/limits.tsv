@@ -1,0 +1,307 @@
+compiler	config	op	unit	exit	inst_p_u	wall_s	maxrss_kib	sibling_busy_s	pinned_other_s	limit
+gcc	galoot-O0	gp	typed	0	1294680795	0.184	86852	0.00	0.00	-
+gcc	galoot-O0	gp	conformal3-vectors	0	963308841	0.141	76076	0.00	-0.00	-
+gcc	galoot-O0	gp	sparse8	0	932801950	0.126	76188	0.00	0.00	-
+gcc	galoot-O0	gp	sparse12	0	939482868	0.134	76164	0.00	-0.00	-
+gcc	galoot-O0	gp	sparse16	0	947767983	0.138	76100	0.00	0.00	-
+gcc	galoot-O0	gp	full-r-n2	0	930815286	0.128	76264	0.00	0.01	-
+gcc	galoot-O0	gp	full-r-n3	0	1041672026	0.160	78448	0.00	0.01	-
+gcc	galoot-O0	gp	full-r-n4	0	1619083521	0.169	84748	0.00	-0.01	-
+gcc	galoot-O0	gp	full-r-n5	0	4839067123	0.329	123020	0.00	-0.01	-
+gcc	galoot-O0	gp	full-r-n6	0	24879280426	1.310	348596	0.00	-0.01	-
+gcc	galoot-O0	gp	full-r-n7	1	82805309899	4.285	961244	0.00	0.01	include/galoot/core/plan.hpp:310:56: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	gp	full-conformal-n3	0	1047860376	0.156	78404	0.00	0.00	-
+gcc	galoot-O0	gp	full-conformal-n4	0	1639213452	0.182	84364	0.00	0.01	-
+gcc	galoot-O0	gp	full-conformal-n5	0	4909484288	0.337	124840	0.00	0.00	-
+gcc	galoot-O0	gp	full-conformal-n6	0	25433123429	1.812	353076	0.83	-0.00	-
+gcc	galoot-O0	gp	full-conformal-n7	1	84268918672	8.246	977840	6.64	0.05	include/galoot/core/plan.hpp:310:56: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	gp	full-rigid-n2	0	926121411	0.163	75908	0.12	0.01	-
+gcc	galoot-O0	gp	full-rigid-n3	0	1021419275	0.207	78116	0.20	0.03	-
+gcc	galoot-O0	gp	full-rigid-n4	0	1502295424	0.171	84564	0.06	-0.01	-
+gcc	galoot-O0	gp	full-rigid-n5	0	4179279955	0.480	114556	0.40	-0.01	-
+gcc	galoot-O0	gp	full-rigid-n6	0	20769868373	1.728	302608	1.08	0.01	-
+gcc	galoot-O0	gp	full-rigid-n7	1	78690136242	8.017	913900	6.56	0.04	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O0	gp	full-dense-n2	0	940115967	0.192	76220	0.18	-0.00	-
+gcc	galoot-O0	gp	full-dense-n3	0	1180525133	0.178	80568	0.10	0.00	-
+gcc	galoot-O0	gp	full-dense-n4	0	3308819771	0.328	106000	0.19	0.00	-
+gcc	galoot-O0	gp	full-dense-n5	0	25162222073	1.951	374332	1.09	-0.00	-
+gcc	galoot-O0	gp	full-dense-n6	1	48472344459	2.470	694304	0.00	0.01	include/galoot/core/blade_product.hpp:156:11: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	wedge	typed	0	1178718004	0.147	84776	0.01	0.00	-
+gcc	galoot-O0	wedge	conformal3-vectors	0	946520792	0.142	76140	0.00	-0.00	-
+gcc	galoot-O0	wedge	sparse8	0	923435401	0.139	76164	0.00	0.00	-
+gcc	galoot-O0	wedge	sparse12	0	929632858	0.131	75936	0.00	0.00	-
+gcc	galoot-O0	wedge	sparse16	0	937972372	0.129	75932	0.00	0.00	-
+gcc	galoot-O0	wedge	full-r-n2	0	915959147	0.127	76192	0.00	-0.01	-
+gcc	galoot-O0	wedge	full-r-n3	0	969309921	0.149	76224	0.00	0.00	-
+gcc	galoot-O0	wedge	full-r-n4	0	1187695292	0.152	80248	0.00	-0.00	-
+gcc	galoot-O0	wedge	full-r-n5	0	2178082123	0.190	93016	0.00	0.00	-
+gcc	galoot-O0	wedge	full-r-n6	0	7079703237	0.436	150248	0.00	0.00	-
+gcc	galoot-O0	wedge	full-r-n7	1	60721174851	3.055	771832	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O0	wedge	full-conformal-n3	0	969217703	0.137	76256	0.00	0.00	-
+gcc	galoot-O0	wedge	full-conformal-n4	0	1187856771	0.148	80188	0.00	-0.01	-
+gcc	galoot-O0	wedge	full-conformal-n5	0	2165153417	0.199	93064	0.00	0.00	-
+gcc	galoot-O0	wedge	full-conformal-n6	0	7097842365	0.438	150264	0.00	0.00	-
+gcc	galoot-O0	wedge	full-conformal-n7	1	60572953873	3.091	771972	0.00	0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O0	wedge	full-rigid-n2	0	916124040	0.148	75924	0.00	0.00	-
+gcc	galoot-O0	wedge	full-rigid-n3	0	969453838	0.139	76148	0.00	-0.01	-
+gcc	galoot-O0	wedge	full-rigid-n4	0	1187445742	0.152	80244	0.00	-0.00	-
+gcc	galoot-O0	wedge	full-rigid-n5	0	2174026550	0.206	93088	0.00	0.00	-
+gcc	galoot-O0	wedge	full-rigid-n6	0	7052795961	0.434	149984	0.00	0.01	-
+gcc	galoot-O0	wedge	full-rigid-n7	1	61041520791	3.110	771952	0.00	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O0	wedge	full-dense-n2	0	917116047	0.139	75916	0.00	0.00	-
+gcc	galoot-O0	wedge	full-dense-n3	0	971292731	0.146	76148	0.00	-0.00	-
+gcc	galoot-O0	wedge	full-dense-n4	0	1189758833	0.159	80436	0.00	0.00	-
+gcc	galoot-O0	wedge	full-dense-n5	0	2180873085	0.210	92792	0.01	-0.01	-
+gcc	galoot-O0	wedge	full-dense-n6	0	7075663797	0.459	150316	0.00	0.00	-
+gcc	galoot-O0	wedge	full-dense-n7	1	61393926449	3.145	771860	0.00	0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O2	gp	typed	0	1323881839	0.176	88160	0.00	-0.00	-
+gcc	galoot-O2	gp	conformal3-vectors	0	979212676	0.149	78752	0.00	0.00	-
+gcc	galoot-O2	gp	sparse8	0	948429559	0.139	76584	0.00	0.00	-
+gcc	galoot-O2	gp	sparse12	0	954329575	0.187	76528	0.15	0.01	-
+gcc	galoot-O2	gp	sparse16	0	962681099	0.203	76456	0.20	0.01	-
+gcc	galoot-O2	gp	full-r-n2	0	946201499	0.186	76600	0.17	-0.00	-
+gcc	galoot-O2	gp	full-r-n3	0	1057365843	0.211	78800	0.20	-0.01	-
+gcc	galoot-O2	gp	full-r-n4	0	1622972617	0.260	84968	0.24	0.00	-
+gcc	galoot-O2	gp	full-r-n5	0	4824321758	0.567	123320	0.50	0.01	-
+gcc	galoot-O2	gp	full-r-n6	0	24760742241	2.392	348780	1.86	0.01	-
+gcc	galoot-O2	gp	full-r-n7	1	83207853764	8.115	961532	5.76	0.05	include/galoot/core/plan.hpp:310:56: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	gp	full-conformal-n3	0	1063223153	0.144	78760	0.03	-0.00	-
+gcc	galoot-O2	gp	full-conformal-n4	0	1653885531	0.259	85224	0.24	-0.01	-
+gcc	galoot-O2	gp	full-conformal-n5	0	4928497914	0.652	125528	0.61	-0.01	-
+gcc	galoot-O2	gp	full-conformal-n6	0	25172248402	2.416	353236	1.89	0.02	-
+gcc	galoot-O2	gp	full-conformal-n7	1	83193347658	7.880	978080	5.24	0.03	include/galoot/core/plan.hpp:310:56: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	gp	full-rigid-n2	0	941609547	0.137	76576	0.00	0.00	-
+gcc	galoot-O2	gp	full-rigid-n3	0	1036689795	0.153	78840	0.00	-0.00	-
+gcc	galoot-O2	gp	full-rigid-n4	0	1516763510	0.169	85072	0.00	-0.01	-
+gcc	galoot-O2	gp	full-rigid-n5	0	4198606224	0.327	114840	0.00	0.00	-
+gcc	galoot-O2	gp	full-rigid-n6	0	20677622107	1.145	302832	0.00	-0.00	-
+gcc	galoot-O2	gp	full-rigid-n7	1	78115535062	4.241	914176	0.01	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_blade>::size()), 0)’ is not a constant expre
+gcc	galoot-O2	gp	full-dense-n2	0	955723172	0.144	76600	0.00	-0.00	-
+gcc	galoot-O2	gp	full-dense-n3	0	1196694184	0.155	80856	0.00	0.01	-
+gcc	galoot-O2	gp	full-dense-n4	0	3319192286	0.265	106296	0.00	0.01	-
+gcc	galoot-O2	gp	full-dense-n5	0	25121252968	1.346	374448	0.00	0.01	-
+gcc	galoot-O2	gp	full-dense-n6	1	48583052213	2.509	694428	0.00	0.02	include/galoot/core/blade_product.hpp:156:11: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	wedge	typed	0	1208575354	0.174	86244	0.00	0.01	-
+gcc	galoot-O2	wedge	conformal3-vectors	0	961811014	0.147	76620	0.00	0.00	-
+gcc	galoot-O2	wedge	sparse8	0	938676845	0.155	76304	0.00	-0.00	-
+gcc	galoot-O2	wedge	sparse12	0	944704082	0.151	76644	0.00	0.01	-
+gcc	galoot-O2	wedge	sparse16	0	953112479	0.145	76616	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-r-n2	0	931534581	0.141	76224	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-r-n3	0	984282705	0.150	76464	0.00	-0.01	-
+gcc	galoot-O2	wedge	full-r-n4	0	1201554600	0.167	80920	0.00	-0.01	-
+gcc	galoot-O2	wedge	full-r-n5	0	2193359559	0.208	93520	0.00	0.01	-
+gcc	galoot-O2	wedge	full-r-n6	0	7077749582	0.468	152472	0.00	0.00	-
+gcc	galoot-O2	wedge	full-r-n7	1	60496666524	3.076	772084	0.01	0.01	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O2	wedge	full-conformal-n3	0	984271552	0.144	76516	0.00	0.01	-
+gcc	galoot-O2	wedge	full-conformal-n4	0	1202645677	0.148	80488	0.00	0.00	-
+gcc	galoot-O2	wedge	full-conformal-n5	0	2186115250	0.195	93492	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-conformal-n6	0	7059426701	0.432	152888	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-conformal-n7	1	60559626859	3.071	771968	0.00	-0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O2	wedge	full-rigid-n2	0	931114287	0.145	76608	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-rigid-n3	0	984682512	0.144	76208	0.00	0.01	-
+gcc	galoot-O2	wedge	full-rigid-n4	0	1202290706	0.157	80880	0.01	-0.01	-
+gcc	galoot-O2	wedge	full-rigid-n5	0	2191983873	0.210	93332	0.00	0.00	-
+gcc	galoot-O2	wedge	full-rigid-n6	0	7104132624	0.441	152612	0.00	0.00	-
+gcc	galoot-O2	wedge	full-rigid-n7	1	60930647570	3.046	771980	0.00	0.02	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	galoot-O2	wedge	full-dense-n2	0	932482914	0.129	76620	0.00	0.01	-
+gcc	galoot-O2	wedge	full-dense-n3	0	986297672	0.133	76340	0.00	-0.00	-
+gcc	galoot-O2	wedge	full-dense-n4	0	1203997395	0.138	80908	0.00	0.00	-
+gcc	galoot-O2	wedge	full-dense-n5	0	2189864762	0.201	93364	0.00	0.01	-
+gcc	galoot-O2	wedge	full-dense-n6	0	7067554479	0.419	152916	0.00	0.00	-
+gcc	galoot-O2	wedge	full-dense-n7	1	60563050538	3.055	771956	0.00	-0.00	/usr/include/c++/16/span:288:9: error: ‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::core::detail::plan_term>::size()), 0)’ is no
+gcc	bare-O2	gp	typed	0	1275103527	0.155	87048	0.00	-0.00	-
+gcc	bare-O2	gp	conformal3-vectors	0	945022985	0.133	75356	0.00	-0.00	-
+gcc	bare-O2	gp	sparse8	0	915798934	0.132	75136	0.00	-0.00	-
+gcc	bare-O2	gp	sparse12	0	922216088	0.148	75156	0.00	0.00	-
+gcc	bare-O2	gp	sparse16	0	930568067	0.147	75500	0.00	0.00	-
+gcc	bare-O2	gp	full-r-n2	0	913252001	0.150	75276	0.00	0.00	-
+gcc	bare-O2	gp	full-r-n3	0	1020157084	0.131	77560	0.00	-0.00	-
+gcc	bare-O2	gp	full-r-n4	0	1571572593	0.167	83896	0.00	0.00	-
+gcc	bare-O2	gp	full-r-n5	0	4654019022	0.314	118160	0.00	-0.00	-
+gcc	bare-O2	gp	full-r-n6	0	23977892590	1.258	317824	0.00	-0.01	-
+gcc	bare-O2	gp	full-r-n7	1	81618046787	4.272	886196	0.00	0.01	include/galoot/core/plan.hpp:311:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	gp	full-conformal-n3	0	1026888263	0.141	77680	0.00	-0.00	-
+gcc	bare-O2	gp	full-conformal-n4	0	1597817532	0.184	84228	0.00	-0.00	-
+gcc	bare-O2	gp	full-conformal-n5	0	4752860069	0.325	118044	0.00	0.01	-
+gcc	bare-O2	gp	full-conformal-n6	0	24220395043	1.287	321456	0.00	-0.00	-
+gcc	bare-O2	gp	full-conformal-n7	1	83034651624	4.255	898644	0.00	0.00	include/galoot/core/plan.hpp:311:7: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	gp	full-rigid-n2	0	909083046	0.123	75276	0.00	0.01	-
+gcc	bare-O2	gp	full-rigid-n3	0	1001107352	0.133	77692	0.01	-0.00	-
+gcc	bare-O2	gp	full-rigid-n4	0	1466834359	0.153	81724	0.00	-0.00	-
+gcc	bare-O2	gp	full-rigid-n5	0	4061870759	0.275	111840	0.00	-0.00	-
+gcc	bare-O2	gp	full-rigid-n6	0	19921457963	1.037	276364	0.00	0.00	-
+gcc	bare-O2	gp	full-rigid-n7	1	76439834088	3.875	839892	0.00	-0.01	include/galoot/core/plan.hpp:310:40: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	gp	full-dense-n2	0	923188242	0.126	75644	0.00	0.01	-
+gcc	bare-O2	gp	full-dense-n3	0	1154672077	0.135	79976	0.00	0.01	-
+gcc	bare-O2	gp	full-dense-n4	0	3203706120	0.233	103416	0.00	-0.00	-
+gcc	bare-O2	gp	full-dense-n5	0	24205380078	1.259	337672	0.00	0.00	-
+gcc	bare-O2	gp	full-dense-n6	1	47790876177	2.563	631112	0.00	0.01	include/galoot/core/blade_product.hpp:151:53: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	wedge	typed	0	1160567567	0.159	85016	0.00	0.00	-
+gcc	bare-O2	wedge	conformal3-vectors	0	928925474	0.130	75308	0.00	-0.01	-
+gcc	bare-O2	wedge	sparse8	0	907046949	0.141	75276	0.00	-0.00	-
+gcc	bare-O2	wedge	sparse12	0	913238826	0.127	75036	0.00	-0.01	-
+gcc	bare-O2	wedge	sparse16	0	921368752	0.136	75160	0.00	-0.01	-
+gcc	bare-O2	wedge	full-r-n2	0	899662505	0.134	75340	0.00	0.01	-
+gcc	bare-O2	wedge	full-r-n3	0	950805999	0.157	75176	0.00	-0.01	-
+gcc	bare-O2	wedge	full-r-n4	0	1159313732	0.145	77596	0.00	0.01	-
+gcc	bare-O2	wedge	full-r-n5	0	2099995961	0.192	90256	0.00	-0.00	-
+gcc	bare-O2	wedge	full-r-n6	0	6826152870	0.427	141220	0.00	0.00	-
+gcc	bare-O2	wedge	full-r-n7	1	59841487837	3.116	698684	0.00	0.02	include/galoot/core/plan.hpp:359:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	wedge	full-conformal-n3	0	950997844	0.109	75292	0.00	0.00	-
+gcc	bare-O2	wedge	full-conformal-n4	0	1160375743	0.117	77224	0.00	-0.01	-
+gcc	bare-O2	wedge	full-conformal-n5	0	2095311606	0.175	90312	0.00	0.01	-
+gcc	bare-O2	wedge	full-conformal-n6	0	6763802837	0.410	140988	0.00	0.00	-
+gcc	bare-O2	wedge	full-conformal-n7	1	59626918675	3.218	698920	0.00	0.01	include/galoot/core/plan.hpp:359:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	wedge	full-rigid-n2	0	899807250	0.104	75308	0.00	-0.00	-
+gcc	bare-O2	wedge	full-rigid-n3	0	950761976	0.110	75012	0.00	0.00	-
+gcc	bare-O2	wedge	full-rigid-n4	0	1160129203	0.121	77104	0.00	-0.00	-
+gcc	bare-O2	wedge	full-rigid-n5	0	2103042723	0.167	90256	0.00	0.00	-
+gcc	bare-O2	wedge	full-rigid-n6	0	6750165733	0.412	141052	0.00	0.01	-
+gcc	bare-O2	wedge	full-rigid-n7	1	59021267065	3.208	698972	0.01	0.00	include/galoot/core/plan.hpp:359:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	wedge	full-dense-n2	0	900974651	0.118	75220	0.04	-0.01	-
+gcc	bare-O2	wedge	full-dense-n3	0	952263952	0.105	75264	0.00	0.01	-
+gcc	bare-O2	wedge	full-dense-n4	0	1161875002	0.116	77456	0.00	-0.00	-
+gcc	bare-O2	wedge	full-dense-n5	0	2106967386	0.165	89948	0.00	0.01	-
+gcc	bare-O2	wedge	full-dense-n6	0	6797892633	0.407	143344	0.00	0.00	-
+gcc	bare-O2	wedge	full-dense-n7	1	58858137558	3.108	698900	0.01	0.01	include/galoot/core/plan.hpp:359:45: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	gp	typed	0	1599752716	0.200	128924	0.00	0.01	-
+clang	galoot-O0	gp	conformal3-vectors	0	1186681608	0.164	121484	0.00	-0.00	-
+clang	galoot-O0	gp	sparse8	0	1147253091	0.167	121400	0.00	-0.01	-
+clang	galoot-O0	gp	sparse12	0	1159290576	0.166	121700	0.00	0.01	-
+clang	galoot-O0	gp	sparse16	0	1168462234	0.164	121328	0.00	-0.00	-
+clang	galoot-O0	gp	full-r-n2	0	1147789296	0.166	120184	0.00	0.00	-
+clang	galoot-O0	gp	full-r-n3	0	1319849709	0.178	121572	0.00	0.00	-
+clang	galoot-O0	gp	full-r-n4	0	2276632819	0.236	122064	0.00	0.00	-
+clang	galoot-O0	gp	full-r-n5	0	7812196867	0.550	125608	0.00	0.00	-
+clang	galoot-O0	gp	full-r-n6	1	7364938483	0.513	114780	0.00	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	gp	full-conformal-n3	0	1339536018	0.176	121388	0.00	0.00	-
+clang	galoot-O0	gp	full-conformal-n4	0	2359629115	0.239	122032	0.00	0.00	-
+clang	galoot-O0	gp	full-conformal-n5	0	8158716781	0.573	125316	0.00	-0.00	-
+clang	galoot-O0	gp	full-conformal-n6	1	7308166643	0.512	114852	0.00	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	gp	full-rigid-n2	0	1144114534	0.161	121196	0.00	0.00	-
+clang	galoot-O0	gp	full-rigid-n3	0	1290284714	0.170	121564	0.00	0.00	-
+clang	galoot-O0	gp	full-rigid-n4	0	2104278660	0.219	122052	0.00	0.00	-
+clang	galoot-O0	gp	full-rigid-n5	0	6775630977	0.486	124548	0.00	0.01	-
+clang	galoot-O0	gp	full-rigid-n6	1	7336701484	0.502	114696	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	gp	full-dense-n2	0	1163206034	0.164	121396	0.00	-0.01	-
+clang	galoot-O0	gp	full-dense-n3	0	1587102290	0.190	121792	0.00	0.00	-
+clang	galoot-O0	gp	full-dense-n4	0	6031554503	0.441	122824	0.00	0.00	-
+clang	galoot-O0	gp	full-dense-n5	1	6546132792	0.469	112828	0.00	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O0	wedge	typed	0	1340085887	0.183	129160	0.00	0.02	-
+clang	galoot-O0	wedge	conformal3-vectors	0	1158402151	0.161	121528	0.00	0.00	-
+clang	galoot-O0	wedge	sparse8	0	1133657054	0.162	121384	0.00	0.00	-
+clang	galoot-O0	wedge	sparse12	0	1141990405	0.160	121504	0.00	0.00	-
+clang	galoot-O0	wedge	sparse16	0	1151327665	0.158	120568	0.00	-0.01	-
+clang	galoot-O0	wedge	full-r-n2	0	1127021934	0.155	121304	0.00	-0.00	-
+clang	galoot-O0	wedge	full-r-n3	0	1186003652	0.161	121280	0.00	-0.00	-
+clang	galoot-O0	wedge	full-r-n4	0	1438184453	0.179	117424	0.00	0.00	-
+clang	galoot-O0	wedge	full-r-n5	0	2646873523	0.253	122288	0.02	-0.01	-
+clang	galoot-O0	wedge	full-r-n6	1	8313806351	0.645	123964	0.10	-0.00	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	wedge	full-conformal-n3	0	1186002245	0.200	121456	0.09	0.00	-
+clang	galoot-O0	wedge	full-conformal-n4	0	1437173297	0.299	117500	0.30	0.00	-
+clang	galoot-O0	wedge	full-conformal-n5	0	2645731284	0.420	122452	0.37	0.01	-
+clang	galoot-O0	wedge	full-conformal-n6	1	8320118223	0.827	123720	0.47	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	wedge	full-rigid-n2	0	1129632456	0.276	121460	0.28	0.02	-
+clang	galoot-O0	wedge	full-rigid-n3	0	1187956640	0.220	121264	0.12	0.00	-
+clang	galoot-O0	wedge	full-rigid-n4	0	1441031535	0.304	117600	0.27	-0.00	-
+clang	galoot-O0	wedge	full-rigid-n5	0	2647638707	0.373	122432	0.26	0.00	-
+clang	galoot-O0	wedge	full-rigid-n6	1	8295326148	0.597	123820	0.00	0.02	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O0	wedge	full-dense-n2	0	1129761505	0.164	118888	0.00	0.01	-
+clang	galoot-O0	wedge	full-dense-n3	0	1186955257	0.166	117248	0.00	0.00	-
+clang	galoot-O0	wedge	full-dense-n4	0	1441447275	0.201	117396	0.04	0.00	-
+clang	galoot-O0	wedge	full-dense-n5	0	2651453433	0.251	122540	0.00	0.00	-
+clang	galoot-O0	wedge	full-dense-n6	1	8321538793	0.592	123840	0.00	0.00	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	gp	typed	0	1608853242	0.203	136500	0.00	-0.00	-
+clang	galoot-O2	gp	conformal3-vectors	0	1189965403	0.167	123284	0.00	-0.01	-
+clang	galoot-O2	gp	sparse8	0	1153167438	0.164	123356	0.00	-0.00	-
+clang	galoot-O2	gp	sparse12	0	1160330196	0.168	123088	0.00	0.00	-
+clang	galoot-O2	gp	sparse16	0	1171810699	0.167	123384	0.00	0.00	-
+clang	galoot-O2	gp	full-r-n2	0	1156221210	0.165	122784	0.00	-0.00	-
+clang	galoot-O2	gp	full-r-n3	0	1326219036	0.172	118956	0.00	-0.00	-
+clang	galoot-O2	gp	full-r-n4	0	2282549591	0.228	123908	0.00	0.00	-
+clang	galoot-O2	gp	full-r-n5	0	7845898347	0.556	127440	0.00	-0.00	-
+clang	galoot-O2	gp	full-r-n6	1	7319573527	0.518	114868	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	gp	full-conformal-n3	0	1344810389	0.175	123272	0.00	-0.00	-
+clang	galoot-O2	gp	full-conformal-n4	0	2357550312	0.231	123896	0.00	-0.00	-
+clang	galoot-O2	gp	full-conformal-n5	0	8170429954	0.580	127244	0.00	0.00	-
+clang	galoot-O2	gp	full-conformal-n6	1	7305152175	0.522	114860	0.00	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	gp	full-rigid-n2	0	1149354731	0.166	123124	0.00	-0.00	-
+clang	galoot-O2	gp	full-rigid-n3	0	1296658613	0.174	122392	0.00	0.01	-
+clang	galoot-O2	gp	full-rigid-n4	0	2107579164	0.227	123916	0.00	0.00	-
+clang	galoot-O2	gp	full-rigid-n5	0	6761324423	0.521	126144	0.04	0.00	-
+clang	galoot-O2	gp	full-rigid-n6	1	7320865208	0.671	114880	0.24	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	gp	full-dense-n2	0	1169188469	0.179	123272	0.00	-0.01	-
+clang	galoot-O2	gp	full-dense-n3	0	1596773062	0.229	121036	0.07	0.00	-
+clang	galoot-O2	gp	full-dense-n4	0	6016546240	0.687	124588	0.43	0.01	-
+clang	galoot-O2	gp	full-dense-n5	1	6519919877	0.898	112904	0.84	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	galoot-O2	wedge	typed	0	1348632681	0.309	136548	0.27	0.00	-
+clang	galoot-O2	wedge	conformal3-vectors	0	1164085580	0.283	120312	0.26	0.01	-
+clang	galoot-O2	wedge	sparse8	0	1143086655	0.280	123060	0.28	0.00	-
+clang	galoot-O2	wedge	sparse12	0	1148600186	0.244	122996	0.19	0.02	-
+clang	galoot-O2	wedge	sparse16	0	1158739808	0.276	123196	0.28	0.01	-
+clang	galoot-O2	wedge	full-r-n2	0	1133130925	0.241	122456	0.19	0.00	-
+clang	galoot-O2	wedge	full-r-n3	0	1191509096	0.284	122340	0.25	0.01	-
+clang	galoot-O2	wedge	full-r-n4	0	1445442687	0.305	119204	0.30	-0.00	-
+clang	galoot-O2	wedge	full-r-n5	0	2672852319	0.465	122688	0.44	-0.01	-
+clang	galoot-O2	wedge	full-r-n6	1	8310773250	1.086	124120	1.00	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	wedge	full-conformal-n3	0	1192099425	0.235	123112	0.18	0.01	-
+clang	galoot-O2	wedge	full-conformal-n4	0	1443816040	0.218	119272	0.09	0.00	-
+clang	galoot-O2	wedge	full-conformal-n5	0	2655852307	0.295	124380	0.08	0.01	-
+clang	galoot-O2	wedge	full-conformal-n6	1	8315024576	0.803	124152	0.38	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	wedge	full-rigid-n2	0	1133718199	0.206	122256	0.08	0.01	-
+clang	galoot-O2	wedge	full-rigid-n3	0	1191792079	0.255	119636	0.24	-0.00	-
+clang	galoot-O2	wedge	full-rigid-n4	0	1445241720	0.192	119328	0.00	0.01	-
+clang	galoot-O2	wedge	full-rigid-n5	0	2653050064	0.292	123908	0.04	-0.01	-
+clang	galoot-O2	wedge	full-rigid-n6	1	8313642372	0.765	124104	0.26	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	galoot-O2	wedge	full-dense-n2	0	1134306204	0.183	122180	0.04	0.01	-
+clang	galoot-O2	wedge	full-dense-n3	0	1193559218	0.183	122268	0.02	0.01	-
+clang	galoot-O2	wedge	full-dense-n4	0	1445629796	0.249	119288	0.19	0.00	-
+clang	galoot-O2	wedge	full-dense-n5	0	2657178273	0.296	121760	0.07	-0.01	-
+clang	galoot-O2	wedge	full-dense-n6	1	8300699087	0.745	124112	0.24	0.00	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	gp	typed	0	1613811679	0.216	135556	0.01	0.01	-
+clang	bare-O2	gp	conformal3-vectors	0	1190839515	0.194	122656	0.06	0.01	-
+clang	bare-O2	gp	sparse8	0	1149507516	0.245	122480	0.19	0.01	-
+clang	bare-O2	gp	sparse12	0	1157831387	0.191	122736	0.03	0.00	-
+clang	bare-O2	gp	sparse16	0	1170014810	0.219	122880	0.12	0.00	-
+clang	bare-O2	gp	full-r-n2	0	1150997291	0.208	122576	0.10	-0.01	-
+clang	bare-O2	gp	full-r-n3	0	1325824873	0.203	123032	0.05	0.01	-
+clang	bare-O2	gp	full-r-n4	0	2310538741	0.240	123084	0.01	0.00	-
+clang	bare-O2	gp	full-r-n5	0	7991017518	0.696	126408	0.22	-0.00	-
+clang	bare-O2	gp	full-r-n6	1	6352136813	0.483	114284	0.00	0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	gp	full-conformal-n3	0	1345768529	0.193	122660	0.01	-0.00	-
+clang	bare-O2	gp	full-conformal-n4	0	2388070164	0.255	123372	0.00	-0.00	-
+clang	bare-O2	gp	full-conformal-n5	0	8313033786	0.641	126416	0.01	0.01	-
+clang	bare-O2	gp	full-conformal-n6	1	6290388073	0.518	114324	0.09	-0.00	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	gp	full-rigid-n2	0	1144598984	0.190	122540	0.05	0.01	-
+clang	bare-O2	gp	full-rigid-n3	0	1294722778	0.185	121900	0.02	0.01	-
+clang	bare-O2	gp	full-rigid-n4	0	2125022677	0.225	123504	0.00	0.01	-
+clang	bare-O2	gp	full-rigid-n5	0	6893165711	0.552	125804	0.05	0.00	-
+clang	bare-O2	gp	full-rigid-n6	1	6331490052	0.486	114032	0.00	0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	gp	full-dense-n2	0	1165876176	0.176	122520	0.00	-0.00	-
+clang	bare-O2	gp	full-dense-n3	0	1596862215	0.202	123076	0.01	0.01	-
+clang	bare-O2	gp	full-dense-n4	0	6144267687	0.508	123988	0.02	0.00	-
+clang	bare-O2	gp	full-dense-n5	1	5683426690	0.493	111856	0.15	-0.01	include/galoot/core/plan.hpp:550:34: error: constexpr variable 'count' must be initialized by a constant expression
+clang	bare-O2	wedge	typed	0	1347835450	0.193	135604	0.00	-0.00	-
+clang	bare-O2	wedge	conformal3-vectors	0	1163666474	0.172	121572	0.00	0.01	-
+clang	bare-O2	wedge	sparse8	0	1136559518	0.231	122488	0.16	0.00	-
+clang	bare-O2	wedge	sparse12	0	1144901661	0.170	122720	0.00	0.01	-
+clang	bare-O2	wedge	sparse16	0	1154925582	0.183	122684	0.03	-0.01	-
+clang	bare-O2	wedge	full-r-n2	0	1128938953	0.170	122348	0.01	-0.01	-
+clang	bare-O2	wedge	full-r-n3	0	1190945911	0.219	122604	0.13	0.00	-
+clang	bare-O2	wedge	full-r-n4	0	1448145328	0.243	118840	0.16	-0.01	-
+clang	bare-O2	wedge	full-r-n5	0	2685804341	0.290	120604	0.05	-0.01	-
+clang	bare-O2	wedge	full-r-n6	1	7928360782	0.610	123680	0.03	0.00	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	wedge	full-conformal-n3	0	1188844222	0.213	122756	0.11	0.01	-
+clang	bare-O2	wedge	full-conformal-n4	0	1447390718	0.187	118788	0.00	0.00	-
+clang	bare-O2	wedge	full-conformal-n5	0	2678670724	0.326	123784	0.13	0.01	-
+clang	bare-O2	wedge	full-conformal-n6	1	7951406221	0.644	123756	0.09	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	wedge	full-rigid-n2	0	1128945047	0.190	122600	0.04	0.01	-
+clang	bare-O2	wedge	full-rigid-n3	0	1189893431	0.174	122492	0.02	0.01	-
+clang	bare-O2	wedge	full-rigid-n4	0	1450696112	0.192	118840	0.02	-0.00	-
+clang	bare-O2	wedge	full-rigid-n5	0	2680175777	0.276	124020	0.02	-0.01	-
+clang	bare-O2	wedge	full-rigid-n6	1	7935874178	0.637	123648	0.04	0.01	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression
+clang	bare-O2	wedge	full-dense-n2	0	1131412884	0.168	122580	0.00	0.00	-
+clang	bare-O2	wedge	full-dense-n3	0	1190413726	0.197	118460	0.06	-0.01	-
+clang	bare-O2	wedge	full-dense-n4	0	1449663522	0.258	118844	0.19	0.01	-
+clang	bare-O2	wedge	full-dense-n5	0	2687182159	0.265	123976	0.00	-0.00	-
+clang	bare-O2	wedge	full-dense-n6	1	7953625509	0.606	123500	0.04	-0.00	include/galoot/core/plan.hpp:568:27: error: constexpr variable 'found' must be initialized by a constant expression

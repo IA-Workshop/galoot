@@ -1,0 +1,7 @@
+compiler	style	mangled_len	demangled_len	nested_mangled_lens	diag_lines	diag_bytes	diag_max_line
+g++	VALUE	350	1913	350,390,398,418,438,458	15	2042	874
+g++	TAG	111	239	111,124,137	15	1237	174
+g++	HYBRID	235	739	235,283,303	15	1238	207
+clang++	VALUE	418	2070	418,466,486	8	857	447
+clang++	TAG	111	239	111,124,137	8	607	210
+clang++	HYBRID	256	746	256,304,324	8	566	215

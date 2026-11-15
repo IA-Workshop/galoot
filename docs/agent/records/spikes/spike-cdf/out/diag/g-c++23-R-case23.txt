@@ -1,0 +1,34 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:20: error: no matching function for call to ‘get<"e14">(const cdf::rga3_types::Line&)’
+   60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+      |          ~~~~~~~~~~^~~
+  • there are 2 candidates
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+    • candidate 1: ‘template<fixed_string<...auto...> Name, class Alg, blade_set<...auto...> B, class T>  requires  has_blade<Alg, B, Name> constexpr T& cdf::get(mv<Alg, B, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:457:14:
+        457 | constexpr T& get(mv<Alg, B, T>& x) {
+            |              ^~~
+      • template argument deduction/substitution failed:
+        •   types ‘cdf::mv<Alg, B, T>’ and ‘const cdf::rga3_types::Line’ {aka ‘const cdf::mv<cdf::rga3, cdf::blade_set<6>{std::array<unsigned int, 6>{std::__array_traits<unsigned int, 6>::_Type{9, 10, 12, 6, 5, 3}}, std::array<int, 6>{std::__array_traits<int, 6>::_Type{-1, -1, -1, 1, -1, 1}}}>’} have incompatible cv-qualifiers
+          /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:20:
+             60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+                |          ~~~~~~~~~~^~~
+    • candidate 2: ‘template<fixed_string<...auto...> Name, class Alg, blade_set<...auto...> B, class T>  requires  has_blade<Alg, B, Name> constexpr const T& cdf::get(const mv<Alg, B, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:467:20:
+        467 | constexpr const T& get(const mv<Alg, B, T>& x) {
+            |                    ^~~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In substitution of ‘template<fixed_string<...auto...> Name, class Alg, blade_set<...auto...> B, class T>  requires  has_blade<Alg, B, Name> constexpr const T& cdf::get(const mv<Alg, B, T>&) [with fixed_string<...auto...> Name = cdf::fixed_string<4>{std::array<char, 4>{"e14"}}; Alg = cdf::rga3; blade_set<...auto...> B = cdf::blade_set<6>{std::array<unsigned int, 6>{std::__array_traits<unsigned int, 6>::_Type{9, 10, 12, 6, 5, 3}}, std::array<int, 6>{std::__array_traits<int, 6>::_Type{-1, -1, -1, 1, -1, 1}}}; T = double]’:
+          • required from here
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:60:20:   
+               60 |   return get<"e14">(l) + p.c[0] + q.c[0];
+                  |          ~~~~~~~~~~^~~
+          • required for the satisfaction of ‘has_blade<Alg, B, Name>’ [with Alg = cdf::rga3; B = cdf::blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}; Name = cdf::fixed_string<4>{{"e14"}}]
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:452:9:   
+              452 | concept has_blade =
+                  |         ^~~~~~~~~
+          • the expression ‘cdf::index_of(B, cdf::parse_name(Name, (Alg::value).g.size())) < B.size [with B = cdf::blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}; Name = cdf::fixed_string<4>{{"e14"}}; Alg = cdf::rga3]’ evaluated to ‘false’
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:453:56:
+              453 |     index_of(B, parse_name(Name, Alg::value.g.size())) < B.size;
+                  |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~

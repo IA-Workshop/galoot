@@ -1,0 +1,60 @@
+# Mutants written after the gap runs, so that each test case part B added
+# kills at least one mutant on both presets (criterion 12): the cases that
+# no mutant of identities.toml or faults.toml reached, because a compile-
+# time check killed those mutants first or their faults lay elsewhere. Run
+# at the tip only: they judge the new cases, not the gaps.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = ["core_identities_test", "core_identities_rounding_test"]
+labels = '^core\.(identities|identities_rounding)$'
+
+[selection.duals]
+targets = ["core_dual_test", "core_dual_identities_test"]
+labels = '^core\.(dual|dual_identities)$'
+
+[selection.tracked]
+targets = ["support_tracked_test", "core_identities_rounding_test"]
+labels = '^(support\.tracked|core\.identities_rounding)$'
+
+# The grade involution keeps the sign of grade 3, so it is no longer an
+# automorphism of any product that reaches grade 3; for "the involutions
+# follow their antiproduct rules over many forms".
+[[mutant]]
+name = "grade_involution_grade_three"
+selection = "identities"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = '''  return grade(a) % 2 == 0 ? 1 : -1;''', replacement = '''  return grade(a) % 2 == 0 || grade(a) == 3 ? 1 : -1;''' }]
+expect = "killed"
+
+# The bulk dual without the reverse, u ⟑ 𝟙 in place of reverse(u) ⟑ 𝟙,
+# wrong by (-1)^(k(k-1)/2) on grades 2 and 3; for "the four duals of every
+# blade are the reference's images".
+[[mutant]]
+name = "bulk_dual_reverse_dropped"
+selection = "duals"
+file = "include/galoot/core/dual.hpp"
+edits = [{ anchor = '''    return geometric_product(reverse(x), detail::unit_antiscalar<Alg, T>());''', replacement = '''    return geometric_product(x, detail::unit_antiscalar<Alg, T>());''' }]
+expect = "killed"
+
+# The identity check's margin of one rounding a side dropped; for "with
+# several roundings the identity check admits the sum of the ...".
+[[mutant]]
+name = "identity_margin_zero"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''inline constexpr int identity_margin = 1;''', replacement = '''inline constexpr int identity_margin = 0;''' }]
+expect = "killed"
+
+# Two results of at most one rounding each compared within the tolerance
+# rather than for equality; for "with one rounding a side the identity
+# check accepts only equality".
+[[mutant]]
+name = "identity_equality_rule_dropped"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  if (roundings_l <= 1 && roundings_r <= 1) {
+    return l == r;
+  }
+''', replacement = '' }]
+expect = "killed"

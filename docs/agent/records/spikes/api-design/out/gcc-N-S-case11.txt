@@ -1,0 +1,22 @@
+In file included from fixture.hpp:20,
+                 from program.cpp:5:
+../../../../../include/galoot/core/blade_set.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_blades() [with long unsigned int N = 4; name_list<...auto...> Names = name_list<6>{std::array<char, 6>{"e1 e5"}}]’:
+../../../../../include/galoot/core/blade_set.hpp:599:61:   required from ‘constexpr const auto galoot::core::blades<4, galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e5"}}>’
+  599 | inline constexpr auto blades = detail::make_blades<N, Names>();
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+fixture.hpp:137:39:   required from ‘constexpr const auto apx::names_set<rga3, galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e5"}}>’
+  137 | inline constexpr auto names_set = gc::blades<n_of<Alg>, Names>;
+      |                                   ~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+fixture.hpp:150:31:   required from ‘constexpr const auto apx::mvn<rga3, galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e5"}}>::set’
+  150 |   static constexpr auto set = names_set<Alg, Names>;
+      |                               ^~~~~~~~~~~~~~~~~~~~~
+fixture.hpp:150:25:   required from ‘struct apx::mvn<rga3, galoot::core::detail::name_list<6>{std::array<char, 6>{"e1 e5"}}>’
+  150 |   static constexpr auto set = names_set<Alg, Names>;
+      |                         ^~~
+program.cpp:97:15:   required from here
+   97 |   const Wrong x{};
+      |               ^
+../../../../../include/galoot/core/blade_set.hpp:513:25: error: static assertion failed: blades: a name has an index above n, the number of generators
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘(((galoot::core::detail::NameError)error) != galoot::core::detail::NameError::index_above_n)’ evaluates to false

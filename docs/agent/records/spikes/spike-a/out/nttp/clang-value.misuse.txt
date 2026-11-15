@@ -1,0 +1,8 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:10: error: no matching function for call to 'gp'
+  173 |   return gp(a, b).c[0];
+      |          ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:86:37: note: candidate template ignored: deduced conflicting values for parameter 'M' ('<template param spike::metric<5>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, 0, -1}}, {{0, 0, 0, -1, 0}}}}}>' vs. '<template param spike::metric<5>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, 1, 0}}, {{0, 0, 0, 0, -1}}}}}>')
+   86 | mv<M, spike::result_set<M, A, B>()> gp(const mv<M, A>& a, const mv<M, B>& b) {
+      |                                     ^
+1 error generated.
+timed: build spike-a:nttp-misuse:clang++:VALUE took 0.202 s (exit 1)

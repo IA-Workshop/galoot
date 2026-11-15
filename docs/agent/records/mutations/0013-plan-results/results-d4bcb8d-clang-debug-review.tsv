@@ -1,0 +1,4 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_range_shift	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:134:28: error: shift count >= width of type [-Werror,-Wshift-count-overflow]
+wedge_capacity_zero	clang-debug	0	8	core.plan	killed	-	pair_capacity is 1 for the wedge and product_capacity for the geometric product	-
+result_sign_negative_only	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-

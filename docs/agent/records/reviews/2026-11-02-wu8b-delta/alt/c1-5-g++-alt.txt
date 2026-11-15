@@ -1,0 +1,9 @@
+$S/probes/c1.cpp: In function ‘int main()’:
+$S/probes/c1.cpp:46:19: error: conversion from ‘double [4]’ to non-scalar type ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>’} requested
+   46 |   const Point p = raw;
+      |                   ^~~
+In file included from $S/probes/c1.cpp:12:
+$S/alt/include/galoot/core/mv.hpp:577:22: note: explicit conversion function was not considered
+  577 |   constexpr explicit mv(Value&& /*value*/) {
+      |                      ^~
+timed: probe delta-wu8b:probe-c1-5:g++:alt took 0.303 s (exit 1)

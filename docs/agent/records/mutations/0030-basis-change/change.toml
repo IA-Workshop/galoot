@@ -1,0 +1,189 @@
+# Mutants of include/galoot/core/basis_change.hpp, judged by the change's own
+# tests: the programs core.basis_change and core.basis_change_identities and
+# the compile-fail tests of its messages, which all carry the label
+# core.basis_change. Plan 0030 section 8's list, and the elimination's two
+# steps. Under --runtime the static_asserts of basis_change_test.cpp that
+# compare a layout or a value become static_assert(true || ...), so that the
+# run-time checks must do the killing.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+[[runtime]]
+file = "test/core/basis_change_test.cpp"
+anchor = 'static_assert(core::change_basis_layout<cga3_to_r410, core::full<5>> =='
+replacement = 'static_assert(true || core::change_basis_layout<cga3_to_r410, core::full<5>> =='
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_test.cpp"
+anchor = 'static_assert(core::change_basis_back_layout<cga3_to_r410, core::full<5>> =='
+replacement = 'static_assert(true || core::change_basis_back_layout<cga3_to_r410, core::full<5>> =='
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_test.cpp"
+anchor = '''static_assert(
+    core::change_basis_layout<'''
+replacement = '''static_assert(true ||
+    core::change_basis_layout<'''
+count = 2
+
+[[runtime]]
+file = "test/core/basis_change_test.cpp"
+anchor = '''static_assert(
+    core::change_basis_back_layout<'''
+replacement = '''static_assert(true ||
+    core::change_basis_back_layout<'''
+count = 1
+
+[[runtime]]
+file = "test/core/basis_change_test.cpp"
+anchor = '  static_assert(Q::layout == core::blades<r410, "e1 e2 e3 e4 e5">);'
+replacement = '  static_assert(true || Q::layout == core::blades<r410, "e1 e2 e3 e4 e5">);'
+count = 1
+
+# A minor computed without the wedge's reordering sign: every transposition
+# of the Leibniz expansion uncounted.
+[[mutant]]
+name = "minor_sign_dropped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''                       change_multiply(partial.coefficient, rows.rows[i][j]),
+                       wedge.terms[0].coefficient));''', replacement = '''                       change_multiply(partial.coefficient, rows.rows[i][j]),
+                       1));''' }]
+expect = "killed"
+
+# The columns of P read as its rows: the image of e_i taken from column i.
+[[mutant]]
+name = "columns_for_rows"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [
+  { anchor = '''        if (rows.rows[i][j] == 0) {''', replacement = '''        if (rows.rows[j][i] == 0) {''' },
+  { anchor = '''change_multiply(partial.coefficient, rows.rows[i][j]),''', replacement = '''change_multiply(partial.coefficient, rows.rows[j][i]),''' },
+]
+expect = "killed"
+
+# The denominator never applied: every output's q_B left at 1, so the
+# integer sum is the result.
+[[mutant]]
+name = "denominator_never_applied"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    out.denominators[r] /= common[r];''', replacement = '''    out.denominators[r] = 1;''' }]
+expect = "killed"
+
+# An output's denominator taken from one term (the last) rather than from
+# all the terms that reach it.
+[[mutant]]
+name = "denominator_from_one_term"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''        change_multiply(q / change_gcd(q, own[k]), own[k]);''', replacement = '''        own[k] + (q - q);''' }]
+expect = "killed"
+
+# The inverse's rows taken as the change's columns over the determinant,
+# a transpose in place of the inverse.
+[[mutant]]
+name = "inverse_as_transpose"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      out.rows.rows[i][j] = multiply_noting(sign * e.scaled_inverse[i][j],
+                                            change.denominators[j], out.fits);''', replacement = '''      out.rows.rows[i][j] = sign * change.rows[j][i];''' }]
+expect = "killed"
+
+# The isometry check written as P G P^T = G', the two forms swapped.
+[[mutant]]
+name = "isometry_sides_swapped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(change, source, target);''', replacement = '''  const identity_check isometry = keeps_inner_products(change, target, source);''' }]
+expect = "killed"
+
+# The isometry check removed.
+[[mutant]]
+name = "isometry_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  const identity_check isometry = keeps_inner_products(change, source, target);''', replacement = '''  const identity_check isometry{.fits = true, .holds = source.gram.size() == target.gram.size()};''' }]
+expect = "killed"
+
+# The invertibility check removed: a singular change goes on to the
+# inner products and the inverse.
+[[mutant]]
+name = "independence_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!e.fits || e.pivot == 0) {''', replacement = '''  if (!e.fits) {''' }]
+expect = "killed"
+
+# The counts of generators not compared: a change of another size goes on.
+[[mutant]]
+name = "count_checks_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [
+  { anchor = '''  static_assert(C::source::value.generator_count == C::value.generator_count,''', replacement = '''  static_assert(true || C::source::value.generator_count == C::value.generator_count,''' },
+  { anchor = '''  if constexpr (C::source::value.generator_count == n) {''', replacement = '''  if constexpr (true) {''' },
+  { anchor = '''    static_assert(C::target::value.generator_count == C::value.generator_count,''', replacement = '''    static_assert(true || C::target::value.generator_count == C::value.generator_count,''' },
+  { anchor = '''    if constexpr (C::target::value.generator_count == n) {''', replacement = '''    if constexpr (true) {''' },
+]
+expect = "killed"
+
+# The denominators not checked for sign.
+[[mutant]]
+name = "denominator_check_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!denominators_positive(change)) {''', replacement = '''  if (!denominators_positive(change) && false) {''' }]
+expect = "killed"
+
+# The scalar's image dropped: a layout holding 1 maps it to nothing.
+[[mutant]]
+name = "grade_zero_image_dropped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    const term_list<Capacity> image = blade_image<Capacity>(rows, set[a].mask);''', replacement = '''    const term_list<Capacity> image =
+        set[a].mask == 0 ? term_list<Capacity>{}
+                         : blade_image<Capacity>(rows, set[a].mask);''' }]
+expect = "killed"
+
+# The rejection of a scalar that cannot divide removed, in both functions.
+[[mutant]]
+name = "integer_rejection_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      !detail::divides(map) || detail::divides_exactly<T>;''', replacement = '''      true;''', count = 2 }]
+expect = "killed"
+
+# The checked arithmetic made unchecked: a product that overflows goes on
+# as undefined behavior, which a constant evaluation still rejects, but not
+# with the change's message.
+[[mutant]]
+name = "checked_arithmetic_unchecked"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x) {''', replacement = '''  if (magnitude_x != 0 && magnitude_y > max / magnitude_x && magnitude_x < 0) {''' }]
+expect = "killed"
+
+# The elimination's row swap at a zero pivot skipped.
+[[mutant]]
+name = "elimination_swap_skipped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      std::swap(a[row], a[k]);''', replacement = '''      static_cast<void>(a[row]);''' }]
+expect = "killed"
+
+# The elimination's division by the previous pivot dropped, so that the
+# entries are no longer minors and the diagonal no longer one value.
+[[mutant]]
+name = "elimination_division_dropped"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
+               previous;''', replacement = '''                          -multiply_noting(row[k], pivot_row[j], fits), fits) /
+               (previous / previous);''' }]
+expect = "killed"

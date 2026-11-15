@@ -1,0 +1,440 @@
+# The mutants of blade_product.hpp, ported from mutate.py. Under
+# --runtime the static_asserts of the test that check products are
+# turned off, the three of mutate.py and the one of the test case on the
+# top generator of the widest algebra, so that the run-time checks must
+# kill each mutant.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.blade_product]
+targets = ["core_blade_product_test", "core_blade_product_assert_fail"]
+labels = '^core\.blade_product$'
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(table_mismatches(core::conformal<3>(),'
+replacement = 'static_assert(true || table_mismatches(core::conformal<3>(),'
+count = 1
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(added('
+replacement = 'static_assert(true || added('
+count = 3
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(core::detail::blade_product<1>(widest, top, top)'
+replacement = 'static_assert(true || core::detail::blade_product<1>(widest, top, top)'
+count = 1
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(core::detail::blade_product<1>(witt, pair, top)'
+replacement = 'static_assert(true || core::detail::blade_product<1>(witt, pair, top)'
+count = 1
+
+[[mutant]]
+name = "wedge_sign_side"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'multiply_checked(reorder_sign(generator, blade), c)', replacement = 'multiply_checked(reorder_sign(blade, generator), c)' }]
+expect = "killed"
+
+[[mutant]]
+name = "wedge_sign_dropped"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'multiply_checked(reorder_sign(generator, blade), c)', replacement = 'c' }]
+expect = "killed"
+
+[[mutant]]
+name = "contraction_first_sign"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+    coefficient_type sign = 1;
+''', replacement = '''
+    coefficient_type sign = -1;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "contraction_sign_constant"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+      sign = -sign;
+    }
+  }
+}''', replacement = '''
+    }
+  }
+}''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "correction_sign"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+  coefficient_type sign = -1;
+''', replacement = '''
+  coefficient_type sign = 1;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "correction_sign_constant"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+    sign = -sign;
+  }
+}
+''', replacement = '''
+  }
+}
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "correction_dropped"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+      add_blade_product(out, g, rest & ~(mask_t{1} << j), b,
+''', replacement = '''
+      if (false) add_blade_product(out, g, rest & ~(mask_t{1} << j), b,
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "contraction_transposed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'g.gram[i][j]', replacement = 'g.gram[j][i]' }]
+expect = "equivalent"
+reason = "blade_product requires a symmetric form, on which g(i, j) equals g(j, i)"
+
+[[mutant]]
+name = "correction_transposed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'g.gram[low][j]', replacement = 'g.gram[j][low]' }]
+expect = "equivalent"
+reason = "blade_product requires a symmetric form, on which g(i, j) equals g(j, i)"
+
+[[mutant]]
+name = "lowest_generator_highest"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+const auto low = static_cast<std::size_t>(std::countr_zero(a));
+  const mask_t rest = a & (a - 1);''', replacement = '''
+const auto low = static_cast<std::size_t>(std::bit_width(a) - 1);
+  const mask_t rest = a & ~(mask_t{1} << low);''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "scalar_scale_dropped"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+    out.add(b, scale);
+''', replacement = '''
+    out.add(b, 1);
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "generator_scale_dropped"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'multiply_checked(x.terms[k].coefficient, scale)', replacement = 'x.terms[k].coefficient' }]
+expect = "killed"
+
+[[mutant]]
+name = "zero_kept"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+    if (coefficient == 0) {
+      return;
+    }
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "zero_sum_kept"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '      if (terms[at].coefficient == 0) {', replacement = '      if (false) {' }]
+expect = "killed"
+
+[[mutant]]
+name = "trailing_place_kept"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+        --length;
+        terms[length] = {};
+''', replacement = '''
+        --length;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "merge_dropped"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'if (at < length && terms[at].blade == blade) {', replacement = 'if (false) {' }]
+expect = "killed"
+
+[[mutant]]
+name = "append"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'while (at < length && canonical_less(terms[at].blade, blade)) {', replacement = 'while (at < length) {' }]
+expect = "killed"
+
+[[mutant]]
+name = "numeric_order"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'canonical_less(terms[at].blade, blade)', replacement = 'terms[at].blade < blade' }]
+expect = "killed"
+
+[[mutant]]
+name = "capacity_check_removed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'GALOOT_ASSERT(length < Capacity,', replacement = 'GALOOT_ASSERT(true || length < Capacity,' }]
+expect = "killed"
+
+[[mutant]]
+name = "capacity_off_by_one"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'GALOOT_ASSERT(length < Capacity,', replacement = 'GALOOT_ASSERT(length <= Capacity,' }]
+expect = "killed"
+
+[[mutant]]
+name = "product_guard_removed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'const bool fits = magnitude_x == 0 || magnitude_y <= max / magnitude_x;', replacement = 'const bool fits = true;' }]
+expect = "killed"
+
+[[mutant]]
+name = "product_guard_strict"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'magnitude_y <= max / magnitude_x', replacement = 'magnitude_y < max / magnitude_x' }]
+expect = "killed"
+
+[[mutant]]
+name = "product_magnitude_x"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'magnitude_x = x < 0 ? -x : x;', replacement = 'magnitude_x = x;' }]
+expect = "killed"
+
+[[mutant]]
+name = "product_magnitude_y"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'magnitude_y = y < 0 ? -y : y;', replacement = 'magnitude_y = y;' }]
+expect = "killed"
+
+[[mutant]]
+name = "sum_guard_removed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'const bool fits = y > 0 ? x <= max - y : x >= -max - y;', replacement = 'const bool fits = true;' }]
+expect = "killed"
+
+[[mutant]]
+name = "sum_guard_upper_strict"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'x <= max - y :', replacement = 'x < max - y :' }]
+expect = "killed"
+
+[[mutant]]
+name = "sum_guard_lower_strict"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'x >= -max - y;', replacement = 'x > -max - y;' }]
+expect = "killed"
+
+[[mutant]]
+name = "sum_guard_lower_minimum"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'x >= -max - y;', replacement = 'x >= -max - y - 1;' }]
+expect = "killed"
+
+[[mutant]]
+name = "sum_guard_branch"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'y > 0 ? x <= max - y', replacement = 'y >= 0 ? x <= max - y' }]
+expect = "equivalent"
+reason = "at y = 0 both branches accept every x within -max to max, which add_checked requires"
+
+[[mutant]]
+name = "range_check_removed"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'GALOOT_ASSERT(in_range,', replacement = 'GALOOT_ASSERT(true || in_range,' }]
+expect = "killed"
+
+[[mutant]]
+name = "range_shift_off_by_one"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'return ((a | b) >> N) == 0;', replacement = 'return ((a | b) >> (N + 1)) == 0;' }]
+expect = "killed"
+
+[[mutant]]
+name = "range_widest_shifted"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'if constexpr (N < mask_bits) {', replacement = 'if constexpr (N <= mask_bits) {' }]
+expect = "killed"
+
+[[mutant]]
+name = "capacity_formula"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'static_cast<unsigned>(generators - 1)', replacement = 'static_cast<unsigned>(generators)' }]
+expect = "killed"
+
+[[mutant]]
+name = "capacity_scalar"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+             ? 1
+''', replacement = '''
+             ? 2
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "term_not_trivially_copyable"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+  [[nodiscard]] constexpr bool operator==(const term&) const = default;
+''', replacement = '''
+  [[nodiscard]] constexpr bool operator==(const term&) const = default;
+  constexpr ~term() {}
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "term_list_not_trivially_copyable"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+  [[nodiscard]] constexpr bool operator==(const term_list&) const = default;
+''', replacement = '''
+  [[nodiscard]] constexpr bool operator==(const term_list&) const = default;
+  constexpr ~term_list() {}
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "term_not_aggregate"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+struct term {
+''', replacement = '''
+struct term {
+  term() = default;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "term_list_not_aggregate"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+struct term_list {
+''', replacement = '''
+struct term_list {
+  term_list() = default;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "term_list_not_structural"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+  std::size_t length;
+''', replacement = '''
+  mutable std::size_t length;
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "range_second_unchecked"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'return ((a | b) >> N) == 0;', replacement = 'return (a >> N) == 0;' }]
+expect = "killed"
+
+[[mutant]]
+name = "range_skip_below_top"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'if constexpr (N < mask_bits) {', replacement = 'if constexpr (N + 1 < mask_bits) {' }]
+expect = "killed"
+
+[[mutant]]
+name = "partial_sum_excursion"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = '''
+    out.add(b, scale);
+    return;''', replacement = '''
+    out.add(b ^ 1U, 1);
+    out.add(b, scale);
+    out.add(b ^ 1U, -1);
+    return;''' },
+]
+expect = "killed"

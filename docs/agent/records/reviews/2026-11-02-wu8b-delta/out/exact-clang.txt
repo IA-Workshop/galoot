@@ -1,0 +1,22 @@
+seed 20261101
+signed char          408449 values, 27352 accepted
+char                 408449 values, 27352 accepted
+short                408449 values, 36742 accepted
+int                  408449 values, 75052 accepted
+long                 408449 values, 408449 accepted
+long long            408449 values, 408449 accepted
+int64                408449 values, 408449 accepted
+int32                408449 values, 75052 accepted
+wchar_t              408449 values, 75052 accepted
+unsigned char        408449 values, 28035 accepted
+unsigned short       408449 values, 38254 accepted
+unsigned             408449 values, 78294 accepted
+uint64               408449 values, 408449 accepted
+char16_t             408449 values, 38254 accepted
+char32_t             408449 values, 78294 accepted
+float                408449 values, 270813 accepted
+double               408449 values, 401568 accepted
+long double          408449 values, 408449 accepted
+half (limits only)   408449 values, 37076 accepted
+failures 0
+timed: probe delta-wu8b:run-exact:clang++:new took 0.064 s (exit 0)

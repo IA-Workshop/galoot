@@ -1,0 +1,55 @@
+# Mutants of the test-side exact diagonalization, test/support/diagonalize.hpp,
+# judged by its own tests, support.diagonalize: the three rules of the
+# elimination by congruence that plan 0030 criterion 7 names. Under
+# --runtime the three static_asserts of the one-mode Witt form become
+# static_assert(true || ...), so that the run-time cases must kill.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.diagonalize]
+targets = ["support_diagonalize_test"]
+labels = '^support\.diagonalize$'
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(witt_one_diagonal.squares =='
+replacement = 'static_assert(true || witt_one_diagonal.squares =='
+count = 1
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(witt_one_diagonal.rows =='
+replacement = 'static_assert(true || witt_one_diagonal.rows =='
+count = 1
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(diagonal_mismatches(witt_one, witt_one_diagonal) == 0);'
+replacement = 'static_assert(true || diagonal_mismatches(witt_one, witt_one_diagonal) == 0);'
+count = 1
+
+# A zero pivot not swapped with the next vector of nonzero square, so the
+# elimination divides by it, or pairs where it should swap.
+[[mutant]]
+name = "pivot_swap_skipped"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''        swap(k, j);''', replacement = '''        static_cast<void>(swap);''' }]
+expect = "killed"
+
+# Two null vectors not paired, f_k + f_j, so a zero pivot with a nonzero
+# coupling is left as if it were in the radical.
+[[mutant]]
+name = "pairing_skipped"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''        add_to(k, j, rational{1});''', replacement = '''        continue;''' }]
+expect = "killed"
+
+# The squarefree scaling skipped: the rows keep their scale, so a square
+# p / q of the elimination is not the integer s of D.
+[[mutant]]
+name = "squarefree_scaling_skipped"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''    const rational scale{d.denominator, root};''', replacement = '''    const rational scale{root, root};''' }]
+expect = "killed"

@@ -1,0 +1,297 @@
+#!/usr/bin/env bash
+# Starts, stops, and inspects the machine-wide pool of build job slots, which
+# lets builds in several checkouts share the processors instead of each
+# running a job per CPU: a GNU Make FIFO jobserver held open by a transient
+# user service. The service outlives any one session, but it stops itself
+# after it has had no client for the idle time (30 minutes by default), so a
+# lost session does not leave the pool running for good. A build started after
+# that needs `tools/jobpool ensure` first.
+#
+# A client is a process other than the service that holds the FIFO open;
+# Ninja holds it for its whole build. A client can leave without returning
+# its slots: Ninja killed with SIGKILL, or CTest after a test whose program
+# is missing. Whenever the service finds no client and the free slots differ
+# from its total, it moves the FIFO aside, so that no client can open it,
+# counts again, and only if there is still no client writes back the slots
+# missing from its total or drains any surplus a client wrote back. So it
+# never takes a live client's slots for lost ones. While any client holds
+# the pool, slots in use cannot be told from lost ones, so lost slots come
+# back only at the next moment with no client. A client that
+# already holds the FIFO keeps using it after the path is replaced, so a
+# restart under running builds serves them from the old pool and new builds
+# from the new one, up to twice the slots.
+#
+# Usage: tools/jobpool start [tokens] [--idle MINUTES]
+#                                       start the pool (default 23 slots, idle
+#                                       stop after 30 minutes; 0 never stops)
+#        tools/jobpool ensure           start the pool with the defaults unless it is running
+#                                       (no arguments)
+#        tools/jobpool stop [--force]   remove the pool; refuses while a client holds it
+#        tools/jobpool status           show free slots, clients, and lost slots
+#        tools/jobpool env              print the MAKEFLAGS line for a shell
+set -u
+
+# The unit name, the FIFO path, the poll interval, and the idle time (in
+# seconds, replacing --idle) can be overridden, so that a test can run a
+# pool of its own beside the real one.
+unit=${JOBPOOL_UNIT:-galoot-jobserver}
+tokens_default=23
+idle_default=30
+poll=${JOBPOOL_POLL_SECONDS:-30}
+idle_seconds=${JOBPOOL_IDLE_SECONDS:-}
+fifo=${JOBPOOL_FIFO:-${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/jobserver.fifo}
+# Clients are found by the path their descriptor resolves to, so the FIFO is
+# named by its resolved path too: through a symbolic link, no client would
+# match, and the service would write back the slots they hold at every poll.
+fifo=$(realpath -m -- "$fifo")
+
+free_slots() {
+  python3 -I - "$fifo" <<'PY'
+import fcntl, os, struct, sys, termios
+fd = os.open(sys.argv[1], os.O_RDWR | os.O_NONBLOCK)
+print(struct.unpack("i", fcntl.ioctl(fd, termios.FIONREAD, b"\0" * 4))[0])
+os.close(fd)
+PY
+}
+
+# Writes back the tokens missing from $2 to the FIFO $1 and drains any
+# surplus, and prints the change made. Only right while no process but the
+# service holds the FIFO and none can open it, that is, while it is moved
+# aside and a count has found no client: then every token there is lies in
+# the FIFO.
+balance() {
+  python3 -I - "$1" "$2" <<'PY'
+import fcntl, os, struct, sys, termios
+fd = os.open(sys.argv[1], os.O_RDWR | os.O_NONBLOCK)
+free = struct.unpack("i", fcntl.ioctl(fd, termios.FIONREAD, b"\0" * 4))[0]
+change = int(sys.argv[2]) - free
+if change > 0:
+    os.write(fd, b"+" * change)
+elif change < 0:
+    try:
+        change = -len(os.read(fd, -change))
+    except BlockingIOError:
+        change = 0  # a client that just opened the FIFO took them
+print(change)
+PY
+}
+
+running() { systemctl --user is-active --quiet "$unit.service"; }
+
+# Prints "pid (command)" for each client holding the FIFO open.
+clients() {
+  local holder fd pid
+  holder=$(systemctl --user show "$unit.service" -p MainPID --value)
+  find /proc/[0-9]*/fd -maxdepth 1 -lname "$fifo" 2>/dev/null |
+    while read -r fd; do
+      pid=${fd#/proc/}
+      pid=${pid%%/*}
+      [[ $pid == "$holder" || $pid == "$$" ]] && continue
+      echo "$pid ($(cat "/proc/$pid/comm" 2>/dev/null))"
+    done | sort -un
+}
+
+total_slots() {
+  systemctl --user show "$unit.service" -p Description --value 2>/dev/null |
+    sed -n 's/.* \([0-9][0-9]*\) slots$/\1/p'
+}
+
+# Counts the processes that hold the FIFO open, other than the service's main
+# shell (pid $2) and its descendants: the clients that keep the pool alive.
+count_clients() {
+  python3 -I - "$1" "$2" <<'PY'
+import os, sys
+fifo, main = sys.argv[1], int(sys.argv[2])
+
+
+def parent(pid):
+    try:
+        with open(f"/proc/{pid}/stat") as f:
+            return int(f.read().rsplit(")", 1)[1].split()[1])
+    except OSError:
+        return 0
+
+
+count = 0
+for entry in os.listdir("/proc"):
+    if not entry.isdigit():
+        continue
+    try:
+        held = any(
+            os.readlink(f"/proc/{entry}/fd/{fd}") == fifo
+            for fd in os.listdir(f"/proc/{entry}/fd")
+        )
+    except OSError:
+        continue
+    if not held:
+        continue
+    pid = int(entry)
+    while pid > 1 and pid != main:
+        pid = parent(pid)
+    if pid != main:
+        count += 1
+print(count)
+PY
+}
+
+# Succeeds only when the count of the clients of FIFO $1, leaving out pid $2
+# and its descendants, is exactly 0. A count that fails, or prints anything
+# else, is taken as a client, so the service neither writes back slots nor
+# stops itself on a count it could not make.
+no_clients() {
+  local count
+  count=$(count_clients "$1" "$2" 3>&-) || return 1
+  [[ $count == 0 ]]
+}
+
+# Moves the FIFO $1 aside to $1.stopping, so that no new client can open it,
+# waits $2 seconds for an open that found the old path to complete, and
+# counts the clients. Succeeds, leaving the FIFO aside, only if there is
+# none; otherwise puts it back and fails.
+aside_without_clients() {
+  mv -- "$1" "$1.stopping" || return 1
+  sleep "$2" 3>&-
+  no_clients "$1.stopping" $$ && return 0
+  mv -- "$1.stopping" "$1"
+  return 1
+}
+
+# The service body: makes the FIFO, fills it with $2 tokens, and then polls
+# every $4 seconds. A count of clients (processes but this one and its
+# children holding the FIFO) is not enough to fix the tokens: a client can
+# open the FIFO and take some just after the count. So at a poll that finds
+# no client and a free count other than $2, the FIFO is moved aside and the
+# clients counted again; with still none, nobody holds a token or can take
+# one, and the tokens are brought back to $2 before the FIFO goes back.
+# With an idle time of $3 seconds, once no client has held the FIFO for that
+# long, it is moved aside the same way, and with no client the service
+# exits, removing it. A FIFO missing at a poll that finds no client it can
+# see was removed by someone else (the service puts it back before each
+# poll), so the service exits with an error rather than run on with nothing
+# to serve. Clients that still hold the removed FIFO are not seen, since
+# their descriptors no longer resolve to its path; they keep the old pool
+# among themselves, as after a restart.
+# The poll closes descriptor 3, so its children are not mistaken for
+# clients.
+serve() {
+  local fifo=$1 n=$2 idle=$3 poll=$4 quiet=$SECONDS free change
+  rm -f -- "$fifo" "$fifo.stopping"
+  mkfifo -m 600 -- "$fifo"
+  exec 3<>"$fifo"
+  printf "%*s" "$n" "" | tr " " "+" >&3
+  while sleep "$poll" 3>&-; do
+    if ! no_clients "$fifo" $$; then
+      quiet=$SECONDS
+      continue
+    fi
+    if [[ ! -p $fifo ]]; then
+      echo "$fifo is gone, so the pool stops" >&2
+      exit 1
+    fi
+    free=$(free_slots 3>&-) || continue
+    if ((free != n)) && aside_without_clients "$fifo" 0.2; then
+      change=$(balance "$fifo.stopping" "$n" 3>&-) || change=0
+      mv -- "$fifo.stopping" "$fifo"
+      if ((change > 0)); then echo "wrote back $change of $n slots that clients never returned"; fi
+      if ((change < 0)); then echo "drained $((-change)) tokens beyond the $n slots, which clients wrote back"; fi
+    fi
+    if ((idle > 0 && SECONDS - quiet >= idle)); then
+      if aside_without_clients "$fifo" 1; then
+        rm -f -- "$fifo.stopping"
+        exit 0
+      fi
+      quiet=$SECONDS
+    fi
+  done
+}
+
+case ${1:-} in
+  _serve) set -eu; serve "$2" "$3" "$4" "$5" ;;
+  _count_clients) count_clients "$2" "$3" ;;
+  start|ensure)
+    n=
+    idle=$idle_default
+    if [[ $1 == ensure && $# -gt 1 ]]; then
+      echo "usage: tools/jobpool ensure (no arguments; start takes the slot count and --idle)" >&2
+      exit 2
+    fi
+    shift
+    while [[ $# -gt 0 ]]; do
+      case $1 in
+        --idle) idle=${2:-}; shift 2 || shift ;;
+        -*) echo "unknown option $1" >&2; exit 2 ;;
+        *)
+          [[ -z $n ]] || { echo "start takes one slot count, not $n and $1" >&2; exit 2; }
+          n=$1; shift ;;
+      esac
+    done
+    n=${n:-$tokens_default}
+    [[ $n =~ ^[1-9][0-9]*$ ]] || { echo "tokens must be a positive integer" >&2; exit 2; }
+    [[ $idle =~ ^[0-9]+$ ]] || { echo "--idle takes a whole number of minutes (0 for never)" >&2; exit 2; }
+    idle_seconds=${idle_seconds:-$((idle * 60))}
+    [[ $idle_seconds =~ ^[0-9]+$ ]] || { echo "JOBPOOL_IDLE_SECONDS must be a whole number" >&2; exit 2; }
+    if running; then echo "already running: $(free_slots) of $(total_slots) slots free"; exit 0; fi
+    systemctl --user reset-failed "$unit.service" 2>/dev/null
+    systemd-run --user --quiet --unit="$unit" \
+      --description="Galoot build job slots: $n slots" \
+      -p ExecStopPost="/usr/bin/rm -f $fifo $fifo.stopping" \
+      --setenv=JOBPOOL_IDLE_MINUTES="$idle" \
+      --setenv=JOBPOOL_IDLE_SECONDS="$idle_seconds" \
+      --setenv=JOBPOOL_REPAIR=auto \
+      "$(readlink -f "$0")" _serve "$fifo" "$n" "$idle_seconds" "$poll" || exit 1
+    for _ in 1 2 3 4 5 6 7 8 9 10; do [[ -p $fifo ]] && break; sleep 0.2; done
+    [[ -p $fifo ]] || { echo "pool did not start; see: systemctl --user status $unit" >&2; exit 1; }
+    echo "started: $(free_slots) slots free at $fifo"
+    echo "use:  export MAKEFLAGS=\"-j$((n + 1)) --jobserver-auth=fifo:$fifo\""
+    ;;
+  stop)
+    running || { echo "not running"; exit 0; }
+    holding=$(clients)
+    if [[ -n $holding && ${2:-} != "--force" ]]; then
+      echo "clients hold the pool: $(echo $holding)" >&2
+      echo "they would keep the old pool beside a new one; wait for them, or run: tools/jobpool stop --force" >&2
+      exit 1
+    fi
+    total=$(total_slots)
+    free=$(free_slots)
+    if [[ -z $holding && -n $total && $free -lt $total ]]; then
+      echo "$((total - free)) of $total slots were lost by clients that never returned them"
+    fi
+    systemctl --user stop "$unit.service" && echo "stopped"
+    ;;
+  status)
+    running || { echo "not running"; exit 1; }
+    environment=$(systemctl --user show "$unit.service" -p Environment --value)
+    idle=$(sed -n 's/.*JOBPOOL_IDLE_MINUTES=\([0-9]*\).*/\1/p' <<<"$environment")
+    seconds=$(sed -n 's/.*JOBPOOL_IDLE_SECONDS=\([0-9]*\).*/\1/p' <<<"$environment")
+    seconds=${seconds:-$((${idle:-0} * 60))}
+    if [[ ! -p $fifo ]]; then
+      echo "running, but $fifo is missing: the pool is stopping, or was moved aside for a moment while it counts its clients"
+      exit 1
+    fi
+    total=$(total_slots)
+    free=$(free_slots)
+    holding=$(clients)
+    echo "running: $free of $total slots free at $fifo"
+    if ((seconds > 0 && seconds % 60 == 0)); then
+      echo "stops itself after $((seconds / 60)) minutes without a client"
+    elif ((seconds > 0)); then
+      echo "stops itself after $seconds seconds without a client"
+    fi
+    if [[ -n $holding ]]; then
+      echo "clients: $(echo $holding)"
+    elif [[ -n $total && $free -ne $total && $environment == *JOBPOOL_REPAIR=auto* ]]; then
+      echo "no client holds the pool, and $free of $total slots are free; it brings them back to $total at its next check"
+    elif [[ -n $total && $free -lt $total ]]; then
+      echo "no client holds the pool, so $((total - free)) slots are lost; restart it to recover them: tools/jobpool stop && tools/jobpool start $total"
+    fi
+    ;;
+  env)
+    n=$(total_slots); n=${n:-$tokens_default}
+    echo "export MAKEFLAGS=\"-j$((n + 1)) --jobserver-auth=fifo:$fifo\""
+    ;;
+  *)
+    echo "usage: tools/jobpool start [tokens] [--idle MINUTES] | ensure | stop [--force] | status | env" >&2
+    exit 2
+    ;;
+esac

@@ -1,0 +1,13 @@
+user.cpp:135:18: error: no matching function for call to 'truncate'
+  135 |   const auto s = gc::truncate(q);  // no target
+      |                  ^~~~~~~~~~~~
+include/galoot/core/mv.hpp:808:40: note: candidate template ignored: couldn't infer template argument 'To'
+  808 | [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
+      |                                        ^
+include/galoot/core/mv.hpp:825:1: note: candidate template ignored: couldn't infer template argument 'Target'
+  825 | truncate(const mv<Alg, From, T>& x) {
+      | ^
+include/galoot/core/mv.hpp:833:16: note: candidate template ignored: couldn't infer template argument 'Target'
+  833 | constexpr auto truncate(const mv<Alg, From, T>& x) {
+      |                ^
+1 error generated.

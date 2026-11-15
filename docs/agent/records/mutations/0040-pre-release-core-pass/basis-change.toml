@@ -1,0 +1,46 @@
+# Plan 0040 section 8, part B: a mutant for each changed or new test, run
+# at the tip of part B on both presets. Each counts when the test it was
+# written for is among those it fails.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+# One entry of the checked inverse negated: the identities test, which now
+# reads the inverse from check_change, must see its round trips fail.
+[[mutant]]
+name = "inverse_rows_sign"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    out.rows.denominators[i] = magnitude / common;
+  }
+  return out;''', replacement = '''    out.rows.denominators[i] = magnitude / common;
+  }
+  out.rows.rows[0][0] = -out.rows.rows[0][0];
+  return out;''' }]
+expect = "killed"
+killers = ["core.basis_change_identities"]
+
+# The deleted == removed: a == b fails with the compilers' generic error,
+# without the hint.
+[[mutant]]
+name = "equality_hint_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  bool operator==(const basis_change&) const = delete; // use same_rows(a, b)
+''', replacement = '' }]
+expect = "killed"
+killers = ["core.basis_change_equality", "core.basis_change_inequality"]
+
+# A defaulted == in place of the deleted one: values compare entry by
+# entry, which the static_assert that basis_change is not equality
+# comparable rejects (a failed object of basis_change_test.cpp), and the
+# two comparisons compile.
+[[mutant]]
+name = "equality_defaulted"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''const = delete; // use same_rows(a, b)''', replacement = '''const = default; // use same_rows(a, b)''' }]
+expect = "killed"
+killers = ["core.basis_change_equality", "core.basis_change_inequality"]

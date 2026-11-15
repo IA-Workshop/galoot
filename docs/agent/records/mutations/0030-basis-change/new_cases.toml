@@ -1,0 +1,183 @@
+# Mutants written after change.toml's run, so that each test case and test
+# that part B and part C added kills at least one mutant on both presets
+# (plan 0030 criterion 12): the cases and tests that no mutant of the other
+# specs reached. Run at the tip only: they judge the new cases, not gaps.
+# Under --runtime the static_asserts of the one-mode Witt form in
+# diagonalize_test.cpp become static_assert(true || ...), as in ldlt.toml,
+# so that the hand-value cases must kill the diagonalize mutants.
+presets = ["gcc-debug", "clang-debug"]
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(witt_one_diagonal.squares =='
+replacement = 'static_assert(true || witt_one_diagonal.squares =='
+count = 1
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(witt_one_diagonal.rows =='
+replacement = 'static_assert(true || witt_one_diagonal.rows =='
+count = 1
+
+[[runtime]]
+file = "test/support/diagonalize_test.cpp"
+anchor = 'static_assert(diagonal_mismatches(witt_one, witt_one_diagonal) == 0);'
+replacement = 'static_assert(true || diagonal_mismatches(witt_one, witt_one_diagonal) == 0);'
+count = 1
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change$'
+
+[selection.diagonalize]
+targets = ["support_diagonalize_test"]
+labels = '^support\.diagonalize$'
+
+[selection.tracked]
+targets = [
+  "support_tracked_test",
+  "support_tracked_exact_rational_fail",
+  "support_tracked_division_fail",
+]
+labels = '^support\.tracked$'
+
+[selection.blade_product]
+targets = ["core_blade_product_test", "core_blade_product_assert_fail"]
+labels = '^core\.blade_product$'
+
+# Each output's q_B and its coefficients not divided by their gcd, so the
+# image of e45 under conformal_change<3>(), -2 e'45 / 2, asks for a division
+# over std::int64_t; for "change_basis over std::int64_t where no division
+# is needed".
+[[mutant]]
+name = "denominator_unreduced"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [
+  { anchor = '''    t.coefficient /= common[t.out];''', replacement = '''    t.coefficient /= 1;''' },
+  { anchor = '''    out.denominators[r] /= common[r];''', replacement = '''    out.denominators[r] /= 1;''' },
+]
+expect = "killed"
+
+# The transpose returning its argument; for "the matrix product, transpose,
+# and inverse on hand values".
+[[mutant]]
+name = "transpose_is_identity"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''      out[i][j] = x[j][i];''', replacement = '''      out[i][j] = x[i][j];''' }]
+expect = "killed"
+
+# The squarefree part losing the prime left after the loop; for "the
+# squarefree part and the integer square root on hand values".
+[[mutant]]
+name = "squarefree_part_last_prime_lost"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''  return part * x;''', replacement = '''  return part * (x / x);''' }]
+expect = "killed"
+
+# exact_rational's magnitude limit about doubled; for the tests
+# support.tracked_rejects_magnitude_two_62 and _magnitude_above.
+[[mutant]]
+name = "exact_rational_magnitude_widened"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''(below_two_62 >> power)''', replacement = '''(((below_two_62 >> power) << 1) | 1)''' }]
+expect = "killed"
+
+# exact_rational's limit narrowed by half; for "exact_rational converts
+# every double within its stated range".
+[[mutant]]
+name = "exact_rational_magnitude_narrowed"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''(below_two_62 >> power)''', replacement = '''((below_two_62 >> power) >> 1)''' }]
+expect = "killed"
+
+# exact_rational accepting a denominator of 2^63; for
+# support.tracked_rejects_denominator_two_63.
+[[mutant]]
+name = "exact_rational_denominator_widened"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''power >= -62''', replacement = '''power >= -63''' }]
+expect = "killed"
+
+# A division by a power of two counted as a rounding; for "tracked counts a
+# division by an exact divisor".
+[[mutant]]
+name = "division_by_power_of_two_counted"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''(power_of_two ? 0 : 1)''', replacement = '''(power_of_two ? 1 : 1)''' }]
+expect = "killed"
+
+# A rounded divisor accepted; for support.tracked_rejects_rounded_divisor.
+[[mutant]]
+name = "rounded_divisor_accepted"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  if (b.roundings != 0) {''', replacement = '''  if (b.roundings < 0) {''' }]
+expect = "killed"
+
+# A zero divisor left to the rational's own division; for
+# support.tracked_rejects_zero_divisor.
+[[mutant]]
+name = "zero_divisor_unchecked"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  if (b.value.numerator == 0) {''', replacement = '''  if (b.value.denominator == 0) {''' }]
+expect = "killed"
+
+# correctly_rounded without its dyadic case, so a dyadic value that is not
+# a double stops; for "correctly_rounded gives the nearest double of any
+# rational".
+[[mutant]]
+name = "correctly_rounded_dyadic_case_dropped"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  if (w == 1) {
+    return nearest_double(x);
+  }''', replacement = '' }]
+expect = "killed"
+
+# correctly_rounded not checking that w x is a double; for
+# support.tracked_rejects_not_a_double.
+[[mutant]]
+name = "scaled_numerator_unchecked"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''  if (exact_rational(numerator) != scaled) {''', replacement = '''  if (exact_rational(numerator) != exact_rational(numerator)) {''' }]
+expect = "killed"
+
+# The quotient check's ratio limit doubled, and its one-rounding case read
+# by the ratio; for "the quotient check admits exactly the bound".
+[[mutant]]
+name = "quotient_limit_doubled"
+selection = "tracked"
+file = "test/support/tracked.hpp"
+edits = [{ anchor = '''return scaled_bound_ratio(d, exact, roundings, magnitude) <= ratio_limit;''', replacement = '''return scaled_bound_ratio(d, exact, roundings, magnitude) <= 2 * ratio_limit;''' }]
+expect = "killed"
+
+# R(p, q, r) with its -1 squares first, which changes the product tables of
+# R(1, 1, 0) and R(1, 3, 0); for "The products of five algebras equal their
+# matrix representations".
+[[mutant]]
+name = "diagonal_negative_first"
+selection = "blade_product"
+file = "include/galoot/core/metric.hpp"
+edits = [{ anchor = '''m.gram[i][i] = i < P ? 1 : -1;''', replacement = '''m.gram[i][i] = i < Q ? -1 : 1;''' }]
+expect = "killed"
+
+# The pivot swap exchanging the form's vectors but not the rows of T, so
+# that T no longer diagonalizes; for "a zero pivot is swapped with the next
+# nonzero square", which pivot_swap_skipped cannot reach: its division by
+# the zero pivot stops the program in an earlier case.
+[[mutant]]
+name = "swap_leaves_t"
+selection = "diagonalize"
+file = "test/support/diagonalize.hpp"
+edits = [{ anchor = '''    t[i] = t[j];
+    t[j] = t_row;''', replacement = '''    static_cast<void>(t_row);''' }]
+expect = "killed"

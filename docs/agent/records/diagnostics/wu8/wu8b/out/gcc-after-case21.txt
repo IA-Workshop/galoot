@@ -1,0 +1,10 @@
+In file included from ../../../../../../include/galoot/core.hpp:12,
+                 from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, std::unique_ptr<double> >’:
+program.cpp:95:61:   required from here
+   95 |   const gc::mv<rga3, point_layout, std::unique_ptr<double>> s{};
+      |                                                             ^
+../../../../../../include/galoot/core/mv.hpp:464:17: error: static assertion failed: mv: the scalar type must be copyable and assignable, as a number is; give it copy construction and copy assignment, which a move-only type or a class with a const member lacks
+  464 |   static_assert(scalar_is_copyable,
+      |                 ^~~~~~~~~~~~~~~~~~
+  • ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, std::unique_ptr<double> >::scalar_is_copyable’ evaluates to false

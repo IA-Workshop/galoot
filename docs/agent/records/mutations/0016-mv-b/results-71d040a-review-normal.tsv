@@ -1,0 +1,49 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+float_bound_one_below	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1639	mv_test.cpp:1639	-	test/core/mv_test.cpp:1639:17: error: static assertion failed
+float_bound_one_below	clang-debug	normal	1	-	killed	-	mv_test.cpp:1639	mv_test.cpp:1639	-	test/core/mv_test.cpp:1639:17: error: static assertion failed due to requirement 'e12_exact<4095, 4097, float>'
+float_bound_one_above	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1641	mv_test.cpp:1641	-	test/core/mv_test.cpp:1641:17: error: static assertion failed
+float_bound_one_above	clang-debug	normal	1	-	killed	-	mv_test.cpp:1641	mv_test.cpp:1641	-	test/core/mv_test.cpp:1641:17: error: static assertion failed due to requirement '!e12_exact<24929, 673, float>'
+float_exponent_ignored	gcc-debug	normal	0	0	SURVIVED	-	-	-	-	-
+float_exponent_ignored	clang-debug	normal	0	0	SURVIVED	-	-	-	-	-
+float_bound_on_magnitude	gcc-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1640,mv_test.cpp:1663	mv_test.cpp:35,mv_test.cpp:1099,mv_test.cpp:1584,mv_test.cpp:1588,mv_test.cpp:1607,mv_test.cpp:1638,mv_test.cpp:1640,mv_test.cpp:1649,mv_test.cpp:1663	-	include/galoot/core/mv.hpp:658:15: error: unused variable ‘odd_bits’ [-Werror=unused-variable]
+float_bound_on_magnitude	clang-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1640,mv_test.cpp:1663	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1640,mv_test.cpp:1663,mv_truncate_assert_fail.cpp:29,smoke_test.cpp:3	-	include/galoot/core/mv.hpp:658:15: error: unused variable 'odd_bits' [-Werror,-Wunused-variable]
+integer_min_excluded	gcc-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1653,mv_test.cpp:1662	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1653,mv_test.cpp:1662	-	test/core/mv_test.cpp:1653:17: error: static assertion failed
+integer_min_excluded	clang-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1653,mv_test.cpp:1662	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1653,mv_test.cpp:1662	-	test/core/mv_test.cpp:1653:17: error: static assertion failed due to requirement 'e12_exact<128, 256, short>'
+integer_min_one_below	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1654	mv_test.cpp:35,mv_test.cpp:1584,mv_test.cpp:1644,mv_test.cpp:1654	-	include/galoot/core/mv.hpp:651:65: error: integer overflow in expression of type ‘galoot::core::coefficient_type’ {aka ‘long int’} results in ‘9223372036854775807’ [-Werror=overflow]
+integer_min_one_below	clang-debug	normal	1	-	killed	-	mv_test.cpp:1654	mv_test.cpp:1654	-	test/core/mv_test.cpp:1654:17: error: static assertion failed due to requirement '!e12_exact<9, 3641, short>'
+integer_max_excluded	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1655	mv_test.cpp:1655	-	test/core/mv_test.cpp:1655:17: error: static assertion failed
+integer_max_excluded	clang-debug	normal	1	-	killed	-	mv_test.cpp:1655	mv_test.cpp:1655	-	test/core/mv_test.cpp:1655:17: error: static assertion failed due to requirement 'e1234_exact<1, 7, 31, 151, short>'
+integer_bound_one_above	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1656	mv_test.cpp:35,mv_test.cpp:1584,mv_test.cpp:1644,mv_test.cpp:1656	-	include/galoot/core/mv.hpp:652:65: error: integer overflow in expression of type ‘galoot::core::coefficient_type’ {aka ‘long int’} results in ‘-9223372036854775808’ [-Werror=overflow]
+integer_bound_one_above	clang-debug	normal	1	-	killed	-	mv_test.cpp:1656	mv_test.cpp:1656	-	test/core/mv_test.cpp:1656:17: error: static assertion failed due to requirement '!e1234_exact<1, 1, 128, 256, short>'
+integer_bound_on_magnitude	gcc-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1653,mv_test.cpp:1662	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1653,mv_test.cpp:1662	-	test/core/mv_test.cpp:1653:17: error: static assertion failed
+integer_bound_on_magnitude	clang-debug	normal	1	-	killed	-	mv.hpp:787,mv_test.cpp:1653,mv_test.cpp:1662	mv_test.cpp:35,mv_test.cpp:1607,mv_test.cpp:1653,mv_test.cpp:1662	-	test/core/mv_test.cpp:1653:17: error: static assertion failed due to requirement 'e12_exact<128, 256, short>'
+no_coefficient_check	gcc-debug	normal	0	8	killed	core.mv_apply_inexact_float,core.mv_apply_inexact_double,core.mv_apply_inexact_short	-	-	-	-
+no_coefficient_check	clang-debug	normal	0	8	killed	core.mv_apply_inexact_float,core.mv_apply_inexact_double,core.mv_apply_inexact_short	-	-	-	-
+truncate_other_algebra	gcc-debug	normal	1	-	killed	-	mv_test.cpp:2067	mv_test.cpp:2067	-	test/core/mv_test.cpp:2067:17: error: static assertion failed
+truncate_other_algebra	clang-debug	normal	1	-	killed	-	mv_test.cpp:2067	mv_test.cpp:2067	-	test/core/mv_test.cpp:2067:17: error: static assertion failed due to requirement '!detail::multivector_of<galoot::core::mv<(anonymous namespace)::rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, 
+truncate_other_scalar	gcc-debug	normal	1	-	killed	-	mv_test.cpp:2068	mv_test.cpp:2068	-	test/core/mv_test.cpp:2068:17: error: static assertion failed
+truncate_other_scalar	clang-debug	normal	1	-	killed	-	mv_test.cpp:2068	mv_test.cpp:2068	-	test/core/mv_test.cpp:2068:17: error: static assertion failed due to requirement '!detail::multivector_of<galoot::core::mv<(anonymous namespace)::rga3, galoot::core::blade_set<6>{{{{9, -1}, {10, -1}, 
+no_semiregular_scalar_check	gcc-debug	normal	0	8	killed	core.mv_scalar_without_default	-	-	-	-
+no_semiregular_scalar_check	clang-debug	normal	0	8	killed	core.mv_scalar_without_default	-	-	-	-
+no_copyable_scalar_check	gcc-debug	normal	0	8	killed	core.mv_scalar_move_only,core.mv_scalar_const_member	-	-	-	-
+no_copyable_scalar_check	clang-debug	normal	0	8	killed	core.mv_scalar_move_only,core.mv_scalar_const_member	-	-	-	-
+array_reaches_count	gcc-debug	normal	0	8	killed	core.mv_coefficients_as_array,core.mv_value_not_scalar	-	-	-	-
+array_reaches_count	clang-debug	normal	0	8	killed	core.mv_coefficients_as_array,core.mv_value_not_scalar	-	-	-	-
+no_braced_list_catch_all	gcc-debug	normal	0	8	killed	core.mv_coefficients_as_braced_list,core.mv_coefficients_as_braced_list_copy	-	-	-	-
+no_braced_list_catch_all	clang-debug	normal	0	8	killed	core.mv_coefficients_as_braced_list,core.mv_coefficients_as_braced_list_copy	-	-	-	-
+braced_list_catch_all_explicit	gcc-debug	normal	0	8	killed	core.mv_coefficients_as_braced_list_copy	-	-	-	-
+braced_list_catch_all_explicit	clang-debug	normal	0	8	killed	core.mv_coefficients_as_braced_list_copy	-	-	-	-
+coefficient_by_conversion	gcc-debug	normal	1	-	killed	-	mv_test.cpp:2048,mv_test.cpp:2095	mv_test.cpp:2048,mv_test.cpp:2095	-	test/core/mv_test.cpp:2048:17: error: static assertion failed
+coefficient_by_conversion	clang-debug	normal	1	-	killed	-	mv_test.cpp:2048,mv_test.cpp:2095	mv_test.cpp:2048,mv_test.cpp:2095	-	test/core/mv_test.cpp:2048:17: error: static assertion failed due to requirement '!detail::not_a_coefficient<int, test_support::rational>'
+several_values_always	gcc-debug	normal	1	-	killed	-	mv_test.cpp:2055,mv_test.cpp:2056	mv_test.cpp:2055,mv_test.cpp:2056	-	test/core/mv_test.cpp:2055:17: error: static assertion failed
+several_values_always	clang-debug	normal	1	-	killed	-	mv_test.cpp:2055,mv_test.cpp:2056	mv_test.cpp:2055,mv_test.cpp:2056	-	test/core/mv_test.cpp:2055:17: error: static assertion failed due to requirement '!detail::holds_several_values<std::complex<double>>'
+several_values_no_containers	gcc-debug	normal	1	-	killed	-	mv_test.cpp:2050	mv_test.cpp:35,mv_test.cpp:2050	-	test/core/mv_test.cpp:2050:25: error: static assertion failed
+several_values_no_containers	clang-debug	normal	1	-	killed	-	mv_test.cpp:2050	mv_test.cpp:2050	-	test/core/mv_test.cpp:2050:17: error: static assertion failed
+truncate_checks_first_only	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1939,mv_test.cpp:1940	mv_test.cpp:1939,mv_test.cpp:1940	-	test/core/mv_test.cpp:1939:17: error: static assertion failed
+truncate_checks_first_only	clang-debug	normal	1	-	killed	-	mv_test.cpp:1939,mv_test.cpp:1940	mv_test.cpp:1939,mv_test.cpp:1940	-	test/core/mv_test.cpp:1939:17: error: static assertion failed due to requirement '!truncates_in_a_constant_evaluation<long, 0, 7>'
+truncate_catch_all_returns_source	gcc-debug	normal	0	8	killed	core.mv_truncate_result_used	-	-	-	-
+truncate_catch_all_returns_source	clang-debug	normal	0	8	killed	core.mv_truncate_result_used	-	-	-	-
+opposite_message_not_ordered	gcc-debug	normal	0	8	killed	core.mv_get_opposite_ordered	-	-	-	-
+opposite_message_not_ordered	clang-debug	normal	0	8	killed	core.mv_get_opposite_ordered	-	-	-	-
+absent_message_not_ordered	gcc-debug	normal	0	8	killed	core.mv_get_absent_ordered	-	-	-	-
+absent_message_not_ordered	clang-debug	normal	0	8	killed	core.mv_get_absent_ordered	-	-	-	-

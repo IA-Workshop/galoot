@@ -1,5 +1,7 @@
 # Verification, validation, and uncertainty quantification
 
+Status: ratified by the owner on 2026-11-01 (decision 0094).
+
 This document defines what counts as evidence that Galoot is correct and how numerical uncertainty is handled. It adds detail to C7, C11, C14, and C15 of the [constitution](CONSTITUTION.md); [WORKFLOW.md](WORKFLOW.md) says when in a unit of work the evidence is produced.
 
 Verification shows that the implementation meets its specification: the conventions specification and the mathematical definitions it cites. Validation shows that the specification is the mathematics users mean, and that a model serves the uses it was built for. Uncertainty quantification states how far a computed value can be from the exact one. Passing one of the three is never evidence for another.
@@ -51,11 +53,11 @@ A generated structure is validated against the mathematics it claims to be: defi
 
 ### V9 Sources and sampled claims
 
-A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1).
+A source is cited only after someone has read it and confirmed that it supports the specific claim, and the research note records who did. A claim supported only by random sampling states the number of samples, the seed, and what was observed; it supports a hypothesis, not a theorem. Such a claim, including those the design study reports as checked numerically, becomes a reference for the core only after evidence of kind 1 or 2 (V1). A formula or table from a published source is a reference only after it is recomputed from the definitions, and an erratum found this way is recorded in a research note. A source that could not be retrieved is recorded as not read. A substitute, such as a preprint, an abstract, or a secondary account, is named as such, with how it may differ from the source. Quoted external text is marked as a quotation with its source.
 
 ### V10 Status in reports
 
-Every reported result and every release states, separately, whether verification and validation were performed and whether they passed. A result that lacks either is labeled unverified or unvalidated.
+Every reported result and every release states, separately, whether verification and validation were performed and whether they passed. A result that lacks either is labeled unverified or unvalidated. A reported value or finding names the revision, command, and seed that produce it, and a result that comes from unrecorded or scratch steps is labeled not reproducible until its steps are committed.
 
 ## Uncertainty
 

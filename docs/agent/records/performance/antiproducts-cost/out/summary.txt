@@ -1,0 +1,33 @@
+after: 5f209d4055a9; before: develop; 3 repeats pinned to CPU 4; instructions retired on that core, mean and spread in M; wall time mean in s; peak memory max in KiB
+gcc suites/smoke/before: 1130.9 M (spread 0.1), 0.161 s, 90420 KiB
+gcc suites/smoke/after: 1135.1 M (spread 0.0), 0.153 s, 90404 KiB
+gcc suites/core_only/before: 932.7 M (spread 0.4), 0.131 s, 79852 KiB
+gcc suites/core_only/after: 937.9 M (spread 0.2), 0.138 s, 82060 KiB
+gcc suites/product/before: 21584.0 M (spread 6.2), 1.470 s, 404996 KiB
+gcc suites/product/after: 43001.1 M (spread 41.9), 2.814 s, 413188 KiB
+gcc suites/unary/after: 14954.4 M (spread 5.1), 1.316 s, 344912 KiB
+gcc suites/identities/after: 294999.7 M (spread 499.6), 18.924 s, 1413204 KiB
+gcc growth/percent/n4: 1838.7 M (spread 0.3), 0.195 s, 105824 KiB; use 747.3 M
+gcc growth/times/n4: 1929.2 M (spread 0.3), 0.223 s, 106300 KiB; use 837.9 M
+gcc growth/baseline/n4: 1091.3 M (spread 0.3), 0.146 s, 88804 KiB
+gcc growth/percent/n16: 2650.5 M (spread 8.0), 0.248 s, 107796 KiB; use 1545.3 M
+gcc growth/times/n16: 1944.1 M (spread 0.4), 0.213 s, 106364 KiB; use 838.9 M
+gcc growth/baseline/n16: 1105.2 M (spread 0.3), 0.210 s, 89176 KiB
+gcc growth of percent from n = 4 to 16: +106.8%
+gcc growth of times from n = 4 to 16: +0.1%
+clang suites/smoke/before: 1044.0 M (spread 2.7), 0.165 s, 130260 KiB
+clang suites/smoke/after: 1047.8 M (spread 1.5), 0.171 s, 130328 KiB
+clang suites/core_only/before: 942.4 M (spread 1.4), 0.138 s, 116016 KiB
+clang suites/core_only/after: 949.1 M (spread 2.5), 0.139 s, 116156 KiB
+clang suites/product/before: 19151.4 M (spread 47.6), 1.300 s, 228844 KiB
+clang suites/product/after: 42686.9 M (spread 32.7), 2.760 s, 273880 KiB
+clang suites/unary/after: 11508.5 M (spread 26.3), 1.167 s, 242260 KiB
+clang suites/identities/after: 299107.2 M (spread 842.2), 21.877 s, 715332 KiB
+clang growth/percent/n4: 1936.9 M (spread 3.1), 0.219 s, 137328 KiB; use 914.3 M
+clang growth/times/n4: 1834.1 M (spread 3.3), 0.212 s, 137568 KiB; use 811.5 M
+clang growth/baseline/n4: 1022.6 M (spread 2.6), 0.151 s, 126468 KiB
+clang growth/percent/n16: 5212.3 M (spread 16.7), 0.383 s, 137384 KiB; use 4174.0 M
+clang growth/times/n16: 1847.2 M (spread 5.8), 0.216 s, 137412 KiB; use 808.8 M
+clang growth/baseline/n16: 1038.3 M (spread 2.4), 0.153 s, 126656 KiB
+clang growth of percent from n = 4 to 16: +356.5%
+clang growth of times from n = 4 to 16: -0.3%

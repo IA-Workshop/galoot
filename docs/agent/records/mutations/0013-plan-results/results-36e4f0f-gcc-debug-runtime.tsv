@@ -1,0 +1,79 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_shared_kept	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: no match for ‘operator==’ (operand types are ‘const galoot::core::detail::typed_plan<10, 16>’ and ‘galoot::core::detail::typed_plan<6, 12>’)
+wedge_sign_plus	gcc-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products	-
+wedge_sign_reversed	gcc-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+wedge_sign_by_grade	gcc-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+wedge_range_removed	gcc-debug	0	8	core.plan_wedge_pair_beyond_n,core.plan_wedge_pair_beyond_n_second	killed	-	-	-
+wedge_range_first_only	gcc-debug	0	8	core.plan_wedge_pair_beyond_n_second	killed	-	-	-
+wedge_range_second_only	gcc-debug	0	8	core.plan_wedge_pair_beyond_n	killed	-	-	-
+wedge_as_gp	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: no match for ‘operator==’ (operand types are ‘const galoot::core::detail::typed_plan<7, 15>’ and ‘galoot::core::detail::typed_plan<6, 12>’)
+pair_rule_always_gp	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: no match for ‘operator==’ (operand types are ‘const galoot::core::detail::typed_plan<7, 15>’ and ‘galoot::core::detail::typed_plan<6, 12>’)
+wedge_capacity_gp	gcc-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:90:67: error: unused parameter ‘op’ [-Werror=unused-parameter]
+capacities_swapped	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+sign_fold_dropped	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Repeated blades share a result position, and empty sets give empty typed plans	-
+sign_first_only	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | product_plan accepts the generators of the widest algebra	-
+sign_second_only	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Repeated blades share a result position, and empty sets give empty typed plans	-
+sign_by_sum	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+positions_swapped	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+a_off_by_one	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+b_off_by_one	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+out_shifted	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | The result set of every blade times every blade is the golden canonical order | Repeated blades share a result position, and empty sets give empty typed plans	-
+out_xor	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table	-
+loops_swapped	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products	-
+terms_reversed	gcc-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table	-
+last_pair_skipped	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:381:70: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 12>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+count_plus_one	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:381:70: error: no match for ‘operator==’ (operand types are ‘const std::array<galoot::core::detail::plan_term, 16>’ and ‘std::array<galoot::core::detail::plan_term, 15>’)
+write_bound_inclusive	gcc-debug	1	-	-	killed	-	-	/usr/include/c++/16/span:288:9: error: call to non-‘constexpr’ function ‘void std::__glibcxx_assert_fail(const char*, int, const char*, const char*)’
+capacity_start_zero	gcc-debug	0	8	core.plan	killed	-	A plan with an empty blade set is empty | Repeated blades share a result position, and empty sets give empty typed plans	-
+capacity_halved	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+fill_negated	gcc-debug	0	8	core.plan	killed	-	product_plan equals generate_plan run at run time | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | product_plan equals its typing run at run time | Repeated blades share a result position, and empty sets give empty typed plans	-
+range_first_only	gcc-debug	0	8	core.plan_beyond_n_second	killed	-	-	-
+range_second_only	gcc-debug	0	8	core.plan_beyond_n,core.plan_wedge_beyond_n	killed	-	-	-
+range_check_removed	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_wedge_beyond_n	killed	-	-	-
+sign_check_first_only	gcc-debug	0	8	core.plan_bad_sign_second	killed	-	-	-
+sign_check_second_only	gcc-debug	0	8	core.plan_bad_sign	killed	-	-	-
+sign_check_removed	gcc-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+generation_unguarded	gcc-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_wedge_beyond_n	killed	-	-	-
+zero_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+second_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+beyond_n_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+order_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_bound_strict	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+second_bound_strict	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+zero_test_wrong	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_allows_repeat	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_b	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_a	gcc-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+result_by_mask	gcc-debug	0	8	core.plan	killed	-	Every typed plan reads back as its generated terms, on a result set of exactly their blades in canonical order | The result set of every blade times every blade is the golden canonical order | collect_result and type_terms keep to their stated bounds	-
+result_extra_scalar	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: no match for ‘operator==’ (operand types are ‘const galoot::core::detail::typed_plan<7, 12>’ and ‘galoot::core::detail::typed_plan<6, 12>’)
+result_sign_from_coefficient	gcc-debug	0	8	core.plan	killed	-	Repeated blades share a result position, and empty sets give empty typed plans | collect_result and type_terms keep to their stated bounds	-
+result_repeats_kept	gcc-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1043:78: error: no match for ‘operator==’ (operand types are ‘const galoot::core::detail::typed_plan<15, 15>’ and ‘galoot::core::detail::typed_plan<7, 15>’)
+result_room_check_removed	gcc-debug	0	8	core.plan_result_room	killed	-	-	-
+result_room_inclusive	gcc-debug	0	8	core.plan_result_room	killed	-	-	-
+result_clears_rest	gcc-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+position_off_by_one	gcc-debug	1	-	-	killed	-	-	/usr/include/c++/16/array:240:43: error: call to non-‘constexpr’ function ‘void std::__throw_out_of_range_fmt(const char*, ...)’
+position_missing_zero	gcc-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+typing_past_output	gcc-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+typed_result_short	gcc-debug	1	-	-	killed	-	-	/usr/include/c++/16/array:240:43: error: call to non-‘constexpr’ function ‘void std::__throw_out_of_range_fmt(const char*, ...)’
+typed_negated	gcc-debug	0	8	core.plan	killed	-	product_plan equals generate_plan run at run time | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | product_plan equals its typing run at run time | Repeated blades share a result position, and empty sets give empty typed plans	-
+typing_order_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_sign_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_beyond_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_unused_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_terms_check_removed	gcc-debug	-	-	-	skipped	-	-	the check is off in this mode
+typed_result_order_by_mask	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_result_repeat_allowed	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_sign_test	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_beyond_inclusive	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_unused_ignored	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_allows_equal	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_same_b	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_same_a	gcc-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_term_not_trivially_copyable	gcc-debug	1	-	-	killed	plan_test.cpp:1281,plan_test.cpp:1283	-	test/core/plan_test.cpp:1281:20: error: static assertion failed
+typed_term_not_aggregate	gcc-debug	1	-	-	killed	plan_test.cpp:1280	-	include/galoot/core/plan.hpp:262:5: error: no match for ‘operator=’ (operand types are ‘std::span<galoot::core::detail::typed_term>::element_type’ {aka ‘galoot::core::detail::typed_term’} and ‘<brace-
+typed_plan_not_trivially_copyable	gcc-debug	1	-	-	killed	plan_test.cpp:1283	-	test/core/plan_test.cpp:1283:20: error: static assertion failed
+typed_plan_not_aggregate	gcc-debug	1	-	-	killed	plan_test.cpp:1282	-	test/core/plan_test.cpp:1079:15: error: designated initializers cannot be used with a non-aggregate type ‘galoot::core::detail::typed_plan<7, 15>’
+locals_plain	gcc-debug	0	0	-	SURVIVED	-	-	-
+locals_plain_twice	gcc-debug	0	0	-	SURVIVED	-	-	-
+twice_static_locals	gcc-debug	0	0	-	SURVIVED	-	-	-

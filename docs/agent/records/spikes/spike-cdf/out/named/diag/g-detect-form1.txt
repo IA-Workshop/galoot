@@ -1,0 +1,3 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/named_detect.cpp:12:102: error: aggregate ‘answers<14> show’ has incomplete type and cannot be defined
+   12 | answers<(g_e1<Line> ? 1 : 0) + (s_e1<Line> ? 2 : 0) + (g_e41<Line> ? 4 : 0) + (s_e41<Line> ? 8 : 0)> show;
+      |                                                                                                      ^~~~

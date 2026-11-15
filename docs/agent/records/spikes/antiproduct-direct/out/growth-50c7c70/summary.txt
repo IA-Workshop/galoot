@@ -1,0 +1,7 @@
+headers of 50c7c70; instructions retired on the pinned core, mean of the repeats, in M; each use is its unit minus the baseline at the same n
+gcc gp: n=4 306.0 M (+0.0%, spread 0.8, baseline 906.6 M); n=8 309.2 M (+1.1%, spread 0.5, baseline 906.7 M); n=12 315.1 M (+3.0%, spread 0.9, baseline 907.2 M); n=16 323.5 M (+5.7%, spread 0.6, baseline 907.4 M)
+gcc antigp: n=4 308.9 M (+0.0%, spread 0.3, baseline 906.6 M); n=8 476.7 M (+54.4%, spread 1.1, baseline 906.7 M); n=12 751.2 M (+143.2%, spread 0.7, baseline 907.2 M); n=16 1130.4 M (+266.0%, spread 5.1, baseline 907.4 M)
+gcc reduced: n=4 342.3 M (+0.0%, spread 0.2, baseline 906.6 M); n=8 349.4 M (+2.1%, spread 0.4, baseline 906.7 M); n=12 358.6 M (+4.7%, spread 1.0, baseline 907.2 M); n=16 371.5 M (+8.5%, spread 0.8, baseline 907.4 M)
+clang gp: n=4 547.5 M (+0.0%, spread 2.3, baseline 925.0 M); n=8 553.9 M (+1.2%, spread 4.6, baseline 925.1 M); n=12 563.5 M (+2.9%, spread 2.5, baseline 923.2 M); n=16 571.2 M (+4.3%, spread 3.6, baseline 925.4 M)
+clang antigp: n=4 699.9 M (+0.0%, spread 2.5, baseline 925.0 M); n=8 1379.9 M (+97.1%, spread 3.0, baseline 925.1 M); n=12 2463.4 M (+252.0%, spread 9.6, baseline 923.2 M); n=16 3969.6 M (+467.2%, spread 65.6, baseline 925.4 M)
+clang reduced: n=4 678.4 M (+0.0%, spread 6.0, baseline 925.0 M); n=8 710.9 M (+4.8%, spread 4.3, baseline 925.1 M); n=12 759.6 M (+12.0%, spread 2.5, baseline 923.2 M); n=16 829.8 M (+22.3%, spread 6.2, baseline 925.4 M)

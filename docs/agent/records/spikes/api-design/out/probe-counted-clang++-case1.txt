@@ -1,0 +1,10 @@
+counted.cpp:28:19: error: static assertion failed due to requirement 'sizeof...(A) == 4UL': give one value for each component of the type, in the order the type lists them
+   28 |     static_assert(sizeof...(A) == K,
+      |                   ^~~~~~~~~~~~~~~~~
+counted.cpp:50:20: note: in instantiation of function template specialization 'counted<4>::counted<int, int, int>' requested here
+   50 |   const counted<4> p{1, 2, 3};
+      |                    ^
+counted.cpp:28:32: note: expression evaluates to '3 == 4'
+   28 |     static_assert(sizeof...(A) == K,
+      |                   ~~~~~~~~~~~~~^~~~
+1 error generated.

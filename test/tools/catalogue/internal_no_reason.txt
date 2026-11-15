@@ -1,0 +1,4 @@
+# A block whose first line is a message, not its reason.
+
+third: only forbidden
+fourth: only in a test that is meant to fail

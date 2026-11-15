@@ -1,0 +1,9 @@
+conformal(3) and R(4,1,0): bulk(1 e4) = -1 e5; by way of the target: -1/2 e5; differ: True
+conformal(3) and R(4,1,0): weight(1 e4) = 1 e5; by way of the target: 1/2 e5; differ: True
+conformal(3) and R(4,1,0): right(1 e4) = -1 e1235; by way of the target: 1/2 e1235; differ: True
+conformal(3) and R(4,1,0): left(1 e4) = -1 e1235; by way of the target: 1/2 e1235; differ: True
+random 1 and diag(2, 1, -62): antigp(1 e12, 1 e12) = -2 e123; by way of the target: -124 e123; differ: True
+random 1 and diag(2, 1, -62): antidot(1 e12, 1 e12) = -2 e123; by way of the target: -124 e123; differ: True
+random 1 and diag(2, 1, -62): weight_dual(1 e3) = 2 e12 + -6 e13 + 3 e23; by way of the target: -2510 e12 + -744 e13 + 186 e23; differ: True
+every value differs
+timed: spike wu12-hand-values took 0.166 s (exit 0)

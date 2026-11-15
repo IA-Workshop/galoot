@@ -1,0 +1,45 @@
+# The gap mutants of plan 0030 section 8, at the branch point 1818efe (the
+# unit before part B's tests and part C's header), run from a detached
+# worktree at that revision: judged by the four identity suites alone, which
+# must let each survive for it to count (gaps.toml beside this directory
+# runs the same mutants at the tip). The predictions are
+# gap-predictions.md, written before any run.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = [
+  "core_identities_test",
+  "core_identities_rounding_test",
+  "core_dual_identities_test",
+  "core_transform_identities_test",
+]
+labels = '^core\.(identities|identities_rounding|dual_identities|transform_identities)$'
+
+# conformal(d) with e(d+1) . e(d+2) = +1, a consistent algebra of another
+# form.
+[[mutant]]
+name = "conformal_pairing_positive"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [
+  { anchor = '''m.gram[D][D + 1] = -1;''', replacement = '''m.gram[D][D + 1] = 1;''' },
+  { anchor = '''m.gram[D + 1][D] = -1;''', replacement = '''m.gram[D + 1][D] = 1;''' },
+]
+expect = "killed"
+
+# R(p, q, r) with its -1 squares before its +1 squares.
+[[mutant]]
+name = "diagonal_negative_first"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [{ anchor = '''m.gram[i][i] = i < P ? 1 : -1;''', replacement = '''m.gram[i][i] = i < Q ? -1 : 1;''' }]
+expect = "killed"
+
+# from_gram doubling every entry off the diagonal, the nearest library
+# mutant to a Witt form of pairing 2.
+[[mutant]]
+name = "witt_pairing_doubled"
+selection = "identities"
+file = "include/galoot/core/metric.hpp"
+edits = [{ anchor = '''m.gram[i][j] = gram[i][j];''', replacement = '''m.gram[i][j] = i == j ? gram[i][j] : 2 * gram[i][j];''' }]
+expect = "killed"

@@ -1,0 +1,117 @@
+# The mutants of bits.hpp, ported from docs/agent/snippets/bits_fault_injection.py
+# with their anchors and replacements unchanged, judged by the bits suite:
+# the run-time and static_assert checks of bits_test.cpp, the abort tests of
+# bits_assert_fail.cpp, and the compile-fail test core.bits_consteval. Under
+# --runtime the nine static_asserts of bits_test.cpp become
+# static_assert(true || ...), as the snippet's --runtime-only removed them,
+# so that the run-time checks must kill each mutant; unlike the removal, the
+# rewrite keeps all_agree in use, so Clang's -Wunused-function does not stop
+# the baseline.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.bits]
+targets = ["core_bits_test", "core_bits_assert_fail"]
+labels = '^core\.bits$'
+
+[[runtime]]
+file = "test/core/bits_test.cpp"
+anchor = "\nstatic_assert("
+replacement = "\nstatic_assert(true || "
+count = 9
+
+[[mutant]]
+name = "reorder_counts_equal"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'b & ((mask_t{1} << i) - 1U)', replacement = 'b & ((mask_t{2} << i) - 1U)' }]
+expect = "killed"
+
+# Counts the pairs with the generator of A below the one of B, as if the
+# bits of a mask were numbered from the other end.
+[[mutant]]
+name = "reorder_opposite_order"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'b & ((mask_t{1} << i) - 1U)', replacement = 'b & ~((mask_t{2} << i) - 1U)' }]
+expect = "killed"
+
+# This and the next keep every variable in use, so -Werror does not end the
+# build.
+[[mutant]]
+name = "reorder_always_plus"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return swaps % 2 == 0 ? 1 : -1;', replacement = 'return swaps % 2 == 0 ? 1 : 1;' }]
+expect = "killed"
+
+[[mutant]]
+name = "right_sign_swapped"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return reorder_sign(a, complement_mask(a, n));', replacement = 'return reorder_sign(complement_mask(a, n), a);' }]
+expect = "killed"
+
+[[mutant]]
+name = "left_sign_swapped"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return reorder_sign(complement_mask(a, n), a);', replacement = 'return reorder_sign(a, complement_mask(a, n));' }]
+expect = "killed"
+
+[[mutant]]
+name = "reverse_k_plus_1"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return (k * (k - 1) / 2) % 2 == 0 ? 1 : -1;', replacement = 'return (k * (k + 1) / 2) % 2 == 0 ? 1 : -1;' }]
+expect = "killed"
+
+[[mutant]]
+name = "antireverse_uses_grade"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'const int m = antigrade(a, n);', replacement = 'const int m = static_cast<int>(n) - antigrade(a, n);' }]
+expect = "killed"
+
+[[mutant]]
+name = "involution_mod_4"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return grade(a) % 2 == 0 ? 1 : -1;', replacement = 'return grade(a) % 4 == 0 ? 1 : -1;' }]
+expect = "killed"
+
+[[mutant]]
+name = "complement_drops_top"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return ~a & detail::low_bits(n);', replacement = 'return ~a & (detail::low_bits(n) >> 1U);' }]
+expect = "killed"
+
+[[mutant]]
+name = "count_rejects_32"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return n >= 1 && n <= mask_bits;', replacement = 'return n >= 1 && n < mask_bits;' }]
+expect = "killed"
+
+# n is unsigned, so n >= 0 would end the build on -Wtype-limits instead.
+[[mutant]]
+name = "count_accepts_0"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return n >= 1 && n <= mask_bits;', replacement = 'return n <= mask_bits;' }]
+expect = "killed"
+
+[[mutant]]
+name = "count_accepts_above"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return n >= 1 && n <= mask_bits;', replacement = 'return n >= 1 && n <= mask_bits + 1;' }]
+expect = "killed"
+
+# Still uses both parameters, so -Wunused-parameter does not end the build.
+[[mutant]]
+name = "mask_check_dropped"
+selection = "bits"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = 'return (a & ~low_bits(n)) == 0;', replacement = 'return (a & ~low_bits(n)) == 0 || a != 0;' }]
+expect = "killed"

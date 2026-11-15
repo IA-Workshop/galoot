@@ -1,0 +1,5 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_capacity_gp	gcc-debug	0	8	core.plan	killed	-	Repeated blades share a result position, and empty sets give empty typed plans	-
+typed_plan_not_structural	gcc-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:364:11: error: mutable ‘galoot::core::detail::typed_plan<7, 15>::terms’ is not usable in a constant expression
+plan_term_not_trivially_copyable	gcc-debug	1	-	-	killed	plan_test.cpp:507	-	test/core/plan_test.cpp:507:20: error: static assertion failed
+plan_term_not_aggregate	gcc-debug	1	-	-	killed	plan_test.cpp:506	-	test/core/plan_test.cpp:353:3: error: could not convert ‘{{{0, 0, {anonymous}::e1, 1}, {0, 1, {anonymous}::e2, 1}, {0, 2, en, 1}, {1, 0, 0, 1}, {1, 1, {anonymous}::e12, 1}, {1, 2, ({anonymous}::e1 | e

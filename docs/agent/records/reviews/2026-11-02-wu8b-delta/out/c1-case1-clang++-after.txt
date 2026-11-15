@@ -1,0 +1,11 @@
+$S/probes/c1.cpp:37:13: error: call to 'g' is ambiguous
+   37 |   std::puts(g(raw));
+      |             ^
+$S/probes/c1.cpp:21:37: note: candidate function
+   21 | [[maybe_unused]] static const char* g(const Point&) { return "Point"; }
+      |                                     ^
+$S/probes/c1.cpp:22:37: note: candidate function
+   22 | [[maybe_unused]] static const char* g(std::span<const double>) { return "span"; }
+      |                                     ^
+1 error generated.
+timed: probe delta-wu8b:probe-c1-1:clang++:new took 0.323 s (exit 1)

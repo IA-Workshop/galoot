@@ -1,0 +1,49 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:259:59: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+  259 |   using ConstLine = gc::mv<rga3, line_layout, const double>;
+      |                                                           ^
+first_user.cpp:259:59: note: constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from first_user.cpp:6:
+  • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}; T = const double]’:
+  • required from here
+    first_user.cpp:259:59:   
+  • required for the satisfaction of ‘assignable_from<_Tp&, _Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:148:13:   
+      148 |     concept assignable_from
+          |             ^~~~~~~~~~~~~~~
+  • required for the satisfaction of ‘movable<_Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:273:13:   
+      273 |     concept movable = is_object_v<_Tp> && move_constructible<_Tp>
+          |             ^~~~~~~
+  • required for the satisfaction of ‘copyable<_Tp>’ [with _Tp = const double]
+    /usr/include/c++/16/concepts:277:13:   
+      277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+          |             ^~~~~~~~
+  • required for the satisfaction of ‘semiregular<T>’ [with T = const double]
+    /usr/include/c++/16/concepts:282:13:   
+      282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+          |             ^~~~~~~~~~~
+  • in requirements with ‘_Lhs __lhs’, ‘_Rhs&& __rhs’ [with _Lhs = const double&; _Rhs = const double]
+    /usr/include/c++/16/concepts:151:10:   
+      151 |       && requires(_Lhs __lhs, _Rhs&& __rhs) {
+          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      152 |         { __lhs = static_cast<_Rhs&&>(__rhs) } -> same_as<_Lhs>;
+          |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      153 |       };
+          |       ~   
+  • the required expression ‘__lhs = static_cast<_Rhs&&>(__rhs)’ is invalid
+    /usr/include/c++/16/concepts:152:17:
+      152 |         { __lhs = static_cast<_Rhs&&>(__rhs) } -> same_as<_Lhs>;
+          |           ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail
+first_user.cpp:259:21: error: expected type-specifier
+  259 |   using ConstLine = gc::mv<rga3, line_layout, const double>;
+      |                     ^~
+first_user.cpp:260:9: error: ‘ConstLine’ does not name a type
+  260 |   const ConstLine s{};
+      |         ^~~~~~~~~
+first_user.cpp:261:8: error: ‘s’ was not declared in this scope
+  261 |   r += s.coefficients[0];
+      |        ^

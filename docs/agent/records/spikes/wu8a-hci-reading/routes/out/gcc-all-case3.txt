@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+mv_routes.hpp: In instantiation of ‘constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&) [with name_list<...auto...> Name = detail::name_list<4>{std::array<char, 4>{"e14"}}; X = Line&; detail::coefficient_reference<X> = double&]’:
+program.cpp:89:18:   required from here
+   89 |   r += get<"e14">(l);
+      |        ~~~~~~~~~~^~~
+mv_routes.hpp:526:19: error: static assertion failed: get: the type stores this blade with the other orientation; use the name its layout gives it and negate the value
+  526 |     static_assert(false, "get: the type stores this blade with the other "
+      |                   ^~~~~
+  • ‘false’ evaluates to false

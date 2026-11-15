@@ -1,0 +1,9 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+integer_bound_one_above	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_bound_one_above	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+truncate_checks_rounding	gcc-debug	runtime	0	8	killed	core.mv	-	-	truncate keeps the blades of its target<float>	-
+truncate_checks_rounding	clang-debug	runtime	0	8	killed	core.mv	-	-	truncate keeps the blades of its target<float>	-
+truncate_skips_rational	gcc-debug	runtime	0	8	killed	core.mv_truncate_consteval_nonzero_rational,core.mv_truncate_nonzero_rational,core.mv_truncate_nonzero_counted	-	-	-	-
+truncate_skips_rational	clang-debug	runtime	0	8	killed	core.mv_truncate_consteval_nonzero_rational,core.mv_truncate_nonzero_rational,core.mv_truncate_nonzero_counted	-	-	-	-
+truncate_check_removed	gcc-debug	runtime	0	8	killed	core.mv,core.mv_truncate_consteval_nonzero,core.mv_truncate_consteval_nonzero_rational,core.mv_truncate_nonzero_int64,core.mv_truncate_nonzero_rational,core.mv_truncate_nonzero_counted	-	-	truncate checks what it drops over an exact scalar	-
+truncate_check_removed	clang-debug	runtime	0	8	killed	core.mv,core.mv_truncate_consteval_nonzero,core.mv_truncate_consteval_nonzero_rational,core.mv_truncate_nonzero_int64,core.mv_truncate_nonzero_rational,core.mv_truncate_nonzero_counted	-	-	truncate checks what it drops over an exact scalar	-

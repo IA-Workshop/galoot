@@ -1,0 +1,10 @@
+# revision e191731, the merge mutants after the guard was removed
+mutation	preset	build_exit	test_exit	failed_tests	killed	first_build_error
+merge_duplicates	gcc-debug	1	8	core.blade_set_merge_opposite_signs,core.blade_set_merge_repeated_mask	killed	test/core/blade_set_test.cpp:654:40: error: no match for ‘operator==’ (operand types are ‘doctest::detail::Expression_lhs<const std::array<galoot::core::oriented_blade, 12>&>’ and ‘const std::array<ga
+merge_conflict	gcc-debug	0	8	core.blade_set_merge_opposite_signs	killed	-
+merge_sign_check	gcc-debug	0	8	core.blade_set_merge_bad_sign	killed	-
+merge_repeat_check	gcc-debug	0	8	core.blade_set_merge_repeated_mask	killed	-
+merge_duplicates	clang-debug	1	8	core.blade_set_merge_opposite_signs,core.blade_set_merge_repeated_mask	killed	test/core/blade_set_test.cpp:654:40: error: invalid operands to binary expression ('Expression_lhs<const std::array<galoot::core::oriented_blade, 12> &>' and 'const array<remove_cv_t<galoot::core::ori
+merge_conflict	clang-debug	0	8	core.blade_set_merge_opposite_signs	killed	-
+merge_sign_check	clang-debug	0	8	core.blade_set_merge_bad_sign	killed	-
+merge_repeat_check	clang-debug	0	8	core.blade_set_merge_repeated_mask	killed	-

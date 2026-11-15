@@ -1,0 +1,31 @@
+# 0176 CONVENTIONS 1.10 as committed, and the condition on 4.3's antiprojection sentences
+
+- Status: recorded. The 1.10 text was ratified by the owner on 2026-11-07 (decision 0192), with one wording change in 4.4 made here that needs the owner's confirmation (item 3).
+- Date: 2026-11-07
+- Recorded by: Claude (agent, Opus 5.5), implementer of WU13a
+- Bears on: CONVENTIONS 2.1, 3.2, 4.3, 4.4, 4.5, 7.1; plan 0021 section 4 step 2; decisions 0177, 0190, 0192; research note 0021
+
+## Context
+
+Decision 0192 ratified the 1.10 text proposed in plan 0021 O2 with three changes, and left two things to WU13a: the wording of the 4.5 sentence on which rounding scalars are checked, and whether 4.3's antiprojection sentences have met their condition (a direct reading of the Projections page under V9, and passing antiprojection checks in `conventions_check.py`). Plan 0021 step 1 (the math-expert's checks, the spike, decision 0177, and research note 0021) ran first, so the evidence labels could be set from its results.
+
+## Decision
+
+1. **The condition of decision 0192 item 2(c) is met.** Research note 0021 records a direct reading of the page's source text (revision 352, 2024-04-13, fetched as raw wikitext, not through a summary), by Claude, agent, Opus 5.5, math-expert role. The page defines the antiprojection of a onto b as b ∧ (a ∨ b☆), as plan 0021 read it; nine of its formulas were recomputed as polynomial identities in rigid(3) and agree; one row (the horizon onto a point) is the negation of its own formula, an erratum the note records, and no convention rests on it. `conventions_check.py`'s antiprojection checks pass ("all convention checks passed (seed 20261031)"). So 4.3 carries the antiprojection sentences, labeled "Checked; Confirmed".
+2. **The text, as committed** (the changes against 1.9):
+   - 2.1 adds: "the antigrade involution multiplies a blade of antigrade m by (−1)^m, so it is (−1)^n times the grade involution, and the right complement takes it to the grade involution: right(x̌) is the grade involution of right(x)", labeled Proposed for 4.4 with its relations Checked (`conventions_check.py`; decision 0177 section 1.2).
+   - 4.3: plan 0021 O2's text, labeled "(Checked; Confirmed, research note 0021)".
+   - 4.4: plan 0021 O2's text, with the change of item 3, labeled "(Proposed; the odd sign Checked for n = 3, 4, and 5)": the math-expert's check covers rigid(2), R(3,0,0), rigid(3), R(4,0,0), rigid(4), and R(5,0,0), so n = 5 is added to the proposed "n = 3 and n = 4".
+   - 4.5 adds, for decision 0192 item 2(b) and O5: "The rounding scalars it checks are the IEEE 754 binary floating-point types that round to nearest, those whose `std::numeric_limits` give `is_iec559` and `round_to_nearest`: `float` and `double` are tested, and `long double` is neither tested nor claimed. Other inexact scalars, such as `std::complex<double>`, are not checked, and the operation's interface says so." `long double` is x87 on x86-64, which is out of scope, so it is neither tested nor claimed; the sentence says what the check covers, and the rounding check itself is WU13b's.
+   - 7.1: "the projections" join the operations without an operator, and `transform(x, V)` "applies 4.4".
+   - 3.2: unchanged. Its label "(Confirmed, with the diagonal case Checked)" is now backed: `conventions_check.py` checks the diagonal rule on every blade of 13 diagonal forms, with squares of −1 and one to three null generators (decision 0190). The revision row says so.
+3. **One change to the ratified 4.4 wording.** Plan 0021 O2 read "Either way the transform is the outermorphism of V's action on vectors". Decision 0177 (theorem 4) shows that for a versor with V ⟇ V̰ = λ𝟙 the transform is λ times an outermorphism: λ^(k−1) T(a1 ∧ … ∧ ak) = T(a1) ∧ … ∧ T(ak). The O2 sentence is exact only for λ = 1, and its "versor" needs the hypothesis of decision 0177, which an antiproduct of hyperplanes meets. The committed sentence says this: "Either way, for a versor V, an antiproduct of hyperplanes, with V ⟇ V̰ = λ𝟙 and λ ≠ 0, the transform T satisfies λ^(k−1) T(a1 ∧ … ∧ ak) = T(a1) ∧ … ∧ T(ak), so it is the outermorphism of V's action on vectors when λ = 1, as for a unitized motor or flector, and a single reflection maps each vector of its mirror to itself times λ." No value changes: every Checked case and every rigid(3) case is the same under both wordings. Options weighed: committing the O2 sentence as ratified, which states a false general claim in the specification; holding the whole version for the owner, which stops WU13a, whose code does not depend on the sentence; or committing the corrected sentence and asking the owner to confirm it. The third was chosen; the owner may reverse it, and the report of WU13a lists it first.
+
+## Consequences
+
+- The trace table gains rows, set to `no` until the code exists: 4.3 "the antiprojection of a plane onto a unitized point is the plane through the point with the same normal"; 4.4 "the parity of a versor is the parity of the antigrades of its blades", "an odd versor V transforms x as the negated antiproduct of V, the antigrade involution of x, and antireverse(V)", and "compose(Q2, Q1) applies Q1 first". 2.1 gains no row: the core has no public antigrade involution; the odd-sign row of 4.4 pins its use.
+- If the owner rejects item 3, 4.4 returns to the O2 sentence in a later version; nothing in the code or the tests changes.
+
+## Addendum, 2026-11-07, after the blind review (finding 1)
+
+The 1.10 text holds two passages that the owner has not ratified, not one: item 3's 4.4 sentence, and the two clauses item 2 added to 2.1 after the ratified definition, "so it is (−1)^n times the grade involution, and the right complement takes it to the grade involution: right(x̌) is the grade involution of right(x)", with the label "its relations Checked". Decision 0192 item 2(a) ratified only the definition. Both passages are correct as far as the math-expert's proofs (decision 0177, lemma 1.2) and the reviewer's own checks show, and both are put to the owner for confirmation. CONVENTIONS' status line and its 1.10 revision row now say that these two passages await the owner, so the document no longer states them as ratified. If the owner rejects either, a later version removes it; no code or test depends on the 2.1 clauses.

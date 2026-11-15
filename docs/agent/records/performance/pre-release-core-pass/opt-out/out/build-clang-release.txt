@@ -1,0 +1,15 @@
+ninja: Entering directory `/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/pre-release-core-pass--inline-opt-out/build/clang-release'
+[0/2] Re-checking globbed directories...
+[1/2] Re-running CMake...
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/pre-release-core-pass--inline-opt-out/build/clang-release
+[0/4] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/9] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_conformal3_test.cpp.o
+[2/9] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_drawn_test.cpp.o
+[3/9] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_diagonal_test.cpp.o
+[4/9] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_dense_test.cpp.o
+[5/9] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o
+[6/9] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_four_test.cpp.o
+timed: build identities-six-units took 12.988 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/pre-release-core-pass--inline-opt-out/docs/agent/records/performance/pre-release-core-pass/opt-out/runs.tsv

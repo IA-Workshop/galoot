@@ -1,0 +1,84 @@
+antiproject_cga3	clang++	O0	0	
+antiproject_cga3	clang++	O2	0	
+antiproject_cga3	g++	O0	0	
+antiproject_cga3	g++	O2	0	
+antiproject_dense5	clang++	O0	0	
+antiproject_dense5	clang++	O2	0	
+antiproject_dense5	g++	O0	0	
+antiproject_dense5	g++	O2	0	
+antiproject_r3	clang++	O0	0	
+antiproject_r3	clang++	O2	0	
+antiproject_r3	g++	O0	0	
+antiproject_r3	g++	O2	0	
+antiproject_r4	clang++	O0	0	
+antiproject_r4	clang++	O2	0	
+antiproject_r4	g++	O0	0	
+antiproject_r4	g++	O2	0	
+antiproject_r5	clang++	O0	0	
+antiproject_r5	clang++	O2	0	
+antiproject_r5	g++	O0	0	
+antiproject_r5	g++	O2	0	
+antiproject_r6	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+antiproject_r6	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+antiproject_r6	g++	O0	0	
+antiproject_r6	g++	O2	0	
+antiproject_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+antiproject_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+antiproject_r7	g++	O0	1	‘__builtin_expect((__idx >= ((const std::span<const galoot::core::detail::plan_term>*)this)->std::span<const galoot::cor
+antiproject_r7	g++	O2	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+compose_cga3	clang++	O0	0	
+compose_cga3	clang++	O2	0	
+compose_cga3	g++	O0	0	
+compose_cga3	g++	O2	0	
+compose_dense5	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+compose_dense5	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+compose_dense5	g++	O0	0	
+compose_dense5	g++	O2	0	
+compose_r3	clang++	O0	0	
+compose_r3	clang++	O2	0	
+compose_r3	g++	O0	0	
+compose_r3	g++	O2	0	
+compose_r4	clang++	O0	0	
+compose_r4	clang++	O2	0	
+compose_r4	g++	O0	0	
+compose_r4	g++	O2	0	
+compose_r5	clang++	O0	0	
+compose_r5	clang++	O2	0	
+compose_r5	g++	O0	0	
+compose_r5	g++	O2	0	
+compose_r6	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+compose_r6	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+compose_r6	g++	O0	0	
+compose_r6	g++	O2	0	
+compose_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+compose_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+compose_r7	g++	O0	0	
+compose_r7	g++	O2	0	
+transform_cga3	clang++	O0	0	
+transform_cga3	clang++	O2	0	
+transform_cga3	g++	O0	0	
+transform_cga3	g++	O2	0	
+transform_dense5	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+transform_dense5	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+transform_dense5	g++	O0	0	
+transform_dense5	g++	O2	0	
+transform_r3	clang++	O0	0	
+transform_r3	clang++	O2	0	
+transform_r3	g++	O0	0	
+transform_r3	g++	O2	0	
+transform_r4	clang++	O0	0	
+transform_r4	clang++	O2	0	
+transform_r4	g++	O0	0	
+transform_r4	g++	O2	0	
+transform_r5	clang++	O0	0	
+transform_r5	clang++	O2	0	
+transform_r5	g++	O0	0	
+transform_r5	g++	O2	0	
+transform_r6	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+transform_r6	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+transform_r6	g++	O0	0	
+transform_r6	g++	O2	0	
+transform_r7	clang++	O0	1	constexpr variable 'count' must be initialized by a constant expression
+transform_r7	clang++	O2	1	constexpr variable 'count' must be initialized by a constant expression
+transform_r7	g++	O0	1	‘__builtin_expect((__idx >= ((const std::span<galoot::core::oriented_blade>*)this)->std::span<galoot::core::oriented_bla
+transform_r7	g++	O2	1	‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)

@@ -1,0 +1,10 @@
+bad 0
+1 max partial/cap 1.0
+2 max partial/cap 1.0
+3 max partial/cap 1.0
+4 max partial/cap 1.0
+5 max partial/cap 1.0
+6 max partial/cap 1.0
+7 max partial/cap 1.0
+8 max partial/cap 1.0
+timed: check review:mapcheck.py took 2.069 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-blind-review/docs/agent/records/reviews/2026-11-09-wu12-blind-review/runs.tsv

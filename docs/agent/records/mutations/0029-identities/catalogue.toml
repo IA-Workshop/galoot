@@ -1,0 +1,146 @@
+# Mutants of tools/catalogue: the nine of the scan's old record
+# (records/mutations/0022-format, judged then by the scan's self-test),
+# ported to the tool's code, and seven for what the tool added: reading
+# below the root, the internal list's three checks, the twin rule, and a
+# failing ctest. Judged by tools.catalogue and tests.messages_pinned,
+# which build nothing.
+presets = ["gcc-debug"]
+
+[selection.catalogue]
+targets = []
+labels = '^(tools|tests)\.catalogue$'
+
+# FORBID and FORBID_FIRST literals counted as required.
+[[mutant]]
+name = "forbid_values_required"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''            mode = argument''', replacement = '''            mode = "require"''' }]
+expect = "killed"
+
+# The character that stands for ; kept.
+[[mutant]]
+name = "semicolon_not_translated"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''            found[mode].append(argument.replace("\x01", ";"))''', replacement = '''            found[mode].append(argument)''' }]
+expect = "killed"
+
+# A test marked WILL_FAIL counted.
+[[mutant]]
+name = "will_fail_counted"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    if properties.get("WILL_FAIL"):''', replacement = '''    if False:''' }]
+expect = "killed"
+
+# The run-time handler's prefix kept on a literal.
+[[mutant]]
+name = "handler_prefix_kept"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    if literal.startswith(ASSERT_PREFIX):
+        literal = literal[len(ASSERT_PREFIX):]
+    if not literal:''', replacement = '''    if not literal:''' }]
+expect = "killed"
+
+# A literal that is a part of several messages pins the first.
+[[mutant]]
+name = "ambiguous_literal_pins_first"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    return max(whole, key=len) if whole else None''', replacement = '''    return found[0] if found else None''' }]
+expect = "killed"
+
+# A literal holding several messages pins the shortest.
+[[mutant]]
+name = "nested_literal_pins_shortest"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''return max(whole, key=len)''', replacement = '''return min(whole, key=len)''' }]
+expect = "killed"
+
+# The macro's own definition read as an assertion.
+[[mutant]]
+name = "macro_definition_read"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''            if bare[text_start:match.start()].lstrip().startswith("#define"):''', replacement = '''            if False:''' }]
+expect = "killed"
+
+# Comments read as code.
+[[mutant]]
+name = "comments_read"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''        bare = strip_comments(code)''', replacement = '''        bare = code''' }]
+expect = "killed"
+
+# #error texts not read.
+[[mutant]]
+name = "error_directive_ignored"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''        for match in ERROR_DIRECTIVE.finditer(bare):''', replacement = '''        for match in []:''' }]
+expect = "killed"
+
+# Only the root's own headers read, so the preset directory is dropped.
+[[mutant]]
+name = "subdirectories_not_read"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    for directory, _, files in os.walk(root):''', replacement = '''    for directory, _, files in [next(os.walk(root))]:''' }]
+expect = "killed"
+
+# A message neither pinned nor listed accepted.
+[[mutant]]
+name = "unlisted_message_accepted"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''                if not tests[m] and m not in listed]''', replacement = '''                if False]''' }]
+expect = "killed"
+
+# An entry no header holds accepted.
+[[mutant]]
+name = "stale_entry_accepted"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''        if entry not in messages:
+            findings.append(f"listed as internal but in no header: {entry}")
+        elif tests[entry]:''', replacement = '''        if entry not in messages:
+            pass
+        elif tests[entry]:''' }]
+expect = "killed"
+
+# An entry a test pins accepted.
+[[mutant]]
+name = "pinned_entry_accepted"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''        elif tests[entry]:''', replacement = '''        elif False:''' }]
+expect = "killed"
+
+# A test that allows its message's twin accepted.
+[[mutant]]
+name = "twin_guard_removed"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    findings += unguarded_twins(messages, tests_of_listing)
+''', replacement = '''''' }]
+expect = "killed"
+
+# A twin forbidden on the first error line only accepted.
+[[mutant]]
+name = "twin_forbid_first_counted"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''    return found["require"], found["FORBID"]''', replacement = '''    return found["require"], found["FORBID"] + found["FORBID_FIRST"]''' }]
+expect = "killed"
+
+# A failing ctest's output read as a listing.
+[[mutant]]
+name = "ctest_status_ignored"
+selection = "catalogue"
+file = "tools/catalogue"
+edits = [{ anchor = '''        if result.returncode != 0:''', replacement = '''        if False:''' }]
+expect = "killed"

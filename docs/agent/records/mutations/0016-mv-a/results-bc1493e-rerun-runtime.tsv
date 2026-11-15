@@ -1,0 +1,7 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+ring_scalar_no_unary_minus	gcc-debug	runtime	0	8	killed	core.mv	-	-	The scalar concepts accept the types that meet their requirements	-
+ring_scalar_no_unary_minus	clang-debug	runtime	0	8	killed	core.mv	-	-	The scalar concepts accept the types that meet their requirements	-
+shared_zero_initializer	gcc-debug	runtime	0	8	killed	core.mv	-	-	mv stays zero by default after a constant evaluation wrote into one | get reaches the coefficient of each oriented name<rational>	-
+shared_zero_initializer	clang-debug	runtime	0	0	SURVIVED	-	-	-	-	-
+rational_no_sum_guard	gcc-debug	runtime	0	8	killed	support.rational_rejects_add_far_above,support.rational_consteval_add	-	-	-	-
+rational_no_sum_guard	clang-debug	runtime	0	8	killed	support.rational_rejects_add_far_above	-	-	-	-

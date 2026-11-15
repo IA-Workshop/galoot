@@ -1,0 +1,29 @@
+In file included from fixture.hpp:20,
+                 from program.cpp:5:
+../../../../../include/galoot/core/blade_set.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_blades() [with long unsigned int N = 4; name_list<...auto...> Names = name_list<3>{std::array<char, 3>{"e5"}}]’:
+../../../../../include/galoot/core/blade_set.hpp:599:61:   required from ‘constexpr const auto galoot::core::blades<4, galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}>’
+  599 | inline constexpr auto blades = detail::make_blades<N, Names>();
+      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+fixture.hpp:193:28:   required from ‘constexpr std::size_t apx::position_of_name() [with X = mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}>; name_list<...auto...> Name = galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}; std::size_t = long unsigned int]’
+  193 |   constexpr auto one = gc::blades<n_of<typename X::algebra>, Name>;
+      |                        ~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fixture.hpp:208:49:   required by substitution of ‘template<name_list<...auto...> Name, class X>  requires (multivector<typename std::remove_cvref<_Tp2>::type>) && !(has_component<typename std::remove_cvref<_Tp2>::type, Name>) constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}; X = apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}>&]’
+  208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~^~
+program.cpp:72:17:   required from here
+   72 |   r += get<"e5">(l);
+      |        ~~~~~~~~~^~~
+../../../../../include/galoot/core/blade_set.hpp:513:25: error: static assertion failed: blades: a name has an index above n, the number of generators
+  513 |     static_assert(error != NameError::index_above_n,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘(((galoot::core::detail::NameError)error) != galoot::core::detail::NameError::index_above_n)’ evaluates to false
+fixture.hpp: In instantiation of ‘constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}; X = mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}>&]’:
+program.cpp:72:17:   required from here
+   72 |   r += get<"e5">(l);
+      |        ~~~~~~~~~^~~
+fixture.hpp:289:59: error: invalid use of incomplete type ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+  289 |   return no_component_named<Name, std::remove_cvref_t<X>>{};
+      |                                                           ^
+fixture.hpp:80:8: note: declaration of ‘struct apx::no_component_named<galoot::core::detail::name_list<3>{std::array<char, 3>{"e5"}}, apx::mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}> >’
+   80 | struct no_component_named;
+      |        ^~~~~~~~~~~~~~~~~~

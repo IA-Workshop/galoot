@@ -1,0 +1,13 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:62:15: error: no viable conversion from 'const mv<[...], blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}>' to 'const mv<[...], blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>'
+   62 |   const Point r = q;
+      |               ^   ~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const Motor' (aka 'const mv<rga3, blades_of<rga3, "1", "e41", "e42", "e43", "e23", "e31", "e12", "e1234">>') to 'const mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}> &' for 1st argument
+  237 | template <algebra Alg, blade_set B, class T = double> struct mv {
+      |                                                              ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const Motor' (aka 'const mv<rga3, blades_of<rga3, "1", "e41", "e42", "e43", "e23", "e31", "e12", "e1234">>') to 'mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}> &&' for 1st argument
+  237 | template <algebra Alg, blade_set B, class T = double> struct mv {
+      |                                                              ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:250:22: note: explicit conversion function is not a candidate
+  250 |   explicit constexpr operator mv<Alg, To, T>() const {
+      |                      ^
+1 error generated.

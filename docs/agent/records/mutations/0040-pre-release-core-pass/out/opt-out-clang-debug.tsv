@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+opt_out_ignored	clang-debug	20fa092f6f1c	killed	killed	core.force_inline_off	-	-	GALOOT_ALWAYS_INLINE is the always_inline attribute exactly when the forced-inline mode is on	-	-
+opt_out_always	clang-debug	20fa092f6f1c	killed	killed	core.force_inline_build core.force_inline_default	-	-	GALOOT_ALWAYS_INLINE is the always_inline attribute exactly when the forced-inline mode is on	-	-
+value_unchecked	clang-debug	20fa092f6f1c	killed	killed	core.force_inline_value	-	-	-	-	-

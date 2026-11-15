@@ -1,0 +1,4 @@
+first_user.cpp:196:14: error: type 'const Point' (aka 'const gc::mv<rga3, point_layout, double>') binds to 1 element, but 4 names were provided
+  196 |   const auto [x, y, z, weight] = p;
+      |              ^
+1 error generated.

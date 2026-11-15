@@ -1,0 +1,2160 @@
+# Written by generate.py; do not edit.
+compilers = ["gcc", "clang"]
+flags_from = "core.assert_consteval"
+
+[[unit]]
+name = "n4/baseline"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2);
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/wedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q)) +
+         sum(core::wedge(core::wedge(p, q), r));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/antiwedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::antiwedge(l, g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/product"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_product(p, q)) +
+         sum(core::geometric_product(l, g)) +
+         sum(core::geometric_product(Q1, p)) +
+         sum(core::geometric_product(p, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/antiproduct"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::compose(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/antiproduct4"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_antiproduct(p, q)) +
+         sum(core::geometric_antiproduct(g, h)) +
+         sum(core::geometric_antiproduct(Q1, p)) +
+         sum(core::geometric_antiproduct(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/transform"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::transform(p, Q1)) +
+         sum(core::transform(l, Q1)) +
+         sum(core::transform(g, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/dual"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::bulk_dual(p)) +
+         sum(core::bulk_dual(l)) +
+         sum(core::bulk_dual(g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/involution"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::reverse(p)) +
+         sum(core::reverse(l)) +
+         sum(core::reverse(g)) +
+         sum(core::reverse(Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/baseline"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2);
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/wedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q)) +
+         sum(core::wedge(core::wedge(p, q), r));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/antiwedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::antiwedge(l, g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/product"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_product(p, q)) +
+         sum(core::geometric_product(l, g)) +
+         sum(core::geometric_product(Q1, p)) +
+         sum(core::geometric_product(p, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/antiproduct"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::compose(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/antiproduct4"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_antiproduct(p, q)) +
+         sum(core::geometric_antiproduct(g, h)) +
+         sum(core::geometric_antiproduct(Q1, p)) +
+         sum(core::geometric_antiproduct(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/transform"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::transform(p, Q1)) +
+         sum(core::transform(l, Q1)) +
+         sum(core::transform(g, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/dual"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::bulk_dual(p)) +
+         sum(core::bulk_dual(l)) +
+         sum(core::bulk_dual(g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n8/involution"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<7>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {128U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{129U, -1}, {130U, -1}, {132U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{134U, 1}, {133U, -1}, {131U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{129U, -1}, {130U, -1}, {132U, -1}, {135U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::reverse(p)) +
+         sum(core::reverse(l)) +
+         sum(core::reverse(g)) +
+         sum(core::reverse(Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/baseline"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2);
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/wedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q)) +
+         sum(core::wedge(core::wedge(p, q), r));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/antiwedge"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::antiwedge(l, g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/product"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_product(p, q)) +
+         sum(core::geometric_product(l, g)) +
+         sum(core::geometric_product(Q1, p)) +
+         sum(core::geometric_product(p, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/antiproduct"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::compose(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/antiproduct4"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::geometric_antiproduct(p, q)) +
+         sum(core::geometric_antiproduct(g, h)) +
+         sum(core::geometric_antiproduct(Q1, p)) +
+         sum(core::geometric_antiproduct(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/transform"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::transform(p, Q1)) +
+         sum(core::transform(l, Q1)) +
+         sum(core::transform(g, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/dual"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::bulk_dual(p)) +
+         sum(core::bulk_dual(l)) +
+         sum(core::bulk_dual(g));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n16/involution"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<15>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {32768U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{32774U, 1}, {32773U, -1}, {32771U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{32769U, -1}, {32770U, -1}, {32772U, -1}, {32775U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::reverse(p)) +
+         sum(core::reverse(l)) +
+         sum(core::reverse(g)) +
+         sum(core::reverse(Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/distinct1"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/distinct4"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q)) +
+         sum(core::antiwedge(l, g)) +
+         sum(core::transform(p, Q1)) +
+         sum(core::compose(Q2, Q1));
+}
+'''
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "n4/distinct16"
+text = '''
+#include <cstddef>
+
+#include <galoot/core.hpp>
+
+namespace core = galoot::core;
+
+namespace {
+
+struct alg {
+  static constexpr auto value = core::rigid<3>();
+};
+
+constexpr auto point_layout = core::blade_set<4>{{{{1U, 1}, {2U, 1}, {4U, 1}, {8U, 1}}}};
+constexpr auto line_layout = core::blade_set<6>{{{{9U, -1}, {10U, -1}, {12U, -1}, {6U, 1}, {5U, -1}, {3U, 1}}}};
+constexpr auto plane_layout = core::blade_set<4>{{{{14U, 1}, {13U, -1}, {11U, 1}, {7U, -1}}}};
+constexpr auto motor_layout = core::blade_set<8>{{{{9U, -1}, {10U, -1}, {12U, -1}, {15U, 1}, {6U, 1}, {5U, -1}, {3U, 1}, {0U, 1}}}};
+
+using Point = core::mv<alg, point_layout, double>;
+using Line = core::mv<alg, line_layout, double>;
+using Plane = core::mv<alg, plane_layout, double>;
+using Motor = core::mv<alg, motor_layout, double>;
+
+template <class Mv>
+Mv read(const double*& in) {
+  Mv x;
+  for (double& c : x.coefficients) {
+    c = *in++;
+  }
+  return x;
+}
+
+template <class Mv>
+double sum(const Mv& x) {
+  double s = 0;
+  for (const double c : x.coefficients) {
+    s += c;
+  }
+  return s;
+}
+
+} // namespace
+
+double use(const double* in);
+
+double use(const double* in) {
+  const auto p = read<Point>(in);
+  const auto q = read<Point>(in);
+  const auto r = read<Point>(in);
+  const auto l = read<Line>(in);
+  const auto g = read<Plane>(in);
+  const auto h = read<Plane>(in);
+  const auto Q1 = read<Motor>(in);
+  const auto Q2 = read<Motor>(in);
+  return sum(p) +
+         sum(q) +
+         sum(r) +
+         sum(l) +
+         sum(g) +
+         sum(h) +
+         sum(Q1) +
+         sum(Q2) +
+         sum(core::wedge(p, q)) +
+         sum(core::antiwedge(l, g)) +
+         sum(core::transform(p, Q1)) +
+         sum(core::compose(Q2, Q1)) +
+         sum(core::wedge(l, r)) +
+         sum(core::antiwedge(g, h)) +
+         sum(core::transform(l, Q1)) +
+         sum(core::transform(g, Q1)) +
+         sum(core::geometric_product(Q1, p)) +
+         sum(core::geometric_product(p, Q1)) +
+         sum(core::geometric_antiproduct(Q1, p)) +
+         sum(core::bulk_dual(p)) +
+         sum(core::reverse(Q1)) +
+         sum(core::bulk_dual(l)) +
+         sum(core::geometric_product(p, q)) +
+         sum(core::antiwedge(g, l));
+}
+'''
+trees = ["after"]
+kind = "debug"

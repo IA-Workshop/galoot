@@ -1,0 +1,6 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:88:18: error: narrowing conversion of ‘d’ from ‘double’ to ‘galoot::core::detail::component<float, 0>’ {aka ‘float’} [-Werror=narrowing]
+   88 |   const FPoint s{d, 0, 0, 1};
+      |                  ^
+first_user.cpp:88:18: error: conversion from ‘double’ to ‘galoot::core::detail::component<float, 0>’ {aka ‘float’} may change value [-Werror=float-conversion]
+cc1plus: all warnings being treated as errors

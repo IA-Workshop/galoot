@@ -1,0 +1,16 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+check_ignores_conditional_jump	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_conditional_jump	-	-	-	-	-
+check_ignores_register_call	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate tools.kernels_inline_rejects_notrack tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_keeps_overwritten_register	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_accepts_overwritten_register	-	-	-	-	-
+check_ignores_explicit_object	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_explicit_object	-	-	-	-	-
+check_accepts_other_target	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_other_target	-	-	-	-	-
+alone_not_alone	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_accepts tools.kernels_inline_alone_rejects_call	-	-	-	-	-
+alone_skips_missing	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_rejects_missing_function	-	-	-	-	-
+check_ignores_jmp	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_conditional_jump tools.kernels_inline_rejects_jmp tools.kernels_inline_rejects_notrack	-	-	-	-	-
+check_ignores_plt	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_notrack tools.kernels_inline_rejects_plt tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_skips_missing	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_missing_function	-	-	-	-	-
+check_ignores_immediate	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate	-	-	-	-	-
+check_ignores_register_width	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_immediate	-	-	-	-	-
+check_ignores_notrack	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_rejects_notrack	-	-	-	-	-
+check_refuses_bare_return	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_accepts_bare_return	-	-	-	-	-
+alone_accepts_twice	clang-debug	8ba0e08dec9d	killed	killed	tools.kernels_inline_alone_rejects_twice	-	-	-	-	-

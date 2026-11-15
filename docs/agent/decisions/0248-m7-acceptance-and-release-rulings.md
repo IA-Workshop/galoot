@@ -1,0 +1,13 @@
+# 0248 M7 acceptance and release rulings
+
+Date: 2026-11-11. Source: the owner's acceptance of the recommendations in the M7 gate report (`records/gates/2026-11-11-M7-audit.md`, plan 0042 section 7).
+
+1. **M7 accepted.** The auditor found no blocking finding. The minor findings m1 to m3, m5, m6 and m9 are fixed in unit U6 of plan 0042; they change no result.
+2. **Errata-naming row (MA1).** The owner adds the corrected row from the audit to CONVENTIONS section 8, as version 1.18 with a revision-history row. The drafted row in `records/performance/core-unit-w10-index.md` is superseded by the audit's text. Only the owner edits CONVENTIONS.
+3. **Decision records (MA2).** Decision 0245 item 1 was edited in place after it reached `develop` (commit `6de1beb`) to point at decision 0246 item 1. This decision records that edit. Decisions 0245 and 0246 accepted the recommendations of plan 0040's core pass report, which is not kept in the repository; the recommendations they accepted are the ones listed in those decisions. Both depart from decision 0228 item 6(a) (no edits to accepted records) in that one respect; item 6(a) is reaffirmed, and supersession is recorded in a new decision from here on.
+4. **W10 gaps (m4).** The missing cost records for WU9 (plan 0018) and the partial one for plan 0009 are accepted as past gaps and stated in the release record. No retroactive measurement.
+5. **DoD-22 mode at release.** Shared mode, with a P14 note in the release record. Pinned builds (decision 0233 item 5) stay deferred (decision 0246 item 2).
+6. **`run_memo.py`.** It stays broken by the ruling that deleted `count_evals.py` (decision 0233 item 7). The recovery note moves beside the import, which breaks every set.
+7. **`plan_cost_model` checks.** `selfcheck`, `comments`, `comments_test.py` and `jobserver_check.py` run in U8 at the release revision, and the index row is refreshed.
+8. **Old tools findings.** Plan 0027 findings I2, I3, I5 and plan 0028 findings I5 to I7 are accepted as known limits; the cost of `tools.jobpool` is kept, since its race case is the only guard of the invariant (decision 0228 item 9). Plan 0011's skipped delta reviews are accepted as a departure; the changes in `78680f3`, `13358dd` and `4e5ea90` are comments and an attribute.
+9. **Plan 0042 section 7.** O1: the six helpers stay public in 1.0, and decision 0241 item 6 is superseded. O2: `basis_change.hpp` stays in `core.hpp`. O3: two audits. O4: the tag names the records-only tip T, and the release record states the empty code diff from the release commit R to T. O5: the two `-O3` measure presets run. O6: the tag is `1.0.0` and the rga3 version is 0.1.0. The repository URL and the byline come from the owner before U7.

@@ -1,0 +1,25 @@
+// g++ -std=c++23 -O0 -DCE=0 -DRT_STORES=0 -DSTORES=0x100 -fdump-tree-gimple -c probe.cpp: the start of make()
+struct matrix make (long unsigned int stores)
+{
+  long unsigned int D.20122;
+  long unsigned int D.20126;
+  struct fraction D.19998;
+  struct matrix t [value-expr: <retval>];
+
+  D.20122 = 0;
+  <D.20119>:
+  D.20126 = 0;
+  <D.20123>:
+  <retval>._M_elems[D.20122]._M_elems[D.20126].n = 0;
+  <retval>._M_elems[D.20122]._M_elems[D.20126].d = 1;
+  if (D.20126 == 2) goto <D.20124>; else goto <D.20125>;
+  <D.20125>:
+  D.20126 = D.20126 + 1;
+  goto <D.20123>;
+  <D.20124>:
+  if (D.20122 == 2) goto <D.20120>; else goto <D.20121>;
+  <D.20121>:
+  D.20122 = D.20122 + 1;
+  goto <D.20119>;
+  <D.20120>:
+  {

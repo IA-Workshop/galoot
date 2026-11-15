@@ -1,0 +1,67 @@
+compiler	config	unit	exit	inst_p_u	wall_s	maxrss_kib	sibling_busy_s	pinned_other_s	limit
+gcc	galoot-O0	full-n1	0	917448824	0.203	79744	0.00	-0.00	-
+gcc	galoot-O0	full-n2	0	918842935	0.153	80080	0.01	-0.00	-
+gcc	galoot-O0	full-n3	0	922156620	0.119	79760	0.00	-0.01	-
+gcc	galoot-O0	full-n4	0	928579078	0.151	79772	0.00	-0.01	-
+gcc	galoot-O0	full-n5	0	948667979	0.159	79772	0.00	0.02	-
+gcc	galoot-O0	full-n6	0	1012060245	0.160	79752	0.00	0.00	-
+gcc	galoot-O0	full-n7	0	1230606940	0.170	81892	0.00	0.00	-
+gcc	galoot-O0	full-n8	0	2064885425	0.207	88328	0.00	0.00	-
+gcc	galoot-O0	full-n9	0	5253841974	0.346	113900	0.00	0.01	-
+gcc	galoot-O0	full-n10	0	17715807908	0.918	198704	0.01	-0.01	-
+gcc	galoot-O0	full-n11	1	74291772636	3.371	561320	0.00	0.01	include/galoot/core/mv.hpp:93:37: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O0	full-n12	1	118911459777	4.744	795236	0.00	0.00	include/galoot/core/mv.hpp:93:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full-n1	0	931123435	0.159	80384	0.00	-0.01	-
+gcc	galoot-O2	full-n2	0	932496321	0.158	80084	0.00	0.01	-
+gcc	galoot-O2	full-n3	0	935537274	0.157	80308	0.00	0.00	-
+gcc	galoot-O2	full-n4	0	941236201	0.157	80288	0.01	0.00	-
+gcc	galoot-O2	full-n5	0	961199164	0.158	80168	0.00	-0.01	-
+gcc	galoot-O2	full-n6	0	1024387792	0.163	80280	0.00	-0.01	-
+gcc	galoot-O2	full-n7	0	1245239187	0.172	82056	0.00	0.01	-
+gcc	galoot-O2	full-n8	0	2075894118	0.208	89000	0.00	-0.01	-
+gcc	galoot-O2	full-n9	0	5223567364	0.343	114696	0.00	0.01	-
+gcc	galoot-O2	full-n10	0	17557626756	0.870	198940	0.01	0.00	-
+gcc	galoot-O2	full-n11	1	73810565930	3.318	561856	0.00	-0.00	include/galoot/core/mv.hpp:93:37: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	galoot-O2	full-n12	1	118891625425	4.726	797044	0.00	0.01	include/galoot/core/mv.hpp:93:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	full-n1	0	900063875	0.153	79060	0.00	-0.00	-
+gcc	bare-O2	full-n2	0	901314905	0.153	79076	0.00	-0.00	-
+gcc	bare-O2	full-n3	0	903100232	0.153	79188	0.00	0.01	-
+gcc	bare-O2	full-n4	0	911069481	0.153	79228	0.00	0.01	-
+gcc	bare-O2	full-n5	0	930770068	0.153	79268	0.01	-0.00	-
+gcc	bare-O2	full-n6	0	992924960	0.157	78920	0.00	-0.01	-
+gcc	bare-O2	full-n7	0	1218665183	0.145	81432	0.00	-0.00	-
+gcc	bare-O2	full-n8	0	2037965011	0.201	87788	0.00	0.00	-
+gcc	bare-O2	full-n9	0	5249701744	0.338	110872	0.00	-0.01	-
+gcc	bare-O2	full-n10	0	17815390165	0.871	195432	0.00	0.00	-
+gcc	bare-O2	full-n11	1	73508026869	3.305	558688	0.00	0.00	include/galoot/core/mv.hpp:93:37: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+gcc	bare-O2	full-n12	1	118975350705	4.697	791528	0.01	0.01	include/galoot/core/mv.hpp:93:15: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+clang	galoot-O0	full-n1	0	938977486	0.175	123220	0.00	-0.00	-
+clang	galoot-O0	full-n2	0	938469386	0.173	123536	0.00	-0.00	-
+clang	galoot-O0	full-n3	0	942120171	0.174	123520	0.00	-0.00	-
+clang	galoot-O0	full-n4	0	950246371	0.176	123516	0.00	-0.00	-
+clang	galoot-O0	full-n5	0	976147502	0.175	123528	0.00	0.02	-
+clang	galoot-O0	full-n6	0	1053674624	0.179	123540	0.01	-0.01	-
+clang	galoot-O0	full-n7	0	1357053121	0.194	125236	0.00	-0.00	-
+clang	galoot-O0	full-n8	0	2533284328	0.257	130860	0.00	0.01	-
+clang	galoot-O0	full-n9	1	7017693836	0.521	125060	0.00	-0.00	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<512>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be in
+clang	galoot-O0	full-n10	1	7210781483	0.512	126400	0.00	-0.00	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<1024>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be i
+clang	galoot-O2	full-n1	0	944637053	0.171	126748	0.00	0.01	-
+clang	galoot-O2	full-n2	0	946807208	0.174	126788	0.01	-0.00	-
+clang	galoot-O2	full-n3	0	949036439	0.175	126736	0.00	0.01	-
+clang	galoot-O2	full-n4	0	957660873	0.176	126808	0.00	0.01	-
+clang	galoot-O2	full-n5	0	981039592	0.177	126896	0.00	-0.01	-
+clang	galoot-O2	full-n6	0	1061286229	0.178	127232	0.00	0.00	-
+clang	galoot-O2	full-n7	0	1363621725	0.196	128452	0.00	0.01	-
+clang	galoot-O2	full-n8	0	2525399435	0.261	134356	0.00	0.00	-
+clang	galoot-O2	full-n9	1	7021307056	0.518	125432	0.01	-0.00	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<512>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be in
+clang	galoot-O2	full-n10	1	7255975954	0.515	126380	0.00	0.01	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<1024>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be i
+clang	bare-O2	full-n1	0	942473456	0.172	125752	0.00	0.01	-
+clang	bare-O2	full-n2	0	943101876	0.174	125492	0.00	-0.00	-
+clang	bare-O2	full-n3	0	947476322	0.174	125404	0.00	-0.00	-
+clang	bare-O2	full-n4	0	953288513	0.175	125500	0.01	-0.00	-
+clang	bare-O2	full-n5	0	979861390	0.176	125484	0.01	0.02	-
+clang	bare-O2	full-n6	0	1063871814	0.180	126072	0.00	0.00	-
+clang	bare-O2	full-n7	0	1378775744	0.196	127592	0.00	0.01	-
+clang	bare-O2	full-n8	0	2599425272	0.261	132868	0.00	0.01	-
+clang	bare-O2	full-n9	1	5148849594	0.418	122024	0.00	-0.00	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<512>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be in
+clang	bare-O2	full-n10	1	5360701421	0.409	122908	0.00	0.00	include/galoot/core/mv.hpp:104:23: error: constexpr variable 'distinct_masks<blade_set<1024>{{{{0, 1}, {1, 1}, {2, 1}, {4, 1}, {8, 1}, {16, 1}, {32, 1}, {64, 1}, {128, 1}, {256, 1}, ...}}}>' must be i

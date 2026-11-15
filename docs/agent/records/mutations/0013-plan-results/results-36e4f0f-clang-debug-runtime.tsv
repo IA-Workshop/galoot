@@ -1,0 +1,79 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_shared_kept	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: invalid operands to binary expression ('const typed_plan<10UL, 16UL>' and 'typed_plan<6, 12>')
+wedge_sign_plus	clang-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products	-
+wedge_sign_reversed	clang-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+wedge_sign_by_grade	clang-debug	0	8	core.plan	killed	-	The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+wedge_range_removed	clang-debug	0	8	core.plan_wedge_pair_beyond_n,core.plan_wedge_pair_beyond_n_second	killed	-	-	-
+wedge_range_first_only	clang-debug	0	8	core.plan_wedge_pair_beyond_n_second	killed	-	-	-
+wedge_range_second_only	clang-debug	0	8	core.plan_wedge_pair_beyond_n	killed	-	-	-
+wedge_as_gp	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: invalid operands to binary expression ('const typed_plan<7UL, 15UL>' and 'typed_plan<6, 12>')
+pair_rule_always_gp	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: invalid operands to binary expression ('const typed_plan<7UL, 15UL>' and 'typed_plan<6, 12>')
+wedge_capacity_gp	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:90:67: error: unused parameter 'op' [-Werror,-Wunused-parameter]
+capacities_swapped	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:443:34: error: constexpr variable 'count' must be initialized by a constant expression
+sign_fold_dropped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Repeated blades share a result position, and empty sets give empty typed plans	-
+sign_first_only	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | product_plan accepts the generators of the widest algebra	-
+sign_second_only	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Repeated blades share a result position, and empty sets give empty typed plans	-
+sign_by_sum	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+positions_swapped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+a_off_by_one	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+b_off_by_one	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | Repeated blades share a result position, and empty sets give empty typed plans	-
+out_shifted	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is associative on every triple of blades | The wedge plan is the top grade of the golden products | The result set of every blade times every blade is the golden canonical order | Repeated blades share a result position, and empty sets give empty typed plans	-
+out_xor	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | No plan has a zero coefficient, a position or blade out of range, or a repeated term | The plan of a dense form equals its golden product table	-
+loops_swapped	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | product_plan accepts the generators of the widest algebra | The wedge plan is the exterior product of each pair | The wedge plan is the top grade of the golden products	-
+terms_reversed	clang-debug	0	8	core.plan	killed	-	Every plan of every blade times every blade is the products of its pairs, signs folded | The plan of a dense form equals its golden product table	-
+last_pair_skipped	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:381:70: error: invalid operands to binary expression ('const std::array<plan_term, 12UL>' and 'std::array<plan_term, 15>')
+count_plus_one	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:381:70: error: invalid operands to binary expression ('const std::array<plan_term, 16UL>' and 'std::array<plan_term, 15>')
+write_bound_inclusive	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:443:34: error: constexpr variable 'count' must be initialized by a constant expression
+capacity_start_zero	clang-debug	0	8	core.plan	killed	-	A plan with an empty blade set is empty | Repeated blades share a result position, and empty sets give empty typed plans	-
+capacity_halved	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:443:34: error: constexpr variable 'count' must be initialized by a constant expression
+fill_negated	clang-debug	0	8	core.plan	killed	-	product_plan equals generate_plan run at run time | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | product_plan equals its typing run at run time | Repeated blades share a result position, and empty sets give empty typed plans	-
+range_first_only	clang-debug	0	8	core.plan_beyond_n_second	killed	-	-	-
+range_second_only	clang-debug	0	8	core.plan_beyond_n,core.plan_wedge_beyond_n	killed	-	-	-
+range_check_removed	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_wedge_beyond_n	killed	-	-	-
+sign_check_first_only	clang-debug	0	8	core.plan_bad_sign_second	killed	-	-	-
+sign_check_second_only	clang-debug	0	8	core.plan_bad_sign	killed	-	-	-
+sign_check_removed	clang-debug	0	8	core.plan_bad_sign,core.plan_bad_sign_second	killed	-	-	-
+generation_unguarded	clang-debug	0	8	core.plan_beyond_n,core.plan_beyond_n_second,core.plan_beyond_n_31,core.plan_wedge_beyond_n	killed	-	-	-
+zero_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+second_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+beyond_n_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+order_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+first_bound_strict	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+second_bound_strict	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+zero_test_wrong	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_allows_repeat	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_b	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+order_same_a	clang-debug	0	8	core.plan	killed	-	The checks of a generated plan find each defect at its bound	-
+result_by_mask	clang-debug	0	8	core.plan	killed	-	Every typed plan reads back as its generated terms, on a result set of exactly their blades in canonical order | The result set of every blade times every blade is the golden canonical order | collect_result and type_terms keep to their stated bounds	-
+result_extra_scalar	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1080:81: error: invalid operands to binary expression ('const typed_plan<7UL, 12UL>' and 'typed_plan<6, 12>')
+result_sign_from_coefficient	clang-debug	0	8	core.plan	killed	-	Repeated blades share a result position, and empty sets give empty typed plans | collect_result and type_terms keep to their stated bounds	-
+result_repeats_kept	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:1043:78: error: invalid operands to binary expression ('const typed_plan<15UL, 15UL>' and 'typed_plan<7, 15>')
+result_room_check_removed	clang-debug	0	8	core.plan_result_room	killed	-	-	-
+result_room_inclusive	clang-debug	0	8	core.plan_result_room	killed	-	-	-
+result_clears_rest	clang-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+position_off_by_one	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:125:16: error: constexpr variable 'gp_terms<(anonymous namespace)::rga3, core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8
+position_missing_zero	clang-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+typing_past_output	clang-debug	0	8	core.plan	killed	-	collect_result and type_terms keep to their stated bounds	-
+typed_result_short	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:125:16: error: constexpr variable 'gp_terms<(anonymous namespace)::rga3, core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8
+typed_negated	clang-debug	0	8	core.plan	killed	-	product_plan equals generate_plan run at run time | The plan of a dense form equals its golden product table | generate_plan counts every term and writes only what fits | A repeated blade gets the terms of each place that lists it | product_plan accepts the generators of the widest algebra | Two functions that use one plan read its values | product_plan equals its typing run at run time | Repeated blades share a result position, and empty sets give empty typed plans	-
+typing_order_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_sign_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_beyond_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_unused_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+typing_terms_check_removed	clang-debug	-	-	-	skipped	-	-	the check is off in this mode
+typed_result_order_by_mask	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_result_repeat_allowed	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_sign_test	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_beyond_inclusive	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_unused_ignored	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_allows_equal	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_same_b	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_order_same_a	clang-debug	0	8	core.plan	killed	-	The checks of a typed plan find each defect at its bound	-
+typed_term_not_trivially_copyable	clang-debug	1	-	-	killed	plan_test.cpp:1281,plan_test.cpp:1283	-	test/core/plan_test.cpp:1281:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::typed_term>'
+typed_term_not_aggregate	clang-debug	1	-	-	killed	-	-	include/galoot/core/plan.hpp:257:12: error: no viable overloaded '='
+typed_plan_not_trivially_copyable	clang-debug	1	-	-	killed	plan_test.cpp:1283	-	test/core/plan_test.cpp:1283:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::typed_plan<7, 15>>'
+typed_plan_not_aggregate	clang-debug	1	-	-	killed	plan_test.cpp:1282	-	test/core/plan_test.cpp:1044:15: error: initialization of non-aggregate type 'typed_plan<7, 15>' with a designated initializer list
+locals_plain	clang-debug	0	8	core.plan_evaluated_once	killed	-	-	-
+locals_plain_twice	clang-debug	0	8	core.plan_evaluated_once	killed	-	-	-
+twice_static_locals	clang-debug	0	0	-	SURVIVED	-	-	-

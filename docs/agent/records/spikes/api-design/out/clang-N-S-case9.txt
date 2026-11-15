@@ -1,0 +1,28 @@
+In file included from program.cpp:5:
+./fixture.hpp:269:17: error: static assertion failed: ==: the operands belong to different algebras
+  269 |   static_assert(std::same_as<typename X::algebra, typename Y::algebra>,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:80:11: note: in instantiation of function template specialization 'apx::operator==<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>>' requested here
+   80 |   r += (p == v) ? 1 : 0;
+      |           ^
+./fixture.hpp:269:17: note: because 'std::same_as<typename apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>::algebra, typename apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>::algebra>' evaluated to false
+  269 |   static_assert(std::same_as<typename X::algebra, typename Y::algebra>,
+      |                 ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:65:9: note: because '__detail::__same_as<typename apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>::algebra, typename apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>::algebra>' evaluated to false
+   65 |       = __detail::__same_as<_Tp, _Up> && __detail::__same_as<_Up, _Tp>;
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:59:27: note: because 'std::is_same_v<rga3, r400>' evaluated to false
+   59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+      |                           ^
+In file included from program.cpp:5:
+./fixture.hpp:271:17: error: static assertion failed: ==: the operands have different blade sets or scalars
+  271 |   static_assert(std::same_as<X, Y>,
+      |                 ^~~~~~~~~~~~~~~~~~
+./fixture.hpp:271:17: note: because 'std::same_as<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>>' evaluated to false
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:65:9: note: because '__detail::__same_as<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>>' evaluated to false
+   65 |       = __detail::__same_as<_Tp, _Up> && __detail::__same_as<_Up, _Tp>;
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:59:27: note: because 'std::is_same_v<apx::mvn<rga3, name_list<12>{{"e1 e2 e3 e4"}}>, apx::mvn<r400, name_list<12>{{"e1 e2 e3 e4"}}>>' evaluated to false
+   59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+      |                           ^
+2 errors generated.

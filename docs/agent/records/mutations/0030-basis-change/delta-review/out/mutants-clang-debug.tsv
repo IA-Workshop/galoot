@@ -1,0 +1,9 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+elimination_overflow_as_dependent	clang-debug	a4eb9959266d	killed	killed	core.basis_change_overflow_elimination	-	-	-	-	-
+elimination_overflow_not_stopping	clang-debug	a4eb9959266d	killed	killed	core.basis_change_overflow_elimination	-	-	-	-	-
+inverts_overflow_as_self_check	clang-debug	a4eb9959266d	killed	killed	core.basis_change_overflow_inverse_check	-	-	-	-	-
+inverse_rows_overflow_ignored	clang-debug	a4eb9959266d	killed	killed	core.basis_change_overflow_inverse_rows	-	-	-	-	-
+isometry_overflow_holds	clang-debug	a4eb9959266d	killed	killed	core.basis_change_overflow	-	-	-	-	-
+target_count_unguarded	clang-debug	a4eb9959266d	killed	killed	core.basis_change_both_counts core.basis_change_source_count	-	-	-	-	-
+value_catch_all_removed	clang-debug	a4eb9959266d	killed	killed	core.change_basis_value_as_tag	-	-	-	-	-
+value_catch_all_back_takes_types	clang-debug	a4eb9959266d	killed	killed	core.change_basis_back_value_as_tag	-	-	-	-	-

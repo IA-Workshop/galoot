@@ -1,0 +1,2 @@
+span
+timed: probe delta-wu8b:run-c1-1:g++:alt took 0.050 s (exit 0)

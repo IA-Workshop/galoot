@@ -1,0 +1,13 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:14: error: deduced type ‘const void’ for ‘r’ is incomplete
+   51 |   const auto r = gp(p, v);
+      |              ^
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘void cdf::gp(const X&, const Y&) [with X = mv<rga3, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}>; Y = mv<r400, blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}>]’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:20:   required from here
+   51 |   const auto r = gp(p, v);
+      |                  ~~^~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:358:17: error: static assertion failed: gp: the operands belong to different algebras
+  358 |   static_assert(false, "gp: the operands belong to different algebras");
+      |                 ^~~~~
+  • ‘false’ evaluates to false

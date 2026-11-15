@@ -1,0 +1,517 @@
+constexpr witt32 00000001 80000000: +1 e00000000 +1 e80000001
+constexpr witt32 80000000 80000001: +1 e80000000
+constexpr witt32 80000001 80000000: -1 e80000000
+constexpr witt32 80000001 80000001: +1 e00000000
+constexpr witt32 c0000000 80000000: +1 e80000000
+constexpr witt32 80000000 c0000001: +1 e80000001 +1 ec0000000
+constexpr witt32 40000021 80000020: +1 e00000001 +1 e40000000 -1 ec0000001
+constexpr witt32 80000021 40000021: +1 e40000001
+constexpr reorder table hash 8374245bcdbc9b63, edges +1 -1 +1 +1 +1 +1 -1 -1 +1
+compile-time plan rigid16 point x motor: 28 terms hash 3e59b64b448006ed
+compile-time plan rigid16 motor x motor: 48 terms hash cc9167a53a7129c3
+compile-time plan conformal3 full x full: 1024 terms hash 8594cea2a5295173
+compile-time plan dense4 full x full: 832 terms hash 116eed2c8b9d6627
+compile-time plan degenerate3 full x full: 48 terms hash b9c28f989c1063fa
+reorder block a=0 hash 36dc6ee63b810383
+reorder block a=512 hash 07474581dd810383
+reorder block a=1024 hash 07474581dd810383
+reorder block a=1536 hash 3df10e1b5fd20383
+reorder block a=2048 hash 07474581dd810383
+reorder block a=2560 hash c34c16ad7fd20383
+reorder block a=3072 hash e2ef7d893fd20383
+reorder block a=3584 hash 07474581dd810383
+reorder exhaustive 2^12 x 2^12: 16777216 values hash bd01ef0312d90383
+reorder 00000000 00000000 +1
+reorder 00000000 00000001 +1
+reorder 00000000 00000002 +1
+reorder 00000000 00000003 +1
+reorder 00000000 80000000 +1
+reorder 00000000 c0000000 +1
+reorder 00000000 80000001 +1
+reorder 00000000 7fffffff +1
+reorder 00000000 ffffffff +1
+reorder 00000000 fffffffe +1
+reorder 00000000 aaaaaaaa +1
+reorder 00000000 55555555 +1
+reorder 00000000 00010000 +1
+reorder 00000000 0000ffff +1
+reorder 00000001 00000000 +1
+reorder 00000001 00000001 +1
+reorder 00000001 00000002 +1
+reorder 00000001 00000003 +1
+reorder 00000001 80000000 +1
+reorder 00000001 c0000000 +1
+reorder 00000001 80000001 +1
+reorder 00000001 7fffffff +1
+reorder 00000001 ffffffff +1
+reorder 00000001 fffffffe +1
+reorder 00000001 aaaaaaaa +1
+reorder 00000001 55555555 +1
+reorder 00000001 00010000 +1
+reorder 00000001 0000ffff +1
+reorder 00000002 00000000 +1
+reorder 00000002 00000001 -1
+reorder 00000002 00000002 +1
+reorder 00000002 00000003 -1
+reorder 00000002 80000000 +1
+reorder 00000002 c0000000 +1
+reorder 00000002 80000001 -1
+reorder 00000002 7fffffff -1
+reorder 00000002 ffffffff -1
+reorder 00000002 fffffffe +1
+reorder 00000002 aaaaaaaa +1
+reorder 00000002 55555555 -1
+reorder 00000002 00010000 +1
+reorder 00000002 0000ffff -1
+reorder 00000003 00000000 +1
+reorder 00000003 00000001 -1
+reorder 00000003 00000002 +1
+reorder 00000003 00000003 -1
+reorder 00000003 80000000 +1
+reorder 00000003 c0000000 +1
+reorder 00000003 80000001 -1
+reorder 00000003 7fffffff -1
+reorder 00000003 ffffffff -1
+reorder 00000003 fffffffe +1
+reorder 00000003 aaaaaaaa +1
+reorder 00000003 55555555 -1
+reorder 00000003 00010000 +1
+reorder 00000003 0000ffff -1
+reorder 80000000 00000000 +1
+reorder 80000000 00000001 -1
+reorder 80000000 00000002 -1
+reorder 80000000 00000003 +1
+reorder 80000000 80000000 +1
+reorder 80000000 c0000000 -1
+reorder 80000000 80000001 -1
+reorder 80000000 7fffffff -1
+reorder 80000000 ffffffff -1
+reorder 80000000 fffffffe +1
+reorder 80000000 aaaaaaaa -1
+reorder 80000000 55555555 +1
+reorder 80000000 00010000 -1
+reorder 80000000 0000ffff +1
+reorder c0000000 00000000 +1
+reorder c0000000 00000001 +1
+reorder c0000000 00000002 +1
+reorder c0000000 00000003 +1
+reorder c0000000 80000000 +1
+reorder c0000000 c0000000 -1
+reorder c0000000 80000001 +1
+reorder c0000000 7fffffff -1
+reorder c0000000 ffffffff -1
+reorder c0000000 fffffffe -1
+reorder c0000000 aaaaaaaa +1
+reorder c0000000 55555555 -1
+reorder c0000000 00010000 +1
+reorder c0000000 0000ffff +1
+reorder 80000001 00000000 +1
+reorder 80000001 00000001 -1
+reorder 80000001 00000002 -1
+reorder 80000001 00000003 +1
+reorder 80000001 80000000 +1
+reorder 80000001 c0000000 -1
+reorder 80000001 80000001 -1
+reorder 80000001 7fffffff -1
+reorder 80000001 ffffffff -1
+reorder 80000001 fffffffe +1
+reorder 80000001 aaaaaaaa -1
+reorder 80000001 55555555 +1
+reorder 80000001 00010000 -1
+reorder 80000001 0000ffff +1
+reorder 7fffffff 00000000 +1
+reorder 7fffffff 00000001 +1
+reorder 7fffffff 00000002 -1
+reorder 7fffffff 00000003 -1
+reorder 7fffffff 80000000 +1
+reorder 7fffffff c0000000 +1
+reorder 7fffffff 80000001 +1
+reorder 7fffffff 7fffffff -1
+reorder 7fffffff ffffffff -1
+reorder 7fffffff fffffffe -1
+reorder 7fffffff aaaaaaaa -1
+reorder 7fffffff 55555555 +1
+reorder 7fffffff 00010000 +1
+reorder 7fffffff 0000ffff +1
+reorder ffffffff 00000000 +1
+reorder ffffffff 00000001 -1
+reorder ffffffff 00000002 +1
+reorder ffffffff 00000003 -1
+reorder ffffffff 80000000 +1
+reorder ffffffff c0000000 -1
+reorder ffffffff 80000001 -1
+reorder ffffffff 7fffffff +1
+reorder ffffffff ffffffff +1
+reorder ffffffff fffffffe -1
+reorder ffffffff aaaaaaaa +1
+reorder ffffffff 55555555 +1
+reorder ffffffff 00010000 -1
+reorder ffffffff 0000ffff +1
+reorder fffffffe 00000000 +1
+reorder fffffffe 00000001 -1
+reorder fffffffe 00000002 +1
+reorder fffffffe 00000003 -1
+reorder fffffffe 80000000 +1
+reorder fffffffe c0000000 -1
+reorder fffffffe 80000001 -1
+reorder fffffffe 7fffffff +1
+reorder fffffffe ffffffff +1
+reorder fffffffe fffffffe -1
+reorder fffffffe aaaaaaaa +1
+reorder fffffffe 55555555 +1
+reorder fffffffe 00010000 -1
+reorder fffffffe 0000ffff +1
+reorder aaaaaaaa 00000000 +1
+reorder aaaaaaaa 00000001 +1
+reorder aaaaaaaa 00000002 -1
+reorder aaaaaaaa 00000003 -1
+reorder aaaaaaaa 80000000 +1
+reorder aaaaaaaa c0000000 -1
+reorder aaaaaaaa 80000001 +1
+reorder aaaaaaaa 7fffffff +1
+reorder aaaaaaaa ffffffff +1
+reorder aaaaaaaa fffffffe +1
+reorder aaaaaaaa aaaaaaaa +1
+reorder aaaaaaaa 55555555 +1
+reorder aaaaaaaa 00010000 +1
+reorder aaaaaaaa 0000ffff +1
+reorder 55555555 00000000 +1
+reorder 55555555 00000001 -1
+reorder 55555555 00000002 -1
+reorder 55555555 00000003 +1
+reorder 55555555 80000000 +1
+reorder 55555555 c0000000 +1
+reorder 55555555 80000001 -1
+reorder 55555555 7fffffff +1
+reorder 55555555 ffffffff +1
+reorder 55555555 fffffffe -1
+reorder 55555555 aaaaaaaa +1
+reorder 55555555 55555555 +1
+reorder 55555555 00010000 -1
+reorder 55555555 0000ffff +1
+reorder 00010000 00000000 +1
+reorder 00010000 00000001 -1
+reorder 00010000 00000002 -1
+reorder 00010000 00000003 +1
+reorder 00010000 80000000 +1
+reorder 00010000 c0000000 +1
+reorder 00010000 80000001 -1
+reorder 00010000 7fffffff +1
+reorder 00010000 ffffffff +1
+reorder 00010000 fffffffe -1
+reorder 00010000 aaaaaaaa +1
+reorder 00010000 55555555 +1
+reorder 00010000 00010000 +1
+reorder 00010000 0000ffff +1
+reorder 0000ffff 00000000 +1
+reorder 0000ffff 00000001 -1
+reorder 0000ffff 00000002 +1
+reorder 0000ffff 00000003 -1
+reorder 0000ffff 80000000 +1
+reorder 0000ffff c0000000 +1
+reorder 0000ffff 80000001 -1
+reorder 0000ffff 7fffffff +1
+reorder 0000ffff ffffffff +1
+reorder 0000ffff fffffffe -1
+reorder 0000ffff aaaaaaaa +1
+reorder 0000ffff 55555555 +1
+reorder 0000ffff 00010000 +1
+reorder 0000ffff 0000ffff +1
+reorder random n=13: 100000 hash 2d2039521fa13841
+reorder random n=14: 100000 hash 8c7837c8e71d6e01
+reorder random n=15: 100000 hash dde693e430fbc641
+reorder random n=16: 100000 hash 3fa3dc6d0d7aa5c1
+reorder random n=17: 100000 hash 207b4d757d5f9983
+reorder random n=18: 100000 hash ee7de9b58b224ac3
+reorder random n=19: 100000 hash 3a09901d2c493f03
+reorder random n=20: 100000 hash d421ae87002be003
+reorder random n=21: 100000 hash 85dd04df151837c1
+reorder random n=22: 100000 hash 7462115bb8591483
+reorder random n=23: 100000 hash 3df5c8b8f716e101
+reorder random n=24: 100000 hash 9205d4906a4d01c3
+reorder random n=25: 100000 hash 1738ae3cd1ce7283
+reorder random n=26: 100000 hash 12e834ecabba8481
+reorder random n=27: 100000 hash 90126960141e61c3
+reorder random n=28: 100000 hash d9576401afaf0381
+reorder random n=29: 100000 hash b9e6e37fd2ed8ec3
+reorder random n=30: 100000 hash 646b89e5d927ac83
+reorder random n=31: 100000 hash 3736c13245a34541
+reorder random n=32: 100000 hash 1996b71ba6a0f741
+reorder disagreements with the direct count: 0
+complement n=1: 6 hash b4a6d6bb43ce4482
+complement n=2: 12 hash a48dc800e84b5983
+complement n=3: 24 hash ac194dc4aa746403
+complement n=4: 48 hash 775777c7b9a2b503
+complement n=5: 96 hash 98c34f42b7eabd83
+complement n=6: 192 hash 1700246e80c81c83
+complement n=7: 384 hash b984ab8a51ca8f83
+complement n=8: 768 hash bd5256d7297c0f83
+complement n=9: 1536 hash b363825bd0c86583
+complement n=10: 3072 hash f96319c50b8aaa83
+complement n=11: 6144 hash 5ae3b604856fef83
+complement n=12: 12288 hash 4d4c560fdfd1b383
+complement n=13: 24576 hash ff70d972aba37783
+complement n=14: 49152 hash d88b4fe1b7b22f83
+complement n=15: 60012 hash fa6f2b12113bb29b
+complement n=16: 60012 hash e392d54e8dfad972
+complement n=17: 60012 hash ff0dc914c85fc7a3
+complement n=18: 60012 hash 78fafb380a430e0d
+complement n=19: 60012 hash 6eb6c7155d70d94a
+complement n=20: 60012 hash 287435c1c0f5a92d
+complement n=21: 60012 hash 906db68a6eafd7cc
+complement n=22: 60012 hash 702275ce8bc8b952
+complement n=23: 60012 hash 786aa0f1af829e7e
+complement n=24: 60012 hash c60fd9f990d628e6
+complement n=25: 60012 hash 1d84d81d4b0da240
+complement n=26: 60012 hash 4410ac5d0fe53fb8
+complement n=27: 60012 hash 4660b44da2abbc40
+complement n=28: 60012 hash 861c5f733bca88d9
+complement n=29: 60012 hash 52f21fc01df0fbda
+complement n=30: 60012 hash 885ee9e7cd0b5032
+complement n=31: 60012 hash 7a3c869f31559c19
+complement n=32: 60012 hash 52e8e93c36606e81
+complement disagreements with the direct count: 0
+products R(0,0,1) n=1: 3 terms hash ce178dc1943f48a3
+products R(0,1,0) n=1: 4 terms hash ebc2aff4c818e37a
+products R(1,0,0) n=1: 4 terms hash 3e9a3bc6eec51923
+products dense n=1: 4 terms hash e1a9e6abcdf73ac0
+products random seed 1 n=1: 3 terms hash ce178dc1943f48a3
+products random seed 2 n=1: 3 terms hash ce178dc1943f48a3
+products random seed 3 n=1: 3 terms hash ce178dc1943f48a3
+products R(0,0,2) n=2: 9 terms hash d89e03bcde74917a
+products R(0,1,1) n=2: 12 terms hash 99e684532f3f0caa
+products R(0,2,0) n=2: 16 terms hash f029ce71526b6493
+products R(1,0,1) n=2: 12 terms hash 05c18d48472a6853
+products R(1,1,0) n=2: 16 terms hash 25b01b3267db0363
+products R(2,0,0) n=2: 16 terms hash 74fb16280a1cc7a3
+products witt e1 e_n n=2: 16 terms hash 2642aed95dc06c4a
+products null pair last n=2: 16 terms hash ab652c0e4f2b2d3a
+products dense n=2: 22 terms hash 1844295bfbe168b1
+products random seed 1 n=2: 19 terms hash d3f199947da01792
+products random seed 2 n=2: 19 terms hash 7f15eafc2eb3d379
+products random seed 3 n=2: 16 terms hash d60087f882f4302f
+products R(0,0,3) n=3: 27 terms hash 998b287e97dca01a
+products R(0,1,2) n=3: 36 terms hash b4cc5c6792b4826a
+products R(0,2,1) n=3: 48 terms hash a504865e5f4174b3
+products R(0,3,0) n=3: 64 terms hash 817801bb44d6af23
+products R(1,0,2) n=3: 36 terms hash 3c095d3ddbcb4be3
+products R(1,1,1) n=3: 48 terms hash 3badd09fbd69e523
+products R(1,2,0) n=3: 64 terms hash c2fbb3aa4fd3b6c3
+products R(2,0,1) n=3: 48 terms hash f740f863437a57c3
+products R(2,1,0) n=3: 64 terms hash c686a7c3a0381b43
+products R(3,0,0) n=3: 64 terms hash a5dd455a0ccc67c3
+products witt e1 e_n n=3: 48 terms hash dfa81117acc86bda
+products null pair last n=3: 64 terms hash 8a0b9eb7cef62da3
+products dense n=3: 136 terms hash 82c5180a4e5a7913
+products random seed 1 n=3: 57 terms hash 5c7bb95c127b7cd0
+products random seed 2 n=3: 118 terms hash 5f55c2d395455582
+products random seed 3 n=3: 76 terms hash acda8f70ce36ffda
+products R(0,0,4) n=4: 81 terms hash 0c655a0dc7bd33f3
+products R(0,1,3) n=4: 108 terms hash b28174aa54ae62fa
+products R(0,2,2) n=4: 144 terms hash e7307ea7fddbc8b3
+products R(0,3,1) n=4: 192 terms hash 10f6914b06674ee3
+products R(0,4,0) n=4: 256 terms hash 82311a5909268d43
+products R(1,0,3) n=4: 108 terms hash 94d2ee889b14f033
+products R(1,1,2) n=4: 144 terms hash 1c23c7ec8a2c47e3
+products R(1,2,1) n=4: 192 terms hash 0ffaed9796fdd143
+products R(1,3,0) n=4: 256 terms hash f8052b653451d403
+products R(2,0,2) n=4: 144 terms hash 7499367fe08793e3
+products R(2,1,1) n=4: 192 terms hash 870368e5e075f943
+products R(2,2,0) n=4: 256 terms hash 2bfb9037d3eead83
+products R(3,0,1) n=4: 192 terms hash 41d6c8624db46583
+products R(3,1,0) n=4: 256 terms hash 907a574ba627ce83
+products R(4,0,0) n=4: 256 terms hash 08588baadcc13083
+products witt e1 e_n n=4: 144 terms hash 21cd82a5cfe4861a
+products null pair last n=4: 256 terms hash 8b295fec74b70683
+products dense n=4: 832 terms hash f58018265b38ecb7
+products random seed 1 n=4: 436 terms hash 20d37d7e09d77153
+products random seed 2 n=4: 171 terms hash bf0265821b6103e1
+products random seed 3 n=4: 192 terms hash cdcc1ee4669ebd83
+products R(0,0,5) n=5: 243 terms hash 8438ca92e3d5c743
+products R(0,1,4) n=5: 324 terms hash 578019c9f79a8d5a
+products R(0,2,3) n=5: 432 terms hash b6f7e4f358058c53
+products R(0,3,2) n=5: 576 terms hash 1c8cc38277e98ee3
+products R(0,4,1) n=5: 768 terms hash 0bc1baae48f84b43
+products R(0,5,0) n=5: 1024 terms hash d42a750167d1a103
+products R(1,0,4) n=5: 324 terms hash 2e351edb3aff0f43
+products R(1,1,3) n=5: 432 terms hash 512a3f0515fdd623
+products R(1,2,2) n=5: 576 terms hash 6b87d46294d4bc43
+products R(1,3,1) n=5: 768 terms hash 2520ef84912dfd03
+products R(1,4,0) n=5: 1024 terms hash 5236c361ab5d1d83
+products R(2,0,3) n=5: 432 terms hash edceb723063759c3
+products R(2,1,2) n=5: 576 terms hash 7dba67427fef1243
+products R(2,2,1) n=5: 768 terms hash d2d6e0295b04c283
+products R(2,3,0) n=5: 1024 terms hash 2f498cb779867203
+products R(3,0,2) n=5: 576 terms hash 8c1215d6dccffc43
+products R(3,1,1) n=5: 768 terms hash 529abedb12a32d03
+products R(3,2,0) n=5: 1024 terms hash d6f694a408608803
+products R(4,0,1) n=5: 768 terms hash 48d469c2e66aa583
+products R(4,1,0) n=5: 1024 terms hash 2ff91b3d8fedc703
+products R(5,0,0) n=5: 1024 terms hash ec4f15bba2e96e03
+products witt e1 e_n n=5: 432 terms hash 399954cc2502f3ea
+products null pair last n=5: 1024 terms hash 82c3fcb67c576b03
+products dense n=5: 4864 terms hash 3638e3034bd4a1b3
+products random seed 1 n=5: 3667 terms hash c7606ba84723786e
+products random seed 2 n=5: 4324 terms hash bbd3fb1c09beb92b
+products random seed 3 n=5: 1200 terms hash 83827cb35bd6532a
+products R(0,0,6) n=6: 729 terms hash f88fcdc01f85c49a
+products R(0,1,5) n=6: 972 terms hash bf90a79d5e056fca
+products R(0,2,4) n=6: 1296 terms hash c5fa0117841e3493
+products R(0,3,3) n=6: 1728 terms hash c1dee1fa9168a8a3
+products R(0,4,2) n=6: 2304 terms hash 6ceea6cdd5594543
+products R(0,5,1) n=6: 3072 terms hash 2b3db5e743738283
+products R(0,6,0) n=6: 4096 terms hash 036df5ce0fd02603
+products R(1,0,5) n=6: 972 terms hash 37a4d51945667ed3
+products R(1,1,4) n=6: 1296 terms hash 49d400810fbbf9e3
+products R(1,2,3) n=6: 1728 terms hash fe1344bd08a9db43
+products R(1,3,2) n=6: 2304 terms hash e761a5df78000183
+products R(1,4,1) n=6: 3072 terms hash c7ce4472b2615e83
+products R(1,5,0) n=6: 4096 terms hash f1e1b82ef2c74f83
+products R(2,0,4) n=6: 1296 terms hash 455b96b6cc95efe3
+products R(2,1,3) n=6: 1728 terms hash 0d45d1ae6aa636c3
+products R(2,2,2) n=6: 2304 terms hash 610b3d99460ad603
+products R(2,3,1) n=6: 3072 terms hash aee09281c4801a03
+products R(2,4,0) n=6: 4096 terms hash 7cdc8664d3ce6e83
+products R(3,0,3) n=6: 1728 terms hash 6d79b9f9ece1df03
+products R(3,1,2) n=6: 2304 terms hash c4c6bce6925da383
+products R(3,2,1) n=6: 3072 terms hash ef7ac3bb72c87403
+products R(3,3,0) n=6: 4096 terms hash 52259eb59f157283
+products R(4,0,2) n=6: 2304 terms hash a357be2139f88b83
+products R(4,1,1) n=6: 3072 terms hash 01402323eecb0903
+products R(4,2,0) n=6: 4096 terms hash d0db2a0224bcf283
+products R(5,0,1) n=6: 3072 terms hash 21a0455507216903
+products R(5,1,0) n=6: 4096 terms hash 55d3b48bd9e9f483
+products R(6,0,0) n=6: 4096 terms hash c910b4c0e28eeb83
+products witt e1 e_n n=6: 1296 terms hash 88c4644fc4bfe55a
+products null pair last n=6: 4096 terms hash b104a9fbf2d91183
+products dense n=6: 27136 terms hash 18f4e34fffd97183
+products random seed 1 n=6: 10564 terms hash 588dcb9e3f70e420
+products random seed 2 n=6: 7569 terms hash b6fbce7880a2155d
+products random seed 3 n=6: 5808 terms hash 42da9f488b177963
+products R(0,0,7) n=7: 2187 terms hash 5d47967ac2047d9a
+products R(0,1,6) n=7: 2916 terms hash 9670c7e5b78c2bea
+products R(0,2,5) n=7: 3888 terms hash e7799bd8304c2473
+products R(0,3,4) n=7: 5184 terms hash b36393f92230e4a3
+products R(0,4,3) n=7: 6912 terms hash 5b273e2c863ef9c3
+products R(0,5,2) n=7: 9216 terms hash 9c759cec833a8303
+products R(0,6,1) n=7: 12288 terms hash 392004542a558f03
+products R(0,7,0) n=7: 16384 terms hash 94ea831030af4f83
+products R(1,0,6) n=7: 2916 terms hash 28815361c5307ac3
+products R(1,1,5) n=7: 3888 terms hash 77fa10b299d333e3
+products R(1,2,4) n=7: 5184 terms hash 8ef36676c9da17c3
+products R(1,3,3) n=7: 6912 terms hash c24c487bb781df03
+products R(1,4,2) n=7: 9216 terms hash 260afdfb33560d83
+products R(1,5,1) n=7: 12288 terms hash dbacd1fba68d1483
+products R(1,6,0) n=7: 16384 terms hash 4e097dc45f63a583
+products R(2,0,5) n=7: 3888 terms hash e7fbe4e6cbce7b03
+products R(2,1,4) n=7: 5184 terms hash ca65960724a70d43
+products R(2,2,3) n=7: 6912 terms hash 199e6f2519ff1c03
+products R(2,3,2) n=7: 9216 terms hash 3965ea8727872703
+products R(2,4,1) n=7: 12288 terms hash ad12948d3c176383
+products R(2,5,0) n=7: 16384 terms hash ffbbbd52b1d89d83
+products R(3,0,4) n=7: 5184 terms hash 39fdd4bde2932843
+products R(3,1,3) n=7: 6912 terms hash bc4c54687df69383
+products R(3,2,2) n=7: 9216 terms hash b31e940ee4350303
+products R(3,3,1) n=7: 12288 terms hash 17a51c1b217c1983
+products R(3,4,0) n=7: 16384 terms hash 2ec0249cfbf1af83
+products R(4,0,3) n=7: 6912 terms hash eef2ad0a283acb03
+products R(4,1,2) n=7: 9216 terms hash 5dc6e2f57df1d803
+products R(4,2,1) n=7: 12288 terms hash 6d34b473e04a1583
+products R(4,3,0) n=7: 16384 terms hash 93df51e098219183
+products R(5,0,2) n=7: 9216 terms hash 463087e8b7058103
+products R(5,1,1) n=7: 12288 terms hash 08f1f9759b64f283
+products R(5,2,0) n=7: 16384 terms hash 28bbbd7c4b5ef983
+products R(6,0,1) n=7: 12288 terms hash 2b6a0436823da183
+products R(6,1,0) n=7: 16384 terms hash 86361d89cffafe83
+products R(7,0,0) n=7: 16384 terms hash 3f8994dd19e22e83
+products witt e1 e_n n=7: 3888 terms hash b0a2999c5a6d2a9a
+products null pair last n=7: 16384 terms hash 7307c57073e75283
+products dense n=7: 145408 terms hash 3ed8f514e6524463
+products random seed 1 n=7: 35370 terms hash d2c68a834de1d9d7
+products random seed 2 n=7: 42552 terms hash f8c8312eebcbdc6a
+products random seed 3 n=7: 171268 terms hash a2f90d031b8981ab
+products R(0,0,8) n=8: 6561 terms hash 93d100b73133a173
+products R(0,1,7) n=8: 8748 terms hash 10acb519fa77ceda
+products R(0,2,6) n=8: 11664 terms hash b57c923eb394df33
+products R(0,3,5) n=8: 15552 terms hash a8d59ca87a589ce3
+products R(0,4,4) n=8: 20736 terms hash 3828642c3f686dc3
+products R(0,5,3) n=8: 27648 terms hash 0725e0a2be07b203
+products R(0,6,2) n=8: 36864 terms hash 5a4f2c9804311003
+products R(0,7,1) n=8: 49152 terms hash 858a925d49a26983
+products R(0,8,0) n=8: 65536 terms hash 87c2131c6d53eb83
+products R(1,0,7) n=8: 8748 terms hash db35830a7389eab3
+products R(1,1,6) n=8: 11664 terms hash f3d466884a8341a3
+products R(1,2,5) n=8: 15552 terms hash 135725f4998153c3
+products R(1,3,4) n=8: 20736 terms hash d44f773fb99ef803
+products R(1,4,3) n=8: 27648 terms hash b883747ef376b783
+products R(1,5,2) n=8: 36864 terms hash 61e7d54fef48fd83
+products R(1,6,1) n=8: 49152 terms hash 1f2bdb7b6fd61383
+products R(1,7,0) n=8: 65536 terms hash 18daae327beb7b83
+products R(2,0,6) n=8: 11664 terms hash d37381beecf26763
+products R(2,1,5) n=8: 15552 terms hash 600df4b999d0d2c3
+products R(2,2,4) n=8: 20736 terms hash 6b233e24bf96f583
+products R(2,3,3) n=8: 27648 terms hash 196a1f631a5faa03
+products R(2,4,2) n=8: 36864 terms hash c148c099030e1283
+products R(2,5,1) n=8: 49152 terms hash f25f15fdd6f73383
+products R(2,6,0) n=8: 65536 terms hash d5a9cffec56b8183
+products R(3,0,5) n=8: 15552 terms hash e1a1a0b13dce8283
+products R(3,1,4) n=8: 20736 terms hash 998a807e1f8f0d83
+products R(3,2,3) n=8: 27648 terms hash b580478256d48a03
+products R(3,3,2) n=8: 36864 terms hash c0b2df4b4af43a83
+products R(3,4,1) n=8: 49152 terms hash f8bb4fdb5030ff83
+products R(3,5,0) n=8: 65536 terms hash de9b4cc1f6fd0383
+products R(4,0,4) n=8: 20736 terms hash 2098341d15efbc83
+products R(4,1,3) n=8: 27648 terms hash 67e67703d25fa203
+products R(4,2,2) n=8: 36864 terms hash ef6e8237f390d683
+products R(4,3,1) n=8: 49152 terms hash 875fe6b6379c8183
+products R(4,4,0) n=8: 65536 terms hash 7724b6d5f145cd83
+products R(5,0,3) n=8: 27648 terms hash bb3bf40eee4cca03
+products R(5,1,2) n=8: 36864 terms hash 7f06e9ede9c35083
+products R(5,2,1) n=8: 49152 terms hash 6e320fafc38c7383
+products R(5,3,0) n=8: 65536 terms hash 6cecbfff648fb583
+products R(6,0,2) n=8: 36864 terms hash a300d3d60944c583
+products R(6,1,1) n=8: 49152 terms hash c228274d9fa03683
+products R(6,2,0) n=8: 65536 terms hash 44d9e39dbc0d1983
+products R(7,0,1) n=8: 49152 terms hash 584e55014e56da83
+products R(7,1,0) n=8: 65536 terms hash 3473dd01034a5b83
+products R(8,0,0) n=8: 65536 terms hash 8adae54341db4d83
+products witt e1 e_n n=8: 11664 terms hash 55d7a34e9057876a
+products null pair last n=8: 65536 terms hash b68aeb9485e7af83
+products dense n=8: 753664 terms hash ea4f1056a58d8f5b
+products random seed 1 n=8: 346810 terms hash 611803b8110a54a3
+products random seed 2 n=8: 733456 terms hash 147c53735679cc16
+products random seed 3 n=8: 220530 terms hash 8544adbbe1776849
+products conformal n=3: 64 terms hash 8a0b9eb7cef62da3
+products conformal n=4: 256 terms hash 8b295fec74b70683
+products conformal n=5: 1024 terms hash 82c3fcb67c576b03
+products conformal n=6: 4096 terms hash b104a9fbf2d91183
+products conformal n=7: 16384 terms hash 7307c57073e75283
+products conformal n=8: 65536 terms hash b68aeb9485e7af83
+random products n=9: 44988 values hash aba9e457bd531754
+random products n=10: 52966 values hash e9d92f61f20864c5
+random products n=11: 55518 values hash f1ac19928d4dc932
+random products n=12: 56458 values hash 0b5e4b3fe925a470
+random products n=13: 53058 values hash abba671991011a09
+random products n=14: 54392 values hash 9b5d45152ddd8d96
+random products n=15: 59256 values hash 313a0dcbce08472d
+random products n=16: 57908 values hash 4e706bfc3a8989e7
+random products n=17: 65516 values hash 46ebffc29380195d
+random products n=18: 64036 values hash 770b1b8a6a93a3e5
+random products n=19: 67132 values hash d49e7c730b3d7abf
+random products n=20: 63578 values hash db083e279949593f
+random products n=21: 74398 values hash e0d3d08d79887042
+random products n=22: 72764 values hash a6f055c697a78829
+random products n=23: 62274 values hash f26e24b69ddb7172
+random products n=24: 67880 values hash c7315aedcf33f32a
+random products n=25: 80000 values hash 5e2632608ca16bb7
+random products n=26: 75902 values hash 17c538aa7d9b09ca
+random products n=27: 86564 values hash 639cb4bd2e74e500
+random products n=28: 71934 values hash 976223c1c3d17003
+random products n=29: 73066 values hash b29f512535762f3b
+random products n=30: 78532 values hash 95b1dce6c292857e
+random products n=31: 83500 values hash d4c54546cd4a3e14
+random products n=32: 76242 values hash 4141d4343e9f1033
+runtime plan R(3,0,1) n=4: 192 terms hash 0700bedd2c3ece93
+runtime plan conformal(3) n=5: 1024 terms hash 8e8fc7018679da13
+runtime plan random n=6: 6276 terms hash ba819c9699c19ccb
+runtime plan R(5,0,1) n=6: 3072 terms hash c272cc14b14336f3

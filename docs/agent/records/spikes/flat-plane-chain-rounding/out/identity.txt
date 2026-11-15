@@ -1,0 +1,15 @@
+holds  F1  V̰ ⟇ V = V ⟇ V̰ = λ𝟙 + 2h e5
+holds  F2  dropped part of V ⟇ x ⟇ V̰ is 2h x4 on 𝟙, 0 on every trivector
+holds  F3  magnitude of the antiscalar = |x4| T
+holds  F4  V̰ ⟇ e5 ⟇ V = λ e5
+holds  F4  W(m ⟇ V) = λ_m λ_V 𝟙 + (λ_m 2h_V + λ_V 2h_m) e5
+holds  F4  the layout is closed under ⟇
+holds  F5  V ⟇ (𝟙 + α e5) has λ and 2(h + αλ)
+holds  F5  e5 ⟇ e5 = 0
+holds  F5  V ⟇ (𝟙 + α e5): q += α s, a1 −= α b3, a2 += α b2, a3 −= α b1
+holds  F6  h = v·m and λ = |v|² on the oriented motor blades
+holds  F6  the update is m <- m - (v·m / |v|²) v
+holds  H1  V̰ ⟇ V has only 𝟙 and vector parts
+holds  H1  trivector part of V ⟇ x ⟇ V̰ is 0
+holds  H1  antiscalar = <x ⟇ (V̰ ⟇ V)>_𝟙
+sympy 1.14.0

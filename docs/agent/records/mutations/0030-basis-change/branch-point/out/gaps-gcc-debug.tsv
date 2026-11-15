@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+conformal_pairing_positive	gcc-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived
+diagonal_negative_first	gcc-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived
+witt_pairing_doubled	gcc-debug	1818efe64d11	survived	killed	-	-	-	-	-	survived

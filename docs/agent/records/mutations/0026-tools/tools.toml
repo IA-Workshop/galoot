@@ -1,0 +1,389 @@
+# The mutants of tools/mutate and tools/compiles, judged by their own
+# CTests, which copy the mutated tool into a scratch repository, so each
+# mutant is judged by a fresh process. The selections build nothing.
+presets = ["gcc-debug"]
+
+[selection.mutate]
+targets = []
+labels = '^tools\.mutate$'
+
+[selection.compiles]
+targets = []
+labels = '^tools\.compiles$'
+
+# The anchor count check removed.
+[[mutant]]
+name = "mutate_count_check_removed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "        if found != count:", replacement = "        if False:" },
+]
+expect = "killed"
+
+# The no-change check removed.
+[[mutant]]
+name = "mutate_no_change_check_removed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "        if texts[mutant[\"name\"]] == text:", replacement = "        if False:" },
+]
+expect = "killed"
+
+# The dirty-file check removed.
+[[mutant]]
+name = "mutate_dirty_check_removed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+    check_clean(session.files)
+''', replacement = "" },
+]
+expect = "killed"
+
+# The empty-selection check removed.
+[[mutant]]
+name = "mutate_empty_selection_check_removed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        if not tests:
+''', replacement = '''
+        if False:
+''' },
+]
+expect = "killed"
+
+# The unbuilt-program check removed.
+[[mutant]]
+name = "mutate_unbuilt_program_check_removed"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "            for program in programs[test[\"name\"]] - built:", replacement = "            for program in ():" },
+]
+expect = "killed"
+
+# The baseline's failure ignored.
+[[mutant]]
+name = "mutate_baseline_skipped"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+            if status:
+                raise Refused(f"build/{preset}: the baseline''', replacement = '''
+            if False:
+                raise Refused(f"build/{preset}: the baseline''' },
+]
+expect = "killed"
+
+# Programs not deleted before a build.
+[[mutant]]
+name = "mutate_programs_kept"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "                (tree.path / program).unlink(missing_ok=True)", replacement = "                pass" },
+]
+expect = "killed"
+
+# Tests of unbuilt programs passed to CTest.
+[[mutant]]
+name = "mutate_unbuilt_tests_run"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "            ran = sorted(set(programs) - set(not_run))", replacement = "            ran = sorted(programs)" },
+]
+expect = "killed"
+
+# Warning counted as a kill.
+[[mutant]]
+name = "mutate_warning_kills"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\", \"test\", \"warning\")})" },
+]
+expect = "killed"
+
+# Invalid counted as a kill.
+[[mutant]]
+name = "mutate_invalid_kills"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\", \"test\", \"invalid\")})" },
+]
+expect = "killed"
+
+# Test-class errors not counted.
+[[mutant]]
+name = "mutate_test_class_ignored"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "             if kind in (\"assert\", \"test\")})", replacement = "             if kind in (\"assert\",)})" },
+]
+expect = "killed"
+
+# Equivalent declarations ignored.
+[[mutant]]
+name = "mutate_equivalent_ignored"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+            verdict = ("equivalent" if mutant["expect"] == "equivalent"
+                       else "survived")''', replacement = "            verdict = \"survived\"" },
+]
+expect = "killed"
+
+# A guard that stops constant evaluation not counted as a kill.
+[[mutant]]
+name = "mutate_guard_not_a_kill"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "    r\"static assertion|static_assert|call to non-.?constexpr.? function\")", replacement = "    r\"static assertion|static_assert\")" },
+]
+expect = "killed"
+
+# The unexpected-kill report removed.
+[[mutant]]
+name = "mutate_unexpected_kill_unreported"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "        if verdict == \"killed\" and mutant[\"expect\"] == \"equivalent\":", replacement = "        if False:" },
+]
+expect = "killed"
+
+# The killer comparison removed.
+[[mutant]]
+name = "mutate_killers_not_compared"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "                     for k in mutant[\"killers\"] if k not in killers]", replacement = "                     for k in mutant[\"killers\"] if False]" },
+]
+expect = "killed"
+
+# Leak detection removed.
+[[mutant]]
+name = "mutate_leaks_not_detected"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "                leaks.append(where)", replacement = "                pass" },
+]
+expect = "killed"
+
+# Run-time edits not applied to the baseline.
+[[mutant]]
+name = "mutate_runtime_after_baseline"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        for file in runtime_files:
+            self.write(file, self.base[file])
+''', replacement = "" },
+  { anchor = "        counts = dict.fromkeys(", replacement = '''
+        for file in runtime_files:
+            self.write(file, self.base[file])
+        counts = dict.fromkeys(''' },
+]
+expect = "killed"
+
+# The file not restored after a mutant whose build failed.
+[[mutant]]
+name = "mutate_restore_skipped_after_failed_build"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "            _, output = self.build(tree, name, selection[\"targets\"])", replacement = "            status, output = self.build(tree, name, selection[\"targets\"])" },
+  { anchor = '''
+        finally:
+            self.write(mutant["file"], self.base[mutant["file"]])''', replacement = '''
+        finally:
+            if status == 0:
+                self.write(mutant["file"], self.base[mutant["file"]])''' },
+]
+expect = "killed"
+
+# No rebuild when a run stops early.
+[[mutant]]
+name = "mutate_no_rebuild_after_early_stop"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+            if preset not in session.rebuilt:
+                session.rebuild(preset)''', replacement = "            pass" },
+]
+expect = "killed"
+
+# The killers in the order CTest and Ninja report them.
+[[mutant]]
+name = "mutate_killers_in_report_order"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        killers = sorted(set(failed)) + sorted(
+            {where for _, kind, _, where in failures
+             if kind in ("assert", "test")})''', replacement = '''
+        killers = list(dict.fromkeys(failed + [
+            where for _, kind, _, where in failures
+             if kind in ("assert", "test")]))''' },
+]
+expect = "killed"
+
+# CTest's exit status ignored.
+[[mutant]]
+name = "mutate_ctest_status_ignored"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "        ctest_failed = status != 0 and not failed", replacement = "        ctest_failed = False" },
+]
+expect = "killed"
+
+# Rows of earlier runs dropped.
+[[mutant]]
+name = "mutate_earlier_rows_dropped"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = '''
+        if path.exists():
+            for line in path.read_text''', replacement = '''
+        if False:
+            for line in path.read_text''' },
+]
+expect = "killed"
+
+# Exit status always 0.
+[[mutant]]
+name = "mutate_exit_always_0"
+selection = "mutate"
+file = "tools/mutate"
+edits = [
+  { anchor = "    return 1 if session.problems else 0", replacement = "    return 0" },
+]
+expect = "killed"
+
+# The before tree taken from HEAD.
+[[mutant]]
+name = "compiles_before_from_head"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "    archive = subprocess.run([\"git\", \"archive\", revision, \"include\", \"test\"],", replacement = "    archive = subprocess.run([\"git\", \"archive\", \"HEAD\", \"include\", \"test\"]," },
+]
+expect = "killed"
+
+# Include paths not moved.
+[[mutant]]
+name = "compiles_includes_not_moved"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "        return str(before) + path[len(str(ROOT)):] if inside else path", replacement = "        return path" },
+]
+expect = "killed"
+
+# The launcher kept.
+[[mutant]]
+name = "compiles_launcher_kept"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "    if len(argv) > 1 and Path(argv[0]).name == \"measure\" and argv[1] == \"tu\":", replacement = "    if False:" },
+]
+expect = "killed"
+
+# The dirty check removed.
+[[mutant]]
+name = "compiles_dirty_check_removed"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "    if run([\"git\", \"status\", \"--porcelain\", \"include\", \"test\"]).stdout.strip():", replacement = "    if False:" },
+]
+expect = "killed"
+
+# Interleaving by unit instead of by repeat.
+[[mutant]]
+name = "compiles_interleaved_by_unit"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = '''
+    for repeat in range(1, args.repeats + 1):
+        for (compiler, name, tree), (preset, flags, source) in jobs.items():''', replacement = '''
+    for (compiler, name, tree), (preset, flags, source) in jobs.items():
+        for repeat in range(1, args.repeats + 1):''' },
+]
+expect = "killed"
+
+# Rows written to runs.tsv.
+[[mutant]]
+name = "compiles_rows_to_run_log"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = '''
+        result = run([*pin, str(ROOT / "tools/timed"), "--log",
+                          str(out / "runs.tsv"), "measure", preset,''', replacement = "        result = run([*pin, str(ROOT / \"tools/timed\"), \"measure\", preset," },
+]
+expect = "killed"
+
+# Unavailable read as 0.
+[[mutant]]
+name = "compiles_unavailable_as_0"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "    return int(text) if text.isdigit() else None", replacement = "    return int(text) if text.isdigit() else 0" },
+]
+expect = "killed"
+
+# A compiling source not reported.
+[[mutant]]
+name = "compiles_compiling_source_unreported"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = '''
+        if result.returncode == 0:
+            compiled.append(''', replacement = '''
+        if False:
+            compiled.append(''' },
+]
+expect = "killed"
+
+# Notes counted as errors.
+[[mutant]]
+name = "compiles_notes_counted"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "        errors = [line for line in lines if \"error:\" in line]", replacement = "        errors = [line for line in lines if \"error:\" in line or \"note:\" in line]" },
+]
+expect = "killed"
+
+# Flags taken from the wrong compile-fail test.
+[[mutant]]
+name = "compiles_flags_of_first_test"
+selection = "compiles"
+file = "tools/compiles"
+edits = [
+  { anchor = "            if command[-1] == source:", replacement = "            if True:" },
+]
+expect = "killed"

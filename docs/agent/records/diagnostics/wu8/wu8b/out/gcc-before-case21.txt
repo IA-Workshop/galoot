@@ -1,0 +1,46 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:95:58: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+   95 |   const gc::mv<rga3, point_layout, std::unique_ptr<double>> s{};
+      |                                                          ^~
+program.cpp:95:58: note: constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from program.cpp:5:
+  • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = std::unique_ptr<double>]’:
+  • required from here
+    program.cpp:95:58:   
+  • required for the satisfaction of ‘constructible_from<_Tp, _Tp&>’ [with _Tp = std::unique_ptr<double, std::default_delete<double> >]
+    /usr/include/c++/16/concepts:161:13:   
+      161 |     concept constructible_from
+          |             ^~~~~~~~~~~~~~~~~~
+  • required for the satisfaction of ‘copy_constructible<_Tp>’ [with _Tp = std::unique_ptr<double, std::default_delete<double> >]
+    /usr/include/c++/16/concepts:180:13:   
+      180 |     concept copy_constructible
+          |             ^~~~~~~~~~~~~~~~~~
+  • required for the satisfaction of ‘copyable<_Tp>’ [with _Tp = std::unique_ptr<double, std::default_delete<double> >]
+    /usr/include/c++/16/concepts:277:13:   
+      277 |     concept copyable = copy_constructible<_Tp> && movable<_Tp>
+          |             ^~~~~~~~
+  • required for the satisfaction of ‘semiregular<T>’ [with T = std::unique_ptr<double, std::default_delete<double> >]
+    /usr/include/c++/16/concepts:282:13:   
+      282 |     concept semiregular = copyable<_Tp> && default_initializable<_Tp>;
+          |             ^~~~~~~~~~~
+  • the expression ‘is_constructible_v<_Tp, _Args ...> [with _Tp = std::unique_ptr<double, std::default_delete<double> >; _Args = {std::unique_ptr<double, std::default_delete<double> >&}]’ evaluated to ‘false’
+    /usr/include/c++/16/concepts:162:30:
+      162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+          |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘std::unique_ptr<double>’ is not constructible from ‘std::unique_ptr<double>&’, because
+  • error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>::unique_ptr(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = double; _Dp = std::default_delete<double>]’
+In file included from /usr/include/c++/16/memory:80,
+                 from program.cpp:8:
+  • declared here
+    /usr/include/c++/16/bits/unique_ptr.h:543:7:
+      543 |       unique_ptr(const unique_ptr&) = delete;
+          |       ^~~~~~~~~~
+  • use ‘-fdiagnostics-all-candidates’ to display considered candidates
+    /usr/include/c++/16/concepts:162:30:
+      162 |       = destructible<_Tp> && is_constructible_v<_Tp, _Args...>;
+          |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:96:10: error: request for member ‘coefficients’ in ‘s’, which is of non-class type ‘const int’
+   96 |   r += s.coefficients.empty() ? 0 : 1;
+      |          ^~~~~~~~~~~~

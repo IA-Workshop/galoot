@@ -1,0 +1,2 @@
+mutation	file	preset	build_exit	test_exit	failed_tests	killed	kind	static_assert_lines	checks_fired	failed_cases	first_build_error
+map_left_factor_by_grade	plan.hpp	gcc-debug	1	-	-	killed	static_assert	plan.hpp:896	unary map: a complement's sign differs from its closed form	-	include/galoot/core/plan.hpp:896:28: error: static assertion failed: unary map: a complement's sign differs from its closed form

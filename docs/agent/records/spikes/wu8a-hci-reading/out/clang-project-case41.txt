@@ -1,0 +1,4 @@
+first_user.cpp:274:15: error: no type named 'scalar_type' in 'galoot::core::mv<rga3, blade_set<6>{{{{9, -1}, {10, -1}, {12, -1}, {6, 1}, {5, -1}, {3, 1}}}}, double>'
+  274 |   const Line::scalar_type v = 1.0;
+      |         ~~~~~~^
+1 error generated.

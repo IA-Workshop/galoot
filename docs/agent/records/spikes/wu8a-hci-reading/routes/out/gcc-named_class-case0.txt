@@ -1,0 +1,10 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:69:17: error: static assertion failed
+   69 |   static_assert(keeps_properties<Point, 4>);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:70:17: error: static assertion failed
+   70 |   static_assert(keeps_properties<Line, 6>);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+program.cpp:71:17: error: static assertion failed
+   71 |   static_assert(keeps_properties<Motor, 8>);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~

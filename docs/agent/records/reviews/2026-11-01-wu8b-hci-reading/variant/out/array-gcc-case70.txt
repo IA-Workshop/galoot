@@ -1,0 +1,21 @@
+variant.cpp: In function ‘int main()’:
+variant.cpp:94:4: error: no matching function for call to ‘f(const Motor&)’
+   94 |   f(q);  // a motor to a point or a line: both lossy
+      |   ~^~~
+  • there are 2 candidates
+    • candidate 1: ‘void f(const Point&)’
+      variant.cpp:28:6:
+         28 | void f(const Point&) {}
+            |      ^
+      • no known conversion for argument 1 from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>’} to ‘const Point&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&’}
+        variant.cpp:28:8:
+           28 | void f(const Point&) {}
+              |        ^~~~~~~~~~~~
+    • candidate 2: ‘void f(const Line&)’
+      variant.cpp:29:6:
+         29 | void f(const Line&) {}
+            |      ^
+      • no known conversion for argument 1 from ‘const Motor’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{15, 1}}}}, double>’} to ‘const Line&’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>&’}
+        variant.cpp:29:8:
+           29 | void f(const Line&) {}
+              |        ^~~~~~~~~~~

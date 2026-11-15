@@ -1,0 +1,10 @@
+ninja: Entering directory `/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/pre-release-core-pass--inline-opt-out/build/gcc-asan'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/7] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_drawn_test.cpp.o
+[2/7] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_conformal3_test.cpp.o
+[3/7] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_diagonal_test.cpp.o
+[4/7] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_dense_test.cpp.o
+[5/7] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o
+[6/7] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_four_test.cpp.o
+timed: build identities-six-units took 43.012 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/pre-release-core-pass--inline-opt-out/docs/agent/records/performance/pre-release-core-pass/opt-out/runs.tsv

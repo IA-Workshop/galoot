@@ -1,0 +1,10 @@
+before: 2026-11-11T06:44:13Z
+running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+clients: 168873 (ctest)
+5.93 9.87 8.88 2/1790 181300
+after: 2026-11-11T06:54:52Z exit 0
+running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+clients: 238757 (ctest)
+9.58 11.79 10.10 28/1843 239408

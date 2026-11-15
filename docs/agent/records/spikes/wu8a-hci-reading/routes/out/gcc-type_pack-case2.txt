@@ -1,0 +1,5 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:85:26: error: narrowing conversion of ‘w’ from ‘int’ to ‘double’ [-Werror=narrowing]
+   85 |   const Point s{1, 2, 3, w};
+      |                          ^
+cc1plus: all warnings being treated as errors

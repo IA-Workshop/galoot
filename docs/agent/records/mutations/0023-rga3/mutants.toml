@@ -1,0 +1,623 @@
+# The mutants of the rga3 preset's headers, ported from mutate.py: the
+# same edits, written out (a removed catch-all is its whole declaration
+# replaced by nothing).
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.motions]
+targets = ["rga3_motions_test", "rga3_rotation_mode_0", "rga3_rotation_mode_1"]
+labels = '^rga3\.motions$'
+
+[selection.objects]
+targets = ["rga3_objects_test", "rga3_motions_test", "rga3_point_groups_test", "rga3_chains_test", "rga3_incidence_test", "rga3_format_test", "rga3_rotation_mode_0", "rga3_rotation_mode_1", "rga3_readme_example_1", "rga3_readme_example_2", "rga3_readme_example_3"]
+labels = '^rga3'
+
+[[mutant]]
+name = "rotation_full_angle"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [{ anchor = 'const T half = theta / T{2};', replacement = 'const T half = theta;' }]
+expect = "killed"
+
+[[mutant]]
+name = "rotation_negative_angle"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [{ anchor = 'const T half = theta / T{2};', replacement = 'const T half = -theta / T{2};' }]
+expect = "killed"
+
+[[mutant]]
+name = "rotation_sin_cos_swapped"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+const T s = std::sin(half) / length;
+  const T c = std::cos(half);''', replacement = '''
+const T s = std::cos(half) / length;
+  const T c = std::sin(half);''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "rotation_layout"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '[[nodiscard]] inline Motor<T> rotation(', replacement = '[[nodiscard]] inline auto rotation(' },
+  { anchor = '''
+  return Motor<T>{
+      v[0] * s,''', replacement = '''
+  return core::mv<algebra, core::blades<algebra, "1 e41 e42 e43 e23 e31 e12 e1234">, T>{
+      v[0] * s,''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "rotation_any_scalar"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::floating_point T>
+[[nodiscard]] inline''', replacement = '''
+template <class T>
+[[nodiscard]] inline''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "translation_full_d"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [{ anchor = 'dx / T{2}, dy / T{2}, dz / T{2}', replacement = 'dx, dy, dz' }]
+expect = "killed"
+
+[[mutant]]
+name = "translation_negative_half_d"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [{ anchor = 'dx / T{2}, dy / T{2}, dz / T{2}', replacement = '-dx / T{2}, -dy / T{2}, -dz / T{2}' }]
+expect = "killed"
+
+[[mutant]]
+name = "translation_d_permuted"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [{ anchor = 'dx / T{2}, dy / T{2}, dz / T{2}', replacement = 'dy / T{2}, dz / T{2}, dx / T{2}' }]
+expect = "killed"
+
+[[mutant]]
+name = "translation_layout"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '[[nodiscard]] constexpr Motor<T> translation(', replacement = '[[nodiscard]] constexpr auto translation(' },
+  { anchor = '''
+  return Motor<T>{
+      T{0}, T{0}''', replacement = '''
+  return core::mv<algebra, core::blades<algebra, "1 e41 e42 e43 e23 e31 e12 e1234">, T>{
+      T{0}, T{0}''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "translation_accepts_integers"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::ring_scalar T>
+  requires(!std::integral<T>)
+''', replacement = '''
+template <core::ring_scalar T>
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "non_floating_catch_all_unconstrained"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <class T, class S>
+  requires(!std::floating_point<T>)
+''', replacement = '''
+template <class T, class S>
+''' },
+]
+expect = "equivalent"
+reason = "the catch-all becomes viable only for calls that another overload already takes, and that overload still wins by partial ordering or by being more constrained, so no call resolves differently"
+
+[[mutant]]
+name = "angle_type_catch_all_unconstrained"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::floating_point T, class S>
+  requires(!std::same_as<S, T>)
+''', replacement = '''
+template <std::floating_point T, class S>
+''' },
+]
+expect = "equivalent"
+reason = "the catch-all becomes viable only for calls that another overload already takes, and that overload still wins by partial ordering or by being more constrained, so no call resolves differently"
+
+[[mutant]]
+name = "angle_type_catch_all_any_type"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::floating_point T, class S>
+  requires(!std::same_as<S, T>)
+''', replacement = '''
+template <class T, class S>
+''' },
+]
+expect = "equivalent"
+reason = "the catch-all becomes viable only for calls that another overload already takes, and that overload still wins by partial ordering or by being more constrained, so no call resolves differently"
+
+[[mutant]]
+name = "axis_catch_all_unconstrained"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::multivector X, class S>
+  requires(!std::same_as<X, Line<typename X::scalar_type>>)
+''', replacement = '''
+template <core::multivector X, class S>
+''' },
+]
+expect = "equivalent"
+reason = "the catch-all becomes viable only for calls that another overload already takes, and that overload still wins by partial ordering or by being more constrained, so no call resolves differently"
+
+[[mutant]]
+name = "axis_catch_all_any_type"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::multivector X, class S>
+  requires(!std::same_as<X, Line<typename X::scalar_type>>)
+''', replacement = '''
+template <class X, class S>
+''' },
+]
+expect = "equivalent"
+reason = "for an argument that is not a multivector, typename X::scalar_type in the result type is a substitution failure, so the catch-all is not viable, as before"
+
+[[mutant]]
+name = "integer_catch_all_any_type"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::integral T>
+Motor<T> translation(''', replacement = '''
+template <class T>
+Motor<T> translation(''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "mixed_catch_all_unconstrained"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::ring_scalar X, core::ring_scalar Y, core::ring_scalar Z>
+  requires(!(std::same_as<X, Y> && std::same_as<Y, Z>))
+''', replacement = '''
+template <core::ring_scalar X, core::ring_scalar Y, core::ring_scalar Z>
+''' },
+]
+expect = "equivalent"
+reason = "the catch-all becomes viable only for calls that another overload already takes, and that overload still wins by partial ordering or by being more constrained, so no call resolves differently"
+
+[[mutant]]
+name = "mixed_catch_all_any_type"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::ring_scalar X, core::ring_scalar Y, core::ring_scalar Z>
+  requires(!(std::same_as<X, Y> && std::same_as<Y, Z>))
+''', replacement = '''
+template <class X, class Y, class Z>
+''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "non_floating_catch_all_removed"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <class T, class S>
+  requires(!std::floating_point<T>)
+Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
+  static_assert(std::floating_point<T>,
+                "rotation: sin and cos of the angle do not give values of this "
+                "scalar type, which is not a floating type; use Line<double> "
+                "or Line<float>, or build the Motor from its coefficients, the "
+                "unitized line times sin(theta/2) and cos(theta/2) on e1234");
+  return Motor<T>{};
+}
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "angle_type_catch_all_removed"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::floating_point T, class S>
+  requires(!std::same_as<S, T>)
+Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
+  static_assert(std::is_same_v<S, T>,
+                "rotation: the angle is not of the line's scalar type, the "
+                "second of the two types shown; give it in radians as that "
+                "type, as std::numbers::pi / 2 over double or "
+                "std::numbers::pi_v<float> / 2 over float");
+  return Motor<T>{};
+}
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "axis_catch_all_removed"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::multivector X, class S>
+  requires(!std::same_as<X, Line<typename X::scalar_type>>)
+Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
+  static_assert(false, "rotation: the axis is not an rga3 Line; give a "
+                       "Line<T>, and convert a join such as p ^ q with "
+                       "Line<T>{p ^ q}");
+  return Motor<typename X::scalar_type>{};
+}
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "integer_catch_all_removed"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <std::integral T>
+Motor<T> translation(T /*dx*/, T /*dy*/, T /*dz*/) {
+  static_assert(!std::integral<T>,
+                "translation: halving d would truncate in an integer scalar "
+                "type; use a floating or exact rational scalar type");
+  return Motor<T>{};
+}
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "mixed_catch_all_removed"
+selection = "motions"
+file = "include/galoot/presets/rga3/motions.hpp"
+edits = [
+  { anchor = '''
+template <core::ring_scalar X, core::ring_scalar Y, core::ring_scalar Z>
+  requires(!(std::same_as<X, Y> && std::same_as<Y, Z>))
+Motor<X> translation(const X& /*dx*/, const Y& /*dy*/, const Z& /*dz*/) {
+  static_assert(std::is_same_v<X, Y> && std::is_same_v<Y, Z>,
+                "translation: dx, dy, and dz are not all of one scalar type, "
+                "the types shown; give all three the same type, as "
+                "translation(1.0, 0.0, 2.0) over double");
+  return Motor<X>{};
+}
+''', replacement = '' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "line_e14_for_e41"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto line_layout =
+    core::blades<algebra, "e41 e42 e43 e23 e31 e12">;''', replacement = '''
+inline constexpr auto line_layout =
+    core::blades<algebra, "e14 e42 e43 e23 e31 e12">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "line_e13_for_e31"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto line_layout =
+    core::blades<algebra, "e41 e42 e43 e23 e31 e12">;''', replacement = '''
+inline constexpr auto line_layout =
+    core::blades<algebra, "e41 e42 e43 e23 e13 e12">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "plane_e123_for_e321"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto plane_layout =
+    core::blades<algebra, "e423 e431 e412 e321">;''', replacement = '''
+inline constexpr auto plane_layout =
+    core::blades<algebra, "e423 e431 e412 e123">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "plane_e134_for_e431"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto plane_layout =
+    core::blades<algebra, "e423 e431 e412 e321">;''', replacement = '''
+inline constexpr auto plane_layout =
+    core::blades<algebra, "e423 e134 e412 e321">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "motor_e14_for_e41"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 e1234 e23 e31 e12 1">;''', replacement = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e14 e42 e43 e1234 e23 e31 e12 1">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "motor_e13_for_e31"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 e1234 e23 e31 e12 1">;''', replacement = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 e1234 e23 e13 e12 1">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "flector_e123_for_e321"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e1 e2 e3 e4 e423 e431 e412 e321">;''', replacement = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e1 e2 e3 e4 e423 e431 e412 e123">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "flector_e134_for_e431"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e1 e2 e3 e4 e423 e431 e412 e321">;''', replacement = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e1 e2 e3 e4 e423 e134 e412 e321">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "motor_1_e1234_swapped"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 e1234 e23 e31 e12 1">;''', replacement = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 1 e23 e31 e12 e1234">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "motor_halves_swapped"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e41 e42 e43 e1234 e23 e31 e12 1">;''', replacement = '''
+inline constexpr auto motor_layout =
+    core::blades<algebra, "e23 e31 e12 1 e41 e42 e43 e1234">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "flector_halves_swapped"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e1 e2 e3 e4 e423 e431 e412 e321">;''', replacement = '''
+inline constexpr auto flector_layout =
+    core::blades<algebra, "e423 e431 e412 e321 e1 e2 e3 e4">;''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "point_alias_double"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Point = core::mv<algebra, point_layout, T>;', replacement = 'using Point = core::mv<algebra, point_layout, double>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "line_alias_double"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Line = core::mv<algebra, line_layout, T>;', replacement = 'using Line = core::mv<algebra, line_layout, double>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "plane_alias_double"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Plane = core::mv<algebra, plane_layout, T>;', replacement = 'using Plane = core::mv<algebra, plane_layout, double>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "motor_alias_double"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Motor = core::mv<algebra, motor_layout, T>;', replacement = 'using Motor = core::mv<algebra, motor_layout, double>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "flector_alias_double"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Flector = core::mv<algebra, flector_layout, T>;', replacement = 'using Flector = core::mv<algebra, flector_layout, double>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "point_alias_on_plane_layout"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Point = core::mv<algebra, point_layout, T>;', replacement = 'using Point = core::mv<algebra, plane_layout, T>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "plane_alias_on_point_layout"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Plane = core::mv<algebra, plane_layout, T>;', replacement = 'using Plane = core::mv<algebra, point_layout, T>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "motor_alias_on_flector_layout"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Motor = core::mv<algebra, motor_layout, T>;', replacement = 'using Motor = core::mv<algebra, flector_layout, T>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "flector_alias_on_motor_layout"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [{ anchor = 'using Flector = core::mv<algebra, flector_layout, T>;', replacement = 'using Flector = core::mv<algebra, motor_layout, T>;' }]
+expect = "killed"
+
+[[mutant]]
+name = "names_wrong_blade"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e32 e12 e423 e431 e412 e321 e1234";''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "names_swapped"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e42 e41 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''' },
+]
+expect = "equivalent"
+reason = "a name is matched to a layout's blade by the blade it stands for, its mask and orientation, so the order of the list does not change what prints"
+
+[[mutant]]
+name = "names_e14_for_e41"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e14 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "names_e123_for_e321"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e123 e1234";''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "names_e13_for_e31"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e13 e12 e423 e431 e412 e321 e1234";''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "names_e431_dropped"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";''', replacement = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e412 e321 e1234";''' },
+]
+expect = "killed"
+
+[[mutant]]
+name = "names_removed"
+selection = "objects"
+file = "include/galoot/presets/rga3/objects.hpp"
+edits = [
+  { anchor = '''
+  static constexpr auto names =
+      "1 e1 e2 e3 e4 e41 e42 e43 e23 e31 e12 e423 e431 e412 e321 e1234";
+''', replacement = '' },
+]
+expect = "killed"

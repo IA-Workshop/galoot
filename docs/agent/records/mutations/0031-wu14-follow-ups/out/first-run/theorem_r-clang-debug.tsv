@@ -1,0 +1,3 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+resigned_e12	clang-debug	98fd0c20dfc4	killed	killed	core.identities	-	-	a generator times a blade is its contraction plus its wedge over many forms | a product of blades follows the recursion on its lowest generator over many forms	-	-
+recursion_contraction_doubled	clang-debug	98fd0c20dfc4	unjudged	killed	-	test/CMakeFiles/core_identities_test.dir/core/identities_five_dense_test.cpp.o: invalid: include/galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression	core.identities	-	-	unjudged

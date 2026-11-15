@@ -1,0 +1,10 @@
+In file included from ../../../../../../include/galoot/core.hpp:12,
+                 from program.cpp:10:
+../../../../../../include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double&>’:
+program.cpp:62:39:   required from here
+   62 |   gc::mv<rga3, point_layout, double&> s{};
+      |                                       ^
+../../../../../../include/galoot/core/mv.hpp:454:17: error: static assertion failed: mv: the scalar type is a reference or is const or volatile; give the type itself, as in double for const double
+  454 |   static_assert(scalar_is_not_a_reference_or_qualified,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double&>::scalar_is_not_a_reference_or_qualified’ evaluates to false

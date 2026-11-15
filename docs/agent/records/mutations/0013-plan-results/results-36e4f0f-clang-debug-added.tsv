@@ -1,0 +1,5 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_capacity_gp	clang-debug	0	8	core.plan	killed	-	Repeated blades share a result position, and empty sets give empty typed plans	-
+typed_plan_not_structural	clang-debug	1	-	-	killed	plan.hpp:465,plan.hpp:468,plan.hpp:470,plan.hpp:472,plan.hpp:475,plan_test.cpp:381,plan_test.cpp:407,plan_test.cpp:408	-	include/galoot/core/plan.hpp:463:36: error: constexpr variable 'typing' must be initialized by a constant expression
+plan_term_not_trivially_copyable	clang-debug	1	-	-	killed	plan_test.cpp:507	-	test/core/plan_test.cpp:507:15: error: static assertion failed due to requirement 'std::is_trivially_copyable_v<galoot::core::detail::plan_term>'
+plan_term_not_aggregate	clang-debug	1	-	-	killed	-	-	test/core/plan_test.cpp:190:23: error: initialization of non-aggregate type 'const plan_term' with a designated initializer list

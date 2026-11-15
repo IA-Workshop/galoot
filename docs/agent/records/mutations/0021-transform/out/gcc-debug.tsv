@@ -1,0 +1,36 @@
+mutant	build_exit	build_failures	failed_tests
+parity_by_grade	1	transform: test/core/transform_test.cpp:466:64: error: static assertion failed	core.transform_identities
+parity_accepts_mixed	1	transform: test/core/transform_test.cpp:471:68: error: static assertion failed	core.compose_mixed_parity_first core.compose_mixed_parity_second core.transform_mixed_parity
+parity_rejects_empty	1	transform: test/core/transform_test.cpp:477:62: error: static assertion failed	-
+odd_sign_minus_for_every_n	0	-	core.transform core.transform_identities
+odd_sign_plus_for_every_n	0	-	core.transform core.transform_identities
+reverse_for_antireverse	0	-	core.transform core.transform_identities
+no_involution_for_odd	0	-	core.transform core.transform_identities
+x_orientation_dropped	0	-	core.transform
+second_stage_drops_a_kept_term	1	transform: test/core/transform_test.cpp:1265:63: error: static assertion failed	core.transform core.transform_unchecked_int64 core.transform_unchecked_rational core.transform_checking_recorded core.transform_unchecked_recorded core.transform_identities
+first_stage_drops_a_read_term	1	transform: test/core/transform_test.cpp:1265:63: error: static assertion failed	core.transform core.transform_unchecked_int64 core.transform_unchecked_rational core.transform_unchecked_recorded core.transform_unchecked_rigid_int64 core.transform_unchecked_rigid_rational
+compose_operands_swapped	0	-	core.transform core.transform_identities
+exact_check_removed	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded
+exact_check_reads_kept	1	FAILED: [code=1] test/CMakeFiles/core_transform_mode_0.dir/core/transform_assert_fail.cpp.o : include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’ | FAILED: [code=1] test/CMakeFiles/core_transform_mode_1.dir/core/transform_assert_fail.cpp.o : include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’	core.transform core.transform_nonzero_int64 core.transform_nonzero_rational core.transform_checking_recorded core.transform_identities
+exact_check_twice	0	-	core.transform_checking_recorded
+exact_check_truncate_message	0	-	core.transform_consteval_nonzero core.transform_consteval_nonzero_rational core.transform_nonzero_int64 core.transform_nonzero_rational
+transform_parity_check_removed	0	-	core.transform_mixed_parity
+transform_check_removed	0	-	core.transform_narrow_scalar_first_plan core.transform_narrow_scalar_second_plan
+transform_checks_first_plan_only	0	-	core.transform_narrow_scalar_second_plan
+transform_checks_second_plan_only	0	-	core.transform_narrow_scalar_first_plan
+compose_parity_check_removed	0	-	core.compose_mixed_parity_first core.compose_mixed_parity_second
+compose_parity_checks_first_only	0	-	core.compose_mixed_parity_second
+compose_check_removed	0	-	core.compose_narrow_scalar
+compose_checks_reversed_plan	0	-	-
+compose_layout_is_input	1	transform_identities: include/galoot/core/mv.hpp:866:17: error: static assertion failed: apply: the target layout does not hold every blade of the product | transform: test/core/transform_test.cpp:429:72: error: static assertion failed	core.compose_compare
+transform_catch_alls_without_algebra_condition	1	transform: test/core/transform_test.cpp:515:17: error: static assertion failed	core.compose_mixed_algebras core.transform_mixed_algebras
+transform_catch_alls_without_scalar_condition	1	transform: test/core/transform_test.cpp:514:17: error: static assertion failed	core.compose_mixed_scalars core.transform_mixed_scalars
+antiproject_operands_swapped	1	dual: test/core/dual_test.cpp:1692:12: error: static assertion failed	-
+antiproject_uses_bulk_dual	1	dual: include/galoot/core/dual.hpp:441:17: error: static assertion failed: bulk_dual: the scalar type cannot hold one of the bulk dual's exact coefficients; use a scalar type that holds larger integers exactly	-
+antiproject_is_project	1	dual: test/core/dual_test.cpp:1692:12: error: static assertion failed	-
+antiproject_check_removed	0	-	core.dual_narrow_scalar_antiproject core.dual_narrow_scalar_antiproject_first_operand
+antiproject_checks_first_operand	1	dual: include/galoot/core/dual.hpp:662:17: error: static assertion failed: antiproject: the scalar type cannot hold one of the antiprojection's exact coefficients; use a scalar type that holds larger integers exactly	core.dual_narrow_scalar_antiproject_first_operand
+antiproject_checks_bulk	1	dual: include/galoot/core/dual.hpp:662:17: error: static assertion failed: antiproject: the scalar type cannot hold one of the antiprojection's exact coefficients; use a scalar type that holds larger integers exactly	core.dual_narrow_scalar_antiproject core.dual_narrow_scalar_antiproject_first_operand
+antiproject_layout_is_input	1	dual: test/core/dual_test.cpp:1692:12: error: static assertion failed	core.dual_compare_antiproject
+antiproject_catch_all_without_algebra_condition	1	dual: test/core/dual_test.cpp:1831:17: error: static assertion failed	core.dual_mixed_algebras_antiproject
+antiproject_catch_all_without_scalar_condition	1	dual: test/core/dual_test.cpp:1830:17: error: static assertion failed	core.dual_mixed_scalars_antiproject

@@ -1,0 +1,10 @@
+set_printing.cpp:29:17: error: static assertion failed due to requirement 'blade_set<2>{{{{9, -1}, {10, -1}}}}.blades[0].mask == 0': the first blade is not the scalar
+   29 |   static_assert(B.blades[0].mask == 0, "the first blade is not the scalar");
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+set_printing.cpp:34:43: note: in instantiation of template class 'mv<blade_set<2>{{{{9, -1}, {10, -1}}}}>' requested here
+   34 | [[maybe_unused]] constexpr mv<line_start> wrong{};
+      |                                           ^
+set_printing.cpp:29:34: note: expression evaluates to '9 == 0'
+   29 |   static_assert(B.blades[0].mask == 0, "the first blade is not the scalar");
+      |                 ~~~~~~~~~~~~~~~~~^~~~
+1 error generated.

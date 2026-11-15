@@ -1,0 +1,10 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:2:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp: In instantiation of ‘constexpr std::remove_cvref_t<_Tp2> galoot::core::change_basis(const X&) [with auto Value = cga3_to_r410(); X = mv<cga3, blade_set<5>{std::array<oriented_blade, 5>{std::__array_traits<oriented_blade, 5>::_Type{oriented_blade{1, 1}, oriented_blade{2, 1}, oriented_blade{4, 1}, oriented_blade{8, 1}, oriented_blade{16, 1}}}}, double>; std::remove_cvref_t<_Tp2> = mv<cga3, blade_set<5>{std::array<oriented_blade, 5>{std::__array_traits<oriented_blade, 5>::_Type{oriented_blade{1, 1}, oriented_blade{2, 1}, oriented_blade{4, 1}, oriented_blade{8, 1}, oriented_blade{16, 1}}}}, double>]’:
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:21:63:   required from here
+   21 |   [[maybe_unused]] auto q = core::change_basis<cga3_to_r410{}>(p);
+      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1225:17: error: static assertion failed: change_basis: the template argument is a value, not a change tag; put it in a tag, as in struct cga3_to_r410 { using source = cga3; using target = r410; static constexpr auto value = conformal_change<3>(); }
+ 1225 |   static_assert(false, "change_basis: the template argument is a value, not a "
+      |                 ^~~~~
+  • ‘false’ evaluates to false
+timed: probe overloads-1-g++ took 0.127 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

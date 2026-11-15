@@ -1,0 +1,11 @@
+# Delta review 2 of plan 0040: one unit of the third W10 campaign
+# (records/performance/pre-release-core-pass/cost-d1/units.toml), rerun on
+# GCC at 26f1b62 against the branch point 8058589.
+compilers = ["gcc"]
+flags_from = "core.plan_map_term_zero_n"
+
+[[unit]]
+name = "debug/core/product"
+source = "test/core/product_test.cpp"
+trees = ["before", "after"]
+kind = "debug"

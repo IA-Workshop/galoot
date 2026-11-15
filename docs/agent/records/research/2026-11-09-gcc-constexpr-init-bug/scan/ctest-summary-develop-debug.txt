@@ -1,0 +1,18 @@
+97% tests passed, 17 tests failed out of 499
+	 35 - core.bare_compile (Failed)                        core core.headers
+	133 - core.plan_cost_model.gp_full5 (Failed)            core core.plan
+	134 - core.plan_cost_model.gp_dense4 (Failed)           core core.plan
+	135 - core.plan_cost_model.gp_grades_3_7 (Failed)       core core.plan
+	136 - core.plan_cost_model.antigp_sparse16 (Failed)     core core.plan
+	137 - core.plan_cost_model.reverse_full7 (Failed)       core core.plan
+	138 - core.plan_cost_model.right_complement_full8 (Failed) core core.plan
+	139 - core.plan_cost_model.antiwedge_full5 (Failed)     core core.plan
+	140 - core.plan_cost_model.gp_vectors_full6 (Failed)    core core.plan
+	190 - core.mv_scalar_move_only (Failed)                 core core.mv
+	197 - core.mv_narrowing_int (Failed)                    core core.mv
+	198 - core.mv_narrowing_float (Failed)                  core core.mv
+	256 - core.mv_truncate_unchecked_counted (Failed)       core core.mv
+	266 - core.mv_part_never_checks_counted (Failed)        core core.mv
+	396 - core.transform_checking_recorded (Failed)         core core.transform
+	397 - core.transform_unchecked_recorded (Failed)        core core.transform
+	466 - rga3.bare_compile (Failed)                        rga3 rga3.headers

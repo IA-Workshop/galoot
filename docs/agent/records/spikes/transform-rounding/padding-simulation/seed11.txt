@@ -1,0 +1,78 @@
+simulation equals the core on the probe inputs: 11 transforms
+violations of |d - e| <= tol: 0
+violations of gamma_K M + K denorm_min: 5202
+('cga3 flector vector', 'one huge') 2.25e+14
+('cga3 motor bivector', 'one huge') 2.44e+14
+('cga3 motor vector', 'one huge') 3.46e+14
+('cga3 plane vector', 'one huge') 9.01e+14
+('r400 even scalar', 'one huge') 5e+14
+('r400 even vector', 'one huge') 3.75e+14
+('ratio', 'cga3 flector vector', 'deep underflow') 2.31e-14
+('ratio', 'cga3 flector vector', 'mixed scales') 0.163
+('ratio', 'cga3 flector vector', 'near overflow') 0.137
+('ratio', 'cga3 flector vector', 'one huge') 3.61e-18
+('ratio', 'cga3 flector vector', 'ordinary') 0.0995
+('ratio', 'cga3 flector vector', 'underflow and zeros') 0.0477
+('ratio', 'cga3 motor bivector', 'deep underflow') 2.18e-15
+('ratio', 'cga3 motor bivector', 'mixed scales') 0.0822
+('ratio', 'cga3 motor bivector', 'near overflow') 0.135
+('ratio', 'cga3 motor bivector', 'one huge') 0.0255
+('ratio', 'cga3 motor bivector', 'ordinary') 0.0919
+('ratio', 'cga3 motor bivector', 'underflow and zeros') 0.0441
+('ratio', 'cga3 motor vector', 'deep underflow') 1.78e-16
+('ratio', 'cga3 motor vector', 'mixed scales') 0.143
+('ratio', 'cga3 motor vector', 'near overflow') 0.149
+('ratio', 'cga3 motor vector', 'one huge') 6.39e-18
+('ratio', 'cga3 motor vector', 'ordinary') 0.123
+('ratio', 'cga3 motor vector', 'underflow and zeros') 0.0377
+('ratio', 'cga3 plane vector', 'deep underflow') 3.16e-15
+('ratio', 'cga3 plane vector', 'mixed scales') 0.291
+('ratio', 'cga3 plane vector', 'near overflow') 0.318
+('ratio', 'cga3 plane vector', 'one huge') 1.75e-17
+('ratio', 'cga3 plane vector', 'ordinary') 0.311
+('ratio', 'cga3 plane vector', 'underflow and zeros') 0.00252
+('ratio', 'r400 even scalar', 'deep underflow') 1.7e-18
+('ratio', 'r400 even scalar', 'mixed scales') 0.137
+('ratio', 'r400 even scalar', 'near overflow') 0.197
+('ratio', 'r400 even scalar', 'one huge') 1.11e-17
+('ratio', 'r400 even scalar', 'ordinary') 0.204
+('ratio', 'r400 even scalar', 'underflow and zeros') 0.0883
+('ratio', 'r400 even vector', 'deep underflow') 2.19e-15
+('ratio', 'r400 even vector', 'mixed scales') 0.13
+('ratio', 'r400 even vector', 'near overflow') 0.125
+('ratio', 'r400 even vector', 'one huge') 5.94e-18
+('ratio', 'r400 even vector', 'ordinary') 0.116
+('ratio', 'r400 even vector', 'underflow and zeros') 0.0721
+('ratio', 'rga3 flector line', 'deep underflow') 3.1e-11
+('ratio', 'rga3 flector line', 'mixed scales') 0.12
+('ratio', 'rga3 flector line', 'near overflow') 0.184
+('ratio', 'rga3 flector line', 'one huge') 9.81e-18
+('ratio', 'rga3 flector line', 'ordinary') 0.146
+('ratio', 'rga3 flector line', 'underflow and zeros') 0.121
+('ratio', 'rga3 flector point', 'mixed scales') 0.196
+('ratio', 'rga3 flector point', 'near overflow') 0.173
+('ratio', 'rga3 flector point', 'one huge') 1.82e-17
+('ratio', 'rga3 flector point', 'ordinary') 0.249
+('ratio', 'rga3 flector point', 'underflow and zeros') 0.141
+('ratio', 'rga3 motor line', 'deep underflow') 1.85e-18
+('ratio', 'rga3 motor line', 'mixed scales') 0.136
+('ratio', 'rga3 motor line', 'near overflow') 0.151
+('ratio', 'rga3 motor line', 'one huge') 7.89e-18
+('ratio', 'rga3 motor line', 'ordinary') 0.138
+('ratio', 'rga3 motor line', 'underflow and zeros') 0.0531
+('ratio', 'rga3 motor plane', 'mixed scales') 0.115
+('ratio', 'rga3 motor plane', 'near overflow') 0.2
+('ratio', 'rga3 motor plane', 'one huge') 7.55e-18
+('ratio', 'rga3 motor plane', 'ordinary') 0.139
+('ratio', 'rga3 motor plane', 'underflow and zeros') 0.0514
+('ratio', 'rga3 motor point', 'mixed scales') 0.212
+('ratio', 'rga3 motor point', 'near overflow') 0.162
+('ratio', 'rga3 motor point', 'one huge') 1.82e-17
+('ratio', 'rga3 motor point', 'ordinary') 0.222
+('ratio', 'rga3 motor point', 'underflow and zeros') 0.131
+('rga3 flector line', 'one huge') 6.43e+14
+('rga3 flector point', 'one huge') 9.01e+14
+('rga3 motor line', 'one huge') 6.43e+14
+('rga3 motor plane', 'one huge') 6.43e+14
+('rga3 motor point', 'one huge') 9.01e+14
+timed: run review-sim:tau:11:600 took 4.143 s (exit 0)

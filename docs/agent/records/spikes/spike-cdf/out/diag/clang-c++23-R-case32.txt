@@ -1,0 +1,17 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:65:18: error: no matching conversion for static_cast from 'const Motor' (aka 'const mv<rga3, blades_of<rga3, "1", "e41", "e42", "e43", "e23", "e31", "e12", "e1234">>') to 'Point' (aka 'mv<rga3, blades_of<rga3, "e1", "e2", "e3", "e4">>')
+   65 |   const auto r = static_cast<Point>(q);
+      |                  ^~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'const mv<[...], blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}, [...]>' to 'const mv<[...], blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, [...]>' for 1st argument
+  237 | template <algebra Alg, blade_set B, class T = double> struct mv {
+      |                                                              ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'const mv<[...], blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}, [...]>' to 'mv<[...], blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, [...]>' for 1st argument
+  237 | template <algebra Alg, blade_set B, class T = double> struct mv {
+      |                                                              ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:237:62: note: candidate constructor (the implicit default constructor) not viable: requires 0 arguments, but 1 was provided
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:250:22: note: candidate template ignored: constraints not satisfied [with To = blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}]
+  250 |   explicit constexpr operator mv<Alg, To, T>() const {
+      |                      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:249:14: note: because 'subset(blade_set<8>{{{0, 9, 10, 12, 6, 5, 3, 15}}, {{1, -1, -1, -1, 1, -1, 1, 1}}}, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}})' evaluated to false
+  249 |     requires(subset(B, To))
+      |              ^
+1 error generated.

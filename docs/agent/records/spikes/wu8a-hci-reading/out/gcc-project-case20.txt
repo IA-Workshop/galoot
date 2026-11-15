@@ -1,0 +1,29 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:154:11: error: no match for ‘operator==’ (operand types are ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’} and ‘const FLine’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, float>’})
+  154 |   r += (l == f) ? 1.0 : 0.0;
+      |         ~ ^~ ~
+      |         |    |
+      |         |    mv<[...],[...],float>
+      |         mv<[...],[...],double>
+  • there are 2 candidates
+    first_user.cpp:154:11:
+      154 |   r += (l == f) ? 1.0 : 0.0;
+          |         ~~^~~~
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+    • candidate 1: ‘constexpr bool galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::operator==(const galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, float>; T = float; long unsigned int ...I = {0, 1, 2, 3, 4, 5}]’ (reversed)
+      ../../../../../include/galoot/core/mv.hpp:150:3:
+        150 |   operator==(const coefficient_storage& other) const
+            |   ^~~~~~~~
+      • no known conversion for argument 1 from ‘Line’ {aka ‘galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>’} to ‘const galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, float>, float, std::integer_sequence<long unsigned int, 0, 1, 2, 3, 4, 5> >&’
+        ../../../../../include/galoot/core/mv.hpp:150:41:
+          150 |   operator==(const coefficient_storage& other) const
+              |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+    • candidate 2: ‘constexpr bool galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::operator==(const galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >&) const requires  equality_comparable<T> [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>; T = double; long unsigned int ...I = {0, 1, 2, 3, 4, 5}]’
+      ../../../../../include/galoot/core/mv.hpp:150:3:
+        150 |   operator==(const coefficient_storage& other) const
+            |   ^~~~~~~~
+      • no known conversion for argument 1 from ‘const FLine’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, float>’} to ‘const galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<6>{std::array<galoot::core::oriented_blade, 6>{std::__array_traits<galoot::core::oriented_blade, 6>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0, 1, 2, 3, 4, 5> >&’
+        ../../../../../include/galoot/core/mv.hpp:150:41:
+          150 |   operator==(const coefficient_storage& other) const
+              |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~

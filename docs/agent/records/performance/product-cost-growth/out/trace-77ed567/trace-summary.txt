@@ -1,0 +1,111 @@
+Clang 23 -ftime-trace at 9ff402c, mean of 3 pinned repeats; plans - baseline at each n
+event	unit	n=4	n=8	n=12	n=16
+CodeGen Function	count	4	4	4	4
+CodeGen Function	us	191	193	198	198
+EvaluateAsBooleanCondition	count	161	161	161	161
+EvaluateAsBooleanCondition	us	283	296	290	292
+EvaluateAsConstantExpr	count	214	214	214	214
+EvaluateAsConstantExpr	us	184	480	790	1271
+EvaluateAsInitializer	count	123	123	123	123
+EvaluateAsInitializer	us	12524	12538	12458	12496
+EvaluateAsRValue	count	284	284	284	284
+EvaluateAsRValue	us	264	291	271	257
+EvaluateForOverflow	count	110	110	110	110
+EvaluateForOverflow	us	59	76	46	40
+InstantiateClass	count	29	29	29	29
+InstantiateClass	us	-1106	347	394	429
+InstantiateFunction	count	65	65	65	65
+InstantiateFunction	us	33745	34017	34230	34411
+OptFunction	count	2	2	2	2
+OptFunction	us	-96	-109	-124	-97
+ParseClass	count	0	0	0	0
+ParseClass	us	-1826	764	-2527	-3800
+RunPass	count	136	136	136	136
+RunPass	us	-106	-122	-132	-104
+Total AAManager	us	11	12	12	12
+Total AllocTokenPass	us	1	1	1	1
+Total AlwaysInlinerPass	us	296	307	307	309
+Total AnnotationRemarksPass	us	-4	-3	-3	-3
+Total AssumptionAnalysis	us	1	1	1	1
+Total Backend	us	217	211	173	195
+Total BasicAA	us	5	5	5	5
+Total BuildCFG	us	360	365	348	348
+Total CheckConstraintSatisfaction	us	6404	7322	7782	8435
+Total CodeGen Function	us	192	193	198	196
+Total CodeGenPasses	us	-62	-86	-91	-66
+Total CoroConditionalWrapper	us	0	0	0	0
+Total DominatorTreeAnalysis	us	3	3	3	3
+Total EntryExitInstrumenterPass	us	1	1	1	1
+Total EvaluateAsBooleanCondition	us	287	289	282	288
+Total EvaluateAsConstantExpr	us	200	470	798	1317
+Total EvaluateAsInitializer	us	12517	12534	12462	12496
+Total EvaluateAsInt	us	19	22	24	21
+Total EvaluateAsRValue	us	252	279	269	262
+Total EvaluateForOverflow	us	48	59	41	38
+Total EvaluateKnownConstInt	us	-2	1	0	-2
+Total ExecuteCompiler	us	20141	27430	20267	16753
+Total Frontend	us	20129	27220	20156	16955
+Total InnerAnalysisManagerProxy<FunctionAnalysisManager, Module>	us	0	0	0	0
+Total InstantiateClass	us	-492	365	370	315
+Total InstantiateFunction	us	24279	24427	24500	24641
+Total LowerCommentStringPass	us	0	0	0	0
+Total ModuleToFunctionPassAdaptor	us	0	-1	-1	-1
+Total OptFunction	us	-97	-109	-123	-97
+Total OptModule	us	-62	-86	-91	-66
+Total Optimizer	us	297	306	307	309
+Total OuterAnalysisManagerProxy<ModuleAnalysisManager, Function>	us	0	0	0	0
+Total ParseClass	us	-1780	732	-2493	-3728
+Total ParseDeclarationOrFunctionDefinition	us	-2582	1152	-2950	-4812
+Total ParseFunctionDefinition	us	-878	91	51	-257
+Total PerformPendingInstantiations	us	-2	1	-0	1
+Total ProfileSummaryAnalysis	us	0	1	0	0
+Total RunPass	us	-107	-121	-133	-109
+Total ScopedNoAliasAA	us	0	0	0	0
+Total Source	us	-4436	1475	-5214	-7662
+Total TargetIRAnalysis	us	240	248	248	253
+Total TargetLibraryAnalysis	us	0	0	1	0
+Total TypeBasedAA	us	0	0	0	0
+Total isIntegerConstantExpr	us	-2	2	-2	-4
+instructions		396300294	401178652	408080029	420178987
+
+Costliest events of the plans unit, first repeat: kind, detail, count, microseconds at n = 4 and at n = 16
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {32768, 1}}	0	2	0	14265
+InstantiateClass	std::span<const galoot::core::oriented_blade>	1	1	7936	7891
+InstantiateClass	std::span<galoot::core::detail::plan_term>	1	1	7204	7267
+InstantiateClass	std::span<const galoot::core::detail::plan_term>	1	1	5719	5900
+EvaluateAsInitializer	plan	4	4	5688	5735
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<8>{{{{0, 1}, {32769, -1}, {32770, -1}, {	0	1	0	5563
+EvaluateAsInitializer	count	4	4	5260	5295
+InstantiateFunction	galoot::core::detail::make_gp_plan<alg, blade_set<6>{{{{32769, -1}, {32770, -1}, {32772, -	0	1	0	5045
+ParseClass	std::numeric_limits	28	28	3417	3489
+ParseClass	std::char_traits	6	6	3099	3117
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::oriented_blade *, s	1	1	2812	2798
+InstantiateFunction	galoot::core::detail::filled_gp<15UL, 2UL, 16UL>	0	1	0	2670
+EvaluateAsConstantExpr	</home/brianm/projects/utils/math-core/galoot/.claude/worktrees/product-cost-growth/includ	95	95	238	2505
+ParseClass	std::ranges::__detail::__max_size_type	1	1	1968	2045
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<const galoot::core::detail::plan_term *	1	1	1736	1806
+InstantiateClass	std::reverse_iterator<__gnu_cxx::__normal_iterator<galoot::core::detail::plan_term *, std:	1	1	1779	1768
+ParseClass	std::hash	29	29	1334	1426
+InstantiateClass	std::common_reference<galoot::core::detail::plan_term &, galoot::core::detail::plan_term &	2	2	1220	1348
+ParseClass	std::ranges::__detail::__max_diff_type	1	1	1293	1332
+InstantiateFunction	galoot::core::detail::generate_gp<2UL, 16UL>	0	1	0	997
+ParseClass	std::basic_string_view	1	1	876	936
+InstantiateFunction	galoot::core::detail::generate_gp<8UL, 16UL>	0	1	0	891
+InstantiateFunction	galoot::core::detail::blade_product<2UL, 16UL>	0	1	0	845
+ParseClass	std::__compare::_Strong_order	1	1	977	805
+InstantiateFunction	galoot::core::detail::blade_product<8UL, 16UL>	0	1	0	762
+ParseClass	std::common_iterator	1	1	719	708
+EvaluateAsInitializer	defects	4	4	704	688
+InstantiateClass	std::__and_<std::__not_<std::__is_tuple_like<std::reverse_iterator<__gnu_cxx::__normal_ite	3	3	653	685
+ParseClass	std::span	1	1	666	667
+EvaluateAsInitializer	capacity	4	4	624	639
+InstantiateFunction	std::__detail::_Synth3way::operator()<const galoot::core::oriented_blade *, const galoot::	1	1	678	629
+InstantiateFunction	std::__detail::_Synth3way::_S_noexcept<const galoot::core::oriented_blade *, const galoot:	1	1	634	590
+ParseClass	std::pair	1	1	645	530
+ParseClass	alg	1	1	435	523
+ParseClass	std::basic_const_iterator	1	1	503	513
+InstantiateFunction	galoot::core::detail::add_blade_product<2UL, 16UL>	0	1	0	513
+InstantiateFunction	std::__detail::_Synth3way::operator()<galoot::core::detail::plan_term *, galoot::core::det	1	1	502	481
+EvaluateAsBooleanCondition	</home/brianm/projects/utils/math-core/galoot/.claude/worktrees/product-cost-growth/includ	380	380	461	477
+InstantiateFunction	galoot::core::detail::add_blade_product<8UL, 16UL>	0	1	0	476
+InstantiateClass	std::__and_<std::__not_<std::__is_tuple_like<__gnu_cxx::__normal_iterator<const galoot::co	2	2	495	475

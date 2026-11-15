@@ -1,0 +1,29 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:18: error: call to deleted function 'gp'
+   51 |   const auto r = gp(p, v);
+      |                  ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:375:6: note: candidate function [with X = cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>, Y = cdf::mv<cdf::r400, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>] has been explicitly deleted
+  375 | void gp(const X&, const Y&) = delete;
+      |      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:331:46: note: candidate template ignored: deduced conflicting types for parameter 'Alg' ('cdf::rga3' vs. 'cdf::r400')
+  331 | constexpr mv<Alg, gp_blades<Alg, A, B>(), T> gp(const mv<Alg, A, T>& a,
+      |                                              ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:381:6: note: candidate template ignored: constraints not satisfied [with X = Point, Y = R400Vector]
+  381 | void gp(const X&, const Y&) = delete;
+      |      ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:377:12: note: because 'same_algebra<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>, cdf::mv<cdf::r400, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}>>' evaluated to false
+  377 |   requires(same_algebra<X, Y> &&
+      |            ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:292:24: note: because 'std::same_as<typename mv_traits<cdf::mv<cdf::rga3, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, double> >::algebra_type, typename mv_traits<cdf::mv<cdf::r400, blade_set<4>{{{1, 2, 4, 8}}, {{1, 1, 1, 1}}}, double> >::algebra_type>' evaluated to false
+  292 | concept same_algebra = std::same_as<typename mv_traits<X>::algebra_type,
+      |                        ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:65:9: note: because '__detail::__same_as<cdf::rga3, cdf::r400>' evaluated to false
+   65 |       = __detail::__same_as<_Tp, _Up> && __detail::__same_as<_Up, _Tp>;
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:59:27: note: because 'std::is_same_v<cdf::rga3, cdf::r400>' evaluated to false
+   59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+      |                           ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/concepts:59:27: note: and 'std::is_same_v<cdf::rga3, cdf::r400>' evaluated to false
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:51:14: error: variable has incomplete type 'const void'
+   51 |   const auto r = gp(p, v);
+      |              ^
+2 errors generated.

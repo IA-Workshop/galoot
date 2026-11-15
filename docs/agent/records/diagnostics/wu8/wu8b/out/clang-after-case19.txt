@@ -1,0 +1,9 @@
+In file included from program.cpp:10:
+In file included from ../../../../../../include/galoot/core.hpp:12:
+../../../../../../include/galoot/core/mv.hpp:583:21: error: static assertion failed: mv: the value does not convert to the scalar type; give one value of the scalar type for each component
+  583 |       static_assert(false, "mv: the value does not convert to the scalar "
+      |                     ^~~~~
+program.cpp:88:15: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<std::complex<double>>' requested here
+   88 |   const Point s{std::complex<double>{1, 0}};
+      |               ^
+1 error generated.

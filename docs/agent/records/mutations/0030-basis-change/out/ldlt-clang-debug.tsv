@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+pivot_swap_skipped	clang-debug	752fdea249c2	killed	killed	support.diagonalize	-	-	diagonalize gives T G T^T = D on every listed form	-	-
+pairing_skipped	clang-debug	752fdea249c2	killed	killed	test/support/diagonalize_test.cpp:81	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:81:15: error: static assertion failed due to requirement 'witt_one_diagonal.squares == std::array<long, 2>{2, -2}'	support.diagonalize	-	-	-
+squarefree_scaling_skipped	clang-debug	752fdea249c2	killed	killed	test/support/diagonalize_test.cpp:82	test/CMakeFiles/support_diagonalize_test.dir/support/diagonalize_test.cpp.o: assert: test/support/diagonalize_test.cpp:82:15: error: static assertion failed due to requirement 'witt_one_diagonal.rows == integer_rows<2>({{{1, 1}, {-1, 1}}})'	support.diagonalize	-	-	-

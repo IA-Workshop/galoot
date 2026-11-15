@@ -1,0 +1,159 @@
+# Written by units.py; do not edit.
+compilers = ["gcc", "clang"]
+flags_from = "core.assert_consteval"
+
+[[unit]]
+name = "rigid3_motor_point/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_point.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_point/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_point.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_point/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_point.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_line/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_line.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_line/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_line.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_line/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_line.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_plane/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_plane.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_plane/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_plane.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "rigid3_motor_plane/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/rigid3_motor_plane.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade1/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade1.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade1/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade1.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade1/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade1.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade2/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade2.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade2/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade2.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade2/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade2.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade3/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade3.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade3/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade3.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade3/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade3.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade4/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade4.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade4/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade4.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_motor_grade4/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_motor_grade4.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_even_grade1/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade1.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_even_grade1/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade1.plan.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_even_grade1/pass"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade1.pass.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_even_grade2/baseline"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade2.baseline.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "cga3_even_grade2/plan"
+source = "docs/agent/records/spikes/spike-e/proto/cost/units/cga3_even_grade2.plan.cpp"
+trees = ["after"]
+kind = "debug"

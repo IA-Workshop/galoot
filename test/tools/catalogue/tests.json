@@ -1,0 +1,225 @@
+{
+ "kind": "ctestInfo",
+ "tests": [
+  {
+   "name": "t.second_place",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "ONLY",
+    "error:",
+    "unrelated text",
+    "first: required",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.semicolon",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "second: holds\u0001 a semicolon",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.forbid",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "nothing",
+    "FORBID",
+    "third: only forbidden",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.forbid_first",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "nothing",
+    "FORBID_FIRST",
+    "third: only forbidden",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.will_fail",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "fourth: only in a test",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": [
+    {
+     "name": "WILL_FAIL",
+     "value": true
+    }
+   ]
+  },
+  {
+   "name": "t.run_time",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "galoot: assertion failed: fifth: run time (",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.joined",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "sixth: joined from two literals",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.ambiguous",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "seventh: shares a",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.directive",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "the directive",
+    "--",
+    "g++",
+    "-c",
+    "x.cpp"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.run_time_prefix",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "Subprocess aborted",
+    "galoot: assertion failed: eighth: cut",
+    "--",
+    "./program"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.nested",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "dot: nested",
+    "FORBID",
+    "antidot: nested",
+    "--",
+    "g++"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.nested_long",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "antidot: nested (",
+    "--",
+    "g++"
+   ],
+   "properties": []
+  },
+  {
+   "name": "t.no_command",
+   "properties": []
+  },
+  {
+   "name": "core.deeper",
+   "command": [
+    "cmake",
+    "-P",
+    "/src/test/expect_output.cmake",
+    "--",
+    "1",
+    "ninth: in a subdirectory",
+    "--",
+    "g++",
+    "-c",
+    "y.cpp"
+   ],
+   "properties": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+elimination_overflow_as_dependent	gcc-debug	82825e92d6a0	survived	killed	-	-	-	-	-	survived
+elimination_overflow_not_stopping	gcc-debug	82825e92d6a0	survived	killed	-	-	-	-	-	survived
+inverts_overflow_as_self_check	gcc-debug	82825e92d6a0	survived	killed	-	-	-	-	-	survived
+inverse_rows_overflow_ignored	gcc-debug	82825e92d6a0	survived	killed	-	-	-	-	-	survived
+isometry_overflow_holds	gcc-debug	82825e92d6a0	killed	killed	core.basis_change_overflow	-	-	-	-	-
+target_count_unguarded	gcc-debug	82825e92d6a0	killed	killed	core.basis_change_both_counts core.basis_change_source_count	-	-	-	-	-
+value_catch_all_removed	gcc-debug	82825e92d6a0	killed	killed	core.change_basis_value_as_tag	-	-	-	-	-
+value_catch_all_back_takes_types	gcc-debug	82825e92d6a0	killed	killed	core.change_basis_back_value_as_tag	-	-	-	-	-

@@ -1,0 +1,15 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp: In function ‘double misuse(const cga_vector&, const r410_vector&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12: error: no matching function for call to ‘gp(const cga_vector&, const r410_vector&)’
+  173 |   return gp(a, b).c[0];
+      |          ~~^~~~~~
+  • there is 1 candidate
+    • candidate 1: ‘template<class Algebra, class A, class B> tag::mv<Algebra, tag::gp_blades<Algebra, A, B> > tag::gp(const mv<Algebra, A>&, const mv<Algebra, B>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:122:39:
+        122 | mv<Algebra, gp_blades<Algebra, A, B>> gp(const mv<Algebra, A>& a,
+            |                                       ^~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting types for parameter ‘Algebra’ (‘tag::conformal3’ and ‘tag::r410’)
+          /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12:
+            173 |   return gp(a, b).c[0];
+                |          ~~^~~~~~
+timed: build spike-a:nttp-misuse:g++:TAG took 0.193 s (exit 1)

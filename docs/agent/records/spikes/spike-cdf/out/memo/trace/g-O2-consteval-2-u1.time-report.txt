@@ -1,0 +1,18 @@
+
+Time variable                                  wall           GGC
+ phase setup                        :   0.00 (  3%)  1849k (  3%)
+ phase parsing                      :   0.12 ( 63%)    29M ( 56%)
+ phase lang. deferred               :   0.06 ( 30%)    20M ( 39%)
+ phase opt and generate             :   0.01 (  5%)   858k (  2%)
+ |name lookup                       :   0.01 (  5%)  1197k (  2%)
+ |overload resolution               :   0.01 (  4%)  2229k (  4%)
+ callgraph functions expansion      :   0.01 (  4%)   381k (  1%)
+ preprocessing                      :   0.04 ( 23%)  2468k (  5%)
+ parser (global)                    :   0.02 ( 13%)    11M ( 22%)
+ parser struct body                 :   0.02 (  9%)  5811k ( 11%)
+ parser inl. func. body             :   0.01 (  3%)   785k (  1%)
+ parser inl. meth. body             :   0.01 (  7%)  4357k (  8%)
+ template instantiation             :   0.01 (  8%)  4887k (  9%)
+ constant expression evaluation     :   0.06 ( 29%)    19M ( 37%)
+ TOTAL                              :   0.19           52M
+timed: build spike-d:trace:g-O2-consteval-2-u1 took 0.205 s (exit 0)

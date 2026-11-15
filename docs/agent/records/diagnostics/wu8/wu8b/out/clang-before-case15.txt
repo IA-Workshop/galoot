@@ -1,0 +1,26 @@
+program.cpp:72:15: error: no matching constructor for initialization of 'const Point' (aka 'const gc::mv<rga3, point_layout, double>')
+   72 |   const Point s{{1, 2, 3, 1}};
+      |               ^~~~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit copy constructor) not viable: cannot convert initializer list argument to 'const mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>'
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+<before>/include/galoot/core/mv.hpp:197:8: note: candidate constructor (the implicit move constructor) not viable: cannot convert initializer list argument to 'mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>'
+  197 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+<before>/include/galoot/core/mv.hpp:254:46: note: candidate template ignored: substitution failure: deduced incomplete pack <(no value)> for template parameter 'Values'
+  251 |   template <class... Values>
+      |                      ~~~~~~
+  252 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+  253 |              !(sizeof...(Values) == 1 && (multivector<Values> && ...)))
+  254 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+<before>/include/galoot/core/mv.hpp:233:13: note: candidate constructor not viable: requires 0 arguments, but 1 was provided
+  233 |   constexpr mv() = default;
+      |             ^
+<before>/include/galoot/core/mv.hpp:134:42: note: candidate inherited constructor not viable: requires 4 arguments, but 1 was provided
+  134 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+      |                                          ^                   ~~~~~~~~~~~~
+<before>/include/galoot/core/mv.hpp:244:45: note: constructor from base class 'coefficient_storage<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double, double, double, double, double>' inherited here
+  244 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+      |                                             ^
+1 error generated.

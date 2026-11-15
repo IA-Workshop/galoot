@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:243:17: error: static assertion failed: ==: the operands have different types; compare multivectors of one algebra, blade set and scalar
+  243 |   static_assert(false, "==: the operands have different types; compare "
+      |                 ^~~~~
+program.cpp:80:11: note: in instantiation of function template specialization 'apx::operator==<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, apx::mv<r400, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>>' requested here
+   80 |   r += (p == v) ? 1 : 0;
+      |           ^
+1 error generated.

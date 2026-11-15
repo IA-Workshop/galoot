@@ -1,0 +1,257 @@
+# The units of plan 0030 criterion 15, for tools/compiles cost on the debug
+# trees: every source that includes galoot/core.hpp (the umbrella header
+# alone, the core sources that include it or format.hpp, the rga3 preset's
+# test sources, and the README's three examples, as text), before (at the
+# branch point) and after; the two test sources part B changed, before and
+# after; and the new sources of the change of basis, after only.
+compilers = ["gcc", "clang"]
+flags_from = "core.metric_type_width"
+
+[[unit]]
+name = "includer/core_only"
+text = "#include <galoot/core.hpp>\n"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/bare_user"
+source = "test/core/bare_user.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/format_outside_core"
+source = "test/core/format_outside_core_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/format"
+source = "test/core/format_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/smoke"
+source = "test/core/smoke_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/bare_user"
+source = "test/presets/rga3/bare_user.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/chains"
+source = "test/presets/rga3/chains_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/format"
+source = "test/presets/rga3/format_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/incidence"
+source = "test/presets/rga3/incidence_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/motions"
+source = "test/presets/rga3/motions_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/objects"
+source = "test/presets/rga3/objects_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "presets/rga3/point_groups"
+source = "test/presets/rga3/point_groups_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/blade_product"
+source = "test/core/blade_product_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "support/tracked"
+source = "test/support/tracked_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "readme/example_1"
+text = '''
+#include <numbers>
+#include <print>
+
+#include <galoot/presets/rga3.hpp>
+
+int main() {
+  namespace core = galoot::core;
+  namespace rga3 = galoot::presets::rga3;
+  using Point = rga3::Point<double>;
+  using Line = rga3::Line<double>;
+  using Motor = rga3::Motor<double>;
+
+  // The join of two points is the line through them, here the z axis, with
+  // the direction up - origin = (0, 0, 2). It has a layout of its own, which
+  // converts to a Line explicitly.
+  const Point origin{0, 0, 0, 1};
+  const Point up{0, 0, 2, 1};
+  const Line z_axis{origin ^ up};
+
+  // A quarter turn about the z axis, then a move by (1, 2, 3). rotation
+  // divides the axis by the length of its direction, so the distance
+  // between the two points does not change the turn. compose(second, first)
+  // chains the two into one motor; like the join, its result has a layout of
+  // its own and converts to a Motor with braces, so
+  // const Motor motion = core::compose(move, turn); would not compile.
+  const Motor turn = rga3::rotation(z_axis, std::numbers::pi / 2);
+  const Motor move = rga3::translation(1.0, 2.0, 3.0);
+  const Motor motion{core::compose(move, turn)};
+
+  // The turn takes (1, 0, 0) to (0, 1, 0), and the move takes that to
+  // (1, 3, 3).
+  const Point p = core::transform(Point{1, 0, 0, 1}, motion);
+  std::println("({:.3f}, {:.3f}, {:.3f}) at weight {:.3f}", core::get<"e1">(p),
+               core::get<"e2">(p), core::get<"e3">(p), core::get<"e4">(p));
+  // prints: (1.000, 3.000, 3.000) at weight 1.000
+}
+'''
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "readme/example_2"
+text = '''
+#include <galoot/presets/rga3.hpp>
+
+namespace core = galoot::core;
+namespace rga3 = galoot::presets::rga3;
+
+constexpr rga3::Point<int> p{1, 0, 0, 1};
+constexpr rga3::Point<int> q{1, 2, 0, 1};
+
+// The line from p to q: its direction q - p = (0, 2, 0) on e41, e42, e43,
+// and its moment p x q = (0, 0, 2) on e23, e31, e12.
+constexpr rga3::Line<int> line{p ^ q};
+static_assert(line == rga3::Line<int>{0, 2, 0, 0, 0, 2});
+
+// The plane y = 1, written (0, 1, 0, -1) because it holds the points where
+// 1 y - 1 w = 0, meets the line at (1, 1, 0). The weight of the meet, here
+// -2, carries the orientations of the line and the plane.
+constexpr rga3::Plane<int> plane{0, 1, 0, -1};
+constexpr rga3::Point<int> hit{line & plane};
+static_assert(hit == rga3::Point<int>{-2, -2, 0, -2});
+
+// Half of (2, 4, 6) on e23, e31, e12, and 1 on e1234: a move by (2, 4, 6).
+constexpr rga3::Motor<int> move{0, 0, 0, 1, 1, 2, 3, 0};
+static_assert(core::transform(p, move) == rga3::Point<int>{3, 4, 6, 1});
+
+// The z axis's direction (0, 0, 1) times sin 45 degrees on e41, e42, e43,
+// and cos 45 degrees on e1234, both multiplied by the square root of 2 to
+// make them integers: a quarter turn about the z axis. A motor multiplied
+// by s multiplies the weight of what it moves by s squared, here 2.
+constexpr rga3::Motor<int> turn{0, 0, 1, 1, 0, 0, 0, 0};
+static_assert(core::transform(p, turn) == rga3::Point<int>{0, 2, 0, 2});
+
+int main() {}
+'''
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "readme/example_3"
+text = '''
+#include <print>
+
+#include <galoot/core/format.hpp> // IWYU pragma: keep
+#include <galoot/presets/rga3.hpp>
+
+int main() {
+  namespace rga3 = galoot::presets::rga3;
+  const rga3::Point<double> p{1, 3, 3, 1};
+  std::println("{}", p);
+  // prints: {e1: 1, e2: 3, e3: 3, e4: 1}
+  std::println("{:.1f}", p);
+  // prints: {e1: 1.0, e2: 3.0, e3: 3.0, e4: 1.0}
+  const rga3::Line<double> z_axis{0, 0, 1, 0, 0, 0};
+  std::println("{}", z_axis);
+  // prints: {e41: 0, e42: 0, e43: 1, e23: 0, e31: 0, e12: 0}
+}
+'''
+trees = ["before", "after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change"
+source = "test/core/basis_change_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_scalars"
+source = "test/core/basis_change_scalars_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_validation"
+source = "test/core/basis_change_validation_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_identities"
+source = "test/core/basis_change_identities_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_conformal"
+source = "test/core/basis_change_conformal_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_conformal3"
+source = "test/core/basis_change_conformal3_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_witt"
+source = "test/core/basis_change_witt_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_random"
+source = "test/core/basis_change_random_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "core/basis_change_random_five"
+source = "test/core/basis_change_random_five_test.cpp"
+trees = ["after"]
+kind = "debug"
+
+[[unit]]
+name = "support/diagonalize"
+source = "test/support/diagonalize_test.cpp"
+trees = ["after"]
+kind = "debug"

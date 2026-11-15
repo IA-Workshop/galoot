@@ -1,0 +1,6 @@
+In file included from probes/sys_use.cpp:3:
+probes/sys/ugsa.hpp: In function ‘void f()’:
+probes/sys/ugsa.hpp:6:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+    6 | template <int K> void f() { static_assert(K < 4, msg_t{}); }
+      |                                                  ^~~~~
+cc1plus: all warnings being treated as errors

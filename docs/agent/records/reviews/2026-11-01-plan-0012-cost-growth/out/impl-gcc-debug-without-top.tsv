@@ -1,0 +1,4 @@
+mutation	preset	mode	build_exit	test_exit	killed	failed_tests	static_asserts	failed_cases	first_build_error
+rs_top_bit_ignored	gcc-debug	normal-without-top-pairing	0	8	killed	core.bits,core.plan	-	gp_plan accepts the generators of the widest algebra | Every function matches its definition on a sample of blades at n = 12, 16, and the widest mask	-
+ct_top_bit_ignored	gcc-debug	normal-without-top-pairing	1	-	killed	-	blade_product_test.cpp:834	-	test/core/blade_product_test.cpp:834:75: error: static assertion failed
+cr_top_bit_ignored	gcc-debug	normal-without-top-pairing	0	0	SURVIVED	-	-	-	-

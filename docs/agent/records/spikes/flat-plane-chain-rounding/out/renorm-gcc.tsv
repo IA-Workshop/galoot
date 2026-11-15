@@ -1,0 +1,8 @@
+N	cases	fired raw	largest raw	fired renormalized once	largest	fired renormalized every step	largest
+2	1000	2	1.6	0	0.217	0	0.217
+4	1000	4	2.38	0	0.217	0	0.217
+8	1000	22	8.11	0	0.248	0	0.248
+16	1000	36	14.6	0	0.218	0	0.218
+32	1000	60	5.61	0	0.243	0	0.243
+64	1000	114	9.26	0	0.271	0	0.271
+128	1000	227	6.29	0	0.295	0	0.295

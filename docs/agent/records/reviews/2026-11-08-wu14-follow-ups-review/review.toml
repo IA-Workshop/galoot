@@ -1,0 +1,56 @@
+# The blind reviewer's mutants of the generator-rule and recursion cases,
+# judged by core.identities as the unit's own spec is. Predictions, written
+# before the run:
+# - wedge_sign_on_grade_two: the generator rule's case fails and the
+#   recursion's case passes, since the library forms every product of a
+#   blade of grade 2 or more by the recursion itself, so a fault inside the
+#   generator step leaves the recursion true. Older cases also fail
+#   (associativity breaks).
+# - recursion_sign_flipped: the recursion's case fails and the generator
+#   rule's case passes (a generator's products never take the correction
+#   term). Older cases also fail.
+# - resigned_e123: the table on the basis in which e123 stands for -e123,
+#   associative and isomorphic. Survives the suite at the branch point and
+#   is killed by both new cases at the tip.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.identities]
+targets = ["core_identities_test"]
+labels = '^core\.identities$'
+
+# e_i ^ e_B with its sign flipped when B has grade 2 or more, in algebras of
+# up to four generators. (Flipped at every n, it made the dense forms of
+# five exceed Clang's constant-evaluation limit, plan.hpp:553, which left it
+# unjudged on clang-debug; gcc-debug killed it, with the generator rule's
+# case among the failed cases and the recursion's case not.)
+[[mutant]]
+name = "wedge_sign_on_grade_two"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''multiply_checked(reorder_sign(generator, blade), c));''', replacement = '''multiply_checked((N <= 4 && grade(blade) >= 2 ? -1 : 1) * reorder_sign(generator, blade), c));''' }]
+expect = "killed"
+
+# -(e_a ⌋ e_A') e_B taken as +(e_a ⌋ e_A') e_B, in algebras of up to four
+# generators (so that the dense forms of five stay within the compilers'
+# constant-evaluation limits).
+[[mutant]]
+name = "recursion_sign_flipped"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''coefficient_type sign = -1;''', replacement = '''coefficient_type sign = N <= 4 ? 1 : -1;''' }]
+expect = "killed"
+
+# The product table of the basis in which e123 stands for -e123.
+[[mutant]]
+name = "resigned_e123"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''  add_blade_product(out, g, a, b, 1);
+  return out;''', replacement = '''  add_blade_product(out, g, a, b, (a == 0b111 ? -1 : 1) * (b == 0b111 ? -1 : 1));
+  for (std::size_t k = 0; k < out.length; ++k) {
+    if (out.terms[k].blade == 0b111) {
+      out.terms[k].coefficient = -out.terms[k].coefficient;
+    }
+  }
+  return out;''' }]
+expect = "killed"

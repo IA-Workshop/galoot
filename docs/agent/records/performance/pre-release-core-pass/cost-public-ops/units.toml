@@ -1,0 +1,181 @@
+# Plan 0040 section 9 (W10), run again after the blind review's M1: the
+# build cost of seven units before the pre-release core pass (8058589,
+# the branch point) and with the public operations forced, on GCC and
+# Clang, in the debug and measure build trees. The units'
+# sources are the same in both trees except where the unit changed a test,
+# so each difference is the headers'. flags_from names the compile-fail
+# test whose command compiles the two text units.
+compilers = ["gcc", "clang"]
+flags_from = "core.plan_map_term_zero_n"
+
+# The core's umbrella header and nothing else: the parse cost of the comments, the deleted ==, and the macro, with no instantiation.
+[[unit]]
+name = "debug/includer/core"
+text = "#include <galoot/core.hpp>\n"
+trees = ["before", "after"]
+kind = "debug"
+
+# E1's probe (records/performance/wu17-asm/probe.cpp), verbatim: the seven operations of the benchmarks, so the forced inlining alone.
+[[unit]]
+name = "debug/probe/e1"
+text = """// One function per operation, each the expression its benchmark program in
+// test/bench/ times, so that the operation's code can be read on its own in
+// the compiler's assembly output.
+#include <galoot/presets/rga3.hpp>
+
+namespace core = galoot::core;
+namespace rga3 = galoot::presets::rga3;
+using Point = rga3::Point<double>;
+using Line = rga3::Line<double>;
+using Plane = rga3::Plane<double>;
+using Motor = rga3::Motor<double>;
+
+Line wedge_point_point(const Point& p, const Point& q) { return Line{p ^ q}; }
+
+Plane wedge_point_point_point(const Point& p, const Point& q, const Point& r) {
+  return Plane{(p ^ q) ^ r};
+}
+
+Point antiwedge_line_plane(const Line& l, const Plane& g) {
+  return Point{l & g};
+}
+
+Point transform_point(const Point& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Line transform_line(const Line& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Plane transform_plane(const Plane& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Motor compose_motors(const Motor& a, const Motor& b) {
+  return Motor{core::compose(a, b)};
+}
+"""
+trees = ["before", "after"]
+kind = "debug"
+
+# Many call sites of transform and compose: the cost of the forced bodies at -O0.
+[[unit]]
+name = "debug/core/transform"
+source = "test/core/transform_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# Many call sites of the products through apply and run_product.
+[[unit]]
+name = "debug/core/product"
+source = "test/core/product_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# The identity suite, thousands of products: the largest -O0 risk.
+[[unit]]
+name = "debug/core/identities"
+source = "test/core/identities_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# run_change through change_basis and change_basis_back, conformal_change<D> for D = 1 to 4.
+[[unit]]
+name = "debug/basis_change/conformal"
+source = "test/core/basis_change_conformal_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# Chains of rga3 operations on the preset's types.
+[[unit]]
+name = "debug/rga3/chains"
+source = "test/presets/rga3/chains_test.cpp"
+trees = ["before", "after"]
+kind = "debug"
+
+# The core's umbrella header and nothing else: the parse cost of the comments, the deleted ==, and the macro, with no instantiation.
+[[unit]]
+name = "measure/includer/core"
+text = "#include <galoot/core.hpp>\n"
+trees = ["before", "after"]
+kind = "measure"
+
+# E1's probe (records/performance/wu17-asm/probe.cpp), verbatim: the seven operations of the benchmarks, so the forced inlining alone.
+[[unit]]
+name = "measure/probe/e1"
+text = """// One function per operation, each the expression its benchmark program in
+// test/bench/ times, so that the operation's code can be read on its own in
+// the compiler's assembly output.
+#include <galoot/presets/rga3.hpp>
+
+namespace core = galoot::core;
+namespace rga3 = galoot::presets::rga3;
+using Point = rga3::Point<double>;
+using Line = rga3::Line<double>;
+using Plane = rga3::Plane<double>;
+using Motor = rga3::Motor<double>;
+
+Line wedge_point_point(const Point& p, const Point& q) { return Line{p ^ q}; }
+
+Plane wedge_point_point_point(const Point& p, const Point& q, const Point& r) {
+  return Plane{(p ^ q) ^ r};
+}
+
+Point antiwedge_line_plane(const Line& l, const Plane& g) {
+  return Point{l & g};
+}
+
+Point transform_point(const Point& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Line transform_line(const Line& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Plane transform_plane(const Plane& x, const Motor& q) {
+  return core::transform(x, q);
+}
+
+Motor compose_motors(const Motor& a, const Motor& b) {
+  return Motor{core::compose(a, b)};
+}
+"""
+trees = ["before", "after"]
+kind = "measure"
+
+# Many call sites of transform and compose: the cost of the forced bodies at -O0.
+[[unit]]
+name = "measure/core/transform"
+source = "test/core/transform_test.cpp"
+trees = ["before", "after"]
+kind = "measure"
+
+# Many call sites of the products through apply and run_product.
+[[unit]]
+name = "measure/core/product"
+source = "test/core/product_test.cpp"
+trees = ["before", "after"]
+kind = "measure"
+
+# The identity suite, thousands of products: the largest -O0 risk.
+[[unit]]
+name = "measure/core/identities"
+source = "test/core/identities_test.cpp"
+trees = ["before", "after"]
+kind = "measure"
+
+# run_change through change_basis and change_basis_back, conformal_change<D> for D = 1 to 4.
+[[unit]]
+name = "measure/basis_change/conformal"
+source = "test/core/basis_change_conformal_test.cpp"
+trees = ["before", "after"]
+kind = "measure"
+
+# Chains of rga3 operations on the preset's types.
+[[unit]]
+name = "measure/rga3/chains"
+source = "test/presets/rga3/chains_test.cpp"
+trees = ["before", "after"]
+kind = "measure"

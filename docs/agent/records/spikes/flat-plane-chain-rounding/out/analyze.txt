@@ -1,0 +1,37 @@
+flat: the antiscalar's tolerance over γ_10 |x4| T, over 7000 cases: min 0.99999999999999956, max 1.0000000000000002
+family	N	cases	fired	drift>1	max |d|/tol	max |e|/tol	max |d-e|/tol	worst blade when fired	median defect/|V|^2 in u
+flat	2	1000	2	2	1.6	1.61	0.217	e12345	0.371
+flat	4	1000	4	4	2.38	2.36	0.217	e12345	0.463
+flat	8	1000	22	21	8.11	8.12	0.248	e12345	0.512
+flat	16	1000	36	37	14.6	14.6	0.218	e12345	0.589
+flat	32	1000	60	62	5.61	5.61	0.243	e12345	0.491
+flat	64	1000	114	113	9.26	9.28	0.271	e12345	0.511
+flat	128	1000	227	226	6.29	6.29	0.295	e12345	0.526
+hyper	2	1000	0	0	0.186	0.18	0.0634	-	0.659
+hyper	4	1000	0	0	0.425	0.412	0.0646	-	0.928
+hyper	8	1000	0	0	0.334	0.352	0.0566	-	0.923
+hyper	16	1000	0	0	0.216	0.229	0.0569	-	0.94
+hyper	32	1000	0	0	0.366	0.381	0.0592	-	0.899
+hyper	64	1000	0	0	0.34	0.348	0.0541	-	0.911
+hyper	128	1000	0	0	0.475	0.511	0.0706	-	0.931
+
+defect = largest |coefficient| of V̰ ⟇ V off 𝟙, over |V|² (sum of squares) in u; tol of the antiscalar over |V|² |x|_1 in u;
+alignment (flat) = T / (2 |A| |B|), A = (a1, a2, a3, q), B = (b1, b2, b3, s)
+family	N	defect q50	q99	tol q01	q50	alignment q50	alignment q50 when fired
+flat	2	0.371	1.99	0.0226	0.96	0.671	0.0983
+flat	4	0.463	2.86	0.02	0.909	0.66	0.148
+flat	8	0.512	3.62	0.0149	0.643	0.652	0.259
+flat	16	0.589	5.7	0.00899	0.547	0.654	0.233
+flat	32	0.491	8.06	0.0106	0.393	0.662	0.342
+flat	64	0.511	7.12	0.00807	0.294	0.659	0.388
+flat	128	0.526	7.65	0.00388	0.209	0.665	0.44
+hyper	2	0.659	2.32	3.59	12.2	nan	nan
+hyper	4	0.928	3.75	4.87	13	nan	nan
+hyper	8	0.923	4.49	4.83	12.8	nan	nan
+hyper	16	0.94	4.45	4.74	12.9	nan	nan
+hyper	32	0.899	3.93	4.5	12.9	nan	nan
+hyper	64	0.911	5	5.28	12.9	nan	nan
+hyper	128	0.931	4.06	4.95	13	nan	nan
+
+cases where firing (|d| > tol) and drift (|e| > tol) disagree: 20, |e|/tol in [0.957, 1.04], largest |d-e|/tol 0.243
+cases that fire: 465, smallest |e|/tol among them 0.957

@@ -1,0 +1,8 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:10: error: no matching function for call to 'gp'
+  173 |   return gp(a, b).c[0];
+      |          ^~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:122:39: note: candidate template ignored: deduced conflicting types for parameter 'Algebra' ('tag::conformal3' vs. 'tag::r410')
+  122 | mv<Algebra, gp_blades<Algebra, A, B>> gp(const mv<Algebra, A>& a,
+      |                                       ^
+1 error generated.
+timed: build spike-a:nttp-misuse:clang++:TAG took 0.194 s (exit 1)

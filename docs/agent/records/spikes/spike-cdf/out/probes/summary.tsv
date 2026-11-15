@@ -1,0 +1,57 @@
+compiler	probe	flags	exit	first_diagnostics
+g++	cxx26-UGSA_OK-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:31:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|cc1plus: all warnings being treated as errors
+g++	cxx26-UGSA_OK-c++26	S4 -Werror -std=c++26	0	
+g++	cxx26-UGSA_OK-bare	-std=c++23 only	0	probes/cxx26.cpp:31:50: warning: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]
+g++	cxx26-UGSA-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:28:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|probes/cxx26.cpp:28:45: error: static assertion failed: blade e5 not in set
+g++	cxx26-UGSA-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:28:45: error: static assertion failed: blade e5 not in set
+g++	cxx26-UGSA-bare	-std=c++23 only	1	probes/cxx26.cpp:28:50: warning: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]|probes/cxx26.cpp:28:45: error: static assertion failed: blade e5 not in set
+g++	cxx26-DELETE_REASON_OK-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:37:21: error: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|cc1plus: all warnings being treated as errors
+g++	cxx26-DELETE_REASON_OK-c++26	S4 -Werror -std=c++26	0	
+g++	cxx26-DELETE_REASON_OK-bare	-std=c++23 only	0	probes/cxx26.cpp:37:21: warning: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]
+g++	cxx26-DELETE_REASON-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:34:21: error: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|probes/cxx26.cpp:35:13: error: use of deleted function ‘void g(int)’: g: integers are not accepted
+g++	cxx26-DELETE_REASON-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:35:13: error: use of deleted function ‘void g(int)’: g: integers are not accepted
+g++	cxx26-DELETE_REASON-bare	-std=c++23 only	1	probes/cxx26.cpp:34:21: warning: ‘delete’ reason only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Wc++26-extensions]|probes/cxx26.cpp:35:13: error: use of deleted function ‘void g(int)’: g: integers are not accepted
+g++	cxx26-SA_FALSE_OK-c++23	S4 -Werror -std=c++23	0	
+g++	cxx26-SA_FALSE_OK-c++26	S4 -Werror -std=c++26	0	
+g++	cxx26-SA_FALSE_OK-bare	-std=c++23 only	0	
+g++	cxx26-SA_FALSE-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid
+g++	cxx26-SA_FALSE-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid
+g++	cxx26-SA_FALSE-bare	-std=c++23 only	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid
+g++	macros-c++23	-E -P	0	long sa = 201411L; long df = 0;
+g++	macros-c++26	-E -P	0	long sa = 202306L; long df = 202403L;
+g++	pragma-K3	S4 -Werror	0	
+g++	pragma-K3-pedantic-errors	-pedantic-errors	0	
+g++	sys-K3-I	S4 -Werror -I	1	probes/sys/ugsa.hpp:6:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|cc1plus: all warnings being treated as errors
+g++	sys-K3-isystem	S4 -Werror -isystem	0	
+g++	pragma-K5	S4 -Werror	1	probes/pragma.cpp:15:45: error: static assertion failed: hi
+g++	pragma-K5-pedantic-errors	-pedantic-errors	1	probes/pragma.cpp:15:45: error: static assertion failed: hi
+g++	sys-K5-I	S4 -Werror -I	1	probes/sys/ugsa.hpp:6:50: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]|probes/sys/ugsa.hpp:6:45: error: static assertion failed: hi
+g++	sys-K5-isystem	S4 -Werror -isystem	1	probes/sys/ugsa.hpp:6:45: error: static assertion failed: hi
+clang++	cxx26-UGSA_OK-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:31:61: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]|1 error generated.
+clang++	cxx26-UGSA_OK-c++26	S4 -Werror -std=c++26	0	
+clang++	cxx26-UGSA_OK-bare	-std=c++23 only	0	probes/cxx26.cpp:31:61: warning: 'static_assert' with a user-generated message is a C++26 extension [-Wc++26-extensions]|1 warning generated.
+clang++	cxx26-UGSA-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:28:61: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]|probes/cxx26.cpp:28:43: error: static assertion failed due to requirement '5 < 4': blade e5 not in set
+clang++	cxx26-UGSA-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:28:43: error: static assertion failed due to requirement '5 < 4': blade e5 not in set|1 error generated.
+clang++	cxx26-UGSA-bare	-std=c++23 only	1	probes/cxx26.cpp:28:61: warning: 'static_assert' with a user-generated message is a C++26 extension [-Wc++26-extensions]|probes/cxx26.cpp:28:43: error: static assertion failed due to requirement '5 < 4': blade e5 not in set
+clang++	cxx26-DELETE_REASON_OK-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:37:22: error: '= delete' with a message is a C++2c extension [-Werror,-Wc++26-extensions]|1 error generated.
+clang++	cxx26-DELETE_REASON_OK-c++26	S4 -Werror -std=c++26	0	
+clang++	cxx26-DELETE_REASON_OK-bare	-std=c++23 only	0	
+clang++	cxx26-DELETE_REASON-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:34:22: error: '= delete' with a message is a C++2c extension [-Werror,-Wc++26-extensions]|probes/cxx26.cpp:35:12: error: call to deleted function 'g': g: integers are not accepted
+clang++	cxx26-DELETE_REASON-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:35:12: error: call to deleted function 'g': g: integers are not accepted|1 error generated.
+clang++	cxx26-DELETE_REASON-bare	-std=c++23 only	1	probes/cxx26.cpp:35:12: error: call to deleted function 'g': g: integers are not accepted|1 error generated.
+clang++	cxx26-SA_FALSE_OK-c++23	S4 -Werror -std=c++23	0	
+clang++	cxx26-SA_FALSE_OK-c++26	S4 -Werror -std=c++26	0	
+clang++	cxx26-SA_FALSE_OK-bare	-std=c++23 only	0	
+clang++	cxx26-SA_FALSE-c++23	S4 -Werror -std=c++23	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid|1 error generated.
+clang++	cxx26-SA_FALSE-c++26	S4 -Werror -std=c++26	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid|1 error generated.
+clang++	cxx26-SA_FALSE-bare	-std=c++23 only	1	probes/cxx26.cpp:39:45: error: static assertion failed: f: never valid|1 error generated.
+clang++	macros-c++23	-E -P	0	long sa = 202306L; long df = 202403L;
+clang++	macros-c++26	-E -P	0	long sa = 202306L; long df = 202403L;
+clang++	pragma-K3	S4 -Werror	0	
+clang++	pragma-K3-pedantic-errors	-pedantic-errors	0	
+clang++	sys-K3-I	S4 -Werror -I	1	probes/sys/ugsa.hpp:6:57: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]|1 error generated.
+clang++	sys-K3-isystem	S4 -Werror -isystem	0	
+clang++	pragma-K5	S4 -Werror	1	probes/pragma.cpp:15:43: error: static assertion failed due to requirement '5 < 4': hi|1 error generated.
+clang++	pragma-K5-pedantic-errors	-pedantic-errors	1	probes/pragma.cpp:15:43: error: static assertion failed due to requirement '5 < 4': hi|1 error generated.
+clang++	sys-K5-I	S4 -Werror -I	1	probes/sys/ugsa.hpp:6:57: error: 'static_assert' with a user-generated message is a C++26 extension [-Werror,-Wc++26-extensions]|probes/sys/ugsa.hpp:6:43: error: static assertion failed due to requirement '5 < 4': hi
+clang++	sys-K5-isystem	S4 -Werror -isystem	1	probes/sys/ugsa.hpp:6:43: error: static assertion failed due to requirement '5 < 4': hi|1 error generated.

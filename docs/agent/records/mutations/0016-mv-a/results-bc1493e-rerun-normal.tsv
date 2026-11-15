@@ -1,0 +1,7 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+ring_scalar_no_unary_minus	gcc-debug	normal	1	-	killed	-	mv_test.cpp:477	mv_test.cpp:477	-	test/core/mv_test.cpp:477:17: error: static assertion failed
+ring_scalar_no_unary_minus	clang-debug	normal	1	-	killed	-	mv_test.cpp:477	mv_test.cpp:477	-	test/core/mv_test.cpp:477:17: error: static assertion failed due to requirement '!core::ring_scalar<(anonymous namespace)::without_unary_minus>'
+shared_zero_initializer	gcc-debug	normal	0	8	killed	core.mv	-	-	mv is zero by default<rational> | mv stays zero by default after a constant evaluation wrote into one | get reaches the coefficient of each oriented name<rational>	-
+shared_zero_initializer	clang-debug	normal	0	0	SURVIVED	-	-	-	-	-
+rational_no_sum_guard	gcc-debug	normal	0	8	killed	support.rational_rejects_add_far_above,support.rational_consteval_add	-	-	-	-
+rational_no_sum_guard	clang-debug	normal	0	8	killed	support.rational_rejects_add_far_above	-	-	-	-

@@ -1,0 +1,9 @@
+In file included from user.cpp:14:
+In file included from include/galoot/core.hpp:12:
+include/galoot/core/mv.hpp:834:17: error: static assertion failed: truncate: the target must be a multivector type of the same algebra and scalar type; truncate changes only which blades are held
+  834 |   static_assert(false, "truncate: the target must be a multivector type of "
+      |                 ^~~~~
+user.cpp:126:22: note: in instantiation of function template specialization 'galoot::core::truncate<galoot::core::mv<r3, blade_set<3>{{{{1, 1}, {2, 1}, {4, 1}}}}, double>, rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>' requested here
+  126 |   const auto s = gc::truncate<R3Vector>(p);  // truncate across algebras
+      |                      ^
+1 error generated.

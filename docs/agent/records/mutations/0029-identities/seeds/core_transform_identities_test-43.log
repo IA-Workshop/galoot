@@ -1,0 +1,15 @@
+rational: a result does not fit std::int64_t
+[doctest] doctest version is "2.5.3"
+[doctest] run with "--help" for options
+===============================================================================
+test/core/transform_identities_test.cpp:318:
+TEST CASE:  versors of hyperplanes act as outermorphisms and compose over many forms
+
+test/core/transform_identities_test.cpp:318: FATAL ERROR: test case CRASHED: SIGABRT - Abort (abnormal termination) signal
+
+===============================================================================
+[doctest] test cases:   1 |   0 passed | 1 failed | 0 skipped
+[doctest] assertions: 890 | 890 passed | 0 failed |
+[doctest] Status: FAILURE!
+build/gcc-debug/test/core_transform_identities_test: Aborted
+timed: test seed:43:core_transform_identities_test took 0.135 s (exit 134); row in seeds/runs.tsv

@@ -1,0 +1,57 @@
+variant	compiler	check	expected	outcome
+base	g++	verdict	compiles	as expected
+base	g++	metric	compiles	as expected
+base	g++	plan	compiles	as expected
+base	g++	not-alg	fails, names metric_like	as expected
+base	clang++	verdict	compiles	as expected
+base	clang++	metric	compiles	as expected
+base	clang++	plan	compiles	as expected
+base	clang++	not-alg	fails, names metric_like	as expected
+cached	g++	verdict	compiles	as expected
+cached	g++	metric	compiles	as expected
+cached	g++	plan	compiles	as expected
+cached	g++	not-alg	fails, names metric_like	as expected
+cached	clang++	verdict	compiles	as expected
+cached	clang++	metric	compiles	as expected
+cached	clang++	plan	compiles	as expected
+cached	clang++	not-alg	fails, names metric_like	as expected
+cached-flat	g++	verdict	compiles	as expected
+cached-flat	g++	metric	compiles	as expected
+cached-flat	g++	plan	compiles	as expected
+cached-flat	g++	not-alg	fails, names metric_like	as expected
+cached-flat	clang++	verdict	compiles	as expected
+cached-flat	clang++	metric	compiles	as expected
+cached-flat	clang++	plan	compiles	as expected
+cached-flat	clang++	not-alg	fails, names metric_like	as expected
+cached-orig	g++	verdict	compiles	as expected
+cached-orig	g++	metric	compiles	as expected
+cached-orig	g++	plan	compiles	as expected
+cached-orig	g++	not-alg	fails, names metric_like	as expected
+cached-orig	clang++	verdict	compiles	as expected
+cached-orig	clang++	metric	compiles	as expected
+cached-orig	clang++	plan	compiles	as expected
+cached-orig	clang++	not-alg	fails, names metric_like	as expected
+single	g++	verdict	compiles	as expected
+single	g++	metric	compiles	as expected
+single	g++	plan	compiles	as expected
+single	g++	not-alg	fails, names metric_like	as expected
+single	clang++	verdict	compiles	as expected
+single	clang++	metric	compiles	as expected
+single	clang++	plan	compiles	as expected
+single	clang++	not-alg	fails, names metric_like	as expected
+single-guarded	g++	verdict	compiles	as expected
+single-guarded	g++	metric	compiles	as expected
+single-guarded	g++	plan	compiles	as expected
+single-guarded	g++	not-alg	fails, names metric_like	as expected
+single-guarded	clang++	verdict	compiles	as expected
+single-guarded	clang++	metric	compiles	as expected
+single-guarded	clang++	plan	compiles	as expected
+single-guarded	clang++	not-alg	fails, names metric_like	as expected
+type	g++	verdict	compiles	NOT as expected (exit 1)
+type	g++	metric	compiles	NOT as expected (exit 1)
+type	g++	plan	compiles	as expected
+type	g++	not-alg	fails, names metric_like	as expected
+type	clang++	verdict	compiles	NOT as expected (exit 1)
+type	clang++	metric	compiles	NOT as expected (exit 1)
+type	clang++	plan	compiles	as expected
+type	clang++	not-alg	fails, names metric_like	as expected

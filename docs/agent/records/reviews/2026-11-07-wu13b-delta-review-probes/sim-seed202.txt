@@ -1,0 +1,77 @@
+simulation equals the core on the probe inputs: 11 transforms
+violations of |d - e| <= tol: 0
+violations of gamma_K M + K denorm_min: 5236
+('cga3 flector vector', 'one huge') 2.25e+14
+('cga3 motor bivector', 'one huge') 2.49e+14
+('cga3 motor vector', 'one huge') 3.46e+14
+('cga3 plane vector', 'one huge') 9.01e+14
+('r400 even scalar', 'one huge') 5e+14
+('r400 even vector', 'one huge') 3.75e+14
+('ratio', 'cga3 flector vector', 'deep underflow') 2.77e-11
+('ratio', 'cga3 flector vector', 'mixed scales') 0.072
+('ratio', 'cga3 flector vector', 'near overflow') 0.0989
+('ratio', 'cga3 flector vector', 'one huge') 3.1e-18
+('ratio', 'cga3 flector vector', 'ordinary') 0.101
+('ratio', 'cga3 flector vector', 'underflow and zeros') 0.0517
+('ratio', 'cga3 motor bivector', 'deep underflow') 6.16e-11
+('ratio', 'cga3 motor bivector', 'mixed scales') 0.0604
+('ratio', 'cga3 motor bivector', 'near overflow') 0.0918
+('ratio', 'cga3 motor bivector', 'one huge') 0.0247
+('ratio', 'cga3 motor bivector', 'ordinary') 0.088
+('ratio', 'cga3 motor bivector', 'underflow and zeros') 0.0375
+('ratio', 'cga3 motor vector', 'deep underflow') 8.24e-15
+('ratio', 'cga3 motor vector', 'mixed scales') 0.157
+('ratio', 'cga3 motor vector', 'near overflow') 0.166
+('ratio', 'cga3 motor vector', 'one huge') 5.66e-18
+('ratio', 'cga3 motor vector', 'ordinary') 0.184
+('ratio', 'cga3 motor vector', 'underflow and zeros') 0.0769
+('ratio', 'cga3 plane vector', 'deep underflow') 8.08e-13
+('ratio', 'cga3 plane vector', 'mixed scales') 0.293
+('ratio', 'cga3 plane vector', 'near overflow') 0.257
+('ratio', 'cga3 plane vector', 'one huge') 1.65e-17
+('ratio', 'cga3 plane vector', 'ordinary') 0.326
+('ratio', 'cga3 plane vector', 'underflow and zeros') 0.136
+('ratio', 'r400 even scalar', 'deep underflow') 1.08e-14
+('ratio', 'r400 even scalar', 'mixed scales') 0.137
+('ratio', 'r400 even scalar', 'near overflow') 0.255
+('ratio', 'r400 even scalar', 'one huge') 1.1e-17
+('ratio', 'r400 even scalar', 'ordinary') 0.2
+('ratio', 'r400 even scalar', 'underflow and zeros') 0.0065
+('ratio', 'r400 even vector', 'deep underflow') 8.96e-12
+('ratio', 'r400 even vector', 'mixed scales') 0.119
+('ratio', 'r400 even vector', 'near overflow') 0.147
+('ratio', 'r400 even vector', 'one huge') 6.01e-18
+('ratio', 'r400 even vector', 'ordinary') 0.118
+('ratio', 'r400 even vector', 'underflow and zeros') 0.0549
+('ratio', 'rga3 flector line', 'mixed scales') 0.126
+('ratio', 'rga3 flector line', 'near overflow') 0.175
+('ratio', 'rga3 flector line', 'one huge') 1.21e-17
+('ratio', 'rga3 flector line', 'ordinary') 0.145
+('ratio', 'rga3 flector line', 'underflow and zeros') 0.000513
+('ratio', 'rga3 flector point', 'deep underflow') 2.14e-18
+('ratio', 'rga3 flector point', 'mixed scales') 0.199
+('ratio', 'rga3 flector point', 'near overflow') 0.224
+('ratio', 'rga3 flector point', 'one huge') 1.84e-17
+('ratio', 'rga3 flector point', 'ordinary') 0.212
+('ratio', 'rga3 flector point', 'underflow and zeros') 0.0201
+('ratio', 'rga3 motor line', 'mixed scales') 0.119
+('ratio', 'rga3 motor line', 'near overflow') 0.199
+('ratio', 'rga3 motor line', 'one huge') 7.18e-18
+('ratio', 'rga3 motor line', 'ordinary') 0.176
+('ratio', 'rga3 motor line', 'underflow and zeros') 0.0261
+('ratio', 'rga3 motor plane', 'deep underflow') 1.71e-17
+('ratio', 'rga3 motor plane', 'mixed scales') 0.133
+('ratio', 'rga3 motor plane', 'near overflow') 0.144
+('ratio', 'rga3 motor plane', 'one huge') 8.06e-18
+('ratio', 'rga3 motor plane', 'ordinary') 0.144
+('ratio', 'rga3 motor plane', 'underflow and zeros') 0.00258
+('ratio', 'rga3 motor point', 'mixed scales') 0.188
+('ratio', 'rga3 motor point', 'near overflow') 0.24
+('ratio', 'rga3 motor point', 'one huge') 1.85e-17
+('ratio', 'rga3 motor point', 'ordinary') 0.176
+('ratio', 'rga3 motor point', 'underflow and zeros') 0.00789
+('rga3 flector line', 'one huge') 6.43e+14
+('rga3 flector point', 'one huge') 9.01e+14
+('rga3 motor line', 'one huge') 5.82e+14
+('rga3 motor plane', 'one huge') 5.85e+14
+('rga3 motor point', 'one huge') 9.01e+14

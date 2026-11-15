@@ -1,0 +1,60 @@
+# The two blade_product mutants that the port of plan 0026 left unjudged,
+# because a warning made an error stopped their build before any test ran,
+# rewritten so that the build stays warning-free and the tests judge them.
+# The selection and the four --runtime edits are those of
+# ../0011-blade-product/mutants.toml.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.blade_product]
+targets = ["core_blade_product_test", "core_blade_product_assert_fail"]
+labels = '^core\.blade_product$'
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(table_mismatches(core::conformal<3>(),'
+replacement = 'static_assert(true || table_mismatches(core::conformal<3>(),'
+count = 1
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(added('
+replacement = 'static_assert(true || added('
+count = 3
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(core::detail::blade_product<1>(widest, top, top)'
+replacement = 'static_assert(true || core::detail::blade_product<1>(widest, top, top)'
+count = 1
+
+[[runtime]]
+file = "test/core/blade_product_test.cpp"
+anchor = 'static_assert(core::detail::blade_product<1>(witt, pair, top)'
+replacement = 'static_assert(true || core::detail::blade_product<1>(witt, pair, top)'
+count = 1
+
+
+# generator_scale_dropped, with the unused parameter cast to void: the
+# scale of e_i x is ignored, as before, without -Wunused-parameter.
+[[mutant]]
+name = "generator_scale_dropped_used"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = 'multiply_checked(x.terms[k].coefficient, scale)', replacement = '(static_cast<void>(scale), x.terms[k].coefficient)' }]
+expect = "killed"
+
+# range_widest_shifted, with the shift count reduced mod the width: the
+# range check also runs in the algebra of mask_bits generators, and there
+# shifts by 0, so every blade but the scalar is out of range. That is what
+# the original shift by the full width does at run time on x86, which uses
+# the count mod 32, without -Wshift-count-overflow, and the constant
+# evaluation fails on the library's assertion instead of on the shift.
+[[mutant]]
+name = "range_widest_shifted_mod"
+selection = "blade_product"
+file = "include/galoot/core/blade_product.hpp"
+edits = [
+  { anchor = 'if constexpr (N < mask_bits) {', replacement = 'if constexpr (N <= mask_bits) {' },
+  { anchor = '((a | b) >> N) == 0', replacement = '((a | b) >> (N % mask_bits)) == 0' },
+]
+expect = "killed"

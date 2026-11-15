@@ -1,0 +1,323 @@
+date	unit	role	model	tokens	tool_calls	wall_s	note
+2026-10-31	plan-0001	architecture planner	fable	145820	29	809	reported by harness as subagent_tokens
+2026-10-31	plan-0001	gates planner	opus	141404	14	530	reported by harness as subagent_tokens
+2026-10-31	plan-0002	WU1 plan author	opus	201873	53	851	reported by harness as subagent_tokens
+2026-10-31	spikes-A-B	spike author	opus	255978	101	2547	reported by harness as subagent_tokens
+2026-10-31	spike-B-review	blind reviewer	fable	99539	18	618	reported by harness as subagent_tokens
+2026-10-31	WU1	build-expert implementer	opus	314277	114	1710	reported by harness as subagent_tokens
+2026-10-31	WU1	blind reviewer (W5)	opus	220829	67	851	reported by harness as subagent_tokens
+2026-10-31	spikes-C-D-F	spike author	opus	417866	159	3069	reported by harness as subagent_tokens
+2026-10-31	WU1-fixes	build-expert implementer (resumed; delta since last row)	opus	53998	32	435	cumulative 368275 less the 314277 logged earlier
+2026-10-31	plan-0003	doctest-expert role, smoke-test review (read-only)	opus	80839	17	150	reported by harness as subagent_tokens
+2026-10-31	WU2	bits implementer	opus	253815	84	1045	reported by harness as subagent_tokens
+2026-10-31	M0-closure	scripts implementer	opus	264885	83	1134	reported by harness as subagent_tokens
+2026-10-31	WU3	metric implementer	opus	277533	73	1190	reported by harness as subagent_tokens
+2026-10-31	M0-closure	blind reviewer (W5)	opus	184017	50	567	reported by harness as subagent_tokens
+2026-10-31	WU2	blind reviewer (W5)	opus	205524	59	697	reported by harness as subagent_tokens
+2026-10-31	WU1b-recorder	recorder implementer	opus	311806	108	1917	reported by harness as subagent_tokens
+2026-10-31	WU3	blind reviewer (W5)	opus	207653	65	752	reported by harness as subagent_tokens
+2026-10-31	WU2	bits implementer (review fixes; delta)	opus	49640	32	466	cumulative 303455 less 253815 logged earlier
+2026-10-31	M0-closure	scripts implementer (review fixes; delta)	opus	63557	32	519	cumulative 328442 less 264885 logged earlier
+2026-10-31	WU3	metric implementer (review fixes; delta)	opus	60117	27	518	cumulative 337650 less 277533 logged earlier
+2026-10-31	WU2	blind reviewer (W5 delta)	opus	119499	30	388	reported by harness as subagent_tokens
+2026-10-31	M0-closure	blind reviewer (W5 delta)	opus	133709	46	396	reported by harness as subagent_tokens
+2026-10-31	recorder	blind reviewer (W5)	opus	241008	84	1108	reported by harness as subagent_tokens
+2026-10-31	WU3	blind reviewer (W5 delta)	opus	144617	47	527	reported by harness as subagent_tokens
+2026-10-31	WU3	metric implementer (markers and golden; delta)	opus	42083	19	302	cumulative 379733 less 337650 logged earlier
+2026-10-31	WU2	bits implementer (markers and golden; delta)	opus	75111	40	529	cumulative 378566 less 303455 logged earlier
+2026-10-31	WU3	metric implementer (D2-D5; delta)	opus	23996	34	563	cumulative 403737 less 379733 logged earlier
+2026-10-31	recorder	recorder implementer (review fixes; delta)	opus	66270	48	600	cumulative 378076 less 311806 logged earlier
+2026-10-31	WU2	blind reviewer (W5 delta 2)	opus	162123	65	637	reported by harness as subagent_tokens
+2026-10-31	WU3	blind reviewer (W5 delta 2)	opus	183589	55	734	reported by harness as subagent_tokens
+2026-10-31	recorder	blind reviewer (W5 delta)	opus	129053	39	420	reported by harness as subagent_tokens
+2026-10-31	WU2	bits implementer (L1-L8; delta)	opus	40675	24	368	cumulative 419241 less 378566 logged earlier
+2026-10-31	WU3	metric implementer (bits merge, N1-N5; delta)	opus	38271	25	328	cumulative 442008 less 403737 logged earlier
+2026-10-31	WU3	blind reviewer (W5 delta 3)	opus	145341	43	421	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	cleanup implementer	opus	368396	138	1718	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	blind reviewer (W5)	opus	253066	90	1073	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	cleanup implementer (review fixes; delta)	opus	61053	42	645	cumulative 429449 less 368396 logged earlier
+2026-10-31	cleanup-1	blind reviewer (W5 delta)	opus	150174	60	587	reported by harness as subagent_tokens
+2026-10-31	WU4	blade-set implementer	opus	350522	129	2522	reported by harness as subagent_tokens
+2026-10-31	cleanup-1	cleanup implementer (delta-review fixes; delta)	opus	58132	41	576	cumulative 487581 less 429449 logged earlier
+2026-10-31	WU4	blind reviewer (W5)	opus	243368	94	1875	reported by harness as subagent_tokens
+2026-10-31	WU4	blade-set implementer (review fixes; delta)	opus	61694	45	3200	cumulative 412216 less 350522 logged earlier; tool calls 174 less 129
+2026-10-31	M0-M1-gate	auditor	opus	290178	97	763	reported by harness as subagent_tokens
+2026-10-31	M0-M1-gate	blind reviewer (W5 fix passes)	opus	218662	79	950	reported by harness as subagent_tokens
+2026-10-31	plan-0009	blade-set implementer (merge fix; delta)	opus	94752	72	2900	cumulative 515721 less 420969 last reported; tool calls 249 less 177
+2026-11-01	plan-0009	blind reviewer (W5)	opus	242977	85	1330	reported by harness as subagent_tokens
+2026-11-01	plan-0009	blade-set implementer (review fixes F1-F8; delta)	opus	43725	32	2200	cumulative 559446 less 515721 logged earlier; tool calls 281 less 249
+2026-11-01	plan-0011	M2 WU6 planner	fable	287260	69	892	reported by harness as subagent_tokens
+2026-11-01	plan-0010	compile-fail lane implementer	opus	255369	111	2140	reported by harness as subagent_tokens
+2026-11-01	plan-0010	blind reviewer (W5)	opus	212029	73	1361	reported by harness as subagent_tokens
+2026-11-01	plan-0011	WU6a implementer incl. lint fix pass	opus	459272	152	3170	reported by harness as subagent_tokens (cumulative across the first pass and the lint-fix round)
+2026-11-01	plan-0011	WU6a blind reviewer (W5)	opus	289431	77	1391	reported by harness as subagent_tokens
+2026-11-01	tools-research	oracles researcher	fable	208543	127	1101	reported by harness as subagent_tokens
+2026-11-01	tools-research	robustness-performance researcher	fable	219649	157	1151	reported by harness as subagent_tokens
+2026-11-01	plan-0011	WU6a implementer incl. review fixes	opus	523993	198	3830	reported by harness as subagent_tokens (cumulative across three rounds; tool calls 152 + 46)
+2026-11-01	plan-0011	WU6b implementer	opus	471530	157	2530	reported by harness as subagent_tokens
+2026-11-01	plan-0011	WU6b blind reviewer (W5)	opus	343771	122	1768	reported by harness as subagent_tokens
+2026-11-01	plan-0011	WU6b implementer incl. review fixes	opus	546961	206	3570	reported by harness as subagent_tokens (cumulative; tool calls 157 + 49)
+2026-11-01	tools-trial	WU6a oracle cross-check (math-expert role)	opus	304677	110	2798	reported by harness as subagent_tokens
+2026-11-01	plan-0012	cost-growth implementer (performance-engineer role)	opus	434103	166	3950	reported by harness as subagent_tokens
+2026-11-01	plan-0012	cost-growth blind reviewer (W5)	opus	300208	95	1592	reported by harness as subagent_tokens
+2026-11-01	plan-0012	cost-growth implementer, review-fix round	opus	475051	191	4390	reported by harness as subagent_tokens (cumulative; tool calls 166 + 25)
+2026-11-01	plan-0013	WU7 planner (math-expert role)	opus	321708	61	1103	reported by harness as subagent_tokens
+2026-11-01	plan-0013	WU7a implementer (cpp-expert role)	opus	630786	194	3426	reported by harness as subagent_tokens (cumulative across the review-fix round)
+2026-11-01	plan-0013	WU7a blind reviewer (W5)	opus	300144	79	1025	reported by harness as subagent_tokens
+2026-11-01	plan-0013	WU7b implementer (cpp-expert role), incl. review-fix rounds	opus	673511	286	0	reported by harness as subagent_tokens (cumulative over four resumptions; wall time not summed)
+2026-11-01	plan-0013	WU7b blind reviewer (W5)	opus	358413	112	1451	reported by harness as subagent_tokens
+2026-11-01	plan-0014	metric_like planner and implementer (cpp-expert role), incl. review-fix round	opus	360085	151	2567	reported by harness as subagent_tokens (cumulative)
+2026-11-01	plan-0014	metric_like blind reviewer (W5)	opus	238928	89	1745	reported by harness as subagent_tokens
+2026-11-01	research	metric_like cheaper-check proof (research/metric-like-proof)	opus	294043	89	1513	reported by harness as subagent_tokens
+2026-11-01	research	job pool generalization survey (research/jobpool-generalization)	opus	220486	103	1420	reported by harness as subagent_tokens
+2026-11-01	plan-0015	certified plan limits planner and implementer (performance-engineer role), incl. review-fix round	opus	642035	330	0	reported by harness as subagent_tokens (cumulative over two resumptions; wall time not summed)
+2026-11-01	plan-0015	certified plan limits blind reviewer (W5)	opus	313735	118	2154	reported by harness as subagent_tokens
+2026-11-01	research	constexpr ceiling certification (research/constexpr-ceiling-certification)	opus	580104	276	7285	reported by harness as subagent_tokens
+2026-11-01	research	antiproduct growth (research/antiproduct-growth)	opus	360189	121	7515	reported by harness as subagent_tokens (includes about 1h40 waiting for the timing lock)
+2026-11-01	research	API design (research/api-design), hci-expert role; its three Sonnet reading assistants used about 176k, 239k and 237k tokens	opus	354265	87	2100	reported by harness as subagent_tokens (assistants' tokens as the researcher reported them, not included)
+2026-11-01	plan-0016	WU8 planner (cpp-expert role), incl. ruling revisions	opus	513359	98	0	reported by harness as subagent_tokens (cumulative over three resumptions; wall time not summed)
+2026-11-01	plan-0017	run-log compaction planner and implementer (performance-engineer role), incl. two fix rounds	opus	466511	~230	0	reported by harness as subagent_tokens (cumulative over three resumptions; wall time not summed)
+2026-11-01	plan-0017	run-log compaction blind reviewer (W5)	opus	248074	75	1298	reported by harness as subagent_tokens
+2026-11-01	plan-0017	run-log compaction delta reviewer	sonnet	152936	52	654	reported by harness as subagent_tokens
+2026-11-01	plan-0016	WU8a implementer (cpp-expert role), incl. review-fix round	opus	806505	~400	0	reported by harness as subagent_tokens (cumulative over two resumptions; wall time not summed)
+2026-11-01	plan-0016	WU8a blind reviewer (W5)	opus	370021	112	1414	reported by harness as subagent_tokens
+2026-11-01	plan-0016	WU8a hci-expert reading	opus	333420	86	1592	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b implementer (cpp-expert role), incl. review-fix and delta-fix rounds	opus	865146	~358	8069	reported by harness as subagent_tokens (cumulative over three resumptions; tool calls and wall time summed)
+2026-11-02	plan-0016	WU8b blind reviewer (W5)	opus	282661	69	815	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b hci-expert reading	opus	221979	57	1211	reported by harness as subagent_tokens
+2026-11-02	plan-0016	WU8b delta reviewer	opus	266514	63	1060	reported by harness as subagent_tokens
+2026-11-02	plan-0018	WU9 blind reviewer	opus	209582	61	793	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	gate-M2	M2 gate evidence researcher	sonnet	127256	22	145	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10 planner (plan 0019)	opus	258999	44	972	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a test author	opus	421645	134	2557	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a implementer (to first hand-back)	opus	316015	144	2719	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a implementer (review fixes, resumed)	opus	409499	204	5727	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a blind reviewer	opus	314116	89	1520	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10a delta reviewer	opus	211751	76	1160	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b test author	opus	438090	135	4043	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b implementer (final, includes the resumed review-fix rounds)	opus	524272	219	7786	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b blind reviewer	opus	288691	67	1305	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	plan-0019	WU10b delta reviewer	opus	214136	67	1071	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-02	audit-post-wu10	post-WU10 auditor	opus	330564	129	1261	reported by harness as subagent_tokens; backfilled by the coordinator
+2026-11-04	plan-0020	WU11a test author (doctest-expert role; golden exomorphisms and test groups 2, 4, 6, 10)	opus	441472	117	2978	reported by harness as subagent_tokens
+2026-11-04	plan-0020	WU11a test author, resumed for the project tests (group 8)	opus	473450	14	406	reported by harness as subagent_tokens for the resumed run; whether it includes the first run's tokens is not stated
+2026-11-04	plan-0020	WU11a math-expert (proofs for decision 0172, review of the golden routes)	opus	193582	37	881	reported by harness as subagent_tokens
+2026-11-02	plan-0020	WU11 planner (plan 0020)	opus	not recorded	not recorded	not recorded	not recorded: the harness figures were not kept; backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11a implementer (cpp-expert role), incl. review-fix rounds	opus	546588	277	not recorded	reported by harness as subagent_tokens, cumulative over resumptions, as relayed by the coordinator; wall time not reported; backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11a blind reviewer	opus	294294	84	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; the reviewer's own report was not preserved (M3 gate MA1); backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11b implementer (numerical-expert role), both groups, incl. review-fix rounds	opus	522236	not recorded	not recorded	reported by harness as subagent_tokens: the last of six figures of resumed sessions (about 342k, 398k, 437k, 504k, 510k, 522k), cumulative, as relayed by the coordinator; tool calls and wall time not reported; backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11b blind reviewer	opus	188083	52	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; the reviewer's own report was not preserved (M3 gate MA1); backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11b delta reviewer	opus	143676	39	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; the reviewer's own report was not preserved (M3 gate MA1); backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0020	WU11b last group blind reviewer	opus	161638	48	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; the reviewer's own report was not preserved (M3 gate MA1); backfilled by the records clerk 2026-11-07
+2026-11-04	plan-0021	WU13 planner (plan 0021)	opus	321632	61	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; backfilled by the records clerk 2026-11-07
+2026-11-04	logician-mut	logician rerun	opus	113408	46	660	reported by harness, as relayed by the coordinator; its subject is not recorded in this repository (a detached worktree logician-mut at c86cb58 exists); date inferred from the worktree; backfilled by the records clerk 2026-11-07
+2026-11-04	gate-m3	M3 auditor	opus	288076	84	not recorded	reported by harness as subagent_tokens, as relayed by the coordinator; wall time not reported; backfilled by the records clerk 2026-11-07
+2026-11-07	plan-0021	WU13a math-expert (conventions_check, spike, decision 0177, note 0021)	opus	310671	60	1633	reported by harness as subagent_tokens
+2026-11-07	plan-0021	WU13a test author (doctest-expert)	opus	464208	138	3348	reported by harness as subagent_tokens
+2026-11-07	plan-0021	WU13b test author (doctest-expert, numerical-expert judgement)	opus	351545	103	2628	reported by harness as subagent_tokens
+2026-11-07	plan-0021	WU13b test author, review round (two resumes: B1, N9, N5, N7 tests; the coarse fix)	opus	73968	46	891	harness reported 425513 subagent_tokens cumulative for the agent after both resumes; tokens here are that minus the first run's 351545 (inferred); tool calls and wall time as reported for the resumes
+2026-11-07	plan-0021	WU13a implementer and coordinator	opus	546015	226	11294	harness subagent_tokens, cumulative over its runs
+2026-11-07	plan-0021	WU13a blind reviewer (review and delta)	opus	348923	104	1800	harness subagent_tokens, cumulative
+2026-11-07	plan-0021	WU13b implementer and coordinator	opus	556775	294	12511	harness subagent_tokens, cumulative over four runs
+2026-11-07	plan-0021	WU13b blind reviewer (review and delta)	opus	395238	156	2148	harness subagent_tokens, cumulative
+2026-11-07	plan-0022	WU15 planner	opus	326931	79	952	harness subagent_tokens
+2026-11-07	plan-0023	WU16 planner	opus	318312	69	979	harness subagent_tokens
+2026-11-07	note-0022	O6 flat-plane rounding researcher	opus	270581	77	1567	harness subagent_tokens
+2026-11-07	audit-wu9	WU9 merge auditor	opus	230968	83	747	harness subagent_tokens
+2026-11-07	plan-0023	WU16 math-expert (step 1: note 0023, conventions_check, rigid_motions.py, golden namespaces)	opus	328000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 step-2 implementer (CONVENTIONS 1.12, decision 0197, trace rows)	opus	105000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 1 (objects)	opus	220000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 build lane and objects implementer (step 4, build-expert judgement)	opus	188000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 2 (motions, compile-fail tests)	opus	188000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 step-6 implementer (motions.hpp, fifth catch-all, mutants)	opus	199000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 numerical-expert (rotation tolerance, records/rotation-tolerance)	opus	135000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 README and its check implementer (step 8)	opus	137000	not recorded	not recorded	as relayed by the coordinator, rounded to thousands; tool calls and wall time not reported
+2026-11-07	plan-0023	WU16 test author, group 3 (V8 cases, geometric rotation test)	opus	210981	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-07	plan-0023	WU16 coordinator	opus	not recorded	not recorded	not recorded	not known when this row was written; the coordinator adds it from the harness report
+2026-11-07	plan-0023	WU16 steps 9-10 implementer (trace rows, lint fixes, records, outcome)	opus	234830	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08; this agent's own cost (steps 9 and 10)
+2026-11-08	plan-0022	WU15 test author, T2a and T2b (format tests)	opus	228564	76	1158	reported by harness as subagent_tokens
+2026-11-08	plan-0022	WU15 test author, part 1 gap test (resumed)	opus	238779	9	80	reported by harness as subagent_tokens for the resumed run; the figure may include the context carried from the first run
+2026-11-08	plan-0022	WU15 test author, T3a-1, T3a-2, T3b (resumed)	opus	325107	48	814	reported by harness as subagent_tokens for the resumed run; the figure may include the context carried from earlier runs
+2026-11-08	plan-0022	WU15 implementer and coordinator of parts 1 to 3 and the records	opus	426182	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08; a single resumed agent across parts 1, 2 and 3
+2026-11-08	plan-0023	WU16 lint and layout mutants	opus	134531	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0023	WU16 hci-expert reading	opus	157085	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0023	WU16 hci findings implementer	opus	151524	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0023	WU16 blind reviewer	opus	226892	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0023	WU16 review-fixes and P9 implementer	opus	120030	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0024	rotation-normalize implementer	opus	233253	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0024	rotation-normalize blind reviewer	opus	149334	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0024	rotation-normalize fix agent	opus	209169	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0024	rotation-normalize delta reviewer	opus	118948	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0024	rotation-normalize close-out and P9	opus	89159	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08; final figure 89159 at one notification, up to about 90k
+2026-11-08	plan-0022	WU15 merge-develop and confirmations	opus	97141	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0022	WU15 hci-expert reading	opus	171886	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0022	WU15 hci-fix implementer	opus	203099	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0022	WU15 blind reviewer	opus	245743	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0022	WU15 close-out and P9	opus	187328	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0025	presets-rga3 implementer	opus	343441	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0025	presets-rga3 blind reviewer	opus	158231	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0025	presets-rga3 close-out and P9	opus	108259	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	Colapinto cross-check	opus	119862	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	flector-test research	opus	125109	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	Hestenes 32-class check	opus	111335	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	Hestenes records	sonnet	62708	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	rotor sign derivation	opus	106557	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	three-merges review	opus	170447	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	research	snippets review	sonnet	69372	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	main-session	coordinator (all of the 2026-11-07/08 session)	opus	not visible	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0026	test author (doctest-expert role), both test groups	opus	242234	61	1161	subagent_tokens as the harness reported them
+2026-11-08	plan-0026	test author (doctest-expert role), two added cases	opus	262830	15	231	subagent_tokens as the harness reported them for the resumed agent (may include the first session)
+2026-11-08	plan-0026	implementer and coordinator, parts A to G and P9	opus	515617	about 190	not visible	harness subagent_tokens, cumulative over the coordinator's resumptions (parts A to G, review fixes and final P9), so it also covers the next implementer-and-coordinator row; tool calls as counted by the agent, approximate; updated 2026-11-08 (tokens were not visible)
+2026-11-08	plan-0026	test author (doctest-expert role), tests of the review findings	opus	305959	29	614	subagent_tokens as the harness reported them for the resumed agent (may include earlier sessions)
+2026-11-08	plan-0026	blind reviewer	opus	231027	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; updated 2026-11-08 (tokens were not visible)
+2026-11-08	plan-0026	implementer and coordinator, review fixes and final P9	opus	not visible	about 60	not visible	tool calls counted by the agent, approximate; same agent as the row above, whose cumulative figure includes this work; updated 2026-11-08
+2026-11-08	gate-m4	M4 auditor	opus	215312	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	audit-early-commits	early-commit audit (423 commits)	opus	327192	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0026	evidence-tools planner	opus	219285	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	pool-runlog-repairs and pool-surplus-fix, plans 0027 and 0028	implementer (one agent, resumed three times across the plan 0027 fixes and the plan 0028 surplus fix)	opus	287128	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0027	pool-runlog blind reviewer	opus	138022	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0027	pool-runlog delta reviewer	opus	103753	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0028	pool-surplus reviewer	opus	152468	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0026	delta reviewer	opus	107499	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	small	transform.hpp comment	sonnet	49749	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	small	agent-cost rows of the previous batch	sonnet	54026	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; backfilled 2026-11-08
+2026-11-08	plan-0029	part A reference values (math)	opus	365836	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	part B test author	opus	323482	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	part N tolerance record	opus	184931	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; approximate
+2026-11-08	plan-0029	implementer parts C1 to C3, integration, review fixes, P9, merge (cumulative)	opus	530263	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08; one agent resumed across all steps
+2026-11-08	plan-0029	seed overflow and O4 test author	opus	279917	145	3510	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0029	blind reviewer	opus	332061	96	876	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	research	math-tools and knowledge-base survey	opus	241458	not visible	not visible	as relayed by the coordinator from the harness completion report; tool calls and wall time not visible; recorded 2026-11-08
+2026-11-08	plan-0030	WU12 planner	opus	328633	73	1127	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-08	plan-0031	follow-ups planner and implementer	opus	349171	157	3104	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-08	plan-0031	blind reviewer	opus	221421	88	1318	as relayed by the coordinator from the harness completion report; tool calls and wall time partly not visible; recorded 2026-11-09
+2026-11-09	plan-0030	part D interface	opus	298151	62	1018	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	part N tolerance rule	opus	226897	58	1241	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools replay fix	sonnet	52632	9	88	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0031	implementer merge steps (cumulative)	opus	551312	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; the unit's own figure, an earlier label said it replaced 530263, which is plan 0029's implementer row (corrected 2026-11-10)
+2026-11-09	plan-0030	part A mathematics (a to g)	opus	502235	153	2526	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools replay verify and run.sh branch	sonnet	46243	8	102	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	part B test author	opus	571561	219	3555	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	parts C and E implementer	opus	583917	248	4635	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	hci reader	opus	201901	46	602	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	Sage cross-check	opus	202657	62	758	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	blind reviewer	opus	316678	103	1275	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	delta reviewer	opus	270786	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; figure not yet relayed
+2026-11-09	research	GCC constexpr initializer scan	opus	314507	133	2251	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	small	math-tools sage note	sonnet	48306	5	27	as relayed by the coordinator from the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0030	implementer cumulative to date	opus	762362	not visible	not visible	as relayed by the coordinator from the harness completion report; recorded 2026-11-09; an earlier label said it replaced 633742, but no 633742 row exists and the earlier figure was not recorded (corrected 2026-11-10)
+2026-11-09	plan-0030	implementer final to date (replaces 762362)	opus	830661			as relayed by the harness completion report; recorded 2026-11-09
+2026-11-09	small	lesson 0065 and KB GCC corrections	sonnet	71312	16	85	as relayed by the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0032	planner and implementer	opus	305111	161	3284	as relayed by the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0032	blind reviewer	opus	232202	73	970	as relayed by the harness completion report; recorded 2026-11-09
+2026-11-09	plan-0032	scalar x full<10> investigation	opus	185590	90	1047	as relayed by the harness completion report; recorded 2026-11-09
+2026-11-10	plan-0033	blind reviewer (reference kernels)	sonnet	73547	13	75	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0032	implementer cumulative to date (replaces 305111)	opus	353558	206		as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0034	blind reviewer (placement comments)	sonnet	99557	21	189	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0034	implementer	opus	159678	71	767	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	M5	auditor fork 1 (reviews, W9, W2, W7)	opus	242909	35	316	as relayed by the auditor; recorded 2026-11-10
+2026-11-10	M5	auditor fork 2 (decisions, governance, cost, lessons)	opus	250407	34	277	as relayed by the auditor; recorded 2026-11-10
+2026-11-10	M5	auditor	opus	285552	85	1654	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	M5	MA1 pool-surplus review fix	sonnet	71805	14	69	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-08	plan-0029	planner (on records/plan-wu14)	opus	not visible	not visible	not visible	no figure was relayed when the plan was written; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	plan-0033	implementer	opus	not visible	not visible	not visible	no separate figure; inferred to be inside the plan 0032 implementer's cumulative row (353558), recorded after the plan 0033 merge; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-09	coordination	coordinator session 2026-11-09	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; plans 0029 and 0030 estimate coordination; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	coordination	coordinator session 2026-11-10	opus	not visible	not visible	not visible	no figure visible to the coordinator for its own session; row added 2026-11-10 from the M5 audit's finding m13
+2026-11-10	M5	records agent (gate records, cost rows, lessons)	sonnet	86570	20	114	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0035	implementer	opus	297576	129	4232	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0035	snippets survey	sonnet	150794	49	282	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	blind reviewer	sonnet	138039	46	301	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	delta reviewer	sonnet	85400	21	130	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0035	second delta reviewer	sonnet	72262	16	97	as relayed by the implementer from the harness report; recorded 2026-11-10
+2026-11-10	plan-0036	blind reviewer (tools pool and mutate)	opus	181767	63	1081	as relayed by the harness completion report to the implementer; recorded 2026-11-10
+2026-11-10	plan-0036	delta reviewer (tools pool and mutate)	opus	155804	83	747	as relayed by the harness completion report to the implementer; recorded 2026-11-10
+2026-11-10	plan-0037	blind reviewer	sonnet	115092	54	557	harness-measured, as relayed by the implementer; recorded 2026-11-10
+2026-11-10	plan-0037	implementer	opus	177877	95	1490	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0036	implementer	opus	334159	134	7569	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	cleanup	worktree cleanup	sonnet	73790	15	119	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	plan-0038	planner	opus	261185	72	941	as relayed by the harness completion report; recorded 2026-11-10
+2026-11-10	wu17-part-a	implementer	sonnet	53692	13	59	cost.py comments list and million pattern
+2026-11-10	wu17-part-a	blind-reviewer	sonnet		14		tokens not reported
+2026-11-10	wu17-part-b	math-numerical (ran as sonnet, brief said opus)	sonnet	230909	51	898	derivations and counts on research/spike-e c056f20
+2026-11-10	wu17-part-b-check	independent checker	opus	219475	53	833	check of spike-e counts
+2026-11-10	plan-0039	blind-reviewer	opus	208315	66	1903	blind review of feature/basis-change-rows; reported by harness as subagent_tokens
+2026-11-10	wu17-part-d	doctest/build/performance (one agent)	opus	309215	107	1439	bench harness, reference kernels; branch feature/cost-evidence--bench
+2026-11-10	wu17-part-a	blind-reviewer (token correction for earlier row)	sonnet	64053	8	71	corrects the empty-token row above
+2026-11-10	wu17-part-d	blind-reviewer	opus	201346	67	812	review 4e6a342
+2026-11-10	wu17-part-d	author review-fix pass	opus	34123	17	287	fixes for review 4e1804e; 13 scratch run rows lost (departure recorded)
+2026-11-10	basis-change-rows	implementer	opus	338565	141	5202	plan 0039 unit, merged 7b85b33 (token figure is the agent total)
+2026-11-10	wu17-part-d	delta-reviewer	opus	112484	37	404	delta review 8573247
+2026-11-10	wu17-part-c	doctest/cpp (one agent)	opus	334093	133	3090	counting scalar, op_counts; feature/cost-evidence--counting b1be3e9
+2026-11-10	wu17-part-d	author merge and lesson pass	opus	17786	12	142	R1-R4 fixes, merge 3e5c4f5, lesson 0072
+2026-11-10	wu17-part-c	blind-reviewer	opus	229428	74	1180	review 9b5a47d
+2026-11-10	wu17-part-c	author review-fix pass	opus	107604	91	4249	fixes M1-M3 L1-L4 N1; tip 0dfc35a (441697 total minus 334093 earlier)
+2026-11-10	wu17-part-c	delta-reviewer	opus	167497	71	1100	delta review c1104d1
+2026-11-10	wu17-part-c	author merge pass	opus	15065	15	524	R1-R3, merge fe4791b (456762 total minus 441697)
+2026-11-10	wu17-e1	performance-engineer	opus	253168	97	1094	assembly read, records/cost-evidence-measurements--asm c2f181d
+2026-11-10	wu17-e2-e3	performance-engineer	opus	320485	154	3267	benchmarks and growth grid, records/cost-evidence-measurements acff460
+2026-11-10	wu17-part-d-inline	author (tests and code)	opus	66000	36	538	inline reference kernels, feature/cost-evidence--bench--inline 16c88af (427274 total minus 361124 earlier, rounded)
+2026-11-10	wu17-part-d-inline	blind-reviewer	opus	193131	61	895	review 53d2e01
+2026-11-10	wu17-part-d-inline	author review-fix and merge pass	opus	59364	30	397	F1-F6 fixes, merge 2de0d36 (486638 total minus 427274)
+2026-11-10	wu17-e2-rerun	performance-engineer	opus	79754	53	1748	E2 rerun at 2de0d36 (400239 total minus 320485)
+2026-11-10	wu17-part-f-bounds	numerical-expert	opus	334585	95	1918	bounds on research/spike-e--bounds 5897365
+2026-11-10	wu17-part-f-bench	performance-engineer	opus	348770	101	3144	benchmarks and prototype on research/spike-e--bench ae09ba3
+2026-11-10	wu17-part-f-bench	performance-engineer	opus	81042	37	1635	activity after the hand-back (429812 total minus 348770); not described in its report
+2026-11-10	wu17-part-f-note	researcher-writer	opus	211986	53	588	note 0027 on research/spike-e--note 88585ab
+2026-11-10	wu17-part-f-check	independent-checker	opus	202593	53	717	check of note 0027 on research/spike-e--check 9544c4d
+2026-11-10	wu17-part-f-check	independent-checker	opus	19186	9	299	activity after the hand-back (221779 total minus 202593)
+2026-11-10	wu17-part-f-note	researcher-writer	opus	35037	30	253	note 0027 amendment 37d2641 (247023 total minus 211986)
+2026-11-10	fable-advisory	advisor	fable	409458	59	1012	advisory report 03770dc
+2026-11-10	wu17-merge-gate	merge-gate runner	opus	111830	46	1502	gate merge 20fe261, full P9 matrix, plus about 21 minutes of pool time
+2026-11-10	wu18-records-drafts	records drafter	sonnet	177972	42	285	records/wu18-drafts e49c58e
+2026-11-10	kb-collected-sandwich	researcher-writer	opus	117817	25	344	kb/collected-sandwich-error merged in the knowledge base
+2026-11-10	plan-0041	planner	opus	246707	59	884	plan 0041 documentation lane, branch plan/documentation-lane aaba2f5, merged 4c95a7c
+2026-11-10	plan-0040	planner	opus	336982	86	1391	plan 0040 pre-release core pass, branch plan/pre-release-core-pass a15d53b, merged f801c06
+2026-11-10	plan-0040-D1	implementer 2	opus	234397	105	884	part D1 on feature/pre-release-core-pass--comments 75c94ca (interim notice figure; final may be higher)
+2026-11-10	plan-0040-D1	implementer 2	opus	8697	6	96	activity after the interim notice (243094 total minus 234397)
+2026-11-10	plan-0041-tooling	build-expert	opus	250622	89	1115	--tooling on feature/documentation-lane--tooling 2cbf950, merged 818eb4c
+2026-11-10	plan-0040-AB	implementer 1	opus	292606	135	2190	parts A and B on feature/pre-release-core-pass--code f4a7e3a
+2026-11-10	plan-0040-E-derivation	numerical-expert	opus	237766	61	1314	contraction derivation on records/contraction-check 11809c5, merged
+2026-11-10	plan-0041-pages	hci-expert author	opus	424951	121	1839	--pages on feature/documentation-lane--pages 7f1d720, merged 13bde56
+2026-11-10	plan-0041-cold-read-1	cold reader	sonnet	55469	6	65	first-page cold read, review/documentation-first-page 9ea89c2 (figures as notified; the 6 tool calls look low for five programs)
+2026-11-10	plan-0041-pages	hci-expert author	opus	13338	0	106	cold-read fixes 4348bae, merged 6c278df (438289 total minus 424951; tool-call count not given)
+2026-11-10	plan-0040-merge-code	merge runner	opus	99736	40	2022	--code merged into feature/pre-release-core-pass c6efd1f, nine presets
+2026-11-10	plan-0040-merge-code	merge runner	opus	10770	10	284	activity after the report (110506 total minus 99736)
+2026-11-10	plan-0040-CDE	implementer 2	opus	67435	53	1030	parts C, D2, E and dual.hpp fix, --comments 7226b2c (310529 total minus 243094)
+2026-11-10	plan-0040-evidence	implementer 1	opus	85254	68	1183	merge of --comments, W10 campaign, scan, mutants, decision 0244; feature/pre-release-core-pass 721afe7 (377860 total minus 292606)
+2026-11-11	plan-0040-review	blind-reviewer	opus	252836	74	936	blind review of feature/pre-release-core-pass 721afe7, review/pre-release-core-pass db8271e: blocked on M1
+2026-11-11	plan-0040-gate-run-1	merge runner	opus	77274	27	435	stopped by the coordinator before reporting, after the review found M1 (matrix at 721afe7 would be superseded by the fix)
+2026-11-11	plan-0040-comments2	implementer 2	opus	34801	27	375	blind-review comment fixes M2, m3, m7 on feature/pre-release-core-pass--comments2 45d79dd (345330 total minus 310529 recorded earlier, which includes about 6000 unrecorded from the previous stage)
+2026-11-11	plan-0040-comments2	implementer 2	opus	3789	3	58	duplicate hand-back (349119 total minus 345330)
+2026-11-11	plan-0040-public-ops	implementer 1	opus	149626	31	1650	M1 fix and m1, m2, m6, m7 on feature/pre-release-core-pass--public-ops 414879e (527486 total minus 377860)
+2026-11-11	plan-0041-review	blind-reviewer	sonnet	162333	50	295	blind review of feature/documentation-lane 6c278df, review/documentation-lane 98c5304: approve with six minors
+2026-11-11	plan-0041-pages	hci-expert author	opus	15827	11	144	review fixes 55e175b, merged 4483b6d (454116 total minus 438289)
+2026-11-11	plan-0040-delta-review	blind-reviewer	opus	257448	83	958	delta review of 721afe7..414879e, review/pre-release-core-pass-delta 2e51bac: blocked on D1
+2026-11-11	plan-0041-gate-run-1	merge runner	opus	133829	39	1486	documentation lane gate at 6ca81ad: lint red on guide examples, develop not moved; mutants all killed
+2026-11-11	plan-0041-pages	hci-expert author	opus	23449	12	209	lint fixes 00f10f0, merged 6d7d7b4 (477565 total minus 454116)
+2026-11-11	plan-0041-gate-run-1	merge runner	opus	18642	11	226	activity after the first report (152471 total minus 133829)
+2026-11-11	plan-0040-public-ops	implementer 1	opus	138799	60	2200	delta-review round: D1 to D6, pack rename, third W10 campaign, feature/pre-release-core-pass--public-ops 26f1b62 (666285 total minus 527486)
+2026-11-11	plan-0041-gate-run-2	merge runner	opus	9488	9	300	documentation lane gate rerun, merged to develop af5c34b (161959 total minus 152471 recorded)
+2026-11-11	plan-0041-gate-run-2	merge runner	opus	13314	9	100	final figures after the second report (175273 total minus 161959)
+2026-11-11	plan-0040-delta2-review	blind-reviewer	opus	231648	84	964	second delta review 414879e..26f1b62, review/pre-release-core-pass-delta2 c186af1: approve with minors
+2026-11-11	plan-0040-public-ops	implementer 1	opus	29747	21	502	E1 to E4 round, feature/pre-release-core-pass--public-ops c4f8bae (696032 total minus 666285)
+2026-11-11	plan-0040-delta3-review	blind-reviewer	sonnet	122284	36	607	delta review 26f1b62..c4f8bae, review/pre-release-core-pass-delta3 4483c65: approve with five minors
+2026-11-11	plan-0040-gate2	gate runner	opus	259346	134	8493	gate2 merge/pre-release-core-pass-gate2 54f2487: matrix red, clang-asan stopped for memory, gcc-asan 5368 s; develop not moved
+2026-11-11	plan-0040-inline-opt-out	implementer	opus	291888	114	1423	feature/pre-release-core-pass--inline-opt-out 048aac5: GALOOT_FORCE_INLINE macro, cache option, four presets
+2026-11-11	plan-0040-opt-out-delta-review	blind-reviewer	opus	202791	50	649	delta review 54f2487..048aac5, review/pre-release-core-pass-inline-opt-out 3deebff: approve with minors
+2026-11-11	plan-0040-opt-out-fixes	implementer	opus	190502	75	750	feature/pre-release-core-pass--inline-opt-out b517977: strict macro check, forced twin, clang-measure forced
+2026-11-11	plan-0040-opt-out-delta2-review	blind-reviewer	opus	173658	58	642	delta review 048aac5..b517977, review/pre-release-core-pass-inline-opt-out-delta2 bfa0fd6: approve with minors
+2026-11-11	plan-0040-gate3	gate-runner	opus	183570	75	2621	merge/pre-release-core-pass-gate3 c6a1cd8: matrix green, develop fast-forwarded
+2026-11-11	plan-0042-planner	planner	opus	216092	48	593	plan 0042 committed 042efa2
+2026-11-11	plan-0042-u2-snippets	implementer	sonnet	71814	11	75	records/m7-snippets 53bbb28 merged
+2026-11-11	plan-0042-u5-closures	implementer	sonnet	87979	18	101	records/plan-closures e730ed3 merged
+2026-11-11	plan-0042-u1-records	implementer	sonnet	170396	44	236	records/m7-gate c43fb63 merged
+2026-11-11	plan-0042-u3-m7-audit	auditor	opus	306512	113	1021	gate/m7 6a0f027 merged: no blocking, 2 major
+2026-11-11	plan-0042-u6-release-records	planner	opus	286255	112	1155	records/release-prep 421d572 merged
+2026-11-12	plan-0042-u7-release-commit	implementer	sonnet	52540	10	40	feature/release-1.0.0 7580e88 (R)
+2026-11-12	plan-0042-u7-blind-review	blind-reviewer	sonnet	51785	7	44	review of R 7580e88: approve, 3 minors
+2026-11-12	plan-0042-u8-release-matrix	gate-runner	opus	234275	145	4741	feature/release-1.0.0 ab6836a: eleven presets pass at R 7580e88
+2026-11-12	plan-0042-u9-release-records	planner	opus	228295	76	845	feature/release-1.0.0 8118033: V10 table, release record
+2026-11-12	plan-0042-u10-release-audit	auditor	opus	282191	112	1055	gate/release-1.0.0 5bfb3a3 merged: no blocking, 3 major
+2026-11-11	plan-0042-u4-rulings	coordinator	sonnet	not tracked	not tracked	not tracked	direct work on develop: decision 0248 (a73cd4e) and the plan 0001 M7 addendum (c41ed75), both with a Sonnet 5.5 trailer; the coordinator did not track this work apart from its session; row added 2026-11-12 by plan 0042 U11 from the release audit m9
+2026-11-12	plan-0042-18eb677-readme-rows	coordinator	sonnet	not visible	not visible	not visible	feature/release-1.0.0 18eb677: run rows 21958 and 21959 (gate:docs@8118033), run by the coordinator, commit trailer Sonnet 5.5; the tokens are unknown; row added 2026-11-12 by plan 0042 U11 from the release audit m5
+2026-11-12	plan-0042-u11-release-records	planner	opus	326712	137	1250	feature/release-1.0.0 ff1d49f (T) fast-forwarded into develop

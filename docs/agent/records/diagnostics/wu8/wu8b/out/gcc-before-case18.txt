@@ -1,0 +1,6 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:84:32: error: could not convert ‘{{1, 2, 3, 1}}’ from ‘<brace-enclosed initializer list>’ to ‘const Point’ {aka ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>’}
+   84 |   const Point s = {{1, 2, 3, 1}};
+      |                                ^
+      |                                |
+      |                                <brace-enclosed initializer list>

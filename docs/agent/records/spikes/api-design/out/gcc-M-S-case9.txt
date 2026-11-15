@@ -1,0 +1,35 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr bool apx::operator==(const X&, const Y&) [with X = mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>; Y = mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>]’:
+program.cpp:80:11:   required from here
+   80 |   r += (p == v) ? 1 : 0;
+      |        ~~~^~~~~
+fixture.hpp:269:22: error: static assertion failed: ==: the operands belong to different algebras
+  269 |   static_assert(std::same_as<typename X::algebra, typename Y::algebra>,
+      |                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from ../../../../../include/galoot/core/blade_set.hpp:27,
+                 from fixture.hpp:20:
+    • required for the satisfaction of ‘__same_as<_Tp, _Up>’ [with _Tp = rga3; _Up = r400]
+      /usr/include/c++/16/concepts:59:15:   
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |               ^~~~~~~~~
+    • the expression ‘is_same_v<_Tp, _Up> [with _Tp = rga3; _Up = r400]’ evaluated to ‘false’
+      /usr/include/c++/16/concepts:59:32:
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |                           ~~~~~^~~~~~~~~~~~~~~~~~~
+    • ‘struct rga3’ is not the same as ‘struct r400’
+fixture.hpp:271:22: error: static assertion failed: ==: the operands have different blade sets or scalars
+  271 |   static_assert(std::same_as<X, Y>,
+      |                 ~~~~~^~~~~~~~~~~~~
+  • constraints not satisfied
+    • required for the satisfaction of ‘__same_as<_Tp, _Up>’ [with _Tp = apx::mv<rga3, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>; _Up = apx::mv<r400, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>]
+      /usr/include/c++/16/concepts:59:15:   
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |               ^~~~~~~~~
+    • the expression ‘is_same_v<_Tp, _Up> [with _Tp = apx::mv<rga3, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>; _Up = apx::mv<r400, galoot::core::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>]’ evaluated to ‘false’
+      /usr/include/c++/16/concepts:59:32:
+         59 |       concept __same_as = std::is_same_v<_Tp, _Up>;
+            |                           ~~~~~^~~~~~~~~~~~~~~~~~~
+    • ‘struct apx::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’ is not the same as ‘struct apx::mv<r400, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}>’

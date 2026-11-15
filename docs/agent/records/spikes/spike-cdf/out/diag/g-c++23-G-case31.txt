@@ -1,0 +1,26 @@
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In member function ‘constexpr cdf::mv<Alg, B, T>::operator cdf::mv<Alg, To, T>() const’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:273:26: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  273 |     static_assert(false, lossy<B, To>());
+      |                          ^~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::gp(const X&, const Y&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:394:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  394 |   static_assert(false, algebras_differ<X, Y>());
+      |                        ^~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:445:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  445 |   static_assert(false, mixed_parity<V>());
+      |                        ^~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In function ‘void cdf::get(const mv<Alg, B, T>&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:508:24: error: ‘static_assert’ with non-string message only available with ‘-std=c++2c’ or ‘-std=gnu++2c’ [-Werror=c++26-extensions]
+  508 |   static_assert(false, missing_name<Name, B>());
+      |                        ^~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In instantiation of ‘constexpr cdf::mv<Alg, B, T>::operator cdf::mv<Alg, To, T>() const [with blade_set<...auto...> To = cdf::blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}; Alg = cdf::rga3; blade_set<...auto...> B = cdf::blade_set<8>{std::array<unsigned int, 8>{std::__array_traits<unsigned int, 8>::_Type{0, 9, 10, 12, 6, 5, 3, 15}}, std::array<int, 8>{std::__array_traits<int, 8>::_Type{1, -1, -1, -1, 1, -1, 1, 1}}}; T = double]’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:62:19:   required from here
+   62 |   const Point r = q;
+      |                   ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:273:19: error: static assertion failed: conversion drops e -e14 -e24 -e34 e23 -e13 e12 e1234: request it with truncate<Blades>(x)
+  273 |     static_assert(false, lossy<B, To>());
+      |                   ^~~~~
+  • ‘false’ evaluates to false
+cc1plus: all warnings being treated as errors

@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Runs one build or test command and records it in the run log,
+# docs/agent/records/performance/runs.tsv, or in a log named as below: wall
+# time, revision, branch, preset, selection, and exit status, then what
+# tools/measure takes (peak memory, user-space counters, package energy, and
+# the processors used). The figures are tracked and noted, never asserted
+# on, and the command's exit status is passed through unchanged.
+#
+# Build and CTest steps need the machine's shared job-slot pool, because Ninja
+# without it runs as many jobs as there are processors, and several
+# checkouts building at once would oversubscribe the machine. They are
+# refused with exit 2 when MAKEFLAGS names no FIFO jobserver or the FIFO is
+# missing. The pool moves its FIFO to <fifo>.stopping for a moment while it
+# counts its clients, so while that file exists the step waits up to 2 s for
+# the FIFO to come back before it is refused. Such a step is one with step
+# `build` or `test`, or a command that is ninja, make, ctest, or `cmake
+# --build` or `cmake --workflow`. Step `test` is refused whatever the
+# command, so that a wrapper such as taskset, env, or nice in front of ctest
+# cannot hide it. Other commands run unchanged.
+#
+# A measurement campaign keeps its rows out of the run log by naming its own
+# log, with --log or, for every run of a shell or script, the environment
+# variable TIMED_LOG; --log wins when both are given. --log is taken from the
+# current directory; TIMED_LOG must be an absolute path, since every run of a
+# script reads it again from wherever that run starts. The file gets the
+# same columns, and a header when it is new.
+#
+# Usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]
+#   file       the log to append to, a path from the current directory
+#   step       build or test (or another word for other commands)
+#   preset     the CMake preset, or - for none
+#   selection  what ran: a target, a label regex, or "all"
+set -u
+
+usage="usage: tools/timed [--log <file>] <step> <preset> <selection> -- <command> [args...]"
+log=${TIMED_LOG:-}
+if [[ -n $log && $log != /* && ${1:-} != --log ]]; then
+  # Each run would read a relative path from its own directory.
+  echo "timed: refused: TIMED_LOG must be an absolute path, not '$log'" >&2
+  exit 2
+fi
+if [[ ${1:-} == --log ]]; then
+  if [[ $# -lt 2 ]]; then
+    echo "$usage" >&2
+    exit 2
+  fi
+  log=$2
+  shift 2
+fi
+if [[ $# -lt 5 || $4 != "--" ]]; then
+  echo "$usage" >&2
+  exit 2
+fi
+step=$1
+
+uses_pool=false
+case ${5##*/} in
+  ninja | make | ctest) uses_pool=true ;;
+  cmake) [[ " ${*:6} " == *" --build "* || " ${*:6} " == *" --workflow "* ]] &&
+    uses_pool=true ;;
+esac
+[[ $step == build || $step == test ]] && uses_pool=true
+
+if $uses_pool; then
+  fifo=
+  [[ ${MAKEFLAGS:-} =~ --jobserver-auth=fifo:([^[:space:]]+) ]] &&
+    fifo=${BASH_REMATCH[1]}
+  for _ in {1..20}; do
+    [[ -n $fifo && ! -p $fifo && -e $fifo.stopping ]] || break
+    sleep 0.1
+  done
+  if [[ -n $fifo && ! -p $fifo && -e $fifo.stopping ]]; then
+    echo "timed: refused: the job-slot pool's FIFO is still moved aside to $fifo.stopping after 2 s." >&2
+    echo "timed: check with tools/jobpool status" >&2
+    exit 2
+  fi
+  if [[ -z $fifo || ! -p $fifo ]]; then
+    echo "timed: refused: no shared job-slot pool (MAKEFLAGS='${MAKEFLAGS:-}')." >&2
+    echo "timed: check with tools/jobpool status, then run: eval \"\$(tools/jobpool env)\"" >&2
+    exit 2
+  fi
+fi
+
+root=$(git rev-parse --show-toplevel) || exit 2
+log_option=()
+[[ -n $log ]] && log_option=(--log "$log")
+exec "$root/tools/measure" run "${log_option[@]}" "$@"

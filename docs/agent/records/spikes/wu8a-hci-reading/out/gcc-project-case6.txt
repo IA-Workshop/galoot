@@ -1,0 +1,65 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:96:29: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(<brace-enclosed initializer list>)’
+   96 |   const Point s{{1, 2, 3, 1}};
+      |                             ^
+  • there are 7 candidates
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+    • candidate 1: ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {Values ...}; Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’
+      ../../../../../include/galoot/core/mv.hpp:226:46:
+        226 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+            |                                              ^~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • ../../../../../include/galoot/core/mv.hpp: In substitution of ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(Values&& ...) [with Values = {}]’:
+          • required from here
+            first_user.cpp:96:29:   
+               96 |   const Point s{{1, 2, 3, 1}};
+                  |                             ^
+          • required by the constraints of ‘template<class Alg, blade_set<...auto...> Blades, class T> template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector<Values> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...)’
+            ../../../../../include/galoot/core/mv.hpp:226:46:   
+              226 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+                  |                                              ^~
+          • the expression ‘sizeof ... (Values ...) > 0 [with Values = {}]’ evaluated to ‘false’
+            ../../../../../include/galoot/core/mv.hpp:224:32:
+              224 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+                  |              ~~~~~~~~~~~~~~~~~~^~~
+    • candidate 2: ‘constexpr galoot::core::detail::coefficient_storage<Multivector, T, std::integer_sequence<long unsigned int, _Idx ...> >::coefficient_storage(galoot::core::detail::component<T, I>...) requires  sizeof ... ((I ...)) > 0 [with Multivector = galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>; T = double; long unsigned int ...I = {0, 1, 2, 3}]’
+      ../../../../../include/galoot/core/mv.hpp:140:7:
+        140 |       coefficient_storage(component<T, I>... values)
+            |       ^~~~~~~~~~~~~~~~~~~
+      • inherited here
+        ../../../../../include/galoot/core/mv.hpp:217:56:
+          217 |       mv, T, std::make_index_sequence<Blades.size()>>::coefficient_storage;
+              |                                                        ^~~~~~~~~~~~~~~~~~~
+      • candidate expects 4 arguments, 1 provided
+    • candidate 3: ‘constexpr galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0, 1, 2, 3> >::coefficient_storage(const galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0, 1, 2, 3> >&)’
+      ../../../../../include/galoot/core/mv.hpp:122:8:
+        122 | struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
+            |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      • inherited here
+        ../../../../../include/galoot/core/mv.hpp:217:56:
+          217 |       mv, T, std::make_index_sequence<Blades.size()>>::coefficient_storage;
+              |                                                        ^~~~~~~~~~~~~~~~~~~
+      • an inherited constructor is not a candidate for initialization from an expression of the same or derived type
+    • candidate 4: ‘constexpr galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0, 1, 2, 3> >::coefficient_storage(galoot::core::detail::coefficient_storage<galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>, double, std::integer_sequence<long unsigned int, 0, 1, 2, 3> >&&)’
+      ../../../../../include/galoot/core/mv.hpp:122:8:
+        122 | struct coefficient_storage<Multivector, T, std::index_sequence<I...>> {
+            |        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      • inherited here
+        ../../../../../include/galoot/core/mv.hpp:217:56:
+          217 |       mv, T, std::make_index_sequence<Blades.size()>>::coefficient_storage;
+              |                                                        ^~~~~~~~~~~~~~~~~~~
+      • an inherited constructor is not a candidate for initialization from an expression of the same or derived type
+    • candidate 5: ‘constexpr galoot::core::mv<Alg, Blades, T>::mv() [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = double]’
+      ../../../../../include/galoot/core/mv.hpp:208:13:
+        208 |   constexpr mv() = default;
+            |             ^~
+      • candidate expects 0 arguments, 1 provided
+    • candidate 6: ‘constexpr galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&)’
+      ../../../../../include/galoot/core/mv.hpp:184:8:
+        184 | struct mv
+            |        ^~
+      • no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘const galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&’
+    • candidate 7: ‘constexpr galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>::mv(galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&&)’
+      • no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, double>&&’

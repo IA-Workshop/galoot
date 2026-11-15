@@ -1,0 +1,417 @@
+# 0019 WU10: involutions, complements, antiproducts, sums and scaling
+
+- Status: WU10a merged `81ffedf` and WU10b merged `a5e8c14`, 2026-11-02, both after a blind review and a delta review (records/reviews/2026-11-02-wu10a-*, -wu10b-*). Closed. The post-WU10 audit's owner items (records/gates/2026-11-02-post-wu10-audit.md) were carried into the M3 gate report (`records/gates/2026-11-04-M3.md`, "Status of the post-WU10 audit's findings"), whose recommendations the owner accepted in decisions 0182 to 0192. Traced item by item (status corrected 2026-11-12 by plan 0042 unit U11): item 1 (B1) by decision 0184; item 2 by 0183, with 0196 item 3; item 4 by 0185; item 5 by 0174 (CONVENTIONS 1.9) and 0186 (C8); item 7 by 0187; item 8 by 0182 item 2 (the cost backfill), its copy step and `gate:` naming fixed by then (the M3 report's table); item 9 by 0189; item 10 by WU11b (the M3 report's table); item 11 by 0182 item 2 (the records). Items 3 (WU9 before the M2 gate) and 6 (the S13 and S7 readings) are listed in the M3 report as "Owner ruling pending" and "No ruling", and no later decision found by grep rules them; they are past process findings that change no result, and nothing in this plan waits on them. Text as written before this correction: "Closed except the open owner items in the post-WU10 audit (records/gates/2026-11-02-post-wu10-audit.md)."
+- Branches, from `develop` at `19273a6` (the merge of WU9) or later, one after the other (section 1, departure 1):
+  - WU10a: `feature/core-antiproducts`, worktree `.claude/worktrees/core-antiproducts`.
+  - WU10b: `feature/core-linear`, worktree `.claude/worktrees/core-linear`, branched after WU10a merges.
+- Decision numbers 0165 to 0169: 0165 and 0166 in WU10a, 0167 to 0169 in WU10b (section 2).
+- Source of scope: plan 0001 (WU10, "Involutions, complements, antiproducts; De Morgan laws", size M, after WU9); plan 0016 section 15 "Deferred" (to WU9 and WU10) and readings 12, 17, and 21; plan 0018 section 1 items 1 and 2 and its Outcome; the WU9 blind review (`records/reviews/2026-11-02-wu9-products.md`, F5, F12, F13 and the usability checklist); decisions 0159, 0162 (items 2, 5, 6, 8, 9), 0164, 0140 and 0141.
+- Goal: the public involutions (`reverse`, `antireverse`, `grade_involution`), complements (`right_complement`, `left_complement`), and antiproducts (`geometric_antiproduct`, `antiwedge`) on multivectors, with the operators `~`, `!`, `%`, and `&` of CONVENTIONS 7.1; sums, differences, and scaling by a scalar (`a + b`, `a - b`, `s * a`, `a * s`, `a / s`); the De Morgan laws and the involution and complement relations tested on multivectors; the never-checking projection beside `truncate`; and the messages that the WU9 review deferred to this unit.
+
+## 1. Departures, ambiguities, and owner questions (C20)
+
+### Departures
+
+1. **Two parts, not one.** Plan 0001 lists WU10 as one unit of size M. It now holds about twice WU9's surface: seven public functions with four operators, five arithmetic operators with a new sum kernel, a projection, a concept rename, and the rewording of eleven messages. WU7 and WU8 ran as two parts for the same reason (decisions 0117, 0158). Split along the dependency, so that each review reads one part in one sitting (W2):
+   - WU10a, the roadmap row proper: the antiproducts with `%` and `&`; the involutions and complements with `~` and `!`; the De Morgan, involution, and complement relations on multivectors; the product messages (F5, F13); the result-type spelling (F12).
+   - WU10b, the arithmetic: sums, differences, and scaling; negation if ratified (question O1); the projection `part` if ratified (O1); `has_blade` renamed `has_name`; the ring-operations message split by cause.
+
+   WU10b changes `mv.hpp`, which WU10a does not touch, and uses WU10a's message wording, so it branches after WU10a merges. If the owner prefers one branch, the commits of section 4 are the same, in the same order.
+2. **No conjugation.** Neither the roadmap nor CONVENTIONS 2.1 names a Clifford conjugation (the reverse composed with the grade involution), so none is built (C12). A user writes `grade_involution(reverse(x))`.
+3. **The plan-level De Morgan proofs are not repeated.** WU7b proved the four De Morgan laws and the involution and complement relations exhaustively on plans and maps (plan 0013, reading 3; its D4 and D6, n up to 6 and 10). WU10 tests the same laws on multivectors through the public functions, on blade pairs of the golden forms (exhaustive) and on seeded random multivectors over the signature set of plan 0001 section 5 (DoD-10's second layer). The trace row of 4.2 is already `yes`.
+4. **Figures that disagree between records.** The antiproduct's growth at fixed use is +268% (GCC) and +463% (Clang) in decisions 0116 and 0140, +265% and +464% in decision 0141 (quoting note 0018), and +266% and +461% in the 2026-11-02 handoff. They come from different runs of the same measurement; section 1, question 3 quotes 0141's as the brief asks. Not traced further; the difference does not bear on the recommendation.
+5. **Planning probes, not reproducible as committed (V10).** Three `-fsyntax-only` probes in the planner's scratch area, on g++ 16.2.1 and clang++ 23.1.4, back statements below. Two ran against `include/` of the WU9 worktree just before its merge, and the third (`demorgan_types.cpp`) against `develop` at `19273a6`. The headers differ between those two revisions only in lint suppressions and one inlined condition in `product.hpp`. The probes are: `scaling.cpp` (question 4), `spelling.cpp` (question 5c), and `demorgan_types.cpp` (reading R3). They were not timed with `tools/timed` (a P13 lapse, reported). The implementer repeats each as a test or a recorded probe before relying on it.
+
+### Readings
+
+R1. **Scope by part.** Plan 0018 section 1 item 1 put in WU10 exactly: the antiproduct, the antiwedge, `%`, `&`, `~`, `!`, scaling (`s * a`, `a * s`, `a / s`), sums, and differences. Confirmed against plan 0016 section 15, which adds "what blade set the unary operations return (reading 17)". `antireverse`, `grade_involution`, and `left_complement` are the remaining public names of plan 0016 section 15's "and the rest"; their operations exist as `UnaryOperation` enumerators since WU7b, so their public functions cost one line each and join WU10a. Bulk, weight, duals, dot, and antidot stay in WU11.
+
+R2. **Operators without a named function.** STYLE S13 says each overloaded operator is a one-line alias of a named function. CONVENTIONS 7.1 leaves the named-function column empty for `a + b`, `a - b`, and the three scalings. Reading: those five are the arithmetic of a number type, as `std::complex` has it, and 7.1 gives them no public name, so none is invented (C12). Each operator's body is one call of a function in `detail`. S13's rule is read as covering the rows that name a function. If the owner wants public names, they need a 7.1 amendment; none is proposed.
+
+R3. **Result layouts (plan 0016 reading 17).** One rule, stated in each `///` comment:
+   - An operation that sends every blade of its input to the same blade times a sign keeps the input's layout. So `reverse`, `antireverse`, `grade_involution`, negation, and scaling return the input's type, and `~line` is a `Line`. `detail::apply` already has the target form for this (`apply<Op, Target>(x)` with Target the input's layout).
+   - `a + b` and `a - b` of one type return that type.
+   - Every other operation returns the canonical set of the blades it reaches: the products and antiproducts (as WU9's do), the complements, and a sum or difference of two different layouts, whose result holds the union of the two layouts' blades.
+
+   Why: the sign maps and same-type sums hold exactly the input's blades, so returning the input's type loses nothing (C6). It also matches what users of every geometric-algebra library expect (`~R` has the type of `R`), and it lets `~~x == x` compile without a conversion. The complements reach other blades, so they follow the products: a canonical set the user converts from, `Plane{!point}`. Probe `demorgan_types.cpp`: both sides of each De Morgan law have one type for six pairs of rigid(3) and conformal(3) layouts, because both are the canonical set of the same masks. The tests still compare on `full<n>` wherever the types differ, so that they do not rely on this.
+
+R4. **Sums of two layouts need a small kernel (C4).** A sum on the union layout is the identity maps of the two inputs onto one target. `identity_kernel` does each half. Their combination needs one new piece of straight-line code: every blade held by one operand is assigned, not added to zero, so that a −0.0 survives, as `accumulate` already does (plan 0016 reading 18), and a blade held by both is added. This is per-basis data (positions and signs) composed with no new generation, so C4 admits it without a decision of its own. Decision 0167 records it.
+
+R5. **Floating-point.** WU10's operations round only through the scalar's own operations: one per coefficient for scaling and division, and the products' rounding as in WU9. Double values in the tests are exact (integers below 2^24, or values chosen so a rounding difference is visible, section 5). M3's "V12 double tests with forward bounds" are not planned in any unit yet; this plan leaves them out and notes the gap for the coordinator.
+
+R6. **Name collisions.** `reverse` meets `std::reverse` (two iterators, so no ambiguity) and `std::ranges::reverse`, a function object that turns off argument-dependent lookup when a using-directive brings it into scope. A test calls `reverse(x)` unqualified in a unit that has `using namespace std;` and includes `<algorithm>`. The `std::ranges` case is documented, not worked around.
+
+### The questions decision 0162 fixes in this plan
+
+1. **The never-checking projection beside `truncate` (decision 0162 item 6).** Required by the ruling: `truncate` keeps its check (decision 0161), and a second, plainly named function takes the same components and never checks.
+
+   | Name | For | Against |
+   | --- | --- | --- |
+   | `part<Line>(motor)` | The field's own word: "the scalar part", "the bivector part", "the grade-k part"; CONVENTIONS 3.2 and 6.3 already call a subset of components a part ("the bulk is the part without e4", "four parts"). Says that the rest is left behind on purpose, and suggests no check. Short, in no standard header | `part<Motor>(line)`, a target with more blades, reads less well (it gives the line with zeros on the rest) |
+   | `project<Line>(x)` | Common in linear algebra | CONVENTIONS 4.3 already uses projection for b ∨ (a ∧ b☆), which WU13 builds as `project`. Rejected |
+   | `truncate_unchecked<Line>(x)` | States the relation to `truncate` | Long; presents the deliberate case as the unsafe variant of the checked one, when a grade part is the ordinary operation |
+   | `keep<Line>(x)`, `select<Line>(x)` | Plain verbs | `keep` does not say the rest goes; `select` has other meanings (POSIX `select`, ranges) |
+
+   Recommended: **`part<Type>(x)` and `part<Blades>(x)`**, mirroring `truncate`'s two forms, with the same result as `truncate` and never a check, in any mode or constant evaluation. Its catch-all rejects a target that is not an `mv` type of x's algebra and scalar, with `truncate`'s wording ("part: the target must be an mv type of the same algebra and scalar type, not a class derived from one; part changes only which blades are held").
+
+   Two ratified texts stand in the way, so `part` waits for the owner (question O1):
+   - CONVENTIONS 4.5 says a conversion that omits blades "is named `truncate`" and "in checking mode verifies that what it drops is zero". A second name with no check needs 4.5 amended (C10).
+   - Constitution C8 says "a checking mode verifies that whatever an operation discarded was zero". Read literally, that sentence forbids `part`, and also the bulk and the weight (WU11) and any grade part, which discard nonzero components by definition. Reading proposed: C8's checking covers what an operation assumes is zero, as `truncate` and `transform` do. An operation whose purpose is to discard, and that says so in its name, assumes nothing. Ruling 0162 item 6 implies this reading. The plan asks the owner to confirm it, not to amend C8.
+
+   `truncate`'s Requires paragraph is reworded to point to `part` ("to drop coefficients that are not zero on purpose, use part"). The lossy-conversion message, which the owner ruled (decision 0162 item 8), is unchanged. None of WU10's unary operations uses either function, since the sign maps keep their layout (R3).
+
+2. **`has_blade` and the other orientation (HCI F11 of the WU8a reading; decision 0162 item 9).** The question, restated: `has_blade<Line, "e14">` is false, though a line holds the blade e14 (as −e41). What the concept tests is narrower than its name: whether the oriented name, with the orientation the layout gives it, is one that `get` accepts. It is `get`'s constraint, and `get`'s messages already draw the distinction ("stores this blade with the other orientation"). The reading proposed two remedies: rename it to say what it tests, or keep the name and document it. The ruling took "the recommendation" without saying which; this plan reads it as the first remedy, because the name is the part a user reads, and both remedies are equally small.
+
+   The change: rename `has_blade<X, Name>` to **`has_name<X, Name>`**, with its meaning unchanged: true exactly when `get<Name>(x)` is accepted, and false, never an error, otherwise. Its comment says that the other orientation of a held blade is false, and that the question "does the layout hold this blade in either orientation" has no concept. That question has no present caller (S16). In one listed commit: `mv.hpp` (the concept, `get`'s constraint and its two comments, "ask has_name instead"), `mv_test.cpp` and the compile-fail sources that name it, with no expected value changed. Decision 0169 supersedes the name in decision 0033 and plan 0016 reading 20. Alternatives weighed in 0169: `holds_name` (reads as well, longer), `has_coefficient` (misleads: the line does have a coefficient on e14, negated).
+
+3. **Decision 0140, the antiproduct inside the coupling closure, raised again (decision 0162 item 5).** The numbers from decision 0141 and the records it rests on:
+
+   | | GCC | Clang |
+   | --- | --- | --- |
+   | Four typed rigid(3) pairs in R(n−1,0,1), n = 4 to 16, antiproduct as built (conjugation over all n) | +265% | +464% |
+   | The same through the geometric product | +6% | +4% |
+   | Option B of 0140 (conjugate inside the closure), components per plan | +9.0% | +10.8% |
+   | Option B, components once per algebra: the plans / the per-algebra data | +0.7% / +30.6 M instructions | +4.3% / +44.1 M |
+   | The sparse sets of R(15,0,1) through the antiproduct (`plan_cost_antigp_sparse16.cpp`, the canary): operations (GCC) and steps (Clang), against 18,252 and 3,136 at every n through the product | 443,211 at n = 16 (49,347 at n = 4) | 77,513 at n = 16 (9,137 at n = 4) |
+   | At n = 4, the size of rigid(3), the four pairs: antiproduct against product (decision 0116) | 308.8 M against 306.2 M | 702.5 M against 547.6 M (+28%) |
+
+   Recommended: **build the public antiproducts on the conjugation as it stands**, and keep 0140 proposed. Reasons:
+   - WU10 changes no generation. `geometric_antiproduct` and `antiwedge` are one-line callers of `detail::apply`, so 0140 can replace the generator later without changing their interface or their results. 0140's own test plan compares the closure route with the present one.
+   - For the models planned (n from 3 to 6), the gain is tens of milliseconds per translation unit (0141). At n = 4 GCC's cost is the product's within 1%, and Clang's is 28% above it.
+   - None of 0141's triggers fires. No production report exists. No model needs more than six generators while using few of them: rigid(3) has 4 and conformal(3) has 5. The date, 2027-11-01, has not come. WU10's own sparse test at n = 16 (section 5) is a test, not a use.
+
+   The triggers stay as 0141 sets them, and WU10 adds nothing to them. WU10 records current figures for the review of the exception: the four rigid(3) pairs through `%` at n = 4 and n = 16 on both compilers, and the canary's counts unchanged. This is not required by 0141 item 4, since WU10 does not touch generation. It keeps the figures through the public path current. Question O2 asks the owner to confirm.
+
+4. **The two `operator*` families.** WU9's family takes two `mv`s, `operator*(const mv<Alg, A, T>&, const mv<Alg, B, T>&)`, with a catch-all constrained to two multivectors that differ in algebra or scalar. Scaling adds:
+   - `operator*(const T& s, const mv<Alg, A, T>& x)` and `operator*(const mv<Alg, A, T>& x, const T& s)`, with T deduced from both parameters, and `operator/(const mv<Alg, A, T>& x, const T& s)`, which also requires that T has `/`. A scalar of another type gives a deduction conflict, so this overload is not a candidate. An `mv` in the scalar's place deduces T as an `mv` type, which conflicts with the coefficient type, so it is not a candidate either.
+   - One catch-all per spelling (`s * a`, `a * s`, `a / s`) for a scalar of another type, constrained by `multivector<X> && !multivector_or_derived<S> && ring_scalar<S> && S is not X's scalar type`.
+
+   The three families' constraints are disjoint. Two `mv`s exclude the scalar overloads (deduction) and the scalar catch-all (`!multivector_or_derived`). A scalar of the right type excludes WU9's catch-all (`multivector<S>` is false) and the scalar catch-all (same type). So no call is ambiguous, whatever partial ordering would say. Probe `scaling.cpp` builds `p * q`, `2.0 * p`, `p * 2.0`, `3.0 * derived_line`, and `derived_line * derived_line` with no ambiguity on both compilers, and `2 * p` for a double point gives one error. Clang's text: "static assertion failed due to requirement 'std::is_same_v<int, double>': s * a: ...".
+
+   The scalar must have the multivector's scalar type exactly. `2 * x` for a double multivector is rejected with a message that says to write 2.0. Reasons:
+   - Converting to T would admit `2.5 * x` for an integer multivector, which drops digits silently (C8).
+   - A rule of conversions that keep every value (int into double, float into double, but not int into float) works, but the user must know the rule to predict a result (C8's last sentences).
+   - `std::complex<double>` rejects `2 * c` for the same reason of deduction, so C++ users know the pattern.
+   - It matches WU9's rule for two operands of different scalar types.
+   - Widening later is additive: every call that compiles now still compiles. Decision 0167 records the value-keeping rule as the alternative.
+
+   `a / s` divides each coefficient by s with T's own division: exact for the test rational, correctly rounded per coefficient for double (never multiplication by 1/s, which rounds twice), and truncating for an integer type, which the comment states (C7: rounding comes from the chosen scalar). For an integer T, s must not be zero. Built-in division by zero is undefined, so the precondition is checked by `GALOOT_ASSERT` (S9). A T without `/` gets the compiler's own error: no present scalar lacks it, and the comment says so. `s * a` multiplies each coefficient on the left and `a * s` on the right, so that a scalar ring that does not commute keeps its order. A test-local 2×2 integer matrix scalar checks this (section 5).
+
+5. **Messages deferred to this unit.**
+   - (a) **F5: `apply:` reaches the user through a public product.** A narrow scalar in `geometric_product`, `*`, `geometric_antiproduct`, or `%` gets "apply: the scalar type cannot hold one of the product's exact coefficients; ...". Fix: each public product checks that condition itself, before it calls `apply`, in an `if constexpr` whose other branch holds the one `static_assert` with the product's spelling, so the user sees one error. Example: "a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly". The condition is a named `constexpr bool`, so Clang prints the rule, not a mask. The wedge and the antiwedge have coefficients ±1 only, which every ring scalar holds, so they need no check, and their comments say so. The sum kernel's coefficients are ±1 too.
+   - (b) **F13: the mixed-operand wording.** The messages begin with the operation as written (`a * b:` since WU9). The fixes change. "Both must be in the same one" restates the rule, and "convert one explicitly first" points to a conversion the library does not have:
+     - mixed algebras: "a * b: the operands are in different algebras; give both types the same algebra tag". The likeliest cause is two tags declared for one metric, and this names the fix for it.
+     - mixed scalars: "a * b: the operands have different scalar types; give both types the same scalar type". Reworded again when the scalar conversion of question 7 exists.
+
+     The same pair of wordings serves the eight product spellings (four functions, four operators) and `a + b` and `a - b`. Each `static_assert` keeps WU9's condition on the two types, so the compilers print both algebras or both scalars.
+   - (c) **F12: the spelling of a result type.** WU9 gave the operation enums underlying type `int`, which removed the raw byte. Clang still prints a product's result type through the declared return type of `apply`: `mv<rga3, product_plan<(galoot::core::detail::BinaryOperation)1, rga3, blade_set<4>{...}, blade_set<4>{...}>.result, double>`. GCC prints the value whatever the declaration says. The type itself is correct and stays: the canonical set by value, which WU9's tests pin. Only its sugar is at issue, and sugar can change later without breaking anyone. A small change removes the internal names from Clang's line. Each public function that returns a canonical set declares its return type as `mv<Alg, detail::wedge_layout<Alg, A, B>, T>` and calls `apply<Op, Target>`, with one variable template per result (`geometric_product_layout`, `wedge_layout`, `geometric_antiproduct_layout`, `antiwedge_layout`, `right_complement_layout`, `left_complement_layout`; `sum_layout` in WU10b). Probe `spelling.cpp`: Clang then prints `mv<rga3, wedge_layout<...>, double>`, without `product_plan`, `.result`, the enum cast, or `detail::`. Recommended in WU10a, because it changes the four products' declarations at the same time as F5's check. The masks of the operand layouts remain in the text: they come from deduction, which drops the name of a layout variable. Names written in the type stay deferred (decision 0157 item 3).
+   - (d) **The ring-operations message (decision 0152; decision 0162 item 8).** WU9 gave it a fix after the semicolon ("...; use a number type such as double or an integer type"). The rest of the reviews' proposal, naming the requirement that failed, is still open. WU10b splits `ScalarFault::no_ring_operations` into the five requirements of `ring_scalar`, tested in its order, each with its own named rule and message (plan 0016 reading 21: each cause its own message):
+     - "mv: the scalar type has no addition; give it a + b, or use a number type such as double"
+     - "mv: the scalar type has no subtraction; give it a - b, or use a number type such as double"
+     - "mv: the scalar type has no multiplication; give it a * b, or use a number type such as double"
+     - "mv: the scalar type has no unary minus; give it -a, which the products use for a term of coefficient -1"
+     - "mv: the scalar type cannot be made from an integer coefficient; give it a constructor from std::int64_t, or use a number type such as double"
+
+     `ring_scalar` itself stays one concept, and generic code tests it as before. The five checks are its five clauses, so no sixth rule can drift from it. A static_assert in the test pins each clause against a scalar that lacks it.
+   - All new messages follow plan 0016 reading 21: one error, the operation as written, the mistake in the algebra's terms, the fix after a semicolon, no final period or quotes. Each rejecting overload returns a value of the first operand's type, or of the target, so that `auto r = ...;` adds no second error (WU9 F1).
+
+6. **Headers (decision 0164 leaves this to the plan).** Recommended: three headers, all included by `core.hpp`.
+   - `product.hpp` gains the antiproduct and antiwedge with `%` and `&`. They share the products' operand checks, catch-alls, and messages, so a reader finds all four products in one file.
+   - A new `unary.hpp` holds the involutions and complements with `~` and `!`. They need no operand checks and include only `mv.hpp` and `plan.hpp`. WU11 decides whether bulk, weight, and duals join it.
+   - A new `linear.hpp` holds sums, differences, scaling, and negation: the operations of the vector space, with the sum kernel.
+   - The operand checks that `product.hpp` and `linear.hpp` share (`same_algebra_v`, `same_scalar_v`, and the two concepts) move to `mv.hpp`'s `detail`, beside `multivector_of`, which tests the same members. That way neither new header includes the other. The move is a mechanical commit of WU10b.
+
+   Alternatives weighed in decision 0165: everything in `product.hpp` (one file, but `+` and `~` in a file named for products); sums and scaling in `mv.hpp` (beside the type, but `mv.hpp` is the largest header and every edit to it rebuilds every multivector test, P8). The new headers add parse cost to every includer of `core.hpp`, which is measured (section 2).
+
+7. **Scalar conversion is not in WU10 (decision 0162 item 2).** It goes to a small unit of its own, planned after WU10b merges and before WU16's model aliases. It must:
+   - choose a name consistent with `truncate` and `part`, since a conversion from double to float is lossy in digits as `truncate` is in components;
+   - change the assertion `!std::is_constructible_v<Line<double>, Line<float>>` in `mv_test.cpp` by a recorded decision (W9);
+   - reword the mixed-scalar messages of 5(b) to name it.
+
+   Nothing in WU10 needs it. Each mixed-scalar message tells the user to give both types one scalar type.
+
+### Owner questions (section 8)
+
+- O1. Ratify CONVENTIONS version 1.8: 4.5 names `part` beside `truncate`; 7.1 adds negation `-a`; and confirm the reading of C8 in question 1. WU10a does not wait; WU10b's two commits that need it wait (W8).
+- O2. Decision 0140: keep it proposed and build the antiproducts on the present conjugation (recommended).
+
+## 2. Definition of done
+
+WU10a:
+- `include/galoot/core/product.hpp`: `geometric_antiproduct(x, y)`, `antiwedge(x, y)`, `x % y`, and `x & y`, each a short caller of `detail::apply`, with `///` comments that say what each computes (the definitions of CONVENTIONS 4.2, restated), its result layout, that the antiwedge does not depend on the metric, the cost a user can predict (one plan per pair of layouts, and the antiproduct's growth with n for low-grade blades in a large algebra), and that `&` binds below `==`. Rejecting overloads for mixed algebras and scalars in the four new spellings. The F5 check in the two geometric products, the F13 wording in all eight spellings, and the F12 return types in all four products.
+- `include/galoot/core/unary.hpp`, new: `reverse`, `antireverse`, `grade_involution`, `right_complement`, `left_complement`, `~x`, and `!x`, each a one-line caller of `detail::apply`, the sign maps on the input's layout and the complements on their canonical result (R3). Comments say: the sign of each map in terms of grade and antigrade (2.1); the complement's defining relation (3.1) and that `!!x` is ±x by grade, not x; that `!x` is a multivector, so `if (!x)` does not compile; that `std::ranges::reverse` under a using-directive hides `reverse` (R6). `core.hpp` includes it.
+- Tests (doctest-expert role), in `test/core/product_test.cpp` and a new `test/core/unary_test.cpp` (section 5). Compile-fail tests for the eight new rejections, for F5 in two spellings, and for each reworded WU9 message.
+- Trace table: rows for 2.1 (the antireverse and the grade involution), 3.1 (left of right is the identity), and 7.1 (`a ^ b`, `a % b`, `a & b`, `~a`, `!a`), each set to `yes` with a test that states its fact.
+- Decisions 0165 (split, headers, result layouts) and 0166 (product messages and result spelling).
+- Records: mutants (`records/mutations/0019-antiproducts/`), the diagnostics table (each new message, first-line length, line count, both compilers), W10 before and after for the affected suites, P2 for the new includer of `core.hpp` (the smoke test, with a usable instruction count; WU9's failed), the figures of question 3. The plan's outcome for WU10a.
+
+WU10b:
+- Mechanical commits: the operand checks move to `mv.hpp` (no behavior changes); `has_blade` becomes `has_name` (question 2).
+- `include/galoot/core/linear.hpp`, new: `a + b`, `a - b` (same algebra and scalar; result per R3), `s * a`, `a * s`, `a / s` (question 4), and `-a` if O1 ratifies it, with their rejecting overloads and comments: the layout rule, the order of multiplication, division by T's own `/` with the integer case and its zero precondition, and that a requires-expression asking whether `2 * x` is valid answers yes. `core.hpp` includes it.
+- `mv.hpp`: `part<Type>(x)` and `part<Blades>(x)` with their catch-all, if O1 ratifies 4.5; `truncate`'s Requires paragraph reworded; the ring-operations fault split (5d).
+- Tests (doctest-expert role) in a new `test/core/linear_test.cpp`, with `part` in `mv_test.cpp` beside `truncate`, and compile-fail tests for every new rejection.
+- Trace table: 7.1 rows for the sum and difference and the scaling; 4.5 and 7.1 rows for `part` and negation once ratified.
+- Decisions 0167 (scaling, sums, the operator families, negation), 0168 (`part` and the C8 reading, with the owner's ruling on O1), and 0169 (`has_name`, the ring-operations messages).
+- Records as for WU10a (`records/mutations/0019-linear/`); the plan's outcome closed.
+
+Both parts: W5 blind review with the usability checklist (each part changes a public interface), requested by the coordinator; merge by the coordinator after P9's checks. The independent audit that decision 0163 item 2 placed after WU10 follows WU10b.
+
+## 3. Acceptance criteria
+
+1. Values against independent references.
+   - Every public involution and complement of every blade of `full<n>`, n = 3, 4, 5, equals the golden `grade_signs` and `complements`.
+   - Every antiproduct and antiwedge of a pair of blades of the four golden forms equals the composition from golden values.
+   - The randomized identities of section 5 hold on every form of the signature set, by exact equality.
+2. Layouts. The sign maps, negation, scaling, and same-type sums return the input's type, by `static_assert` on `Line`, `Motor`, and a conformal(3) layout. The complements, products, antiproducts, and two-layout sums return the canonical set of the reached blades, by `static_assert` against an expected layout written in the test from the definition (not from `detail`).
+3. Operators. Each of `%`, `&`, `~`, `!` returns the type and value of its named function.
+4. Diagnostics. Each rejection in the units' catalogue gives one error, also in the form `auto r = ...;`, and the message is on the first error line on GCC and Clang, pinned by `expect_output` compile-fail tests. No message begins with `apply:` for a public spelling. Clang's first line for `(p ^ q) == line` contains no `product_plan`, `detail::`, or enum cast. Sizes are recorded beside the WU9 table.
+5. Detection. Each catch-all has an `is_invocable` or requires-expression probe in the tests, showing the documented "yes" for a rejected call. Each also has a probe showing that it captures no valid call and no other type's operator, in a scope where `galoot::core`'s operators are visible (WU9 F8a).
+6. Mutants. Each mutant of section 6 is killed on gcc-debug and clang-debug by a test, never by a warning; an equivalent survivor is recorded with its reason.
+7. Checks. P8 and P9: only the tests a change can affect, widened at each merge. Every build and test is timed with `tools/timed`. All seven presets pass from new, empty trees at the final revision of the build inputs. The trace gate passes. Builds draw from the shared job pool, whose status is read before and after each heavy run.
+8. No citation of project records in code, comments, tests, or build files (STYLE S11).
+9. Only after O1: `part` never checks, also on an exact scalar and in a constant evaluation, while `truncate` on the same input still fails; and `-a` returns the input's type.
+
+## 4. Approach
+
+Tests before the code they judge where they can be, each such commit saying it fails (W2); expected-value changes to existing tests in their own listed commits (W9). Small commits, each building and passing apart from those.
+
+WU10a, on `feature/core-antiproducts`:
+
+0. Claim: this plan committed to `develop`. Branch and worktree as above.
+1. Test commit: the reworded expectations of WU9's eight compile-fail tests (F13), listed for review; fails until commit 2.
+2. The F13 wording in `product.hpp`.
+3. Test commit: compile-fail tests for F5 in `a * b` and `geometric_product(a, b)` with a narrow scalar (WU9 review's probe: `std::int8_t` under diag(100, 100)); fails until commit 4.
+4. F5 and F12 in `product.hpp`: the coefficient check in the public geometric product, and the four products' declared return types through the per-operation layout variable templates. A test asserts that `decltype(p ^ q)` is unchanged.
+5. Test commit: the antiproduct tests of section 5 (golden composition, operators, associativity, 𝟙 as identity, compile-fail for the eight new rejections).
+6. `geometric_antiproduct`, `antiwedge`, `%`, `&`, with their catch-alls, in `product.hpp`.
+7. Test commit: `unary_test.cpp` (golden signs and complements, layouts, relations, the unqualified-call test of R6).
+8. `unary.hpp` and its line in `core.hpp`; CTest registration.
+9. Test commit: the De Morgan laws and the involution product rules on multivectors (section 5, identities), over the signature set.
+10. Trace rows of section 2, with the trace gate run.
+11. Records: mutants, diagnostics, W10, P2, question 3's figures, decisions 0165 and 0166, the WU10a outcome.
+
+WU10b, on `feature/core-linear`, after WU10a merges:
+
+0. The claim line for WU10b in this plan, on `develop`.
+1. The operand checks move from `product.hpp` to `mv.hpp`'s `detail` (mechanical; product tests unchanged).
+2. `has_blade` becomes `has_name`, every use migrated, no expected value changed (listed).
+3. Test commit, then code: the ring-operations fault split (5d).
+4. Test commit, then code: sums and differences in `linear.hpp`, with the sum kernel and `sum_layout`.
+5. Test commit, then code: scaling and division with their catch-alls.
+6. After O1 only: negation (test, then code).
+7. After O1 only: `part` (test, then code), and `truncate`'s comment reworded.
+8. Trace rows; records; decisions 0167 to 0169; the outcome. If O1 is still open here, the unit closes without commits 6 and 7, which are recorded as waiting, and a later small unit adds them (W8).
+
+## 5. Evidence
+
+Independent oracles (V1 kind 3) are the golden header, generated by `test/reference/golden.py` by routes that share no code with the library. Identities (kind 2) are checked exactly, on seeded random multivectors over the integers or the test rational. Plan-level proofs (kind 1) exist from WU7b and are not repeated (departure 3).
+
+| Operation | Golden values that exist (`test/reference/golden.hpp`) | How the test uses them |
+| --- | --- | --- |
+| `reverse`, `antireverse`, `grade_involution` | `grade_signs::n3`, `n4`, `n5` (fact 2.1) | Each blade of `full<n>` as a one-blade multivector, on its own layout and on a rigid(3) oriented layout (`oriented_names::rigid_3`, fact 1.6), so the orientation's sign is in play |
+| `right_complement`, `left_complement` | `complements::n3`, `n4`, `n5` (fact 3.1); `result_order::n4`, `n5` (fact 1.7) for the canonical result | As above; n = 3 and 5 are odd (left and right agree) and n = 4 is even (they differ), so a swap is caught |
+| `geometric_antiproduct` | `gp_tables` for rigid(3), conformal(3), the degenerate 3-form, and random form 1, with `complements` | For every pair of blades: left(golden gp(right e_A, right e_B)), composed in the test from golden values alone, as WU7b's D5 did at plan level |
+| `antiwedge` | the same tables; the wedge as their top-grade part, which WU9 already uses | As above, with the test's own wedge |
+| 𝟙 as the identity of ⟇ (validation for rigid(3), a statement Lengyel makes, read in note 0005) | `units::antiscalars` (fact 1.5) | `antiscalar % x == x` and `x % antiscalar == x` on random multivectors |
+| Sums, differences, scaling, negation, `part` | none needed | Hand values over the integers, stated in the test; vector-space identities |
+
+`golden.py` needs no new values. One addition was weighed and rejected: tables of the antiproducts themselves. The test composes them from golden values, which is the same independence at no cost to the generator (C12). `conventions_check.py` is unchanged: it already checks the De Morgan laws and the antiproduct's associativity for rigid(3), which is where 4.2's Checked label comes from.
+
+Identities on multivectors (DoD-10's second layer), each on seeded random integer or rational multivectors with the seed printed (V7). Coverage: every form of plan 0001 section 5 with n ≤ 5 on `full<n>`; n = 6 on grade subsets, where Clang's limit on `full<6>` products applies; sparse sets at n = 8, 12, and 16:
+- the four De Morgan laws, and their converses right(a ⟇ b) = right(a) ⟑ right(b) and right(a ∨ b) = right(a) ∧ right(b), with left likewise;
+- associativity of `%` and `&`;
+- `~~x == x`, `grade_involution(grade_involution(x)) == x`, and `antireverse(antireverse(x)) == x`; `left_complement(right_complement(x)) == x` and the reverse order;
+- `right_complement(right_complement(x))` equal to x times (−1)^(gr·ag) grade by grade;
+- `antireverse(x) == left_complement(reverse(right_complement(x)))`;
+- the product rules: reverse(a ⟑ b) = reverse(b) ⟑ reverse(a), reverse(a ∧ b) = reverse(b) ∧ reverse(a), antireverse(a ⟇ b) = antireverse(b) ⟇ antireverse(a), and grade_involution(a ⟑ b) = grade_involution(a) ⟑ grade_involution(b).
+
+The n = 16 cases compile the antiproduct of the 0141 exception. If one makes the edit-and-test cycle slow, it carries the `slow` label (P9) and is never omitted.
+
+WU10b's own tests:
+- vector-space laws: a + b = b + a, (a + b) + c = a + (b + c), a − b = a + (−1)·b, s(a + b) = sa + sb, (st)a = s(ta);
+- distributivity of each product over sums;
+- `(x * s) / s == x` over the rational;
+- hand values for two-layout sums on oriented layouts (a rigid(3) line plus the antiscalar gives a motor-shaped canonical result, with each sign from the oriented names);
+- −0.0 kept on a blade only one operand holds, over double;
+- `3.0 / 10.0`, which is not `3.0 * 0.1` in binary64, against multiplication by the reciprocal;
+- the left and right order of scaling, with a test-local 2×2 integer matrix scalar, which also checks that products keep the order x_a y_b;
+- the integer zero-divisor precondition, aborting in checking mode under `test/expect_output.cmake`, as `truncate`'s run-time check is tested;
+- `part` against `truncate` on inputs whose dropped part is zero (equal) and nonzero (`part` succeeds where `truncate` fails a constant evaluation).
+
+V10, to fill in at each outcome. Verification by the above. Validation: for rigid(3), 𝟙 as the identity of ⟇; for non-diagonal antiproducts, not performed, as the owner accepted at M2 (decision 0163 item 3).
+
+## 6. Mutants
+
+WU10a, each on gcc-debug and clang-debug:
+- `reverse` calls the antireverse map;
+- `grade_involution` calls the reverse map;
+- `!` calls `left_complement` (killed only in even n);
+- a sign map returns the canonical layout instead of the input's;
+- `%` calls `geometric_product`;
+- `antiwedge` uses the geometric-antiproduct plan;
+- `&` calls `wedge`;
+- the operands of `geometric_antiproduct` are swapped;
+- the F5 check is dropped (`apply:` returns);
+- the algebra and scalar constraints are dropped from the new catch-alls;
+- one sign of `left_complement_sign` is flipped in `bits.hpp`.
+
+WU10b:
+- the sum kernel adds its first term to zero (the −0.0 test);
+- a difference takes y with +1;
+- a two-layout sum drops the blades only y holds;
+- `s * a` computes x_i * s (the matrix scalar);
+- `/` multiplies by the reciprocal (`3.0 / 10.0`);
+- the integer zero assertion is removed;
+- the scalar catch-all's constraint is widened to every type;
+- `part` calls `truncate`;
+- one ring-operations fault reports the next clause's message.
+
+## 7. Risks
+
+1. **`!` and `~` on a class type.** `!x` is a multivector, so `if (!x)` does not compile, which is the safe failure. `!!x` is ±x, not x, and the comment says so.
+2. **Precedence.** `%` binds as `*`, left to right; `&` and `^` bind below `==`. CONVENTIONS 7.1 requires parentheses for `^` and `&`, and the tests also parenthesize every mix of `*` and `%`.
+3. **The scalar catch-all is broad.** A requires-expression for `int * Point` answers yes, as WU9's catch-alls do for mixed operands. Constraining it to `ring_scalar` keeps it from capturing other types' operators; criterion 5 probes this.
+4. **Antiproduct build cost at large n.** The 0141 exception applies. The tests at n = 16 pay it, and users of models with n ≤ 6 see the figures of question 3.
+5. **Compile cost of the new tests.** `mv_test.cpp` is the largest unit (64.5 G instructions on GCC). The identity tests over the signature set may approach it. If `product_test.cpp` passes `mv_test.cpp`'s cost, the identities move to their own unit under the same label, by the implementer's measurement.
+6. **The layout rule is a rule.** R3 is stated in every comment. The hci reading of the review checks that a first-time user predicts `~line`, `!point`, and `line + antiscalar` from the comments alone.
+7. **Owner-dependent commits.** `part` and negation wait for O1. If O1 is answered against them, WU10b closes without them and the trace gains no rows for them.
+8. **Classes derived from `mv`.** Valid calls work by deduction and mismatched ones get the compiler's error (WU9 F6), until WU16.
+9. **Shared files with other lanes.** `test/CMakeLists.txt` blocks and `runs.tsv` rows: whichever unit merges second merges `develop` in first (W7).
+
+## 8. Open questions for the owner
+
+- **O1. CONVENTIONS version 1.8, and a reading of C8.**
+  - 4.5, after "It is never implicit.": "`part<Blades>(x)` and `part<Type>(x)` keep the same components and never check: what they drop is meant to be nonzero, as in a grade part."
+  - 7.1, a row: "`-a` | Negation | " (no named function, like `+` and `-`).
+  - Confirm that C8's "a checking mode verifies that whatever an operation discarded was zero" covers what an operation assumes is zero, not an operation whose purpose is to discard and whose name says so (question 1).
+
+  Recommended: yes to all three. Without them, `part` and `-x` are not built, and `-x` stays the compiler's error.
+- **O2. Decision 0140.** Keep it proposed, and build WU10's antiproducts on the present conjugation, with 0141's triggers unchanged (question 3). Recommended: yes.
+
+For the coordinator, not the owner: M3's "V12 double tests with forward bounds" have no unit yet (R5).
+
+### Owner rulings, 2026-11-02
+
+O1: agreed. CONVENTIONS version 1.8 (`part` in 4.5, negation in 7.1) and the reading of C8 are ratified; the version row is added in the WU10b commits that build them. O2: agreed. Decision 0140 stays proposed, and the antiproducts are built on the present conjugation. The owner also asked the coordinator to proceed until a decision needs the owner.
+
+## 9. Agent cost estimate
+
+Recorded in `docs/agent/records/agent-cost.tsv` as each agent finishes. Figures for comparison: WU7b's implementer used 674k tokens and WU8b's 865k; their blind reviews used 280k to 360k.
+
+| Part | Role | Model | Estimate |
+| --- | --- | --- | --- |
+| WU10a | implementer (cpp-expert role) | Opus, high | 550k to 700k tokens |
+| WU10a | test author (doctest-expert) | Opus, high | 250k to 350k |
+| WU10a | blind reviewer (W5, with the usability checklist) | Opus, high | 300k to 380k |
+| WU10a | delta reviewer, if the review asks for fixes | Opus, high | 200k to 270k |
+| WU10b | implementer (cpp-expert role) | Opus, high | 450k to 600k |
+| WU10b | test author (doctest-expert) | Opus, high | 200k to 300k |
+| WU10b | blind reviewer (W5, with the usability checklist) | Opus, high | 250k to 330k |
+| WU10b | delta reviewer, if needed | Opus, high | 180k to 250k |
+
+Size M overall, as plan 0001 has it: about 2.2M to 3.2M tokens in all. The mechanical commits (WU10b 1 and 2) are small enough for Sonnet if the coordinator prefers.
+
+## WU10b claim
+
+WU10b is claimed on 2026-11-02, after the merge of WU10a (`81ffedf`), on `feature/core-linear`. The owner's rulings on O1 and O2 are in force, so commits 6 and 7 are included and CONVENTIONS version 1.8 is added in the commit that builds `part`.
+
+## 10. Outcome
+
+### WU10a
+
+Implemented on `feature/core-antiproducts` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, in separate commits before the code). Blind review (Claude, agent, Opus 5.5, blind-reviewer role, separate context): merge after fixes, F1 blocking; the fixes are listed below. A delta review follows; not merged.
+
+Commits, in the order of section 4: the six test commits of the test author (approach 1, 3, 5, 7, 9, and a lint pass over them); then F13's wording (approach 2); F5 and F12 for the geometric product (4); the antiproducts with `%` and `&` (6); `unary.hpp` with `~` and `!` and its line in `core.hpp` (8); the trace rows (10); the `slow` label of `core.identities` with the measured growth in the antiproduct's comment; the records (11).
+
+Departures and readings (C20):
+
+1. The result-layout variable templates are public names in `galoot::core` (`geometric_product_layout`, `wedge_layout`, `geometric_antiproduct_layout`, `antiwedge_layout`, `right_complement_layout`, `left_complement_layout`), not `detail::wedge_layout` as question 5(c) wrote. Clang 23 prints the qualifier, so in `detail` they leave `detail::` on the first line that criterion 4 forbids (decision 0166, with the probe). They are six new public names, documented in place; no test asserts them directly, only through the result types they declare.
+2. `galoot::core`'s header set in `CMakeLists.txt` lacked `product.hpp` since WU9, so the header checks never compiled it on its own. Both `product.hpp` and `unary.hpp` are now listed (a build-description change, so the final runs cover every test).
+3. The trace table also gains `a ^ b is the wedge` for 7.1, which section 2 names and the test author's list left out; the WU9 operator test already states it.
+4. `core.identities` carries the `slow` label, by measurement (records README): 19 s and 295 G instructions on GCC, 22 s and 299 G on Clang, 4.6 times `mv_test.cpp`.
+5. The rejecting function keeps WU9's shape, one function with a branch per spelling and cause (16 messages), rather than moving each message into its catch-all.
+6. The first run of the mutant "`%` calls `geometric_product`" was invalid on Clang (see the README) and was rewritten and run again on both presets.
+7. One diagnostic probe (the longest GCC line of one compile-fail source) and the `clang-format` checks ran without `tools/timed`; every build and test did run under it.
+8. W2: the test author's commits came first and the code after, not interleaved as section 4 has it, so five commits in a row leave the project unbuildable: `3a22686`, `fdc1cb6`, `0d3d990` (test commits that need headers not yet written), and `c120caa` and `a53d386` (code commits that come before the antiproducts the test file needs). Each message says it does not build. W2 allows only the single test commit to fail. Also `5cb362a` (review fix F4) fails `tests.reference_markers`, a semicolon in two new markers, fixed in `c04ea8b`.
+9. `28dd10c` combines the antiproduct's comment figures with the `slow` label of the test author's test (no expected value changes).
+10. The first outcome reported the seven-preset run as passing "at `28dd10c`". Its run rows say `28dd10cad9d0-dirty`: the records of `47dab5c` (this outcome and the 0018 README) were uncommitted tracked files during the run. That run is superseded by the run after the review fixes, below.
+
+Test author's finding, for the coordinator: Clang 23 at its default limits cannot evaluate the product plans of the dense random forms 3 and 7 of n = 5 on `full<5>` times `full<5>`, nor the antiproduct of vectors with bivectors there, nor three bivectors through `%`; GCC 16 can. So `identities_test.cpp` checks those two forms on bivectors and vectors only. This is generation cost, which WU10a does not change, and it bounds what the public products accept on Clang for dense forms of five generators.
+
+Evidence:
+
+- Verification: the golden composition of the antiproducts over every blade pair of four forms and the oriented rigid(3) blades; the golden signs and complements of every blade of `full<3>` to `full<5>` and of rigid(3) oriented; the layouts by `static_assert` against layouts written from the definition; the De Morgan laws, their converses, the associativity of `%` and `&`, the involution and complement relations, and the product rules of the involutions over the signature set (seeded, exact). All pass.
+- Validation: for rigid(3), the antiscalar is the identity of ⟇ (Lengyel's statement), and a point and a plane meet in gx x + gy y + gz z + gw w; passes. Non-diagonal antiproducts: validation not performed, as the owner accepted at M2.
+- Mutants (`records/mutations/0019-antiproducts/README.md`): all 15 (the 11 of section 6, with the F5 check dropped in each of its four spellings) killed on gcc-debug and clang-debug, each by a test, none by a warning. The flipped sign of `left_complement_sign` is caught first by the unary map's own generation check in two programs and killed by `core.product` at run time.
+- Diagnostics: every rejection gives one error with the message on its first error line on both compilers; no public spelling shows `apply:`; Clang's first line for `(p ^ q) == line` names `wedge_layout<rga3, ...>`, with no `product_plan`, `detail::`, or enum cast. Sizes beside the WU9 table in `records/mutations/0018-products/README.md`.
+- W10 and P2 (pinned, three repeats): `product_test.cpp` 21.6 G to 43.0 G instructions on GCC and 19.2 G to 42.7 G on Clang; a unit that includes only `core.hpp` +5.2 M (+0.6%) on GCC and +6.7 M (+0.7%) on Clang.
+- Question 3, through the public `%`, the four rigid(3) pairs from n = 4 to 16: +106.8% on GCC (747 M to 1,545 M) and +356.5% on Clang (914 M to 4,174 M), against +0.1% and −0.3% through `*`. The absolute growth matches decision 0141's plan-level figures within a few percent; the percentages are lower because the public path adds n-independent kernel code. 0141's triggers are unchanged and none fired.
+- Final runs: all seven presets from new empty build trees at `03b9443`, the final revision of the build inputs, with a clean tree (the run rows say `03b9443276d1` without `-dirty`; the run log itself does not count toward a dirty tree, and every other file was committed before the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 263 tests, gcc-asan 255, clang-debug, clang-release, clang-asan, and lint 265, all passing. The trace gate, `clang-format --dry-run --Werror`, and `tools/runlog check` exit 0. The commit after it records these results and the run rows, and changes nothing else.
+
+After the review (findings of the blind review, each fixed in its own commit):
+
+- F1, blocking: on Clang 23 with libstdc++, the geometric antiproduct of two `full<5>` multivectors of conformal(3) does not build in an optimized build, or in any build with `_GLIBCXX_NO_ASSERTIONS`. Its plan takes about 950,000 of Clang's 1,048,576 default steps with libstdc++'s assertions, which libstdc++ turns on by itself only without optimization, and more than the limit without them. Measured by the implementer with clang++ 23.1.4 on that pair: `-O0` builds; `-O1`, `-O2`, and `-O0 -D_GLIBCXX_NO_ASSERTIONS` fail at the step limit; `-O2 -D_GLIBCXX_ASSERTIONS` and `-O2 -fconstexpr-steps=1200000` build; libc++, GCC 16 at `-O0` and `-O2` with and without assertions, R(5,0,0), R(4,0,1), and the products `*`, `^`, `&` of the same conformal(3) operands all build. The `clang-measure` preset fails to build `core_product_test` and `core_identities_test` at this pair. Dense forms of five generators fail on Clang for `*` and `%` of `full<5>` at `-O0` already; GCC builds them. Fixed in `1fb18a4`: `product.hpp`'s header comment, `geometric_antiproduct`'s and `%`'s comments state the limit, the error the user sees, and the workaround; `apply`'s comment in `mv.hpp` no longer claims `full<5>` times `full<5>` on Clang with and without the assertions.
+  - The configuration gap, for the coordinator and the owner: every test preset defines `_GLIBCXX_ASSERTIONS` (the `checks` and `sanitizers` blocks of `CMakePresets.json`), so no preset of the suite builds what most Clang users ship, an optimized build without libstdc++'s assertions. Only the `clang-measure` presets do, and they are not in the merge checks. Adding a no-assertions optimized Clang build of `core.product` and `core.identities` to the merge checks would have caught F1; it costs one more build tree. No toolchain-matrix record names the presets' flags beyond decision 0006, which is not rewritten; a new decision would record the choice.
+- F2: two compile-fail tests take two scalars, whose product fits `std::int8_t` and whose antiproduct does not (`02d64d0`). The review's two surviving mutants (the antiproduct's spellings checking the product's coefficients) now die on gcc-debug and clang-debug, each by its new test.
+- F3: departures 8 to 10 above, and the final run below.
+- F4: each layout name has its own `///` comment, and the tests assert the blades each holds and that a non-algebra is rejected (`5cb362a`, markers fixed in `c04ea8b`).
+- F5: `golden.py` now writes the product table of conformal(2), four generators with a coupled null pair, and the table test of the products and the composed antiproduct test cover it (`c04ea8b`), so a non-diagonal form at even n is checked against an exact table.
+- F6: configuring stops when a header under `include/galoot` is missing from the header set (`f129e01`), checked with an unlisted probe header.
+- F7: the examples declare their names and compile; every rejecting overload states the requires-expression answer; `(!x) == y`; derived classes get the mv type from `~` and `!`; `std::views` beside `std::ranges` (`35ba6b6`).
+- F8 (the `slow` label): accepted by the review; its notes go to the coordinator.
+
+### WU10b
+
+Implemented on `feature/core-linear` (implementer: Claude, agent, Opus 5.5, cpp-expert role; test author: Claude, agent, Opus 5.5, doctest-expert role, in separate commits before the code). Not reviewed yet; not merged.
+
+Commits, in the order of section 4: the test author's eight commits (the tests of `has_name`, the ring-operations messages, sums, scaling, negation, and `part`, the message record, and a lint pass); then the operand checks moved to `mv.hpp` (approach 1, `3d7907a`); `has_blade` renamed `has_name` (2, `cbf5423`, with its layout fixed in `c8c5901`); the ring-operations fault split (3, `28a6fd2`); sums and differences with the sum kernel and `sum_layout` (4, `f6277d8`); scaling and division (5, `501e353`); negation (6, `2bcd67d`); `part`, `truncate`'s comment, and CONVENTIONS version 1.8 (7, `93d2e2f`); the trace rows (8, `b668de7`); the measured compile limit of a sum of two layouts in the comments (`e2be608`); the records.
+
+Departures and readings (C20):
+
+1. W2: the test author's commits came first and the code after, as in WU10a, so the project does not build from `1aa4e70` to `2bcd67d`: `mv_test.cpp` waits for `has_name` and then for `part` (fixed at `93d2e2f`), `linear_test.cpp` for `linear.hpp` and its three operation families (fixed at `2bcd67d`), and the ten ring-operations compile-fail tests of `a5673bb` fail until `28a6fd2`. Each message says what does not build. My own commits `3d7907a` to `2bcd67d` were each checked by the tests that could build (named in each message), not by the full suite. The full suite passes from `93d2e2f`.
+2. `cbf5423` (the rename) left the concept in a layout that `clang-format` changes; `c8c5901` fixes it alone, layout only.
+3. The S7 accept and reject assertions for `sum_layout` are the test author's, in `linear_test.cpp` (the two layouts it names, `has_sum_layout<rga3>` and `!has_sum_layout<int>`); none was added in the header. The detail facilities (`same_layout_v`, `with_plus_signs`, `scalar_of_another_type`, the five ring clauses) are asserted through the public behavior the tests pin, not by `static_assert`s of their own.
+4. `ring_scalar` is now written as the conjunction of five named detail concepts (`ring_addition` and the others), so the multivector's five checks read the concept's own clauses (decision 0169); its meaning is unchanged, and `mv_test.cpp` pins each clause against a scalar that lacks it alone.
+5. A `volatile` scalar reaches the scalar catch-all and is told it is of another type; the comment says to copy it to a T first. Stripping cv-qualification in the constraint was weighed and not done (decision 0167). No test pins either way.
+6. The mutant set adds two of my own (negation as `0 - x`, and `sum_layout` keeping the operands' orientations). No list of further mutants from the test author was found in the branch's records, so none was taken from there.
+7. The limit of `sum_layout` on Clang at n = 8 was measured to fail at -O0 with libstdc++'s assertions only; that it fails at -O2 too is inferred (more steps without the assertions), and the comment's "up to 7" bound was measured at all three configurations.
+8. One test run repeated an unchanged revision and configuration (core.product and core.unary on gcc-debug after `3d7907a`, to read the count), and one mistaken target name made a `core.mv` run test stale programs (15 failed or not run, rerun after building the right targets); both are in the run log. The scratch probes of the header examples and of the sums (`examples.cpp`, `sum_probe.cpp`) were compiled through `tools/timed` but are not committed; the limits probe is, in `records/mutations/0019-linear/`.
+9. `0ef7c22` formats one line of `mv_test.cpp` that the rename of `cbf5423` left as `clang-format` would not; the format check before the final runs found it. Layout only.
+
+Evidence:
+
+- Verification: hand values of sums of one type and of two oriented layouts, signed zeros, the vector-space, module, and negation laws over seeded random integer multivectors of rigid(3), conformal(3), and mixed layouts, distributivity of `*`, `^`, `%`, `&` over sums (also in conformal(2)), division over `std::int64_t`, the test rational, and double (`3.0 / 10.0` against the reciprocal), the order of scaling and of the products with a 2 by 2 matrix scalar, the integer zero divisor at compile time and at run time, `part` against `truncate` over five scalars and its constant evaluation where `truncate` fails, `has_name`, and the five ring-operation messages and their order. All pass.
+- Validation: not performed. The operations are the vector-space operations of their definitions, and no independent referent beyond the definitions was used (V8).
+- Mutants (`records/mutations/0019-linear/README.md`): all 11 killed on gcc-debug and clang-debug, each by a test, none by a warning.
+- Diagnostics: every new rejection gives one error, with the message on its first error line, on both compilers; sizes in the same README.
+- W10 and P2 (pinned, three repeats, `records/performance/linear-cost/`): `mv_test.cpp` +0.8% on GCC and +1.1% on Clang; the other affected suites under +0.4%; `linear_test.cpp` 34.1 G instructions on GCC and 29.9 G on Clang; a unit that includes only `core.hpp` +6.9 M (+0.7%) on GCC and +7.9 M (+0.8%) on Clang.
+- Final runs: all seven presets from new empty build trees at `0ef7c22`, the final revision of the build inputs, with a clean tree (the run rows say `0ef7c222826b` without `-dirty`; only the run log was modified during the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 295 tests, gcc-asan 287, clang-debug, clang-release, clang-asan, and lint 297, all passing; the lint build includes the header checks and `format-check`. The trace gate and `tools/runlog check` exit 0. The commit after `0ef7c22` records these results, the run rows, and one wording of the mutation README, and changes no build input.
+
+After the review (blind review by Claude, agent, Opus 5.5, blind-reviewer role, separate context: approve with non-blocking findings; fixed on the branch at the coordinator's request, each in its own commit):
+
+- F1, the zero-divisor check pinned for one type and sign: `c381d16` tests division by −2 over `std::int64_t` and by 2 over `unsigned` and `short`, by hand and as constant expressions, that a zero divisor of each of the three types is not a constant expression, and at run time that unsigned and short zero divisors abort with the message and a negative one does not. `a376ba8` states the check's full rule in `operator/`'s comment (an integer type by its limits, with ==), that a constant `x / 0.0` is not a constant expression on either compiler, and that `min() / -1` overflows as the scalar's own arithmetic does.
+- F2, `sum_layout<Alg, A, A>`: `b1523aa` (a test commit that fails until the next, as its message says) asserts `sum_layout<Alg, A, A> == A` and the type of `x + x` through it, and sums two `full<8>` multivectors of R(8, 0, 0); `7e22638` makes `sum_layout<Alg, A, A>` A by a partial specialization and gives `+` and `-` one overload each, without the `same_layout_v` constraint. Size chosen: `full<8>`, 256 blades, the largest full layout `mv` builds on Clang 23 and one whose merge with itself Clang cannot evaluate, so a same-type sum that merged would fail there; on GCC it builds either way. Decision 0167 gains a correction section with the constraint's real effect and its replacement.
+- F3, two constraints no test pinned: `c381d16` asserts that a multivector over the 2 by 2 matrix scalar, which has no `/`, cannot be divided, and that a user type with a member `scalar_type` gets no product or quotient from the scaling catch-alls.
+- F4, a probe of `part`'s or `truncate`'s rejection is a hard error: stated in both comments (`a376ba8`), and pinned for `part` by the compile-fail test `core.mv_part_probe` (`77a6bc7`), one error with part's message.
+- F5, the scalar-type message: reworded to "...: the scalar is not of the multivector's scalar type, the second of the two types shown; convert it to that type first, as 2.0 for 2 over double or std::int64_t{2} over std::int64_t", with the pinned expectation and the message record, in one listed commit (`64598f3`).
+- F6, CONVENTIONS 4.5's "meant to be nonzero": not changed; for the owner (C10).
+- F7: no compound assignment and no unary `+`, recorded in decision 0167's correction section; a variable named `part` in scope stops `part<Line>(x)` being read as a call, stated in `part`'s comment (`a376ba8`); the `volatile` scalar stays as decided and untested.
+- F8: departure 1 above covers the run of commits that do not build; counted exactly, every commit from `1aa4e70` to `2bcd67d` (15 commits: the test author's 8 and my first 7) leaves `mv_test.cpp` unbuildable; `linear_test.cpp` does not exist in the first two (`1aa4e70`, `a5673bb`) and does not build from `65bcab6`, where it first appears, to `501e353`. After the review, `b1523aa` fails by design until `7e22638`. The run-log row `20942c11981f citations - citations` with exit 1 was my hand run of `tools/test_references.py citations` over `include`, `test`, and the build files without the fixture exclusions that `tests.citations` passes: it reported the fixture `test/tools/test_references/citations_bad/parts.cpp`, which cites a record on purpose. The suite's `tests.citations` passes.
+
+Departures after the review (C20):
+
+1. `64598f3`'s message says the reworded text is required by "six tests" and names five; five is right (`core.linear_scale_left_int`, `_scale_right_int`, `_divide_int`, `_scale_left_fraction`, `_scale_with_products`).
+2. The W10 and P2 figures above were measured at `e2be608`, before the review's tests. `linear_test.cpp` grew after it; measured again pinned at `cd146a4` (after the delta review, below).
+3. Mutants after the review: all sixteen (the eleven first ones and five new) run again at `64598f3` on gcc-debug and clang-debug, all killed by tests (`records/mutations/0019-linear/README.md`); the diagnostics measured again at the same revision.
+
+Final runs after the review: all seven presets from new empty build trees at `97e94f8`, whose build inputs are those of `64598f3`, with a clean tree (the run rows say `97e94f8610dd` without `-dirty`; only the run log was modified during the run). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug and gcc-release 299 tests, gcc-asan 291, clang-debug, clang-release, clang-asan, and lint 301, all passing; the lint build includes the header checks and `format-check`. The trace gate and `tools/runlog check` exit 0. In those runs `linear_test.cpp` compiled in 3.96 s on gcc-debug and 3.19 s on clang-debug (shared mode, not pinned, so not comparable with the pinned figures above). The commit after `97e94f8` records these results and the run rows, and changes no build input.
+
+After the delta review (Claude, agent, Opus 5.5, blind-reviewer role as delta reviewer: approve with non-blocking findings; fixed at the coordinator's request):
+
+- D1: the three assertions that a division by zero over `std::int64_t`, `unsigned`, or `short` is not a constant expression hold with or without the check, since no integer division by zero is a constant expression. Chosen fix: both remedies. Two compile-fail tests, `core.linear_divide_consteval_zero_unsigned` and `_short`, require the check's message and `assertion_failed` in a constant evaluation, as `core.linear_divide_consteval_zero` does for `std::int64_t`; and the test case's contract now says what its assertions test (`48175d1`).
+- D2 (`cd146a4`, comments): `min() / -1` overflows only over a signed type at least as wide as int (short and signed char compute in int and give `min()` back); a division by zero fails a constant evaluation for a built-in floating type, while a user's scalar may define it; only a variable or a type named `part` stops `part<Line>(x)`, not a function; and the zero check needs `min()` and `max()` that convert implicitly to `std::int64_t` and `std::uint64_t`, so an integer class with only explicit conversions is not checked.
+- D3, P7: `linear_test.cpp` measured again pinned at `cd146a4` (`records/performance/linear-cost/measure_full8.py`, `out-full8/`; CPU 4, three repeats): 42,151 M instructions on GCC and 37,797 M on Clang, against 34,061 M and 29,930 M at `e2be608`, +23.8% and +26.3%. The cause is the sum of two `full<8>` multivectors: without it the file costs 34,101 M and 30,023 M, so the other tests added after the review cost about 0.05 G; with only its type assertions, 35,751 M and 31,616 M, so the run-time sum, difference, and loops cost 6.4 G and 6.2 G (about 0.4 s and 0.3 s). The run-time part is kept: the type assertions keep the specialization's mutant killed on both compilers (it dies earlier, at the same-type sums of `Line`), but they instantiate no sum body, and the run-time part is the only test that builds a same-type sum's kernels and fold at 256 blades, the largest full layout Clang 23 builds.
+- D4 (where GCC prints the two types of the scalar-type message): information only, left for the release review of diagnostics.
+- D5: the W2 wording above is corrected: `linear_test.cpp` does not exist in the first two commits.
+
+Final runs after the delta review, the merge-level set: gcc-debug, clang-asan, and lint from new empty build trees at `6fb7827`, whose build inputs are those of `48175d1` and `cd146a4`, with a clean tree (the run rows say `6fb7827e111c` without `-dirty`). Each configure, build, and test step exited 0 with no FAILED build step: gcc-debug 301 tests, clang-asan and lint 303, all passing; the lint build includes the header checks and `format-check`. The trace gate, `tools/runlog check`, and the format check exit 0. The other four presets last ran at `97e94f8` (section above); the changes since are two compile-fail tests and comments.

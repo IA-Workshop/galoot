@@ -1,0 +1,3 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+no_count_test	gcc-debug	normal	0	8	killed	core.metric_like_no_generators	-	-	-	-
+no_cache	gcc-debug	normal	1	-	killed	-	metric_test.cpp:345	metric_test.cpp:345	-	test/core/metric_test.cpp:345:15: error: static assertion failed

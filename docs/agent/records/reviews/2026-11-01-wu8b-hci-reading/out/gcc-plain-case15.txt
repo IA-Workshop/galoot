@@ -1,0 +1,51 @@
+user.cpp: In function ‘double use()’:
+user.cpp:132:57: error: no matching function for call to ‘truncate<"e41 e42 e43 e23 e31 e12">(const Motor&)’
+  132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+  • there are 3 candidates
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+    • candidate 1: ‘template<blade_set<...auto...> To, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) constexpr galoot::core::mv<Alg, To, T> galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:808:40:
+        808 | [[nodiscard]] constexpr mv<Alg, To, T> truncate(const mv<Alg, From, T>& x) {
+            |                                        ^~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: class template argument deduction failed:
+          user.cpp:132:57:
+            132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+                |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        • error: no matching function for call to ‘blade_set(const char [24])’
+          • there are 2 candidates
+In file included from include/galoot/core/blade_product.hpp:43,
+                 from include/galoot/core.hpp:9:
+            • candidate 1: ‘template<long unsigned int K> blade_set() -> galoot::core::blade_set<K>’
+              include/galoot/core/blade_set.hpp:69:8:
+                 69 | struct blade_set {
+                    |        ^~~~~~~~~
+              • candidate expects 0 arguments, 1 provided
+            • candidate 2: ‘template<long unsigned int K> blade_set(galoot::core::blade_set<K>) -> galoot::core::blade_set<K>’
+              • template argument deduction/substitution failed:
+                •   mismatched types ‘galoot::core::blade_set<K>’ and ‘const char*’
+                  user.cpp:132:57:
+                    132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+                        |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+    • candidate 2: ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && (multivector_of<Target, Alg, T>) constexpr std::remove_cvref_t<_Tp1> galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:825:1:
+        825 | truncate(const mv<Alg, From, T>& x) {
+            | ^~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: type/value mismatch at argument 1 in template parameter list for ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && (multivector_of<Target, Alg, T>) constexpr std::remove_cvref_t<_Tp1> galoot::core::truncate(const mv<Alg, S, T>&)’
+          user.cpp:132:57:
+            132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+                |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        •   expected a type, got ‘"e41 e42 e43 e23 e31 e12"’
+    • candidate 3: ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && !(multivector_of<Target, Alg, T>) constexpr auto galoot::core::truncate(const mv<Alg, S, T>&)’
+      include/galoot/core/mv.hpp:833:16:
+        833 | constexpr auto truncate(const mv<Alg, From, T>& x) {
+            |                ^~~~~~~~
+      • template argument deduction/substitution failed:
+        • error: type/value mismatch at argument 1 in template parameter list for ‘template<class Target, class Alg, blade_set<...auto...> From, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) && !(multivector_of<Target, Alg, T>) constexpr auto galoot::core::truncate(const mv<Alg, S, T>&)’
+          user.cpp:132:57:
+            132 |   const auto s = gc::truncate<"e41 e42 e43 e23 e31 e12">(q);  // names
+                |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+        •   expected a type, got ‘"e41 e42 e43 e23 e31 e12"’

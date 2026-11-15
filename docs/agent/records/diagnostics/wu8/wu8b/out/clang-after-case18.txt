@@ -1,0 +1,7 @@
+program.cpp:84:15: error: chosen constructor is explicit in copy-initialization
+   84 |   const Point s = {{1, 2, 3, 1}};
+      |               ^   ~~~~~~~~~~~~~~
+../../../../../../include/galoot/core/mv.hpp:600:22: note: explicit constructor declared here
+  600 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+      |                      ^
+1 error generated.

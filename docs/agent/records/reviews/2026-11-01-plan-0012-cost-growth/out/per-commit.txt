@@ -1,0 +1,12 @@
+Fresh trees per code state (scratch worktrees, detached), configure + build all (+ header sets) + ctest:
+
+revision  code state of                                 gcc-debug  clang-debug  lint
+971bc9e   test commit                                   124/124    124/124      builds, 124/124
+4e69ce8   blade_product loops                           124/124    124/124      builds, 124/124
+77ed567   + reorder_sign; also 20dc2ea..115b53e         124/124    124/124      build fails: bits.hpp:107:47 bugprone-signed-bitwise
+58f4aa1   c97fac5's code; also f812191                  all seven presets 124/124; gcc-debug, clang-debug: header sets and format-check built; lint: all, header sets, format-check
+4e8b55d   develop's code (records only)                 not rebuilt
+
+git diff 77ed567 <r> over include, test, CMakeLists.txt, CMakePresets.json, cmake, .clang-tidy,
+.clang-format, tools is empty for r = 20dc2ea, 52ed97f, 9ff402c, a023495, 115b53e; and from
+c97fac5 to f812191 and 58f4aa1.

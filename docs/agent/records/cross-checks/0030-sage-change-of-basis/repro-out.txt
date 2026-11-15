@@ -1,0 +1,8 @@
+g++ -std=c++23 -O0 : elements with d != 1 at run time: 2 of 9 (exit 1)
+g++ -std=c++23 -O0 -DWITHOUT_CONSTANT_EVALUATION: elements with d != 1 at run time: 0 of 9 (exit 0)
+g++ -std=c++23 -O2 : elements with d != 1 at run time: 2 of 9 (exit 1)
+g++ -std=c++23 -O2 -DWITHOUT_CONSTANT_EVALUATION: elements with d != 1 at run time: 0 of 9 (exit 0)
+clang++ -std=c++23 -O0 : elements with d != 1 at run time: 0 of 9 (exit 0)
+clang++ -std=c++23 -O0 -DWITHOUT_CONSTANT_EVALUATION: elements with d != 1 at run time: 0 of 9 (exit 0)
+clang++ -std=c++23 -O2 : elements with d != 1 at run time: 0 of 9 (exit 0)
+clang++ -std=c++23 -O2 -DWITHOUT_CONSTANT_EVALUATION: elements with d != 1 at run time: 0 of 9 (exit 0)

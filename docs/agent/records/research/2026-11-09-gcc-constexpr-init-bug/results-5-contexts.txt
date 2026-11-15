@@ -1,0 +1,52 @@
+g++	ce5-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=5	wrong 0x1e4 (exit 1)
+clang++	ce5-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=5	wrong 0 (exit 0)
+g++	ce6-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=6	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce6-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=6	first 1
+wrong 0 (exit 0)
+g++	ce7-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=7	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce7-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DCE=7	first 1
+wrong 0 (exit 0)
+g++	init6-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DINIT=6	wrong 0x1e4 (exit 1)
+clang++	init6-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DINIT=6	wrong 0 (exit 0)
+g++	init7-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DINIT=7	wrong 0 (exit 0)
+clang++	init7-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DINIT=7	wrong 0 (exit 0)
+g++	template-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE	wrong 0x1e4 (exit 1)
+clang++	template-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE	wrong 0 (exit 0)
+g++	template-ce0-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE -DCE=0	wrong 0 (exit 0)
+clang++	template-ce0-O0	-O0 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE -DCE=0	wrong 0 (exit 0)
+g++	noarg-ce0-O0	-O0 -DSTORES=0x111 -DCE=0	wrong 0 (exit 0)
+clang++	noarg-ce0-O0	-O0 -DSTORES=0x111 -DCE=0	wrong 0 (exit 0)
+g++	noarg-ce5-O0	-O0 -DSTORES=0x111 -DCE=5	wrong 0x24 (exit 1)
+clang++	noarg-ce5-O0	-O0 -DSTORES=0x111 -DCE=5	wrong 0 (exit 0)
+g++	noarg-ce7-O0	-O0 -DSTORES=0x111 -DCE=7	first 1
+wrong 0 (exit 0)
+clang++	noarg-ce7-O0	-O0 -DSTORES=0x111 -DCE=7	first 1
+wrong 0 (exit 0)
+g++	ce5-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=5	wrong 0x1e4 (exit 1)
+clang++	ce5-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=5	wrong 0 (exit 0)
+g++	ce6-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=6	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce6-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=6	first 1
+wrong 0 (exit 0)
+g++	ce7-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=7	first 1
+wrong 0x1e4 (exit 1)
+clang++	ce7-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DCE=7	first 1
+wrong 0 (exit 0)
+g++	init6-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DINIT=6	wrong 0x1e4 (exit 1)
+clang++	init6-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DINIT=6	wrong 0 (exit 0)
+g++	init7-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DINIT=7	wrong 0 (exit 0)
+clang++	init7-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DINIT=7	wrong 0 (exit 0)
+g++	template-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE	wrong 0x1e4 (exit 1)
+clang++	template-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE	wrong 0 (exit 0)
+g++	template-ce0-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE -DCE=0	wrong 0 (exit 0)
+clang++	template-ce0-O2	-O2 -DRT_STORES=0 -DSTORES=0x100 -DTEMPLATE -DCE=0	wrong 0 (exit 0)
+g++	noarg-ce0-O2	-O2 -DSTORES=0x111 -DCE=0	wrong 0 (exit 0)
+clang++	noarg-ce0-O2	-O2 -DSTORES=0x111 -DCE=0	wrong 0 (exit 0)
+g++	noarg-ce5-O2	-O2 -DSTORES=0x111 -DCE=5	wrong 0x24 (exit 1)
+clang++	noarg-ce5-O2	-O2 -DSTORES=0x111 -DCE=5	wrong 0 (exit 0)
+g++	noarg-ce7-O2	-O2 -DSTORES=0x111 -DCE=7	first 1
+wrong 0 (exit 0)
+clang++	noarg-ce7-O2	-O2 -DSTORES=0x111 -DCE=7	first 1
+wrong 0 (exit 0)

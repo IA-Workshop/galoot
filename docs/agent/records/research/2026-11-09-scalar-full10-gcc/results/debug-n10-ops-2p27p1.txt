@@ -1,0 +1,3 @@
+$ g++ -I include -std=c++23 -fsyntax-only -DGALOOT_CHECKING=1 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -O0 -fconstexpr-ops-limit=134217729 docs/agent/records/research/2026-11-09-scalar-full10-gcc/product.cpp
+timed: compile scalar-full10:debug-n10-ops-2p27p1 took 4.812 s (exit 0); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/scalar-full10-gcc/docs/agent/records/research/2026-11-09-scalar-full10-gcc/runs.tsv
+exit status: 0

@@ -1,0 +1,9 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+integer_bound_one_above	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1641	mv_test.cpp:1641	-	test/core/mv_test.cpp:1641:17: error: static assertion failed
+integer_bound_one_above	clang-debug	normal	1	-	killed	-	mv_test.cpp:1641	mv_test.cpp:1641	-	test/core/mv_test.cpp:1641:17: error: static assertion failed due to requirement '!e12_exact<128, 256, short>'
+truncate_checks_rounding	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1912,mv_test.cpp:1913,mv_test.cpp:1914	mv_test.cpp:1895,mv_test.cpp:1896,mv_test.cpp:1912,mv_test.cpp:1913,mv_test.cpp:1914	-	test/core/mv_test.cpp:1912:17: error: static assertion failed
+truncate_checks_rounding	clang-debug	normal	1	-	killed	-	mv_test.cpp:1912,mv_test.cpp:1913,mv_test.cpp:1914	mv_test.cpp:1896,mv_test.cpp:1912,mv_test.cpp:1913,mv_test.cpp:1914	-	test/core/mv_test.cpp:1912:17: error: static assertion failed
+truncate_skips_rational	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1911	mv_test.cpp:1911	-	test/core/mv_test.cpp:1911:17: error: static assertion failed
+truncate_skips_rational	clang-debug	normal	1	-	killed	-	mv_test.cpp:1911	mv_test.cpp:1911	-	test/core/mv_test.cpp:1911:17: error: static assertion failed due to requirement '!truncates_in_a_constant_evaluation<test_support::rational, 7>'
+truncate_check_removed	gcc-debug	normal	1	-	killed	-	mv_test.cpp:1909,mv_test.cpp:1911	mv_test.cpp:1909,mv_test.cpp:1911	-	test/core/mv_test.cpp:1909:17: error: static assertion failed
+truncate_check_removed	clang-debug	normal	1	-	killed	-	mv_test.cpp:1909,mv_test.cpp:1911	mv_test.cpp:1909,mv_test.cpp:1911	-	test/core/mv_test.cpp:1909:17: error: static assertion failed due to requirement '!truncates_in_a_constant_evaluation<long, 7>'

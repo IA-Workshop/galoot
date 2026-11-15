@@ -1,0 +1,6 @@
+#ifndef GALOOT_CORE_NONSTANDARD_HPP
+#define GALOOT_CORE_NONSTANDARD_HPP
+
+#include <vector_math.h>
+
+#endif // GALOOT_CORE_NONSTANDARD_HPP

@@ -1,0 +1,640 @@
+gcc	-Os	reverse_Full	inline	
+gcc	-Os	tilde_Full	inline	
+gcc	-Os	antireverse_Full	inline	
+gcc	-Os	grade_involution_Full	inline	
+gcc	-Os	right_complement_Full	inline	
+gcc	-Os	bang_Full	inline	
+gcc	-Os	left_complement_Full	inline	
+gcc	-Os	bulk_Full	CALL	user->call galoot::core::bulk
+gcc	-Os	weight_Full	inline	
+gcc	-Os	bulk_dual_Full	inline	
+gcc	-Os	weight_dual_Full	inline	
+gcc	-Os	left_bulk_dual_Full	CALL	user->call galoot::core::bulk
+gcc	-Os	left_weight_dual_Full	inline	
+gcc	-Os	negate_Full	inline	
+gcc	-Os	scale_Full	inline	
+gcc	-Os	scale_right_Full	inline	
+gcc	-Os	divide_Full	inline	
+gcc	-Os	reverse_Motor	inline	
+gcc	-Os	tilde_Motor	inline	
+gcc	-Os	antireverse_Motor	inline	
+gcc	-Os	grade_involution_Motor	inline	
+gcc	-Os	right_complement_Motor	inline	
+gcc	-Os	bang_Motor	inline	
+gcc	-Os	left_complement_Motor	inline	
+gcc	-Os	bulk_Motor	inline	
+gcc	-Os	weight_Motor	inline	
+gcc	-Os	bulk_dual_Motor	inline	
+gcc	-Os	weight_dual_Motor	inline	
+gcc	-Os	left_bulk_dual_Motor	inline	
+gcc	-Os	left_weight_dual_Motor	inline	
+gcc	-Os	negate_Motor	inline	
+gcc	-Os	scale_Motor	inline	
+gcc	-Os	scale_right_Motor	inline	
+gcc	-Os	divide_Motor	inline	
+gcc	-Os	reverse_Line	inline	
+gcc	-Os	tilde_Line	inline	
+gcc	-Os	antireverse_Line	inline	
+gcc	-Os	grade_involution_Line	inline	
+gcc	-Os	right_complement_Line	inline	
+gcc	-Os	bang_Line	inline	
+gcc	-Os	left_complement_Line	inline	
+gcc	-Os	bulk_Line	inline	
+gcc	-Os	weight_Line	inline	
+gcc	-Os	bulk_dual_Line	inline	
+gcc	-Os	weight_dual_Line	inline	
+gcc	-Os	left_bulk_dual_Line	inline	
+gcc	-Os	left_weight_dual_Line	inline	
+gcc	-Os	negate_Line	inline	
+gcc	-Os	scale_Line	inline	
+gcc	-Os	scale_right_Line	inline	
+gcc	-Os	divide_Line	inline	
+gcc	-Os	reverse_CFull	inline	
+gcc	-Os	tilde_CFull	inline	
+gcc	-Os	antireverse_CFull	inline	
+gcc	-Os	grade_involution_CFull	inline	
+gcc	-Os	right_complement_CFull	inline	
+gcc	-Os	bang_CFull	inline	
+gcc	-Os	left_complement_CFull	inline	
+gcc	-Os	bulk_CFull	CALL	user->call galoot::core::bulk
+gcc	-Os	weight_CFull	CALL	user->call galoot::core::bulk
+gcc	-Os	bulk_dual_CFull	CALL	user->call galoot::core::bulk_dual
+gcc	-Os	weight_dual_CFull	CALL	user->call galoot::core::bulk
+gcc	-Os	left_bulk_dual_CFull	CALL	user->call galoot::core::bulk
+gcc	-Os	left_weight_dual_CFull	CALL	galoot::core::bulk->call galoot::core::left_complement; user->call galoot::core::bulk; user->call galoot::core::left_complement
+gcc	-Os	negate_CFull	inline	
+gcc	-Os	scale_CFull	inline	
+gcc	-Os	scale_right_CFull	inline	
+gcc	-Os	divide_CFull	inline	
+gcc	-Os	reverse_CEven	inline	
+gcc	-Os	tilde_CEven	inline	
+gcc	-Os	antireverse_CEven	inline	
+gcc	-Os	grade_involution_CEven	inline	
+gcc	-Os	right_complement_CEven	inline	
+gcc	-Os	bang_CEven	inline	
+gcc	-Os	left_complement_CEven	inline	
+gcc	-Os	bulk_CEven	CALL	user->call galoot::core::bulk
+gcc	-Os	weight_CEven	inline	
+gcc	-Os	bulk_dual_CEven	inline	
+gcc	-Os	weight_dual_CEven	inline	
+gcc	-Os	left_bulk_dual_CEven	CALL	user->call galoot::core::bulk
+gcc	-Os	left_weight_dual_CEven	inline	
+gcc	-Os	negate_CEven	inline	
+gcc	-Os	scale_CEven	inline	
+gcc	-Os	scale_right_CEven	inline	
+gcc	-Os	divide_CEven	inline	
+gcc	-Os	reverse_CVec	inline	
+gcc	-Os	tilde_CVec	inline	
+gcc	-Os	antireverse_CVec	inline	
+gcc	-Os	grade_involution_CVec	inline	
+gcc	-Os	right_complement_CVec	inline	
+gcc	-Os	bang_CVec	inline	
+gcc	-Os	left_complement_CVec	inline	
+gcc	-Os	bulk_CVec	inline	
+gcc	-Os	weight_CVec	inline	
+gcc	-Os	bulk_dual_CVec	inline	
+gcc	-Os	weight_dual_CVec	inline	
+gcc	-Os	left_bulk_dual_CVec	inline	
+gcc	-Os	left_weight_dual_CVec	inline	
+gcc	-Os	negate_CVec	inline	
+gcc	-Os	scale_CVec	inline	
+gcc	-Os	scale_right_CVec	inline	
+gcc	-Os	divide_CVec	inline	
+gcc	-Os	reverse_VFull	inline	
+gcc	-Os	tilde_VFull	inline	
+gcc	-Os	antireverse_VFull	inline	
+gcc	-Os	grade_involution_VFull	inline	
+gcc	-Os	right_complement_VFull	inline	
+gcc	-Os	bang_VFull	inline	
+gcc	-Os	left_complement_VFull	inline	
+gcc	-Os	bulk_VFull	inline	
+gcc	-Os	weight_VFull	inline	
+gcc	-Os	bulk_dual_VFull	inline	
+gcc	-Os	weight_dual_VFull	inline	
+gcc	-Os	left_bulk_dual_VFull	inline	
+gcc	-Os	left_weight_dual_VFull	inline	
+gcc	-Os	negate_VFull	inline	
+gcc	-Os	scale_VFull	inline	
+gcc	-Os	scale_right_VFull	inline	
+gcc	-Os	divide_VFull	inline	
+gcc	-Os	reverse_VRotor	inline	
+gcc	-Os	tilde_VRotor	inline	
+gcc	-Os	antireverse_VRotor	inline	
+gcc	-Os	grade_involution_VRotor	inline	
+gcc	-Os	right_complement_VRotor	inline	
+gcc	-Os	bang_VRotor	inline	
+gcc	-Os	left_complement_VRotor	inline	
+gcc	-Os	bulk_VRotor	inline	
+gcc	-Os	weight_VRotor	inline	
+gcc	-Os	bulk_dual_VRotor	inline	
+gcc	-Os	weight_dual_VRotor	inline	
+gcc	-Os	left_bulk_dual_VRotor	inline	
+gcc	-Os	left_weight_dual_VRotor	inline	
+gcc	-Os	negate_VRotor	inline	
+gcc	-Os	scale_VRotor	inline	
+gcc	-Os	scale_right_VRotor	inline	
+gcc	-Os	divide_VRotor	inline	
+gcc	-Os	geometric_product_Full_Full	inline	
+gcc	-Os	times_Full_Full	inline	
+gcc	-Os	wedge_Full_Full	inline	
+gcc	-Os	caret_Full_Full	inline	
+gcc	-Os	antiproduct_Full_Full	inline	
+gcc	-Os	percent_Full_Full	inline	
+gcc	-Os	antiwedge_Full_Full	inline	
+gcc	-Os	ampersand_Full_Full	inline	
+gcc	-Os	plus_Full_Full	inline	
+gcc	-Os	minus_Full_Full	inline	
+gcc	-Os	dot_Full_Full	CALL	user->jmp galoot::core::dot
+gcc	-Os	antidot_Full_Full	inline	
+gcc	-Os	project_Full_Full	CALL	user->call galoot::core::weight_dual
+gcc	-Os	antiproject_Full_Full	CALL	user->call galoot::core::weight_dual
+gcc	-Os	compose_Full_Full	ERROR	the command failed with exit status 1: In file included from /tmp/tmpb3up68c8/compose_Full_Full.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp: In instantiation of ‘constexpr galoot::core::m
+gcc	-Os	geometric_product_Motor_Motor	inline	
+gcc	-Os	times_Motor_Motor	inline	
+gcc	-Os	wedge_Motor_Motor	inline	
+gcc	-Os	caret_Motor_Motor	inline	
+gcc	-Os	antiproduct_Motor_Motor	inline	
+gcc	-Os	percent_Motor_Motor	inline	
+gcc	-Os	antiwedge_Motor_Motor	inline	
+gcc	-Os	ampersand_Motor_Motor	inline	
+gcc	-Os	plus_Motor_Motor	inline	
+gcc	-Os	minus_Motor_Motor	inline	
+gcc	-Os	dot_Motor_Motor	inline	
+gcc	-Os	antidot_Motor_Motor	inline	
+gcc	-Os	project_Motor_Motor	inline	
+gcc	-Os	antiproject_Motor_Motor	inline	
+gcc	-Os	compose_Motor_Motor	inline	
+gcc	-Os	geometric_product_Motor_Flector	inline	
+gcc	-Os	times_Motor_Flector	inline	
+gcc	-Os	wedge_Motor_Flector	inline	
+gcc	-Os	caret_Motor_Flector	inline	
+gcc	-Os	antiproduct_Motor_Flector	inline	
+gcc	-Os	percent_Motor_Flector	inline	
+gcc	-Os	antiwedge_Motor_Flector	inline	
+gcc	-Os	ampersand_Motor_Flector	inline	
+gcc	-Os	dot_Motor_Flector	inline	
+gcc	-Os	antidot_Motor_Flector	inline	
+gcc	-Os	project_Motor_Flector	CALL	user->call galoot::core::weight_dual
+gcc	-Os	antiproject_Motor_Flector	CALL	user->call galoot::core::weight_dual
+gcc	-Os	compose_Motor_Flector	inline	
+gcc	-Os	geometric_product_Point_Plane	inline	
+gcc	-Os	times_Point_Plane	inline	
+gcc	-Os	wedge_Point_Plane	inline	
+gcc	-Os	caret_Point_Plane	inline	
+gcc	-Os	antiproduct_Point_Plane	inline	
+gcc	-Os	percent_Point_Plane	inline	
+gcc	-Os	antiwedge_Point_Plane	inline	
+gcc	-Os	ampersand_Point_Plane	inline	
+gcc	-Os	dot_Point_Plane	inline	
+gcc	-Os	antidot_Point_Plane	inline	
+gcc	-Os	project_Point_Plane	inline	
+gcc	-Os	antiproject_Point_Plane	inline	
+gcc	-Os	compose_Point_Plane	inline	
+gcc	-Os	geometric_product_Line_Point	inline	
+gcc	-Os	times_Line_Point	inline	
+gcc	-Os	wedge_Line_Point	inline	
+gcc	-Os	caret_Line_Point	inline	
+gcc	-Os	antiproduct_Line_Point	inline	
+gcc	-Os	percent_Line_Point	inline	
+gcc	-Os	antiwedge_Line_Point	inline	
+gcc	-Os	ampersand_Line_Point	inline	
+gcc	-Os	dot_Line_Point	inline	
+gcc	-Os	antidot_Line_Point	inline	
+gcc	-Os	project_Line_Point	inline	
+gcc	-Os	antiproject_Line_Point	inline	
+gcc	-Os	compose_Line_Point	inline	
+gcc	-Os	geometric_product_Plane_Point	inline	
+gcc	-Os	times_Plane_Point	inline	
+gcc	-Os	wedge_Plane_Point	inline	
+gcc	-Os	caret_Plane_Point	inline	
+gcc	-Os	antiproduct_Plane_Point	inline	
+gcc	-Os	percent_Plane_Point	inline	
+gcc	-Os	antiwedge_Plane_Point	inline	
+gcc	-Os	ampersand_Plane_Point	inline	
+gcc	-Os	dot_Plane_Point	inline	
+gcc	-Os	antidot_Plane_Point	inline	
+gcc	-Os	project_Plane_Point	inline	
+gcc	-Os	antiproject_Plane_Point	inline	
+gcc	-Os	compose_Plane_Point	inline	
+gcc	-Os	geometric_product_Line_Line	inline	
+gcc	-Os	times_Line_Line	inline	
+gcc	-Os	wedge_Line_Line	inline	
+gcc	-Os	caret_Line_Line	inline	
+gcc	-Os	antiproduct_Line_Line	inline	
+gcc	-Os	percent_Line_Line	inline	
+gcc	-Os	antiwedge_Line_Line	inline	
+gcc	-Os	ampersand_Line_Line	inline	
+gcc	-Os	plus_Line_Line	inline	
+gcc	-Os	minus_Line_Line	inline	
+gcc	-Os	dot_Line_Line	inline	
+gcc	-Os	antidot_Line_Line	inline	
+gcc	-Os	project_Line_Line	inline	
+gcc	-Os	antiproject_Line_Line	inline	
+gcc	-Os	compose_Line_Line	inline	
+gcc	-Os	geometric_product_CFull_CFull	inline	
+gcc	-Os	times_CFull_CFull	inline	
+gcc	-Os	wedge_CFull_CFull	inline	
+gcc	-Os	caret_CFull_CFull	inline	
+gcc	-Os	antiproduct_CFull_CFull	inline	
+gcc	-Os	percent_CFull_CFull	inline	
+gcc	-Os	antiwedge_CFull_CFull	inline	
+gcc	-Os	ampersand_CFull_CFull	inline	
+gcc	-Os	plus_CFull_CFull	inline	
+gcc	-Os	minus_CFull_CFull	inline	
+gcc	-Os	dot_CFull_CFull	CALL	user->jmp galoot::core::dot
+gcc	-Os	antidot_CFull_CFull	CALL	user->call galoot::core::right_complement
+gcc	-Os	project_CFull_CFull	CALL	galoot::core::weight_dual->call galoot::core::bulk; user->call galoot::core::weight_dual
+gcc	-Os	antiproject_CFull_CFull	CALL	galoot::core::weight_dual->call galoot::core::bulk; user->call galoot::core::weight_dual
+gcc	-Os	compose_CFull_CFull	ERROR	the command failed with exit status 1: In file included from /tmp/tmp3qs499h1/compose_CFull_CFull.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp: In instantiation of ‘constexpr galoot::core:
+gcc	-Os	geometric_product_CEven_CEven	inline	
+gcc	-Os	times_CEven_CEven	inline	
+gcc	-Os	wedge_CEven_CEven	inline	
+gcc	-Os	caret_CEven_CEven	inline	
+gcc	-Os	antiproduct_CEven_CEven	inline	
+gcc	-Os	percent_CEven_CEven	inline	
+gcc	-Os	antiwedge_CEven_CEven	inline	
+gcc	-Os	ampersand_CEven_CEven	inline	
+gcc	-Os	plus_CEven_CEven	inline	
+gcc	-Os	minus_CEven_CEven	inline	
+gcc	-Os	dot_CEven_CEven	CALL	user->jmp galoot::core::dot
+gcc	-Os	antidot_CEven_CEven	inline	
+gcc	-Os	project_CEven_CEven	inline	
+gcc	-Os	antiproject_CEven_CEven	inline	
+gcc	-Os	compose_CEven_CEven	inline	
+gcc	-Os	geometric_product_CVec_CBiv	inline	
+gcc	-Os	times_CVec_CBiv	inline	
+gcc	-Os	wedge_CVec_CBiv	inline	
+gcc	-Os	caret_CVec_CBiv	inline	
+gcc	-Os	antiproduct_CVec_CBiv	inline	
+gcc	-Os	percent_CVec_CBiv	inline	
+gcc	-Os	antiwedge_CVec_CBiv	inline	
+gcc	-Os	ampersand_CVec_CBiv	inline	
+gcc	-Os	dot_CVec_CBiv	inline	
+gcc	-Os	antidot_CVec_CBiv	inline	
+gcc	-Os	project_CVec_CBiv	inline	
+gcc	-Os	antiproject_CVec_CBiv	inline	
+gcc	-Os	compose_CVec_CBiv	inline	
+gcc	-Os	geometric_product_VFull_VFull	inline	
+gcc	-Os	times_VFull_VFull	inline	
+gcc	-Os	wedge_VFull_VFull	inline	
+gcc	-Os	caret_VFull_VFull	inline	
+gcc	-Os	antiproduct_VFull_VFull	inline	
+gcc	-Os	percent_VFull_VFull	inline	
+gcc	-Os	antiwedge_VFull_VFull	inline	
+gcc	-Os	ampersand_VFull_VFull	inline	
+gcc	-Os	plus_VFull_VFull	inline	
+gcc	-Os	minus_VFull_VFull	inline	
+gcc	-Os	dot_VFull_VFull	inline	
+gcc	-Os	antidot_VFull_VFull	inline	
+gcc	-Os	project_VFull_VFull	inline	
+gcc	-Os	antiproject_VFull_VFull	inline	
+gcc	-Os	compose_VFull_VFull	ERROR	the command failed with exit status 1: In file included from /tmp/tmpap90agxw/compose_VFull_VFull.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp: In instantiation of ‘constexpr galoot::core:
+gcc	-Os	geometric_product_VRotor_VVec	inline	
+gcc	-Os	times_VRotor_VVec	inline	
+gcc	-Os	wedge_VRotor_VVec	inline	
+gcc	-Os	caret_VRotor_VVec	inline	
+gcc	-Os	antiproduct_VRotor_VVec	inline	
+gcc	-Os	percent_VRotor_VVec	inline	
+gcc	-Os	antiwedge_VRotor_VVec	inline	
+gcc	-Os	ampersand_VRotor_VVec	inline	
+gcc	-Os	dot_VRotor_VVec	inline	
+gcc	-Os	antidot_VRotor_VVec	inline	
+gcc	-Os	project_VRotor_VVec	inline	
+gcc	-Os	antiproject_VRotor_VVec	inline	
+gcc	-Os	compose_VRotor_VVec	inline	
+gcc	-Os	transform_Point_Motor	inline	
+gcc	-Os	transform_Line_Motor	inline	
+gcc	-Os	transform_Plane_Motor	inline	
+gcc	-Os	transform_Full_Motor	inline	
+gcc	-Os	transform_CVec_CEven	inline	
+gcc	-Os	transform_CFull_CEven	inline	
+gcc	-Os	transform_VVec_VRotor	inline	
+gcc	-Os	transform_VFull_VRotor	inline	
+gcc	-Os	change_Full	inline	
+gcc	-Os	change_back_Full	inline	
+gcc	-Os	change_Point	inline	
+gcc	-Os	convert_Motor	inline	
+gcc	-Os	truncate_Full	inline	
+gcc	-Os	part_Full	inline	
+gcc	-Os	part_CFull	inline	
+gcc	-Os	truncate_CFull	inline	
+clang	-Os	reverse_Full	CALL	user->jmp galoot::core::reverse
+clang	-Os	tilde_Full	CALL	user->jmp galoot::core::reverse
+clang	-Os	antireverse_Full	CALL	user->jmp galoot::core::antireverse
+clang	-Os	grade_involution_Full	CALL	user->jmp galoot::core::grade_involution
+clang	-Os	right_complement_Full	CALL	user->jmp galoot::core::right_complement
+clang	-Os	bang_Full	CALL	user->jmp galoot::core::right_complement
+clang	-Os	left_complement_Full	CALL	user->jmp galoot::core::left_complement
+clang	-Os	bulk_Full	CALL	galoot::core::bulk->callq galoot::core::reverse; user->jmp galoot::core::bulk
+clang	-Os	weight_Full	inline	
+clang	-Os	bulk_dual_Full	CALL	galoot::core::bulk_dual->callq galoot::core::reverse; user->jmp galoot::core::bulk_dual
+clang	-Os	weight_dual_Full	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->jmp galoot::core::weight_dual
+clang	-Os	left_bulk_dual_Full	CALL	galoot::core::left_bulk_dual->callq galoot::core::reverse; user->jmp galoot::core::left_bulk_dual
+clang	-Os	left_weight_dual_Full	inline	
+clang	-Os	negate_Full	inline	
+clang	-Os	scale_Full	inline	
+clang	-Os	scale_right_Full	inline	
+clang	-Os	divide_Full	inline	
+clang	-Os	reverse_Motor	inline	
+clang	-Os	tilde_Motor	inline	
+clang	-Os	antireverse_Motor	inline	
+clang	-Os	grade_involution_Motor	inline	
+clang	-Os	right_complement_Motor	inline	
+clang	-Os	bang_Motor	inline	
+clang	-Os	left_complement_Motor	inline	
+clang	-Os	bulk_Motor	inline	
+clang	-Os	weight_Motor	inline	
+clang	-Os	bulk_dual_Motor	inline	
+clang	-Os	weight_dual_Motor	inline	
+clang	-Os	left_bulk_dual_Motor	inline	
+clang	-Os	left_weight_dual_Motor	inline	
+clang	-Os	negate_Motor	inline	
+clang	-Os	scale_Motor	inline	
+clang	-Os	scale_right_Motor	inline	
+clang	-Os	divide_Motor	inline	
+clang	-Os	reverse_Line	inline	
+clang	-Os	tilde_Line	inline	
+clang	-Os	antireverse_Line	inline	
+clang	-Os	grade_involution_Line	inline	
+clang	-Os	right_complement_Line	inline	
+clang	-Os	bang_Line	inline	
+clang	-Os	left_complement_Line	inline	
+clang	-Os	bulk_Line	inline	
+clang	-Os	weight_Line	inline	
+clang	-Os	bulk_dual_Line	inline	
+clang	-Os	weight_dual_Line	inline	
+clang	-Os	left_bulk_dual_Line	inline	
+clang	-Os	left_weight_dual_Line	inline	
+clang	-Os	negate_Line	inline	
+clang	-Os	scale_Line	inline	
+clang	-Os	scale_right_Line	inline	
+clang	-Os	divide_Line	inline	
+clang	-Os	reverse_CFull	CALL	user->jmp galoot::core::reverse
+clang	-Os	tilde_CFull	CALL	user->jmp galoot::core::reverse
+clang	-Os	antireverse_CFull	CALL	user->jmp galoot::core::antireverse
+clang	-Os	grade_involution_CFull	CALL	user->jmp galoot::core::grade_involution
+clang	-Os	right_complement_CFull	CALL	user->jmp galoot::core::right_complement
+clang	-Os	bang_CFull	CALL	user->jmp galoot::core::right_complement
+clang	-Os	left_complement_CFull	CALL	user->jmp galoot::core::left_complement
+clang	-Os	bulk_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->jmp galoot::core::bulk
+clang	-Os	weight_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::left_complement; user->callq galoot::core::right_complement
+clang	-Os	bulk_dual_CFull	CALL	galoot::core::bulk_dual->callq galoot::core::reverse; user->jmp galoot::core::bulk_dual
+clang	-Os	weight_dual_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::right_complement
+clang	-Os	left_bulk_dual_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::left_complement
+clang	-Os	left_weight_dual_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::left_complement; user->callq galoot::core::right_complement
+clang	-Os	negate_CFull	inline	
+clang	-Os	scale_CFull	inline	
+clang	-Os	scale_right_CFull	inline	
+clang	-Os	divide_CFull	inline	
+clang	-Os	reverse_CEven	CALL	user->jmp galoot::core::reverse
+clang	-Os	tilde_CEven	CALL	user->jmp galoot::core::reverse
+clang	-Os	antireverse_CEven	CALL	user->jmp galoot::core::antireverse
+clang	-Os	grade_involution_CEven	CALL	user->jmp galoot::core::grade_involution
+clang	-Os	right_complement_CEven	CALL	user->jmp galoot::core::right_complement
+clang	-Os	bang_CEven	CALL	user->jmp galoot::core::right_complement
+clang	-Os	left_complement_CEven	CALL	user->jmp galoot::core::left_complement
+clang	-Os	bulk_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; user->jmp galoot::core::bulk
+clang	-Os	weight_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk
+clang	-Os	bulk_dual_CEven	CALL	galoot::core::bulk_dual->callq galoot::core::reverse; user->jmp galoot::core::bulk_dual
+clang	-Os	weight_dual_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->jmp galoot::core::weight_dual
+clang	-Os	left_bulk_dual_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::left_bulk_dual->callq galoot::core::bulk; user->jmp galoot::core::left_bulk_dual
+clang	-Os	left_weight_dual_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk
+clang	-Os	negate_CEven	inline	
+clang	-Os	scale_CEven	inline	
+clang	-Os	scale_right_CEven	inline	
+clang	-Os	divide_CEven	inline	
+clang	-Os	reverse_CVec	inline	
+clang	-Os	tilde_CVec	inline	
+clang	-Os	antireverse_CVec	inline	
+clang	-Os	grade_involution_CVec	inline	
+clang	-Os	right_complement_CVec	inline	
+clang	-Os	bang_CVec	inline	
+clang	-Os	left_complement_CVec	inline	
+clang	-Os	bulk_CVec	inline	
+clang	-Os	weight_CVec	inline	
+clang	-Os	bulk_dual_CVec	inline	
+clang	-Os	weight_dual_CVec	inline	
+clang	-Os	left_bulk_dual_CVec	inline	
+clang	-Os	left_weight_dual_CVec	inline	
+clang	-Os	negate_CVec	inline	
+clang	-Os	scale_CVec	inline	
+clang	-Os	scale_right_CVec	inline	
+clang	-Os	divide_CVec	inline	
+clang	-Os	reverse_VFull	inline	
+clang	-Os	tilde_VFull	inline	
+clang	-Os	antireverse_VFull	inline	
+clang	-Os	grade_involution_VFull	inline	
+clang	-Os	right_complement_VFull	inline	
+clang	-Os	bang_VFull	inline	
+clang	-Os	left_complement_VFull	inline	
+clang	-Os	bulk_VFull	inline	
+clang	-Os	weight_VFull	inline	
+clang	-Os	bulk_dual_VFull	inline	
+clang	-Os	weight_dual_VFull	inline	
+clang	-Os	left_bulk_dual_VFull	inline	
+clang	-Os	left_weight_dual_VFull	inline	
+clang	-Os	negate_VFull	inline	
+clang	-Os	scale_VFull	inline	
+clang	-Os	scale_right_VFull	inline	
+clang	-Os	divide_VFull	inline	
+clang	-Os	reverse_VRotor	inline	
+clang	-Os	tilde_VRotor	inline	
+clang	-Os	antireverse_VRotor	inline	
+clang	-Os	grade_involution_VRotor	inline	
+clang	-Os	right_complement_VRotor	inline	
+clang	-Os	bang_VRotor	inline	
+clang	-Os	left_complement_VRotor	inline	
+clang	-Os	bulk_VRotor	inline	
+clang	-Os	weight_VRotor	inline	
+clang	-Os	bulk_dual_VRotor	inline	
+clang	-Os	weight_dual_VRotor	inline	
+clang	-Os	left_bulk_dual_VRotor	inline	
+clang	-Os	left_weight_dual_VRotor	inline	
+clang	-Os	negate_VRotor	inline	
+clang	-Os	scale_VRotor	inline	
+clang	-Os	scale_right_VRotor	inline	
+clang	-Os	divide_VRotor	inline	
+clang	-Os	geometric_product_Full_Full	inline	
+clang	-Os	times_Full_Full	inline	
+clang	-Os	wedge_Full_Full	inline	
+clang	-Os	caret_Full_Full	inline	
+clang	-Os	antiproduct_Full_Full	inline	
+clang	-Os	percent_Full_Full	inline	
+clang	-Os	antiwedge_Full_Full	inline	
+clang	-Os	ampersand_Full_Full	inline	
+clang	-Os	plus_Full_Full	CALL	user->jmp galoot::core
+clang	-Os	minus_Full_Full	CALL	user->jmp galoot::core
+clang	-Os	dot_Full_Full	CALL	galoot::core::dot->callq galoot::core::reverse; user->jmp galoot::core::dot
+clang	-Os	antidot_Full_Full	CALL	galoot::core::dot->callq galoot::core::reverse; user->callq galoot::core::dot
+clang	-Os	project_Full_Full	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->callq galoot::core::weight_dual
+clang	-Os	antiproject_Full_Full	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->callq galoot::core::weight_dual
+clang	-Os	compose_Full_Full	ERROR	the command failed with exit status 1: In file included from /tmp/tmp33feauxh/compose_Full_Full.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp:658:17: error: static assertion failed due to r
+clang	-Os	geometric_product_Motor_Motor	inline	
+clang	-Os	times_Motor_Motor	inline	
+clang	-Os	wedge_Motor_Motor	inline	
+clang	-Os	caret_Motor_Motor	inline	
+clang	-Os	antiproduct_Motor_Motor	inline	
+clang	-Os	percent_Motor_Motor	inline	
+clang	-Os	antiwedge_Motor_Motor	inline	
+clang	-Os	ampersand_Motor_Motor	inline	
+clang	-Os	plus_Motor_Motor	CALL	user->jmp galoot::core
+clang	-Os	minus_Motor_Motor	CALL	user->jmp galoot::core
+clang	-Os	dot_Motor_Motor	inline	
+clang	-Os	antidot_Motor_Motor	inline	
+clang	-Os	project_Motor_Motor	inline	
+clang	-Os	antiproject_Motor_Motor	inline	
+clang	-Os	compose_Motor_Motor	inline	
+clang	-Os	geometric_product_Motor_Flector	inline	
+clang	-Os	times_Motor_Flector	inline	
+clang	-Os	wedge_Motor_Flector	inline	
+clang	-Os	caret_Motor_Flector	inline	
+clang	-Os	antiproduct_Motor_Flector	inline	
+clang	-Os	percent_Motor_Flector	inline	
+clang	-Os	antiwedge_Motor_Flector	inline	
+clang	-Os	ampersand_Motor_Flector	inline	
+clang	-Os	dot_Motor_Flector	inline	
+clang	-Os	antidot_Motor_Flector	inline	
+clang	-Os	project_Motor_Flector	inline	
+clang	-Os	antiproject_Motor_Flector	inline	
+clang	-Os	compose_Motor_Flector	inline	
+clang	-Os	geometric_product_Point_Plane	inline	
+clang	-Os	times_Point_Plane	inline	
+clang	-Os	wedge_Point_Plane	inline	
+clang	-Os	caret_Point_Plane	inline	
+clang	-Os	antiproduct_Point_Plane	inline	
+clang	-Os	percent_Point_Plane	inline	
+clang	-Os	antiwedge_Point_Plane	inline	
+clang	-Os	ampersand_Point_Plane	inline	
+clang	-Os	dot_Point_Plane	inline	
+clang	-Os	antidot_Point_Plane	inline	
+clang	-Os	project_Point_Plane	inline	
+clang	-Os	antiproject_Point_Plane	inline	
+clang	-Os	compose_Point_Plane	inline	
+clang	-Os	geometric_product_Line_Point	inline	
+clang	-Os	times_Line_Point	inline	
+clang	-Os	wedge_Line_Point	inline	
+clang	-Os	caret_Line_Point	inline	
+clang	-Os	antiproduct_Line_Point	inline	
+clang	-Os	percent_Line_Point	inline	
+clang	-Os	antiwedge_Line_Point	inline	
+clang	-Os	ampersand_Line_Point	inline	
+clang	-Os	dot_Line_Point	inline	
+clang	-Os	antidot_Line_Point	inline	
+clang	-Os	project_Line_Point	inline	
+clang	-Os	antiproject_Line_Point	inline	
+clang	-Os	compose_Line_Point	inline	
+clang	-Os	geometric_product_Plane_Point	inline	
+clang	-Os	times_Plane_Point	inline	
+clang	-Os	wedge_Plane_Point	inline	
+clang	-Os	caret_Plane_Point	inline	
+clang	-Os	antiproduct_Plane_Point	inline	
+clang	-Os	percent_Plane_Point	inline	
+clang	-Os	antiwedge_Plane_Point	inline	
+clang	-Os	ampersand_Plane_Point	inline	
+clang	-Os	dot_Plane_Point	inline	
+clang	-Os	antidot_Plane_Point	inline	
+clang	-Os	project_Plane_Point	inline	
+clang	-Os	antiproject_Plane_Point	inline	
+clang	-Os	compose_Plane_Point	inline	
+clang	-Os	geometric_product_Line_Line	inline	
+clang	-Os	times_Line_Line	inline	
+clang	-Os	wedge_Line_Line	inline	
+clang	-Os	caret_Line_Line	inline	
+clang	-Os	antiproduct_Line_Line	inline	
+clang	-Os	percent_Line_Line	inline	
+clang	-Os	antiwedge_Line_Line	inline	
+clang	-Os	ampersand_Line_Line	inline	
+clang	-Os	plus_Line_Line	CALL	user->jmp galoot::core
+clang	-Os	minus_Line_Line	CALL	user->jmp galoot::core
+clang	-Os	dot_Line_Line	inline	
+clang	-Os	antidot_Line_Line	inline	
+clang	-Os	project_Line_Line	inline	
+clang	-Os	antiproject_Line_Line	inline	
+clang	-Os	compose_Line_Line	inline	
+clang	-Os	geometric_product_CFull_CFull	inline	
+clang	-Os	times_CFull_CFull	inline	
+clang	-Os	wedge_CFull_CFull	inline	
+clang	-Os	caret_CFull_CFull	inline	
+clang	-Os	antiproduct_CFull_CFull	inline	
+clang	-Os	percent_CFull_CFull	inline	
+clang	-Os	antiwedge_CFull_CFull	inline	
+clang	-Os	ampersand_CFull_CFull	inline	
+clang	-Os	plus_CFull_CFull	CALL	user->jmp galoot::core
+clang	-Os	minus_CFull_CFull	CALL	user->jmp galoot::core
+clang	-Os	dot_CFull_CFull	CALL	galoot::core::dot->callq galoot::core::reverse; user->jmp galoot::core::dot
+clang	-Os	antidot_CFull_CFull	CALL	galoot::core::dot->callq galoot::core::reverse; user->callq galoot::core::dot; user->callq galoot::core::right_complement
+clang	-Os	project_CFull_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::right_complement
+clang	-Os	antiproject_CFull_CFull	CALL	galoot::core::bulk->callq galoot::core::left_complement; galoot::core::bulk->callq galoot::core::reverse; user->callq galoot::core::bulk; user->callq galoot::core::right_complement
+clang	-Os	compose_CFull_CFull	ERROR	the command failed with exit status 1: In file included from /tmp/tmp7jj_06ys/compose_CFull_CFull.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp:658:17: error: static assertion failed due to
+clang	-Os	geometric_product_CEven_CEven	inline	
+clang	-Os	times_CEven_CEven	inline	
+clang	-Os	wedge_CEven_CEven	inline	
+clang	-Os	caret_CEven_CEven	inline	
+clang	-Os	antiproduct_CEven_CEven	inline	
+clang	-Os	percent_CEven_CEven	inline	
+clang	-Os	antiwedge_CEven_CEven	inline	
+clang	-Os	ampersand_CEven_CEven	inline	
+clang	-Os	plus_CEven_CEven	CALL	user->jmp galoot::core
+clang	-Os	minus_CEven_CEven	CALL	user->jmp galoot::core
+clang	-Os	dot_CEven_CEven	CALL	galoot::core::dot->callq galoot::core::reverse; user->jmp galoot::core::dot
+clang	-Os	antidot_CEven_CEven	CALL	galoot::core::dot->callq galoot::core::reverse; user->callq galoot::core::dot
+clang	-Os	project_CEven_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->callq galoot::core::weight_dual
+clang	-Os	antiproject_CEven_CEven	CALL	galoot::core::bulk->callq galoot::core::reverse; galoot::core::weight_dual->callq galoot::core::bulk; user->callq galoot::core::weight_dual
+clang	-Os	compose_CEven_CEven	inline	
+clang	-Os	geometric_product_CVec_CBiv	inline	
+clang	-Os	times_CVec_CBiv	inline	
+clang	-Os	wedge_CVec_CBiv	inline	
+clang	-Os	caret_CVec_CBiv	inline	
+clang	-Os	antiproduct_CVec_CBiv	inline	
+clang	-Os	percent_CVec_CBiv	inline	
+clang	-Os	antiwedge_CVec_CBiv	inline	
+clang	-Os	ampersand_CVec_CBiv	inline	
+clang	-Os	dot_CVec_CBiv	inline	
+clang	-Os	antidot_CVec_CBiv	inline	
+clang	-Os	project_CVec_CBiv	inline	
+clang	-Os	antiproject_CVec_CBiv	inline	
+clang	-Os	compose_CVec_CBiv	inline	
+clang	-Os	geometric_product_VFull_VFull	inline	
+clang	-Os	times_VFull_VFull	inline	
+clang	-Os	wedge_VFull_VFull	inline	
+clang	-Os	caret_VFull_VFull	inline	
+clang	-Os	antiproduct_VFull_VFull	inline	
+clang	-Os	percent_VFull_VFull	inline	
+clang	-Os	antiwedge_VFull_VFull	inline	
+clang	-Os	ampersand_VFull_VFull	inline	
+clang	-Os	plus_VFull_VFull	CALL	user->jmp galoot::core
+clang	-Os	minus_VFull_VFull	CALL	user->jmp galoot::core
+clang	-Os	dot_VFull_VFull	CALL	user->jmp galoot::core::dot
+clang	-Os	antidot_VFull_VFull	inline	
+clang	-Os	project_VFull_VFull	inline	
+clang	-Os	antiproject_VFull_VFull	inline	
+clang	-Os	compose_VFull_VFull	ERROR	the command failed with exit status 1: In file included from /tmp/tmpewj3_dob/compose_VFull_VFull.cpp:6: /tmp/claude-1000/-home-brianm-projects-utils-math-core/fd84b452-4222-4a56-be70-661be7f37273/scratchpad/rsurvey/tree/include/galoot/core/transform.hpp:658:17: error: static assertion failed due to
+clang	-Os	geometric_product_VRotor_VVec	inline	
+clang	-Os	times_VRotor_VVec	inline	
+clang	-Os	wedge_VRotor_VVec	inline	
+clang	-Os	caret_VRotor_VVec	inline	
+clang	-Os	antiproduct_VRotor_VVec	inline	
+clang	-Os	percent_VRotor_VVec	inline	
+clang	-Os	antiwedge_VRotor_VVec	inline	
+clang	-Os	ampersand_VRotor_VVec	inline	
+clang	-Os	dot_VRotor_VVec	inline	
+clang	-Os	antidot_VRotor_VVec	inline	
+clang	-Os	project_VRotor_VVec	inline	
+clang	-Os	antiproject_VRotor_VVec	inline	
+clang	-Os	compose_VRotor_VVec	inline	
+clang	-Os	transform_Point_Motor	inline	
+clang	-Os	transform_Line_Motor	inline	
+clang	-Os	transform_Plane_Motor	inline	
+clang	-Os	transform_Full_Motor	inline	
+clang	-Os	transform_CVec_CEven	inline	
+clang	-Os	transform_CFull_CEven	inline	
+clang	-Os	transform_VVec_VRotor	inline	
+clang	-Os	transform_VFull_VRotor	inline	
+clang	-Os	change_Full	inline	
+clang	-Os	change_back_Full	inline	
+clang	-Os	change_Point	inline	
+clang	-Os	convert_Motor	CALL	user->callq galoot::core::mv
+clang	-Os	truncate_Full	inline	
+clang	-Os	part_Full	inline	
+clang	-Os	part_CFull	CALL	user->jmp galoot::core::part
+clang	-Os	truncate_CFull	CALL	user->jmp galoot::core::truncate

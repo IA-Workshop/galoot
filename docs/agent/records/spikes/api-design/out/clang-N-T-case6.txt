@@ -1,0 +1,11 @@
+In file included from program.cpp:5:
+./fixture.hpp:289:10: error: implicit instantiation of undefined template 'apx::no_component_named<name_list<3>{{"e1"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}>>'
+  289 |   return no_component_named<Name, std::remove_cvref_t<X>>{};
+      |          ^
+program.cpp:69:8: note: in instantiation of function template specialization 'apx::get<name_list<3>{{"e1"}}, apx::mvn<rga3, name_list<24>{{"e41 e42 e43 e23 e31 e12"}}> &>' requested here
+   69 |   r += get<"e1">(l);
+      |        ^
+./fixture.hpp:80:8: note: template is declared here
+   80 | struct no_component_named;
+      |        ^
+1 error generated.

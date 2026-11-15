@@ -1,0 +1,9 @@
+forbid_values_required	killed
+semicolon_not_translated	killed
+will_fail_counted	killed
+handler_prefix_kept	killed
+ambiguous_literal_pins_first	killed
+nested_literal_pins_shortest	killed
+macro_definition_read	killed
+comments_read	killed
+error_directive_ignored	killed

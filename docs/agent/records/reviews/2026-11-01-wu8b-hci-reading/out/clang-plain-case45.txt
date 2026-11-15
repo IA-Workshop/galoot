@@ -1,0 +1,9 @@
+In file included from user.cpp:14:
+In file included from include/galoot/core.hpp:12:
+include/galoot/core/mv.hpp:434:17: error: static assertion failed due to requirement 'scalar_has_ring_operations': mv: the scalar type must support +, -, *, unary - and construction from an integer coefficient
+  434 |   static_assert(scalar_has_ring_operations,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+user.cpp:217:45: note: in instantiation of template class 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, addonly>' requested here
+  217 |   const gc::mv<rga3, point_layout, addonly> s{};
+      |                                             ^
+1 error generated.

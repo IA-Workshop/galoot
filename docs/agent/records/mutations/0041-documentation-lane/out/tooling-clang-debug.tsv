@@ -1,0 +1,11 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+throw_in_assert	clang-debug	6ca81adf2286	killed	killed	core.bare_compile_format_no_exceptions core.bare_compile_no_exceptions rga3.bare_compile_no_exceptions	-	-	-	-	-
+throw_in_transform	clang-debug	6ca81adf2286	killed	killed	rga3.bare_compile_no_exceptions	-	-	-	-	-
+throw_in_format	clang-debug	6ca81adf2286	killed	killed	core.bare_compile_format_no_exceptions	-	-	-	-	-
+rejected_ignored	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_accepts_kinds tools.doc_examples_extracts_kinds tools.doc_examples_rejects_no_literal tools.doc_examples_rejects_two_literals	-	-	-	-	-
+rejected_literal_unchecked	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_rejects_no_literal tools.doc_examples_rejects_two_literals	-	-	-	-	-
+rejected_literal_at_least_one	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_rejects_two_literals	-	-	-	-	-
+cmake_not_extracted	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_extracts_cmake	-	-	-	-	-
+cmake_extracted_with_programs	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_extracts_kinds	-	-	-	-	-
+pages_registration_ignored	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_rejects_unregistered	-	-	-	-	-
+pages_agent_read	clang-debug	6ca81adf2286	killed	killed	tools.doc_examples_accepts_registered tools.doc_examples_rejects_unregistered	-	-	-	-	-

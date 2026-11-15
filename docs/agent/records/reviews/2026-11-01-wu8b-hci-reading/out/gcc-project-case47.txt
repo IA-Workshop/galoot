@@ -1,0 +1,10 @@
+In file included from include/galoot/core.hpp:12,
+                 from user.cpp:14:
+include/galoot/core/mv.hpp: In instantiation of ‘struct galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, std::unique_ptr<double> >’:
+user.cpp:223:61:   required from here
+  223 |   const gc::mv<rga3, point_layout, std::unique_ptr<double>> s{};
+      |                                                             ^
+include/galoot/core/mv.hpp:430:17: error: static assertion failed: mv: the scalar type must be default constructible, copyable, and assignable; give it a default constructor that makes its zero
+  430 |   static_assert(scalar_is_semiregular,
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+  • ‘galoot::core::mv<rga3, galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}, std::unique_ptr<double> >::scalar_is_semiregular’ evaluates to false

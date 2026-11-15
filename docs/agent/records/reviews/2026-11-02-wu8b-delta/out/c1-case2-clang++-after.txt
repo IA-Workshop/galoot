@@ -1,0 +1,60 @@
+In file included from $S/probes/c1.cpp:12:
+$S/new/include/galoot/core/mv.hpp:601:19: error: static assertion failed: mv: give the coefficients one by one, not as one array or braced list; write one value for each component, in the order the layout lists them
+  601 |     static_assert(false, "mv: give the coefficients one by one, not as one "
+      |                   ^~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:812:36: note: in instantiation of function template specialization 'galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>::mv<4UL>' requested here
+  812 |                       void_t<decltype(_Arr<_Ti>{{std::declval<_Tp>()}})>>
+      |                                                  ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:824:7: note: during template argument deduction for class template partial specialization '_Build_FUN<_Ind, _Tp, _Ti, void_t<decltype(_Arr<_Ti>{{std::declval<_Tp>()}})>>' [with _Ind = 0, _Tp = double (&)[4], _Ti = galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>]
+  824 |     : _Build_FUN<_Ind, _Tp, _Ti>...
+      |       ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:824:7: note: in instantiation of template class 'std::__detail::__variant::_Build_FUN<0, double (&)[4], galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>>' requested here
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:833:18: note: in instantiation of template class 'std::__detail::__variant::_Build_FUNs<double (&)[4], std::variant<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, std::span<const double>>>' requested here
+  833 |       = decltype(_Build_FUNs<_Tp, _Variant>::_S_fun(std::declval<_Tp>()));
+      |                  ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:842:44: note: in instantiation of template type alias '_FUN_type' requested here
+  842 |     __accepted_index<_Tp, _Variant, void_t<_FUN_type<_Tp, _Variant>>>
+      |                                            ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1484:27: note: during template argument deduction for variable template partial specialization '__accepted_index<_Tp, _Variant, void_t<_FUN_type<_Tp, _Variant>>>' [with _Tp = double (&)[4], _Variant = variant<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, std::span<const double>>]
+ 1484 |           = __detail::__variant::__accepted_index<_Tp, variant>;
+      |                                  ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1490:36: note: in instantiation of static data member 'std::variant<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, std::span<const double>>::__accepted_index<double (&)[4]>' requested here
+ 1490 |         using __accepted_type = __to_type<__accepted_index<_Tp>>;
+      |                                           ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1523:24: note: in instantiation of template type alias '__accepted_type' requested here
+ 1523 |                typename _Tj = __accepted_type<_Tp&&>,
+      |                               ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1527:2: note: in instantiation of default argument for 'variant<double (&)[4], enable_if_t<sizeof...(_Types) != 0>, enable_if_t<__not_in_place_tag<double (&)[4]>>>' required here
+ 1527 |         variant(_Tp&& __t)
+      |         ^~~~~~~~~~~~~~~~~~
+ 1528 |         noexcept(is_nothrow_constructible_v<_Tj, _Tp>)
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1529 |         : variant(in_place_index<__accepted_index<_Tp>>,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1530 |                   std::forward<_Tp>(__t))
+      |                   ~~~~~~~~~~~~~~~~~~~~~~~
+ 1531 |         { }
+      |         ~~~
+$S/probes/c1.cpp:39:48: note: while substituting deduced template arguments into function template 'variant' [with _Tp = double (&)[4], $1 = (no value), $2 = (no value), _Tj = (no value), $4 = (no value)]
+   39 |   std::variant<Point, std::span<const double>> v = raw;
+      |                                                ^
+$S/probes/c1.cpp:39:48: error: no viable conversion from 'double[4]' to 'std::variant<Point, std::span<const double>>' (aka 'std::variant<core::mv<rga3, point_layout, double>, std::span<const double>>')
+   39 |   std::variant<Point, std::span<const double>> v = raw;
+      |                                                ^   ~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1514:7: note: candidate constructor not viable: no known conversion from 'double[4]' to 'const variant<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, std::span<const double>> &' for 1st argument
+ 1514 |       variant(const variant& __rhs) = default;
+      |       ^       ~~~~~~~~~~~~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1515:7: note: candidate constructor not viable: no known conversion from 'double[4]' to 'variant<galoot::core::mv<rga3, blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}, double>, std::span<const double>> &&' for 1st argument
+ 1515 |       variant(variant&&) = default;
+      |       ^       ~~~~~~~~~
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1527:2: note: candidate template ignored: requirement '18446744073709551615UL < sizeof...(_Types)' was not satisfied [with _Tp = double (&)[4], $1 = enable_if_t<sizeof...(_Types) != 0>, $2 = enable_if_t<__not_in_place_tag<double (&)[4]>>]
+ 1527 |         variant(_Tp&& __t)
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1537:2: note: explicit constructor is not a candidate
+ 1537 |         variant(in_place_type_t<_Tp>, _Args&&... __args)
+      |         ^
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/variant:1557:2: note: explicit constructor is not a candidate
+ 1557 |         variant(in_place_index_t<_Np>, _Args&&... __args)
+      |         ^
+2 errors generated.
+timed: probe delta-wu8b:probe-c1-2:clang++:new took 0.350 s (exit 1)

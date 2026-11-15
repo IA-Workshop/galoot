@@ -1,0 +1,26 @@
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:27:29: error: no matching function for call to 'change_basis'
+   27 |   [[maybe_unused]] auto q = core::change_basis<core::conformal_change<3>()>(5);
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1224:34: note: candidate template ignored: constraints not satisfied [with Value = basis_change<3UL + 2>{{{{{1, 0, 0, 0, 0}}, {{0, 1, 0, 0, 0}}, {{0, 0, 1, 0, 0}}, {{0, 0, 0, -1, 1}}, {{0, 0, 0, 1, 1}}}}, {{1, 1, 1, 2, 1}}}, X = int]
+ 1224 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+      |                                  ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1223:23: note: because 'int' does not satisfy 'multivector'
+ 1223 | template <auto Value, multivector X>
+      |                       ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/mv.hpp:133:23: note: because 'detail::is_multivector_v<std::remove_cvref_t<int>>' evaluated to false
+  133 | concept multivector = detail::is_multivector_v<std::remove_cvref_t<X>>;
+      |                       ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1103:1: note: candidate template ignored: template argument for template type parameter must be a type for template parameter 'C'
+ 1103 | change_basis(const mv<typename C::source, S, T>& x) {
+      | ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1171:34: note: candidate template ignored: template argument for template type parameter must be a type for template parameter 'C'
+ 1171 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+      |                                  ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/include/galoot/core/basis_change.hpp:1197:34: note: candidate template ignored: template argument for template type parameter must be a type for template parameter 'C'
+ 1197 | constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {
+      |                                  ^
+/home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/probes/overloads.cpp:13:36: error: unused parameter 'p' [-Werror,-Wunused-parameter]
+   13 | [[maybe_unused]] void use(const P& p) {
+      |                                    ^
+2 errors generated.
+timed: probe overloads-4-clang++ took 0.147 s (exit 1); row in /home/brianm/projects/utils/math-core/galoot/.claude/worktrees/wu12-delta-review/docs/agent/records/reviews/2026-11-09-wu12-delta-review/runs.tsv

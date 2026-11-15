@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+odd_versor_even_sign	clang-debug	a1546f9894ee	killed	killed	rga3.objects	-	-	rga3 Lines and Planes move as the Points that span them | the rga3 Flector e412 reflects (1, 2, 3, 1) to (1, 2, -3, 1) with weight +1 | the rga3 Flector e412 reflects the plane (0, 0, 1, -1) to (0, 0, 1, 1)	-	-

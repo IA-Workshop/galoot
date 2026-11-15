@@ -1,0 +1,9 @@
+mutation	preset	mode	build_exit	test_exit	verdict	failed_tests	static_asserts	test_lines	failed_cases	first_build_error
+float_exponent_ignored	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_exponent_ignored	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+float_bound_on_magnitude	gcc-debug	runtime	1	-	killed	-	mv.hpp:788	mv_test.cpp:35,mv_test.cpp:1646,mv_test.cpp:1711	-	include/galoot/core/mv.hpp:788:17: error: static assertion failed: apply: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
+float_bound_on_magnitude	clang-debug	runtime	1	-	killed	-	mv.hpp:788	mv_test.cpp:35,mv_test.cpp:1646,mv_test.cpp:1711	-	include/galoot/core/mv.hpp:788:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': apply: the scalar type cannot hold one of the product's exact coef
+integer_min_one_below	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_min_one_below	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_bound_one_above	gcc-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-
+integer_bound_one_above	clang-debug	runtime	0	8	killed	core.mv	-	-	apply checks that the scalar holds the plan's coefficients	-

@@ -1,0 +1,11 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+check_ignores_conditional_jump	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_conditional_jump	-	-	-	-	-
+check_ignores_register_call	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_keeps_overwritten_register	gcc-debug	d47e8f97c681+dirty	equivalent	equivalent	-	-	-	-	-	-
+check_ignores_explicit_object	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_explicit_object	-	-	-	-	-
+check_accepts_other_target	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_other_target	-	-	-	-	-
+alone_not_alone	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_alone_accepts tools.kernels_inline_alone_rejects_call	-	-	-	-	-
+alone_skips_missing	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_alone_rejects_missing_function	-	-	-	-	-
+check_ignores_jmp	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_conditional_jump tools.kernels_inline_rejects_jmp	-	-	-	-	-
+check_ignores_plt	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_plt tools.kernels_inline_rejects_register_call	-	-	-	-	-
+check_skips_missing	gcc-debug	d47e8f97c681+dirty	killed	killed	tools.kernels_inline_rejects_missing_function	-	-	-	-	-

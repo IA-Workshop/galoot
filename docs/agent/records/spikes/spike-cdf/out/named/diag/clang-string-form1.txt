@@ -1,0 +1,22 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/out/named/diag/string-missing.cpp:34:17: error: no matching function for call to 'get'
+   34 |   sink = sink + get<"e1">(l);
+      |                 ^~~~~~~~~
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:457:14: note: candidate template ignored: constraints not satisfied [with Name = fixed_string<3>{{"e1"}}, Alg = cdf::rga3, B = blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, T = double]
+  457 | constexpr T& get(mv<Alg, B, T>& x) {
+      |              ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:456:12: note: because 'has_blade<cdf::rga3, blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, fixed_string<3>{{"e1"}}>' evaluated to false
+  456 |   requires has_blade<Alg, B, Name>
+      |            ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:453:5: note: because 'index_of(blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, parse_name(fixed_string<3>{{"e1"}}, cdf::rga3::value.g.size())) < blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}.size' (6 < 6) evaluated to false
+  453 |     index_of(B, parse_name(Name, Alg::value.g.size())) < B.size;
+      |     ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:467:20: note: candidate template ignored: constraints not satisfied [with Name = fixed_string<3>{{"e1"}}, Alg = cdf::rga3, B = blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, T = double]
+  467 | constexpr const T& get(const mv<Alg, B, T>& x) {
+      |                    ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:466:12: note: because 'has_blade<cdf::rga3, blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, fixed_string<3>{{"e1"}}>' evaluated to false
+  466 |   requires has_blade<Alg, B, Name>
+      |            ^
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:453:5: note: because 'index_of(blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}, parse_name(fixed_string<3>{{"e1"}}, cdf::rga3::value.g.size())) < blade_set<6>{{{9, 10, 12, 6, 5, 3}}, {{-1, -1, -1, 1, -1, 1}}}.size' (6 < 6) evaluated to false
+  453 |     index_of(B, parse_name(Name, Alg::value.g.size())) < B.size;
+      |     ^
+1 error generated.

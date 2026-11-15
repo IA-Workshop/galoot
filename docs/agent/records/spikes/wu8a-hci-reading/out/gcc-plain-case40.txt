@@ -1,0 +1,19 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:269:44: error: wrong number of template arguments (2, should be 3)
+  269 |   using NoScalar = gc::mv<rga3, line_layout>;
+      |                                            ^
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+../../../../../include/galoot/core/mv.hpp:68:8: note: provided for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (semiregular<T>) struct galoot::core::mv’
+   68 | struct mv;
+      |        ^~
+first_user.cpp:269:20: error: expected type-specifier
+  269 |   using NoScalar = gc::mv<rga3, line_layout>;
+      |                    ^~
+first_user.cpp:270:9: error: ‘NoScalar’ does not name a type; did you mean ‘Scalar’?
+  270 |   const NoScalar s{};
+      |         ^~~~~~~~
+      |         Scalar
+first_user.cpp:271:8: error: ‘s’ was not declared in this scope
+  271 |   r += s.coefficients[0];
+      |        ^

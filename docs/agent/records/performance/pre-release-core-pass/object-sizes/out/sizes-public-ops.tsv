@@ -1,0 +1,9 @@
+compiler	level	side	revision	text	data	bss
+gcc	O0	before	805858966ecd	110511	8	0
+gcc	O0	after	a6f3196a46e5	123767	8	0
+gcc	O2	before	805858966ecd	4513	0	0
+gcc	O2	after	a6f3196a46e5	4497	0	0
+clang	O0	before	805858966ecd	74739	0	0
+clang	O0	after	a6f3196a46e5	76085	0	0
+clang	O2	before	805858966ecd	4766	0	0
+clang	O2	after	a6f3196a46e5	4347	0	0

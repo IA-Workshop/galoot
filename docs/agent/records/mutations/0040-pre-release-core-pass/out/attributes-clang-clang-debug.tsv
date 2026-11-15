@@ -1,0 +1,14 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+apply_not_forced	clang-debug	d382516a7961	killed	killed	rga3.kernels_inline	-	-	-	-	-
+run_product_not_forced	clang-debug	d382516a7961	killed	killed	rga3.kernels_inline	-	-	-	-	-
+transform_not_forced	clang-debug	d382516a7961	killed	killed	rga3.kernels_inline	-	-	-	-	-
+run_map_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+unary_apply_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+run_sum_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+sum_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+run_change_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+transform_middle_not_forced	clang-debug	d382516a7961	killed	survived	rga3.kernels_inline	-	-	-	-	expected to survive but killed
+transform_outer_not_forced	clang-debug	d382516a7961	survived	survived	-	-	-	-	-	-
+compose_not_forced	clang-debug	d382516a7961	killed	survived	rga3.kernels_inline	-	-	-	-	expected to survive but killed
+apply_result_layout_not_forced	clang-debug	d382516a7961	equivalent	equivalent	-	-	-	-	-	-
+unary_apply_result_layout_not_forced	clang-debug	d382516a7961	equivalent	equivalent	-	-	-	-	-	-

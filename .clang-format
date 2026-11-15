@@ -1,4 +1,5 @@
-# Layout of Galoot's C++ source; see docs/agent/governance/STYLE.md (S3).
+# Layout of Galoot's C++ source. Every change must leave clang-format with
+# this file nothing to change; the format-check target checks it.
 # LLVM's K&R-derived layout matches Core Guidelines NL.17; left pointer
 # alignment matches NL.18.
 BasedOnStyle: LLVM
@@ -8,6 +9,8 @@ PointerAlignment: Left
 ReferenceAlignment: Left
 DerivePointerAlignment: false
 AlwaysBreakTemplateDeclarations: Yes
+# Read as an attribute, so a declaration it opens keeps the usual layout.
+AttributeMacros: [GALOOT_ALWAYS_INLINE]
 RequiresClausePosition: OwnLine
 InsertNewlineAtEOF: true
 IncludeBlocks: Regroup

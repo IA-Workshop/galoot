@@ -1,0 +1,4 @@
+mutation	exit	verdict	first_line
+none	0	passes	0 counts in the comments are not in the figures
+count_655239_plus_one	1	killed	include/galoot/core/plan.hpp:630: 655,240
+count_22509577_minus_one	1	killed	include/galoot/core/plan.hpp:961: 22,509,576

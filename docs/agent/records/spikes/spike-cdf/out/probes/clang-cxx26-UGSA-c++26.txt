@@ -1,0 +1,7 @@
+probes/cxx26.cpp:28:43: error: static assertion failed due to requirement '5 < 4': blade e5 not in set
+   28 | template <int K> void f() { static_assert(K < 4, make_msg(K)); }
+      |                                           ^~~~~
+probes/cxx26.cpp:29:15: note: in instantiation of function template specialization 'f<5>' requested here
+   29 | template void f<5>();
+      |               ^
+1 error generated.

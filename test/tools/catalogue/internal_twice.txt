@@ -1,0 +1,8 @@
+# One message listed in two blocks.
+
+reason: only forbidden, so no test requires it
+third: only forbidden
+
+reason: required only by a test that passes when it is missing
+fourth: only in a test that is meant to fail
+third: only forbidden

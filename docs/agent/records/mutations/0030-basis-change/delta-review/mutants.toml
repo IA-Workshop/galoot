@@ -1,0 +1,100 @@
+# The delta reviewer's mutants of check_change, its noting arithmetic, the
+# count guard, and the value catch-alls, written from the header at 30c2275
+# and not from the implementer's specs. Each must be killed by the unit's
+# tests; one that survives is a finding of the review.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.change]
+targets = ["core_basis_change_test", "core_basis_change_identities_test"]
+labels = '^core\.basis_change'
+
+# An overflow in the elimination reported as a dependent change.
+[[mutant]]
+name = "elimination_overflow_as_dependent"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    out.fault = e.fits ? ChangeFault::dependent : ChangeFault::overflow;''', replacement = '''    out.fault = ChangeFault::dependent;''' }]
+expect = "killed"
+
+# The elimination goes on after an overflow, and its last return says
+# that every value fit.
+[[mutant]]
+name = "elimination_overflow_not_stopping"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    if (!fits) {
+      return {.pivot = 0, .scaled_inverse = {}, .fits = false};
+    }
+''', replacement = '''    static_cast<void>(fits);
+''' }]
+expect = "killed"
+
+# An overflow in the check that the inverse inverts reported as the
+# internal self-check's message.
+[[mutant]]
+name = "inverts_overflow_as_self_check"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''        inverse_holds.fits ? ChangeFault::inverse : ChangeFault::overflow;''', replacement = '''        ChangeFault::inverse;''' }]
+expect = "killed"
+
+# An overflow in the inverse's rows ignored: the change is accepted with
+# rows that are 0 where the product overflowed.
+[[mutant]]
+name = "inverse_rows_overflow_ignored"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if (!inverse.fits) {
+    out.fault = ChangeFault::overflow;
+    return out;
+  }
+''', replacement = '' }]
+expect = "killed"
+
+# An overflow in the isometry check no longer makes it fail: the zeros the
+# noting arithmetic returns can compare equal.
+[[mutant]]
+name = "isometry_overflow_holds"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''      holds = holds && left == right;
+    }
+  }
+  return {.fits = fits, .holds = fits && holds};''', replacement = '''      holds = holds && left == right;
+    }
+  }
+  return {.fits = fits, .holds = holds};''' }]
+expect = "killed"
+killers = ["core.basis_change_overflow"]
+
+# The target's count checked whatever the source's count (S1 undone).
+[[mutant]]
+name = "target_count_unguarded"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''  if constexpr (C::source::value.generator_count == n) {''', replacement = '''  if constexpr (true) {''' }]
+expect = "killed"
+killers = ["core.basis_change_both_counts"]
+
+# change_basis's value catch-all taken out of the overload set.
+[[mutant]]
+name = "value_catch_all_removed"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''template <auto Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis(const X& /*x*/) {''', replacement = '''template <auto Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis_unused(const X& /*x*/) {''' }]
+expect = "killed"
+killers = ["core.change_basis_value_as_tag"]
+
+# change_basis_back's catch-all made to take a type instead of a value: it
+# no longer catches the value, and it joins the overload set of every call.
+[[mutant]]
+name = "value_catch_all_back_takes_types"
+selection = "change"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''template <auto Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis_back(const X& /*y*/) {''', replacement = '''template <class Value, multivector X>
+constexpr std::remove_cvref_t<X> change_basis_back(const X& /*y*/) {''' }]
+expect = "killed"
+killers = ["core.change_basis_back_value_as_tag"]

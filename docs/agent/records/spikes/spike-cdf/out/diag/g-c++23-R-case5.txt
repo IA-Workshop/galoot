@@ -1,0 +1,40 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp: In function ‘double use(const cdf::rga3_types::Point&, const cdf::rga3_types::Line&, const cdf::rga3_types::Motor&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:20: error: no matching function for call to ‘gp(cdf::rga3_types::Vector<length>&, cdf::rga3_types::Vector<length>&)’
+   74 |   const auto r = gp(a, a);
+      |                  ~~^~~~~~
+  • there is 1 candidate
+In file included from /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:17:
+    • candidate 1: ‘template<class Alg, blade_set<...auto...> A, blade_set<...auto...> B, class T>  requires  ring_scalar<T> constexpr cdf::mv<Alg, gp_blades<Alg, A, B>(), T> cdf::gp(const mv<Alg, A, T>&, const mv<Alg, B, T>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:331:46:
+        331 | constexpr mv<Alg, gp_blades<Alg, A, B>(), T> gp(const mv<Alg, A, T>& a,
+            |                                              ^~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp: In substitution of ‘template<class Alg, blade_set<...auto...> A, blade_set<...auto...> B, class T>  requires  ring_scalar<T> constexpr cdf::mv<Alg, gp_blades<Alg, A, B>(), T> cdf::gp(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg = cdf::rga3; blade_set<...auto...> A = cdf::blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}; blade_set<...auto...> B = cdf::blade_set<4>{std::array<unsigned int, 4>{std::__array_traits<unsigned int, 4>::_Type{1, 2, 4, 8}}, std::array<int, 4>{std::__array_traits<int, 4>::_Type{1, 1, 1, 1}}}; T = length]’:
+          • required from here
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/diag.cpp:74:20:   
+               74 |   const auto r = gp(a, a);
+                  |                  ~~^~~~~~
+          • required for the satisfaction of ‘ring_scalar<T>’ [with T = length]
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:230:9:   
+              230 | concept ring_scalar = std::copyable<T> && requires(T a, T b, std::int64_t k) {
+                  |         ^~~~~~~~~~~
+          • in requirements with ‘T a’, ‘T b’, ‘int64_t k’ [with T = length]
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:230:43:   
+              230 | concept ring_scalar = std::copyable<T> && requires(T a, T b, std::int64_t k) {
+                  |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+              231 |   { a + b } -> std::convertible_to<T>;
+                  |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     
+              232 |   { a - b } -> std::convertible_to<T>;
+                  |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     
+              233 |   { a * b } -> std::convertible_to<T>;
+                  |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     
+              234 |   static_cast<T>(k);
+                  |   ~~~~~~~~~~~~~~~~~~                       
+              235 | };
+                  | ~                                          
+          • the required expression ‘(a * b)’ is invalid
+            /home/brianm/projects/utils/math-core/galoot/docs/agent/records/spikes/spike-cdf/fixture.hpp:233:7:
+              233 |   { a * b } -> std::convertible_to<T>;
+                  |     ~~^~~
+          • set ‘-fconcepts-diagnostics-depth=’ to at least 2 for more detail

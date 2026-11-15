@@ -1,0 +1,15 @@
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp: In function ‘double misuse(const cga_vector&, const r410_vector&)’:
+/home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12: error: no matching function for call to ‘gp(const cga_vector&, const r410_vector&)’
+  173 |   return gp(a, b).c[0];
+      |          ~~^~~~~~
+  • there is 1 candidate
+    • candidate 1: ‘template<metric<...auto...> M, blade_set<...auto...> A, blade_set<...auto...> B> value::mv<M, result_set<M, A, B>()> value::gp(const mv<M, A>&, const mv<M, B>&)’
+      /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:86:37:
+         86 | mv<M, spike::result_set<M, A, B>()> gp(const mv<M, A>& a, const mv<M, B>& b) {
+            |                                     ^~
+      • template argument deduction/substitution failed:
+        •   deduced conflicting values for non-type parameter ‘M’ (‘spike::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}’ and ‘spike::metric<5>{std::array<std::array<int, 5>, 5>{std::__array_traits<std::array<int, 5>, 5>::_Type{std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{1}}, std::array<int, 5>{std::__array_traits<int, 5>::_Type{-1}}}}}’)
+          /home/brianm/projects/utils/math-core/galoot/docs/agent/workbench/spike-a/nttp.cpp:173:12:
+            173 |   return gp(a, b).c[0];
+                |          ~~^~~~~~
+timed: build spike-a:nttp-misuse:g++:VALUE took 0.175 s (exit 1)

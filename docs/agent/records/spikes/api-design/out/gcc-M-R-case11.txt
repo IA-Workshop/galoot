@@ -1,0 +1,26 @@
+program.cpp: In function ‘double use(int)’:
+program.cpp:93:52: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv’
+   93 |   using Wrong = apx::mv<rga3, gc::blades<5, "e1 e5">>;
+      |                                                    ^~
+program.cpp:93:52: note: constraints not satisfied
+In file included from program.cpp:5:
+  • fixture.hpp: In substitution of ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv [with Alg = rga3; blade_set<...auto...> B = galoot::core::blade_set<2>{std::array<galoot::core::oriented_blade, 2>{std::__array_traits<galoot::core::oriented_blade, 2>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{16, 1}}}}; T = double]’:
+  • required from here
+    program.cpp:93:52:   
+  • required by the constraints of ‘template<class Alg, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && ((ring_scalar<T>) && (blades_fit<Alg, B>)()) struct apx::mv’
+    fixture.hpp:93:8:   
+       93 | struct mv {
+          |        ^~
+  • the expression ‘(blades_fit<Alg, B>)() [with Alg = rga3; B = galoot::core::blade_set<2>{{{{1, 1}, {16, 1}}}}]’ evaluated to ‘false’
+    fixture.hpp:91:49:
+       91 |   requires ring_scalar<T> && (blades_fit<Alg, B>())
+          |                              ~~~~~~~~~~~~~~~~~~~^~~
+program.cpp:93:17: error: expected type-specifier
+   93 |   using Wrong = apx::mv<rga3, gc::blades<5, "e1 e5">>;
+      |                 ^~~
+program.cpp:97:9: error: ‘Wrong’ does not name a type
+   97 |   const Wrong x{};
+      |         ^~~~~
+program.cpp:98:8: error: ‘x’ was not declared in this scope
+   98 |   r += x.c[0];
+      |        ^

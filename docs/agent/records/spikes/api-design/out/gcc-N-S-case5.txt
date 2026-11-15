@@ -1,0 +1,17 @@
+In file included from program.cpp:5:
+fixture.hpp: In instantiation of ‘constexpr auto apx::get(X&&) [with name_list<...auto...> Name = galoot::core::detail::name_list<4>{std::array<char, 4>{"e14"}}; X = mvn<rga3, galoot::core::detail::name_list<24>{std::array<char, 24>{"e41 e42 e43 e23 e31 e12"}}>&]’:
+program.cpp:66:18:   required from here
+   66 |   r += get<"e14">(l);
+      |        ~~~~~~~~~~^~~
+fixture.hpp:260:17: error: static assertion failed: get<name>: the type has no component of this name with this orientation
+  260 |   static_assert(has_component<std::remove_cvref_t<X>, Name>,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • constraints not satisfied
+    • required by the constraints of ‘template<class X, name_list<...auto...> Name> concept apx::has_component’
+      fixture.hpp:207:9:   
+        207 | concept has_component =
+            |         ^~~~~~~~~~~~~
+    • the expression ‘(position_of_name<X, Name>)() < (X::set).size() [with X = apx::mvn<rga3, galoot::core::detail::name_list<24>{{"e41 e42 e43 e23 e31 e12"}}, double>; Name = galoot::core::detail::name_list<4>{{"e14"}}]’ evaluated to ‘false’
+      fixture.hpp:208:52:
+        208 |     multivector<X> && (position_of_name<X, Name>() < X::set.size());
+            |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~

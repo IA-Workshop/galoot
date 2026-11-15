@@ -1,0 +1,8 @@
+In file included from program.cpp:5:
+./fixture.hpp:251:17: error: static assertion failed: make<Type>: give one coefficient for each component of the type, in the order the type lists them
+  251 |   static_assert(false, "make<Type>: give one coefficient for each component "
+      |                 ^~~~~
+program.cpp:54:24: note: in instantiation of function template specialization 'apx::make<apx::mv<rga3, gc::blade_set<4>{{{{1, 1}, {2, 1}, {4, 1}, {8, 1}}}}>, int, int, int>' requested here
+   54 |   const Point s = apx::make<Point>(1, 2, 3);
+      |                        ^
+1 error generated.

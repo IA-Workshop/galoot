@@ -1,0 +1,151 @@
+# The mutants of the structure check's script after the delta review's D3,
+# D4 and D6: those of check-review.toml, with their anchors rewritten for
+# the script as it is now, and one for each rule added since, each written
+# for one of the fixture tests. check_keeps_overwritten_register, which
+# check-review.toml called equivalent, is a mutant that no fixture killed;
+# accepts_overwritten_register now kills it. The script reads no compiler,
+# so the two presets give one answer; both run.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.check]
+targets = []
+labels = '^tools\.kernels_inline$'
+
+[[mutant]]
+name = "check_ignores_conditional_jump"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(call[lq]?|j[a-z]+)''', replacement = '''(call[lq]?|jmpq?)''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_conditional_jump"]
+
+# A call through a register is never reported.
+[[mutant]]
+name = "check_ignores_register_call"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        elif operand.startswith("*%") and wide(operand[1:]) in loaded:''', replacement = '''        elif False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_register_call"]
+
+# A register keeps the library's address after another load overwrites it.
+[[mutant]]
+name = "check_keeps_overwritten_register"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''                loaded.pop(wide(load.group(2)), None)''', replacement = '''                pass''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_accepts_overwritten_register"]
+
+# The explicit-object qualifier H is not read.
+[[mutant]]
+name = "check_ignores_explicit_object"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(?<![\w.])_ZZ?N[KVrROH]*6galoot''', replacement = '''(?<![\w.])_ZZ?N[KVrRO]*6galoot''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_explicit_object"]
+
+# Assembly of another target is read as if it were x86-64.
+[[mutant]]
+name = "check_accepts_other_target"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    if not x86_64:''', replacement = '''    if False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_other_target"]
+
+# --alone puts every function of the source in every unit.
+[[mutant]]
+name = "alone_not_alone"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    common = [p for p in paragraphs if p not in owners.values()]''', replacement = '''    common = [p for p in paragraphs if p is not None]''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_alone_accepts"]
+
+# --alone does not refuse a name the source does not define.
+[[mutant]]
+name = "alone_skips_missing"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        if len(found) != 1:''', replacement = '''        if len(found) > 1:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_alone_rejects_missing_function"]
+
+# check.toml's three mutants, run again on the script as it is now, with
+# their anchors rewritten for it.
+
+# Jumps of every kind are not read as branches, only calls.
+[[mutant]]
+name = "check_ignores_jmp"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(call[lq]?|j[a-z]+)''', replacement = '''(call[lq]?)''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_jmp"]
+
+# The symbol must end the operand, so a call through the PLT or the global
+# offset table is not read as one.
+[[mutant]]
+name = "check_ignores_plt"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''6galoot[\w.$]*")''', replacement = '''6galoot[\w.$]*$")''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_plt"]
+
+# A function missing from the output is not reported.
+[[mutant]]
+name = "check_skips_missing"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        if not any(label.startswith(prefix) for label in labels):''', replacement = '''        if False:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_missing_function"]
+
+# An immediate address, $sym, is not read as the library's.
+[[mutant]]
+name = "check_ignores_immediate"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''(?<![\w.])_ZZ?N''', replacement = '''(?<![\w.$])_ZZ?N''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_immediate"]
+
+# A register is tracked by its exact name only, so a load into %eax and a
+# call through %rax are not matched.
+[[mutant]]
+name = "check_ignores_register_width"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    return WIDE.get(register, register)''', replacement = '''    return register''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_immediate"]
+
+# A branch with the notrack prefix is not read.
+[[mutant]]
+name = "check_ignores_notrack"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''^\s+(?:(?:notrack|bnd)\s+)?(call''', replacement = '''^\s+(call''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_rejects_notrack"]
+
+# A function that is a return alone is refused as another target's.
+[[mutant]]
+name = "check_refuses_bare_return"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''    return offending, missing, x86_64 or only_returns''', replacement = '''    return offending, missing, x86_64''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_accepts_bare_return"]
+
+# --alone takes the first of two paragraphs that define one function.
+[[mutant]]
+name = "alone_accepts_twice"
+selection = "check"
+file = "test/tools/kernels_inline.py"
+edits = [{ anchor = '''        if len(found) != 1:''', replacement = '''        if not found:''' }]
+expect = "killed"
+killers = ["tools.kernels_inline_alone_rejects_twice"]

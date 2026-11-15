@@ -1,0 +1,67 @@
+first_user.cpp: In function ‘double use(int, double)’:
+first_user.cpp:300:14: error: no matching function for call to ‘get<0>(Line&)’
+  300 |   r += get<0>(l);
+      |        ~~~~~~^~~
+  • there are 2 candidates
+In file included from ../../../../../include/galoot/core.hpp:12,
+                 from first_user.cpp:13:
+    • candidate 1: ‘template<name_list<...auto...> Name, class X>  requires  has_blade<X, Name> constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&)’
+      ../../../../../include/galoot/core/mv.hpp:345:58:
+        345 | [[nodiscard]] constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+            |                                                          ^~~
+      • template argument deduction/substitution failed:
+        • error: class template argument deduction failed:
+          first_user.cpp:300:14:
+            300 |   r += get<0>(l);
+                |        ~~~~~~^~~
+        • error: no matching function for call to ‘name_list(int)’
+          • there are 2 candidates
+In file included from ../../../../../include/galoot/core/blade_product.hpp:43,
+                 from ../../../../../include/galoot/core.hpp:9:
+            • candidate 1: ‘template<long unsigned int L> name_list(const char (&)[L]) -> galoot::core::detail::name_list<L>’
+              ../../../../../include/galoot/core/blade_set.hpp:393:13:
+                393 |   consteval name_list(const char (&text)[L]) noexcept {
+                    |             ^~~~~~~~~
+              • template argument deduction/substitution failed:
+                •   mismatched types ‘const char [L]’ and ‘int’
+                  first_user.cpp:300:14:
+                    300 |   r += get<0>(l);
+                        |        ~~~~~~^~~
+            • candidate 2: ‘template<long unsigned int L> name_list(galoot::core::detail::name_list<L>) -> galoot::core::detail::name_list<L>’
+              ../../../../../include/galoot/core/blade_set.hpp:386:8:
+                386 | struct name_list {
+                    |        ^~~~~~~~~
+              • template argument deduction/substitution failed:
+                •   mismatched types ‘galoot::core::detail::name_list<L>’ and ‘int’
+                  first_user.cpp:300:14:
+                    300 |   r += get<0>(l);
+                        |        ~~~~~~^~~
+    • candidate 2: ‘template<name_list<...auto...> Name, class X>  requires (multivector<X>) && !(has_blade<X, Name>) constexpr galoot::core::detail::coefficient_reference<X> galoot::core::get(X&&)’
+      ../../../../../include/galoot/core/mv.hpp:357:44:
+        357 | constexpr detail::coefficient_reference<X> get(X&& x) noexcept {
+            |                                            ^~~
+      • template argument deduction/substitution failed:
+        • error: class template argument deduction failed:
+          first_user.cpp:300:14:
+            300 |   r += get<0>(l);
+                |        ~~~~~~^~~
+        • error: no matching function for call to ‘name_list(int)’
+          • there are 2 candidates
+            • candidate 1: ‘template<long unsigned int L> name_list(const char (&)[L]) -> galoot::core::detail::name_list<L>’
+              ../../../../../include/galoot/core/blade_set.hpp:393:13:
+                393 |   consteval name_list(const char (&text)[L]) noexcept {
+                    |             ^~~~~~~~~
+              • template argument deduction/substitution failed:
+                •   mismatched types ‘const char [L]’ and ‘int’
+                  first_user.cpp:300:14:
+                    300 |   r += get<0>(l);
+                        |        ~~~~~~^~~
+            • candidate 2: ‘template<long unsigned int L> name_list(galoot::core::detail::name_list<L>) -> galoot::core::detail::name_list<L>’
+              ../../../../../include/galoot/core/blade_set.hpp:386:8:
+                386 | struct name_list {
+                    |        ^~~~~~~~~
+              • template argument deduction/substitution failed:
+                •   mismatched types ‘galoot::core::detail::name_list<L>’ and ‘int’
+                  first_user.cpp:300:14:
+                    300 |   r += get<0>(l);
+                        |        ~~~~~~^~~

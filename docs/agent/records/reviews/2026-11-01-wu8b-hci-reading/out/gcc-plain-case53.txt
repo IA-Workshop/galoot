@@ -1,0 +1,22 @@
+user.cpp: In function ‘double use()’:
+user.cpp:243:47: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
+  243 |   r += sizeof(gc::mv<rga3, point_layout, later>*);
+      |                                               ^
+user.cpp:243:47: note: constraints not satisfied
+In file included from /usr/include/c++/16/compare:44,
+                 from /usr/include/c++/16/array:40,
+                 from user.cpp:3:
+  • /usr/include/c++/16/concepts: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv [with Alg = rga3; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{4, 1}, galoot::core::oriented_blade{8, 1}}}}; T = use()::later]’:
+  • required from here
+    user.cpp:243:47:   
+  • required for the satisfaction of ‘destructible<T>’ [with T = use::later]
+    /usr/include/c++/16/concepts:157:13:   
+      157 |     concept destructible = __detail::__destructible<_Tp>;
+          |             ^~~~~~~~~~~~
+  • the expression ‘__destructible<_Tp> [with _Tp = use::later]’ evaluated to ‘false’
+    /usr/include/c++/16/concepts:157:38:
+      157 |     concept destructible = __detail::__destructible<_Tp>;
+          |                            ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+user.cpp:243:49: error: expected primary-expression before ‘)’ token
+  243 |   r += sizeof(gc::mv<rga3, point_layout, later>*);
+      |                                                 ^

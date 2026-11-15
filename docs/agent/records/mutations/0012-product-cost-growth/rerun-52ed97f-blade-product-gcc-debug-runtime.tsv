@@ -1,0 +1,43 @@
+mutation	preset	build_exit	test_exit	failed_tests	killed	static_assert_lines	failed_cases	first_build_error
+wedge_sign_side	gcc-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | In a diagonal form a product of blades is one signed term | Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g | In R(0,0,n) the product is the exterior product | blade_product accepts the generators of the widest algebra | blade_product reads a pairing with the top generator of the widest algebra	-
+wedge_sign_dropped	gcc-debug	0	8	core.blade_product	killed	-	e_i e_j + e_j e_i = 2 g_ij for every pair of generators | The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | In a diagonal form a product of blades is one signed term | Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g | In R(0,0,n) the product is the exterior product	-
+contraction_first_sign	gcc-debug	0	8	core.blade_product	killed	-	e_i e_j + e_j e_i = 2 g_ij for every pair of generators | The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | In a diagonal form a product of blades is one signed term | Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g | blade_product accepts the generators of the widest algebra | blade_product reads a pairing with the top generator of the widest algebra	-
+contraction_sign_constant	gcc-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | In a diagonal form a product of blades is one signed term | Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g	-
+correction_sign	gcc-debug	1	-	-	killed	856	-	test/core/blade_product_test.cpp:856:74: error: static assertion failed
+correction_sign_constant	gcc-debug	0	8	core.blade_product	killed	-	The product of blades is associative on every triple | Each blade is the antisymmetrized product of its generators, up to k! | Every product of four forms equals the golden product tables | The pseudoscalar squares to (-1)^(n(n-1)/2) det g	-
+correction_dropped	gcc-debug	1	-	-	killed	856	-	test/core/blade_product_test.cpp:856:74: error: static assertion failed
+contraction_transposed	gcc-debug	0	0	-	SURVIVED	-	-	-
+correction_transposed	gcc-debug	0	0	-	SURVIVED	-	-	-
+lowest_generator_highest	gcc-debug	1	-	-	killed	-	-	test/core/blade_product_test.cpp:856:74: error: non-constant condition for static assertion
+scalar_scale_dropped	gcc-debug	1	-	-	killed	856	-	test/core/blade_product_test.cpp:856:74: error: static assertion failed
+generator_scale_dropped	gcc-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:199:55: error: unused parameter ‘scale’ [-Werror=unused-parameter]
+zero_kept	gcc-debug	0	8	core.blade_product	killed	-	Term lists are in canonical order, merge repeated blades, and drop zero sums	-
+zero_sum_kept	gcc-debug	0	8	core.blade_product	killed	-	Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g | Term lists are in canonical order, merge repeated blades, and drop zero sums | blade_product reads a pairing with the top generator of the widest algebra	-
+trailing_place_kept	gcc-debug	0	8	core.blade_product	killed	-	Every product of four forms equals the golden product tables | Hand-derived products in conformal(3), the Witt form, a degenerate form, and the classical algebras | The pseudoscalar squares to (-1)^(n(n-1)/2) det g | Term lists are in canonical order, merge repeated blades, and drop zero sums | blade_product reads a pairing with the top generator of the widest algebra	-
+merge_dropped	gcc-debug	0	8	core.blade_product,core.blade_product_overflow,core.blade_product_sum_overflow,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below	killed	-	The product of blades is associative on every triple	-
+append	gcc-debug	0	8	core.blade_product,core.blade_product_overflow,core.blade_product_sum_overflow,core.blade_product_rejects_overflow,core.blade_product_rejects_sum_above,core.blade_product_rejects_sum_below	killed	-	The product of blades is associative on every triple	-
+numeric_order	gcc-debug	0	8	core.blade_product	killed	-	Term lists are in canonical order, merge repeated blades, and drop zero sums	-
+capacity_check_removed	gcc-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+capacity_off_by_one	gcc-debug	0	8	core.blade_product_capacity,core.blade_product_rejects_capacity	killed	-	-	-
+product_guard_removed	gcc-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:90:30: error: unused variable ‘max’ [-Werror=unused-variable]
+product_guard_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+product_magnitude_x	gcc-debug	1	-	-	killed	-	-	include/galoot/core/assert.hpp:71:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+product_magnitude_y	gcc-debug	0	8	core.blade_product_rejects_product_below_second	killed	-	-	-
+sum_guard_removed	gcc-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:73:30: error: unused variable ‘max’ [-Werror=unused-variable]
+sum_guard_upper_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_strict	gcc-debug	0	8	core.blade_product	killed	-	The coefficient guards accept results up to the bounds	-
+sum_guard_lower_minimum	gcc-debug	0	8	core.blade_product_rejects_sum_below	killed	-	-	-
+sum_guard_branch	gcc-debug	0	0	-	SURVIVED	-	-	-
+range_check_removed	gcc-debug	0	8	core.blade_product_beyond_n,core.blade_product_beyond_n_second,core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n,core.blade_product_rejects_beyond_n_second,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+range_shift_off_by_one	gcc-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:285:23: error: right shift count >= width of type [-Werror=shift-count-overflow]
+range_widest_shifted	gcc-debug	1	-	-	killed	-	-	include/galoot/core/blade_product.hpp:285:23: error: right shift count >= width of type [-Werror=shift-count-overflow]
+capacity_formula	gcc-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+capacity_scalar	gcc-debug	0	8	core.blade_product	killed	-	No product has more terms than product_capacity, and the bound is attained	-
+term_not_trivially_copyable	gcc-debug	1	-	-	killed	516,518	-	test/core/blade_product_test.cpp:516:20: error: static assertion failed
+term_list_not_trivially_copyable	gcc-debug	1	-	-	killed	518	-	test/core/blade_product_test.cpp:518:20: error: static assertion failed
+term_not_aggregate	gcc-debug	1	-	-	killed	515	-	include/galoot/core/blade_product.hpp:167:15: error: no match for ‘operator=’ (operand types are ‘std::array<galoot::core::detail::term, 1>::value_type’ {aka ‘galoot::core::detail::term’} and ‘<brace-
+term_list_not_aggregate	gcc-debug	1	-	-	killed	517	-	test/core/blade_product_test.cpp:517:20: error: static assertion failed
+term_list_not_structural	gcc-debug	1	-	-	killed	-	-	test/core/blade_product_test.cpp:521:38: error: ‘galoot::core::detail::term_list<2>’ is not a valid type for a template non-type parameter because it is not structural
+range_second_unchecked	gcc-debug	0	8	core.blade_product_beyond_n_second,core.blade_product_rejects_beyond_n_second	killed	-	-	-
+range_skip_below_top	gcc-debug	0	8	core.blade_product_beyond_n_31,core.blade_product_rejects_beyond_n_31	killed	-	-	-
+partial_sum_excursion	gcc-debug	1	-	-	killed	-	-	test/core/blade_product_test.cpp:856:74: error: non-constant condition for static assertion
