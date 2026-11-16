@@ -1,0 +1,53 @@
+--- test/core/identities_rounding_test.cpp	2026-11-16 04:41:05.032070620 -0500
++++ probe/rounding.cpp	2026-11-16 04:42:48.363473428 -0500
+@@ -361,26 +361,50 @@
+   std::mt19937_64 source(seed);
+   tally out;
+ 
++#if PROBE == 0
+   check_associativity<rga3>(source, 10, 18, "rigid(3)", out);
++#endif
++#if PROBE == 1
+   check_associativity<cga3>(source, 4, 17, "conformal(3)", out);
++#endif
++#if PROBE == 2
+   check_de_morgan<rga3>(source, 10, "rigid(3)", out);
++#endif
++#if PROBE == 3
+   check_de_morgan<cga3>(source, 4, "conformal(3)", out);
++#endif
++#if PROBE == 4
+   check_rigid_composition<motor_layout, motor_layout, point_layout>(
+       source, 10, "motor and motor on a point", out);
++#endif
++#if PROBE == 5
+   check_rigid_composition<motor_layout, motor_layout, line_layout>(
+       source, 10, "motor and motor on a line", out);
++#endif
++#if PROBE == 6
+   check_rigid_composition<motor_layout, motor_layout, plane_layout>(
+       source, 10, "motor and motor on a plane", out);
++#endif
++#if PROBE == 7
+   check_rigid_composition<flector_layout, flector_layout, point_layout>(
+       source, 10, "flector and flector on a point", out);
++#endif
++#if PROBE == 8
+   check_rigid_composition<motor_layout, flector_layout, point_layout>(
+       source, 10, "motor and flector on a point", out);
++#endif
++#if PROBE == 9
+   check_rigid_composition<flector_layout, motor_layout, line_layout>(
+       source, 10, "flector and motor on a line", out);
++#endif
++#if PROBE == 10
+   check_conformal_composition<core::of_grade<5, 1>>(source, 10, "on a vector",
+                                                     out);
++#endif
++#if PROBE == 11
+   check_conformal_composition<core::of_grade<5, 2>>(source, 10, "on a bivector",
+                                                     out);
++#endif
+ 
+   MESSAGE(std::format("{} coefficients, {} of them with at most one rounding "
+                       "a side; largest ratio of |L - R| to the sum of the "

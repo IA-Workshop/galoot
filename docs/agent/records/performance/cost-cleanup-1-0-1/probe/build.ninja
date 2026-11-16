@@ -1,0 +1,84 @@
+rule cl
+  command = <worktree>/tools/measure tu clang-measure Clang-23.1.4 <worktree>/docs/agent/records/performance/cost-cleanup-1-0-1/compile.tsv -- /usr/bin/clang++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=0 -I<worktree>/include -I<worktree>/test -isystem <worktree>/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -O2 -std=c++23 -fconstexpr-steps=1200000 $extra -c $in -o $out
+rule gc
+  command = <worktree>/tools/measure tu gcc-debug GNU-16.2.1 <worktree>/docs/agent/records/performance/cost-cleanup-1-0-1/compile.tsv -- /usr/bin/g++ -DDOCTEST_CONFIG_SUPER_FAST_ASSERTS -DGALOOT_CHECKING=1 -I<worktree>/include -I<worktree>/test -isystem <worktree>/include/ext -Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror -ffp-contract=off -D_GLIBCXX_ASSERTIONS -O0 -g -std=c++23 $extra -c $in -o $out
+build <probe>/obj/rounding_whole.o: cl <worktree>/test/core/identities_rounding_test.cpp
+build <probe>/obj/rounding_sm1.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=-1
+build <probe>/obj/rounding_s0.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=0
+build <probe>/obj/rounding_s1.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=1
+build <probe>/obj/rounding_s2.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=2
+build <probe>/obj/rounding_s3.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=3
+build <probe>/obj/rounding_s4.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=4
+build <probe>/obj/rounding_s5.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=5
+build <probe>/obj/rounding_s6.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=6
+build <probe>/obj/rounding_s7.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=7
+build <probe>/obj/rounding_s8.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=8
+build <probe>/obj/rounding_s9.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=9
+build <probe>/obj/rounding_s10.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=10
+build <probe>/obj/rounding_s11.o: cl <probe>/src/rounding.cpp
+  extra = -Wno-error -DPROBE=11
+build <probe>/obj/transform_whole.o: gc <worktree>/test/core/transform_identities_test.cpp
+build <probe>/obj/transform_fm1.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=-1
+build <probe>/obj/transform_f0.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=0
+build <probe>/obj/transform_f1.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=1
+build <probe>/obj/transform_f2.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=2
+build <probe>/obj/transform_f3.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=3
+build <probe>/obj/transform_f4.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=4
+build <probe>/obj/transform_f5.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=5
+build <probe>/obj/transform_f6.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=6
+build <probe>/obj/transform_f7.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=7
+build <probe>/obj/transform_f8.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=8
+build <probe>/obj/transform_f9.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=9
+build <probe>/obj/transform_f10.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=10
+build <probe>/obj/transform_f11.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=11
+build <probe>/obj/transform_f12.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=12
+build <probe>/obj/transform_f13.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=13
+build <probe>/obj/transform_f14.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=14
+build <probe>/obj/transform_f15.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=15
+build <probe>/obj/transform_f16.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=16
+build <probe>/obj/transform_f17.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=17
+build <probe>/obj/transform_f18.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=18
+build <probe>/obj/transform_f19.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=19
+build <probe>/obj/transform_f20.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=20
+build <probe>/obj/transform_f21.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=21
+build <probe>/obj/transform_f22.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=22
+build <probe>/obj/transform_f23.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=23
+build <probe>/obj/transform_f24.o: gc <probe>/src/transform.cpp
+  extra = -Wno-error -DPROBE=24
