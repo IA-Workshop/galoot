@@ -54,6 +54,10 @@ KINDS = {"file prologue", "public contract", "internal contract", "reason",
          "equation or convention", "narration", "example", "marker", "pointer"}
 CLASSES = ("keep", "summary", "move", "delete")
 POSITIONS = {"prologue", "public", "detail", "trailing"}
+# What a row may wait for. The README's table "What a row waits for" says
+# what each means; a condition that is met or ruled leaves this list.
+WAITS = {"none", "B9", "D1", "D3", "the S11 amendment",
+         "D3 and the S11 amendment"}
 
 # The page layout of the user documentation planned for docs/guide/. The file
 # names inside each directory are proposals until the frame publishes them.
@@ -351,6 +355,7 @@ KEPT_IN_FULL = tuple(
         ("core/plan.hpp", "303-304"),
         ("core/plan.hpp", "664-665"),
         ("core/plan.hpp", "698-699"),
+        ("presets/rga3/motions.hpp", "48-61"),
     ))
 
 
@@ -593,8 +598,8 @@ def main():
             errors.append(f"row {number}: class {r['class']}")
         if not r["descriptor"]:
             errors.append(f"row {number}: no descriptor")
-        if not r["waits_for"]:
-            errors.append(f"row {number}: no waits_for")
+        if r["waits_for"] not in WAITS:
+            errors.append(f"row {number}: waits_for {r['waits_for']!r}")
         if r["class"] in ("move", "summary"):
             page = r["target"]
             if r["class"] == "summary" and page.startswith("include/"):
