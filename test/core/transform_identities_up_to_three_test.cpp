@@ -10,8 +10,9 @@ namespace galoot_test::transform_identities {
 namespace {
 
 // Diagonal R(p, q, r) with null generators last, conformal(1), the Witt form
-// of one mode, a degenerate form that is not diagonal, and seeded random
-// symmetric forms of two and three generators with entries from -3 to 3.
+// of one mode, and one seeded random symmetric form of two generators and one
+// of three, with entries from -3 to 3. The degenerate form that is not
+// diagonal is in the four-generator Gram source.
 using up_to_three = forms<
     // n = 2
     core::R<2, 0, 0>(), core::R<1, 1, 0>(), core::R<1, 0, 1>(),
