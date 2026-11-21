@@ -348,3 +348,44 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	plan-0049-user-docs	planner	fable	273963	35	634	plan/0049 0f0b6e5; harness subagent_tokens; owner-authorized Fable
 2026-11-21	kb-doc-pedagogy	researcher	opus	182499	74	865	kb/doc-pedagogy c4607f6; plus 5 Sonnet helpers, 300000 tokens, 122 tool calls
 2026-11-21	kb-complexity-reduction	researcher	opus	292278	163	9332	kb/complexity-reduction 56daebb and tools/complexity-reduction b1ac42b; plus 4 Sonnet helpers, 194204 tokens, 49 tool calls
+2026-11-21	0047-V1-gap-register	planner	sonnet	258725	69	517	records/gap-register 186f019; workflow agent, harness token count
+2026-11-21	0047-V3-conventions-rederived	math-expert	opus	407777	135	1987	research/conventions-rederived 75664ef; math-tools tools/conventions-rederived ea3e0c4; kb/conventions-rederived efb3ac7; workflow agent, harness token count
+2026-11-21	0048-D0-candidates-baselines	cpp-expert	opus	392804	139	1583	records/simplification-survey a4c18f1; workflow agent, harness token count
+2026-11-21	0049-U1-docs-design	math-expert	fable	469762	71	2021	records/docs-design 5175316; owner-authorized Fable (decision 0253 item 32); workflow agent, harness token count
+2026-11-21	0047-H0-read-cpp	cpp-expert	opus	430656	102	1658	records/hardening-audit-cpp 4df8976; workflow agent, harness token count
+2026-11-21	0047-H0-read-numerical	numerical-expert	opus	396147	89	1404	records/hardening-audit-numerical ea2847a; workflow agent, harness token count
+2026-11-21	0048-D0-comment-table	hci-expert	opus	443255	89	1730	records/simplification-survey d345390; workflow agent, harness token count
+2026-11-21	0047-H0-register	cpp-expert	opus	315271	102	1530	records/hardening-audit 1e1a77b; workflow agent, harness token count
+2026-11-21	0047-V3-sample-check	reviewer	opus	212704	56	908	review/conventions-rederived 44252f9; no error found, 5 minor; workflow agent, harness token count
+2026-11-21	0049-U1-check	reviewer	opus	221017	47	687	review/docs-design e0ee3b4; 1 important, 4 minor; workflow agent, harness token count
+2026-11-21	0047-H0-sample-check	reviewer	opus	217167	74	773	review/hardening-audit 819d898; errors found (E1, M1 to M4); workflow agent, harness token count
+2026-11-21	0048-D0-sample-check	reviewer	sonnet	287533	79	553	review/simplification-survey cfad408; errors found (F1 to F6); workflow agent, harness token count
+2026-11-21	0048-D0-correction	cpp-expert	opus	201804	62	633	records/simplification-survey-fix 335d489; workflow agent, harness token count
+2026-11-21	0047-H0-correction	cpp-expert	fable	434974	103	2114	records/hardening-audit 3da5b43; Fable under decision 0253 item 12 after the sample check found errors; workflow agent, harness token count
+2026-11-21	0047-H0-sample-check-2	reviewer	opus	248534	84	901	review/hardening-audit df93ace; no error found, 4 minor; workflow agent, harness token count
+2026-11-21	0047-V3-corrections	math-expert	opus	169551	60	587	research/conventions-rederived e3ed781; math-tools 5785b29; workflow agent, harness token count
+2026-11-21	0047-H0-corrections-2	cpp-expert	opus	241435	92	966	records/hardening-audit f6ec74e; new row A50; workflow agent, harness token count
+2026-11-21	0049-U1-corrections	math-expert	opus	145737	41	530	records/docs-design 774049c; note renumbered 0029; workflow agent, harness token count
+2026-11-21	0048-D0-checker-extension	cpp-expert	opus	199634	71	885	records/simplification-survey-fix 0a1505e; workflow agent, harness token count
+2026-11-21	0047-V1-sample-check	reviewer	opus	206250	56	500	review/gap-register 17d762e; errors found (1 important, 8 minor); workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-review	reviewer	opus	94419	27	250	knowledge base and math-tools branches; 1 important (home path in logs), 5 minor; workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-fix	collector	opus	108985	31	288	kb/conventions-rederived 313b847; tools/conventions-rederived cf17fc2; workflow agent, harness token count
+2026-11-21	0047-V1-corrections-addendum	planner	opus	154055	35	468	records/gap-register 3bed4b7; plan 0047 addendum; workflow agent, harness token count
+2026-11-21	0048-D0-delta-check	reviewer	opus	276000	82	899	review/simplification-survey-fix 63e8c8e; 3 minor findings, 4 nits; workflow agent, harness token count
+2026-11-21	0048-D0-delta-fix	cpp-expert	opus	198752	67	563	records/simplification-survey-fix 9a3c0bc; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review	reviewer	sonnet	138833	44	272	kb/doc-pedagogy; merge after fixes, 1 important, 8 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review	reviewer	sonnet	155477	49	561	kb and tools complexity-reduction; merge after fixes, 10 findings; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix	collector	sonnet	85503	23	114	kb/doc-pedagogy 651c538; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix	collector	sonnet	182830	67	716	kb/complexity-reduction 5a84842; tools/complexity-reduction 562a6f3; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin	cpp-expert	opus	515495	236	12628	kb/constexpr-step-margin a8eaf61; tools/constexpr-step-margin 0c37d04; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse	cpp-expert	opus	399576	195	5775	kb/wrapper-collapse baff6c1; tools/wrapper-collapse 4e9d012; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	0044-integration	build-expert	sonnet	64955	21	105	feature/header-hygiene-1-0-1 67907a5; docs subfeature merged; workflow agent, harness token count
+2026-11-21	0044-blind-review	reviewer	opus	211215	69	837	review/header-hygiene-1-0-1 5019bff; approve, 5 minor, 8 notes; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review-2	reviewer	opus	140225	49	457	kb/doc-pedagogy; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review-2	reviewer	opus	174618	47	503	kb and tools complexity-reduction; 4 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-review	reviewer	opus	191412	71	1130	kb and tools constexpr-step-margin; figures reproduced; 2 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-review	reviewer	opus	193405	58	660	kb and tools wrapper-collapse; figures reproduced; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix-2	collector	opus	160210	69	611	kb/doc-pedagogy 2d79a40; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix-2	collector	opus	172825	53	760	kb/complexity-reduction f0137c5; tools/complexity-reduction 795ad32; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-fix	collector	opus	174397	67	614	kb/wrapper-collapse 3f4324a; tools/wrapper-collapse 34f3baf; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-fix	collector	opus	181155	75	933	kb/constexpr-step-margin 48cd438; tools/constexpr-step-margin 7892f3c; workflow agent, harness token count

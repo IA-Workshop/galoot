@@ -1,0 +1,402 @@
+#### d01: Clang's refusals at 22 generators follow the pair's span (N1, A21)
+== clang++ GEN=22 CASE=1: builds
+== clang++ GEN=22 CASE=2: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=3: builds
+== clang++ GEN=22 CASE=4: builds
+== clang++ GEN=22 CASE=5: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=6: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=7: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=8: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=9: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=10: refused: errors 3, own 3
+     first: error: constexpr variable 'count' must be initialized by a constant expression
+     note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576)
+== clang++ GEN=22 CASE=11: builds
+== clang++ GEN=22 CASE=12: builds
+== g++ GEN=22 CASE=1: builds
+== g++ GEN=22 CASE=2: builds
+== g++ GEN=22 CASE=3: builds
+== g++ GEN=22 CASE=4: builds
+== g++ GEN=22 CASE=5: builds
+== g++ GEN=22 CASE=6: builds
+== g++ GEN=22 CASE=7: builds
+== g++ GEN=22 CASE=8: builds
+== g++ GEN=22 CASE=9: builds
+== g++ GEN=22 CASE=10: builds
+== g++ GEN=22 CASE=11: builds
+== g++ GEN=22 CASE=12: builds
+== clang++ GEN=21 CASE=2: builds
+== clang++ GEN=21 CASE=5: builds
+== clang++ GEN=21 CASE=6: builds
+== clang++ GEN=21 CASE=7: builds
+#### d02: a hand-written metric that metric_like refuses, through blades (N2, A39)
+== g++ CASE=1: refused: errors 4, own 4
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+== g++ CASE=2: refused: errors 4, own 4
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+== g++ CASE=3: refused: errors 3, own 3
+     first: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) s
+== g++ CASE=4: refused: errors 1, own 1
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+== clang++ CASE=1: refused: errors 3, own 3
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+== clang++ CASE=2: refused: errors 3, own 3
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+== clang++ CASE=3: refused: errors 2, own 2
+     first: error: constraints not satisfied for class template 'mv' [with Alg = big, Blades = blade_set<4>{{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}}}, T = double]
+== clang++ CASE=4: refused: errors 1, own 1
+     first: error: static assertion failed: blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value, as in str
+#### d03: the motor rotation returns about an l that is not a line (N3, A49)
+== g++ -O0, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+about the z axis (a line)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.000000 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.000000
+  Q ⟇ antireverse(Q), nonzero coefficients: e1234 1.000000
+  weights of two moved points: 1 and 1
+about direction z, moment z (v . m = 1)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.479426 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.229849
+  Q ⟇ antireverse(Q), nonzero coefficients: 1 0.459698 e1234 1.000000
+  weights of two moved points: 1 and 1
+   exit status 0
+== g++ -O2, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+about the z axis (a line)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.000000 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.000000
+  Q ⟇ antireverse(Q), nonzero coefficients: e1234 1.000000
+  weights of two moved points: 1 and 1
+about direction z, moment z (v . m = 1)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.479426 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.229849
+  Q ⟇ antireverse(Q), nonzero coefficients: 1 0.459698 e1234 1.000000
+  weights of two moved points: 1 and 1
+   exit status 0
+== clang++ -O0, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+about the z axis (a line)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.000000 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.000000
+  Q ⟇ antireverse(Q), nonzero coefficients: e1234 1.000000
+  weights of two moved points: 1 and 1
+about direction z, moment z (v . m = 1)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.479426 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.229849
+  Q ⟇ antireverse(Q), nonzero coefficients: 1 0.459698 e1234 1.000000
+  weights of two moved points: 1 and 1
+   exit status 0
+== clang++ -O2, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+about the z axis (a line)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.000000 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.000000
+  Q ⟇ antireverse(Q), nonzero coefficients: e1234 1.000000
+  weights of two moved points: 1 and 1
+about direction z, moment z (v . m = 1)
+  motor: 0.000000 0.000000 0.479426 0.877583 0.000000 0.000000 0.479426 0.000000
+  |Qv|^2 = 1, Qv . Qm = 0.229849
+  Q ⟇ antireverse(Q), nonzero coefficients: 1 0.459698 e1234 1.000000
+  weights of two moved points: 1 and 1
+   exit status 0
+#### d04: a derived class beside an operand of another scalar or algebra (N4, A50)
+== g++ FORM=1 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_product(D, Vf)’
+== g++ FORM=1 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to ‘wedge(D, Vf)’
+== g++ FORM=1 OP=3: refused: errors 1, own 1
+     first: error: no match for ‘operator*’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=4: refused: errors 1, own 1
+     first: error: no match for ‘operator^’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_antiproduct(D, Vf)’
+== g++ FORM=1 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiwedge(D, Vf)’
+== g++ FORM=1 OP=7: refused: errors 1, own 1
+     first: error: no match for ‘operator%’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=8: refused: errors 1, own 1
+     first: error: no match for ‘operator&’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=9: refused: errors 1, own 1
+     first: error: no match for ‘operator+’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=10: refused: errors 1, own 1
+     first: error: no match for ‘operator-’ (operand types are ‘D’ and ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriente
+== g++ FORM=1 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to ‘dot(D, Vf)’
+== g++ FORM=1 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antidot(D, Vf)’
+== g++ FORM=1 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to ‘project(D, Vf)’
+== g++ FORM=1 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiproject(D, Vf)’
+== g++ FORM=1 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to ‘transform(D, Vf)’
+== g++ FORM=1 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to ‘compose(D, Vf)’
+== g++ FORM=2 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_product(Vf, D)’
+== g++ FORM=2 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to ‘wedge(Vf, D)’
+== g++ FORM=2 OP=3: refused: errors 1, own 1
+     first: error: no match for ‘operator*’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=4: refused: errors 1, own 1
+     first: error: no match for ‘operator^’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_antiproduct(Vf, D)’
+== g++ FORM=2 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiwedge(Vf, D)’
+== g++ FORM=2 OP=7: refused: errors 1, own 1
+     first: error: no match for ‘operator%’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=8: refused: errors 1, own 1
+     first: error: no match for ‘operator&’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=9: refused: errors 1, own 1
+     first: error: no match for ‘operator+’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=10: refused: errors 1, own 1
+     first: error: no match for ‘operator-’ (operand types are ‘Vf’ {aka ‘galoot::core::mv<r3, galoot::core::blade_set<3>{std::array<galoot::core::oriented_blade,
+== g++ FORM=2 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to ‘dot(Vf, D)’
+== g++ FORM=2 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antidot(Vf, D)’
+== g++ FORM=2 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to ‘project(Vf, D)’
+== g++ FORM=2 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiproject(Vf, D)’
+== g++ FORM=2 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to ‘transform(Vf, D)’
+== g++ FORM=2 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to ‘compose(Vf, D)’
+== g++ FORM=3 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_product(D, W)’
+== g++ FORM=3 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to ‘wedge(D, W)’
+== g++ FORM=3 OP=3: refused: errors 1, own 1
+     first: error: no match for ‘operator*’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=4: refused: errors 1, own 1
+     first: error: no match for ‘operator^’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to ‘geometric_antiproduct(D, W)’
+== g++ FORM=3 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiwedge(D, W)’
+== g++ FORM=3 OP=7: refused: errors 1, own 1
+     first: error: no match for ‘operator%’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=8: refused: errors 1, own 1
+     first: error: no match for ‘operator&’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=9: refused: errors 1, own 1
+     first: error: no match for ‘operator+’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=10: refused: errors 1, own 1
+     first: error: no match for ‘operator-’ (operand types are ‘D’ and ‘W’ {aka ‘galoot::core::mv<r4, galoot::core::blade_set<3>{std::array<galoot::core::oriented
+== g++ FORM=3 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to ‘dot(D, W)’
+== g++ FORM=3 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antidot(D, W)’
+== g++ FORM=3 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to ‘project(D, W)’
+== g++ FORM=3 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to ‘antiproject(D, W)’
+== g++ FORM=3 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to ‘transform(D, W)’
+== g++ FORM=3 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to ‘compose(D, W)’
+== g++ FORM=4 OP=1: refused: errors 1, own 1
+     first: error: static assertion failed: geometric_product: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=2: refused: errors 1, own 1
+     first: error: static assertion failed: wedge: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=3: refused: errors 1, own 1
+     first: error: static assertion failed: a * b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=4: refused: errors 1, own 1
+     first: error: static assertion failed: a ^ b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=5: refused: errors 1, own 1
+     first: error: static assertion failed: geometric_antiproduct: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=6: refused: errors 1, own 1
+     first: error: static assertion failed: antiwedge: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=7: refused: errors 1, own 1
+     first: error: static assertion failed: a % b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=8: refused: errors 1, own 1
+     first: error: static assertion failed: a & b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=9: refused: errors 1, own 1
+     first: error: static assertion failed: a + b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=10: refused: errors 1, own 1
+     first: error: static assertion failed: a - b: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=11: refused: errors 1, own 1
+     first: error: static assertion failed: dot: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=12: refused: errors 1, own 1
+     first: error: static assertion failed: antidot: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=13: refused: errors 1, own 1
+     first: error: static assertion failed: project: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=14: refused: errors 1, own 1
+     first: error: static assertion failed: antiproject: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=15: refused: errors 1, own 1
+     first: error: static assertion failed: transform: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=4 OP=16: refused: errors 1, own 1
+     first: error: static assertion failed: compose: the operands have different scalar types; give both types the same scalar type
+== g++ FORM=5 OP=1: builds
+== g++ FORM=5 OP=2: builds
+== g++ FORM=5 OP=3: builds
+== g++ FORM=5 OP=4: builds
+== g++ FORM=5 OP=5: builds
+== g++ FORM=5 OP=6: builds
+== g++ FORM=5 OP=7: builds
+== g++ FORM=5 OP=8: builds
+== g++ FORM=5 OP=9: builds
+== g++ FORM=5 OP=10: builds
+== g++ FORM=5 OP=11: builds
+== g++ FORM=5 OP=12: builds
+== g++ FORM=5 OP=13: builds
+== g++ FORM=5 OP=14: builds
+== g++ FORM=5 OP=15: builds
+== g++ FORM=5 OP=16: builds
+== clang++ FORM=1 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_product'
+== clang++ FORM=1 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to 'wedge'
+== clang++ FORM=1 OP=3: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=4: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_antiproduct'
+== clang++ FORM=1 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiwedge'
+== clang++ FORM=1 OP=7: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=8: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=9: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=10: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>'))
+== clang++ FORM=1 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to 'dot'
+== clang++ FORM=1 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to 'antidot'
+== clang++ FORM=1 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to 'project'
+== clang++ FORM=1 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiproject'
+== clang++ FORM=1 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to 'transform'
+== clang++ FORM=1 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to 'compose'
+== clang++ FORM=2 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_product'
+== clang++ FORM=2 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to 'wedge'
+== clang++ FORM=2 OP=3: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=4: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_antiproduct'
+== clang++ FORM=2 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiwedge'
+== clang++ FORM=2 OP=7: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=8: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=9: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=10: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('Vf' (aka 'core::mv<r3, core::blades<r3, "e1 e2 e3">, float>') and 'D')
+== clang++ FORM=2 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to 'dot'
+== clang++ FORM=2 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to 'antidot'
+== clang++ FORM=2 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to 'project'
+== clang++ FORM=2 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiproject'
+== clang++ FORM=2 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to 'transform'
+== clang++ FORM=2 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to 'compose'
+== clang++ FORM=3 OP=1: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_product'
+== clang++ FORM=3 OP=2: refused: errors 1, own 1
+     first: error: no matching function for call to 'wedge'
+== clang++ FORM=3 OP=3: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=4: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=5: refused: errors 1, own 1
+     first: error: no matching function for call to 'geometric_antiproduct'
+== clang++ FORM=3 OP=6: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiwedge'
+== clang++ FORM=3 OP=7: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=8: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=9: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=10: refused: errors 1, own 1
+     first: error: invalid operands to binary expression ('D' and 'W' (aka 'core::mv<r4, core::blades<r4, "e1 e2 e3">, double>'))
+== clang++ FORM=3 OP=11: refused: errors 1, own 1
+     first: error: no matching function for call to 'dot'
+== clang++ FORM=3 OP=12: refused: errors 1, own 1
+     first: error: no matching function for call to 'antidot'
+== clang++ FORM=3 OP=13: refused: errors 1, own 1
+     first: error: no matching function for call to 'project'
+== clang++ FORM=3 OP=14: refused: errors 1, own 1
+     first: error: no matching function for call to 'antiproject'
+== clang++ FORM=3 OP=15: refused: errors 1, own 1
+     first: error: no matching function for call to 'transform'
+== clang++ FORM=3 OP=16: refused: errors 1, own 1
+     first: error: no matching function for call to 'compose'
+== clang++ FORM=4 OP=1: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': geometric_product: the operands have different scalar types; give b
+== clang++ FORM=4 OP=2: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': wedge: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=3: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a * b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=4: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a ^ b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=5: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': geometric_antiproduct: the operands have different scalar types; gi
+== clang++ FORM=4 OP=6: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': antiwedge: the operands have different scalar types; give both type
+== clang++ FORM=4 OP=7: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a % b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=8: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a & b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=9: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a + b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=10: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': a - b: the operands have different scalar types; give both types th
+== clang++ FORM=4 OP=11: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': dot: the operands have different scalar types; give both types the 
+== clang++ FORM=4 OP=12: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': antidot: the operands have different scalar types; give both types 
+== clang++ FORM=4 OP=13: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': project: the operands have different scalar types; give both types 
+== clang++ FORM=4 OP=14: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': antiproject: the operands have different scalar types; give both ty
+== clang++ FORM=4 OP=15: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': transform: the operands have different scalar types; give both type
+== clang++ FORM=4 OP=16: refused: errors 1, own 1
+     first: error: static assertion failed due to requirement 'std::is_same_v<double, float>': compose: the operands have different scalar types; give both types 
+== clang++ FORM=5 OP=1: builds
+== clang++ FORM=5 OP=2: builds
+== clang++ FORM=5 OP=3: builds
+== clang++ FORM=5 OP=4: builds
+== clang++ FORM=5 OP=5: builds
+== clang++ FORM=5 OP=6: builds
+== clang++ FORM=5 OP=7: builds
+== clang++ FORM=5 OP=8: builds
+== clang++ FORM=5 OP=9: builds
+== clang++ FORM=5 OP=10: builds
+== clang++ FORM=5 OP=11: builds
+== clang++ FORM=5 OP=12: builds
+== clang++ FORM=5 OP=13: builds
+== clang++ FORM=5 OP=14: builds
+== clang++ FORM=5 OP=15: builds
+== clang++ FORM=5 OP=16: builds

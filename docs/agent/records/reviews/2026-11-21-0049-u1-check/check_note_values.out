@@ -1,0 +1,43 @@
+PASS R(0,3,0) g=0: transform(x, bulk_dual V) = C_V(x)
+     R(0,3,0) g=0: transform(x, right V) = C_V(x)? True
+PASS R(0,3,0) g=1: transform(x, bulk_dual V) = C_V(x)
+     R(0,3,0) g=1: transform(x, right V) = C_V(x)? True
+PASS R(2,1,0) g=0: transform(x, bulk_dual V) = C_V(x)
+     R(2,1,0) g=0: transform(x, right V) = C_V(x)? False
+PASS R(2,1,0) g=1: transform(x, bulk_dual V) = C_V(x)
+     R(2,1,0) g=1: transform(x, right V) = C_V(x)? False
+PASS R(1,1,0) g=0: transform(x, bulk_dual V) = C_V(x)
+     R(1,1,0) g=0: transform(x, right V) = C_V(x)? False
+PASS R(1,1,0) g=1: transform(x, bulk_dual V) = C_V(x)
+     R(1,1,0) g=1: transform(x, right V) = C_V(x)? False
+PASS Theorem D rigid(3) g=0: transform(x, right V) = C_V(x)
+PASS Theorem D rigid(3) g=1: transform(x, right V) = C_V(x)
+PASS R(2,0,0) transform(v, 1 - e12) equals classical on every vector: True
+PASS R(2,0,0) transform(v, 2 - e12) equals classical on every vector: False
+PASS R(3,0,0): right(right(x)) = x for all x
+PASS R(2,0,0): right(right(e1)) = -e1
+PASS r = 1 - e12, !r = e123 - e3
+PASS (2,-3,5): classical (6,4,10), transform(v,r) (6,4,-10), transform(v,!r) (6,4,10)
+PASS s on (1, 0, 0): classical (3, 4, 0), transform(v,s) (-3, 4, 0), transform(v,!s) (3, 4, 0)
+PASS s on (0, 1, 0): classical (-4, 3, 0), transform(v,s) (-4, -3, 0), transform(v,!s) (-4, 3, 0)
+PASS s on (0, 0, 1): classical (0, 0, 5), transform(v,s) (0, 0, -5), transform(v,!s) (0, 0, 5)
+PASS one mirror a: -a v a = (-1,2,3), transform(v,a) = (1,-2,-3), transform(v,!a) = (-1,2,3)
+PASS g = !a = e23, h = !b = e23 + e31
+PASS transform((1,2,3), g) = (-1,2,3)
+PASS h % g = !r
+PASS V % antirev(V) = 2 antiscalar (R(3,0,0))
+PASS transform(e1, V) = 2 e2, transform(e3, V) = 2 e3
+PASS rigid(3): !(1 - e12) = motor (0,0,1,1,0,0,0,0)
+PASS rigid(3): !e1 = plane (1,0,0,0)
+PASS Q: (2,-3,5,1) -> (6,4,10,2)
+PASS plane x=0 as flector: (1,2,3,1) -> (-1,2,3,1)
+PASS compose of planes !b, !a = Q
+PASS compose(z=1, z=0) = motor (0,0,0,1,0,0,1,0)
+PASS that motor: (1,2,3,1) -> (1,2,5,1)
+PASS reflect in z=0 then z=1 equals the motor
+PASS x=1 meet y=1 = line (0,0,-1,-1,1,0)
+PASS compose(y=1, x=1) = motor (0,0,1,0,1,-1,0,0)
+PASS lambda = 1
+PASS origin -> (2,2,0); (1,1,5) stays; (2,1,0) -> (0,1,0)
+PASS z=0 meet z=1 = line (0,0,0,0,0,-1)
+ALL PASS

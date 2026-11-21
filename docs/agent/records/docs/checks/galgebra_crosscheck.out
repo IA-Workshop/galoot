@@ -1,0 +1,6 @@
+R(3,0,0): 64 blade pairs compared
+R(2,1,0): 64 blade pairs compared
+!!!!If I**2 = 0, I cannot be normalized!!!!
+R(3,0,1): 256 blade pairs compared
+sandwich values compared: 4
+agree

@@ -1,0 +1,20 @@
+comment	class	position	lines
+//	lint	detail	23
+//	lint	prologue	1
+//	lint	public	11
+//	other	detail	225
+//	other	prologue	27
+//	other	public	18
+//	why	detail	388
+//	why	prologue	674
+//	why	public	60
+///	contract	detail	302
+///	contract	public	1034
+///	cross-ref	public	7
+///	other	detail	97
+///	other	public	172
+///	why	detail	44
+///	why	public	125
+
+By class (the census's table): // lint 35, // other 270, // why 1122, /// contract 1336, /// cross-ref 7, /// other 269, /// why 169
+All comment lines: 3208
