@@ -1,0 +1,29 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=1 docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp
+In file included from include/galoot/core.hpp:8,
+                 from docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp:19:
+include/galoot/core/basis_change.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_checked_change() [with C = extreme]’:
+include/galoot/core/basis_change.hpp:744:62:   required from ‘constexpr const auto galoot::core::detail::checked_change<extreme>’
+  744 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ~~~~~~~~~~~~~~~~~~~~~~^~
+include/galoot/core/basis_change.hpp:954:42:   required from ‘consteval auto galoot::core::detail::make_change_map() [with C = extreme; bool Back = false; blade_set<...auto...> S = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}]’
+  954 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^~~~~~~~~~~~~~~~~
+include/galoot/core/basis_change.hpp:1003:66:   required from ‘constexpr const auto galoot::core::detail::change_map_of<extreme, false, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}>’
+ 1003 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+include/galoot/core/basis_change.hpp:1097:13:   required from ‘constexpr const auto galoot::core::change_basis_layout<extreme, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}>’
+ 1097 |     detail::change_map_of<C, false, S>.result;
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/basis_change.hpp:1141:48:   required by substitution of ‘template<class C, blade_set<...auto...> S, class T>  requires (basis_change_like<C>) && (ring_scalar<T>) constexpr galoot::core::mv<typename C::target, change_basis_layout<C, S>, T> galoot::core::change_basis(const mv<typename C::source, S, T>&) [with C = extreme; blade_set<...auto...> S = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}; T = double]’
+ 1141 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~
+docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp:36:47:   required from here
+   36 | const auto image = core::change_basis<extreme>(P{1.0});
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+include/galoot/core/basis_change.hpp:719:21: error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+  719 |       static_assert(fits, "basis_change: an exact value the change computes "
+      |                     ^~~~
+  • ‘fits’ evaluates to false
+exit status: 1
+error lines: 1
+error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries

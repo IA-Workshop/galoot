@@ -1,0 +1,8 @@
+$ g++ p01_narrow_unsigned.cpp -fsanitize=undefined -g -DGALOOT_CHECKING=0
+--- run
+include/galoot/core/mv.hpp:366:58: runtime error: signed integer overflow: 65535 * 65535 cannot be represented in type 'int'
+include/galoot/core/linear.hpp:364:44: runtime error: signed integer overflow: 65535 * 65535 cannot be represented in type 'int'
+uint16 e1 * e1 on the scalar: 1 (2^16-modular answer 1)
+uint16 s * x on e1: 1 (2^16-modular answer 1)
+int16 e1 * e1 on the scalar: 1 (2^16-modular answer 1)
+exit status: 0

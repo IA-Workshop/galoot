@@ -1,0 +1,5 @@
+$ /home/brianm/projects/utils/math-core/math-tools/exercises/performance/pe-common/memguard.sh build/audit-numerical/p09.n24.op3.clang++.mem -- timeout 600 tools/timed --log docs/agent/records/hardening/0047-audit/numerical/p09.timed.tsv probe - p09.n24.op3.clang++ -- clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DWIDE_N=24 -DWIDE_OP=3 docs/agent/records/hardening/0047-audit/numerical/p09_wide_algebras.cpp
+timed: probe p09.n24.op3.clang++ took 0.167 s (exit 0); row in docs/agent/records/hardening/0047-audit/numerical/p09.timed.tsv
+exit status: 0
+error lines: 0
+memguard: peak_tree_rss_kib 8264 exit 0

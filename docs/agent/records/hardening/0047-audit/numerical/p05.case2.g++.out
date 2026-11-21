@@ -1,0 +1,15 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=2 docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp
+In file included from include/galoot/core/dual.hpp:104,
+                 from include/galoot/core.hpp:12,
+                 from docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:6:
+include/galoot/core/product.hpp: In instantiation of ‘constexpr galoot::core::mv<Alg, geometric_product_layout<Alg, A, B>, T> galoot::core::operator*(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg = diagonal<4097>; blade_set<...auto...> A = blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{3, 1}}}}; blade_set<...auto...> B = blade_set<1>{std::array<oriented_blade, 1>{std::__array_traits<oriented_blade, 1>::_Type{oriented_blade{3, 1}}}}; T = float]’:
+docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:29:36:   required from here
+   29 | constexpr auto r = B{1.0F} * B{1.0F};
+      |                                    ^
+include/galoot/core/product.hpp:291:17: error: static assertion failed: a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
+  291 |   static_assert(scalar_holds_every_coefficient_of_the_product,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  • ‘scalar_holds_every_coefficient_of_the_product’ evaluates to false
+exit status: 1
+error lines: 1
+error: static assertion failed: a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly

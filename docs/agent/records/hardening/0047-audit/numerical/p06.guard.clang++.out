@@ -1,0 +1,6 @@
+$ clang++ p06_change_extreme_rows.cpp -DCASE=2 -fsanitize=undefined -g
+--- run
+include/galoot/core/basis_change.hpp:266:48: runtime error: negation of -9223372036854775808 cannot be represented in type 'coefficient_type' (aka 'long'); cast to an unsigned type to negate this value to itself
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior include/galoot/core/basis_change.hpp:266:48 
+multiply_noting(min, 1) = 0, fits 0
+exit status: 0
