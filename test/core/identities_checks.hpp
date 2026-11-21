@@ -852,7 +852,8 @@ void check_each(Identity identity, forms<G...> /*list*/,
 // Each group checks an identity over its forms, on the layouts its source
 // states, drawing from source in the order of its forms.
 void forms_up_to_three(Identity identity, std::mt19937_64& source);
-void forms_of_four(Identity identity, std::mt19937_64& source);
+void diagonal_forms_of_four(Identity identity, std::mt19937_64& source);
+void other_forms_of_four(Identity identity, std::mt19937_64& source);
 void diagonal_forms_of_five(Identity identity, std::mt19937_64& source);
 void conformal_three(Identity identity, std::mt19937_64& source);
 void dense_forms_of_five(Identity identity, std::mt19937_64& source);
@@ -864,11 +865,15 @@ void forms_off_axis(Identity identity, std::mt19937_64& source);
 
 // The groups in the order each test case checks them, so that one seed
 // gives the same multivectors in every build. A group added later goes
-// last, so that the groups before it keep their draws.
+// last, so that the groups before it keep their draws. The forms of four
+// are two groups, one after the other, which draw as one group of all of
+// them would.
 inline constexpr std::array groups{
-    &forms_up_to_three, &forms_of_four,       &diagonal_forms_of_five,
-    &conformal_three,   &dense_forms_of_five, &forms_of_six,
-    &large_forms,       &drawn_forms_of_five, &drawn_forms_of_six,
+    &forms_up_to_three,   &diagonal_forms_of_four,
+    &other_forms_of_four, &diagonal_forms_of_five,
+    &conformal_three,     &dense_forms_of_five,
+    &forms_of_six,        &large_forms,
+    &drawn_forms_of_five, &drawn_forms_of_six,
     &forms_off_axis,
 };
 

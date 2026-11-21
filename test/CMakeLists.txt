@@ -1667,7 +1667,8 @@ set_source_files_properties(core/identities_conformal3_test.cpp
 galoot_add_test(MODULE core COMPONENT identities)
 target_sources(core_identities_test PRIVATE
   core/identities_up_to_three_test.cpp
-  core/identities_four_test.cpp
+  core/identities_four_diagonal_test.cpp
+  core/identities_four_other_test.cpp
   core/identities_five_diagonal_test.cpp
   core/identities_conformal3_test.cpp
   core/identities_five_dense_test.cpp
@@ -2385,8 +2386,18 @@ set_tests_properties(core.transform_fast_math
 # core.transform_identities: the outermorphism and composition identities of
 # transform over many signatures. A program of its own, so that a change to
 # the tests of transform_test.cpp does not rebuild it; it also carries the
-# label core.transform.
+# label core.transform. Its test cases are in transform_identities_test.cpp,
+# and each group of forms is checked in a source of its own,
+# transform_identities_<group>_test.cpp: at -O0 GCC holds the code of every
+# form until the end of its source, so one source for all of them needed
+# about 6 GB, and the groups compile in parallel.
 galoot_add_test(MODULE core COMPONENT transform_identities)
+target_sources(core_transform_identities_test PRIVATE
+  core/transform_identities_up_to_three_test.cpp
+  core/transform_identities_four_named_test.cpp
+  core/transform_identities_four_gram_test.cpp
+  core/transform_identities_five_rigid_conformal_test.cpp
+  core/transform_identities_five_dense_large_test.cpp)
 target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
