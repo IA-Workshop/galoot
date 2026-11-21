@@ -15,15 +15,15 @@ include/galoot/core/assert.hpp	56-59	public	internal contract	keep	GALOOT_ALWAYS
 include/galoot/core/assert.hpp	60-65	public	reason	summary	Why the core forces inlining: so an operation compiles to the straight-line arithmetic of its terms at the call site	docs/guide/concepts/compile-time-cost.md	Forced inlining	D3	keep the first sentence; the rest (out-of-line calls take a large share of the time) moves
 include/galoot/core/assert.hpp	66-74	public	narration	move	Scope of the no-call check (rga3 operations, double, -O2, x86-64) and where it is not promised (conformal(3), -Os, checking builds)	docs/guide/verification.md	Forced inlining	D3	process narration ("the structure test found"); a user-facing scope claim, so the verification page
 include/galoot/core/assert.hpp	75-76	public	internal contract	keep	It is not part of the interface: a program neither uses nor defines it			none	
-include/galoot/core/assert.hpp	77-83	public	internal contract	move	A forced-inline function cannot be inlined into a caller built for fewer instruction-set features; both compilers stop with an error; how to arrange a fallback	docs/guide/diagnostics.md	A function built for another target cannot call an operation	D3 and the detail ruling	not in core or limits at this revision
+include/galoot/core/assert.hpp	77-83	public	internal contract	move	A forced-inline function cannot be inlined into a caller built for fewer instruction-set features; both compilers stop with an error; how to arrange a fallback	docs/guide/diagnostics.md	A function built for another target cannot call an operation	D3 and the S11 amendment	not in core or limits at this revision. GALOOT_ALWAYS_INLINE is a macro, in no detail namespace, so the detail ruling does not reach it; the text is the only statement of a compile error a user meets when calling an operation, and leaves the header only under the S11 amendment
 include/galoot/core/assert.hpp	84-85	public	reason	keep	Why GALOOT_ALWAYS_INLINE is a macro: written only for compilers that know the attribute, only in forced mode			none	
 include/galoot/core/assert.hpp	94	detail	internal contract	keep	assertion_failed: reports a failed GALOOT_ASSERT and ends the program			none	
-include/galoot/core/assert.hpp	95-97	detail	internal contract	delete	Requires restates the parameters; the output format	docs/guide/core.md	Checking mode	the detail ruling	the format is in core 'Checking mode'
+include/galoot/core/assert.hpp	95-97	detail	internal contract	delete	Requires restates the parameters; the output format	docs/guide/core.md	Checking mode	none	the format is in core 'Checking mode'
 include/galoot/core/assert.hpp	98-100	detail	reason	keep	Not constexpr, so reaching it ends a constant evaluation without a throw and the core needs no exceptions			none	
 include/galoot/core/assert.hpp	103-104	detail	reason	keep	Why fprintf: <print>, <format> or <iostream> would add a heavy include to every core header			none	
 include/galoot/core/assert.hpp	105	detail	marker	keep	NOLINT for vararg and use-std-print, with the reason above			none	
 include/galoot/core/assert.hpp	111	detail	internal contract	keep	checking_now: whether GALOOT_ASSERT checks where it is evaluated			none	
-include/galoot/core/assert.hpp	112-114	detail	narration	delete	Guarantees restate the five-line body (true in a constant evaluation, else GALOOT_CHECKING == 1)			the detail ruling	
+include/galoot/core/assert.hpp	112-114	detail	narration	delete	Guarantees restate the five-line body (true in a constant evaluation, else GALOOT_CHECKING == 1)			none	
 include/galoot/core/assert.hpp	124-125	public	public contract	summary	GALOOT_ASSERT(condition, message): checks a precondition	docs/guide/reference/macros.md	GALOOT_ASSERT	D3 and the S11 amendment	
 include/galoot/core/assert.hpp	126-129	public	reason	keep	The message must be a literal starting on the line of GALOOT_ASSERT(, because a failed constant evaluation shows only the source line the compiler echoes			none	the home of this rule; seven other comments repeat it and point here instead
 include/galoot/core/assert.hpp	130-133	public	public contract	move	What GALOOT_ASSERT does in a constant evaluation and in each run-time mode; with checking off the condition is not evaluated	docs/guide/reference/macros.md	GALOOT_ASSERT	D3 and the S11 amendment	already in core 'Checking mode'
@@ -40,7 +40,7 @@ include/galoot/core/bits.hpp	37	public	public contract	keep	mask_bits: the numbe
 include/galoot/core/bits.hpp	40	public	reason	keep	Why the static_assert: the messages below are literals that name the bound			none	
 include/galoot/core/bits.hpp	45-47	detail	internal contract	keep	low_bits: the antiscalar's mask; requires 1 <= n <= mask_bits, checked by the caller			none	the precondition is undefined behavior when broken (a shift by 32 or more)
 include/galoot/core/bits.hpp	49	detail	reason	keep	Why a right shift of all ones: 1 << n is undefined at n = mask_bits			none	
-include/galoot/core/bits.hpp	53	detail	narration	delete	valid_count: restates its one-line body			the detail ruling	
+include/galoot/core/bits.hpp	53	detail	narration	delete	valid_count: restates its one-line body			none	
 include/galoot/core/bits.hpp	58-60	detail	internal contract	keep	in_algebra: whether a names only e_1 to e_n; requires valid_count(n)			none	the requirement guards the shift in low_bits
 include/galoot/core/bits.hpp	67-69	public	public contract	summary	grade: the number of generators of the blade; requires nothing	docs/guide/reference/blade-helpers.md	grade	D3 and the S11 amendment	
 include/galoot/core/bits.hpp	70-72	public	reason	keep	The range 0 to mask_bits, and why grades are int (sign formulas such as k(k - 1)/2 need no unsigned arithmetic)			none	
@@ -183,25 +183,25 @@ include/galoot/core/blade_product.hpp	48	public	public contract	keep	coefficient
 include/galoot/core/blade_product.hpp	49-57	public	public contract	keep	Signed 64 bits; generation keeps coefficients in range and an overflow fails GALOOT_ASSERT where formed; with GALOOT_CHECKING 0 an overflow is undefined behavior			none	the ruling's own example of a precondition kept in full
 include/galoot/core/blade_product.hpp	62-63	detail	internal contract	keep	add_checked: x + y, checked to lie within -max to max			none	
 include/galoot/core/blade_product.hpp	64-65	detail	internal contract	keep	Requires x and y within -max to max			none	the invariant the bound computation below relies on
-include/galoot/core/blade_product.hpp	66-68	detail	narration	delete	Guarantees restate the body: the sum, or a failed GALOOT_ASSERT			the detail ruling	plan 0048's B5 rewrites this function
+include/galoot/core/blade_product.hpp	66-68	detail	narration	delete	Guarantees restate the body: the sum, or a failed GALOOT_ASSERT			none	plan 0048's B5 rewrites this function
 include/galoot/core/blade_product.hpp	71-72	detail	equation or convention	keep	Why neither bound overflows: max - y and -max - y both lie in range			none	
 include/galoot/core/blade_product.hpp	79-80	detail	internal contract	keep	multiply_checked: x y, checked to lie within -max to max			none	
 include/galoot/core/blade_product.hpp	81-83	detail	internal contract	keep	Requires x and y within range, so that their magnitudes are defined			none	negating the most negative value is undefined
-include/galoot/core/blade_product.hpp	84-86	detail	narration	delete	Guarantees restate the body			the detail ruling	
+include/galoot/core/blade_product.hpp	84-86	detail	narration	delete	Guarantees restate the body			none	
 include/galoot/core/blade_product.hpp	89	detail	equation or convention	keep	The overflow test: |x| |y| <= max exactly when |y| <= max / |x| rounded down			none	
 include/galoot/core/blade_product.hpp	98-99	detail	internal contract	keep	term: coefficient times the canonical blade of the mask			none	
-include/galoot/core/blade_product.hpp	100-102	detail	narration	delete	Guarantees: structural, trivially copyable, equal when the members are			the detail ruling	the declaration shows each
-include/galoot/core/blade_product.hpp	104	detail	narration	delete	term::blade: bit i - 1 for e_i			the detail ruling	the mask convention again
-include/galoot/core/blade_product.hpp	106	detail	narration	delete	term::coefficient: the exact coefficient			the detail ruling	
-include/galoot/core/blade_product.hpp	109	detail	narration	delete	term::operator==: equal when the members are			the detail ruling	
+include/galoot/core/blade_product.hpp	100-102	detail	narration	delete	Guarantees: structural, trivially copyable, equal when the members are			none	the declaration shows each
+include/galoot/core/blade_product.hpp	104	detail	narration	delete	term::blade: bit i - 1 for e_i			none	the mask convention again
+include/galoot/core/blade_product.hpp	106	detail	narration	delete	term::coefficient: the exact coefficient			none	
+include/galoot/core/blade_product.hpp	109	detail	narration	delete	term::operator==: equal when the members are			none	
 include/galoot/core/blade_product.hpp	113-121	detail	internal contract	keep	term_list: distinct blades, no zero coefficient, canonical order; starts empty and changes only through add; unused places hold {0, 0}, so equal sums compare equal			none	the invariants every generated table relies on
-include/galoot/core/blade_product.hpp	124	detail	internal contract	delete	term_list::terms: canonical order, then {0, 0}	include/galoot/core/blade_product.hpp:119-121		the detail ruling	repeats the class's invariant
-include/galoot/core/blade_product.hpp	126	detail	narration	delete	term_list::length: the number of terms			the detail ruling	
-include/galoot/core/blade_product.hpp	129	detail	narration	delete	term_list::size: the number of terms			the detail ruling	
+include/galoot/core/blade_product.hpp	124	detail	internal contract	delete	term_list::terms: canonical order, then {0, 0}	include/galoot/core/blade_product.hpp:119-121		none	repeats the class's invariant
+include/galoot/core/blade_product.hpp	126	detail	narration	delete	term_list::length: the number of terms			none	
+include/galoot/core/blade_product.hpp	129	detail	narration	delete	term_list::size: the number of terms			none	
 include/galoot/core/blade_product.hpp	132-140	detail	internal contract	keep	term_list::add: requires a coefficient in range; merges a listed blade and removes it at zero; inserts a new one in order; capacity and overflow fail GALOOT_ASSERT			none	
-include/galoot/core/blade_product.hpp	170	detail	narration	delete	term_list::operator==			the detail ruling	
+include/galoot/core/blade_product.hpp	170	detail	narration	delete	term_list::operator==			none	
 include/galoot/core/blade_product.hpp	174-176	detail	equation or convention	keep	product_capacity: 2^(|A ∪ B| - 1) terms at most, or 1 for two scalars			none	
-include/galoot/core/blade_product.hpp	177-178	detail	narration	delete	Requires nothing			the detail ruling	
+include/galoot/core/blade_product.hpp	177-178	detail	narration	delete	Requires nothing			none	
 include/galoot/core/blade_product.hpp	179-185	detail	equation or convention	keep	Why the capacity holds: terms lie on subsets of A ∪ B with the parity of |A| + |B|, for every partial sum too, so the list never overflows			none	the proof a maintainer needs before changing the recursion
 include/galoot/core/blade_product.hpp	194	detail	equation or convention	keep	add_generator_product applies e_i x = e_i ⌋ x + e_i ∧ x, term by term			none	
 include/galoot/core/blade_product.hpp	205-206	detail	equation or convention	keep	e_i ∧ e_B: the transpositions past the lower generators of B, the count reorder_sign takes			none	
@@ -229,14 +229,14 @@ include/galoot/core/plan.hpp	91	detail	equation or convention	keep	wedge: e_A �
 include/galoot/core/plan.hpp	93	detail	equation or convention	keep	geometric_antiproduct: e_A ⟇ e_B = left(right(e_A) right(e_B))			none	
 include/galoot/core/plan.hpp	95-96	detail	equation or convention	keep	antiwedge: e_A ∨ e_B = left(right(e_A) ∧ right(e_B)), independent of the metric			none	
 include/galoot/core/plan.hpp	100-102	detail	internal contract	keep	base_operation: the product an operation is a conjugate of			none	
-include/galoot/core/plan.hpp	103-104	detail	narration	delete	Requires nothing			the detail ruling	
+include/galoot/core/plan.hpp	103-104	detail	narration	delete	Requires nothing			none	
 include/galoot/core/plan.hpp	116-118	detail	internal contract	keep	plan_term: the blade at a of the first set times the blade at b of the second gives coefficient times the blade of out			none	
-include/galoot/core/plan.hpp	119-121	detail	narration	delete	Guarantees: aggregate, equal when every member is			the detail ruling	
+include/galoot/core/plan.hpp	119-121	detail	narration	delete	Guarantees: aggregate, equal when every member is			none	
 include/galoot/core/plan.hpp	123	detail	internal contract	keep	plan_term::a: the position in the first set			none	
 include/galoot/core/plan.hpp	125	detail	internal contract	keep	plan_term::b: the position in the second set			none	
 include/galoot/core/plan.hpp	127-128	detail	internal contract	keep	plan_term::out: the output blade's generators, sign +1			none	
 include/galoot/core/plan.hpp	130	detail	internal contract	keep	plan_term::coefficient: exact, with both input signs folded in			none	
-include/galoot/core/plan.hpp	133	detail	narration	delete	plan_term::operator==			the detail ruling	
+include/galoot/core/plan.hpp	133	detail	narration	delete	plan_term::operator==			none	
 include/galoot/core/plan.hpp	137-146	detail	internal contract	keep	pair_capacity: the most terms an operation gives one pair (product_capacity, of the complements for an antiproduct, 1 for the wedges); a valid n for an antiproduct; never overflows			none	
 include/galoot/core/plan.hpp	155-162	detail	internal contract	keep	plan_capacity: the largest pair_capacity over the pairs and at least 1; generate_plan never outgrows it			none	
 include/galoot/core/plan.hpp	170	detail	marker	keep	NOLINT use-std-min-max, with its reason			none	
@@ -249,21 +249,21 @@ include/galoot/core/plan.hpp	254-263	detail	internal contract	keep	Requires sign
 include/galoot/core/plan.hpp	274-275	detail	equation or convention	keep	Why the products of signs need no guard: ±1 times an in-range coefficient cannot overflow			none	
 include/galoot/core/plan.hpp	299-301	detail	internal contract	keep	collect_result: the distinct output blades, sign +1, canonical order, and their number			none	
 include/galoot/core/plan.hpp	302-304	detail	internal contract	keep	Requires: out has a place for every distinct blade, checked by GALOOT_ASSERT; plan.size() places always suffice			none	undefined behavior in an unchecked build were this called at run time (a span too small is written past its end), so it stays in full under the ruling, as for unary_term
-include/galoot/core/plan.hpp	305-307	detail	internal contract	delete	Guarantees: the first places hold exactly those blades in increasing order; the others are not written	include/galoot/core/plan.hpp:299-301		the detail ruling	restates the summary, adding only that later places are not written
+include/galoot/core/plan.hpp	305-307	detail	internal contract	delete	Guarantees: the first places hold exactly those blades in increasing order; the others are not written	include/galoot/core/plan.hpp:299-301		none	restates the summary, adding only that later places are not written
 include/galoot/core/plan.hpp	329-331	detail	internal contract	keep	typed_term: positions a and b contribute coefficient times the result blade at out			none	
-include/galoot/core/plan.hpp	332-334	detail	narration	delete	Guarantees: aggregate, equal when every member is			the detail ruling	
+include/galoot/core/plan.hpp	332-334	detail	narration	delete	Guarantees: aggregate, equal when every member is			none	
 include/galoot/core/plan.hpp	336	detail	internal contract	keep	typed_term::a			none	
 include/galoot/core/plan.hpp	338	detail	internal contract	keep	typed_term::b			none	
 include/galoot/core/plan.hpp	340	detail	internal contract	keep	typed_term::out: the position in the result set			none	
-include/galoot/core/plan.hpp	342	detail	internal contract	delete	typed_term::coefficient: both input signs folded in	include/galoot/core/plan.hpp:130		the detail ruling	the same sentence as plan_term::coefficient
-include/galoot/core/plan.hpp	345	detail	narration	delete	typed_term::operator==			the detail ruling	
+include/galoot/core/plan.hpp	342	detail	internal contract	delete	typed_term::coefficient: both input signs folded in	include/galoot/core/plan.hpp:130		none	the same sentence as plan_term::coefficient
+include/galoot/core/plan.hpp	345	detail	narration	delete	typed_term::operator==			none	
 include/galoot/core/plan.hpp	349-350	detail	internal contract	keep	type_terms: the plan's terms with each blade replaced by its position in the result			none	
 include/galoot/core/plan.hpp	351-356	detail	internal contract	keep	Requires nothing; the position of the first blade with the mask, or result.size() if none; later places not written			none	result.size() for a missing blade is what the self-check catches
 include/galoot/core/plan.hpp	374-375	detail	internal contract	keep	typed_plan: R result blades and T terms			none	
-include/galoot/core/plan.hpp	376-378	detail	narration	delete	Guarantees: structural aggregate, equal when its members are			the detail ruling	
+include/galoot/core/plan.hpp	376-378	detail	narration	delete	Guarantees: structural aggregate, equal when its members are			none	
 include/galoot/core/plan.hpp	381	detail	internal contract	keep	typed_plan::result: sign +1, canonical order			none	
 include/galoot/core/plan.hpp	383	detail	internal contract	keep	typed_plan::terms: in order of a, then b, then result position			none	
-include/galoot/core/plan.hpp	386	detail	narration	delete	typed_plan::operator==			the detail ruling	
+include/galoot/core/plan.hpp	386	detail	narration	delete	typed_plan::operator==			none	
 include/galoot/core/plan.hpp	390	detail	narration	delete	all_in_algebra: restates its name and its one loop			none	
 include/galoot/core/plan.hpp	394	detail	marker	keep	NOLINT use-anyofallof, with its reason			none	
 include/galoot/core/plan.hpp	403-405	detail	reason	keep	plan_defects: none can hold for a plan generate_plan wrote; why they are checked once per plan (each is one pass)			none	
@@ -276,9 +276,9 @@ include/galoot/core/plan.hpp	530-535	detail	reason	keep	make_product_plan: the s
 include/galoot/core/plan.hpp	536-539	detail	reason	keep	Why every local is static constexpr: Clang re-evaluates a plain constexpr local at each call, so the plan would be generated twice			none	the home of this reason; lines 63-66 and 624-627 repeat it
 include/galoot/core/plan.hpp	593-600	detail	internal contract	keep	product_plan: the typed plan of Op over A and B, its result set and term order; an antiproduct's plan through the complements, with a and b still positions of A and B			none	
 include/galoot/core/plan.hpp	601-608	detail	internal contract	keep	Requires Alg metric_like and valid blades (checked, with messages), coefficients in range; a repeated mask is not checked; the compilers' limits bound the sets			none	
-include/galoot/core/plan.hpp	609-621	detail	internal contract	delete	The cost model of a plan (a fixed amount per pair plus the pair's product, placement up to T times R, a small set times a large one, the antiproduct's growth with n) and the flags that raise the limits	docs/guide/limits.md	Compile-time limits: products and plans	the detail ruling	the limits page states the same model in nearly the same words
+include/galoot/core/plan.hpp	609-621	detail	internal contract	delete	The cost model of a plan (a fixed amount per pair plus the pair's product, placement up to T times R, a small set times a large one, the antiproduct's growth with n) and the flags that raise the limits	docs/guide/limits.md	Compile-time limits: products and plans	none	the limits page states the same model in nearly the same words
 include/galoot/core/plan.hpp	622-623	detail	pointer	keep	Pointer: docs/guide/limits.md, under 'Compile-time limits: products and plans'			none	reword to stand alone once the sentences before it go
-include/galoot/core/plan.hpp	624-627	detail	internal contract	delete	Generated once per translation unit, because of the static constexpr locals (checked on Clang; GCC's cache hides a repetition)	include/galoot/core/plan.hpp:536-539		the detail ruling	two homes, as for 63-66: the Clang half at 536-539, the GCC half in the comment above core.plan_evaluated_once in test/CMakeLists.txt (733-742 at 01dce7f); line 627 also opens the next sentence, kept below, so it is rewritten, not cut
+include/galoot/core/plan.hpp	624-627	detail	internal contract	delete	Generated once per translation unit, because of the static constexpr locals (checked on Clang; GCC's cache hides a repetition)	include/galoot/core/plan.hpp:536-539		none	two homes, as for 63-66: the Clang half at 536-539, the GCC half in the comment above core.plan_evaluated_once in test/CMakeLists.txt (733-742 at 01dce7f); line 627 also opens the next sentence, kept below, so it is rewritten, not cut
 include/galoot/core/plan.hpp	628-630	detail	internal contract	keep	No zero coefficient; a, b and out in range; every result blade used; each checked when the plan is generated			none	
 include/galoot/core/plan.hpp	632-633	detail	marker	delete	Why the cast marker: clang-tidy reads the substituted operation as a C-style cast			B9	one of 23 cast markers; goes with its marker under B9
 include/galoot/core/plan.hpp	634	detail	marker	delete	NOLINT modernize-avoid-c-style-cast			B9	the exclusion in .clang-tidy replaces it (ruled, after B9 confirms every report is false)
@@ -295,16 +295,16 @@ include/galoot/core/plan.hpp	663-666	detail	internal contract	keep	Requires a va
 include/galoot/core/plan.hpp	692-696	detail	internal contract	keep	generate_map: for each position the signed image, as a plan term with second position 0, so the plan's typing functions type a map too			none	
 include/galoot/core/plan.hpp	697-702	detail	internal contract	keep	Requires valid masks (checked) and signs of ±1 (not checked); term a is that of blade a; later places not written			none	
 include/galoot/core/plan.hpp	717-719	detail	internal contract	keep	map_term: the input blade at a contributes coefficient times the result blade at out			none	plan 0048's B1 deletes map_term; the comment goes with it
-include/galoot/core/plan.hpp	720-722	detail	narration	delete	Guarantees: aggregate, equal when every member is			the detail ruling	
+include/galoot/core/plan.hpp	720-722	detail	narration	delete	Guarantees: aggregate, equal when every member is			none	
 include/galoot/core/plan.hpp	724	detail	internal contract	keep	map_term::a			none	
 include/galoot/core/plan.hpp	726	detail	internal contract	keep	map_term::out			none	
 include/galoot/core/plan.hpp	728-729	detail	internal contract	keep	map_term::coefficient: ±1 with the input's sign folded in			none	
-include/galoot/core/plan.hpp	732	detail	narration	delete	map_term::operator==			the detail ruling	
+include/galoot/core/plan.hpp	732	detail	narration	delete	map_term::operator==			none	
 include/galoot/core/plan.hpp	736-737	detail	internal contract	keep	typed_map: R result blades and one term per input blade			none	plan 0048's B1 deletes typed_map
-include/galoot/core/plan.hpp	738-740	detail	narration	delete	Guarantees: structural aggregate, equal when its members are			the detail ruling	
-include/galoot/core/plan.hpp	743	detail	internal contract	delete	typed_map::result: sign +1, canonical order	include/galoot/core/plan.hpp:381		the detail ruling	the same sentence as typed_plan::result
+include/galoot/core/plan.hpp	738-740	detail	narration	delete	Guarantees: structural aggregate, equal when its members are			none	
+include/galoot/core/plan.hpp	743	detail	internal contract	delete	typed_map::result: sign +1, canonical order	include/galoot/core/plan.hpp:381		none	the same sentence as typed_plan::result
 include/galoot/core/plan.hpp	745	detail	internal contract	keep	typed_map::terms: term a for input blade a			none	
-include/galoot/core/plan.hpp	748	detail	narration	delete	typed_map::operator==			the detail ruling	
+include/galoot/core/plan.hpp	748	detail	narration	delete	typed_map::operator==			none	
 include/galoot/core/plan.hpp	752-758	detail	equation or convention	keep	closed_form_right_sign: (-1)^(k(k+1)/2 + i_1 + ... + i_k), a second route to right_complement_sign, and its derivation			none	the independent formula the map's self-check compares against
 include/galoot/core/plan.hpp	759-761	detail	internal contract	keep	Requires nothing; ±1, the same in every algebra that holds the blade			none	the second clause is why it serves as a check
 include/galoot/core/plan.hpp	771-772	detail	internal contract	keep	map_defects: none can hold for a map generated and typed by the functions above			none	
@@ -314,7 +314,7 @@ include/galoot/core/plan.hpp	837	detail	marker	keep	NOLINT use-anyofallof, with 
 include/galoot/core/plan.hpp	873-876	detail	reason	keep	make_unary_map: the set is checked first; generate, type, check; static constexpr locals for the same reason as make_product_plan			none	
 include/galoot/core/plan.hpp	916-922	detail	internal contract	keep	unary_map: one term per blade of S, sent with its sign to the result position; the result's form; the algebra gives n and the metric is not read			none	
 include/galoot/core/plan.hpp	923-927	detail	internal contract	keep	Requires Alg metric_like and valid blades (checked); a repeated mask is not checked			none	
-include/galoot/core/plan.hpp	928-930	detail	internal contract	delete	Typing costs at most a fixed amount times the square of the size of S, and the flags are those of product_plan	docs/guide/limits.md	Compile-time limits: products and plans	the detail ruling	the limits page states the map's cost in the same words
+include/galoot/core/plan.hpp	928-930	detail	internal contract	delete	Typing costs at most a fixed amount times the square of the size of S, and the flags are those of product_plan	docs/guide/limits.md	Compile-time limits: products and plans	none	the limits page states the map's cost in the same words
 include/galoot/core/plan.hpp	931-932	detail	pointer	keep	Pointer: docs/guide/limits.md, under 'Compile-time limits: products and plans'			none	
 include/galoot/core/plan.hpp	933-940	detail	internal contract	keep	Generated once per unit as product_plan is; each term's blade; out in range; a complement's sign agrees with the closed form; each checked			none	
 include/galoot/core/plan.hpp	942-943	detail	marker	delete	Why the cast marker			B9	goes with its marker under B9
@@ -408,14 +408,14 @@ include/galoot/core/mv.hpp	838	detail	internal contract	keep	make_map_kernel: th
 include/galoot/core/mv.hpp	859-860	detail	marker	delete	"As for coefficients_exact" and the cast NOLINT			B9	
 include/galoot/core/mv.hpp	863-871	detail	internal contract	keep	apply: the plan as straight-line code in term order; ±1 as addition or subtraction; the first term assigned, so a lone -0.0 stays -0.0; unreached positions zero			none	the arithmetic contract plan 0048's class (e) protects
 include/galoot/core/mv.hpp	872-879	detail	internal contract	keep	Requires: Target holds the result's blades and each coefficient converts exactly where numeric_limits can tell, each checked with a message			none	
-include/galoot/core/mv.hpp	880-882	detail	public contract	move	A scalar without a specialization, or with one lacking a member, must hold the coefficients exactly with no check	docs/guide/concepts/exactness-and-rounding.md	Scalars the exactness check cannot read	D3 and the detail ruling	a requirement on the user that every product inherits; no public comment states it
-include/galoot/core/mv.hpp	883-888	detail	internal contract	delete	The fold's length limit, reached after the plan's; a plan's cost grows with terms times result blades; the flags	docs/guide/limits.md	Compile-time limits: products and plans	the detail ruling	the limits page states each; the flags are under 'Raising the limits'
+include/galoot/core/mv.hpp	880-882	detail	public contract	move	A scalar without a specialization, or with one lacking a member, must hold the coefficients exactly with no check	docs/guide/concepts/exactness-and-rounding.md	Scalars the exactness check cannot read	D3 and the S11 amendment	a requirement on the user that every product inherits; no public comment states it. It sits in detail, but it is public contract, which leaves a header only under the S11 amendment
+include/galoot/core/mv.hpp	883-888	detail	internal contract	delete	The fold's length limit, reached after the plan's; a plan's cost grows with terms times result blades; the flags	docs/guide/limits.md	Compile-time limits: products and plans	none	the limits page states each; the flags are under 'Raising the limits'
 include/galoot/core/mv.hpp	889-891	detail	pointer	keep	Pointers: docs/guide/limits.md, under 'Raising the limits' and under 'Compile-time limits: products and plans'			none	rewrite in the fixed pointer form
 include/galoot/core/mv.hpp	892-894	detail	internal contract	keep	Guarantees: each coefficient is the sum over its terms times the blade's sign, in the order stated; exact with an exact scalar			none	
-include/galoot/core/mv.hpp	895-899	detail	internal contract	move	A constant evaluation and a run-time call agree unless multiply-adds are fused (-ffp-contract=fast, GCC's default with FMA), when the last bits can differ	docs/guide/concepts/exactness-and-rounding.md	Multiply-add contraction	D3 and the detail ruling	limits 'The rounding check' measures it for transform only
+include/galoot/core/mv.hpp	895-899	detail	internal contract	move	A constant evaluation and a run-time call agree unless multiply-adds are fused (-ffp-contract=fast, GCC's default with FMA), when the last bits can differ	docs/guide/concepts/exactness-and-rounding.md	Multiply-add contraction	D3	limits 'The rounding check' measures it for transform only
 include/galoot/core/mv.hpp	928-929	detail	internal contract	keep	The product on its plan's own result set			none	
 include/galoot/core/mv.hpp	938-943	detail	internal contract	keep	The map Op of x onto Target as for a product, one assignment per blade; requires Target to hold the result, checked			none	
-include/galoot/core/mv.hpp	944-945	detail	internal contract	delete	The limits bound the map; the flags that raise them	docs/guide/limits.md	Raising the limits	the detail ruling	
+include/galoot/core/mv.hpp	944-945	detail	internal contract	delete	The limits bound the map; the flags that raise them	docs/guide/limits.md	Raising the limits	none	
 include/galoot/core/mv.hpp	946-947	detail	pointer	keep	Pointer: docs/guide/limits.md, under 'Compile-time limits: products and plans'			none	
 include/galoot/core/mv.hpp	948	detail	internal contract	keep	Guarantees as for a product			none	
 include/galoot/core/mv.hpp	968	detail	internal contract	keep	The map on its own result set			none	
@@ -537,7 +537,7 @@ include/galoot/core/linear.hpp	170-175	detail	reason	keep	sum: a blade only one 
 include/galoot/core/linear.hpp	190-191	detail	internal contract	keep	SumSpelling: the ways a sum is written, so a message names it as written			none	
 include/galoot/core/linear.hpp	192	detail	reason	keep	An int, so a compiler prints its values and not a byte			none	reason beside a suppression
 include/galoot/core/linear.hpp	193	detail	marker	keep	NOLINT performance-enum-size			none	
-include/galoot/core/linear.hpp	199-204	detail	reason	summary	reject_sum: the only error of a mismatched sum, built as reject_product is	include/galoot/core/product.hpp:80-84		the detail ruling	the same three reasons in nearly the same words; plan 0048's E1 replaces both
+include/galoot/core/linear.hpp	199-204	detail	reason	summary	reject_sum: the only error of a mismatched sum, built as reject_product is	include/galoot/core/product.hpp:80-84		none	the same three reasons in nearly the same words; plan 0048's E1 replaces both
 include/galoot/core/linear.hpp	240-246	public	public contract	summary	x + y on sum_layout: coefficients times orientations added, a lone blade's taken alone; one type gives that type; the line-plus-antiscalar example	docs/guide/reference/multivectors.md	operator+	D3 and the S11 amendment	
 include/galoot/core/linear.hpp	253-254	public	public contract	keep	Rejects a mismatched x + y with one error that names the cause			none	
 include/galoot/core/linear.hpp	255-256	public	public contract	delete	A requires-expression is told yes; ask the operand types	docs/guide/core.md	Writing generic code	the S11 amendment	the rule for every rejecting overload, with the question to ask instead; product.hpp:35-42 states it for the products only
@@ -590,7 +590,7 @@ include/galoot/core/dual.hpp	208-209	detail	equation or convention	keep	weight_c
 include/galoot/core/dual.hpp	214-215	detail	internal contract	keep	DualSpelling: so a message names the operation as written			none	
 include/galoot/core/dual.hpp	216	detail	reason	keep	An int, so a compiler prints its values and not a byte			none	reason beside a suppression
 include/galoot/core/dual.hpp	217	detail	marker	keep	NOLINT performance-enum-size			none	
-include/galoot/core/dual.hpp	225-229	detail	reason	summary	reject_dual_operands: the only error of a mismatched dot, antidot or projection, built as reject_product is	include/galoot/core/product.hpp:80-84		the detail ruling	plan 0048's E1 replaces it
+include/galoot/core/dual.hpp	225-229	detail	reason	summary	reject_dual_operands: the only error of a mismatched dot, antidot or projection, built as reject_product is	include/galoot/core/product.hpp:80-84		none	plan 0048's E1 replaces it
 include/galoot/core/dual.hpp	286-288	public	reason	keep	The results' layouts are named so a program can name a result type; each is the layout its composition gives			none	line 288 also starts the cast marker's reason
 include/galoot/core/dual.hpp	289-290	public	marker	delete	The cast marker's reason and NOLINTBEGIN			B9	
 include/galoot/core/dual.hpp	292-295	public	public contract	summary	bulk_layout: the blades G reaches from S, +1, canonical; a rigid(3) line gives e12, e13, e23	docs/guide/reference/involutions-complements-duals.md	bulk_layout	D3 and the S11 amendment	
@@ -650,7 +650,7 @@ include/galoot/core/transform.hpp	138	detail	internal contract	keep	parity_of: f
 include/galoot/core/transform.hpp	143-144	detail	internal contract	keep	TransformSpelling: so a message names the operation as written			none	
 include/galoot/core/transform.hpp	145	detail	reason	keep	An int, so a compiler prints its values and not a byte			none	reason beside a suppression
 include/galoot/core/transform.hpp	146	detail	marker	keep	NOLINT performance-enum-size			none	
-include/galoot/core/transform.hpp	152-157	detail	reason	summary	reject_transform_operands: the only error of a mismatched transform or composition, built as reject_product is	include/galoot/core/product.hpp:80-84		the detail ruling	plan 0048's E1 replaces it
+include/galoot/core/transform.hpp	152-157	detail	reason	summary	reject_transform_operands: the only error of a mismatched transform or composition, built as reject_product is	include/galoot/core/product.hpp:80-84		none	plan 0048's E1 replaces it
 include/galoot/core/transform.hpp	192-195	detail	internal contract	keep	The two plans of a transform: V ⟇ x on the middle layout, and that with V			none	
 include/galoot/core/transform.hpp	209-210	detail	internal contract	keep	Whether a second-plan output is a blade of X, which the transform keeps			none	
 include/galoot/core/transform.hpp	217-218	detail	internal contract	keep	The count of second-plan terms reaching X's blades, or the others			none	
