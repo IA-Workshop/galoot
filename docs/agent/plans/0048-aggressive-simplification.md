@@ -440,3 +440,5 @@ The coordinator merges this plan into `main` (the claim), puts O1 to O9 to the o
 ## 14. Outcome
 
 Not started.
+
+- 2026-11-21: D0, first part, recorded in [records/simplification/](../records/simplification/README.md): the candidate sites by unit (`candidates.tsv`), the baselines with the commands that rerun them, the knowledge-base notes read against this plan, and this section 5.7 restated for the owner (`restated-targets.md`); the comment table for plan 0049 is D0's second part.
