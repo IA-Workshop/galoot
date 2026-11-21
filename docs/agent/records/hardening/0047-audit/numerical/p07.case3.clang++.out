@@ -1,0 +1,44 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=3 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:43:10: error: no matching constructor for initialization of 'const E1' (aka 'const core::mv<r300, core::blades<r300, "e1">, ring>')
+   43 | const E1 x{1};
+      |          ^~~~
+include/galoot/core/mv.hpp:399:42: note: candidate inherited constructor not viable: no known conversion from 'int' to 'ring' for 1st argument
+  399 |   constexpr explicit(sizeof...(Ts) == 1) coefficient_storage(Ts... values)
+      |                                          ^                   ~~~~~~~~~~~~
+include/galoot/core/mv.hpp:603:45: note: constructor from base class 'coefficient_storage<r300, blade_set<1>{{{{1, 1}}}}, ring, ring>' inherited here
+  603 |   using detail::storage_of<Alg, Blades, T>::storage_of;
+      |                                             ^
+include/galoot/core/mv.hpp:508:8: note: candidate constructor (the implicit copy constructor) not viable: no known conversion from 'int' to 'const mv<r300, blade_set<1>{{{{1, 1}}}}, ring>' for 1st argument
+  508 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:508:8: note: candidate constructor (the implicit move constructor) not viable: no known conversion from 'int' to 'mv<r300, blade_set<1>{{{{1, 1}}}}, ring>' for 1st argument
+  508 | struct mv : detail::storage_of<Alg, Blades, T> {
+      |        ^~
+include/galoot/core/mv.hpp:619:22: note: candidate template ignored: could not match 'mv<r300, From, ring>' against 'int'
+  619 |   constexpr explicit mv(const mv<Alg, From, T>& source) { // write Type{x}
+      |                      ^
+include/galoot/core/mv.hpp:636:22: note: candidate template ignored: could not match 'mv<r300, From, ring>' against 'int'
+  636 |   constexpr explicit mv(const mv<Alg, From, T>& /*x*/) { // truncate<Type>(x)
+      |                      ^
+include/galoot/core/mv.hpp:650:22: note: candidate template ignored: could not match 'mv<OtherAlg, From, U>' against 'int'
+  650 |   constexpr explicit mv(const mv<OtherAlg, From, U>& /*source*/) {
+      |                      ^
+include/galoot/core/mv.hpp:675:46: note: candidate template ignored: constraints not satisfied [with Values = <int>]
+  675 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+      |                                              ^
+include/galoot/core/mv.hpp:670:39: note: because 'sizeof...(Values) != component_count' (1 != 1) evaluated to false
+  670 |     requires(sizeof...(Values) > 0 && sizeof...(Values) != component_count &&
+      |                                       ^
+include/galoot/core/mv.hpp:690:22: note: candidate template ignored: constraints not satisfied [with Value = int]
+  690 |   constexpr explicit mv(Value&& /*value*/) {
+      |                      ^
+include/galoot/core/mv.hpp:689:14: note: because 'detail::not_a_coefficient<int, ring>' evaluated to false
+  689 |     requires detail::not_a_coefficient<Value, T>
+      |              ^
+include/galoot/core/mv.hpp:456:39: note: because '!std::constructible_from<ring, int>' evaluated to false
+  456 |     !multivector_or_derived<Value> && !std::constructible_from<T, Value>;
+      |                                       ^
+include/galoot/core/mv.hpp:713:22: note: candidate template ignored: could not match 'std::remove_cvref_t<ring>[N]' (aka 'ring[N]') against 'int'
+exit status: 1
+errors: 1
+error: no matching constructor for initialization of 'const E1' (aka 'const core::mv<r300, core::blades<r300, "e1">, ring>')

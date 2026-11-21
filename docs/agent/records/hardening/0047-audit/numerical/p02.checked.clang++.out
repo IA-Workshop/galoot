@@ -1,0 +1,4 @@
+$ clang++ p02_bits_unchecked.cpp -DGALOOT_CHECKING=1
+--- run
+galoot: assertion failed: n must be from 1 to 32 (include/galoot/core/bits.hpp:121)
+exit status: 134

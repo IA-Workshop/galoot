@@ -1,0 +1,15 @@
+$ g++ p04_rotation_edges.cpp -O2 -DGALOOT_CHECKING=1
+--- run
+length L       |w - 1| / u
+1              0.987
+1e-150         0.987
+1e-154         1.82
+1e-156         3.18e+03
+1e-158         6.85e+07
+1e-160         9.99e+11
+1e-161         7.49e+13
+1e+150         0.987
+1e+153         0.987
+theta = nan: e43 nan, e1234 nan (no check fired)
+theta = inf: e43 -nan, e1234 -nan (no check fired)
+exit status: 0

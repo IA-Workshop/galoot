@@ -1,0 +1,47 @@
+$ /home/brianm/projects/utils/math-core/math-tools/exercises/performance/pe-common/memguard.sh build/audit-numerical/p09.n22.op4.clang++.mem -- timeout 600 tools/timed --log docs/agent/records/hardening/0047-audit/numerical/p09.timed.tsv probe - p09.n22.op4.clang++ -- clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DWIDE_N=22 -DWIDE_OP=4 docs/agent/records/hardening/0047-audit/numerical/p09_wide_algebras.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p09_wide_algebras.cpp:17:
+In file included from include/galoot/core.hpp:8:
+In file included from include/galoot/core/basis_change.hpp:130:
+In file included from include/galoot/core/mv.hpp:61:
+include/galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression
+  553 |     static constexpr std::size_t count =
+      |                                  ^
+  554 |         generate_plan<Op, capacity>(Alg::value, A.blades, B.blades, {});
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:635:38: note: in instantiation of function template specialization 'galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, wide, blade_set<2>{{{{1, 1}, {2097152, 1}}}}, blade_set<1>{{{{4194303, 1}}}}>' requested here
+  635 | inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
+      |                                      ^
+include/galoot/core/product.hpp:195:13: note: in instantiation of variable template specialization 'galoot::core::detail::product_plan' requested here
+  195 |     detail::product_plan<detail::BinaryOperation::geometric_product, Alg, A, B>.result;
+      |             ^
+include/galoot/core/dual.hpp:312:5: note: in instantiation of variable template specialization 'galoot::core::geometric_product_layout' requested here
+  312 |     geometric_product_layout<Alg, S, detail::antiscalar_layout<Alg>>;
+      |     ^
+include/galoot/core/dual.hpp:428:33: note: in instantiation of variable template specialization 'galoot::core::bulk_dual_layout' requested here
+  428 | [[nodiscard]] constexpr mv<Alg, bulk_dual_layout<Alg, S>, T>
+      |                                 ^
+docs/agent/records/hardening/0047-audit/numerical/p09_wide_algebras.cpp:44:20: note: while substituting deduced template arguments into function template 'bulk_dual' [with Alg = wide, S = blade_set<2>{{{{1, 1}, {2097152, 1}}}}, T = long long]
+   44 | constexpr auto r = core::bulk_dual(V{1, 0});
+      |                    ^
+include/galoot/core/blade_product.hpp:166:15: note: cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576); use '-fconstexpr-steps' to increase this limit
+  166 |     terms[at] = {.blade = blade, .coefficient = coefficient};
+      |               ^
+include/galoot/core/blade_product.hpp:238:5: note: in call to 'out.add(4194303, 1)'
+  238 |     out.add(b, scale);
+      |     ^~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:245:3: note: in call to 'add_blade_product<2097152UL, 22UL>(rest_product, value, 0, 4194303, 1)'
+  245 |   add_blade_product(rest_product, g, rest, b, 1);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:293:3: note: in call to 'add_blade_product<2097152UL, 22UL>(out, value, 1, 4194303, 1)'
+  293 |   add_blade_product(out, g, a, b, 1);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:196:12: note: in call to 'blade_product<2097152UL, 22UL>(value, 1, 4194303)'
+  196 |     return blade_product<Capacity>(g, a, b);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:280:11: note: in call to 'pair_terms<galoot::core::detail::BinaryOperation::geometric_product, 2097152UL, 22UL>(value, 1, 4194303)'
+exit status: 1
+errors: 3
+error: constexpr variable 'count' must be initialized by a constant expression
+error: no matching function for call to 'filled_plan'
+error: no matching function for call to 'bulk_dual'
+memguard: peak_tree_rss_kib 10760 exit 1

@@ -1,0 +1,34 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=5 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:55:46: error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
+   55 | using M = core::mv<big, core::full<2>, double>;
+      |                                              ^
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:55:46: note: constraints not satisfied
+In file included from include/galoot/core/blade_set.hpp:38,
+                 from include/galoot/core/blade_product.hpp:43,
+                 from include/galoot/core/basis_change.hpp:127,
+                 from include/galoot/core.hpp:8,
+                 from include/galoot/presets/rga3/motions.hpp:26,
+                 from include/galoot/presets/rga3.hpp:10,
+                 from docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:5:
+  • include/galoot/core/metric.hpp: In substitution of ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv [with Alg = big; blade_set<...auto...> Blades = galoot::core::blade_set<4>{std::array<galoot::core::oriented_blade, 4>{std::__array_traits<galoot::core::oriented_blade, 4>::_Type{galoot::core::oriented_blade{0, 1}, galoot::core::oriented_blade{1, 1}, galoot::core::oriented_blade{2, 1}, galoot::core::oriented_blade{3, 1}}}}; T = double]’:
+  • required from here
+    docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:55:46:   
+  • required for the satisfaction of ‘metric_like<Alg>’ [with Alg = big]
+    include/galoot/core/metric.hpp:301:9:   
+      301 | concept metric_like =
+          |         ^~~~~~~~~~~
+  • the expression ‘is_valid_form_v<Alg> [with Alg = big]’ evaluated to ‘false’
+    include/galoot/core/metric.hpp:314:18:
+      314 |     } && detail::is_valid_form_v<Alg>;
+          |          ~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:55:11: error: expected type-specifier
+   55 | using M = core::mv<big, core::full<2>, double>;
+      |           ^~~~
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:56:7: error: ‘M’ does not name a type
+   56 | const M m{};
+      |       ^
+exit status: 1
+errors: 3
+error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
+error: expected type-specifier
+error: ‘M’ does not name a type

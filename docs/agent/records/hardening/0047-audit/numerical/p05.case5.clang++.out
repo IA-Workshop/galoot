@@ -1,0 +1,14 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=5 docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:6:
+In file included from include/galoot/core.hpp:12:
+In file included from include/galoot/core/dual.hpp:104:
+include/galoot/core/product.hpp:291:17: error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
+  291 |   static_assert(scalar_holds_every_coefficient_of_the_product,
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:49:27: note: in instantiation of function template specialization 'galoot::core::operator*<diagonal<32767>, blade_set<1>{{{{15, 1}}}}, blade_set<1>{{{{15, 1}}}}, double>' requested here
+   49 | constexpr auto r = B{1.0} * B{1.0};
+      |                           ^
+1 error generated.
+exit status: 1
+errors: 1
+error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly
