@@ -137,14 +137,14 @@ Full-line comment lines, from the checker:
 | `core/linear.hpp` | 79 | 25 | 20 | 70 | 194 |
 | `core/metric.hpp` | 61 | 8 | 41 | 8 | 118 |
 | `core/mv.hpp` | 246 | 97 | 60 | 59 | 462 |
-| `core/plan.hpp` | 269 | 0 | 31 | 66 | 366 |
+| `core/plan.hpp` | 270 | 0 | 31 | 65 | 366 |
 | `core/product.hpp` | 76 | 5 | 25 | 45 | 151 |
 | `core/transform.hpp` | 127 | 10 | 102 | 106 | 345 |
 | `core/unary.hpp` | 21 | 8 | 7 | 32 | 68 |
 | `presets/rga3.hpp` | 5 | 0 | 0 | 0 | 5 |
 | `presets/rga3/motions.hpp` | 32 | 0 | 58 | 15 | 105 |
 | `presets/rga3/objects.hpp` | 40 | 0 | 7 | 50 | 97 |
-| **All** | **1,580** | **295** | **663** | **670** | **3,208** |
+| **All** | **1,581** | **295** | **663** | **669** | **3,208** |
 
 The 73 trailing comments are all kept.
 
@@ -153,7 +153,7 @@ By kind:
 | Kind | Keep | Summary | Move | Delete | All |
 | --- | --- | --- | --- | --- | --- |
 | public contract | 250 | 266 | 485 | 97 | 1,098 |
-| internal contract | 494 | 0 | 12 | 38 | 544 |
+| internal contract | 495 | 0 | 12 | 37 | 544 |
 | equation or convention | 364 | 0 | 54 | 73 | 491 |
 | file prologue | 86 | 0 | 80 | 195 | 361 |
 | reason | 298 | 29 | 21 | 10 | 358 |
@@ -168,10 +168,10 @@ By what the rows wait for:
 
 | Waits for | Lines | Of which delete |
 | --- | --- | --- |
-| none (kept) | 1,580 | |
+| none (kept) | 1,581 | |
 | none (delete or summary now) | 453 | 447 |
 | B9 | 45 | 45 |
-| the detail ruling | 98 | 81 |
+| the detail ruling | 97 | 80 |
 | D1 | 26 | |
 | D3 | 146 | |
 | D3 and the detail ruling | 15 | |
@@ -185,7 +185,7 @@ Plan 0048 section 5.4 estimated its four comment candidates from position alone.
 | Candidate | Now | Plan, S11 as ratified (a) | Plan, one sentence and a pointer (b) | Table, S11 as ratified, after D3 | Table, after the amendment |
 | --- | --- | --- | --- | --- | --- |
 | D1 prologues | 702 | 90 | 90 | 176 | 165 |
-| D2 `///` on `detail` | 443 | 110 | 110 | 343 | 343 |
+| D2 `///` on `detail` | 443 | 110 | 110 | 344 | 344 |
 | D3 `//` elsewhere | 725 | 330 | 330 | 634 | 634 |
 | D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,282 | 538 |
 | **Total** | **3,208** | **about 1,620** | **about 870** | **about 2,440** | **about 1,680** |
@@ -202,9 +202,9 @@ Stage by stage, as each condition is met (kept lines, no pointers):
 | --- | --- | --- |
 | Now | 3,208 | |
 | Deletions that wait for nothing, and B9 | 2,712 | -15% |
-| The detail ruling, if it is (a) | 2,620 | -18% |
-| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,435 | -24% |
-| The S11 amendment applied | 1,680 | -48% |
+| The detail ruling, if it is (a) | 2,621 | -18% |
+| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,436 | -24% |
+| The S11 amendment applied | 1,681 | -48% |
 | The same with pointers | about 1,800 to 1,870 | -42% to -44% |
 
 The first part's [restated targets](../simplification/restated-targets.md) gave the comment column as follows:
@@ -218,7 +218,7 @@ So the restated totals' comment column should read about 2,620 and about 1,800. 
 | Class | Gap | Where it comes from |
 | --- | --- | --- |
 | D3, `//` | about 300 lines | The plan expected to drop narration and repeats and to move derivations. Read block by block, the `//` lines inside functions are mostly reasons (a GCC 16 miscompilation, why a first term is assigned, why a check is a variable template), equations applied where they are applied, and internal contracts of the generator. Only 54 delete and 33 move. The 42 marker lines that stay are suppressions and formatting directives, each suppression with the reason the static-check rule requires beside it |
-| D2, `///` on `detail` | 233 lines | Most `detail` comments describe the generator: `generate_plan`'s count-then-fill protocol, the capacity proofs, the self-checks and the conditions they test, the rounding counts, the elimination. Plan 0048's own rule 4 keeps a `detail` comment whose behavior, bound, or cost is not obvious, and these are the least obvious code in the library. What goes is "Requires: nothing", "an aggregate, equal when every member is", and member comments that repeat their class |
+| D2, `///` on `detail` | 234 lines | Most `detail` comments describe the generator: `generate_plan`'s count-then-fill protocol, the capacity proofs, the self-checks and the conditions they test, the rounding counts, the elimination. Plan 0048's own rule 4 keeps a `detail` comment whose behavior, bound, or cost is not obvious, and these are the least obvious code in the library. What goes is "Requires: nothing", "an aggregate, equal when every member is", and member comments that repeat their class |
 | D4, public `///` | about 200 lines, before pointers | Four things stay that the estimate of 340 lines did not allow for: the one sentence of each of 42 rejecting overloads; one-line comments on 36 members; summary sentences that are themselves the formula, such as the sign rules of `bits.hpp` and the coefficient orders of the rga3 layouts; and eleven preconditions on public declarations kept in full under the ruling |
 | D1, prologues | 75 lines | Prologues keep the conventions they apply and the reasons for them: the mask convention in `bits.hpp`; why a blade is a wedge and not a product, with the integer-polynomial invariant, in `blade_product.hpp`; why the complement reverses canonical order, in `plan.hpp`; why the odd form of `transform` has its sign. The examples, the restated guide text, and the cost paragraphs go: 430 of 702 lines are deleted |
 
@@ -270,7 +270,7 @@ Undefined behavior when broken in an unchecked build, kept under the ruling. Pla
 | `bits.hpp:80-81` (added) | `antigrade` with n of 2^31 or more: `static_cast<int>(n) - grade(a)` overflows `int` |
 | `bits.hpp:167-168` (added) | `antireverse_sign` with an antigrade above 46341: m(m − 1) overflows `int` |
 | `bits.hpp:45-47`, `:58-60` | The same requirement on the `detail` helpers that the shift sits in |
-| `plan.hpp:302-303` (added) | `collect_result`'s `out` must have a place for every distinct blade, or it is written past its end |
+| `plan.hpp:303-304` (added) | `collect_result`'s `out` must have a place for every distinct blade, or it is written past its end |
 | `plan.hpp:664-665` (listed) | `unary_term` with an n out of range reaches `complement_mask`'s shifts |
 | `blade_product.hpp:82-83` (listed) | `multiply_checked`'s operands within range, since negating the most negative value is undefined |
 | `metric.hpp:126` | `is_null(i)` with i at or beyond N, which reads past the array |
@@ -316,7 +316,7 @@ An independent sample check of this table (the review record `docs/agent/records
 
 | Finding | Correction |
 | --- | --- |
-| 1. `plan.hpp:302-307`, `collect_result`: a precondition that is undefined behavior when unchecked was classed delete | Split: `302-303` keep, `304-307` delete as before |
+| 1. `plan.hpp:302-307`, `collect_result`: a precondition that is undefined behavior when unchecked was classed delete | Split: `302-304` keep, `305-307` delete as before. The first split was one line early and deleted the end of the sentence; see [Corrections after the precondition check](#corrections-after-the-precondition-check) |
 | 2. `transform.hpp:492-495`: the floor of the padded tolerance, about K λ W, was deleted as a repeat of limits.md, which lacks the formula | Keep, beside the reason for the padding |
 | 3. `bits.hpp:132`: a public contract deleted with nothing to wait for, and "returns -1 or +1" said nowhere else | Move to the `right_complement_sign` reference entry, after D3 and the S11 amendment |
 | 4. `plan.hpp:63-66` and `:624-627` cited a home with only the Clang half of the reason | Notes name the second home, the comment above `core.plan_evaluated_once` in `test/CMakeLists.txt` |
@@ -324,6 +324,14 @@ An independent sample check of this table (the review record `docs/agent/records
 | 6. Two illustrations only in deleted prologues | Notes name the reference entries that receive them |
 
 Re-reading every row of the same header and kind as each confirmed error found two more preconditions of the same class as finding 1, on `antigrade` and `antireverse_sign` in `bits.hpp`, and two notes in `transform.hpp` that named the wrong heading. All are corrected, and the sums above are the checker's output after the corrections. Rows after the split rows are numbered five higher than in the record of the check, at most.
+
+## Corrections after the precondition check
+
+The checker's precondition check (see [How to check it](#how-to-check-it)) found one row of the table wrong:
+
+| Header | Finding | Correction |
+| --- | --- | --- |
+| `plan.hpp` | `collect_result`'s precondition is lines 303-304, but the split after the sample check put the keep row at `302-303`, the blank line before it and the first half of the sentence, and deleted `304`, "GALOOT_ASSERT; plan.size() places always suffice", with the guarantee | Keep `302-304`, delete `305-307`. One line moves from delete to keep, under the detail ruling's column: the sums, the stages and the list above include it |
 
 ## Open items
 
@@ -335,7 +343,7 @@ Each item has its options, their tradeoffs, and a recommendation.
      - (a) A pointer on every declaration: about 190 lines. Uniform and easy to check, but a member's or a rejecting overload's pointer repeats its owner's.
      - (b) A pointer on each declaration that has a reference entry, with members and rejecting overloads covered by it: about 120 lines. Plan 0049's pointer test then needs a rule for what counts as covered.
    - **Recommendation:** (b). Put it to the owner with the confirmation of the wording, which decision 0253 already reserves.
-2. **The detail ruling** (open item 2 of [restated-targets.md](../simplification/restated-targets.md)). The table marks 100 lines as waiting for it. The recommendation there stands: S11's contract sentence applies outside `detail`.
+2. **The detail ruling** (open item 2 of [restated-targets.md](../simplification/restated-targets.md)). The table marks 97 lines as waiting for it alone, and 15 more as waiting for it and D3. The recommendation there stands: S11's contract sentence applies outside `detail`.
 3. **The seven `performance-enum-size` suppressions.**
    - **The options.**
      - (a) Keep each with its reason: 14 lines. Nothing changes.
