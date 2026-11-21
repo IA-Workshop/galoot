@@ -412,3 +412,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0043-tests-blind-review	reviewer	opus	247124	65	632	review/cost-cleanup-1-0-1-tests abcd856; approve; workflow agent, harness token count
 2026-11-21	0043-merge-gate	performance-engineer	opus	195868	72	2030	gate at 05229a7; merged into main as 26cd467; workflow agent, harness token count
 2026-11-21	0043-U6-records	planner	sonnet	181389	45	317	records/cost-cleanup-1-0-1 0af3419; workflow agent, harness token count
+2026-11-21	0044-U7-merge-gate	performance-engineer	opus	201516	83	1480	gate at 41d8029; merged into main as c6e3b18; workflow agent, harness token count
+2026-11-21	0044-U8-records	planner	sonnet	158676	30	187	records/header-hygiene-1-0-1 3c0455d; workflow agent, harness token count
