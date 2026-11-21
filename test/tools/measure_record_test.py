@@ -390,6 +390,96 @@ def git_attribution(s):
     check("branch when only git status fails", row["branch"], "main")
 
 
+def dirty_mark(s):
+    # A row is marked dirty when the tree was dirty when the command started
+    # or when it ended, or when HEAD moved while it ran, and then carries the
+    # revision the command started on. Each case leaves the scratch
+    # repository clean again.
+    s.use_fake_perf(False)
+    real_git = shutil.which("git")
+
+    def git(*args):
+        return subprocess.run(
+            [real_git, "-C", s.top, "-c", "user.name=test",
+             "-c", "user.email=test@example.invalid", *args],
+            check=True, capture_output=True, text=True).stdout.strip()
+
+    def head():
+        return git("rev-parse", "--short=12", "HEAD")
+
+    def edit(path):
+        with open(os.path.join(s.top, path), "a", encoding="utf-8") as f:
+            f.write("edit\n")
+
+    log = os.path.join(s.top, "dirty-mark.tsv")
+    campaign = "docs/agent/records/performance/campaign.tsv"
+    os.makedirs(os.path.dirname(os.path.join(s.top, campaign)), exist_ok=True)
+    for path in ("tracked.txt", campaign):
+        with open(os.path.join(s.top, path), "w", encoding="utf-8") as f:
+            f.write("line\n")
+    git("add", "tracked.txt", campaign)
+    git("commit", "-q", "-m", "files the cases change")
+
+    def revision_of(name, script, before=lambda: None):
+        before()
+        s.measure_cmd(["run", "--log", log, "step", "-", name, "--",
+                       "/bin/sh", "-c", script])
+        return [r["revision"] for r in s.rows(log)
+                if r["selection"] == name][0]
+
+    base = head()
+    check("a clean tree throughout", revision_of("clean", "true"), base)
+
+    # The index counts: a change that is staged and not committed is dirty.
+    edit("tracked.txt")
+    git("add", "tracked.txt")
+    check("a staged change", revision_of("staged", "true"), base + "-dirty")
+    git("reset", "-q", "--hard", base)
+
+    edit("tracked.txt")
+    check("an edit before the command",
+          revision_of("edit-before", "true"), base + "-dirty")
+    git("reset", "-q", "--hard", base)
+
+    check("an edit during the command",
+          revision_of("edit-during", "echo edit >> tracked.txt"),
+          base + "-dirty")
+    git("reset", "-q", "--hard", base)
+
+    check("an edit before the command, undone during it",
+          revision_of("undone-during", "git checkout -q -- tracked.txt",
+                      lambda: edit("tracked.txt")), base + "-dirty")
+
+    check("a change before the command, committed during it",
+          revision_of("committed-during",
+                      "git -c user.name=t -c user.email=t@example.invalid "
+                      "commit -q -a -m change",
+                      lambda: edit("tracked.txt")), base + "-dirty")
+    check("the commit moved HEAD", head() != base, True)
+    base = head()
+
+    check("a commit during the command",
+          revision_of("empty-commit-during",
+                      "git -c user.name=t -c user.email=t@example.invalid "
+                      "commit -q --allow-empty -m move"), base + "-dirty")
+    base = head()
+
+    # The performance records change with every run and are never the mark.
+    edit(campaign)
+    check("a records edit before the command",
+          revision_of("records-before", "echo edit >> " + campaign), base)
+    git("reset", "-q", "--hard", base)
+
+    # The compile launcher reads the mark the same way.
+    edit("tracked.txt")
+    s.measure_cmd(["tu", "p", "c", "dirty-mark-tu.tsv", "--", "/bin/sh", "-c",
+                   "git checkout -q -- tracked.txt"])
+    check("a compile started dirty",
+          s.rows("dirty-mark-tu.tsv")[0]["revision"], base + "-dirty")
+    check("the tree is clean again",
+          git("status", "--porcelain", "--untracked-files=no"), "")
+
+
 def log_option(s):
     # A campaign names its own log; the run log is left as it was.
     s.use_fake_perf(False)
@@ -526,7 +616,8 @@ def main(measure, directory):
     s = Scratch(measure, directory)
     for case in (perf_ran_but_named_no_event, command_cannot_start,
                  compile_options, counters_per_core_type, run_options, reader,
-                 record_with_another_header, git_attribution, log_option,
+                 record_with_another_header, git_attribution, dirty_mark,
+                 log_option,
                  timed_pool):
         try:
             case(s)
