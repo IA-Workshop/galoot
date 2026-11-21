@@ -1,0 +1,20 @@
+# Plan 0044, unit U2: the mutant of the cache option's propagation on a tree
+# whose forced inlining is off. On a tree where it is on, dropping the
+# definition changes nothing the test can see, so only an off tree can kill
+# it. The test links galoot::core, so a definition lost between the option
+# and the compile command reaches it as the header's default of 1.
+presets = ["clang-release"]
+
+[selection.build]
+targets = ["core_force_inline_build"]
+labels = '^core\.assert$'
+
+# The definition GALOOT_FORCE_INLINE=0 dropped from the interface of
+# galoot::core.
+[[mutant]]
+name = "propagation_dropped"
+selection = "build"
+file = "CMakeLists.txt"
+edits = [{ anchor = '''  $<BUILD_INTERFACE:$<$<NOT:$<BOOL:${GALOOT_FORCE_INLINE}>>:GALOOT_FORCE_INLINE=0>>)''', replacement = '''  $<BUILD_INTERFACE:>)''' }]
+expect = "killed"
+killers = ["core.force_inline_build"]
