@@ -1,24 +1,36 @@
 # Page templates and authoring rules of the user documentation
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Brought in step with decisions 0255 part A and 0258 on 2026-11-21 by Claude (agent, Opus 5.5, math-expert and hci-expert roles): section 1, templates T4 and T5, rules W9, W12, A8, A11, R5, and G1 to G8, and sections 4 and 5. Not yet reviewed.
 
-An author of a page under `docs/guide/` reads this record, `learner-contracts.md`, the chapter's rows of `concept-inventory.md`, and `misconceptions.md` before writing a line. Section 1 says what is already decided and not the author's to change. Section 2 has a template for each kind of page. Section 3 has the rules, each with an identifier a reviewer can cite and its reason in a clause. Section 4 says which rules a machine checks.
+An author of a page under `docs/guide/` reads this record, `learner-contracts.md`, the chapter's rows of `concept-inventory.md`, and `misconceptions.md` before writing a line. Section 1 says what is already decided and not the author's to change: what the owner ruled, and what the coordinator settled. Section 2 has a template for each kind of page. Section 3 has the rules, each with an identifier a reviewer can cite and its reason in a clause. Section 4 says which rules a machine checks.
 
 ## 1 What is already decided
 
-The owner ruled these in decision 0253 (items 24 to 35); an author designs within them and reports, not works around, anything that argues against one.
+The owner ruled these in decision 0253 (items 24 to 35) and decision 0258; an author designs within them and reports, not works around, anything that argues against one.
 
 | Ruled | Consequence for an author |
 | --- | --- |
 | Pages live in subdirectories of `docs/guide/` by kind: `tutorial/`, `exercises/`, `howto/`, `concepts/`, `reference/`, `figures/`, and single pages for the conventions, the diagnostics, the verification, the glossary, and the limits | A page has one kind and follows that kind's template. A paragraph that belongs to another kind moves there and leaves a link |
 | The conventions chapter restates the specification in plain words; user pages do not link it | State the rule and its reason on the page; the agent-side trace keeps the two in step |
-| Unicode symbols, and words for accented operations | Section 3, rules A5 to A7, and `notation-key.md` |
+| Unicode symbols, and words for accented operations (decision 0253 item 27); of them, ⟑ and ⟇ in running text, and `*` and `%` inside code and text blocks (decision 0258 section 4 item 9) | Section 3, rules A5 to A7 and A11, and `notation-key.md` rules 6 and 9 |
 | About fourteen SVG figures drawn by one standard-library script, with a staleness test | A figure is asked for by its scene description; no hand-drawn file |
 | The reference is written by hand, with coverage checks | Template T4; every fact that can be a `static_assert` is one |
 | Every example runs in every configuration until the cost is measured | Rule E8 keeps each example cheap |
 | In-repository checks only; no YAML front matter | The contract is the visible "Before you start" section (`learner-contracts.md`, section 5) |
 | The tutorial teaches around what 1.0.0 lacks | Research note 0029 section 4 lists each lack and what the page does instead; no page promises an operation the release does not have |
-| `///` comments shrink to one sentence and a pointer once the reference exists | A reference entry is written to be the only full statement of its contract |
+| STYLE S11's new wording is ratified (decision 0258 section 2): on each declaration of a public header outside a `detail` namespace, one sentence that says what it is; on each declaration with a reference entry, a pointer to the guide page and heading that hold its contract; a precondition whose violation is undefined behavior in a build without checking kept on the declaration in full. Under the owner's condition that the headers and the guide not drift apart (section 3 of that decision), the wording is applied, and a contract leaves a header, only when seven checks run as tests at each merge into `main`. Until then S11 as ratified on 2026-11-01 stands and no unit removes a contract from a header. The reference pages are in milestone D3, which is not yet authorized | A reference entry is written to be the full statement of its contract, and so that each of the seven checks can be built: rules G1 to G8 |
+| `transform` and the classical sandwich: taught in the documentation now, in four pieces (decision 0258 section 4 item 1); the first-things page gains a tenth fact, the same trap (item 11) | `misconceptions.md` section 5 says where each piece goes, what it says, and with which values; rule A8 |
+| A human cold reader: still optional, and nobody is named (decision 0258 section 4 item 10) | Language-model readers only, each record saying so (rules R4 and R5) |
+
+The coordinator settled these in decision 0255 part A, as readings of plan 0049 that no ruling of the owner's changes; the owner can reverse each.
+
+| Settled | Consequence for an author |
+| --- | --- |
+| The chapter cut of research note 0029 section 3.3 (item 4): the plan's chapters 1 and 2 are one, and a new chapter 6 teaches the antiproduct in R(3, 0, 0) before the rigid algebra; the page count of plan 0049 section 4.1 does not change | The chapters are those of `concept-inventory.md` part 2 and `learner-contracts.md` section 4. U5 writes chapters 1 to 5 and U6 chapters 6 to 10 of this cut |
+| Tutorial examples are whole programs with one fixed preamble per chapter; the mechanism of decision 0242 does not change (item 5) | Rule E2. No page preamble that later blocks are compiled with |
+| The tutorial links only pages that exist at milestone D2; chapter 8 points to the conventions chapter, not to the porting recipe (item 6) | Rule W12 and `learner-contracts.md` section 6 |
+| U3 names the conventions page so that the citation check passes unchanged, and no citation pattern is weakened for it (item 7) | Section 5, finding 1. `docs/guide/conventions.md`, the name in plan 0049 section 4.1, is not that name |
+| A second language-model cold reader, told that it knows rotors and quaternions, reads the conventions chapter and the first-things page at U4; it is the only test of the documentation of the `transform` trap (item 8) | Rule R5 |
 
 The governance adds: user documentation is plain American English and changes in the same unit as the code it describes; every code example is compiled and run as a test; no user page names a governance document, a numbered rule, a record, or an agent.
 
@@ -67,13 +79,15 @@ Entries on a page are in the order a reader would learn them, the thing others d
 
 | Field | Content |
 | --- | --- |
-| Name | The declaration as a user writes the call, and the header to include |
-| One sentence | What it is, in terms a user can read without the tutorial's story |
-| Requires | Each precondition, with "must" |
+| Name | The declaration as a user writes the call, its qualified name as the interface manifest spells it, and the header to include (rules G1 and G2) |
+| Signature | The declaration as the manifest tool writes it (rule G4) |
+| One sentence | The declaration's `///` sentence, word for word: what it is, in terms a user can read without the tutorial's story (rule G3) |
+| Covers | The members and rejecting overloads the entry covers, each by its manifest name and the rule that covers it (rule G2) |
+| Requires | Each precondition, with "must", numbered; a precondition kept in full on the declaration is quoted in its words (rule G5) |
 | Guarantees | What holds of the result |
 | Result layout | The blades, their order, and their orientations |
 | Exactness | Exact for an exact scalar; for a rounding scalar, what is rounded and where the bound is stated; or "does no arithmetic" |
-| On violation | For each requirement: rejected at compile time (with the message, linked), checked in checking mode and in every constant evaluation, or not checked, and then what happens |
+| On violation | For each requirement, by its number: rejected at compile time (with the message, quoted as rule G6 says, and linked), checked in checking mode and in every constant evaluation, or not checked, and then what happens; for each checkable violation, the example or compile-fail test that exercises it (rule G7) |
 | Degenerate inputs | Zero, parallel, unnormalized, or non-versor inputs, and the value returned for each |
 | Asking whether a call is valid | Where a rejecting overload exists: that a `requires`-expression is told yes, and what to ask instead |
 | Cost | What is worked out at compile time and how it grows, with a link to the measured sizes |
@@ -81,11 +95,13 @@ Entries on a page are in the order a reader would learn them, the thing others d
 | Why | A link to the concepts page that gives the reason for the design, where one exists |
 | See also | Related entries |
 
-An entry is the only full statement of its contract, so it is complete even where that repeats a neighbor. It has no worked steps and no prompts.
+An entry is the full statement of its contract, so it is complete even where that repeats a neighbor. Until the seven checks that rules G1 to G7 serve run as tests, the header keeps its contract too (section 1); afterward the header keeps its sentence, its pointer, and any precondition kept in full, each of which reads the same in the entry. It has no worked steps and no prompts.
 
 ### T5 The conventions chapter
 
-1. **The card**, on one screen: a table with one row per choice. Columns: the choice; Galoot's rule in a clause; a one-line expression; its value; a link to the section. A reader from another source runs the lines and finds each difference without reading further. The rows, in order: generator names and numbering; where a null generator sits; blade names and orientation; the order of components; the reverse, the antireverse, the grade involution; the two complements; bulk, weight, and the duals; which dot; the four products and their operators; `transform`, even and odd; `transform` against the classical sandwich; `compose`'s order; a point, a line, a plane, a motor, a flector by their coefficients; full angles in, halves stored; operator precedence; the printed form.
+Its file name is settled in section 5, finding 1.
+
+1. **The card**, on one screen: a table with one row per choice. Columns: the choice; Galoot's rule in a clause; a one-line expression; its value; a link to the section. A reader from another source runs the lines and finds each difference without reading further. The rows, in order: generator names and numbering; where a null generator sits; blade names and orientation; the order of components; the reverse, the antireverse, the grade involution; the two complements; bulk, weight, and the duals; which dot; the four products and their operators; `transform`, even and odd; `transform` against the classical sandwich, with the row and section that `misconceptions.md` section 5.2 sets out; `compose`'s order; a point, a line, a plane, a motor, a flector by their coefficients; full angles in, halves stored; operator precedence; the printed form.
 2. **One section per row**: the rule; a compiled example that would change if the rule did, its values derived by hand beside it; the reason for the choice where there was one; how the evidence stands, in words a user can read ("recomputed by a script that shares no code with the library").
 3. **How this differs from other sources**: only rows for sources someone has read, each naming the source and the lines of the card on which it differs.
 4. **Where published sources disagree**: each recorded disagreement, the choice made, and an example that tells the alternatives apart.
@@ -114,9 +130,10 @@ Two tables. Terms: term, definition in one sentence, the page of its defining in
 - **W6** Every call is qualified with its namespace alias (`core::`, `rga3::`), as the README's are, so that no page depends on name lookup the reader has not been taught.
 - **W7** No step is called easy. The words "simply", "just", "obviously", "clearly", "trivially", "straightforward", "it can be shown", and "left to the reader" do not appear on a teaching page.
 - **W8** Cut what serves no objective: history, asides, and remarks for readers who know more. One such remark may go in "Why it works".
-- **W9** A page names nothing behind the user documentation: no governance document, numbered rule, record, or agent. The citation check also rejects, in ordinary teaching text: "Lesson", "Plan", or "Review" followed by a number; "section" or "item" followed by a dotted number; a capital P or W followed by digits, so points are p, q, r and never P1; a parenthesized capital C, S, or V with digits, such as (C3); and the word "Opus". Sections are referred to by name, chapters as "chapter 4", equations as "Eq. (3)", exercises as "exercise 4.2".
+- **W9** A page names nothing behind the user documentation: no governance document, numbered rule, record, or agent. The citation check also rejects, in ordinary teaching text: "Lesson", "Plan", or "Review" followed by a number; "section" or "item" followed by a dotted number; a capital P or W followed by digits, so points are p, q, r and never P1; a parenthesized capital C, S, or V with digits, such as (C3); the word "Opus"; and the file names of the governance documents and of the conventions specification in any case, `conventions.md` among them, so that no page is named so or links a page so named. Sections are referred to by name, chapters as "chapter 4", equations as "Eq. (3)", exercises as "exercise 4.2".
 - **W10** One term for one thing, as the glossary has it. "Complement" always means the right complement unless "left" is written; "motion" is the plain word and "motor" the object; "unitized" is used for weight 1 and "unit" for norm 1.
 - **W11** Plain American English; no em dashes; sentence-case headings; bold only for the fixed labels of a worked example and of "Before you start".
+- **W12** A tutorial page links only pages that exist at milestone D2: earlier chapters, the opening page, the conventions chapter, the glossary, the first-things page, the limits page, and a page that U3 created with content moved from today's guide, at a heading it has at D2. Chapter 8 points to the conventions chapter for the other convention, not to the porting recipe, which is in milestone D3. A forward link to a later chapter follows rule W2.
 
 ### Mathematics
 
@@ -127,9 +144,16 @@ Two tables. Terms: term, definition in one sentence, the page of its defining in
 - **A5** Symbols are those of `notation-key.md`, each with its C++ spelling at its first use on a page.
 - **A6** Accented operations are written as words: `reverse(a)`, `antireverse(a)`, `right(a)`, `left(a)`. The literature's mark is shown once, where the operation is defined.
 - **A7** A derivation is a calculational chain in a `text` block: one expression per line, and between two lines the relation and its reason in braces. Each line follows from the one before by the reason given and by nothing else.
-- **A8** A sandwich of a rotor is written `r * v * ~r`. `transform` is never used with a versor built by the geometric product, except on the page that shows it is wrong; with `transform`, a versor is a plane, an antiproduct of planes, or a complemented rotor.
+- **A8** A sandwich of a rotor is written `r * v * ~r`. `transform` is never used with a versor built by the geometric product, except in the four pieces that show it gives another vector (`misconceptions.md` section 5); with `transform`, a versor is a plane, an antiproduct of planes, or a complemented rotor.
 - **A9** A point, a line, a plane, or a motor may differ from another by a factor and be the same object. A page that compares two says which it means, and compares coefficients only after making the weights equal.
 - **A10** A sentence about another author's convention names a source that someone has read, and says no more than was read.
+- **A11** The geometric product and the antiproduct are written ⟑ and ⟇ in running text, and `*` and `%` inside a `text` block, a `cpp` block of any kind, and the comments of a `cpp` block. Inside a block, `*` stands wherever running text would write ⟑ (`notation-key.md` rule 6) and `%` wherever it would write ⟇; juxtaposition stays where rule 6 allows it, and every other symbol is the same in both places. Blocks are monospaced, and no monospaced font on the machine probed has either glyph. One line of each kind, from chapter 6:
+  - in running text: "the two mirror planes multiply to the complemented rotor, (e23 + e31) ⟇ e23 = e123 − e3";
+  - in a `text` block, the same rotor turning e3:
+
+    ```text
+    (e123 − e3) % e3 % (e123 + e3) = 2 e3
+    ```
 
 ### Examples
 
@@ -163,6 +187,20 @@ Two tables. Terms: term, definition in one sentence, the page of its defining in
 - **R2** A cold reader gets the contract, the pages up to the one under test, the glossary, and a command that compiles one file. It gets no path to the headers, the tests, or the records, and lists every file it opened.
 - **R3** A cold reader reports, beside the pedagogical skill's table, every term, fact, or convention it supplied from its own knowledge. A language model has read about geometric algebra; what it supplied is what the page failed to say.
 - **R4** A reader's pass is weaker evidence than a reader's stumble, and a language model's pass is weaker than a person's. Each record says which it was.
+- **R5** The second cold reader, at U4, is a language model told that it knows geometric algebra from another source: Euclidean rotors built with the geometric product, and quaternions. It gets what R2 gives, with the conventions chapter and the first-things page as the pages under test and their contracts from `learner-contracts.md` section 3. It predicts the value of each line of the card before running it. Then, from those two pages alone, it writes a program that turns (2, −3, 5) by the rotor (2, 1, 0)(1, 0, 0) = 2 − e12 and states the result. The pages pass only if it reaches (18, −1, 25) by a call it took from them; (6, 17, −25) is the trap. It reports as R3 asks, with each wrong prediction beside the line. It is the only test of the documentation of the `transform` trap, so its record says that a language model read the pages and no person did. A human cold reader is still optional and unnamed.
+
+### Reference entries and the headers
+
+The owner's condition on the new wording of S11 is that the headers and the guide not drift apart (decision 0258 section 3). Seven checks are to hold it, designed and built by plan 0049's unit U9 and plan 0048's phase 4, each an acceptance criterion of their plans; none exists yet. These rules are what the author of a reference entry does so that each check can be built and pass. Each names its check by the decision's number. They hold from the first entry, before the checks exist, so that no entry is rewritten for them.
+
+- **G1** (check 1, pointers resolve) An entry's heading is the text that the header's pointer quotes, a heading of the list U3 publishes for the reference, and no other heading on that page has the same text. A heading is renamed only in a commit that changes every pointer to it too. A declaration in a `detail` namespace has no entry and no heading.
+- **G2** (check 2, coverage both ways) An entry documents one public declaration, or one overload set, and its Name field gives the qualified name as the interface manifest of plan 0047 spells it. A member or a rejecting overload has no entry of its own: its owner's entry lists it under Covers, by its manifest name and with the rule that covers it ("a member of `mv`", "the overload of `get` that rejects a blade the layout lacks"). An author writes no entry for a name the manifest lacks, and reports a public declaration that no entry documents or covers instead of leaving it out.
+- **G3** (check 3, one sentence, one text) The One sentence field is the declaration's `///` sentence, copied from the header and not rewritten: the same words, signs, and code spans, with only line breaks and the comment markers gone. Where the declaration does not yet carry such a sentence, the entry's author drafts one under S11's new wording and reports it to plan 0048, which owns the header and puts it there (plan 0049 section 7 item 6). The field is a paragraph of its own, directly after the Signature field, and holds that sentence and nothing else: no link, no emphasis, nothing the header does not write. Where the header's sentence has ⟑ or ⟇, as `geometric_antiproduct`'s has, the entry keeps the symbol, since the field is running text (rule A11) and the two must read the same. To change the sentence, change the header and the entry in one commit; a sentence that is not one sentence, or that a user cannot read without the project's records, is reported to the header's owner, plan 0048, and not mended in the entry alone.
+- **G4** (check 4, signatures agree) The Signature field prints the declaration as the manifest tool writes it: the template head, its constraints, the parameters, and the return type, with nothing elided ("..."), shortened, or dropped. It is copied from the tool's output, not typed. It sits in a block of its own, one per overload, that holds the declaration and nothing else. Because rule E1 compiles every `cpp` block as a whole program, that block is of a kind the documentation tests do not compile; its info string is fixed with the check.
+- **G5** (check 5, preconditions kept in full read the same) A precondition that stays on its declaration in full is quoted in the Requires field in the header's words: the header's sentences whole, as one numbered item, with no word changed, added, or dropped and no link or emphasis inside them. What the entry adds, such as the detail of On violation, goes in a sentence of its own after the quoted ones. The preconditions kept in full are those on the list that the comment table's checker holds (`records/docs/check_comment_moves.py`), as decision 0258 section 4 item 4 rules it: `rotation`'s zero direction (`motions.hpp:48-61`) stays in full, though the checker's list does not hold it yet, and the unchecked floating division of `linear.hpp:397-406` moves. Any other Requires item is written in the entry's own words.
+- **G6** (check 6, messages agree) A message that an entry quotes is the library's string literal, whole and exactly as the header spells it, in a code span or block, never reflowed inside the literal, cut with an ellipsis, or paraphrased in quotation marks or code font; a paraphrase is plain prose. Where a compiler prints the literal inside its own text, the entry marks which part is the library's, as template T6 does. A text the library no longer has appears only under a field labeled "formerly" (template T6), so that the check can tell a former text from a current one. The same holds for every page that quotes a message (rule E7).
+- **G7** (check 7, stated contracts are exercised) For each numbered requirement whose violation is checkable, rejected at compile time or checked in checking mode and in every constant evaluation, On violation names what exercises it: the entry's own compiled example, a `cpp rejected` example by its page and heading, or a compile-fail test of the suite by its test name. A requirement that is not checked says "not checked" and names nothing (rule C3). An author who finds nothing that exercises a checkable requirement writes the `cpp rejected` example or reports the gap; a requirement is never called checked without one.
+- **G8** (the process rules of the same condition) A unit that changes what a declaration requires, guarantees, or preserves changes its entry in the same unit, and its review request names the entry; the blind reviewer's checklist asks for it. A contract leaves a header only after the entry that receives it has passed review (decision 0253), and not at all until the seven checks run at each merge into `main`.
 
 ## 4 Which rules a machine checks
 
@@ -179,11 +217,21 @@ Two tables. Terms: term, definition in one sentence, the page of its defining in
 | A1, A2, A3, A10 | | the independent math review of plan section 9.2 |
 | W7, W11 | `amspell.py --check` and the writing-style scans | the reviewer reads the hits |
 | C1 to C5 | | the trust review of plan section 9.3 |
+| A11 | half of it by the script that `notation-key.md` section 6 suggests: a ⟑ or ⟇ inside a block | that each `*` and `%` in a block stands where the symbol would: review |
+| W12 | `tests.docs_links`, while the pages of D3 do not exist | once they do, that the tutorial links none of them: review |
+| G1 | check 1, `tests.docs_header_pointers` | |
+| G2 | check 2, `tests.docs_reference` with the manifest | that the rule under Covers is the right one: the blind reviewer's sample |
+| G3, G5 | checks 3 and 5, to be built | |
+| G4 | check 4, by the manifest tool | |
+| G6 | check 6, `tests.docs_diagnostics` | |
+| G7 | check 7, to be built | that a named example or test exercises the requirement it is named for: review |
+| G8 | | the blind reviewer's checklist |
+| R5 | | the coordinator, at U4 |
 
 Two things the checks cannot hold that matter most here: that a value was derived and not pasted (A1), and that a test could have failed (A2). Both are what the math reviewer is asked first.
 
 ## 5 Findings for the units that follow
 
-1. **A link to `conventions.md` fails the citation check.** `tools/citation_patterns.txt` rejects the file name in any case, so that no page cites the specification, and plan 0049 section 4.1 names the new page `docs/guide/conventions.md`. A page that links it, and a header comment that points to it, fail `tests.citations_guide` and `tests.citations`. (Checked: a page with the link `(conventions.md)` is reported by `python3 -I tools/test_references.py citations`.) Options: name the page `docs/guide/conventions/README.md`, or drop the lower-case file name from that pattern, since the capitals form and the phrase "conventions specification" are caught by the patterns beside it. The first needs no tool change; the second keeps the name a reader expects. It is the coordinator's to assign, before U3 creates the page.
-2. **The tutorial's examples are whole programs** (rule E2 and research note 0029, open item 7).
+1. **A link to `conventions.md` fails the citation check. Settled:** U3 names the conventions page so that the check passes unchanged, and no citation pattern is weakened for it (decision 0255 part A item 7). `tools/citation_patterns.txt` rejects the file name in any case, so that no page cites the specification, and plan 0049 section 4.1 names the new page `docs/guide/conventions.md`. A page that links it, and a header comment that points to it, fail `tests.citations_guide` and `tests.citations`. (Checked: a page with the link `(conventions.md)` is reported by `python3 -I tools/test_references.py citations`.) Of the two options U1 gave, dropping the lower-case file name from that pattern is closed by the settlement; the other, `docs/guide/conventions/README.md`, needs no tool change. The name is U3's to choose and publish with its heading list, before any page or pointer links the chapter.
+2. **The tutorial's examples are whole programs. Settled:** one fixed preamble per chapter (rule E2), and decision 0242's mechanism does not change (decision 0255 part A item 5; research note 0029, open item 7).
 3. **The pedagogical skill asks for front matter and its two checkers**; decision 0253 item 33 rules them out until the owner says where they are. Section 2's fixed labels are chosen so that front matter can be generated from a page if that changes.

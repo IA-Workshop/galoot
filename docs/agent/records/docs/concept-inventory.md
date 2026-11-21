@@ -1,6 +1,6 @@
 # The concept inventory of the user documentation, and its order
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Research note [0029](../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Section 4 records the settled chapter cut, added 2026-11-21 by Claude (agent, Opus 5.5). Research note [0029](../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
 
 Every term, symbol, notation, named result, and technique that the documentation introduces is a row here, with what it rests on. The tutorial is written in the order of part 2: a row may use only the prerequisites of part 1 and rows above it. The glossary (unit U3) is built from this record, one row per term, and `tests.docs_terms` then holds the pages to the same order.
 
@@ -251,6 +251,6 @@ These rows belong to the conventions chapter, the concepts pages, and the first-
 ## 4 What the order was checked against
 
 - No cycle, no forward reference by ID, and no headword used above its defining row: `checks/inventory_check.py`, run on this file; `checks/inventory_mutants.py` shows that it fails on three broken copies.
-- Each concept of plan 0049 section 4.2's table has a row. Three of its entries moved: "why `!!x` is not always x" needs two or four generators, so K505 uses R(2, 0, 0) for it; the antiproduct, the antireverse, `transform`, and `compose` moved from the plan's chapter 8 to the new chapter 6; and the plan's chapters 1 and 2 are one chapter.
+- Each concept of plan 0049 section 4.2's table has a row. Three of its entries moved: "why `!!x` is not always x" needs two or four generators, so K505 uses R(2, 0, 0) for it; the antiproduct, the antireverse, `transform`, and `compose` moved from the plan's chapter 8 to the new chapter 6; and the plan's chapters 1 and 2 are one chapter. The coordinator settled this cut of the chapters (decision 0255 part A item 4); the page count of plan 0049 section 4.1 does not change.
 - The public names the tutorial brings in are counted by the same script. The reference documents the rest.
 - Not checked: that a reader at the declared level can take each step. That is what the cold reads of plan section 9.1 test.
