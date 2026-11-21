@@ -12,7 +12,7 @@ r02_many_blades_explicit_fail.cpp:7:34: error: no matching constructor for initi
 1 error generated.
 == g++, link order checked_first
 galoot: assertion failed: n must be from 1 to 32 (galoot/core/bits.hpp:121)
-r03_checking_mixed/run.sh: line 12: 1352539 Aborted                    (core dumped) "$out/$order"
+r03_checking_mixed/run.sh: line N: Aborted                    (core dumped) "$out/$order"
 exit status 134
 == g++, link order unchecked_first
 checked unit returned 254
@@ -20,7 +20,7 @@ unchecked unit returned 4294967294
 exit status 0
 == clang++, link order checked_first
 galoot: assertion failed: n must be from 1 to 32 (galoot/core/bits.hpp:121)
-r03_checking_mixed/run.sh: line 12: 1352557 Aborted                    (core dumped) "$out/$order"
+r03_checking_mixed/run.sh: line N: Aborted                    (core dumped) "$out/$order"
 exit status 134
 == clang++, link order unchecked_first
 checked unit returned 254
@@ -165,29 +165,29 @@ r20_wide_vectors_wedge.cpp:15:54: error: no matching function for call to 'wedge
 galoot/core/plan.hpp:362:53: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
 galoot/core/plan.hpp:575:19: error: non-constant condition for static assertion
 galoot/core/plan.hpp:578:19: error: non-constant condition for static assertion
-./run.sh: line 63: 1353884 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[1], g++: builds, exit status 134
-./run.sh: line 63: 1353897 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[1], clang++: builds, exit status 134
 == GALOOT_CHECKING=[0], g++: builds, exit status 40
 == GALOOT_CHECKING=[0], clang++: builds, exit status 40
-./run.sh: line 63: 1353929 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[true], g++: builds, exit status 134
-./run.sh: line 63: 1353948 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[true], clang++: builds, exit status 134
 == GALOOT_CHECKING=[false], g++: builds, exit status 40
 == GALOOT_CHECKING=[false], clang++: builds, exit status 40
-./run.sh: line 63: 1353981 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[01], g++: builds, exit status 134
-./run.sh: line 63: 1354000 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[01], clang++: builds, exit status 134
-./run.sh: line 63: 1354017 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[0x1], g++: builds, exit status 134
-./run.sh: line 63: 1354030 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[0x1], clang++: builds, exit status 134
-./run.sh: line 63: 1354051 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[1-0], g++: builds, exit status 134
-./run.sh: line 63: 1354082 Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
 == GALOOT_CHECKING=[1-0], clang++: builds, exit status 134
 == GALOOT_CHECKING=[ON], g++: <command-line>: error: ‘ON’ was not declared in this scope
 == GALOOT_CHECKING=[ON], clang++: galoot/core/assert.hpp:119:10: error: use of undeclared identifier 'ON'
