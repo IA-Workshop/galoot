@@ -373,3 +373,9 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0047-V1-corrections-addendum	planner	opus	154055	35	468	records/gap-register 3bed4b7; plan 0047 addendum; workflow agent, harness token count
 2026-11-21	0048-D0-delta-check	reviewer	opus	276000	82	899	review/simplification-survey-fix 63e8c8e; 3 minor findings, 4 nits; workflow agent, harness token count
 2026-11-21	0048-D0-delta-fix	cpp-expert	opus	198752	67	563	records/simplification-survey-fix 9a3c0bc; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review	reviewer	sonnet	138833	44	272	kb/doc-pedagogy; merge after fixes, 1 important, 8 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review	reviewer	sonnet	155477	49	561	kb and tools complexity-reduction; merge after fixes, 10 findings; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix	collector	sonnet	85503	23	114	kb/doc-pedagogy 651c538; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix	collector	sonnet	182830	67	716	kb/complexity-reduction 5a84842; tools/complexity-reduction 562a6f3; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin	cpp-expert	opus	515495	236	12628	kb/constexpr-step-margin a8eaf61; tools/constexpr-step-margin 0c37d04; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse	cpp-expert	opus	399576	195	5775	kb/wrapper-collapse baff6c1; tools/wrapper-collapse 4e9d012; experiment on a copy of Galoot; workflow agent, harness token count
