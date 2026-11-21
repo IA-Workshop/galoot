@@ -162,3 +162,41 @@ complement_mask(e3, 2) = 3, and e3 | it = 7 (guarantee: 3, the antiscalar)
 complement_mask applied twice to e3 = 0 (guarantee: 4, e3 again)
 == clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1
 galoot: assertion failed: blade has a generator beyond e_n (galoot/core/bits.hpp:85)
+#### c06: a search for a versor the check rejects under directed rounding (A46)
+== g++ -O2 -frounding-math: rounding near: roundings K = 7, largest |d|/tol 0.213, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding up: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding down: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding zero: roundings K = 7, largest |d|/tol 0.310, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding near: roundings K = 7, largest |d|/tol 0.213, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding up: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding down: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding zero: roundings K = 7, largest |d|/tol 0.310, over 1 in 0 of 2000000
+#### c07: x / s over an integer scalar with a zero divisor and min() / -1 (A34)
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, zero
+galoot/core/linear.hpp:421:60: runtime error: division by zero
+   exit status 136
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 136
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, zero
+galoot: assertion failed: a / s: an integer scalar cannot divide by zero (galoot/core/linear.hpp:417)
+   exit status 134
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 136
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, zero
+galoot/core/linear.hpp:421:60: runtime error: division by zero
+   exit status 1
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 1
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, zero
+galoot: assertion failed: a / s: an integer scalar cannot divide by zero (galoot/core/linear.hpp:417)
+   exit status 134
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 1

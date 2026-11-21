@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Runs the reproducers of the correction of the merged register (the sample
-# check's findings E1 and M1 to M4) and prints what each gave. Each is one
-# small compile, called with g++ and clang++ directly, outside the test suite
-# and the job pool.
+# check's findings E1 and M1 to M4, and the rows the correction changed
+# besides) and prints what each gave. Each is one small compile, called with
+# g++ and clang++ directly, outside the test suite and the job pool.
 #   run.sh <galoot include dir> <scratch dir>
 set -u
 inc=$1; out=$2; here=$(cd "$(dirname "$0")" && pwd)
@@ -61,6 +61,32 @@ main() {
       $cxx -std=c++23 -Wall -Wextra -O0 -fsanitize=undefined -I"$inc" \
         -DGALOOT_CHECKING=$checking "$here/c05_bits_mask_beyond_n.cpp" \
         -o "$out/c05" && "$out/c05" 2>&1 | strip
+    done
+  done
+
+  echo "#### c06: a search for a versor the check rejects under directed rounding (A46)"
+  for cxx in g++ clang++; do
+    $cxx -std=c++23 -O2 -Wall -Wextra -frounding-math -I"$inc" \
+      -DGALOOT_CHECKING=1 "$here/c06_directed_rounding_search.cpp" \
+      -o "$out/c06" && for mode in near up down zero; do
+      echo "== $cxx -O2 -frounding-math: $("$out/c06" $mode 2000000)"
+    done
+  done
+
+  echo "#### c07: x / s over an integer scalar with a zero divisor and min() / -1 (A34)"
+  for cxx in g++ clang++; do
+    for checking in 0 1; do
+      $cxx -std=c++23 -Wall -Wextra -O0 -fsanitize=undefined -I"$inc" \
+        -DGALOOT_CHECKING=$checking "$here/c07_integer_division_edges.cpp" \
+        -o "$out/c07" || continue
+      for c in zero min; do
+        echo "== $cxx -O0 -fsanitize=undefined, GALOOT_CHECKING=$checking, $c"
+        # The sanitizer's report of the trap that follows holds addresses
+        # and process numbers; only the lines that say what happened are kept.
+        "$out/c07" $c 2>&1 |
+          grep -E 'runtime error|assertion failed|returned' | strip
+        echo "   exit status ${PIPESTATUS[0]}"
+      done
     done
   done
 }
