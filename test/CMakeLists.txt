@@ -271,6 +271,30 @@ set_tests_properties(tools.compile_fail_literal_in_path_rejects
   tools.compile_fail_literal_in_path_accepts PROPERTIES
   LABELS "tools;tools.compile_fail")
 
+# tools.configure_rejects_*: a cache option of the two modes that is neither
+# ON nor OFF stops the configuration with a message that names the option
+# and the value, instead of being read as a boolean. Each test configures
+# the project again in a scratch tree of its own, which the script removes;
+# the configuration stops at the check, after the compiler is detected.
+set(configure_check
+  ${CMAKE_COMMAND} -DSOURCE=${PROJECT_SOURCE_DIR}
+  -DCOMPILER=${CMAKE_CXX_COMPILER})
+add_test(NAME tools.configure_rejects_force_inline
+  COMMAND ${expect_output} 1 "GALOOT_FORCE_INLINE must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_force_inline
+      -DCHECKING=ON -DFORCE_INLINE=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+add_test(NAME tools.configure_rejects_checking
+  COMMAND ${expect_output} 1 "GALOOT_CHECKING must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_checking
+      -DCHECKING=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+set_tests_properties(tools.configure_rejects_force_inline
+  tools.configure_rejects_checking PROPERTIES
+  LABELS "tools;tools.configure")
+
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
 add_test(NAME core.bare_compile
