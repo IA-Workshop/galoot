@@ -1,0 +1,7 @@
+names declared: 3886 in 18 units
+names left out (do not compile beside the headers): do if j0 j1 jn or y0 y1 yn
+pairs with a side under include/galoot/: 4
+  l | include/galoot/core/basis_change.hpp:542 | I | scan-c95fee5/units/unit00.cpp:492 | unit00.cpp
+  m | include/galoot/core/bits.hpp:171 | rn | scan-c95fee5/units/unit01.cpp:192 | unit01.cpp
+  q1 | include/galoot/core/transform.hpp:654 | qI | scan-c95fee5/units/unit01.cpp:227 | unit01.cpp
+  q1 | include/galoot/core/transform.hpp:654 | ql | scan-c95fee5/units/unit02.cpp:91 | unit02.cpp

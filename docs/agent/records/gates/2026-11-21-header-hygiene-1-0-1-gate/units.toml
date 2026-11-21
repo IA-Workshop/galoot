@@ -1,0 +1,12 @@
+# The heavy unit plan 0044 section 7 item 6 names, for tools/compiles cost on
+# the GCC debug tree, before (c95fee5, the plan's base) and after (the gated
+# revision). No instantiated code changes on the branch, so the two are
+# expected to agree within the repeats' range.
+
+compilers = ["gcc"]
+
+[[unit]]
+name = "core/product"
+source = "test/core/product_test.cpp"
+kind = "debug"
+trees = ["before", "after"]
