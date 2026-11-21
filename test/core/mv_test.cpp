@@ -1079,8 +1079,8 @@ constexpr auto map_by_loop(const std::array<T, S.size()>& x) {
 }
 
 // The product Op of x and y written onto its plan's result set, the blades
-// its terms reach in canonical order, as a test that names no layout reads
-// it.
+// its terms reach in canonical order: the layout that the public function for
+// Op returns, such as geometric_product_layout for geometric_product.
 template <BinaryOperation Op, class Alg, core::blade_set A, core::blade_set B,
           class T>
 constexpr auto product_on_result(const core::mv<Alg, A, T>& x,

@@ -98,13 +98,14 @@ target_compile_definitions(galoot_core INTERFACE
 # operations inline; OFF passes GALOOT_FORCE_INLINE=0 to every target that
 # links galoot::core in this build, for the build presets whose units with
 # many operations cost far more to compile when forced. Unlike the checking
-# mode it changes no value an operation computes, so it has a default, and
-# the build presets declare it anyway, so that each one's mode reads in
-# CMakePresets.json. Only ON and OFF are accepted, as for the checking mode;
-# a test checks that the mode reaches the code. ON passes nothing, so that a
-# target may fix the mode 0 for itself in any build; a second, identical
-# definition is no error. The structure tests in test/bench fix their own
-# flags and do not see this option.
+# mode it changes no value an operation computes in these builds, which turn
+# multiply-add contraction off, so it has a default, and the build presets
+# declare it anyway, so that each one's mode reads in CMakePresets.json.
+# Only ON and OFF are accepted, as for the checking mode; a test checks that
+# the mode reaches the code. ON passes nothing, so that a target may fix the
+# mode 0 for itself in any build; a second, identical definition is no
+# error. The structure tests in test/bench fix their own flags and do not
+# see this option.
 option(GALOOT_FORCE_INLINE
   "ON forces the core's operations inline; OFF leaves inlining to the compiler"
   ON)

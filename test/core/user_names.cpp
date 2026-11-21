@@ -1,7 +1,7 @@
 // A user's unit that names a pseudoscalar I and a line rn at namespace scope,
-// as a short example would. It compiles in every build; in the lint preset,
-// clang-tidy's check of confusable identifiers must find no name in the
-// library's headers that a reader could take for I or rn, such as l or m.
+// as a short example would. It compiles in every build; in the lint build
+// preset, clang-tidy's check of confusable identifiers must find no name in
+// the library's headers that a reader could take for I or rn, such as l or m.
 //
 // It cannot share a file with linear_user_names.cpp, whose l and ls would
 // clash with the I declared here.
