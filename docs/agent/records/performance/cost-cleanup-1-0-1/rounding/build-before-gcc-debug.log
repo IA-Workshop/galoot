@@ -1,0 +1,7 @@
+ninja: Entering directory `build/gcc-debug'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/4] Building CXX object test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o
+[2/4] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o
+[3/4] Linking CXX executable test/core_identities_rounding_test
+timed: build core_identities_rounding_test took 52.407 s (exit 0)
