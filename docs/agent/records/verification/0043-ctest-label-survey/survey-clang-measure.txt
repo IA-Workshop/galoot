@@ -1,0 +1,19 @@
+tree clang-measure: 672 tests
+  A no label: 0
+  B no module label: 0
+  C no component label: 0
+  D repeated label: 0
+  E no module prefix: 0
+  labels outside the test's own module:
+    core.headers: 1
+    rga3.headers: 1
+    runlog: 1
+    slow: 2
+  tests per module:
+    bench: 22
+    core: 475
+    reference: 3
+    rga3: 75
+    support: 19
+    tests: 8
+    tools: 70
