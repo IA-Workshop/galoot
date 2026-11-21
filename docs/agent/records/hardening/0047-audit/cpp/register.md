@@ -89,7 +89,7 @@ A program can also call the `detail` generators at run time; nothing public does
 - Site: `mv.hpp:390-401`, the storage constructor and its comment; the catch-alls at `mv.hpp:669-700`.
 - Class: error path, diagnostic not in the terms of the algebra (C9).
 - Smallest input: a scalar `Exact` constructible from `std::int64_t` only explicitly, and `mv<rga3, blades<rga3, "1">, Exact> s{1};` (`repro/r01_one_blade_explicit_fail.cpp`).
-- What a user sees: GCC, two errors, "no matching function for call to `mv<rga3, blade_set<1>{...}, Exact>::mv(<brace-enclosed initializer list>)`" and "could not convert `{1}`"; Clang, one error, "no matching constructor", with eight candidate notes, among them "no known conversion from 'int' to 'Exact'".
+- What a user sees: GCC, two errors, "no matching function for call to `mv<rga3, blade_set<1>{...}, Exact>::mv(<brace-enclosed initializer list>)`" and "could not convert `{1}`"; Clang, one error, "no matching constructor", with ten candidate notes, among them "no known conversion from 'int' to 'Exact'".
 - Verdict: confirmed, as the release record's exception 8 and the comment at `mv.hpp:390-398` state.
 - Pinned by: none. The nearest test, `core.mv_rejects_one_explicit_value` (`test/core/mv_one_explicit_value_fail.cpp`), is a six-blade line given one value, which the count catch-all reports ("1 == 6").
 - Proposed test (H1): a compile-fail test of this input on both compilers, pinning the error count and the line, so that a later library message is a visible change.
@@ -259,7 +259,7 @@ A program can also call the `detail` generators at run time; nothing public does
 - Site: `blade_product.hpp:186-192` (`product_capacity`: 2^(|A ∪ B| - 1)), used by `plan.hpp:147-153` (`pair_capacity`) for every term list of a pair's product. The contract at stake is `metric.hpp:51-55` and `limits.md:24-26`: an algebra built with `MaxN` up to 32 "every later part of the library accepts", though nothing above 16 is tested.
 - Class: contract not kept at a documented bound; valid input refused.
 - Smallest input: the bulk dual of a vector of R(22, 0, 0) built with `MaxN` 32 (`repro/r17_wide_algebra_capacity.cpp -DGEN=22`). A vector times the antiscalar has at most 22 terms; its lists get 2^21 places.
-- What a user sees on Clang: four errors, the first "constexpr variable 'count' must be initialized by a constant expression" at `plan.hpp:553`, with the note "cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576); use '-fconstexpr-steps' to increase this limit" in `term_list::add`. None names the operation. GCC builds every size to 32, in about 0.2 s and 85 MiB (`r17_runs.tsv`), so its constant evaluator holds the unused places cheaply. Clang builds up to 21.
+- What a user sees on Clang: three errors, the first "constexpr variable 'count' must be initialized by a constant expression" at `plan.hpp:553`, with the note "cannot allocate array; evaluated array bound 2097152 exceeds the limit (1048576); use '-fconstexpr-steps' to increase this limit" in `term_list::add`. None names the operation. GCC builds every size to 32, in about 0.2 s and 85 MiB (`r17_runs.tsv`), so its constant evaluator holds the unused places cheaply. Clang builds up to 21.
 - Also refused on Clang at 22 generators, for vector operands (each compiled once, not kept as reproducers): with the note "cannot allocate array", the geometric antiproduct, `bulk`, `weight`, `bulk_dual` and `antidot`, all of which multiply by the antiscalar or through the complements; with "constexpr evaluation hit maximum step limit", the geometric product, the wedge and `dot`, which is the placement cost of H0-24. The antiwedge and the right complement build. GCC builds all ten.
 - Verdict: confirmed. The capacity is a correct upper bound, so no result is wrong; it is loose by a factor of 2^(n-1)/n for a vector times the antiscalar, and Clang's array limit turns that into a refusal.
 - Pinned by: none (nothing above 16 is tested). Proposed test (H2, under O9): the bulk dual of a vector at 21 and 22 generators on Clang, so that the limit is pinned until it is lifted or stated.
@@ -289,7 +289,7 @@ A program can also call the `detail` generators at run time; nothing public does
 - Site: `plan.hpp:308-327` (`collect_result`, T terms on R blades); `limits.md:17-32`.
 - Class: compile-time limit at a documented bound.
 - Smallest input: the wedge of two vector layouts of R(20, 0, 0), `MaxN` 32 (`repro/r20_wide_vectors_wedge.cpp`), 380 terms on 190 blades.
-- What a user sees on Clang: four errors, "constexpr variable 'found' must be initialized by a constant expression" with the note "constexpr evaluation hit maximum step limit" in `collect_result`; 19 builds. GCC builds to 30 and at 31 exceeds its operation limit with 39 errors, the first "'constexpr' evaluation operation count exceeds limit of 33554432" at `plan.hpp:362`.
+- What a user sees on Clang: three errors, "constexpr variable 'found' must be initialized by a constant expression" with the note "constexpr evaluation hit maximum step limit" in `collect_result`; 19 builds. GCC builds to 30 and at 31 exceeds its operation limit with 21 errors, the first "'constexpr' evaluation operation count exceeds limit of 33554432" at `plan.hpp:362`.
 - Verdict: confirmed, within the class the limits page describes (placement grows as T times R), but the page gives figures only for full layouts up to 10 generators, and "accepted by every later part of the library" up to 32 does not hold for two vectors at 20 on Clang. This is plan 0047's O9 (H2 tests sparse use at 17, 24 and 32) and the deferred placement search (O3), whose trigger is "a preset or a user report that reaches the limit".
 - Fix changes relied-on behavior: no.
 
@@ -356,3 +356,13 @@ A program can also call the `detail` generators at run time; nothing public does
 - `-ffp-contract=fast` (release friction 7) was not re-measured.
 - Libraries other than libstdc++ 16, and compilers other than GCC 16.2.1 and Clang 23.1.5.
 - The lines that plan 0044 changes in `assert.hpp`, `basis_change.hpp`, `bits.hpp`, `metric.hpp` and `motions.hpp`: plan 0047 section 8 asks H0 to re-read them once 1.0.1 is tagged. None of this register's findings is fixed by that branch as it stands (its `assert.hpp` change hardens only `GALOOT_FORCE_INLINE`'s spelling, and H0-04 remains), but line numbers in those five files will move.
+
+## Corrections of 2026-11-21
+
+Made by Claude (agent, Fable 5.2) while correcting the merged register after its sample check; the merged register's section "Corrections after the sample check" gives the evidence. Nothing else in this file changed.
+
+- `repro/run.sh` printed a count of the lines of a compiler's output that contain "error". That is not a count of errors: it takes in Clang's closing "N errors generated.", GCC's note "... errors seen above", and lines of context that print `<expression error>`. The script now counts the lines that start with a location and "error:", strips paths before it cuts a line, and replaces the process number in the shell's "Aborted" lines. `repro/outputs.txt` is one run of the corrected script at the same revision.
+- H0-21: Clang gives three errors at 22 generators, where this file said four.
+- H0-24: Clang gives three errors at 20 generators, where this file said four, and GCC gives 21 at 31 generators, where it said 39.
+- H0-01: Clang's error comes with ten candidate notes, among fourteen notes, where this file said eight.
+- The other counts stand: two errors on GCC and one on Clang for H0-01 and H0-02, two on both for H0-19, one on both for H0-25.

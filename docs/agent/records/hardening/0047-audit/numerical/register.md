@@ -151,7 +151,7 @@ Sites that run at run time, where nothing but the code itself guards them:
   | antiwedge of complements | builds | builds | builds |
   | geometric antiproduct | builds | builds | rejected |
 
-  Clang's reason (`p09.n24.op4.clang++.out`): "constexpr variable 'count' must be initialized by a constant expression", with the note "cannot allocate array; evaluated array bound 8388608 exceeds the limit (1048576); use '-fconstexpr-steps' to increase this limit", at `blade_product.hpp:166`, four errors in all. The threshold is n = 22 (2^21 elements; n = 21 builds, `p09.n21.op4.clang++.out`, `p09.n22.op4.clang++.out`). With `-fconstexpr-steps=100000000` the n = 24 bulk dual builds in 0.17 s (`p09.n24.op4.clang++.steps.out`). Every case took under 0.4 s and 130 MiB on either compiler (`p09.timed.tsv`): GCC does not materialize the zero-filled array.
+  Clang's reason (`p09.n24.op4.clang++.out`): "constexpr variable 'count' must be initialized by a constant expression", with the note "cannot allocate array; evaluated array bound 8388608 exceeds the limit (1048576); use '-fconstexpr-steps' to increase this limit", at `blade_product.hpp:166`, three errors in all. The threshold is n = 22 (2^21 elements; n = 21 builds, `p09.n21.op4.clang++.out`, `p09.n22.op4.clang++.out`). With `-fconstexpr-steps=100000000` the n = 24 bulk dual builds in 0.17 s (`p09.n24.op4.clang++.steps.out`). Every case took under 0.4 s and 130 MiB on either compiler (`p09.timed.tsv`): GCC does not materialize the zero-filled array.
 - **Scope, inferred and not run.** Everything built on an antiproduct or on the bulk product: `bulk`, `weight`, the weight duals, the left duals, `antidot`, `project`, `antiproject`, `transform`, and `compose`.
 - **What a user sees.** On Clang, above 21 generators, one of these operations fails to compile with Clang's own wording about constant-evaluation limits, not a message of the library's, though its layouts hold two blades.
 - **Severity.** Medium, mostly for owner item O9: H2's planned tests of sparse use at 24 and 32 generators will fail on Clang for these operations unless they raise the step limit, and the guide's sentence is false on Clang for them today.
@@ -164,7 +164,7 @@ Sites that run at run time, where nothing but the code itself guards them:
 - **Site.** `blade_product.hpp:75` and `:94` (the coefficient checks), reached through `plan.hpp:553-556`, where `count` and `generated` are evaluated after the failure.
 - **Class.** Unhelpful diagnostic.
 - **Input.** `from_gram` of diag(32767, 32767, 32767, 32767, 32767), every entry within `max_form_entry`, and the product e12345 e12345 = 32767^5 ≈ 3.8e22 over `std::int64_t` (`p05.case4.*.out`). For comparison, case 3, 32767^4 = 1,152,780,773,560,811,521 at n = 4, is generated and right.
-- **What a user sees.** The message "a product coefficient does not fit coefficient_type" is in the output, but Clang reports four errors in 100 lines and GCC fourteen "error" lines in 181, the later ones "no matching function for call to 'filled_plan'" and "invalid operands to binary expression". The comment of `make_product_plan` (`plan.hpp:530-534`) promises one message per misuse for the set checks it makes first; an overflow is not among them.
+- **What a user sees.** The message "a product coefficient does not fit coefficient_type" is in the output, but Clang reports three errors in 100 lines and GCC thirteen in 181, the later ones "no matching function for call to 'filled_plan'" and "invalid operands to binary expression". The comment of `make_product_plan` (`plan.hpp:530-534`) promises one message per misuse for the set checks it makes first; an overflow is not among them.
 - **Severity.** Low.
 - **Pinned today.** Not by me; H1 counts errors per message.
 - **Would a fix change relied-on behavior.** No.
@@ -174,7 +174,7 @@ Sites that run at run time, where nothing but the code itself guards them:
 
 - **Site.** `metric.hpp:300-314` (`metric_like`).
 - **Input.** `struct big { static constexpr core::metric<2> value{{{{40000, 0}, {0, 1}}}}; }` used as `mv<big, full<2>, double>` (`p07.case5.*.out`).
-- **What a user sees.** "constraints not satisfied for class template 'mv'", with the note "because 'detail::is_valid_form_v<big>' evaluated to false" on Clang and "template constraint failure" on GCC, then a second error for the unusable alias. Nothing says whether the form is unsymmetric or out of range; `from_gram` says which.
+- **What a user sees.** "constraints not satisfied for class template 'mv'", with the note "because 'detail::is_valid_form_v<big>' evaluated to false" on Clang and "template constraint failure" on GCC, then a second error for the unusable alias on Clang, and two more on GCC. Nothing says whether the form is unsymmetric or out of range; `from_gram` says which.
 - **Class and severity.** Unhelpful diagnostic (C9), low. The contract (false, not an error) is kept.
 - **Would a fix change relied-on behavior.** A message would have to come from a use site, as `blades` does for tags; `metric_like` itself must stay a concept that answers false.
 - **Proposed test.** For H1, a compile-fail test pinning today's wording, if H1 judges the case worth one.
@@ -199,7 +199,7 @@ Sites that run at run time, where nothing but the code itself guards them:
 
 - **Site.** `presets/rga3/motions.hpp:158-164`. The comment requires "T has division"; the constraint asks only `ring_scalar` and not `std::integral`.
 - **Input.** The same `ring` type, `translation(ring{1}, ring{2}, ring{3})` (`p07.case4.*.out`).
-- **What a user sees.** "invalid operands to binary expression ('ring' and 'ring')" (Clang, 9 lines) or three "no match for 'operator/'" (GCC, 91 lines), inside the function's body.
+- **What a user sees.** "invalid operands to binary expression ('ring' and 'ring')" (Clang, 9 lines) or three "no match for 'operator/'" and a fourth error, "no matching function", for the motor they would have filled (GCC, 91 lines), inside the function's body.
 - **Severity.** Low. **Would a fix change relied-on behavior.** A rejecting overload with a message, like the integer one beside it, changes only an error's text.
 - **Proposed test.** For H1, a compile-fail test with the message, if a message is added.
 
@@ -295,3 +295,14 @@ The fraction-free elimination (`basis_change.hpp:427-469`) forms a_kk a_ij - a_i
 - **H5.** O02.
 - **H6.** N01 is a fix to a kernel's arithmetic for narrow unsigned scalars. N06 (b) and N03's smaller τ touch the generator or the check, and come under the ordering rules of plan 0047 section 9.2 and decision 0253.
 - **Knowledge base.** The general fact behind N06, Clang's limit on the elements of an array in a constant evaluation, is already in `knowledge-base/cpp-language/consteval-limits-per-compiler.md`. I added no note.
+
+## Corrections of 2026-11-21
+
+Made by Claude (agent, Fable 5.2) while correcting the merged register after its sample check; the merged register's section "Corrections after the sample check" gives the evidence. Nothing else in this file changed.
+
+- `run.sh` wrote "error lines: N", a count of the lines of a command's output that contain "error". That is not a count of errors: it takes in Clang's closing "N errors generated.", GCC's note "... errors seen above", and a sanitizer's "runtime error" lines. It now writes "errors: N", a count of the lines that start with a location and "error:". Every `.out` file is from one run of the corrected script at the same revision, and `p09.timed.tsv` holds that run's 39 rows after the first run's.
+- N06: Clang gives three errors, where this file said four.
+- N07: Clang gives three errors and GCC thirteen, where this file said four and fourteen "error" lines. The line counts, 100 and 181, stand.
+- N08: GCC gives three errors and Clang two; this file spoke of "a second error" for both.
+- N11: GCC gives four errors, the three this file named and one more; Clang gives one.
+- D01 and D03's "one error" stand, and so do the line counts of N10 and N11.

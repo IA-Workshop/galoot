@@ -4,9 +4,11 @@
 // e1 e2 plane, (1 + e12) / sqrt(2) up to rounding, which is a versor.
 //   nan-x:      x has NaN on e1.                  The comment: abort (cause 3).
 //   inf-v:      v has infinity on its scalar.      The comment: abort (3 or 4).
-//   huge-x:     x = 1.2e308 (e1 + e2), a finite result of the same size,
-//               whose magnitude, the sum of absolute terms, overflows.
-//                                                  The comment: abort (cause 4).
+//   huge-x:     x = 1.2e308 (e1 + e2), a finite result of the same size.
+//               The one dropped coefficient, on e123, has only terms with
+//               x's e3 or v's e13 or e23, all zero here, so its magnitude P
+//               is the padding alone and does not overflow.
+//                                                  The comment: no abort.
 //   subnormal-x: x = 4.9e-324 e1, the least subnormal. The comment: no abort.
 //   tiny-nonversor: the non-versor 1 + e12 + 2 e13 + 3 e14 of R(4, 0, 0)
 //               scaled by 1e-160, on x = 1e-160 e1, whose dropped part is
