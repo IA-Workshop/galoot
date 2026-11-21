@@ -1,0 +1,78 @@
+ok    conformal(3): e_i e_j + e_j e_i = 2 g_ij, associativity, left(right(a)) = a, a ^ b* = (a . b) 1-bar
+ok    [[1,1,0],[1,2,0],[0,0,1]]: e_i e_j + e_j e_i = 2 g_ij, associativity, left(right(a)) = a, a ^ b* = (a . b) 1-bar
+ok    conformal(3): e4 e5 = -1 + e45 (CONVENTIONS 1.1)
+ok    conformal(3): bulk of e4 is -e5 (CONVENTIONS 1.8)
+ok    t = (1, 0, 3)(0, 0, 1) = 3 + e13
+ok    t~ = 3 - e13
+ok    t e1 t~ = (8, 0, -6)
+ok    t e2 t~ = (0, 10, 0)
+ok    t e3 t~ = (6, 0, 8)
+ok    t~ e1 t = (8, 0, 6)
+ok    t~ e3 t = (-6, 0, 8)
+ok    t v t~ = (44, -10, -8)
+ok    transform(v, t) = -t~ v t = (-20, 10, -40)
+ok    !t = 3 e123 - e2
+ok    transform(v, !t) = (44, -10, -8)
+ok    t t~ = 10; cos = 4/5, sin = 3/5 in the e1 e3 plane
+ok    target and trap differ in every coordinate
+ok    R(0, 1, 0): transform(x, bulk_dual(V)) = classical, 10 versors of 1 to n vectors, full x
+ok    R(1, 0, 0): transform(x, bulk_dual(V)) = classical, 10 versors of 1 to n vectors, full x
+ok    R(0, 2, 0): transform(x, bulk_dual(V)) = classical, 20 versors of 1 to n vectors, full x
+ok    R(1, 1, 0): transform(x, bulk_dual(V)) = classical, 20 versors of 1 to n vectors, full x
+ok    R(2, 0, 0): transform(x, bulk_dual(V)) = classical, 20 versors of 1 to n vectors, full x
+ok    R(0, 3, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(1, 2, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(2, 1, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(3, 0, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(0, 4, 0): transform(x, bulk_dual(V)) = classical, 40 versors of 1 to n vectors, full x
+ok    R(1, 3, 0): transform(x, bulk_dual(V)) = classical, 40 versors of 1 to n vectors, full x
+ok    R(2, 2, 0): transform(x, bulk_dual(V)) = classical, 40 versors of 1 to n vectors, full x
+ok    R(3, 1, 0): transform(x, bulk_dual(V)) = classical, 40 versors of 1 to n vectors, full x
+ok    R(4, 0, 0): transform(x, bulk_dual(V)) = classical, 40 versors of 1 to n vectors, full x
+ok    R(0, 5, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(1, 4, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(2, 3, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(3, 2, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(4, 1, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(5, 0, 0): transform(x, bulk_dual(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(0, 1, 0): transform(x, right(V)) = classical, 6 versors of 1 to n vectors, full x
+ok    R(1, 0, 0): transform(x, right(V)) = classical, 6 versors of 1 to n vectors, full x
+ok    R(0, 2, 0): transform(x, right(V)) = classical, 12 versors of 1 to n vectors, full x
+ok    R(1, 1, 0): transform(x, right(V)) differs from classical on 9 of 12
+ok    R(2, 0, 0): transform(x, right(V)) = classical, 12 versors of 1 to n vectors, full x
+ok    R(0, 3, 0): transform(x, right(V)) = classical, 18 versors of 1 to n vectors, full x
+ok    R(1, 2, 0): transform(x, right(V)) differs from classical on 17 of 18
+ok    R(2, 1, 0): transform(x, right(V)) differs from classical on 18 of 18
+ok    R(3, 0, 0): transform(x, right(V)) = classical, 18 versors of 1 to n vectors, full x
+ok    R(0, 4, 0): transform(x, right(V)) = classical, 24 versors of 1 to n vectors, full x
+ok    R(1, 3, 0): transform(x, right(V)) differs from classical on 24 of 24
+ok    R(2, 2, 0): transform(x, right(V)) differs from classical on 24 of 24
+ok    R(3, 1, 0): transform(x, right(V)) differs from classical on 24 of 24
+ok    R(4, 0, 0): transform(x, right(V)) = classical, 24 versors of 1 to n vectors, full x
+ok    R(0, 5, 0): transform(x, right(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    R(1, 4, 0): transform(x, right(V)) differs from classical on 30 of 30
+ok    R(2, 3, 0): transform(x, right(V)) differs from classical on 30 of 30
+ok    R(3, 2, 0): transform(x, right(V)) differs from classical on 30 of 30
+ok    R(4, 1, 0): transform(x, right(V)) differs from classical on 28 of 30
+ok    R(5, 0, 0): transform(x, right(V)) = classical, 30 versors of 1 to n vectors, full x
+ok    diag(2, 1, 1): transform(x, bulk_dual(V)) differs from classical on 23 of 24
+ok    diag(1, 1, 4): transform(x, bulk_dual(V)) differs from classical on 24 of 24
+ok    diag(2, -1): transform(x, bulk_dual(V)) differs from classical on 13 of 16
+ok    diag(-2, 1, 1): transform(x, bulk_dual(V)) differs from classical on 23 of 24
+ok    R(3, 0, 1) = rigid(3): transform(x, bulk_dual(V)) differs from classical on 32 of 32
+ok    R(2, 0, 1) = rigid(2): transform(x, bulk_dual(V)) differs from classical on 21 of 24
+ok    non-diagonal [[1,1,0],[1,2,0],[0,0,1]]: transform(x, bulk_dual(V)) differs from classical on 23 of 24
+ok    diag(-1, 1, 1): transform(x, bulk_dual(V)) = classical, 24 versors of 1 to n vectors, full x
+ok    diag(1, -1, 1, -1): transform(x, bulk_dual(V)) = classical, 20 versors of 1 to n vectors, full x
+ok    conformal(3) (not proved): transform(x, bulk_dual(V)) = classical, 15 versors of 1 to n vectors, full x
+ok    Witt [[0,1],[1,0]] + (1) (not proved): transform(x, bulk_dual(V)) = classical, 24 versors of 1 to n vectors, full x
+ok    [[3/5,4/5],[4/5,-3/5]] + (1), G G = I (not proved): transform(x, bulk_dual(V)) = classical, 24 versors of 1 to n vectors, full x
+ok    [[1,1,0],[1,-1,0],[0,0,1]], squares 1, -1, 1, not diagonal: transform(x, bulk_dual(V)) differs from classical on 24 of 24
+ok    rigid(3): Euclidean rotor, bulk dual on a point equals the sandwich
+ok    rigid(3): translator 1 + e14, bulk dual does not give the sandwich on a point
+ok    diag(2, 1, 1): r x r~ = (16, 10, 30)
+ok    diag(2, 1, 1): transform(x, bulk_dual(r)) = (40, 28, 60)
+ok    T3: s = 2 - e12, transform(v, s) = (6, 17, -25), classical and transform(v, !s) = (18, -1, 25)
+      T1: r = {0: Fraction(1, 1), 3: Fraction(-1, 1)}, classical (0, 0, Fraction(2, 1)), transform(v, r) (0, 0, Fraction(-2, 1)), transform(v, !r) (0, 0, Fraction(2, 1))
+      T2: r = {0: Fraction(1, 1), 3: Fraction(-1, 1)}, classical (0, Fraction(2, 1), 0), transform(v, r) (0, Fraction(2, 1), 0), transform(v, !r) (0, Fraction(2, 1), 0)
+75 of 75 ok

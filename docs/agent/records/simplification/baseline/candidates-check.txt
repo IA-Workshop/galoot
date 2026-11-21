@@ -1,0 +1,24 @@
+unit	code_lines	comment_lines
+A1	12	0
+B5	43	3
+B1	96	11
+B6	172	3
+B2	104	0
+B3	135	0
+B4	160	14
+B7	89	0
+B9	0	52
+B8	42	3
+E1	331	0
+E2	402	5
+C1b	259	120
+C1c	243	101
+K1	22	60
+K2	2	22
+K3	4	93
+K4	2	42
+K5	6	136
+K6	2	88
+K7	2	70
+K8	12	191
+147 rows, 0 that do not match

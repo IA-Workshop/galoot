@@ -339,3 +339,5 @@ For comparison, plan 0042 (records, matrix and audits, no code unit) recorded ab
 ## 12. Outcome
 
 Not started.
+
+- 2026-11-21: plan 0043 is merged into `main` (`26cd467`). Its outcome, section 14 of [plan 0043](0043-cost-cleanup-1-0-1.md), holds the friction lines and the accepted limits of the project's tools for unit R7's release record, with the figures of the 05229a7 matrix; R7 replaces any figure this plan's own matrix at R gives differently.

@@ -1,0 +1,11 @@
+$ g++ p03_float16_check_floor.cpp -DGALOOT_CHECKING=1
+--- run
+scale of x   float16 |d|/tol   float |d|/tol
+1            454.3             4.194e+06
+0.1          227               4.194e+06
+0.01         37.83             4.194e+06
+0.001        4.059             4.194e+06
+0.0003       1.223             4.194e+06
+0.0002       0.8158            4.194e+06
+0.0001       0.4082            4.194e+06
+exit status: 0

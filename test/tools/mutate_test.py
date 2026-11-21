@@ -713,6 +713,49 @@ def ctest_without_failures(repo):
           in cells(row.get("problems", "-")), True)
 
 
+# A ctest that logs its arguments before it runs.
+LOGGING_CTEST = """#!/bin/sh
+printf '%s\\n' "$*" >> {log}
+exec {ctest} "$@"
+"""
+
+
+def ctest_in_parallel(repo):
+    """The selected tests run on the shared pool, in the baseline and in each
+    mutant: CTest is called with --parallel and no number, which takes one
+    token of the pool per test."""
+    wrapped = repo.path("logged")
+    os.makedirs(wrapped, exist_ok=True)
+    log = repo.path("logged", "ctest-arguments.txt")
+    if os.path.exists(log):
+        os.unlink(log)
+    wrapper = os.path.join(wrapped, "ctest")
+    with open(wrapper, "w", encoding="utf-8") as f:
+        f.write(LOGGING_CTEST.format(log=log, ctest=shutil.which("ctest")))
+    os.chmod(wrapper, 0o755)
+    env = dict(repo.env, PATH=wrapped + os.pathsep + repo.env["PATH"])
+    write_spec(repo, "parallel", LIB_SELECTION, [
+        mutant("same_value", TWICE_SAME_VALUE, expect="equivalent",
+               reason=EQUIVALENT)])
+    result = repo.mutate("parallel", "--preset", "gcc-debug", env=env)
+    check("parallel: exit", result.returncode, 0)
+    check_restored(repo, "parallel")
+    check_rebuilt(repo, "parallel", ["gcc-debug"])
+    with open(log, encoding="utf-8") as f:
+        runs = [line.split() for line in f.read().splitlines()
+                if "--tests-from-file" in line]
+    # The baseline and the one mutant.
+    check("parallel: runs of the selection", len(runs), 2)
+    for arguments in runs:
+        where = (arguments.index("--parallel")
+                 if "--parallel" in arguments else None)
+        check("parallel: the run carries --parallel", where is not None, True)
+        if where is not None:
+            following = arguments[where + 1:where + 2]
+            check("parallel: --parallel takes no number",
+                  all(a.startswith("-") for a in following), True)
+
+
 def restore_between_files(repo):
     """A mutant whose build fails is restored before the next one, which
     edits another file and must get the row it gets alone: built against a
@@ -953,9 +996,9 @@ def main(tools, directory):
         return 1
     for case in (refusals, failing_baselines, main_run,
                  rows_in_spec_order, killers_sorted, ctest_without_failures,
-                 restore_between_files, library_guard, declared_survivals,
-                 runtime_mode, check_mode, failed_rebuild_reported,
-                 stopped_early):
+                 ctest_in_parallel, restore_between_files, library_guard,
+                 declared_survivals, runtime_mode, check_mode,
+                 failed_rebuild_reported, stopped_early):
         try:
             case(repo)
         except (OSError, RuntimeError, ValueError, KeyError,

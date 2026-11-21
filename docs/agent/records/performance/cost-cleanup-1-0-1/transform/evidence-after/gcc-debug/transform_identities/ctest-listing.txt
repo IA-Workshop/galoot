@@ -1,0 +1,4 @@
+Test project <worktree>/build/gcc-debug
+  Test #464: core.transform_identities
+
+Total Tests: 1

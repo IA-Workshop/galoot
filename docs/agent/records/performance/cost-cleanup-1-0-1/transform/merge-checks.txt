@@ -1,0 +1,39 @@
+# Checks for the merge into feature/cost-cleanup-1-0-1, at ac4f296, 2026-11-21T21:13:22Z
+# preset: build core_transform_identities_test core_identities_test; ctest -L '^core\.(transform_identities|identities)$'; selection gate:transform-subfeature
+# Trees: gcc-debug, clang-measure and lint persisted from the unit's work; the other eight configured fresh at ac4f296. Light to moderate load from other sessions.
+gcc-debug: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 24.018 s (exit 0)
+gcc-release: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.784 s (exit 0)
+gcc-asan: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 3.712 s (exit 0)
+clang-debug: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 24.541 s (exit 0)
+clang-release: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.548 s (exit 0)
+clang-asan: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 2.879 s (exit 0)
+lint: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 25.416 s (exit 0)
+gcc-measure: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.694 s (exit 0)
+gcc-measure-o3: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.662 s (exit 0)
+clang-measure: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.535 s (exit 0)
+clang-measure-o3: 100% tests passed out of 2 | timed: test gate:transform-subfeature took 0.348 s (exit 0)
+exit 0
+# The programs' units in each tree's compile.tsv at 2628936 or ac4f296 (the same code), the latest row of each unit (instructions in 10^9, performance plus efficiency cores)
+gcc-debug core_transform_identities_test: 6 units, total 1002.5, largest peak 1750120 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+gcc-debug core_identities_test: 11 units, total 2548.8, largest peak 3146680 KiB (test/core/identities_five_diagonal_test.cpp)
+gcc-release core_transform_identities_test: 6 units, total 1130.0, largest peak 705860 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+gcc-release core_identities_test: 11 units, total 2113.9, largest peak 775016 KiB (test/core/identities_up_to_three_test.cpp)
+gcc-asan core_transform_identities_test: 6 units, total 1600.6, largest peak 1475632 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+gcc-asan core_identities_test: 11 units, total 2226.2, largest peak 1638456 KiB (test/core/identities_up_to_three_test.cpp)
+clang-debug core_transform_identities_test: 6 units, total 445.2, largest peak 507004 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+clang-debug core_identities_test: 11 units, total 910.7, largest peak 1050616 KiB (test/core/identities_five_diagonal_test.cpp)
+clang-release core_transform_identities_test: 6 units, total 548.6, largest peak 415460 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+clang-release core_identities_test: 11 units, total 684.1, largest peak 449148 KiB (test/core/identities_up_to_three_test.cpp)
+clang-asan core_transform_identities_test: 6 units, total 1164.7, largest peak 964684 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+clang-asan core_identities_test: 11 units, total 1444.8, largest peak 1158604 KiB (test/core/identities_four_diagonal_test.cpp)
+gcc-measure core_transform_identities_test: 6 units, total 1118.6, largest peak 657760 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+gcc-measure core_identities_test: 11 units, total 2107.3, largest peak 784360 KiB (test/core/identities_up_to_three_test.cpp)
+gcc-measure-o3 core_transform_identities_test: 6 units, total 1201.2, largest peak 670900 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+gcc-measure-o3 core_identities_test: 11 units, total 2490.1, largest peak 833440 KiB (test/core/identities_up_to_three_test.cpp)
+clang-measure core_transform_identities_test: 6 units, total 979.4, largest peak 417732 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+clang-measure core_identities_test: 11 units, total 1729.0, largest peak 623388 KiB (test/core/identities_up_to_three_test.cpp)
+clang-measure-o3 core_transform_identities_test: 6 units, total 1213.6, largest peak 417764 KiB (test/core/transform_identities_five_dense_large_test.cpp)
+clang-measure-o3 core_identities_test: 11 units, total 1748.3, largest peak 634680 KiB (test/core/identities_up_to_three_test.cpp)
+lint: compiles through clang-tidy, no compile.tsv; rebuilt clean at ac4f296 after ninja -t clean of both programs (55.1 s), no finding
+# memguard peak tree RSS of the eleven-preset run: peak_tree_rss_kib 18771960 exit 0
+# cheap gates at ac4f296: tests.reference_markers, tests.golden_facts, tests.citations (gcc-debug) passed, 3 of 3; convention trace gate exit 0; clang-format --dry-run -Werror of the changed sources exit 0; tools/runlog check exit 0

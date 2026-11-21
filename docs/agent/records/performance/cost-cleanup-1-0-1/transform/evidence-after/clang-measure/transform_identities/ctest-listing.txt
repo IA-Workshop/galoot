@@ -1,0 +1,4 @@
+Test project <worktree>/build/clang-measure
+  Test #456: core.transform_identities
+
+Total Tests: 1

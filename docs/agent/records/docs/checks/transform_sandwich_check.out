@@ -1,0 +1,79 @@
+A  transform(x,V) = rev(V) x' V                            R(1,0,0)   holds 
+A  transform(x,V) = rev(V) x' V                            R(2,0,0)   holds 
+A  transform(x,V) = rev(V) x' V                            R(3,0,0)   holds 
+A  transform(x,V) = rev(V) x' V                            R(4,0,0)   holds 
+A  transform(x,V) = rev(V) x' V                            R(5,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(1,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(2,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(3,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(4,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(5,0,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(0,2,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(0,3,0)   holds 
+B  transform(x,right(V)) = classical V on x                R(0,4,0)   holds 
+B  the same with the complement, indefinite form           R(1,1,0)   FAILS 
+B  the same with the complement, indefinite form           R(2,1,0)   FAILS 
+B  the same with the complement, indefinite form           R(1,2,0)   FAILS 
+B  the same with the complement, indefinite form           R(3,1,0)   FAILS 
+B  the same with the complement, indefinite form           R(1,3,0)   FAILS 
+B  the same with the complement, indefinite form           R(4,1,0)   FAILS 
+B' transform(x,bulk_dual(V)) = classical V on x            R(1,0,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(2,0,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(3,0,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(4,0,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(5,0,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(0,2,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(0,3,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(0,4,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(1,1,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(2,1,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(1,2,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(3,1,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(1,3,0)   holds 
+B' transform(x,bulk_dual(V)) = classical V on x            R(4,1,0)   holds 
+N  transform(x,V) = classical V on x (naive)               R(1,0,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(2,0,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(3,0,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(4,0,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(5,0,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(0,2,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(0,3,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(0,4,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(1,1,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(2,1,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(1,2,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(3,1,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(1,3,0)   FAILS 
+N  transform(x,V) = classical V on x (naive)               R(4,1,0)   FAILS 
+L  a anti b = b I^-1 a; antireverse formula                R(1,0,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(2,0,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(3,0,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(4,0,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(5,0,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(0,2,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(0,3,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(0,4,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(1,1,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(2,1,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(1,2,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(3,1,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(1,3,0)   holds 
+L  a anti b = b I^-1 a; antireverse formula                R(4,1,0)   holds 
+C  right(transform) = sandwich of complements              R(1,0,0)   holds 
+C  right(transform) = sandwich of complements              R(2,0,0)   holds 
+C  right(transform) = sandwich of complements              R(3,0,0)   holds 
+C  right(transform) = sandwich of complements              R(4,0,0)   holds 
+C  right(transform) = sandwich of complements              R(1,1,0)   holds 
+C  right(transform) = sandwich of complements              R(2,1,0)   holds 
+C  right(transform) = sandwich of complements              R(1,2,0)   holds 
+C  right(transform) = sandwich of complements              R(3,1,0)   holds 
+C  right(transform) = sandwich of complements              R(2,0,1)   holds 
+C  right(transform) = sandwich of complements              R(3,0,1)   holds 
+C  right(transform) = sandwich of complements              R(1,0,2)   holds 
+C  right(transform) = sandwich of complements              R(3,1,1)   holds 
+D  rigid(d): transform(x,right(V)) = classical V on x      R(1,0,1)   holds 
+D  rigid(d): transform(x,right(V)) = classical V on x      R(2,0,1)   holds 
+D  rigid(d): transform(x,right(V)) = classical V on x      R(3,0,1)   holds 
+D  rigid(d): transform(x,right(V)) = classical V on x      R(4,0,1)   holds 
+W  worked values of the design note                                   hold
+all checks as expected

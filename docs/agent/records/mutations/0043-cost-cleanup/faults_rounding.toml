@@ -1,0 +1,70 @@
+# The six faults of 0029-identities/faults_identities.toml judged by
+# core.identities_rounding alone, before and after its sources were split
+# (plan 0043 U1). The mutants are copied unchanged; only the selection is
+# narrowed. Informational, as in that spec: each says killed so that the
+# tool runs it, and a survivor makes its exit status 1. The evidence is that
+# each mutant's verdict and killing tests are the same before and after.
+presets = ["gcc-debug", "clang-measure"]
+
+[selection.identities]
+targets = ["core_identities_rounding_test"]
+labels = '^core\.identities_rounding$'
+
+# The reorder sign negated for the pairs of e3 and a blade holding e1 and e2, a class that is not a change of sign of blades; reorder_sign also gives the complements' signs, so the edit reaches both.
+[[mutant]]
+name = "reorder_sign_class"
+selection = "identities"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = '''  int swaps = 0;''', replacement = '''  int swaps = (a == 4U && (b & 3U) == 3U) ? 1 : 0;''' }]
+expect = "killed"
+
+# The right complement's sign flipped on e1 in every algebra, the left one unchanged.
+[[mutant]]
+name = "right_complement_sign_flipped"
+selection = "identities"
+file = "include/galoot/core/bits.hpp"
+edits = [{ anchor = '''  return reorder_sign(a, complement_mask(a, n));''', replacement = '''  return (a == 1U ? -1 : 1) * reorder_sign(a, complement_mask(a, n));''' }]
+expect = "killed"
+
+# The last term of every blade product of two or more terms dropped; only a metric with off-diagonal entries gives such products.
+[[mutant]]
+name = "last_term_dropped"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''  add_blade_product(out, g, a, b, 1);
+  return out;''', replacement = '''  add_blade_product(out, g, a, b, 1);
+  if (out.length > 1) {
+    --out.length;
+    out.terms[out.length] = {};
+  }
+  return out;''' }]
+expect = "killed"
+
+# The entry g_12 doubled where e1 contracts a blade from the left, and nowhere else, so one coefficient of the products through it doubles.
+[[mutant]]
+name = "one_coefficient_doubled"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == 0 && j == 1 ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"
+
+# e13 placed before e12 in the canonical order of 1.7, the rest of the order kept.
+[[mutant]]
+name = "order_swapped"
+selection = "identities"
+file = "include/galoot/core/blade_set.hpp"
+edits = [{ anchor = '''[[nodiscard]] constexpr bool canonical_less(mask_t a, mask_t b) noexcept {
+''', replacement = '''[[nodiscard]] constexpr bool canonical_less(mask_t a, mask_t b) noexcept {
+  if ((a == 3U && b == 5U) || (a == 5U && b == 3U)) {
+    return a == 5U;
+  }
+''' }]
+expect = "killed"
+
+# Informational, beside the five: every square g_ii doubled, which the generator reads only in this loop, so the products are those of another metric and every identity holds; only a comparison with the algebra's own Gram matrix or a golden value can see it.
+[[mutant]]
+name = "squares_doubled"
+selection = "identities"
+file = "include/galoot/core/blade_product.hpp"
+edits = [{ anchor = '''      const coefficient_type entry = g.gram[i][j];''', replacement = '''      const coefficient_type entry = (i == j ? 2 : 1) * g.gram[i][j];''' }]
+expect = "killed"

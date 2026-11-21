@@ -1,6 +1,6 @@
 # 0043 1.0.1: test, build and tool cost cleanup
 
-- Status: proposed 2026-11-16 by Claude (agent, Opus 5.5), planner in the build-expert and performance-engineer roles. From `main` at `c95fee5`. Committed on `plan/0043`; the coordinator merges it into `main`, which is the claim (W3, W7). No unit below has started.
+- Status: proposed 2026-11-16 by Claude (agent, Opus 5.5), planner in the build-expert and performance-engineer roles. From `main` at `c95fee5`. Committed on `plan/0043`; the coordinator merges it into `main`, which is the claim (W3, W7). No unit below had started at the proposal. Closed 2026-11-21: U1 to U5 merged into `main` at `26cd467`; the outcome is section 14.
 - Source of scope: the coordinator's brief for release 1.0.1 (cleanup only: no new feature, no interface change); the release record's "Known friction" items 1 and 2 and "Accepted limits of the project's tools" (`records/release/release-record.md`); the handoff of 2026-11-15, "Backlog after 1.0", tools and tests line; plan 0042 section 9; decision 0241 item 9 (the dirty-mark gap); decision 0246 item 1 (the opt-out review's m6, deferred); decision 0248 item 8 (plans 0027 and 0028 findings as known limits); decision 0228 item 9.
 - Siblings: plan 0044 (public header and API hygiene) and plan 0045 (the 1.0.1 release procedure). This plan does not touch what they own; section 9 lists the files two plans may share.
 - Evidence gathered for this plan: `records/performance/cost-cleanup-1-0-1/` (a compile probe of both units, section 3), and the checks named in section 4, run read-only on scratch copies.
@@ -231,3 +231,138 @@ Machine time, inferred: U1's before and after evidence about 20 minutes (the cla
 ## 13. Next step
 
 The coordinator merges this plan into `main` and reports O1 to O5 to the owner; on the rulings, U1 and U3 start.
+
+## 14. Outcome
+
+Written 2026-11-21 by Claude (agent, Sonnet 5.5), unit U6, on `records/cost-cleanup-1-0-1` from `main` at `8db4b0b`, from the merge gate's record (`records/gates/2026-11-21-cost-cleanup-1-0-1-matrix.md`), the two review records, the units' own records under `records/performance/cost-cleanup-1-0-1/` and the owner's rulings of decision 0252. Records only: nothing under `include/`, `test/`, `tools/`, `cmake/` or the build files changed. I read the matrix record's figures against the committed compile rows (`matrix/scripts/units.py` on `compile-clang-measure.tsv` and `compile-gcc-debug.tsv`) and the run log's rows for the matrix, and they agree; the other figures below are quoted from the records named, not remeasured.
+
+### Departures and readings (C20)
+
+1. **Row numbers.** The matrix record cites `runs.tsv` rows 22388 to 22420. Those are line numbers in the feature worktree's copy of the log; after the merge into `main` the same 33 rows (selection `gate:all@05229a7`, all at revision `05229a7b086c`, none dirty) are lines 22406 to 22438, and their wall times sum to 1,524.94 s, as the record says. The record is not rewritten (W6); this plan cites the selection, which does not move. The release matrix's rows 21905 to 21937 are the same lines in both, and sum to 2,883.56 s.
+2. **The label survey was run again, not recovered.** Section 1 item 4 reports a survey at `c95fee5` but kept no script or output. I repeated it on `main` at `8db4b0b`, in two configured trees, and kept the script, the label lists and the output in `records/verification/0043-ctest-label-survey/` (it needs configure steps only, 0.55 s each, no build). The totals equal the plan's (680 and 672). Four run-log rows were appended for it (selections `survey:ctest-labels` and `survey:ctest-list-preset-filter`).
+3. **No change to plan 0045 beyond one line.** Section 6 says the release record's lines reach `records/release/` only through plan 0045. The friction lines below are this plan's deliverable for that plan's unit R7; I added one dated line to plan 0045's outcome section pointing here, and edited nothing else of it.
+4. **The two review findings that need a code change are not made here.** M1 (a comment in `test/core/transform_identities_up_to_three_test.cpp`) and F1 (a docstring wrap in `tools/mutate`) are outside this unit's files (records only). They stay open, below.
+5. **Not verified here:** anything the gate or the reviewers did not run, as their records say. No benchmark ran (a release step). No agent cost is visible to me; the coordinator records each subagent's cost (decision 0215). The plan's cost estimate (section 12) is therefore not compared with an actual below, except where the records give machine time.
+
+### Units and where they landed
+
+| Unit | Result | Commits and records |
+| --- | --- | --- |
+| U1 rounding split | `identities_rounding_test.cpp` became a driver and five law sources, each of the ten laws a function template of its own, instantiated for rigid(3) and conformal(3); the checks moved unchanged into `identities_rounding_checks.hpp`; section 5's evidence held (listing, test cases, summaries and `MESSAGE` lines at 51 seeds, engine state, six mutation verdicts, sentinel). Rulings: 0252 item 1, option (a) | code `7daa3b0`; `records/performance/cost-cleanup-1-0-1/rounding/`, `records/mutations/0043-cost-cleanup/` |
+| U2 transform split | `transform_identities_test.cpp` became a driver and five group sources; and, as ruled (0252 item 2, option (b)), `identities_four_test.cpp` became two group sources; the same evidence | code `2628936`; `.../transform/` |
+| U3 dirty mark | `tools/measure` reads the revision and the tree before and after the command; a row is `-dirty` if either read is, or if HEAD moved, and carries the start revision. Cases written first, the staged case among them (0252 item 4) | code `56a3d21`; tests `b3fc275`, `7fcd913`, `6d35aa8` |
+| U4 `tools/mutate` | `--parallel` on the one CTest call that runs tests | code `028fa4c`; test `f495093` |
+| U5 `tools/jobpool` | plan 0027's I3 and plan 0028's I6 | code `080c3c2`; test `8305ba8` |
+| U6 | this section, the label survey | this branch |
+
+U3 to U5 are the tools subfeature (tip `8f48b32`, merged as `0ad599e`); the rounding and transform subfeatures merged as `bbc75cb` and `1db53c8`; `main` was merged in (`05229a7`, records only since the branch's base `01dce7f`). Reviews (W5): the blind review of U1 and U2 (Opus 5.5) and of U3 to U5 (Sonnet 5.5), both approve, with no blocking finding; their records are `records/reviews/2026-11-21-plan-0043-u1-u2-blind-review.md` and `2026-11-21-plan-0043-u3-u5-blind-review.md`. The gate ran on `05229a7`, and the feature branch merged into `main` as `26cd467` (merge commit), with the run rows of the post-merge checks at `8db4b0b`.
+
+### Definition of done (section 2), item by item
+
+1. **Rounding spread over several sources, behavior kept, clang-measure before and after: met.** Six units; the program's cost on clang-measure fell from 4,272.5 G to 529.9 G (12.4%), and the clang-measure tree from 667.4 s to 120.2 s. The equivalence evidence is U1's, confirmed by the reviewer, who read the diff with `--color-moved`, compared the eleven `compare` calls as sets and reran the `MESSAGE` and summary comparison at five seeds of his own on a third preset (all 15 pairs identical).
+2. **The same for the transform program, gcc-debug's peak per unit: met.** The largest group peaks at 1,749,812 KiB (1.67 GiB) against 6,214,900 KiB; the tree's largest unit is now `identities_five_diagonal_test.cpp` at 3,145,516 KiB (3.00 GiB).
+3. **`tools/measure` marks a run dirty if its tree changed at any point, with a test: met.** The reviewer ran the new cases against the old tool: five checks failed there, and the staged case passes on both tools, as section 1 item 3 predicted. The one expected value changed (`git status` calls per recorded command, 1 to 2) is in a commit of its own (`7fcd913`) and the reviewer agreed it is right (N3).
+4. **`tools/mutate` runs CTest on the shared pool, with a test and a before-and-after run: met for the code and the test; the run shows no gain.** See "Measured savings" below and the open items.
+5. **The cheap findings closed and the rest restated as known limits: met.** The table below.
+6. **The m6 anomaly and the label anomaly recorded with what was found: met.** Below.
+7. **Merged into `main` once, after one P9 matrix and the reviews: met.** The matrix is `gate:all@05229a7`, all eleven presets from empty trees, one at a time, under the memory watchdog and the timing lock: 657 of 657 tests on six presets and 649 of 649 on five, the lint build's clang-tidy, interface header sets and format check clean, `format-check`, the trace gate ("items with no test: 6.1, 6.2, 6.3, 6.4", as at the release) and `tools/runlog check` ("1 eras match the history; 1727 kept rows present once; no removed row present") exit 0. The trace gate and the run log check were repeated on the merged tree `26cd467` and passed. The pool read 23 of 23 free before and after every step; it was running, so the gate neither started nor stopped it.
+8. **The outcome recorded here, and the friction lines handed to plan 0045: met.** This section and "Friction lines for plan 0045" below.
+
+### Measured savings (section 8.3)
+
+All from the matrix record; wall times are shared mode under other load (P14), compared only as such. Instructions and peak memory are the comparable columns.
+
+| Item | Before | Expected after | Measured after | Reading |
+| --- | --- | --- | --- | --- |
+| clang-measure tree | 667.4 s (build 603.0) | 130 to 170 s | **120.2 s** (build 55.0, suite 64.3); build instructions 9,416 G to 5,697 G (-39.5%) | better than expected; the build is now bounded by `identities_five_diagonal_test.cpp` (334.6 G, 53.4 s) and `identities_four_other_test.cpp` (257.7 G, 45.5 s) |
+| clang-measure-o3 tree | 666.6 s | the same | **127.6 s** (build 63.5); 10,102 G to 6,408 G (-36.6%) | as above; measured here as well as at the release matrix |
+| rounding program on clang-measure | 4,272.5 G in one unit | about 1,330 G (31%) | **529.9 G over six units (12.4%)**, largest 105.1 G | criterion met (below 50%, no unit above 500 G); agrees with U1's own figure to 0.2%; the split saved more than the probe predicted, since a law in a source of its own costs about 100 G against 301 G in the probe's one-function variant (inferred cause: the other sources cannot inline the law into the sample loop) |
+| gcc-debug largest unit | 5.93 GiB (`transform_identities_test.cpp`) | about 1.7 GiB per group; the tree's largest 4.83 GiB, or about 3.0 GiB with O2 (b) | largest transform group **1.67 GiB**; the tree's largest **3.00 GiB** | criterion met; O2 (b)'s expectation held. The largest process fell on every preset (gcc-asan 4,961,752 to 2,486,984 KiB; clang-asan 2,814,684 to 1,565,468; gcc-release 2,052,320 to 879,692; the others by 32% to 66%) |
+| gcc-debug and gcc-asan builds | 95.8 s and 164.5 s | groups in parallel; instructions about the same plus about 3 G per new source | 76.4 s and 131.0 s; the transform program's six units 1,002.2 G against 981.7 G (+2.1%) | wall and peak fell as planned; gcc-asan's build instructions rose, see below |
+| mutation runs | serial CTest per mutant | the selection's tests at once | **not measured** | the before and after rows (`db3de04`, `c645e69`) were taken while other sessions held the pool at 0 of 23 slots free and the machine was loaded; wall about equals user time in every `test` row, so no overlap shows, and the after run was slower. The reviewer's private-jobserver check shows the mechanism works (four 2 s tests ran in 4.0, 4.0 and 2.0 s under `make -j2`, `-j3` and `-j4`). The saving is unmeasured, not absent |
+| dirty mark | read at the end | read at both ends | every row of the matrix reads `05229a7b086c`, none dirty | the extra `git status` costs about 12 ms a row (the tools reviewer's measurement) |
+| whole matrix wall time | 2,883.6 s (48.1 min) | about 40 min (section 12) | **1,524.9 s (25.4 min)** | |
+
+#### Unfavorable, as found
+
+- **Build instructions rose on nine of eleven presets**, by 0.7% (gcc-measure-o3) to 10.4% (gcc-asan, 10,618 G to 11,722 G); lint rose by 1,024 G (+3.5%). Over the whole matrix the net is a saving of about 4,140 G: the two clang-measure trees save 7,414 G, and the other nine add 3,273 G.
+- **The rounding program grew by 28.9% on gcc-debug (258.8 G to 333.5 G) and 79.5% on clang-debug (107.9 G to 193.7 G).** For the other eight presets there is no before figure for the program (no compile rows exist at `01dce7f` for gcc-release, gcc-asan, clang-release, clang-asan, gcc-measure, gcc-measure-o3 and clang-measure-o3). By the gate's recommendation, which the owner's acceptance of all recommendations covers, this outcome states the tree-level bound instead: what the two splits together added to a whole build is at most the figures above (+0.7% to +10.4%). The Clang rows also hold part of the move from Clang 23.1.4 to 23.1.5, which is not separated.
+- **The cause is inferred, not traced:** each new source parses the headers and repeats the shared instantiations, and each law source instantiates its law for both algebras. gcc-asan's rise of 1,104 G is larger than that predicts from gcc-debug's 104 G; the instrumentation may make the repeated instantiations dearer. No time trace was taken. The gate recommends recording this as found and leaving the trace to a later cost pass, since gcc-asan's wall time and peak both fell.
+- **Machine time ran well over the estimate.** The plan estimated 20 minutes for U1's evidence, 10 for U2's and 20 for the mutation runs. U1's record spans 17:02 to 19:10 UTC and U2's 19:14 to 21:12, mostly mutation runs under heavy load from other sessions (the blind review of U1 and U2, N5, puts the before runs at about 84 minutes for U1 and 2 h 10 min for U2; both units disclose it). The matrix itself took 25.4 minutes.
+
+### Known limits (section 7, final state; decision 0248 item 8, ruled again by decision 0252 item 5 (c))
+
+| Finding | Final state | How |
+| --- | --- | --- |
+| 0027 I2: a `JOBPOOL_FIFO` override that is a link, a dangling link, or a system without GNU `realpath` | **known limit**, unchanged | each needs a policy for overrides nobody uses; the default path is unaffected |
+| 0027 I3: `status`'s missing-FIFO message assumes the pool is stopping | **closed** | U5 (`080c3c2`): the message names a FIFO deleted by hand and says to start a new pool with `tools/jobpool ensure` once status says "not running"; the case `status_without_fifo` fails on the old tool and passes on the new (reviewer). The change reaches the shared pool only when it next starts; no restart was made or is proposed |
+| 0027 I5: `clients()` fails open | **known limit**, unchanged | a failed `find` over `/proc/*/fd` lets `stop` go ahead without `--force`; failing closed needs a scan that tells other users' processes apart; agents never stop the pool |
+| 0028 I5: the 0.2 s wait bounds scheduling, it does not prove it | **known limit**, unchanged | no deterministic test is known |
+| 0028 I6: a wrapped header comment line and a long docstring line | **closed** | U5: the header line is reflowed; the reviewer found no line over 79 columns in `test/tools/jobpool_test.py` at `01dce7f` or now, so the author's "did not reproduce" holds for the docstring |
+| 0028 I7: the spike copy of the pool keeps its own design | **known limit**, unchanged | a record of a spike, not rewritten (W6) |
+
+New known limits found by this plan's reviews:
+
+| Finding | State |
+| --- | --- |
+| Tools review N4: `tools/mutate` and `tools/measure` mark a tree dirty by different rules (`tools/mutate` excludes only its own output directory and the run log from `+dirty`; `tools/measure` excludes all of `records/performance/`) | known limit, reported: not in this plan's files; U2's after run of `faults_core_identities` reads `+dirty` because of it, harmlessly. For the tools backlog |
+| Tools review F2: the `tools/mutate` saving is unmeasured | known limit; a quiet-machine repetition under the lock, about 10 minutes, would settle it |
+| Tools review F1 (a docstring paragraph of `tools/mutate`: a 96-column line, a parenthesis that now reads as explaining the wrong clause) | open, minor; a comment-only change to `tools/mutate`; suggested fix: put "in parallel on the pool" after the parenthesis and reflow |
+| Tests review M1 (a comment in `transform_identities_up_to_three_test.cpp` names a degenerate non-diagonal form that none of its eleven forms is; that form is in `transform_identities_four_gram_test.cpp`) | open, minor; a comment-only change; fix: drop the phrase from that comment |
+
+### The records-only closures (decision 0252 item 5)
+
+**(a) The `convention-trace` exit anomaly, the opt-out review's m6: recorded as unexplained.** In `runs.tsv`, lines 21709 and 21710 are two `check - convention-trace` rows at revision `81c923136055` (branch `feature/pre-release-core-pass--inline-opt-out`), both started at 2026-11-11T10:06:20Z: the first exits 1 in 0.166 s, the second exits 0 in 0.267 s. On a `git archive` of that revision, in scratch, the trace gate exited 0 three runs out of three (0.52 to 0.55 s under load) and printed "items with no test: 6.1, 6.2, 6.3, 6.4", as at the release (plan section 4.2). The tool exits 1 for a usage error, a missing path and a wrong last argument, each in 0.03 to 0.05 s, faster than the recorded 0.166 s; nothing in the tool makes the same command fail and then pass. So the revision's trace passes, and the failing row is consistent with a different command (one that scanned part of the tree and found a finding), but the run log does not record commands, so the cause cannot be settled. The evidence does not show a rerun to get a pass (P10): the two rows share a selection and a start second, no tracked file is recorded as changing between them, and the passing row is not marked as a rerun of a failed gate; the log cannot say more. Every trace-gate row after those two (21 rows after line 21710, including `gate:trace@05229a7` and the merged tree's) exits 0. Recording each run's command in the log would settle such cases, but it changes the log's columns, `tools/runlog` and the history; not proposed. Closed, as ruled.
+
+**(b) The CTest label anomaly: closed as "no record and no reproduction".** No record in the repository says what it was (plan 0042 section 1 item 3, and a search of `docs/agent` for it finds only the backlog lists that name it). The survey of every test's labels, in a fresh gcc-debug tree (680 tests) and a fresh clang-measure tree (672), at `c95fee5` and again at `8db4b0b` (`records/verification/0043-ctest-label-survey/`), finds no test without its module label, none without a `<module>.<component>` label, none with a label twice, none without a module prefix; the presets' filter `^(runlog|bench)$` leaves 657 and 649, the release matrix's counts. The survey covers two of the eleven presets and cannot show an anomaly of another kind; if the owner remembers what it was, that reopens the item. Closed, as ruled.
+
+### Findings of the reviews and their resolutions (W6: the review records are not rewritten)
+
+| Review finding | Resolution |
+| --- | --- |
+| U1 and U2, M1: a comment names a form its list lacks | open, comment-only; see the table of limits and the open items |
+| U1 and U2, M2: the rounding split raises total compile work on every preset except the clang-measure ones, and the records showed one | recorded above: the matrix gives the program's after figure on all ten compiling presets and the before figure on three; the tree-level bound stands for the rest (owner item 1 below) |
+| U1 and U2, N1: criterion 1's tree-level after figure waits for the matrix | met by the matrix (`gate:all@05229a7`) |
+| U1 and U2, N2: the raised constexpr step limit is set on two sources that do not need it | accepted as written; the CMake comment gives the reason, the flag changes no result |
+| U1 and U2, N3: U2 wrote mutation specs outside its listed files | accepted; unchanged copies of the 0029 specs with the presets and targets narrowed, disclosed by U2 |
+| U1 and U2, N4: the mutate and measure dirty rules differ | known limit, above |
+| U1 and U2, N5: machine time far over the estimate | recorded above |
+| U3 to U5, F1 | open, comment-only, above |
+| U3 to U5, F2 | recorded above: the saving is unmeasured |
+| U3 to U5, N1, N2 (the readings of departures 4 and 5), N3 (the changed expected value), N4 (`status_without_fifo` depends on a 30 s poll interval) | agreed or accepted by the reviewer; no action |
+
+### What stays open
+
+1. **The rounding program's before figures on seven presets.** (a) Build the program at `01dce7f` on those presets, about 20 minutes under the timing lock, mostly the clang-measure-o3 and gcc-asan compiles of the one large unit. (b) State the tree-level bound, as this outcome does. Tradeoff: (a) gives the per-program rise on every preset and costs machine time; (b) costs nothing, and the tree rows already bound the rise at +0.7% to +10.4%; the split itself is the owner's ruling (0252 item 1) whatever the figure. Recommendation and the course taken: (b). If the owner wants the figures, (a) runs as a small unit.
+2. **gcc-asan's +10.4% (1,104 G).** (a) A `-ftime-report` of one law source and of the old unit under gcc-asan, about 10 minutes. (b) Record it as found. Tradeoff: (a) says where the work goes and may suggest a cheaper split for the sanitizer trees; (b) leaves it, with gcc-asan's wall time (228.8 to 195.8 s) and its peak (4.73 GiB to 2.37 GiB for the largest process) both falling. Recommendation and the course taken: (b), for 1.0.1; a later cost pass can trace it.
+3. **The `tools/mutate` saving.** A repetition of the gcc-debug spec on a quiet machine under the timing lock, about 10 minutes, would show whether tests overlap. Tradeoff: it only supplies a figure; the code and its test are right and the merge did not need it. Recommendation: do it only if a figure is wanted, for instance when the tool next changes.
+4. **M1 and F1, two comment-only fixes** in `test/core/transform_identities_up_to_three_test.cpp` and `tools/mutate`. U6 is records only, so neither is made here. Options: (a) one small comment-only unit now (W5 asks no delta review for comments), (b) fold them into the next unit that touches those files, (c) leave them. Tradeoff: (a) costs a worktree, two edits, a build of one unit and a tools test run, a few minutes; (b) costs nothing but may wait long, since the tools branch is quiet; (c) leaves a comment that tells a reader a form exists that does not. Recommendation: (a) with the 1.0.1 work, since a comment that is wrong is the cheapest kind of defect to remove, and both files are in 1.0.1's window; it changes no executable line.
+5. **The dirty-mark rule of `tools/mutate`** (N4). Options: make it use `tools/measure`'s rule, or leave. Tradeoff: sharing the rule removes a surprising `+dirty` in mutation records and costs a change to a tool and its test; leaving it costs nothing and the two marks mean "not a committed tree" either way. Recommendation: leave it for the tools backlog.
+6. **Whether this matrix counts for plan 0045's release matrix.** The plan's rule (section 9) is that the feature matrix stands for its own merge when 0045's release commit follows it, and 0045 runs its own; the gate raised it as a coordinator question. The rule applies unless the coordinator rules otherwise, and decision 0252 item 16 rules the release matrix's shape. Recommendation: 0045 runs its own, as the rule says, since its matrix runs on the release commit and its figures are the ones the release record cites.
+7. **`GALOOT_FORCE_INLINE` and users' cost** stay as decision 0252 item 3 ruled: no change in 1.0.1; considered for 1.1.0 with plan 0047's measurement (V7b).
+
+None of 1 to 7 blocks the release; the owner's own steps (the walkthrough, the merge into `master`, the tag) are plan 0045's.
+
+### Friction lines for plan 0045's release record (a deliverable for that plan's unit R7)
+
+R7 writes `records/release/release-record-1.0.1.md` as a delta on the 1.0.0 record. The lines below are this plan's input to its "Known friction" and "Accepted limits of the project's tools" sections, in the form of the 1.0.0 record's lines, with the figures of the 05229a7 matrix; R7 replaces them with the figures of plan 0045's own matrix at R if they differ (the releases' matrices, not this one, are what the release record cites), and keeps the wording about what is a user's cost and what is the project's.
+
+Known friction, restated (1.0.0 items 1 and 2) and unchanged (item 3):
+
+1. **Debug builds' peak memory.** gcc-debug's largest compile of the project's own tests is now `identities_five_diagonal_test.cpp` at 3,145,516 KiB (3.00 GiB), against 5.93 GiB (`transform_identities_test.cpp`) at 1.0.0; plan 0043 split the test sources, which lowers the project's own peak and does not change a user's cost. A user's large debug unit can still need several GiB. Measured per form at `-O0` on GCC (the plan's probe, `records/performance/cost-cleanup-1-0-1/README.md`): a unit's peak and instruction count add over the forms it instantiates (within 1.3%), because GCC at `-O0` holds every form's code until the unit ends; a form of two or three generators adds 27 to 100 MiB, one of four 145 to 270 MiB (the Gram forms up to 668 MiB), one of five 570 to 765 MiB, and a dense form of five about 800 MiB.
+2. **Clang at `-O2` with the forced inlining compiles operation-heavy units slowly.** The project's own clang-measure tree takes 120.2 s at the 05229a7 matrix (build 55.0 s) against 667.4 s at 1.0.0, and clang-measure-o3 127.6 s against 666.6 s, because `identities_rounding_test.cpp` (602.5 s, 4,272.5 G at 1.0.0) is now a driver and five law sources totaling 529.9 G, the largest 105.1 G. A user's unit is not split: the probe found that the cost within one function body grows faster than the code (two associativity laws together 1,691.9 G against 301.2 G and 307.7 G one at a time; eight De Morgan laws together 2,450.6 G against 95.1 G and 20.8 G each), which is inferred to come from the laws being instantiated and optimized in one body with the kernels forced inline, and was not traced with a time trace. A law placed in a source of its own cost about 100 G in the split. `GALOOT_FORCE_INLINE` 0 remains the user's remedy; a default that follows the optimization level is considered for 1.1.0 with plan 0047's measurement (decision 0252 item 3).
+3. **Debug builds compile slower with the forced inlining** (1.0.0 item 3): not touched by plan 0043; stands as written.
+
+The project's own cost (not seen by a user), for the performance history's notes: the test sources were split, which raised total build instructions on nine of eleven presets by 0.7% (gcc-measure-o3) to 10.4% (gcc-asan, 10,618 G to 11,722 G) and lowered them on the two clang-measure presets by 36.6% and 39.5%; the largest process of every tree fell, and the whole 11-preset matrix took 1,524.9 s against 2,883.6 s. gcc-asan's rise is not traced.
+
+Accepted limits of the project's tools (restating 1.0.0's list):
+
+- Job pool: plan 0027's I2 and I5 and plan 0028's I5 and I7 stay known limits (decision 0248 item 8); I3 and I6 are closed by plan 0043's U5. An unreadable `/proc/<pid>/fd` hides a client (decision 0228 item 9). The cost of `tools.jobpool` is kept: it bounds every suite at about 64 s (63 s of each).
+- `tools/measure`: the dirty mark is read before and after each command, so a row is `-dirty` if the tree was dirty at either end or HEAD moved, and carries the revision the command started on; this closes decision 0241 item 9. The extra `git status` costs about 12 ms a row.
+- `tools/mutate`: CTest now runs the selected tests with `--parallel` on the shared pool; the saving is unmeasured (the before and after rows were taken on a saturated pool), and its `+dirty` mark follows a different rule from `tools/measure`'s (it excludes only its own output directory and the run log). GCC reports "unjudged" where Clang says "killed" for a guard reached through a `consteval` call or a `constinit` variable of a header (decisions 0231 and 0232), as before.
+- The `convention-trace` row pair of `runs.tsv` lines 21709 and 21710 (the opt-out review's m6) is unexplained: the revision's trace passes, the run log records no commands, and nothing shows a rerun to get a pass. The CTest label anomaly of the 1.0.0 backlog is closed with no record and no reproduction (`records/verification/0043-ctest-label-survey/`).
+- Two comment-only findings are open unless a unit fixes them before R: `tools/mutate`'s docstring paragraph (F1) and a comment in `transform_identities_up_to_three_test.cpp` (M1).
+
+### Cost
+
+Agent cost: the plan row of `agent-cost.tsv` (274,727 tokens, Opus) is the planner's; the implementers', reviewers' and this unit's rows are the coordinator's to write at each hand-back (decision 0215), and none is visible to me. Machine time: the matrix 25.4 minutes, in shared mode under a load of 3 to 9; the units' evidence and mutation runs as above.
