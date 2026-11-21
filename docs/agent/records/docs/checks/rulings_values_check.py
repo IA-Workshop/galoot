@@ -3,7 +3,8 @@
 The notation key and the authoring rules show one line with the antiproduct
 symbol and one with its C++ operator; the misconception record and the
 conventions card quote the values that tell transform from the classical
-sandwich for a rotor that is not a quarter turn. Each value is derived by hand
+sandwich for a rotor that is not a quarter turn; the authoring rules set the
+second cold reader a rotor in another plane. Each value is derived by hand
 in the record that quotes it. This script recomputes each from the
 definitions, with the small algebra of transform_sandwich_check.py beside it,
 which shares no code with the library. It prints one line per value and exits
@@ -98,6 +99,29 @@ def main():
           tsc.full_transform(e3, vec(1, 0, 0), r), vec(0, 2, 0))
     check("transform(v, r) on (0, 0, 1) = (0, 0, -2)",
           tsc.full_transform(e3, vec(0, 0, 1), r), vec(0, 0, -2))
+
+    # The rest of T1 and T2: the classical value of T1 and the complemented
+    # form of both.
+    check("r v reverse(r) on (0, 0, 1) = (0, 0, 2)",
+          tsc.classical(e3, vec(0, 0, 1), r), vec(0, 0, 2))
+    check("transform(v, right(r)) on (0, 0, 1) = (0, 0, 2)",
+          tsc.full_transform(e3, vec(0, 0, 1), e3.right(r)), vec(0, 0, 2))
+    check("transform(v, right(r)) on (1, 0, 0) = (0, 2, 0)",
+          tsc.full_transform(e3, vec(1, 0, 0), e3.right(r)), vec(0, 2, 0))
+
+    # The second cold reader's task: a rotor in another plane, with cosine
+    # 4/5 and sine 3/5 and factor 10, that no page under test prints.
+    # t = (1, 0, 3)(0, 0, 1) = 3 + e13 on (4, -1, 2).
+    t = e3.gp(vec(1, 0, 3), vec(0, 0, 1))
+    check("t = (1, 0, 3)(0, 0, 1) = 3 + e13", t, {0: 3, E13: 1})
+    y = vec(4, -1, 2)
+    check("t v reverse(t) on (4, -1, 2) = (44, -10, -8)",
+          tsc.classical(e3, y, t), vec(44, -10, -8))
+    check("transform(v, t) on (4, -1, 2) = (-20, 10, -40)",
+          tsc.full_transform(e3, y, t), vec(-20, 10, -40))
+    check("right(t) = 3 e123 - e2", e3.right(t), {E123: 3, E2: -1})
+    check("transform(v, right(t)) on (4, -1, 2) = (44, -10, -8)",
+          tsc.full_transform(e3, y, e3.right(t)), vec(44, -10, -8))
 
     print("all values hold" if not failures else f"FAILURES: {failures}")
     return 1 if failures else 0

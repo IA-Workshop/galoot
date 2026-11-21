@@ -1,7 +1,8 @@
 // The values that the design records gained with the rulings on notation and
 // on transform: the antiproduct lines of the notation key and the authoring
 // rules, and the rotor 2 - e12 that tells transform from the classical
-// sandwich with no coincidence of a quarter turn. Each is derived by hand in
+// sandwich with no coincidence of a quarter turn, and the rotor 3 + e13 of the
+// second cold reader's task in the authoring rules. Each is derived by hand in
 // the record that quotes it; this file confirms that the library computes it.
 // Over int, so every claim is a static_assert.
 //
@@ -70,6 +71,18 @@ static_assert(turned(r, Vector{1, 0, 0}) == Vector{0, 2, 0});
 static_assert(core::transform(Vector{1, 0, 0}, r) == Vector{0, 2, 0});
 static_assert(core::transform(x3, r) == Vector{0, 0, -2});
 static_assert(turned(r, x3) == Vector{0, 0, 2});
+static_assert(core::transform(x3, !r) == Vector{0, 0, 2});
+static_assert(core::transform(Vector{1, 0, 0}, !r) == Vector{0, 2, 0});
+
+// The second cold reader's task: t = (1, 0, 3)(0, 0, 1) = 3 + e13, cosine
+// 4/5 and sine 3/5 in the plane of e1 and e3, factor 10, on (4, -1, 2).
+constexpr Rotor t{Vector{1, 0, 3} * Vector{0, 0, 1}};
+constexpr Vector y{4, -1, 2};
+static_assert(t == Rotor{3, 0, 1, 0});
+static_assert(turned(t, y) == Vector{44, -10, -8});
+static_assert(core::transform(y, t) == Vector{-20, 10, -40});
+static_assert(Odd{!t} == Odd{0, -1, 0, 3});
+static_assert(core::transform(y, !t) == Vector{44, -10, -8});
 
 } // namespace
 
