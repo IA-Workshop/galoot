@@ -363,3 +363,13 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0048-D0-correction	cpp-expert	opus	201804	62	633	records/simplification-survey-fix 335d489; workflow agent, harness token count
 2026-11-21	0047-H0-correction	cpp-expert	fable	434974	103	2114	records/hardening-audit 3da5b43; Fable under decision 0253 item 12 after the sample check found errors; workflow agent, harness token count
 2026-11-21	0047-H0-sample-check-2	reviewer	opus	248534	84	901	review/hardening-audit df93ace; no error found, 4 minor; workflow agent, harness token count
+2026-11-21	0047-V3-corrections	math-expert	opus	169551	60	587	research/conventions-rederived e3ed781; math-tools 5785b29; workflow agent, harness token count
+2026-11-21	0047-H0-corrections-2	cpp-expert	opus	241435	92	966	records/hardening-audit f6ec74e; new row A50; workflow agent, harness token count
+2026-11-21	0049-U1-corrections	math-expert	opus	145737	41	530	records/docs-design 774049c; note renumbered 0029; workflow agent, harness token count
+2026-11-21	0048-D0-checker-extension	cpp-expert	opus	199634	71	885	records/simplification-survey-fix 0a1505e; workflow agent, harness token count
+2026-11-21	0047-V1-sample-check	reviewer	opus	206250	56	500	review/gap-register 17d762e; errors found (1 important, 8 minor); workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-review	reviewer	opus	94419	27	250	knowledge base and math-tools branches; 1 important (home path in logs), 5 minor; workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-fix	collector	opus	108985	31	288	kb/conventions-rederived 313b847; tools/conventions-rederived cf17fc2; workflow agent, harness token count
+2026-11-21	0047-V1-corrections-addendum	planner	opus	154055	35	468	records/gap-register 3bed4b7; plan 0047 addendum; workflow agent, harness token count
+2026-11-21	0048-D0-delta-check	reviewer	opus	276000	82	899	review/simplification-survey-fix 63e8c8e; 3 minor findings, 4 nits; workflow agent, harness token count
+2026-11-21	0048-D0-delta-fix	cpp-expert	opus	198752	67	563	records/simplification-survey-fix 9a3c0bc; workflow agent, harness token count

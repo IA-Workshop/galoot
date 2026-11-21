@@ -394,3 +394,5 @@ What later units must know, each with its place in research note 0029:
 - The file name `docs/guide/conventions.md` fails the citation check when a page links it (note open item 11).
 
 Next step: the coordinator arranges the review, puts the note's open items 1 to 4 to the owner, and settles items 5 to 11. Open questions: those items.
+
+2026-11-21, U1 closed: the independent math review ran (`records/reviews/2026-11-21-0049-u1-check.md`) and confirmed the `transform` statement and the tutorial route by its own derivation; its five findings (one gap in the inventory's order, four of wording) are corrected, the inventory check now also catches a term used above the row that defines it, and the unit is merged into `main`. The coordinator's settlements of the note's items 5 to 11 are decision 0255 part A; the note's items 1 to 4 are put to the owner there (part B). Next step: U2 starts once plans 0043 and 0044 are in `main`.
