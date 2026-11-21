@@ -142,13 +142,30 @@ galoot_add_compile_fail_test(NAME force_inline_on
   SOURCE core/force_inline_on_fail.cpp
   MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
   ONE_ERROR)
-# core.force_inline_empty: the same message for a mode defined with no value.
-# The header's later #if on the mode then has no left operand, which the
-# compiler reports as a second error, so this test does not ask for one.
+# core.force_inline_empty: the same for a mode defined with no value.
 galoot_add_compile_fail_test(NAME force_inline_empty
   MODULE core COMPONENT assert
   SOURCE core/force_inline_empty_fail.cpp
-  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1")
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
+  ONE_ERROR)
+
+# core.public_macros: after every header is included, the only macros named
+# GALOOT_ that remain are the include guards, the two modes, the inlining
+# attribute and GALOOT_ASSERT, so that no helper of the headers is left in a
+# user's namespace of macros. -dM prints each macro defined at the end of the
+# file, and an empty definition with a space after its name. A new public
+# macro or a guard of another form needs its line added here.
+add_test(NAME core.public_macros
+  COMMAND ${expect_output} 0 ONLY "^#define GALOOT_"
+    "_HPP "
+    "#define GALOOT_CHECKING "
+    "#define GALOOT_FORCE_INLINE "
+    "#define GALOOT_ALWAYS_INLINE "
+    "#define GALOOT_ASSERT("
+    -- ${CMAKE_CXX_COMPILER} -std=c++23 -I ${PROJECT_SOURCE_DIR}/include
+      -dM -E ${CMAKE_CURRENT_SOURCE_DIR}/core/public_macros.cpp)
+set_tests_properties(core.public_macros PROPERTIES
+  LABELS "core;core.assert;core.headers")
 
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
