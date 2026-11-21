@@ -25,7 +25,7 @@ Severity, a scale of this register's own:
 
 "Fix changes relied-on behavior" says whether a fix would change something a user may rely on today: an accepted input, a result, a message the guide quotes, or the answer of a `requires`-expression or a type trait.
 
-How the reproducers ran: `repro/run.sh <include dir> <scratch dir>` compiles each file with `-std=c++23` and the flags its line names, by calling `g++` and `clang++` directly (small probes, outside the test suite and the job pool), and runs the programs; `repro/outputs.txt` is its output at this revision. `repro/r03_checking_mixed/run.sh` builds three units and links them in both orders. The wide-algebra compiles of `r17` were run once more through `tools/timed --log repro/r17_runs.tsv` under `memguard.sh` with an 8 GiB cap; their rows are in `repro/r17_runs.tsv`. No reproducer needs more than a second or two of one processor, except the 31- and 32-generator compiles of `r20` on GCC, about a minute each.
+How the reproducers ran: `repro/run.sh <include dir> <scratch dir>` compiles each file with `-std=c++23` and the flags its line names, by calling `g++` and `clang++` directly (small probes, outside the test suite and the job pool), and runs the programs; `repro/outputs.txt` is its output at this revision. `repro/r03_checking_mixed/run.sh` builds three units and links them in both orders. The wide-algebra compiles of `r17` were run once more through `tools/timed --log repro/r17_runs.tsv` under `memguard.sh` with an 8 GiB cap; their rows are in `repro/r17_runs.tsv`. Each reproducer is a single small compile on one processor; the 30- and 31-generator compiles of `r20` on GCC are the longest, and were not timed. The 32-generator compiles of `r17` and `r20`, and the per-operation checks at 22 generators in H0-21, were run by hand with the same flags and are not in `run.sh`.
 
 ## What constant evaluation already checks
 
@@ -41,6 +41,8 @@ What runs at run time, and is not covered by that argument:
 A program can also call the `detail` generators at run time; nothing public does. Those calls are plan 0047's unit H4 and are outside this register except where noted (H0-26).
 
 ## Summary
+
+35 sites: 20 confirmed, 10 dismissed, 5 open. Of the confirmed, 4 are medium (H0-03, H0-09, H0-21, H0-22), 13 low and 3 nits; none is high. Three were known before this read (H0-01, H0-16, H0-17, each stated in the release record or a header), and the rest are new to the records as far as this read found.
 
 | ID | Site (at `01dce7f`) | Class | Verdict | Severity | Fix changes relied-on behavior |
 | --- | --- | --- | --- | --- | --- |
