@@ -1,0 +1,4 @@
+  Test #680: tools.kernels_inline_alone_rejects_twice
+
+Total Tests: 657
+timed: test survey:ctest-list-preset-filter took 0.085 s (exit 0)
