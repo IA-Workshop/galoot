@@ -70,7 +70,7 @@ Each merge runs the checks for the scope it integrates. A lower level never runs
 | --- | --- |
 | During work and before each commit | The selection of P8 in one configuration |
 | Merge into a feature or subfeature branch | The selection of P8 for everything the branch changed since it left its parent, in each configuration the change can affect |
-| Merge into `develop` | The full suite on each supported compiler, one of them under the sanitizers of STYLE S5, the full suite under `clang-measure`, and the mechanical style checks (W5) |
+| Merge into `main` | The full suite on each supported compiler, one of them under the sanitizers of STYLE S5, the full suite under `clang-measure`, and the mechanical style checks (W5) |
 | Release | The full suite in every supported configuration, the benchmarks, and an update of the performance history (W13) |
 
 A merge that changes a log under `docs/agent/records/performance/` runs `tools/runlog check` on the merged tree before the merge is committed, once for the merge and not in each configuration, and `tools/runlog prune` when the check reports removed rows. The CTest test `tools.runlog_check` carries the label `runlog` and is left out of the presets' runs.

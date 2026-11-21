@@ -23,11 +23,11 @@ The baseline is C++23. A feature of a later edition is used only behind its feat
 
 ### S3 Layout
 
-Source layout is whatever `clang-format` produces with the repository's `.clang-format`: LLVM style, 80 columns, and left-aligned pointers and references. Every change passes a check that formatting would leave it unchanged before it merges to `develop` (W5). Vendored code under `include/ext/` keeps its upstream layout.
+Source layout is whatever `clang-format` produces with the repository's `.clang-format`: LLVM style, 80 columns, and left-aligned pointers and references. Every change passes a check that formatting would leave it unchanged before it merges to `main` (W5). Vendored code under `include/ext/` keeps its upstream layout.
 
 ### S4 Static checks
 
-Every change passes `clang-tidy` with the repository's `.clang-tidy`, warnings treated as errors, before it merges to `develop`. Test builds compile with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror` on each compiler of the toolchain matrix, at present GCC and Clang. A finding that a change does not fix is suppressed at its location, with the reason beside the suppression.
+Every change passes `clang-tidy` with the repository's `.clang-tidy`, warnings treated as errors, before it merges to `main`. Test builds compile with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror` on each compiler of the toolchain matrix, at present GCC and Clang. A finding that a change does not fix is suppressed at its location, with the reason beside the suppression.
 
 ### S5 Run-time checks
 
