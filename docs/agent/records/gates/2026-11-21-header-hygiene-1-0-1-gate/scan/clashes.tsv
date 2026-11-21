@@ -1,0 +1,3 @@
+name	at	confusable_with	other_declaration	unit
+q1	include/galoot/core/transform.hpp:654	qI	scan/units/unit01.cpp:227	unit01.cpp
+q1	include/galoot/core/transform.hpp:654	ql	scan/units/unit02.cpp:91	unit02.cpp

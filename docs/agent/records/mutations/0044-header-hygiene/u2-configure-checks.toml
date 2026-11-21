@@ -1,0 +1,34 @@
+# Plan 0044, unit U2: the mutants of the two cache options' validation on
+# both debug presets. The tests configure the project in a scratch tree, so
+# the selection builds nothing. Each counts when the test it was written for
+# is among those it fails.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.configure]
+targets = []
+labels = '^tools\.configure$'
+
+# The check of GALOOT_FORCE_INLINE removed, so that 2 reads as ON again.
+[[mutant]]
+name = "force_inline_check_deleted"
+selection = "configure"
+file = "CMakeLists.txt"
+edits = [{ anchor = '''if(NOT GALOOT_FORCE_INLINE MATCHES "^(ON|OFF)$")
+  message(FATAL_ERROR
+    "GALOOT_FORCE_INLINE must be ON or OFF, not '${GALOOT_FORCE_INLINE}'.")
+endif()
+''', replacement = '''''' }]
+expect = "killed"
+killers = ["tools.configure_rejects_force_inline"]
+
+# The check of GALOOT_CHECKING removed.
+[[mutant]]
+name = "checking_check_deleted"
+selection = "configure"
+file = "CMakeLists.txt"
+edits = [{ anchor = '''if(NOT GALOOT_CHECKING MATCHES "^(ON|OFF)$")
+  message(FATAL_ERROR "GALOOT_CHECKING must be ON or OFF, not '${GALOOT_CHECKING}'.")
+endif()
+''', replacement = '''''' }]
+expect = "killed"
+killers = ["tools.configure_rejects_checking"]

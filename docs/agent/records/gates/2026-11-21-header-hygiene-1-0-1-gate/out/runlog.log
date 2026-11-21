@@ -1,0 +1,2 @@
+runlog: docs/agent/records/performance/runs.tsv: 1 eras match the history; 1727 kept rows present once; no removed row present
+timed: check gate:runlog@41d8029 took 2.524 s (exit 0)

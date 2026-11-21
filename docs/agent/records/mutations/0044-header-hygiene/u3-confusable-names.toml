@@ -1,0 +1,36 @@
+# Plan 0044, unit U3: the mutant of the renamed column index in
+# keeps_inner_products, on the lint preset, where a build of the user-names
+# unit fails if a header declares a name that clang-tidy reads as a user's I
+# or rn. The lint preset runs clang-tidy with warnings as errors on every
+# object, so the mutant fails the build of core_user_names. The tests of the
+# selection only keep the selection non-empty: they build with the same
+# headers and are not the judge.
+presets = ["lint"]
+
+[selection.names]
+targets = ["core_user_names", "core_assert_mode_0", "core_assert_mode_1",
+  "core_force_inline_off", "core_force_inline_default",
+  "core_force_inline_build"]
+labels = '^core\.assert$'
+
+# The first loop of keeps_inner_products with its old column name l.
+[[mutant]]
+name = "column_index_l_restored"
+selection = "names"
+file = "include/galoot/core/basis_change.hpp"
+edits = [{ anchor = '''    for (std::size_t c = 0; c < N; ++c) {
+      coefficient_type sum = 0;
+      for (std::size_t k = 0; k < N; ++k) {
+        sum = add_noting(
+            sum, multiply_noting(change.rows[i][k], target.gram[k][c], fits),
+            fits);
+      }
+      rows_times_target[i][c] = sum;''', replacement = '''    for (std::size_t l = 0; l < N; ++l) {
+      coefficient_type sum = 0;
+      for (std::size_t k = 0; k < N; ++k) {
+        sum = add_noting(
+            sum, multiply_noting(change.rows[i][k], target.gram[k][l], fits),
+            fits);
+      }
+      rows_times_target[i][l] = sum;''' }]
+expect = "killed"

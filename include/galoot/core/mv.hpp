@@ -925,16 +925,6 @@ apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
   return out;
 }
 
-/// The product Op of x and y on the blade set of its result, the plan's
-/// result set: apply<Op, product_plan<Op, Alg, A, B>.result>(x, y).
-template <BinaryOperation Op, metric_like Alg, blade_set A, blade_set B,
-          ring_scalar T>
-GALOOT_ALWAYS_INLINE
-[[nodiscard]] constexpr mv<Alg, product_plan<Op, Alg, A, B>.result, T>
-apply(const mv<Alg, A, T>& x, const mv<Alg, B, T>& y) {
-  return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
-}
-
 /// The map Op of x, written onto the layout Target, as for a product: one
 /// statement for each blade of x, its coefficient of +1 or -1 an
 /// assignment of the coefficient or of its negation.
@@ -963,14 +953,6 @@ apply(const mv<Alg, S, T>& x) {
         std::make_index_sequence<map_kernel<Op, Alg, S, Target>.size()>{});
   }
   return out;
-}
-
-/// The map Op of x on the blade set of its result, the map's result set.
-template <UnaryOperation Op, metric_like Alg, blade_set S, ring_scalar T>
-GALOOT_ALWAYS_INLINE
-[[nodiscard]] constexpr mv<Alg, unary_map<Op, Alg, S>.result, T>
-apply(const mv<Alg, S, T>& x) {
-  return apply<Op, unary_map<Op, Alg, S>.result>(x);
 }
 
 // Checks that every coefficient that a truncation drops is zero. The
