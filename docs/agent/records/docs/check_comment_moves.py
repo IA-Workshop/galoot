@@ -31,7 +31,10 @@ Checks, each reported with the row's line number in the table:
   full, whose rows must be keep, or in its table of checked conditions that
   are not undefined behavior; an assertion whose declaration has no Requires
   clause is in a third table, which names where its condition is stated.
-  The README says how the declaration is found and what this can miss.
+  The README says how the declaration is found and what this can miss;
+- every place in KEPT_IN_FULL, below, is a comment line whose row is keep,
+  and the README's table of preconditions kept in full names exactly those
+  places.
 
 It then prints the full-line comment lines by class against each of: the
 header, the kind, the position, the four position classes of plan 0048's
@@ -313,6 +316,43 @@ UB_HEADING = "Preconditions kept in full"
 OTHER_HEADING = "Checked conditions that are not undefined behavior"
 ORPHAN_HEADING = "Assertions with no Requires clause above them"
 
+# The preconditions that are undefined behavior when broken in an unchecked
+# build, each kept in full on its declaration. The README's first table names
+# exactly these places and says why each is undefined; the list is here as
+# well so that a change to one of them is a change to this check, and not only
+# to the README that a comment unit edits. Several have no assertion behind
+# them, so nothing else would notice their loss.
+KEPT_IN_FULL = tuple(
+    (f"include/galoot/{h}", spec) for h, spec in (
+        ("core/assert.hpp", "30-32"),
+        ("core/basis_change.hpp", "258-259"),
+        ("core/basis_change.hpp", "753-757"),
+        ("core/bits.hpp", "14-15"),
+        ("core/bits.hpp", "45-47"),
+        ("core/bits.hpp", "58-60"),
+        ("core/bits.hpp", "80-81"),
+        ("core/bits.hpp", "115-116"),
+        ("core/bits.hpp", "130-131"),
+        ("core/bits.hpp", "143-144"),
+        ("core/bits.hpp", "167-168"),
+        ("core/blade_product.hpp", "49-57"),
+        ("core/blade_product.hpp", "82-83"),
+        ("core/blade_product.hpp", "117-118"),
+        ("core/blade_product.hpp", "139-140"),
+        ("core/blade_product.hpp", "268-275"),
+        ("core/linear.hpp", "392-396"),
+        ("core/linear.hpp", "407-411"),
+        ("core/metric.hpp", "126"),
+        ("core/mv.hpp", "1281-1283"),
+        ("core/plan.hpp", "142-143"),
+        ("core/plan.hpp", "160"),
+        ("core/plan.hpp", "185-187"),
+        ("core/plan.hpp", "255-259"),
+        ("core/plan.hpp", "303-304"),
+        ("core/plan.hpp", "664-665"),
+        ("core/plan.hpp", "698-699"),
+    ))
+
 
 def precondition_sites(texts):
     """The Requires clauses that state a checked precondition, by header.
@@ -396,6 +436,27 @@ def check_preconditions(readme_path, headers, texts, by_line):
                 if name == "kept in full" and row["class"] != "keep":
                     errors.append(f"row {row['number']}: {h}:{l} is a precondition kept "
                                   f"in full in the README, but the row is {row['class']}")
+
+    kept = {(h, l) for h, spec in KEPT_IN_FULL for l in parse_lines(spec)}
+    demoted = collections.defaultdict(list)
+    for h, l in sorted(kept):
+        row = by_line.get((h, l))
+        if row is None:
+            errors.append(f"KEPT_IN_FULL: {h}:{l} is not a full-line comment")
+        elif row["class"] != "keep":
+            demoted[row["number"]].append(l)
+    for number, numbers in sorted(demoted.items()):
+        row = next(r for r in by_line.values() if r["number"] == number)
+        errors.append(f"row {number}: {row['header']}:{spans(numbers)} is a precondition "
+                      f"kept in full (KEPT_IN_FULL), but the row is {row['class']}")
+    in_readme = {(h, l) for h, numbers, _ in lists["kept in full"] for l in numbers}
+    for difference, says in ((kept - in_readme, "in KEPT_IN_FULL but not in the "
+                              "README's table"),
+                             (in_readme - kept, "in the README's table but not in "
+                              "KEPT_IN_FULL")):
+        for h in sorted({h for h, _ in difference}):
+            errors.append(f"README, kept in full: {h}:"
+                          f"{spans(l for g, l in difference if g == h)} is {says}")
 
     sites, orphans = precondition_sites(texts)
     named = {(h, l) for h, numbers, _ in orphan_lines for l in numbers}
