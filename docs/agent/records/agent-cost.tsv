@@ -321,6 +321,28 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0042-u4-rulings	coordinator	sonnet	not tracked	not tracked	not tracked	direct work on develop: decision 0248 (a73cd4e) and the plan 0001 M7 addendum (c41ed75), both with a Sonnet 5.5 trailer; the coordinator did not track this work apart from its session; row added 2026-11-12 by plan 0042 U11 from the release audit m9
 2026-11-12	plan-0042-18eb677-readme-rows	coordinator	sonnet	not visible	not visible	not visible	feature/release-1.0.0 18eb677: run rows 21958 and 21959 (gate:docs@8118033), run by the coordinator, commit trailer Sonnet 5.5; the tokens are unknown; row added 2026-11-12 by plan 0042 U11 from the release audit m5
 2026-11-12	plan-0042-u11-release-records	planner	opus	326712	137	1250	feature/release-1.0.0 ff1d49f (T) fast-forwarded into develop
+2026-11-16	plan-0043-cost-cleanup	planner	opus	274727	117	1394	harness subagent_tokens; branch plan/0043 0d066fd
+2026-11-16	plan-0044-header-hygiene	planner	opus	233416	64	777	harness subagent_tokens; branch plan/0044 8eb88fa
+2026-11-16	plan-0045-release-procedure	planner	opus	197564	43	647	harness subagent_tokens; branch plan/0045 4f7f744
+2026-11-16	learn-mesh-generation	collector	opus	314473	98	1744	harness subagent_tokens; kb/mesh-generation d9f1ec6 and tools/mesh-generation 3b204c7, merged 2026-11-21
+2026-11-16	learn-cg-kernels	collector	opus	273978	77	1334	harness subagent_tokens; kb/cg-kernels a516690, merged 2026-11-21
+2026-11-16	learn-ga-geometry-applications	collector	opus	323593	78	2270	harness subagent_tokens; kb/ga-geometry-applications 11b295a and tools/ga-geometry-applications 44f53e5, merged 2026-11-21
+2026-11-16	learn-meshing-oracles	collector	opus	412102	233	5802	harness subagent_tokens; tools/meshing-oracles 119cdb8 plus findings note 3770e27 by the coordinator, merged 2026-11-21; includes the 101 GB memory incident
+2026-11-16	learn-cg-kernels-helper-cgal	reading helper	sonnet	157753	36	204	low effort; reported by the parent agent
+2026-11-16	learn-cg-kernels-helper-predicates-libs	reading helper	sonnet	153153	40	273	low effort; Shewchuk, Triangle, TetGen, Boost, libigl, OpenMesh; reported by the parent agent
+2026-11-16	learn-cg-kernels-helper-geogram-eigen-langs	reading helper	sonnet	97908	19	143	low effort; Geogram, Eigen, JS, Rust, Julia; reported by the parent agent
+2026-11-16	learn-mesh-generation-helpers	reading helpers	sonnet	777000	164	not reported	six helpers at low effort, about 136k, 203k, 116k, 146k, 112k and 64k tokens (rounded, as reported by the parent agent), calls 30, 45, 23, 35, 23, 8
+2026-11-16	learn-ga-geometry-applications-helpers	reading helpers	sonnet	411000	96	not reported	four helpers at low effort, about 93k, 99k, 100k and 119k tokens (rounded, as reported by the parent agent; the last was the reviewer), calls 14, 20, 38, 24
+2026-11-21	knowledge-merges-memguard	coordinator	sonnet	not tracked	not tracked	not tracked	merged the kb and tools learning branches, reconciled MeshingGenie, added upstream-awareness rows, and wrote the memguard per-job change (tools/memguard-per-job 0de726a); the coordinator did not track this apart from its session
+2026-11-21	plan-0046-garnet-architecture	planner	fable	188850	20	600	harness total, first pass
+2026-11-21	plan-0046-revision	planner	fable	100478	15	300	harness total 289328 less first pass; revision with four closing notes
+2026-11-21	learn-quad-hex-meshing	researcher	opus	213310	60	1233	harness total
+2026-11-21	learn-quad-hex-meshing-helpers	reading helpers	sonnet	580117	148	not reported	four helpers: 113524, 167680, 185535 and 113378 tokens; 34, 49, 47 and 18 calls
+2026-11-21	learn-frame-fields	researcher	opus	291305	89	1905	harness total
+2026-11-21	learn-frame-fields-helpers	reading helpers	sonnet	354912	90	not reported	four helpers: 89584, 77850, 99790 and 87688 tokens; 32, 19, 32 and 7 calls
+2026-11-21	learn-parallel-meshing	researcher	opus	342066	142	7389	harness total; wall includes waiting for the timing lock
+2026-11-21	learn-parallel-meshing-helpers	reading helpers	sonnet	433000	131	not reported	four helpers, rounded: about 104k, 128k, 121k and 80k tokens; 34, 31, 49 and 17 calls
+2026-11-21	learn-modern-mesher-implementations	oracle	opus	486422	296	9097	harness total; includes one Sonnet helper of 55101 tokens and 15 calls
 2026-11-21	plan-0047-core-hardening	planner	fable	197368	27	508	plan/0047 e41f173; harness subagent_tokens; owner-authorized Fable
 2026-11-21	plan-0048-simplification	planner	fable	337001	67	1046	plan/0048 945e86f; harness subagent_tokens; owner-authorized Fable
 2026-11-21	plan-0049-user-docs	planner	fable	273963	35	634	plan/0049 0f0b6e5; harness subagent_tokens; owner-authorized Fable
