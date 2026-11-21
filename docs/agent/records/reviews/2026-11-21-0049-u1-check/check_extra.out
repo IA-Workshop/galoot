@@ -1,0 +1,16 @@
+PASS rigid(3): antirev(V) = left(rev(right(V)))
+PASS rigid(3) antigrade parity 0: Theorem C
+PASS rigid(3) antigrade parity 1: Theorem C
+PASS R(2,1,0): antirev(V) = left(rev(right(V)))
+PASS R(2,1,0) antigrade parity 0: Theorem C
+PASS R(2,1,0) antigrade parity 1: Theorem C
+PASS R(1,0,2): antirev(V) = left(rev(right(V)))
+PASS R(1,0,2) antigrade parity 0: Theorem C
+PASS R(1,0,2) antigrade parity 1: Theorem C
+PASS R(3,0,0): antirev(V) = left(rev(right(V)))
+PASS R(3,0,0) antigrade parity 0: Theorem C
+PASS R(3,0,0) antigrade parity 1: Theorem C
+PASS M6: right(right(p)) = -p in rigid(3)
+PASS M27: right(e4) = e321 (= -e123)
+PASS M29: motor (0,0,-1,1,...) sends (1,0,0,1) to 2(0,-1,0,1)
+ALL PASS
