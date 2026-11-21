@@ -2,7 +2,7 @@
 
 Records of the first part of unit D0 of [plan 0048](../../plans/0048-aggressive-simplification.md), made on 2026-11-21 by an agent (Claude Opus 5.5, cpp-expert role). Everything here was measured at `01dce7f` on `main`. Its `include/` tree is identical to `c95fee5`, the revision the plan surveyed (`git diff --stat c95fee5 01dce7f -- include test tools` is empty), so line numbers here and in the plan agree. Nothing under `include/`, `test/` or `tools/` was changed.
 
-The second part of D0, the comment table `records/docs/comment-moves.tsv` for plan 0049 (decision 0253, "Hand-overs"), is not here.
+The second part of D0, the comment table `records/docs/comment-moves.tsv` for plan 0049 (decision 0253, "Hand-overs"), is in [records/docs/](../docs/README.md).
 
 ## Files
 

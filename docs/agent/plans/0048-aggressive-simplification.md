@@ -442,3 +442,4 @@ The coordinator merges this plan into `main` (the claim), puts O1 to O9 to the o
 Not started.
 
 - 2026-11-21: D0, first part, recorded in [records/simplification/](../records/simplification/README.md): the candidate sites by unit (`candidates.tsv`), the baselines with the commands that rerun them, the knowledge-base notes read against this plan, and this section 5.7 restated for the owner (`restated-targets.md`); the comment table for plan 0049 is D0's second part.
+- 2026-11-21: D0, second part, recorded in [records/docs/](../records/docs/README.md): `comment-moves.tsv`, a verdict for every comment block of every header at `01dce7f` (882 rows covering all 3,208 comment lines and the 73 trailing comments), its coverage check, and the sums against section 5.4. Read block by block, the comments fall to about 1,800 lines once every condition is met, not the 870 of section 5.4; the README gives the reasons and the open items.

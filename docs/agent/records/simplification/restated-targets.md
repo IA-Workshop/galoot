@@ -51,6 +51,7 @@ How each row is built:
 - **Code.** 4,561, less about 365 for section 5.1 (the plan's 373 with A1 at 7), less about 410 for option C. C1 takes about 150 more, the plan's figure, which nothing here can check before the spike.
 - **Comments before D3.** Decision 0253 lets phase 4 move a contract out of a header only after its receiving page in plan 0049 has passed review. Those pages are in D3, which is not authorized. S11 stands as ratified until its amendment, so no unit removes a contract from a header before then. What can go now is the plan's column (a): prologue examples, narration, repeats, process notes, the cast markers, and possibly the `detail` comments (open item 2). That leaves about 1,620 lines at best. The comment table (`records/docs/comment-moves.tsv`, D0's second part) will say how much of that column is deletion and how much is a move.
 - **Comments after D3.** The plan's column (b), about 870, unchanged. B9 removes about 45 lines where the plan counted about 90. That is within the precision of these columns.
+- **Later, from the comment table.** D0's second part read every comment block ([records/docs/README.md](../docs/README.md), "Against plan 0048 and the restated targets"). By its verdicts the comment column reads about 2,610 before D3 and about 1,800 after D3 and the amendment, pointers included, so the three scenario rows above read about 6,930, about 6,120, and, with C1, about 5,950 lines in all. The figures above are left as first written.
 
 ## The other measures, restated
 
