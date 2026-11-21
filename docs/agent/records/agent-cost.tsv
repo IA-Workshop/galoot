@@ -334,3 +334,12 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-16	learn-mesh-generation-helpers	reading helpers	sonnet	777000	164	not reported	six helpers at low effort, about 136k, 203k, 116k, 146k, 112k and 64k tokens (rounded, as reported by the parent agent), calls 30, 45, 23, 35, 23, 8
 2026-11-16	learn-ga-geometry-applications-helpers	reading helpers	sonnet	411000	96	not reported	four helpers at low effort, about 93k, 99k, 100k and 119k tokens (rounded, as reported by the parent agent; the last was the reviewer), calls 14, 20, 38, 24
 2026-11-21	knowledge-merges-memguard	coordinator	sonnet	not tracked	not tracked	not tracked	merged the kb and tools learning branches, reconciled MeshingGenie, added upstream-awareness rows, and wrote the memguard per-job change (tools/memguard-per-job 0de726a); the coordinator did not track this apart from its session
+2026-11-21	plan-0046-garnet-architecture	planner	fable	188850	20	600	harness total, first pass
+2026-11-21	plan-0046-revision	planner	fable	100478	15	300	harness total 289328 less first pass; revision with four closing notes
+2026-11-21	learn-quad-hex-meshing	researcher	opus	213310	60	1233	harness total
+2026-11-21	learn-quad-hex-meshing-helpers	reading helpers	sonnet	580117	148	not reported	four helpers: 113524, 167680, 185535 and 113378 tokens; 34, 49, 47 and 18 calls
+2026-11-21	learn-frame-fields	researcher	opus	291305	89	1905	harness total
+2026-11-21	learn-frame-fields-helpers	reading helpers	sonnet	354912	90	not reported	four helpers: 89584, 77850, 99790 and 87688 tokens; 32, 19, 32 and 7 calls
+2026-11-21	learn-parallel-meshing	researcher	opus	342066	142	7389	harness total; wall includes waiting for the timing lock
+2026-11-21	learn-parallel-meshing-helpers	reading helpers	sonnet	433000	131	not reported	four helpers, rounded: about 104k, 128k, 121k and 80k tokens; 34, 31, 49 and 17 calls
+2026-11-21	learn-modern-mesher-implementations	oracle	opus	486422	296	9097	harness total; includes one Sonnet helper of 55101 tokens and 15 calls
