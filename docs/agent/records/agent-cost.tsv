@@ -379,3 +379,13 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	kb-complexity-reduction-fix	collector	sonnet	182830	67	716	kb/complexity-reduction 5a84842; tools/complexity-reduction 562a6f3; workflow agent, harness token count
 2026-11-21	kb-constexpr-step-margin	cpp-expert	opus	515495	236	12628	kb/constexpr-step-margin a8eaf61; tools/constexpr-step-margin 0c37d04; experiment on a copy of Galoot; workflow agent, harness token count
 2026-11-21	kb-wrapper-collapse	cpp-expert	opus	399576	195	5775	kb/wrapper-collapse baff6c1; tools/wrapper-collapse 4e9d012; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	0044-integration	build-expert	sonnet	64955	21	105	feature/header-hygiene-1-0-1 67907a5; docs subfeature merged; workflow agent, harness token count
+2026-11-21	0044-blind-review	reviewer	opus	211215	69	837	review/header-hygiene-1-0-1 5019bff; approve, 5 minor, 8 notes; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review-2	reviewer	opus	140225	49	457	kb/doc-pedagogy; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review-2	reviewer	opus	174618	47	503	kb and tools complexity-reduction; 4 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-review	reviewer	opus	191412	71	1130	kb and tools constexpr-step-margin; figures reproduced; 2 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-review	reviewer	opus	193405	58	660	kb and tools wrapper-collapse; figures reproduced; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix-2	collector	opus	160210	69	611	kb/doc-pedagogy 2d79a40; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix-2	collector	opus	172825	53	760	kb/complexity-reduction f0137c5; tools/complexity-reduction 795ad32; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-fix	collector	opus	174397	67	614	kb/wrapper-collapse 3f4324a; tools/wrapper-collapse 34f3baf; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-fix	collector	opus	181155	75	933	kb/constexpr-step-margin 48cd438; tools/constexpr-step-margin 7892f3c; workflow agent, harness token count
