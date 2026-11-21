@@ -1041,10 +1041,12 @@ at `-O0` an object grows.
 
 The macro `GALOOT_FORCE_INLINE` turns this off. It is 1 by default; defined
 as 0, as with `-DGALOOT_FORCE_INLINE=0`, it leaves every inlining decision
-to the compiler, and an operation may then compile to a call. Any other
-value stops the compile: a word or a whole number, such as `ON`, `true` or
-`2`, or an empty value, with "GALOOT_FORCE_INLINE must be 0 or 1", and
-another spelling, such as `-1`, with an error of the preprocessor's own.
+to the compiler, and an operation may then compile to a call.
+`-DGALOOT_FORCE_INLINE` with no value defines it as 1. A word such as `ON`
+or `true`, another number such as `2` or `01`, or an empty value
+(`-DGALOOT_FORCE_INLINE=`) stops the compile with "GALOOT_FORCE_INLINE must
+be 0 or 1"; a spelling such as `-1` stops it with an error of the
+preprocessor's own.
 Results over an exact scalar are the same in both modes, and so are results
 over `float` or `double` when the compiler does not contract a multiply and
 an add into one instruction (`-ffp-contract=off`); with contraction, which
