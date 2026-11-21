@@ -30,7 +30,11 @@ appends to the same record.
 
 Revision and branch come from the checkout that holds this recorder, so a
 build tree outside it is still attributed; a field git cannot give is
-`unavailable`, and a detached HEAD is `detached`.
+`unavailable`, and a detached HEAD is `detached`. The revision is the one the
+command started on, marked `-dirty` if a tracked file differed from it, in
+the index or the working tree, when the command started or when it ended, or
+if HEAD moved while it ran. Changes under docs/agent/records/performance do
+not count.
 
 Mode: `pinned` when the process may run on exactly one performance-core CPU
 (for example under `taskset -c 2`), `shared` otherwise. Pinned rows count
@@ -431,20 +435,33 @@ def git(*args):
     return result.stdout.strip() if result.returncode == 0 else None
 
 
-def revision_and_branch():
+def revision_state():
+    """The checkout's short revision and whether it is dirty, or None when
+    git cannot say."""
     revision = git("rev-parse", "--short=12", "HEAD")
     # The run log changes with every run, and the committed compile record
     # when a gate's rows are copied into it, so neither makes a revision
-    # dirty; any other change to a tracked file does. Without
+    # dirty; any other change to a tracked file does, staged or not. Without
     # optional locks, git status does not take the index lock, so a
     # recorded compile cannot make a concurrent commit fail.
     status = git("--no-optional-locks", "status", "--porcelain",
                  "--untracked-files=no", "--", ":(top)",
                  ":(top,exclude)docs/agent/records/performance")
     if not revision or status is None:
+        return None
+    return revision, bool(status)
+
+
+def revision_and_branch(before, after):
+    """The revision the command started on, marked dirty if the tree was
+    dirty at either end or HEAD moved while the command ran, and the
+    branch."""
+    if before is None or after is None:
         revision = UNAVAILABLE
-    elif status:
-        revision += "-dirty"
+    else:
+        revision = before[0]
+        if before[1] or after[1] or before[0] != after[0]:
+            revision += "-dirty"
     branch = git("branch", "--show-current")
     return revision, UNAVAILABLE if branch is None else branch or "detached"
 
@@ -524,10 +541,11 @@ def main(argv):
     command = argv[5:]
     start = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     count = not (kind == "run" and a == "build" and placement()[0] == "pinned")
+    before = revision_state()
     code, fields = run_measured(command, count)
 
     try:
-        revision, branch = revision_and_branch()
+        revision, branch = revision_and_branch(before, revision_state())
         top = git("rev-parse", "--show-toplevel") or ""
         row = dict(fields, utc_start=start, revision=revision, branch=branch,
                    exit=str(code), host=socket.gethostname())

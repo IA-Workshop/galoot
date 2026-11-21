@@ -2,7 +2,7 @@
 and drains when no client holds it, an idle, full pool that leaves its FIFO
 in place, a FIFO path through a symbolic link, a count of clients that
 fails, a client that opens the FIFO just after a count, a FIFO deleted by
-hand, and the idle stop, on pools of its own.
+hand and what status says meanwhile, and the idle stop, on pools of its own.
 
 Usage: python3 -I jobpool_test.py <tools/jobpool> <scratch directory>
 
@@ -278,6 +278,29 @@ def fifo_deleted(tool, directory):
         pool.remove()
 
 
+def status_without_fifo(tool, directory):
+    """While a running pool lacks its FIFO, status fails and says what to do:
+    a FIFO deleted by hand is named among the causes, and the message tells
+    how to start a new pool. The check comes before the pool's next poll,
+    which is why the poll interval is long here."""
+    pool = Pool(tool, directory, "nofifo")
+    pool.env["JOBPOOL_POLL_SECONDS"] = "30"
+    try:
+        check("start exit, status without a FIFO",
+              pool.run("start", "2", "--idle", "0").returncode, 0)
+        os.unlink(pool.fifo)
+        status = pool.run("status")
+        check("status exit without a FIFO", status.returncode, 1)
+        check("status names a FIFO deleted by hand",
+              "deleted by hand" in status.stdout, True)
+        check("status says how to start a new pool",
+              "tools/jobpool ensure" in status.stdout, True)
+        check("status without a FIFO names the path",
+              pool.fifo in status.stdout, True)
+    finally:
+        pool.remove()
+
+
 def symlinked(tool, directory):
     """A pool whose FIFO path runs through a symbolic link finds its clients
     all the same, so it never writes back the slots a client holds."""
@@ -489,7 +512,8 @@ def main(tool, directory):
     shutil.rmtree(directory, ignore_errors=True)
     os.makedirs(directory)
     for case in (arguments, repair, idle_full, symlinked, count_fails,
-                 last_count_fails, surplus_race, fifo_deleted, idle_stop):
+                 last_count_fails, surplus_race, fifo_deleted,
+                 status_without_fifo, idle_stop):
         try:
             case(tool, directory)
         except (OSError, ValueError, subprocess.TimeoutExpired) as error:
