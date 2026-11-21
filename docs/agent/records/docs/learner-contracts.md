@@ -1,6 +1,6 @@
 # The learner contracts of the user documentation
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Sections 1, 4, and 6 brought in step with decision 0255 part A on 2026-11-21 by Claude (agent, Opus 5.5, math-expert and hci-expert roles).
 
 A learner contract is what a page declares about its reader: the level, what the reader is assumed to know, and what the reader will be able to do afterward. An author writes to the contract, the cold reader of plan 0049 section 9.1 is given the contract and nothing more, and a stumble is settled by changing the page or by changing the contract in the open. This record fixes the readers, the contract of each kind of page, the contract of each tutorial chapter, and the form in which a page shows its contract.
 
@@ -13,9 +13,11 @@ Plan 0049 section 2 names two readers. Writing the first programs of each chapte
 | Reader | Knows | Does not know | Wants | Starts at |
 | --- | --- | --- | --- | --- |
 | The newcomer | C++ as section 2 lists it; school vectors and trigonometry | geometric algebra, in any form | to learn enough to rotate and move things, and to trust what the compiler checked | the README's example, then the tutorial |
-| The arriver | geometric algebra from another source: rotors with the geometric product, quaternions, or a rigid algebra with e0 and planes as vectors; C++ | Galoot's choices: the null generator last, points as vectors, the antiproduct, results on their own layouts | to carry formulas and habits over without a silent sign error | the first-things page, then the conventions card, then the porting recipe |
+| The arriver | geometric algebra from another source: rotors with the geometric product, quaternions, or a rigid algebra with e0 and planes as vectors; C++ | Galoot's choices: the null generator last, points as vectors, the antiproduct, results on their own layouts | to carry formulas and habits over without a silent sign error | the first-things page, then the conventions card, then the porting recipe once milestone D3 brings it |
 | The researcher | geometric algebra in some convention; numerical work | what Galoot has verified and how; what is exact | to decide whether a result can be trusted, and to find a limit before meeting it | the conventions chapter, then the verification and limits pages |
 | The user with a task | Galoot's basics, from the tutorial or from use | the one thing the task needs | steps that work | a how-to recipe or a reference entry |
+
+A second language-model cold reader reads as the arriver: the conventions chapter and the first-things page, at U4 (decision 0255 part A item 8; rule R5 of `authoring-rules.md`).
 
 The map (`docs/guide/README.md`) opens with these four as "who you are, where to start", in the reader's own words: "I know C++ and have not met geometric algebra", "I know rotors or quaternions from elsewhere", "I need to know what is verified", "I have a task".
 
@@ -54,7 +56,7 @@ Two consequences. A reference entry, a recipe, and a concepts page drop the tuto
 
 ## 4 The contract of each tutorial chapter
 
-Each chapter may assume section 2 and the chapters before it. Its objectives are drafts for the chapter's author, written in the vocabulary the reader has on arriving, as the pedagogical skill requires: a term the chapter defines does not appear in its objectives. Each objective needs a worked example that demonstrates it and an exercise that tests it (plan criterion A7).
+The chapters are the cut of research note 0029 section 3.3, which the coordinator settled (decision 0255 part A item 4): the plan's chapters 1 and 2 are one, and chapter 6 teaches the antiproduct in R(3, 0, 0) before the rigid algebra. Each chapter may assume section 2 and the chapters before it. Its objectives are drafts for the chapter's author, written in the vocabulary the reader has on arriving, as the pedagogical skill requires: a term the chapter defines does not appear in its objectives. Each objective needs a worked example that demonstrates it and an exercise that tests it (plan criterion A7).
 
 **1. A first program: vectors and dot products.** After it the reader can:
 - compile a program that includes Galoot and names the plane, or the space, its vectors live in;
@@ -157,4 +159,4 @@ A reader who misses a question is told which school topic or which C++ feature t
 
 - A contract is not silently widened. When a cold reader stumbles on a term, the page changes; the term joins the assumed terms only when it is school mathematics or section 2's C++, and then this record changes in the same unit.
 - The README is not a prerequisite of the tutorial. The opening page says that the README's example is the destination and the setup check, and assumes nothing from it.
-- No tutorial chapter depends on a page of milestone D3, which is not authorized (decision 0253 item 23): a chapter may link the conventions chapter, the glossary, the first-things page, the limits page, and earlier chapters.
+- No tutorial chapter depends on a page of milestone D3, which is not authorized (decision 0253 item 23). The tutorial links only pages that exist at milestone D2 (decision 0255 part A item 6): earlier chapters, the opening page, the conventions chapter, the glossary, the first-things page, the limits page, and a page that U3 created with content moved from today's guide, at a heading it has at D2. Chapter 8 points to the conventions chapter, not to the porting recipe (rule W12 of `authoring-rules.md`).
