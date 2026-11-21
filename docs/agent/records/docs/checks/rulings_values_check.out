@@ -1,0 +1,18 @@
+right(e1) = e23                                                    holds
+right(e1 + e2) = e23 + e31                                         holds
+(e23 + e31) anti e23 = e123 - e3                                   holds
+right(1 - e12) = e123 - e3                                         holds
+antireverse(e123 - e3) = e123 + e3                                 holds
+(e123 - e3) % e3 % (e123 + e3) = 2 e3, grouped from the left       holds
+the same, grouped from the right                                   holds
+transform(e3, e123 - e3) = 2 e3                                    holds
+a % b = left(right(a) * right(b)), one pair                        holds
+s = (2, 1, 0)(1, 0, 0) = 2 - e12                                   holds
+s v reverse(s) = (18, -1, 25)                                      holds
+transform(v, s) = (6, 17, -25)                                     holds
+right(s) = 2 e123 - e3                                             holds
+transform(v, right(s)) = (18, -1, 25)                              holds
+r v reverse(r) on (1, 0, 0) = (0, 2, 0)                            holds
+transform(v, r) on (1, 0, 0) = (0, 2, 0)                           holds
+transform(v, r) on (0, 0, 1) = (0, 0, -2)                          holds
+all values hold
