@@ -2,7 +2,7 @@
 
 - Status: written 2026-11-21 by Claude (agent, Sonnet 5.5), planner, plan 0047 unit V1, on branch `records/gap-register` from `main` at `01dce7f`. Records only; nothing outside `docs/agent/` changed. The coordinator's merge into `main` is the hand-over. This file is the working list that plan 0047 section 6 calls for; unit C1 closes it, once the owner rules on the units past merge M1 (decision 0253 item 1; section D).
 - Corrected 2026-11-21 by Claude (agent, Opus 5.5), planner, on the same branch, after the independent sample check `records/reviews/2026-11-21-0047-v1-sample-check.md` (branch `review/gap-register`). Each of its findings F1 to F9 was judged against the cited records and confirmed; none was rejected. The corrections are separate commits after `186f019`: which closing units are authorized (F1), citations and wording (F2 to F8), and rows A28 to A37 (F9).
-- Source of scope: plan 0047 sections 3, 6 and 7. The register starts from the seventeen gaps G1 to G17 that section 6 numbers, checks each against the records it names, and adds the gaps the records show that section 6 does not number (rows A1 to A27, each marked "added").
+- Source of scope: plan 0047 sections 3, 6 and 7. The register starts from the seventeen gaps G1 to G17 that section 6 numbers, checks each against the records it names, and adds the gaps the records show that section 6 does not number (rows A1 to A37, each marked "added"; A28 to A37 were found by the sample check, its section 3, M1 to M10, and each cited line was read again for this register).
 - Records read, in the abbreviations used below. All paths are under `docs/agent/` at `main` `01dce7f` unless stated, and every line number is a line of that file at that commit.
   - **V10**: `records/release/v10-table.md`. **RR**: `records/release/release-record.md`. **DoD**: `records/release/dod-1-to-29.md`. **DoD2**: `records/release/dod-2-inventory.md`. **PC**: `records/release/plan-closures.md`.
   - **RA**: `records/gates/2026-11-12-release-audit.md`. **RM**: `records/gates/2026-11-12-release-matrix.md`. **M2**, **M3**, **M4**, **M7**: the gate reports `2026-11-02-M2.md`, `2026-11-04-M3.md`, `2026-11-08-M4-audit.md` and `2026-11-11-M7-audit.md` in `records/gates/`.
@@ -78,6 +78,16 @@ Each row has: the number; the gap; the record lines it rests on; the claim it we
 | A25 | **Known exceptions 8 and 9 have an evidence side.** A conversion a one-blade layout rejects gets the compiler's own error (RR:91), and a change of basis can be rejected as overflowing where its reduced products would fit (RR:92) | RR:91 and :92; plan 0047 section 4 (rows "One-blade catch-all", "Spurious overflows") | C9 (a message in the algebra's terms); the change of basis's accepted input | H1 (compile-fail test) and H6 (awaits ruling) (fix) for the first; H2 (characterize) for the second, as plan section 4 states | **Open.** I did not search `test/` for a test of either; the plan says H1 and H2 add them |
 | A26 | **Matrix observations and one script were not rerun.** The "23 of 23 slots free" and the watchdog's minimum (92.4 GiB) are not in `runs.tsv`; `probe.py verify` last ran at `753a334` | RA:142 and :178; RR:176 | The release matrix record's side claims; the plan-cost canary's probe | none planned | **Open**, minor. I did not read what `probe.py verify` verifies beyond the index rows RR:176 names |
 | A27 | **One toolchain and platform.** The claims hold for g++ 16.2.1, clang++ 23.1.4, libstdc++ 16, glibc 2.44, x86-64 Linux; the assembly test reads x86-64 only; AArch64 is untested for contraction | RR:50; `test/tools/kernels_inline.py` docstring (lines 1 to 45); `records/numerical/0040-contraction-check.md:15` | Every claim of RR "Platform and toolchain" beyond that triple | none planned. MSVC work is deferred by the owner, and another toolchain is not in plan 0047 | **Open**; a stated boundary of the release, not a defect |
+| A28 | **Known friction 8 rests on a header comment.** That both compilers stop when a forced-inline operation is called from a function built for fewer instruction-set features is stated from `assert.hpp`'s comment on `GALOOT_ALWAYS_INLINE`; no test shows it | RR:108; `grep -rln 'gnu::target' test` prints nothing | RR:108's statement and the limits page's sentence that rests on it | H1 ("a pin for friction 8 (both compilers stop, and the message names the attribute)", plan 0047:90) | **Open** |
+| A29 | **DoD-3 is met with its record's readings, and its headers were read, not tested.** "Per-basis data" is read to include layout positions, orientation signs and the per-tag inverse; "no hand-written, precompiled or cached table was found ... by reading"; the headers were read at `300f6b4` | `records/release/dod-3-operation-map.md:10` to `:12` (departures 2 to 4); DoD:19 ("Met, with that record's readings") | DoD-3 | none planned | **Open.** These readings are not among those decision 0251 item 4 confirms, which names DoD-1, DoD-13, DoD-15 and DoD-21 (`decisions/0251-release-walkthrough-rulings.md:8`) |
+| A30 | **No record judged whether each plan's outcome is complete against its criteria** | RA:180 ("`plan-closures.md` did not judge that either") | The W3 closures of the plans behind 1.0 as evidence that each plan met its criteria | none planned. A24 covers only PC:68 and review coverage | **Open** |
+| A31 | **The W10 index was checked by sample.** The M7 auditor checked eight entries of the index against their plans, and the WU9 gap; V10:146 says "Performed unit by unit" | M7:286; V10:146 | DoD-22's "before and after for each core unit" for the entries not sampled | none planned. A18 covers the two accepted gaps (WU9 and plan 0009), not the sample | **Open** |
+| A32 | **5.5 and 5.6 are Checked on one case each.** 5.5 is "Checked for l the z axis", and 5.6 "Checked for a plane and a plane composed with a motor" | V10:50 and :51; CONV:78 and :80 | CONV 5.5's rotor for other lines and 5.6's flector transform for other objects, as "Checked" | V3 (criterion 5 covers both items, plan 0047:44) | **Open** |
+| A33 | **DoD-5's zero core diff was recorded at the M4 gate and not re-derived at R** | V10:108 ("Recorded at the M4 gate (`26c8a82`) ... Not re-derived at R") | DoD-5's zero diff under `include/galoot/core/` as a statement about the released tree | K1 (awaits ruling) in part: it shows `git diff -- include/galoot/core/` empty for its own model (plan 0047:160), not for the models of the M4 merges | **Open** |
+| A34 | **The cause of DoD-23's baseline growth is inferred.** The baseline grew by +14.2 M and +15.3 M, "inferred to be the signature checks, O(n²)" | M7:57 | DoD-23's growth read under D5 for the baseline | none planned (as A17) | **Open.** The rulings of decisions 0141 and 0247 name the antiproduct, `compose`, `transform` and `bulk_dual`, not the baseline |
+| A35 | **One listed check checks nothing.** `cost.py comments` on `plan.hpp` passes because "`plan.hpp` now holds no count, so this run checks nothing", yet V10:22 lists it among the checks that exited 0 | RR:170; V10:22 | V10:22's list of checks run at `7276f82` as evidence | none planned | **Open**, minor |
+| A36 | **`cost.py selfcheck` leaves nine units uncompared on each compiler**: "9 whole units whose largest evaluation is the metric's check, not compared" | RR:172 and :173; V10:154 (the limits row rests on selfcheck's "0 differences") | The limits row's "0 differences" for those nine units | none planned | **Open** |
+| A37 | **DoD-20's abort tests use a wrapper, and their equivalence to `WILL_FAIL` is asserted.** The tests expect "Subprocess aborted" through the `expect_output` wrapper rather than CTest's `WILL_FAIL`; "the effect is the same" is stated, not shown | DoD:36 | DoD-20's third clause ("a `WILL_FAIL` test") | none planned. H1 tests error paths but plans no check of this | **Open**, a reading |
 
 ## C. Corrections to plan 0047 section 6
 
@@ -93,27 +103,27 @@ Each is the plan's text against a record I read. None changes a closing unit; ea
 
 | Closing unit | Phase | Authorized (decision 0253 item 1) | Rows |
 | --- | --- | --- | --- |
-| V3 | 0 | yes | G1, G2 (with V5), G3, G5 (with V5), G17; A2, A3, A4, A6 (in its list by done item 3 and criterion 5, plan 0047:32 and :44) |
+| V3 | 0 | yes | G1, G2 (with V5), G3, G5 (with V5), G17; A2, A3, A4, A6, A32 (in its list by done item 3 and criterion 5, plan 0047:32 and :44) |
 | V4 | 1, M1 | yes | G7 (narrowed to the structure layer) |
 | V2 | 1, M1 | yes | G15 |
-| H1 | 1, M1 | yes | G10; A25 in part |
+| H1 | 1, M1 | yes | G10, A28; A25 in part |
 | H2 | 1, M1 | yes | G14; A25 in part |
 | V7a | 1, M1 | yes | G11 |
 | V5 | 1, M2 | awaits ruling | G2, G4, G5, G9; A5 and A7 in part |
 | V6 | 1, M2 | awaits ruling (also item 6) | G8; A8 in effect |
 | H3 | 1, M2 | awaits ruling | G6; A9 |
 | H4 | 1, M2 | awaits ruling | A11 in part |
-| K1 | 1, M2 | awaits ruling (item 5 rules its scope) | G16 (6.1 and 6.3); A23 as extra evidence |
+| K1 | 1, M2 | awaits ruling (item 5 rules its scope) | G16 (6.1 and 6.3); A33 in part; A23 as extra evidence |
 | H6 | 2 | awaits ruling | A25 in part (the fix of exception 8) |
 | V7b | 3 | awaits ruling (item 10 rules its timing) | G12, G13; A18 in part |
 | C1 | 3 | awaits ruling | the register itself (its closure) |
 | Plan 0045 R7 | outside plan 0047 | not this plan's ruling | A19 |
-| None planned | | | A1, A12, A13, A14, A15, A16, A17, A20, A21, A22, A24, A26, A27; A10 needs none |
+| None planned | | | A1, A12, A13, A14, A15, A16, A17, A20, A21, A22, A24, A26, A27, A29, A30, A31, A34, A35, A36, A37; A10 needs none |
 
-Counts: 17 plan rows (G1 to G17) and 27 added rows (A1 to A27). By present state:
+Counts: 17 plan rows (G1 to G17) and 37 added rows (A1 to A37). By present state:
 
 - **Narrowed**: G1, G7, G14.
-- **Open** (no unit has run, no ruling): G3, G4, G5, G6, G8, G9, G10, G11, G12, G13, G15, G16, G17; and the added rows A1 to A10, A12 to A15, A20, A21, A26, A27.
+- **Open** (no unit has run, no ruling): G3, G4, G5, G6, G8, G9, G10, G11, G12, G13, G15, G16, G17; and the added rows A1 to A10, A12 to A15, A20, A21, A26 to A37.
 - **Ruled, and open as evidence**: G2, A11, A16, A17, A22; A24 in part (its PC:68 item is open and unsearched).
 - **Ruled**: A18 (partly routed to V7b) and A23.
 - **Routed outside plan 0047**: A19.
@@ -121,9 +131,9 @@ Counts: 17 plan rows (G1 to G17) and 27 added rows (A1 to A27). By present state
 
 By authorization of the closing unit:
 
-- **Every closing unit awaits a ruling**: G4, G6, G8, G9, G12, G13, G16; A5, A7, A8, A9, A11, A23; and A18's V7b part (its other part is ruled).
+- **Every closing unit awaits a ruling**: G4, G6, G8, G9, G12, G13, G16; A5, A7, A8, A9, A11, A23, A33; and A18's V7b part (its other part is ruled).
 - **One closing unit is authorized and the other awaits a ruling**: G2 and G5 (V3 authorized, V5 not); A25 (H1 and H2 authorized, H6 not).
-- **Every closing unit is authorized**: G1, G3, G7, G10, G11, G14, G15, G17; and A2, A3, A4, A6 through V3.
+- **Every closing unit is authorized**: G1, G3, G7, G10, G11, G14, G15, G17; A2, A3, A4, A6 and A32 through V3; A28 through H1.
 
 ## E. What this register does not do
 
