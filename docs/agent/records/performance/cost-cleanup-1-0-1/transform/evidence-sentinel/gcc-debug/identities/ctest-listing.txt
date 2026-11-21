@@ -1,0 +1,4 @@
+Test project <worktree>/build/gcc-debug
+  Test #300: core.identities
+
+Total Tests: 1

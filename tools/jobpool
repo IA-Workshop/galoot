@@ -16,10 +16,10 @@
 # missing from its total or drains any surplus a client wrote back. So it
 # never takes a live client's slots for lost ones. While any client holds
 # the pool, slots in use cannot be told from lost ones, so lost slots come
-# back only at the next moment with no client. A client that
-# already holds the FIFO keeps using it after the path is replaced, so a
-# restart under running builds serves them from the old pool and new builds
-# from the new one, up to twice the slots.
+# back only at the next moment with no client. A client that already holds
+# the FIFO keeps using it after the path is replaced, so a restart under
+# running builds serves them from the old pool and new builds from the new
+# one, up to twice the slots.
 #
 # Usage: tools/jobpool start [tokens] [--idle MINUTES]
 #                                       start the pool (default 23 slots, idle
@@ -266,7 +266,8 @@ case ${1:-} in
     seconds=$(sed -n 's/.*JOBPOOL_IDLE_SECONDS=\([0-9]*\).*/\1/p' <<<"$environment")
     seconds=${seconds:-$((${idle:-0} * 60))}
     if [[ ! -p $fifo ]]; then
-      echo "running, but $fifo is missing: the pool is stopping, or was moved aside for a moment while it counts its clients"
+      echo "running, but $fifo is missing: the pool is stopping, was moved aside for a moment while it counts its clients, or the FIFO was deleted by hand"
+      echo "a pool whose FIFO stays missing ends at its next check; when status says \"not running\", start a new one with: tools/jobpool ensure"
       exit 1
     fi
     total=$(total_slots)

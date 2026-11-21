@@ -1,0 +1,13 @@
+[doctest] listing all test case names
+===============================================================================
+the De Morgan laws hold on multivectors over many forms
+the antiproducts are associative over many forms
+the involutions follow their product rules over many forms
+the products are associative with the scalar 1 as identity over many forms
+vectors anticommute to twice their inner product over many forms
+the involutions follow their antiproduct rules over many forms
+the laws hold on every pair and triple of basis blades over many forms
+a generator times a blade is its contraction plus its wedge over many forms
+a product of blades follows the recursion on its lowest generator over many forms
+===============================================================================
+[doctest] unskipped test cases passing the current filters: 9

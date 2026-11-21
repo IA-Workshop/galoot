@@ -1,0 +1,35 @@
+Test project <worktree>/build/clang-measure
+  Test #295: core.identities_rounding
+Could not find executable <worktree>/build/clang-measure/test/core_transform_identities_test
+Looked in the following places:
+<worktree>/build/clang-measure/test/core_transform_identities_test
+<worktree>/build/clang-measure/test/core_transform_identities_test
+<worktree>/build/clang-measure/test/Release/core_transform_identities_test
+<worktree>/build/clang-measure/test/Release/core_transform_identities_test
+<worktree>/build/clang-measure/test/Debug/core_transform_identities_test
+<worktree>/build/clang-measure/test/Debug/core_transform_identities_test
+<worktree>/build/clang-measure/test/MinSizeRel/core_transform_identities_test
+<worktree>/build/clang-measure/test/MinSizeRel/core_transform_identities_test
+<worktree>/build/clang-measure/test/RelWithDebInfo/core_transform_identities_test
+<worktree>/build/clang-measure/test/RelWithDebInfo/core_transform_identities_test
+<worktree>/build/clang-measure/test/Deployment/core_transform_identities_test
+<worktree>/build/clang-measure/test/Deployment/core_transform_identities_test
+<worktree>/build/clang-measure/test/Development/core_transform_identities_test
+<worktree>/build/clang-measure/test/Development/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Release/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Release/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Debug/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Debug/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/MinSizeRel/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/MinSizeRel/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/RelWithDebInfo/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/RelWithDebInfo/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Deployment/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Deployment/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Development/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/clang-measure/test/Development/core_transform_identities_test
+  Test #456: core.transform_identities
+
+Total Tests: 2

@@ -1638,11 +1638,18 @@ target_link_libraries(core_unary_test PRIVATE galoot_golden)
 # assertions are on and about 1,092,000 without them, so at the default only
 # the configurations with the assertions would build these cases; at the
 # raised limit every configuration builds them, and none skips them. GCC
-# builds them at its own defaults.
+# builds them at its own defaults. Every source of core.identities_rounding
+# takes the limit, although two of them build neither product, so that a law
+# moved from one of its sources to another keeps it.
 set(full_conformal3_steps
   "$<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=1200000>")
 set_source_files_properties(core/identities_conformal3_test.cpp
   core/product_conformal3_test.cpp core/identities_rounding_test.cpp
+  core/identities_rounding_product_test.cpp
+  core/identities_rounding_antiproduct_test.cpp
+  core/identities_rounding_complement_product_test.cpp
+  core/identities_rounding_complement_antiproduct_test.cpp
+  core/identities_rounding_complement_wedge_test.cpp
   PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
 
 # core.identities: the De Morgan laws, the associativity of the products and
@@ -1660,7 +1667,8 @@ set_source_files_properties(core/identities_conformal3_test.cpp
 galoot_add_test(MODULE core COMPONENT identities)
 target_sources(core_identities_test PRIVATE
   core/identities_up_to_three_test.cpp
-  core/identities_four_test.cpp
+  core/identities_four_diagonal_test.cpp
+  core/identities_four_other_test.cpp
   core/identities_five_diagonal_test.cpp
   core/identities_conformal3_test.cpp
   core/identities_five_dense_test.cpp
@@ -1677,8 +1685,19 @@ set_property(TEST core.identities APPEND PROPERTY LABELS core.product
 # bound and the two sides within the sum of their bounds, with the bounds
 # taken from a run over the tracking scalar. It builds the geometric
 # antiproduct of two full<5> multivectors of conformal(3), so it takes the
-# raised step limit above.
+# raised step limit above. Its test case is in identities_rounding_test.cpp,
+# and each law of associativity and each De Morgan law is a function of its
+# own in one of the sources identities_rounding_<part>_test.cpp: Clang at -O2,
+# with the products inlined, takes several times the work over one function
+# that holds the laws of conformal(3) together as over the same laws one
+# function each, and the sources compile in parallel.
 galoot_add_test(MODULE core COMPONENT identities_rounding)
+target_sources(core_identities_rounding_test PRIVATE
+  core/identities_rounding_product_test.cpp
+  core/identities_rounding_antiproduct_test.cpp
+  core/identities_rounding_complement_product_test.cpp
+  core/identities_rounding_complement_antiproduct_test.cpp
+  core/identities_rounding_complement_wedge_test.cpp)
 target_link_libraries(core_identities_rounding_test PRIVATE
   galoot_test_support)
 set_property(TEST core.identities_rounding APPEND PROPERTY LABELS
@@ -2367,8 +2386,18 @@ set_tests_properties(core.transform_fast_math
 # core.transform_identities: the outermorphism and composition identities of
 # transform over many signatures. A program of its own, so that a change to
 # the tests of transform_test.cpp does not rebuild it; it also carries the
-# label core.transform.
+# label core.transform. Its test cases are in transform_identities_test.cpp,
+# and each group of forms is checked in a source of its own,
+# transform_identities_<group>_test.cpp: at -O0 GCC holds the code of every
+# form until the end of its source, so one source for all of them needed
+# about 6 GB, and the groups compile in parallel.
 galoot_add_test(MODULE core COMPONENT transform_identities)
+target_sources(core_transform_identities_test PRIVATE
+  core/transform_identities_up_to_three_test.cpp
+  core/transform_identities_four_named_test.cpp
+  core/transform_identities_four_gram_test.cpp
+  core/transform_identities_five_rigid_conformal_test.cpp
+  core/transform_identities_five_dense_large_test.cpp)
 target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS

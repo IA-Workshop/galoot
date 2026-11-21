@@ -1,0 +1,31 @@
+ninja: Entering directory `build/clang-measure'
+[0/2] Re-checking globbed directories...
+-- GLOB mismatch!
+The following files were added:
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/identities_four_diagonal_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/identities_four_other_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_five_dense_large_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_five_rigid_conformal_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_four_gram_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_four_named_test.cpp
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_up_to_three_test.cpp
+The following files were removed:
+  -/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/identities_four_test.cpp
+-- GLOB mismatch!
+The following files were added:
+  +/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/test/core/transform_identities_checks.hpp
+[1/2] Re-running CMake...
+-- Configuring done (0.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform/build/clang-measure
+[0/4] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_test.cpp.o
+[2/11] Building CXX object test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o
+[3/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_four_gram_test.cpp.o
+[4/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_up_to_three_test.cpp.o
+[5/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_four_named_test.cpp.o
+[6/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_five_rigid_conformal_test.cpp.o
+[7/11] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_five_dense_large_test.cpp.o
+[8/11] Linking CXX executable test/core_transform_identities_test
+timed: build core_transform_identities_test took 23.196 s (exit 0)

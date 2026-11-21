@@ -1,0 +1,33 @@
+2026-11-21T17:27:29Z
+ 12:27:29 up 17:01,  1 user,  load average: 28.31, 18.84, 12.37
+running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+clients: 1470655 (make) 1484099 (ninja) 1497226 (make)
+               total        used        free      shared  buff/cache   available
+Mem:          128485       20679       20937        2347       89399      107805
+Swap:         128484           2      128482
+top - 12:27:29 up 17:01,  1 user,  load average: 28.31, 18.84, 12.37
+Tasks: 718 total, 28 running, 690 sleep, 0 d-sleep, 0 stopped, 0 zombie
+%Cpu(s): 91.0 us,  3.7 sy,  0.0 ni,  5.1 id,  0.0 wa,  0.3 hi,  0.0 si,  0.0 st 
+MiB Mem : 128485.1 total,  20958.8 free,  20657.6 used,  89400.2 buff/cache     
+MiB Swap: 128485.0 total, 128482.0 free,      2.9 used. 107827.5 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+1023378 brianm    16  -4 1799804 499972 142824 R 238.6   0.4 280:13.00 python
+1498398 brianm    16  -4  528992 350628  88924 R 100.0   0.3   0:04.94 clang++
+1498409 brianm    16  -4  504640 330880  89048 R 100.0   0.3   0:04.91 clang++
+1499495 brianm    16  -4  373944 199948  88308 R 100.0   0.2   0:01.51 clang++
+1499552 brianm    16  -4  371268 196968  88416 R 100.0   0.1   0:01.03 clang++
+ 969201 brianm    16  -4  958372 818680  17944 S 100.2   0.6  48:43.46 cpptools
+1494206 brianm    16  -4  650864 474636  87028 R 100.0   0.4   0:20.92 clang++
+1494274 brianm    16  -4  546620 371068  87036 R 100.0   0.3   0:20.58 clang++
+1496601 brianm    16  -4  542852 367348  87712 R 100.0   0.3   0:11.91 clang++
+1497787 brianm    16  -4  390752 216208  87028 R 100.0   0.2   0:07.05 clang++
+1498235 brianm    16  -4  426864 252044  86684 R 100.0   0.2   0:06.28 clang++
+1498258 brianm    16  -4  397776 223160  87044 R 100.0   0.2   0:06.14 clang++
+1498360 brianm    16  -4  508992 333976  88856 R 100.0   0.3   0:05.20 clang++
+1498438 brianm    16  -4  402964 228604  86800 R 100.0   0.2   0:04.69 clang++
+1498439 brianm    16  -4  407788 233712  87072 R 100.0   0.2   0:04.55 clang++
+1498974 brianm    16  -4  364096 188988  86724 R 100.0   0.1   0:02.97 clang++
+1499071 brianm    16  -4  376592 201996  87092 R 100.0   0.2   0:02.43 clang++
+1499442 brianm    16  -4  366196 191488  87168 R 100.0   0.1   0:01.84 clang++

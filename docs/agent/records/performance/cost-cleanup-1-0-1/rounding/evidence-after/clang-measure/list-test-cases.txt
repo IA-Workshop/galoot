@@ -1,0 +1,5 @@
+[doctest] listing all test case names
+===============================================================================
+the identities hold over double within their forward error bounds
+===============================================================================
+[doctest] unskipped test cases passing the current filters: 1

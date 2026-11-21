@@ -1,0 +1,7 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+reorder_sign_class	gcc-debug	a7e64afe50ea	killed	killed	include/galoot/core/plan.hpp:907	test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o: assert: include/galoot/core/plan.hpp:907:28: error: static assertion failed: unary map: a complement's sign differs from its closed form	core.identities_rounding	-	-	-
+right_complement_sign_flipped	gcc-debug	a7e64afe50ea	killed	killed	include/galoot/core/plan.hpp:907	test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o: assert: include/galoot/core/plan.hpp:907:28: error: static assertion failed: unary map: a complement's sign differs from its closed form	core.identities_rounding	-	-	-
+last_term_dropped	gcc-debug	a7e64afe50ea	killed	killed	core.identities_rounding	-	-	the identities hold over double within their forward error bounds	-	-
+one_coefficient_doubled	gcc-debug	a7e64afe50ea	survived	killed	-	-	-	-	-	survived
+order_swapped	gcc-debug	a7e64afe50ea	survived	killed	-	-	-	-	-	survived
+squares_doubled	gcc-debug	a7e64afe50ea	killed	killed	core.identities_rounding	-	-	the identities hold over double within their forward error bounds	-	-
