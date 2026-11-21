@@ -40,6 +40,19 @@
 #include <cstdio>
 #include <cstdlib>
 
+// The mode is checked by pasting it onto a name defined only for 0 and 1,
+// because a numeric #if reads a name it does not know, such as ON, as 0,
+// takes 01 and 0x1 for 1, and reports an empty value with an error of its
+// own. These helpers are removed after the check, so that none is left among
+// a program's macros.
+// NOLINTBEGIN(*-macro-usage,*-macro-to-enum): only the preprocessor can test
+// the spelling of a macro's value, and #if cannot see an enumerator.
+#define GALOOT_DETAIL_PASTE_(a, b) a##b
+#define GALOOT_DETAIL_PASTE(a, b) GALOOT_DETAIL_PASTE_(a, b)
+#define GALOOT_DETAIL_FORCE_INLINE_IS_0 1
+#define GALOOT_DETAIL_FORCE_INLINE_IS_1 1
+// NOLINTEND(*-macro-usage,*-macro-to-enum)
+
 /// Makes a function inline at every call: [[gnu::always_inline]] on GCC
 /// and Clang when GALOOT_FORCE_INLINE is 1, and nothing when it is 0 or on
 /// another compiler.
@@ -71,22 +84,11 @@
 // A macro, because the attribute is written only for the compilers that
 // know it, and only in the forced-inline mode.
 //
-// The mode is first checked by pasting it onto a name defined only for 0 and
-// 1, because a numeric #if reads a name it does not know, such as ON, as 0,
-// takes 01 and 0x1 for 1, and reports an empty value with an error of its
-// own. The check and the choice of attribute are one #if chain, so that a
-// mode the check rejects is never compared with 1: once a group of the chain
-// is taken, the conditions after it are not evaluated. After the error the
-// attribute is still defined, as nothing, so that the headers that use it
-// add no errors of their own. The helper names are removed after the chain,
-// so that none is left among a program's macros.
-// NOLINTBEGIN(*-macro-usage,*-macro-to-enum): only the preprocessor can test
-// the spelling of a macro's value, and #if cannot see an enumerator.
-#define GALOOT_DETAIL_PASTE_(a, b) a##b
-#define GALOOT_DETAIL_PASTE(a, b) GALOOT_DETAIL_PASTE_(a, b)
-#define GALOOT_DETAIL_FORCE_INLINE_IS_0 1
-#define GALOOT_DETAIL_FORCE_INLINE_IS_1 1
-// NOLINTEND(*-macro-usage,*-macro-to-enum)
+// The check of the mode and the choice of attribute are one #if chain, so
+// that a mode the check rejects is never compared with 1: once a group of the
+// chain is taken, the conditions after it are not evaluated. After the error
+// the attribute is still defined, as nothing, so that the headers that use it
+// add no errors of their own.
 #if !GALOOT_DETAIL_PASTE(GALOOT_DETAIL_FORCE_INLINE_IS_, GALOOT_FORCE_INLINE)
 #error "GALOOT_FORCE_INLINE must be 0 or 1"
 #define GALOOT_ALWAYS_INLINE
