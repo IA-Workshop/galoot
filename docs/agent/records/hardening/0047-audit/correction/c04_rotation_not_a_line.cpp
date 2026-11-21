@@ -4,9 +4,10 @@
 // does with such an l, and with a join computed in floating point, which
 // meets the precondition only up to rounding.
 //
-// A motor Q is unitized when its weight norm is 1 and Qv . Qm = 0 (the sum
-// over its e41, e42, e43, e1234 coefficients times its e23, e31, e12, 1
-// coefficients). The defect printed is that sum. A rigid motion keeps the
+// A motor Q is unitized when its weight norm |Qv| is 1, and it is a versor
+// only when also Qv . Qm = 0 (the sum over its e41, e42, e43, e1234
+// coefficients times its e23, e31, e12, 1 coefficients). The defect printed
+// is that sum. A rigid motion keeps the
 // distance between two points, so the distance between the images of two
 // points is printed beside the distance between the points. It also takes
 // the line through two points to the line through their images, so the

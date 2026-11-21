@@ -23,9 +23,9 @@ Each row gives: the site (file and lines); the class of fault; the smallest inpu
 | N03 | `transform.hpp:486-513`, `:720-728` | rounding edge; check weaker than stated for `std::float16_t` | confirmed | low to medium |
 | N04 | `presets/rga3/motions.hpp:81-86`, the claim at `:36-37` | rounding edge; silent loss of unitization | confirmed (documented in part) | low |
 | N05 | `presets/rga3/motions.hpp:90-95` | missing diagnostic: a NaN or infinite angle | confirmed | low |
-| N06 | `blade_product.hpp:122-192`, `plan.hpp:147-153`, the claims at `metric.hpp:51-55` and `docs/guide/limits.md:25-26` | contract not kept: above 21 generators Clang rejects every antiproduct and dual | confirmed | medium |
+| N06 | `blade_product.hpp:122-192`, `plan.hpp:147-153`, the claims at `metric.hpp:51-55` and `docs/guide/limits.md:25-26` | contract not kept: above 21 generators Clang rejects every dual, and every antiproduct of a pair whose complements span 22 or more generators | confirmed | medium |
 | N07 | `blade_product.hpp:75`, `:94`, reached through `plan.hpp:553-556` | unhelpful diagnostic: an overflowing coefficient cascades | confirmed | low |
-| N08 | `metric.hpp:300-314` | unhelpful diagnostic: a hand-written metric beyond `max_form_entry` | confirmed | low |
+| N08 | `metric.hpp:300-314` | unhelpful diagnostic: a hand-written metric beyond `max_form_entry`, which through `blades` gets a message naming a false cause | confirmed | low |
 | N09 | `blade_set.hpp:426-469` | unhelpful diagnostic: a tab between names | confirmed | nit |
 | N10 | `mv.hpp:390-401` (release exception 8) | unhelpful diagnostic: one-blade value from an explicit-only source | confirmed (known) | low |
 | N11 | `presets/rga3/motions.hpp:158-164` | missing diagnostic: `translation` over a scalar without division | confirmed | low |
@@ -136,9 +136,9 @@ Sites that run at run time, where nothing but the code itself guards them:
 - **Would a fix change relied-on behavior.** A `GALOOT_ASSERT(std::isfinite(theta), ...)` changes only checking builds given a non-finite angle, from a NaN motor to an abort.
 - **Proposed test.** A run-time abort test beside `rotation_assert_fail.cpp`, with the message.
 
-### N06 Above 21 generators, Clang rejects every antiproduct and every dual, even of sparse layouts
+### N06 Above 21 generators, Clang rejects every dual, and every antiproduct of a pair whose complements span 22 or more generators, even of sparse layouts
 
-- **Site.** `blade_product.hpp:122-172` (`term_list<Capacity>`, a `std::array` of Capacity terms) sized by `product_capacity` (`:186-192`), 2^(|A ∪ B| - 1), and `plan.hpp:147-153` (`pair_capacity`, which for an antiproduct takes the complements). An antiproduct, and the bulk dual, which is the product of x~ with the antiscalar, have a factor of grade near n, so the capacity is about 2^(n-1) whatever the metric and the layouts. The claims it contradicts: `metric.hpp:51-55` ("a factory given a larger MaxN, up to mask_bits, builds an algebra that every later part of the library accepts but that is not tested") and `docs/guide/limits.md:25-26`.
+- **Site.** `blade_product.hpp:122-172` (`term_list<Capacity>`, a `std::array` of Capacity terms) sized by `product_capacity` (`:186-192`), 2^(|A ∪ B| - 1), and `plan.hpp:147-153` (`pair_capacity`, which for an antiproduct takes the complements). The bulk dual, which is the product of x~ with the antiscalar, has a pair that spans all n generators whatever the layout, and so has the antiproduct of any layout with two blades whose complements together span n, such as {e1, en}; the capacity is then 2^(n-1) whatever the metric. The claims it contradicts: `metric.hpp:51-55` ("a factory given a larger MaxN, up to mask_bits, builds an algebra that every later part of the library accepts but that is not tested") and `docs/guide/limits.md:25-26`.
 - **Class.** Contract not kept; a compile-time limit the limits page does not list.
 - **Input.** `R<n, 0, 0, 32>()` with the layout {e1, en} written as masks, one operation per build, each with its expected value derived by hand and checked by `static_assert` (`p09_wide_algebras.cpp`). n = 17, 24, 32 on both compilers:
 
@@ -176,7 +176,8 @@ Sites that run at run time, where nothing but the code itself guards them:
 - **Input.** `struct big { static constexpr core::metric<2> value{{{{40000, 0}, {0, 1}}}}; }` used as `mv<big, full<2>, double>` (`p07.case5.*.out`).
 - **What a user sees.** "constraints not satisfied for class template 'mv'", with the note "because 'detail::is_valid_form_v<big>' evaluated to false" on Clang and "template constraint failure" on GCC, then a second error for the unusable alias on Clang, and two more on GCC. Nothing says whether the form is unsymmetric or out of range; `from_gram` says which.
 - **Class and severity.** Unhelpful diagnostic (C9), low. The contract (false, not an error) is kept.
-- **Would a fix change relied-on behavior.** A message would have to come from a use site, as `blades` does for tags; `metric_like` itself must stay a concept that answers false.
+- **Through `blades`.** With the layout written `blades<big, "e1 e2">`, the first error is the library's "blades: the tag is not an algebra; an algebra tag holds its metric in a static constexpr member named value", which is false for this tag, and the concept failures follow (3 errors on Clang, 4 on GCC; the merged register's `correction-2/d02`).
+- **Would a fix change relied-on behavior.** A message would have to come from a use site, as `blades` does for tags, though `blades`' own message is wrong for this tag today; `metric_like` itself must stay a concept that answers false.
 - **Proposed test.** For H1, a compile-fail test pinning today's wording, if H1 judges the case worth one.
 
 ### N09 A tab between blade names is reported as a bad index
@@ -306,3 +307,10 @@ Made by Claude (agent, Fable 5.2) while correcting the merged register after its
 - N08: GCC gives three errors and Clang two; this file spoke of "a second error" for both.
 - N11: GCC gives four errors, the three this file named and one more; Clang gives one.
 - D01 and D03's "one error" stand, and so do the line counts of N10 and N11.
+
+## Corrections of 2026-11-21, after the second sample check
+
+Made by Claude (agent, Opus 5.5) while correcting the merged register after its second sample check; the merged register's section "Corrections after the second sample check" gives the evidence. Nothing else in this file changed.
+
+- N06: its title and its line in the table said Clang rejects "every antiproduct" above 21 generators. An antiproduct is rejected only when the complements of some pair of its blades span 22 or more generators: e1 ⟇ e1 (complements spanning 21) and 𝟙 ⟇ 𝟙 build on Clang at 22. "Every dual" stands: each dual multiplies by the antiscalar. The case table stands, since its layout {e1, en} holds a pair whose complements span n. The sentence of the Site paragraph that gave every antiproduct a capacity of about 2^(n-1) "whatever the layouts" now names the pairs that have it.
+- N08: its line in the table, and a new paragraph "Through `blades`": the usual way to name the layout gives a library message with a false cause before the concept failures. The sentence on a fix now says that `blades`' message is wrong for such a tag.
