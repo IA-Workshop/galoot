@@ -1,7 +1,7 @@
 // What transform gives for a classical rotor and a classical mirror, in
 // R(3, 0, 0), R(2, 0, 0), and rigid(3), over int so that every value is
 // exact and every claim is a static_assert. The expected values are derived
-// by hand in research note 0028; this file only confirms that the library
+// by hand in research note 0029; this file only confirms that the library
 // computes them.
 //
 //   g++ -std=c++23 -I include -fsyntax-only transform_sandwich_probe.cpp

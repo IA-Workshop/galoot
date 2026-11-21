@@ -384,9 +384,9 @@ Not started, except as recorded below.
 
 ### U1, the design (2026-11-21)
 
-Written by Claude (agent, Fable 5.2, math-expert and hci-expert roles) on `records/docs-design`. Done: the five records under `records/docs/` (`learner-contracts.md`, `concept-inventory.md`, `misconceptions.md`, `authoring-rules.md`, `notation-key.md`), research note 0028, and the checks in `records/docs/checks/`. In progress: nothing. Not done: the independent math review that this unit's row in section 6 requires; the unit is not closed until it has run.
+Written by Claude (agent, Fable 5.2, math-expert and hci-expert roles) on `records/docs-design`. Done: the five records under `records/docs/` (`learner-contracts.md`, `concept-inventory.md`, `misconceptions.md`, `authoring-rules.md`, `notation-key.md`), research note 0029, and the checks in `records/docs/checks/`. In progress: nothing. Not done: the independent math review that this unit's row in section 6 requires; the unit is not closed until it has run.
 
-What later units must know, each with its place in research note 0028:
+What later units must know, each with its place in research note 0029:
 
 - Section 4.2 point 2 of this plan is wrong. `transform(v, r)` is not `r * v * ~r`; the probe agreed because it tried a quarter turn on a vector of the rotor's plane. The sandwich is `transform(v, !r)` in a Euclidean algebra (note sections 2 and 2.9).
 - The ten chapters are cut differently from section 4.2's table: chapters 1 and 2 are one, and a new chapter 6 teaches the antiproduct in R(3, 0, 0) before the rigid algebra (note section 3.3). U5 writes chapters 1 to 5 and U6 chapters 6 to 10 of that cut.

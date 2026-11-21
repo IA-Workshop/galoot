@@ -17,7 +17,7 @@ The owner ruled these in decision 0253 (items 24 to 35); an author designs withi
 | The reference is written by hand, with coverage checks | Template T4; every fact that can be a `static_assert` is one |
 | Every example runs in every configuration until the cost is measured | Rule E8 keeps each example cheap |
 | In-repository checks only; no YAML front matter | The contract is the visible "Before you start" section (`learner-contracts.md`, section 5) |
-| The tutorial teaches around what 1.0.0 lacks | Research note 0028 section 4 lists each lack and what the page does instead; no page promises an operation the release does not have |
+| The tutorial teaches around what 1.0.0 lacks | Research note 0029 section 4 lists each lack and what the page does instead; no page promises an operation the release does not have |
 | `///` comments shrink to one sentence and a pointer once the reference exists | A reference entry is written to be the only full statement of its contract |
 
 The governance adds: user documentation is plain American English and changes in the same unit as the code it describes; every code example is compiled and run as a test; no user page names a governance document, a numbered rule, a record, or an agent.
@@ -185,5 +185,5 @@ Two things the checks cannot hold that matter most here: that a value was derive
 ## 5 Findings for the units that follow
 
 1. **A link to `conventions.md` fails the citation check.** `tools/citation_patterns.txt` rejects the file name in any case, so that no page cites the specification, and plan 0049 section 4.1 names the new page `docs/guide/conventions.md`. A page that links it, and a header comment that points to it, fail `tests.citations_guide` and `tests.citations`. (Checked: a page with the link `(conventions.md)` is reported by `python3 -I tools/test_references.py citations`.) Options: name the page `docs/guide/conventions/README.md`, or drop the lower-case file name from that pattern, since the capitals form and the phrase "conventions specification" are caught by the patterns beside it. The first needs no tool change; the second keeps the name a reader expects. It is the coordinator's to assign, before U3 creates the page.
-2. **The tutorial's examples are whole programs** (rule E2 and research note 0028, open item 7).
+2. **The tutorial's examples are whole programs** (rule E2 and research note 0029, open item 7).
 3. **The pedagogical skill asks for front matter and its two checkers**; decision 0253 item 33 rules them out until the owner says where they are. Section 2's fixed labels are chosen so that front matter can be generated from a page if that changes.

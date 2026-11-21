@@ -1,6 +1,6 @@
 # The concept inventory of the user documentation, and its order
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed. Research note [0028](../../research-notes/0028-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed. Research note [0029](../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
 
 Every term, symbol, notation, named result, and technique that the documentation introduces is a row here, with what it rests on. The tutorial is written in the order of part 2: a row may use only the prerequisites of part 1 and rows above it. The glossary (unit U3) is built from this record, one row per term, and `tests.docs_terms` then holds the pages to the same order.
 

@@ -2,7 +2,7 @@
 
 Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed.
 
-Decision 0253 item 27 rules the notation: Unicode symbols as the conventions specification and today's guide write them, words for the accented operations, and derivations in `text` blocks. This record fixes, within that ruling, every symbol a page may use, how each is read aloud, its C++ spelling, where the reader first meets it, and the letters used for each kind of object. Section 2 is the key as the map shows it. Section 5 reports a font probe that bears on the ruling; it is open item 4 of research note 0028 and changes nothing here.
+Decision 0253 item 27 rules the notation: Unicode symbols as the conventions specification and today's guide write them, words for the accented operations, and derivations in `text` blocks. This record fixes, within that ruling, every symbol a page may use, how each is read aloud, its C++ spelling, where the reader first meets it, and the letters used for each kind of object. Section 2 is the key as the map shows it. Section 5 reports a font probe that bears on the ruling; it is open item 4 of research note 0029 and changes nothing here.
 
 ## 1 Rules
 
@@ -97,7 +97,7 @@ So the sandwich of chapter 4 reads r v reverse(r) in a formula and `r * v * ~r` 
 | • U+2022 | 149 | 17 |
 | ★ U+2605, ☆ U+2606 | 90 | 14 |
 
-It is one machine, and a viewer that falls back to another font still shows the two glyphs where Noto Sans Math is installed. What it shows is that the two symbols for the products the library is built on depend on one font, and that no monospaced font here has them, while the plan sets derivations in `text` blocks. The key above is written as ruled. Research note 0028, open item 4, gives the options; under its option (b), rule 6 would add "inside a `text` or code block these two are written `*` and `%`", and nothing else in this record would change.
+It is one machine, and a viewer that falls back to another font still shows the two glyphs where Noto Sans Math is installed. What it shows is that the two symbols for the products the library is built on depend on one font, and that no monospaced font here has them, while the plan sets derivations in `text` blocks. The key above is written as ruled. Research note 0029, open item 4, gives the options; under its option (b), rule 6 would add "inside a `text` or code block these two are written `*` and `%`", and nothing else in this record would change.
 
 ## 6 A check worth adding
 

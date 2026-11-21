@@ -8,7 +8,7 @@ Decision 0253 item 33 rules that pages carry no YAML front matter: the contract 
 
 ## 1 The readers
 
-Plan 0049 section 2 names two readers. Writing the first programs of each chapter showed a third, whom the plan folds into the researcher and whose needs differ: the reader who arrives with another convention. This reader is the one the `transform` trap of research note 0028 catches.
+Plan 0049 section 2 names two readers. Writing the first programs of each chapter showed a third, whom the plan folds into the researcher and whose needs differ: the reader who arrives with another convention. This reader is the one the `transform` trap of research note 0029 catches.
 
 | Reader | Knows | Does not know | Wants | Starts at |
 | --- | --- | --- | --- | --- |

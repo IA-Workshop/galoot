@@ -1,6 +1,6 @@
 # Checks of the documentation design (plan 0049, unit U1)
 
-Written by: Claude (agent, Fable 5.2), 2026-11-21. These files back research note [0028](../../../research-notes/0028-docs-design-transform-and-the-classical-sandwich.md) and the records one directory up. All commands run from the repository root.
+Written by: Claude (agent, Fable 5.2), 2026-11-21. These files back research note [0029](../../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) and the records one directory up. All commands run from the repository root.
 
 | File | What it checks | How it ran | Result |
 | --- | --- | --- | --- |
