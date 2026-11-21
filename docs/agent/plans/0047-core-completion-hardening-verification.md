@@ -318,4 +318,4 @@ The register suggests these changes of scope. None is made here. Each needs a ru
 
 ## 14. Outcome
 
-Not started.
+- 2026-11-21, unit V1 (phase 0): done on `records/gap-register`, not yet merged into `main`. The evidence-gap register `records/verification/0047-gap-register.md` holds 17 plan rows (G1 to G17) and 37 added rows (A1 to A37), each with its source lines, closing unit, authorization under decision 0253 item 1, and present state. It was written at `186f019`, then checked by an independent sample check (`records/reviews/2026-11-21-0047-v1-sample-check.md`, on `review/gap-register`), whose nine findings were all confirmed and corrected in `d8480ef`, `376f764` and `1146f72`. Its section C corrections are carried by the addendum above. In progress: V3 and H0, on their own branches. Next step: the coordinator merges `records/gap-register` (and the review record) into `main`, and puts the addendum's six items and the units past M1 to the owner. Open: those rulings.
