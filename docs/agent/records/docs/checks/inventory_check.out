@@ -1,0 +1,16 @@
+rows: 19 prerequisites, 100 tutorial concepts in 9 chapters, 20 outside the tutorial
+  chapter 1: 16
+  chapter 2: 13
+  chapter 3: 9
+  chapter 4: 10
+  chapter 5: 9
+  chapter 6: 9
+  chapter 7: 15
+  chapter 8: 12
+  chapter 9: 7
+public names the tutorial brings in: 28
+  Flector, Line, Motor, Plane, Point, R, algebra, antireverse, antiwedge, blades, bulk, compose, dot, geometric_antiproduct, geometric_product, get, left_complement, mv, part, reverse, right_complement, rigid, rotation, transform, translation, truncate, wedge, weight
+headwords checked for use before definition: 27
+  taken as school meanings, from a prerequisite row: line, plane
+  term rows with no headword, not checked: K106, K504, K702, K810, X01, X03, X04, X05, X10, X11, X12, X16, X17, X19, X20
+order holds
