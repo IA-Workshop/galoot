@@ -1825,6 +1825,11 @@ target_link_libraries(core_linear_test PRIVATE galoot_test_support)
 add_library(core_linear_user_names OBJECT core/linear_user_names.cpp)
 target_link_libraries(core_linear_user_names PRIVATE galoot::presets::rga3)
 
+# A second user's unit, naming a pseudoscalar I and rn, for the names that
+# the first cannot declare beside its own l.
+add_library(core_user_names OBJECT core/user_names.cpp)
+target_link_libraries(core_user_names PRIVATE galoot::presets::rga3)
+
 # core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
 # from two algebras or with two scalar types fails to compile with one
 # error, the message of the operation as written.
