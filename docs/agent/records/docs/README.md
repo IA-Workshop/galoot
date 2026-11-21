@@ -92,11 +92,11 @@ The owner's ruling, decision 0253 item 14, with the S11 wording the owner ratifi
 The checker accepts only these values. Two values are gone: "the detail ruling", whose 36 rows now wait for nothing, and "D3 and the detail ruling", whose three rows now wait for D3 and the S11 amendment (`assert.hpp:77-83`, on a macro in no `detail` namespace, and `mv.hpp:880-882` and `:895-899`, a requirement and a guarantee that every product inherits from `detail::apply`).
 
 Contract text, for these conditions, is text that states what a public declaration requires, guarantees, or preserves (the sense of decision 0258 section 2), wherever it sits, when the headers would hold no other statement of it once the row is acted on. Decision 0258 section 3 says that no unit removes a contract from a header until the no-drift checks exist, and does not limit that to the `///` comment on a declaration. So such text waits for the amendment in three places besides a declaration's own comment:
-- **A prologue or `detail` comment that is the only statement of a contract in the headers**, such as the rule for classes derived from `mv` (`linear.hpp:51-53`, `unary.hpp:25-27`, `product.hpp:35-43`), or what every product requires of and guarantees for its scalar (`mv.hpp:880-882`, `:895-899`).
+- **A prologue or `detail` comment that is the only statement of a contract in the headers**, such as the rule for classes derived from `mv` (`linear.hpp:51-53`, `unary.hpp:25-27`, `product.hpp:35-43`), what every product requires of and guarantees for its scalar (`mv.hpp:880-882`, `:895-899`), what `transform` preserves in any algebra (`transform.hpp:41-46`), or the limit on what a result layout holds over a scalar in which an integer can vanish (`plan.hpp:47-56`).
 - **Text that a declaration's comment sends the reader to.** `change_basis` (`basis_change.hpp:1113-1115`), `bulk` (`dual.hpp:368`), and `transform` (`transform.hpp:752-754`) each say that another comment of the header lists part of what they do. That text waits for at least the condition of the comment that points to it, so it never goes while the pointer may still stand. `dual.hpp:44-59` and `basis_change.hpp:51-82` wait for D3 and the S11 amendment, as `bulk`'s and `change_basis`'s comments do. `transform.hpp:590-610` waits for D3 and the S11 amendment, and the sentence that points to it is part of row `751-763`, which is deleted under the amendment alone, so the pointer may go first but never after.
-- **The lookup caveats of a prologue**, since the same caveat on `reverse`'s declaration (`unary.hpp:63-69`) is public contract.
+- **The lookup caveats of a prologue**, since the same caveat on `reverse`'s declaration (`unary.hpp:63-69`) is public contract, and so is the statement of how a call is found (`part`'s, `mv.hpp:1097-1101`): `rotation`'s, that argument-dependent lookup finds it through its `Line` (`presets/rga3/motions.hpp:17-20`), is said nowhere else in the headers.
 
-A prologue sentence that a declaration's own comment also states is a repeat, not the only statement: the sums' operand rule (`linear.hpp:36-43`) is said again on each rejecting overload, so the contract stays in the header on the declarations until the amendment, and the prologue's copy goes with its own condition. The headers are read together: `presets/rga3/objects.hpp:30-33` repeats `transform.hpp:59-65`, which waits for the amendment, so it may go first. Two kinds of text are not contracts in this sense: worked cases of a definition that the declaration's comment keeps (the bulk's in other metrics, `dual.hpp:44-59`, is held back only because `bulk`'s comment points to it) and explanations of why a stated guarantee holds (`plan.hpp:47-56`, the proof that a product's result layout holds no blade it cannot reach).
+A prologue sentence that a declaration's own comment also states is a repeat, not the only statement: the sums' operand rule (`linear.hpp:36-43`) is said again on each rejecting overload, so the contract stays in the header on the declarations until the amendment, and the prologue's copy goes with its own condition. The headers are read together: `presets/rga3/objects.hpp:30-33` repeats `transform.hpp:59-65`, which waits for the amendment, so it may go first. Two kinds of text are not contracts in this sense: worked cases of a definition that the declaration's comment keeps (the bulk's in other metrics, `dual.hpp:44-59`, is held back only because `bulk`'s comment points to it) and explanations of why a stated guarantee holds (the derivations that move under D3). An explanation that ends by limiting the guarantee is contract text for that limit: `plan.hpp:47-56` proves that a result layout holds no blade a product cannot make nonzero, and then says that where an integer such as 2 can vanish a result blade may always be zero, which no layout's comment says.
 
 ### Target pages
 
@@ -219,12 +219,12 @@ By what the rows wait for:
 | Waits for | Lines | Of which delete |
 | --- | --- | --- |
 | none (kept) | 1,595 | |
-| none (delete or summary now) | 499 | 476 |
+| none (delete or summary now) | 489 | 466 |
 | B9 | 45 | 45 |
 | D1 | 26 | |
-| D3 | 97 | 17 |
-| the S11 amendment | 113 | 113 |
-| D3 and the S11 amendment | 833 | 15 |
+| D3 | 87 | 17 |
+| the S11 amendment | 123 | 123 |
+| D3 and the S11 amendment | 843 | 15 |
 
 ## Against plan 0048 and the restated targets
 
@@ -232,11 +232,11 @@ Plan 0048 section 5.4 estimated its four comment candidates from position alone.
 
 | Candidate | Now | Plan, S11 as ratified (a) | Plan, one sentence and a pointer (b) | Table, S11 as ratified, after D3 | Table, after the amendment |
 | --- | --- | --- | --- | --- | --- |
-| D1 prologues | 702 | 90 | 90 | 252 | 165 |
+| D1 prologues | 702 | 90 | 90 | 272 | 165 |
 | D2 `///` on `detail` | 443 | 110 | 110 | 352 | 344 |
 | D3 `//` elsewhere | 725 | 330 | 330 | 655 | 634 |
 | D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,292 | 552 |
-| **Total** | **3,208** | **about 1,620** | **about 870** | **2,551** | **1,695** |
+| **Total** | **3,208** | **about 1,620** | **about 870** | **2,571** | **1,695** |
 
 The ratified S11 wording also asks each declaration that has a reference entry to name its guide page and heading, and the owner ruled one pointer on each such declaration, with members and rejecting overloads covered by the entry of the declaration they belong to (decision 0258 item 4.3). There are 157 public `///` blocks at namespace scope, 37 of them on rejecting overloads, and 36 on members. With each pointer on a line of its own:
 - **A pointer per reference entry, as ruled:** about 120 lines, one for each of the 120 blocks at namespace scope that are not on a rejecting overload. One of them, on `GALOOT_ALWAYS_INLINE`, documents a macro that is not part of the interface, so the figure is an upper bound by one.
@@ -249,16 +249,16 @@ Stage by stage, as each condition is met (kept lines, no pointers):
 | Stage | Comment lines | Change |
 | --- | --- | --- |
 | Now | 3,208 | |
-| Deletions that wait for nothing, with those of `detail` comments, and B9 | 2,672 | -17% |
-| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,551 | -20% |
+| Deletions that wait for nothing, with those of `detail` comments, and B9 | 2,682 | -16% |
+| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,571 | -20% |
 | The S11 amendment applied, once its no-drift checks run | 1,695 | -47% |
 | The same with one pointer per reference entry | about 1,815 | -43% |
 
 The first part's [restated targets](../simplification/restated-targets.md) gave the comment column as follows:
-- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says 2,672: the deletions that wait for nothing, including those of `detail` comments, and B9.
+- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says 2,682: the deletions that wait for nothing, including those of `detail` comments, and B9.
 - **After D3 and the amendment:** about 870. The table says about 1,815, pointers included.
 
-So the restated totals' comment column should read 2,672 and about 1,815. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 6,992 and about 6,135, not 5,940 and 5,190. The owner accepted the targets as D0 measured them, about 6,120 lines and about 1,800 comment lines (decision 0258 item 4.6); the 14 lines of `rotation`'s precondition, kept in full by item 4.4 of the same decision, are most of the difference, which is within the precision of those figures.
+So the restated totals' comment column should read 2,682 and about 1,815. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 7,002 and about 6,135, not 5,940 and 5,190. The owner accepted the targets as D0 measured them, about 6,120 lines and about 1,800 comment lines (decision 0258 item 4.6); the 14 lines of `rotation`'s precondition, kept in full by item 4.4 of the same decision, are most of the difference, which is within the precision of those figures.
 
 ### Why the estimate and the reading differ
 
@@ -267,7 +267,7 @@ So the restated totals' comment column should read 2,672 and about 1,815. With t
 | D3, `//` | about 300 lines (304) | The plan expected to drop narration and repeats and to move derivations. Read block by block, the `//` lines inside functions are mostly reasons (a GCC 16 miscompilation, why a first term is assigned, why a check is a variable template), equations applied where they are applied, and internal contracts of the generator. Only 54 delete and 33 move. The 46 marker lines that stay are suppressions and formatting directives, each suppression with the reason the static-check rule requires beside it |
 | D2, `///` on `detail` | 234 lines | Most `detail` comments describe the generator: `generate_plan`'s count-then-fill protocol, the capacity proofs, the self-checks and the conditions they test, the rounding counts, the elimination. Plan 0048's own rule 4 keeps a `detail` comment whose behavior, bound, or cost is not obvious, and these are the least obvious code in the library. What goes is "Requires: nothing", "an aggregate, equal when every member is", and member comments that repeat their class |
 | D4, public `///` | about 210 lines (212), before pointers | Four things stay that the estimate of 340 lines did not allow for: the one sentence of each of 42 rejecting overloads; one-line comments on 36 members; summary sentences that are themselves the formula, such as the sign rules of `bits.hpp` and the coefficient orders of the rga3 layouts; and eleven preconditions on public declarations kept in full under the ruling |
-| D1, prologues | 75 lines | Prologues keep the conventions they apply and the reasons for them: the mask convention in `bits.hpp`; why a blade is a wedge and not a product, with the integer-polynomial invariant, in `blade_product.hpp`; why the complement reverses canonical order, in `plan.hpp`; why the odd form of `transform` has its sign. The precondition of `GALOOT_FORCE_INLINE` (`assert.hpp:30-32`) stays in full. The examples, the restated guide text, and the cost paragraphs go: 427 of 702 lines are deleted. Of these, 17, the two illustrations, go only once D3's reference entries hold them, and 28 only under the S11 amendment, since they are contract text no other header line states: what a change of basis preserves, which `change_basis`'s comment points to, and two lookup caveats. The first, 15 lines, waits for D3 as well, as that comment does |
+| D1, prologues | 75 lines | Prologues keep the conventions they apply and the reasons for them: the mask convention in `bits.hpp`; why a blade is a wedge and not a product, with the integer-polynomial invariant, in `blade_product.hpp`; why the complement reverses canonical order, in `plan.hpp`; why the odd form of `transform` has its sign. The precondition of `GALOOT_FORCE_INLINE` (`assert.hpp:30-32`) stays in full. The examples, the restated guide text, and the cost paragraphs go: 427 of 702 lines are deleted. Of these, 17, the two illustrations, go only once D3's reference entries hold them, and 38 only under the S11 amendment, since they are contract text no other header line states: what a change of basis preserves, which `change_basis`'s comment points to, what `transform` preserves in any algebra, and three lookup statements. The first, 15 lines, waits for D3 as well, as that comment does |
 
 A tighter pass is possible:
 - **Cut every kept `detail` `///` row to two lines:** 178 lines more.
@@ -383,7 +383,7 @@ The precondition check leads to these lines too. Breaking what they state is dia
 
 ## For the units that use the table
 
-- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 53 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
+- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 54 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
 - **Cross-references inside kept text.**
   - `dual.hpp:368` sends the reader to the header's own prologue (`:44-59`), which moves. Its row moves with it: both wait for D3 and the S11 amendment.
   - `change_basis`'s pointer to the prologue becomes a pointer to the concepts heading (`basis_change.hpp:1113-1115`). The pointer and the prologue rows it points to (`:51-65`, `:66-73`, `:74-82`) wait for D3 and the S11 amendment together. `:66-82` move to that heading; `:51-65`, the list of factors, is deleted as a repeat of core 'Change of basis', so the heading the pointer names must hold that list too, or the pointer names the heading that does.
