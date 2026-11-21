@@ -19,7 +19,6 @@ fails, or if one claimed to fail holds.
 Run: python3 -I transform_sandwich_check.py
 """
 
-import itertools
 import sys
 
 
