@@ -347,7 +347,8 @@ def record_with_another_header(s):
 
 def git_attribution(s):
     # The revision and branch are the recorder's checkout's, even for a
-    # compile that runs outside it, and git status takes no index lock.
+    # compile that runs outside it, and git status takes no index lock. It
+    # runs once before the command and once after.
     s.use_fake_perf(False)
     outside = s.top + "-outside"
     shutil.rmtree(outside, ignore_errors=True)
@@ -362,7 +363,7 @@ def git_attribution(s):
     check("branch of a compile outside the checkout", row["branch"], "main")
     with open(s.git_log, encoding="utf-8") as f:
         status_calls = [line for line in f if " status " in f" {line}"]
-    check("git status calls", len(status_calls), 1)
+    check("git status calls", len(status_calls), 2)
     check("git status runs without optional locks",
           all("--no-optional-locks status" in line for line in status_calls),
           True)
