@@ -41,3 +41,15 @@ The configure spec ran at `c2f0f96` and the propagation spec at `44d0f25` (the c
 ## U2: behavior of the presets (`configure/`)
 
 `configure/compare.sh <old source> <new source> <scratch>` configures every configure preset from both trees into scratch build trees and compares `CMakeCache.txt` (comments and blank lines left out, the build and source paths replaced by `<build>` and `<source>`) and `compile_commands.json` under the same replacement. The old tree was `git archive 06ff369`. Result in `configure/out.txt`: all eleven presets have identical caches and compile commands; `GALOOT_FORCE_INLINE` is ON in eight and OFF in gcc-asan, clang-release and clang-asan. The cache identity includes the value of `GALOOT_FORCE_INLINE`, which is ON by default before and is now set to ON by the preset.
+
+## U3: confusable names (`u3-confusable-names.toml`)
+
+Run by Claude (agent, Sonnet 5.5, implementer of U3) on 2026-11-21 in the same worktree, at `66b203b` and `c956775` plus records (the revision column of `out/u3-confusable-names-lint.tsv` reads `e63e3fd1106c`, the spec's own commit). The unit `test/core/user_names.cpp` fails the lint preset at the headers of `f78b54d` with two errors, `'l' is confusable with 'I'` (`basis_change.hpp:542`) and `'m' is confusable with 'rn'` (`bits.hpp:171`); clang-tidy 23.1.5 run by hand on the unit shows the same two.
+
+The check reports only the first header name of each look-alike group. After the two planned renames the lint build still failed, on `m` in `metric.hpp:188` and `l` in `motions.hpp:80`, which the first two had hidden; renaming those (the locals `m` to `result`, the parameter `m` to `form`, the parameter `l` of `rotation` to `axis`) leaves the lint build clean, and a scan of 3,954 one- to three-character names declared beside all the headers reports only `q1` against `qI` and `ql`, the name the plan keeps.
+
+| Mutant | Edit | Preset | Verdict |
+| --- | --- | --- | --- |
+| `column_index_l_restored` | the first loop of `keeps_inner_products` with its old `l` | lint | unjudged by `tools/mutate`; the build of `core_user_names` fails with `basis_change.hpp:542:22: error: 'l' is confusable with 'I'` |
+
+`tools/mutate` classifies the failed object by its first error line: a lint error names neither a failed static assertion nor `[-Werror`, and lies in a header, not under `test/`, so the class is `invalid` and the verdict `unjudged`, as for any build failure outside those classes. The mutant is killed in fact, by the lint preset's build, which is the judge the plan names; the tool cannot say so. The spec keeps `expect = "killed"`, so `tools/mutate` exits 1 on it.
