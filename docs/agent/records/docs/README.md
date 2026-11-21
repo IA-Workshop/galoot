@@ -9,7 +9,8 @@ The table is a plan. No header was edited.
 | File | Holds |
 | --- | --- |
 | [comment-moves.tsv](comment-moves.tsv) | One row for each comment block, or part of a block, of every header under `include/galoot/`: 887 rows |
-| [check_comment_moves.py](check_comment_moves.py) | Checks that the rows cover every comment line exactly once at the named revision, then prints the sums below |
+| [check_comment_moves.py](check_comment_moves.py) | Checks that the rows cover every comment line exactly once at the named revision and that every checked precondition is accounted for, then prints the sums below and the boundary report |
+| [boundary-report.tsv](boundary-report.tsv) | The checker's boundary report: each place where a sentence runs from one row into a neighbor with another class or another condition |
 
 ## The revision
 
@@ -116,9 +117,39 @@ It checks:
 - that each position matches the census rule;
 - that kinds, classes, and the waiting conditions take known values;
 - that each move or summary names a page of the layout and a heading;
-- that each delete of anything but narration or a marker names where the text already is. A page named that way must exist at the revision with that heading. A header range named that way must hold comment lines whose own rows are not deleted.
+- that each delete of anything but narration or a marker names where the text already is. A page named that way must exist at the revision with that heading. A header range named that way must hold comment lines whose own rows are not deleted;
+- that every checked precondition is accounted for, by the method below.
 
-It ran on this branch with Python 3.14, in under a second, and printed no problem, both when the table was first written and after the corrections below. No build or test ran for this work. For the corrections, one probe of a few lines was compiled with GCC 16.2.1 and `-fsanitize=undefined` in the session's scratch directory, outside the job pool, to confirm two cases of undefined behavior. Nothing was timed, so the timing lock was not taken.
+It then prints the boundary report, which never fails; `--boundaries FILE` also writes it to a file, and [boundary-report.tsv](boundary-report.tsv) is that file.
+
+### The precondition check
+
+The check finds the text that states a checked precondition, then asks the three tables under [Preconditions kept in full](#preconditions-kept-in-full) where each line of it stands.
+
+1. **Assertions.** Every line whose code (comments and literals removed) calls `GALOOT_ASSERT(`, except the macro's own `#define`, is an assertion.
+2. **The enclosing declaration.** A brace scanner reads each header's code and labels each `{` by the text since the last `;`, `{`, or `}`: a namespace, a class (the last `struct`, `class`, `union`, or `enum` with no `(` after it), or other. The assertion belongs to the outermost "other" brace around it, which is the body of a function or the initializer of a variable, whatever lambdas or blocks lie between.
+3. **Its comment.** From that brace's line the check walks up over the declaration's code lines (template heads, `requires` clauses, attributes, a `NOLINT` line between two of them) and stops at a blank line, a preprocessor line, a comment line, or a code line that ends with `;`, `{`, or `}`. The run of full-line comment lines right above is the declaration's comment.
+4. **Its Requires clause.** In that comment, a clause runs from a line whose text starts with `Requires` to the line before the next labeled clause (`Guarantees:`, `Cost:`, and the like), an empty comment line, or the end of the comment.
+5. **Clauses checked elsewhere.** Every Requires clause in any comment that names `GALOOT_ASSERT` is taken too, which brings in the callers whose precondition a callee checks, such as `right_complement_sign` or `generate_map`.
+6. **Assertions with no clause.** An assertion whose declaration has no Requires clause must be in the third table, which names where its condition is stated; those places are then taken as if they were clauses.
+
+Every line taken must be in the first table (undefined behavior when broken in an unchecked build), whose rows must all be keep, or in the second (checked, but not undefined behavior), which leaves the row to the ordinary classes. Each place in the first table must be a comment line with a keep row, whether an assertion leads to it or not. A line in both tables, a place in the second that no assertion leads to, or a place in the third that is not such an assertion, is an error.
+
+The rule behind the first table: a precondition is undefined behavior when broken if a call that breaks it, at run time with `GALOOT_CHECKING` 0, reaches an operation the standard leaves undefined. A `constexpr` function in `detail` is judged as if it were called at run time, since nothing stops a call, though the generator calls them in constant evaluation, where every assertion checks. A `consteval` function is never unchecked, so its preconditions are not undefined behavior in any build.
+
+What the method can miss:
+- **A precondition with no assertion behind it** that is not named in the first table and whose clause does not name `GALOOT_ASSERT`, such as one marked "not checked here". Only reading finds those; the first table names the ones found that way.
+- **A precondition stated outside a Requires clause**: in a `Guarantees:` sentence ("a list that would outgrow Capacity fails GALOOT_ASSERT"), in a prologue (`bits.hpp:14-16`), or in a paragraph of its own (`transform`'s "Checks, ..."). The clause is found; such a sentence is not, unless the third table names it.
+- **A clause that runs on past the precondition**, into a remark in the same paragraph: the check then asks about lines that state no precondition (as at `metric.hpp:127-128`), which the second table names. The opposite, a precondition continued after an empty comment line or a label, is cut off.
+- **An assertion in a lambda or a local class** is charged to the function around it.
+- **A layout the walk does not expect**: a blank line between a comment and its declaration, a declaration line that ends with `;` or `}` inside its own head (a `requires requires { ... }` on a line of its own), braces that differ between the branches of an `#if`, a comment that sits between a declaration's lines and is not a `NOLINT`. Each of these either gives an assertion no clause, which fails, or charges it to the wrong comment, which fails unless that comment's clause is listed; the scanner also fails on braces that do not balance. None occurs at `01dce7f`: every assertion's declaration and clause were read against the header.
+- **Whether a listed verdict is right.** The check makes every line pass through a table; whether a condition is undefined behavior is judged by reading, and the tables say why.
+
+### The boundary report
+
+Two rows are neighbors when the second starts on the line after the first ends. The report lists each pair of neighbors whose class or `waits_for` differ and where the first row's last line does not end a sentence (its text, without closing brackets, quotes, or backticks, does not end in `.`, `?`, or `!`), so the sentence open there ends in the second row. Marker and example rows are left out: they hold directives and code, not sentences. The test reads only the last line's end, so it misses a sentence that runs on past a line ending in an abbreviation such as "e.g.", and it reports a line that ends a sentence without a period, such as one that ends with a code span or introduces a list with a colon. It reports a line that holds the end of one sentence and the start of the next, which is the case the row ranges cannot split.
+
+It ran on this branch with Python 3.14, in under a second, and printed no problem, both when the table was first written and after the corrections below. With the precondition check, it fails on a table in which one kept precondition row (`metric.hpp:126`) is demoted to delete, on the table before the correction of `collect_result` (line 304 deleted), and on a README whose first table lacks the `generate_map` entry, each with one problem that names the row or the lines, and passes again once the change is undone. No build or test ran for this work. For the corrections, one probe of a few lines was compiled with GCC 16.2.1 and `-fsanitize=undefined` in the session's scratch directory, outside the job pool, to confirm two cases of undefined behavior. Nothing was timed, so the timing lock was not taken.
 
 ## Sums by header and class
 
@@ -259,7 +290,7 @@ A maintainer keeps the following:
 
 ## Preconditions kept in full
 
-Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"):
+Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"). The precondition check found six more, and reading where they lead found a seventh, all generator contracts in `detail` whose rows were already keep (marked "checked"). The checker reads this table, and the two below it:
 
 | Place | Precondition |
 | --- | --- |
@@ -274,12 +305,46 @@ Undefined behavior when broken in an unchecked build, kept under the ruling. Pla
 | `plan.hpp:664-665` (listed) | `unary_term` with an n out of range reaches `complement_mask`'s shifts |
 | `blade_product.hpp:82-83` (listed) | `multiply_checked`'s operands within range, since negating the most negative value is undefined |
 | `metric.hpp:126` | `is_null(i)` with i at or beyond N, which reads past the array |
+| `blade_product.hpp:139-140` (checked) | `term_list::add` on a full list writes past the end of its array; stated as a guarantee, so the check does not find it, but the precondition clauses below lead to it |
+| `blade_product.hpp:268-275` (checked) | `blade_product`: a mask beyond e_N reads `g.gram` past its end; too small a Capacity writes past the term list; an overflowing coefficient is a signed overflow |
+| `basis_change.hpp:753-757` (checked) | `blade_image`: a mask beyond e_N reads `rows.rows` past its end, and the same capacity and overflow conditions |
+| `plan.hpp:142-143` (checked) | `pair_capacity` for an antiproduct with n out of range reaches `complement_mask`'s shifts |
+| `plan.hpp:185-187` (checked) | `pair_terms`: too small a Capacity writes past the term list, and the product's case is `blade_product`'s |
+| `plan.hpp:255-259` (checked) | `generate_plan`: the masks, the capacity and the coefficients, as for `pair_terms` and `blade_product` |
+| `plan.hpp:698-699` (checked) | `generate_map`: what `unary_term` requires, whose n out of range reaches the shifts |
 | `mv.hpp:1281-1283` | The reference that `get` returns from a temporary must not outlive it (in every build) |
 | `assert.hpp:30-32` | Every translation unit must use one `GALOOT_FORCE_INLINE` mode, since mixing them breaks the one-definition rule |
 
-The two cases of `bits.hpp` were confirmed by a probe built with GCC 16.2.1, `-fsanitize=undefined` and `GALOOT_CHECKING` 0, which reports a signed overflow for `antigrade(1, 2^31)` and for `antireverse_sign(0, 50000)`. The `detail` generator contracts of `plan.hpp`, `blade_product.hpp` and `basis_change.hpp` that hold other `Requires:` lines are kept in full as well, so none of them is at risk; this list names only the ones whose violation is undefined behavior.
+The two cases of `bits.hpp` were confirmed by a probe built with GCC 16.2.1, `-fsanitize=undefined` and `GALOOT_CHECKING` 0, which reports a signed overflow for `antigrade(1, 2^31)` and for `antireverse_sign(0, 50000)`.
 
-Two more were weighed and are not undefined behavior: `canonical_name` stops at e9 and does not overrun, and `rotation`'s zero direction gives infinities and NaNs, which floating arithmetic defines.
+### Checked conditions that are not undefined behavior
+
+The precondition check leads to these lines too. Breaking what they state is diagnosed at compile time, gives a defined result, or is not a precondition at all, so the ruling does not keep them and each row keeps its own class.
+
+| Place | What it states | Why it is not undefined behavior when broken |
+| --- | --- | --- |
+| `assert.hpp:126-129` | `GALOOT_ASSERT`'s message is a literal on the macro's line | Only the diagnostic changes; a message that is not a string is a compile error |
+| `blade_product.hpp:65` | `add_checked`'s operands lie within -max to max | With an operand of min, the check still compares correctly and its bounds cannot overflow; what is undefined unchecked is an overflowing sum, which `blade_product.hpp:49-57` states and keeps |
+| `blade_product.hpp:134-135` | `term_list::add`'s coefficient lies within -max to max | The same: the sum goes through `add_checked`. A full list is the case listed above, at `:139-140` |
+| `blade_set.hpp:129-130` | `canonical_name`'s mask names only e1 to e9 | The loop stops at e9 and does not overrun |
+| `linear.hpp:389-391` | `x / s`: s has x's scalar type, and T has a `/` | A call that breaks it does not compile |
+| `linear.hpp:397-406` | Which integer types the zero-divisor check reads, and that a floating T is not checked | Not a precondition but the scope of the check; the undefined case is kept at `:392-396` |
+| `metric.hpp:127-128` | A null generator need not make the form degenerate | A remark that ends the Requires paragraph, not a precondition |
+| `metric.hpp:239-242` | `from_gram`'s form is square, of a valid size, symmetric, with entries in range | `from_gram` is `consteval`, so every check runs at compile time in every build |
+| `mv.hpp:1035-1044` | `truncate` drops only zero coefficients of an exact scalar | With checking off they are dropped unchecked: a defined result |
+| `transform.hpp:697-711` | `transform` checks that an exact scalar's dropped coefficients are zero | With checking off the dropped terms are not computed; the result is defined |
+| `transform.hpp:713-728` | `transform` checks a rounding scalar's dropped coefficients against a bound | The same |
+| `basis_change.hpp:285-287` | `check_fits`: a value the change computes fits `coefficient_type` | The arithmetic that sets the flag returns 0 instead of overflowing, so a broken condition gives a wrong value, not undefined behavior; the change tables are built in constant evaluation, where it always checks |
+| `presets/rga3/motions.hpp:48-68` | `rotation`'s line, and a direction of finite nonzero length | A zero or overflowing length gives infinities and NaNs, which IEEE 754 arithmetic defines and GCC and Clang follow; see open item 6 |
+
+### Assertions with no Requires clause above them
+
+| Assertion | Its condition is stated at | Why there |
+| --- | --- | --- |
+| `basis_change.hpp:290` | `basis_change.hpp:285-287` | `check_fits` is a helper that reports a flag its callers compute; its own comment says what the flag means |
+| `mv.hpp:983` | `mv.hpp:1035-1044` | `check_dropped` checks the precondition of `truncate`, its only caller |
+| `transform.hpp:404` | `transform.hpp:697-711` | `check_transform_dropped` checks what `transform`'s comment says it checks for an exact scalar |
+| `transform.hpp:618` | `transform.hpp:713-728` | `check_transform_rounded` checks the bound `transform`'s comment states for a rounding scalar |
 
 ## Hard calls
 
@@ -308,7 +373,7 @@ Two more were weighed and are not undefined behavior: `canonical_name` stops at 
 
 ### Sentences that cross a row boundary
 
-A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence, and they are found by reading the last line of the row before.
+A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence: [boundary-report.tsv](boundary-report.tsv) lists the 105 the checker finds, with both rows, their verdicts, and the two lines on either side. A unit acting on a row reads that list for the row's number first.
 
 ## Corrections after the sample check
 
@@ -332,6 +397,8 @@ The checker's precondition check (see [How to check it](#how-to-check-it)) found
 | Header | Finding | Correction |
 | --- | --- | --- |
 | `plan.hpp` | `collect_result`'s precondition is lines 303-304, but the split after the sample check put the keep row at `302-303`, the blank line before it and the first half of the sentence, and deleted `304`, "GALOOT_ASSERT; plan.size() places always suffice", with the guarantee | Keep `302-304`, delete `305-307`. One line moves from delete to keep, under the detail ruling's column: the sums, the stages and the list above include it |
+
+Every other failure of the first run was the record's, not the table's: six Requires clauses of generator contracts whose violation is undefined behavior were keep rows but missing from the list of preconditions kept in full, and are now in it, with the capacity guarantee of `term_list::add` that they lead to; the other clauses the check reached, and the four assertions with no clause of their own, are now named in the two tables after it, each with its reason. No other row changed class.
 
 ## Open items
 
@@ -362,3 +429,15 @@ Each item has its options, their tradeoffs, and a recommendation.
      - (b) Ask for the tighter pass described above, about 1,600 lines. It cuts the generator's internal contracts.
      - (c) Have a second reader, the cpp-expert as plan 0048 section 7 pairs it with D0, reread the keep verdicts on `plan.hpp`, `mv.hpp`, and `basis_change.hpp` before phase 4.
    - **Recommendation:** (a), with (c) folded into the review of the first comment unit that opens those headers. One independent sample check has read the table (see [Corrections after the sample check](#corrections-after-the-sample-check)); it read 106 rows at random and every delete row, not the keep verdicts this item is about.
+6. **Floating division by zero and overflow, read by the standard.**
+   - **The problem.** The table treats `rotation`'s zero direction (`motions.hpp:48-68`) and an unchecked floating `x / 0.0` (`linear.hpp:397-406`) as defined, giving infinities and NaNs, and moves both texts. The C++ standard does not define them: [expr.mul] makes a division by zero undefined, and [expr.pre] does the same for a result outside the type's range, with no exception for IEEE 754 types. GCC documents `-fsanitize=float-divide-by-zero` as left out of `-fsanitize=undefined` because such a division "can be a legitimate way of obtaining infinities and NaNs" (read in the GCC 16.2.1 manual); Clang's documentation is recalled to say the same, and was not read for this record. The header's own text at `linear.hpp:403-405` relies on the standard's reading for a constant evaluation, where the division is not a constant expression.
+   - **The options.**
+     - (a) Keep the verdicts: both compilers Galoot supports define the result for IEEE 754 types, and the ruling's purpose, that nothing that can corrupt a program is hidden from the header, is met.
+     - (b) Read "undefined behavior" in decision 0253 item 14 as the standard's term, and keep `motions.hpp:48-61` and `linear.hpp:397-406` in full: about 24 lines more in the end state.
+   - **Recommendation:** (a), with the owner's confirmation that the ruling means behavior the supported compilers leave undefined. If the answer is (b), the two places move from the second table to the first and their rows become keep, one commit per header.
+7. **Undefined behavior stated as a guarantee.**
+   - **The problem.** `add_checked` and `multiply_checked` (`blade_product.hpp:66-68`, `:84-86`) say in their `Guarantees:` that a result out of range fails `GALOOT_ASSERT`. With checking off at run time that result is a signed overflow. Both rows are deleted as narration, and the precondition check does not see them, since they are not Requires clauses. The undefined behavior is stated once, in full, at `coefficient_type` (`blade_product.hpp:49-57`), which is kept.
+   - **The options.**
+     - (a) Leave the rows: the one kept statement covers every coefficient the generator forms, and plan 0048's B5 rewrites both functions.
+     - (b) Keep both rows, and widen the check to `Guarantees:` sentences that name `GALOOT_ASSERT`. That brings in every guarantee of that form, most of which state checked behavior, not a precondition, and each would need a line in the second table.
+   - **Recommendation:** (a), and ask B5's author to keep the statement at `coefficient_type` when the functions change.
