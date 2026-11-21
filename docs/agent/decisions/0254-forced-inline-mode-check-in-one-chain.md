@@ -47,3 +47,15 @@ On GCC 16.2.1 and Clang 23.1.5 (Clang was 23.1.4 when plan 0044 was written), at
 - A user who used one of the `GALOOT_DETAIL_*` macros breaks. They were documented as not interface (the release record lists them so); the 1.0.1 release notes should say they are no longer defined.
 - `GALOOT_ALWAYS_INLINE` stays defined, as before, and stays outside the interface.
 - Plan 0040's mutation specs anchor on the old text of `assert.hpp` and are kept as history; they no longer apply to the tree.
+
+## Correction, 2026-11-21 (blind review of plan 0044, findings m4 and p1)
+
+Added by Claude (agent, Opus 5.5, cpp-expert role, in the fix round after the review `records/reviews/2026-11-21-plan-0044-blind-review.md`); nothing above is rewritten.
+
+- Evidence, first item: "an empty value and `-1` also draw a warning" is incomplete. Under `-Wundef`, every rejected spelling probed draws one warning, on GCC 16.2.1 and Clang 23.1.5 alike: empty, `ON`, `true`, `2`, `01`, `0x1` and `-1`. The warning names `GALOOT_DETAIL_FORCE_INLINE_IS_<spelling>` (for `-1`, `GALOOT_DETAIL_FORCE_INLINE_IS_`, the paste having failed). `1 2` draws none and gives two errors, as without `-Wundef`. Under `-Wundef -Werror` the warning becomes an error and comes first, before the literal, so the first error line names the internal macro. 1.0.0 behaves the same. Rows `probe - p1-force-inline-wundef-cur` of the run log, at `67907a5`, with the whole core and `-Wall -Wextra -Wpedantic`.
+- Whether `assert.hpp` can avoid that warning was probed in the same way, on copies of the header (rows `p1-force-inline-wundef-prag` and `-hca`):
+  - Wrapping the chain in `#pragma GCC diagnostic push`, `ignored "-Wundef"` and `pop` leaves exactly the literal, with and without `-Werror`, for every spelling above, and `-1` keeps its one paste error. But the three pragma lines reach the preprocessed output of every valid spelling (`-E -P` gains them on both compilers), and on a compiler other than GCC and Clang they need a guard.
+  - Testing the pasted name with `__has_cpp_attribute`, whose operand may be a name no macro defines, with the helpers for 0 and 1 expanding to `nodiscard`, draws no warning and leaves the valid spellings' preprocessed output as it was. But `-1` then gives three errors instead of one on both compilers, and `1 2` three instead of two on GCC.
+  - `#pragma GCC system_header` would silence every warning in the rest of the header, in Galoot's own builds too, and likely in the expansions of `GALOOT_ASSERT` (inferred, not probed); GCC also prints a line of spaces for it in `-E -P` output.
+
+  None leaves both the valid spellings and the other rejected spellings as they are, so the fix round left the chain unchanged. The pragma form is the candidate for a later release, if a change to the preprocessed output of the valid spellings is accepted.
