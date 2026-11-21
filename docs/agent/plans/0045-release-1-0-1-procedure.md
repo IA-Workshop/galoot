@@ -341,3 +341,4 @@ For comparison, plan 0042 (records, matrix and audits, no code unit) recorded ab
 Not started.
 
 - 2026-11-21: plan 0043 is merged into `main` (`26cd467`). Its outcome, section 14 of [plan 0043](0043-cost-cleanup-1-0-1.md), holds the friction lines and the accepted limits of the project's tools for unit R7's release record, with the figures of the 05229a7 matrix; R7 replaces any figure this plan's own matrix at R gives differently.
+- 2026-11-21: plan 0044 is merged into `main` (`c6e3b18`). Its outcome, section 15 of [plan 0044](0044-header-hygiene-1-0-1.md), holds the friction lines for unit R7's release record: which items of the 1.0.0 record's "Known friction" 1.0.1 closes (4, 5, 10, 11 and 13; item 12 narrowed, as decision 0257 rules), the user-visible changes, and the statement that no public interface is removed or changed, with the gate's figures at `41d8029`; R7 replaces any figure this plan's own matrix at R gives differently.
