@@ -1135,6 +1135,10 @@ matrix of the change. A `basis_change` has no `==`, because two values for
 one matrix can differ: a row scaled together with its denominator is the
 same matrix. `same_rows(a, b)` compares two values as written.
 
+Writing `a == b` or `a != b` for two changes does not compile. The compiler
+reports that the operator is deleted and, in a note, shows the line of the
+header that deletes it, which ends with `// use same_rows(a, b)`.
+
 Below, the two generators square to zero and have inner product 1, the
 relations of the operators that create and destroy one fermion,
 f f = 0 and f f† + f† f = 1, with the form doubled, since its entries are
