@@ -1,0 +1,33 @@
+2026-11-21T20:40:28Z
+ 15:40:28 up 20:14,  1 user,  load average: 13.33, 22.30, 22.67
+running: 20 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+clients: 3777966 (make)
+               total        used        free      shared  buff/cache   available
+Mem:          128485       18600       39163        3866       74777      109884
+Swap:         128484           2      128482
+top - 15:40:28 up 20:14,  1 user,  load average: 13.33, 22.30, 22.67
+Tasks: 631 total, 5 running, 626 sleep, 0 d-sleep, 0 stopped, 0 zombie
+%Cpu(s): 20.2 us,  1.2 sy,  0.0 ni, 78.2 id,  0.0 wa,  0.3 hi,  0.1 si,  0.0 st 
+MiB Mem : 128485.1 total,  39164.0 free,  18600.5 used,  74777.7 buff/cache     
+MiB Swap: 128485.0 total, 128482.3 free,      2.7 used. 109884.5 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+3211483 brianm    16  -4 1825608 500536 142700 S 134.2   0.4 123:00.76 python
+ 969201 brianm    16  -4 1326108   1.1g  18180 S 100.6   0.9 205:57.77 cpptools
+3857821 brianm    16  -4  756624 580440  87000 R  95.8   0.4   0:13.23 clang++
+3858122 brianm    16  -4  522192 346292  86808 R  95.8   0.3   0:07.67 clang++
+3858308 brianm    16  -4  470540 296420  87016 R  95.8   0.2   0:05.21 clang++
+3858517 brianm    16  -4  410052 235432  87144 R  95.8   0.2   0:02.63 clang++
+ 949427 brianm    16  -4 1448.5g 712780 179060 S   9.6   0.5   6:03.14 code
+3008916 brianm    16  -4 3427756 683780 130712 S   9.6   0.5   1:06.99 Isolated Web Co
+   8138 brianm    16  -4 1451.8g 527076  98292 S   4.8   0.4   0:35.85 code
+   8880 brianm    16  -4 5747860 441548 142816 S   4.8   0.3  15:21.85 claude
+ 131309 root      15  -5  186540  14764   7332 S   4.8   0.0   3:51.00 ananicy-cpp
+ 158057 brianm    20   0 1452.3g 634284 122956 S   4.8   0.5   5:40.23 code
+3858701 brianm    16  -4   10912   6476   4316 R   4.8   0.0   0:00.01 top
+      1 root      20   0   23088  16536  11328 S   0.0   0.0   0:16.25 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.11 kthreadd
+      3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_release
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_gp
+      5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-sync_wq
