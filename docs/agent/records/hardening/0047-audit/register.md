@@ -238,9 +238,9 @@ Plan 0047 section 5.2 makes H6 one subunit per confirmed defect, each starting f
   | A fix already deferred by a ruling: decision 0236 item 2 (A16), owner item O3 (A24) | A16, A24 | 2 |
   | A test only, no fix named | A25, A31 | 2 |
 
-- So **at most 17 rows** (the first two classes) can each become an H6 subunit that changes a header, and **at least 8** do (the first class) unless the owner rules otherwise. A01 is among the 17: plan 0047 section 4 already assigns its fix to H6 and its compile-fail test to H1.
+- So **at most 17 rows** (the first two classes) can each become an H6 subunit that changes a header, and **8** of them (the first class) have no alternative named. A01 is among the 17: plan 0047 section 4 already assigns its fix to H6 and its compile-fail test to H1.
 - Of those 17, **3** need the owner's ruling whatever the fix (A04, A08, A18). **9** need it if the fix chosen is the one that changes relied-on behavior (A01, A02, A10, A11, A17, A21, A22, A36, A37). **5** need none (A09, whose fix relies only on a defect, and A19, A38, A39, A40). Outside the 17, A03, A29, A30 and A41 can also reach the owner through an option that changes relied-on behavior.
-- Of the 17, **4** are in or reached through code that plan 0048 removes or rewrites (A17, A36 and A38 by their own lines, A21 through the operations it reaches). Over all 29, **8** confirmed rows are in that code: 4 by their own lines (A17, A23, A36, A38, all in B5, B7 or B8) and 4 through the public operations they reach (A11, A16, A21, A22).
+- Of the 17, **6** are in or reached through code that plan 0048 removes or rewrites (A17, A36 and A38 by their own lines; A11, A21 and A22 through the public operations they reach). Over all 29, **8** confirmed rows are in that code: 4 by their own lines (A17, A23, A36, A38, all in B5, B7 or B8) and 4 through the public operations they reach (A11, A16, A21, A22).
 - **2 sites are open** (A32, A48), both H3's, and either can still add a confirmed row.
 - **17 sites are dismissed** and need no fix. Plan 0047 section 3 still asks for a boundary test at each integer and rounding site in this register (criterion 6; among them A14, A15 and A42 to A47) and for compile-fail tests (criterion 2), so a dismissed row is not a row without tests.
 
