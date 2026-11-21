@@ -1,0 +1,15 @@
+ninja: Entering directory `build/clang-measure'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_test.cpp.o
+[2/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_six_drawn_test.cpp.o
+[3/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_sparse_test.cpp.o
+[4/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_six_test.cpp.o
+[5/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_dense_test.cpp.o
+[6/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_conformal3_test.cpp.o
+[7/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_drawn_test.cpp.o
+[8/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_up_to_three_test.cpp.o
+[9/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_diagonal_test.cpp.o
+[10/12] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_four_test.cpp.o
+[11/12] Linking CXX executable test/core_identities_test
+timed: build core_identities_test took 45.312 s (exit 0)

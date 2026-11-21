@@ -1,0 +1,7 @@
+ninja: Entering directory `build/clang-measure'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/4] Building CXX object test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o
+[2/4] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_test.cpp.o
+[3/4] Linking CXX executable test/core_transform_identities_test
+timed: build core_transform_identities_test took 77.767 s (exit 0)
