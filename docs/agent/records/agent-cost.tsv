@@ -389,3 +389,14 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	kb-complexity-reduction-fix-2	collector	opus	172825	53	760	kb/complexity-reduction f0137c5; tools/complexity-reduction 795ad32; workflow agent, harness token count
 2026-11-21	kb-wrapper-collapse-fix	collector	opus	174397	67	614	kb/wrapper-collapse 3f4324a; tools/wrapper-collapse 34f3baf; workflow agent, harness token count
 2026-11-21	kb-constexpr-step-margin-fix	collector	opus	181155	75	933	kb/constexpr-step-margin 48cd438; tools/constexpr-step-margin 7892f3c; workflow agent, harness token count
+2026-11-21	0048-D0-apply-rulings	cpp-expert	opus	218851	68	812	records/comment-table-rulings f661ef2; workflow agent, harness token count
+2026-11-21	0049-U1-apply-rulings	hci-expert	opus	259669	68	999	records/docs-design-rulings 74fd859; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-check	reviewer	opus	200068	50	644	review/comment-table-rulings 196b2a8; 7 minor; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-check	reviewer	opus	216848	63	710	review/docs-design-rulings 6bef164; 3 important, 6 minor; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-fix	cpp-expert	opus	225564	81	808	records/comment-table-rulings 7b99a2f; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-fix	hci-expert	opus	161865	58	444	records/docs-design-rulings ad0bf70; workflow agent, harness token count
+2026-11-21	0044-fix-round	cpp-expert	opus	206448	74	1001	feature/header-hygiene-1-0-1 3aa9208; workflow agent, harness token count
+2026-11-21	0044-delta-review-1	reviewer	opus	198192	74	1115	review/header-hygiene-1-0-1 3df1e81; approve; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-check-2	reviewer	opus	217535	69	630	review/comment-table-rulings 1066d72; 1 important, 3 minor; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-check-2	reviewer	opus	210165	63	794	review/docs-design-rulings 981dd71; no error, 8 minor; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-fix-2	cpp-expert	opus	168012	54	409	records/comment-table-rulings 4e73a11; workflow agent, harness token count
