@@ -413,7 +413,7 @@ def dirty_mark(s):
             f.write("edit\n")
 
     log = os.path.join(s.top, "dirty-mark.tsv")
-    campaign = "docs/agent/records/performance/campaign.tsv"
+    campaign = os.path.join(os.path.dirname(RUN_LOG), "campaign.tsv")
     os.makedirs(os.path.dirname(os.path.join(s.top, campaign)), exist_ok=True)
     for path in ("tracked.txt", campaign):
         with open(os.path.join(s.top, path), "w", encoding="utf-8") as f:
