@@ -1,5 +1,6 @@
-// e1234 e1234 = 32767^4 in diag(32767, 32767, 32767, 32767), an odd
-// integer above 2^53, which double cannot hold. This file must not compile.
+// e1234 e1234 = 32767^4 in diag(32767, 32767, 32767, 32767), written onto
+// the scalar, an odd integer above 2^53, which double cannot hold. This file
+// must not compile.
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -17,11 +18,13 @@ struct diagonal {
 };
 
 inline constexpr auto layout = galoot::core::blades<diagonal, "e1234">;
+inline constexpr auto scalar_layout = galoot::core::blades<diagonal, "1">;
 using Blade = galoot::core::mv<diagonal, layout, double>;
 
 [[maybe_unused]] Blade::scalar_type square(const Blade& x) {
   using galoot::core::detail::BinaryOperation;
-  return galoot::core::detail::apply<BinaryOperation::geometric_product>(x, x)
+  return galoot::core::detail::apply<BinaryOperation::geometric_product,
+                                     scalar_layout>(x, x)
       .coefficients[0];
 }
 
