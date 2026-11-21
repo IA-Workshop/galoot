@@ -203,6 +203,11 @@ def main():
             say(f"{g} lines that {c}",
                 sum(v for (gg, _, cc), v in plan_class.items() if gg == g and cc == c))
     say("// marker lines kept", plan_class[("//", "marker", "keep")])
+    prologue_waits = collections.Counter(
+        r["waits_for"] for r in full for _ in r["line_list"]
+        if r["position"] == "prologue" and r["class"] == "delete")
+    say("prologue lines that delete, by what they wait for",
+        ", ".join(f"{w} {n}" for w, n in sorted(prologue_waits.items())))
 
     # Pointers.
     blocks = doc_blocks(headers, texts)
