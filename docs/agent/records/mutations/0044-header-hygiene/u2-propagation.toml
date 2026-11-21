@@ -6,7 +6,9 @@
 presets = ["clang-release"]
 
 [selection.build]
-targets = ["core_force_inline_build"]
+targets = ["core_assert_mode_0", "core_assert_mode_1",
+  "core_force_inline_off", "core_force_inline_default",
+  "core_force_inline_build"]
 labels = '^core\.assert$'
 
 # The definition GALOOT_FORCE_INLINE=0 dropped from the interface of
