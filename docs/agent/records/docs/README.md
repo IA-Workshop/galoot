@@ -292,7 +292,7 @@ A maintainer keeps the following:
 
 ## Preconditions kept in full
 
-Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"). The precondition check found six more, and reading where they lead found a seventh, all generator contracts in `detail` whose rows were already keep (marked "checked"). After the delta check, four more that were already keep rows with this reason are listed, so that the checker guards them too (marked "guarded"). The checker reads this table, and the two below it, and holds its own copy of this one:
+Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"). The precondition check found six more, and reading where they lead found a seventh, all generator contracts in `detail` whose rows were already keep (marked "checked"). After the delta check, four more that were already keep rows with this reason are listed, so that the checker guards them too (marked "guarded"). The owner's ruling on "undefined behavior" (decision 0258 item 4.4) added `rotation`'s, which was a move row (marked "ruled"). The checker reads this table, and the two below it, and holds its own copy of this one:
 
 | Place | Precondition |
 | --- | --- |
@@ -320,6 +320,7 @@ Undefined behavior when broken in an unchecked build, kept under the ruling. Pla
 | `blade_product.hpp:117-118` (guarded) | A `term_list` starts empty: one made at run time without `{}` has an indeterminate `length`, which `add` reads and writes past |
 | `basis_change.hpp:258-259` (guarded) | `multiply_noting`'s operands lie within -max to max, since negating the most negative value is undefined |
 | `plan.hpp:160` (guarded) | `plan_capacity` requires what `pair_capacity` requires of each pair, whose n out of range reaches `complement_mask`'s shifts |
+| `presets/rga3/motions.hpp:48-61` (ruled) | `rotation`'s floating T, its line, and a direction whose length is finite and nonzero: with checking off, a zero direction divides by zero, which [expr.mul] leaves undefined, and squares that overflow give a result outside the type's range, which [expr.pre] leaves undefined, whatever IEEE 754 says |
 
 The two cases of `bits.hpp` were confirmed by a probe built with GCC 16.2.1, `-fsanitize=undefined` and `GALOOT_CHECKING` 0, which reports a signed overflow for `antigrade(1, 2^31)` and for `antireverse_sign(0, 50000)`.
 
@@ -341,7 +342,7 @@ The precondition check leads to these lines too. Breaking what they state is dia
 | `transform.hpp:697-711` | `transform` checks that an exact scalar's dropped coefficients are zero | With checking off the dropped terms are not computed; the result is defined |
 | `transform.hpp:713-728` | `transform` checks a rounding scalar's dropped coefficients against a bound | The same |
 | `basis_change.hpp:285-287` | `check_fits`: a value the change computes fits `coefficient_type` | The arithmetic that sets the flag returns 0 instead of overflowing, so a broken condition gives a wrong value, not undefined behavior; the change tables are built in constant evaluation, where it always checks |
-| `presets/rga3/motions.hpp:48-68` | `rotation`'s line, and a direction of finite nonzero length | A zero or overflowing length gives infinities and NaNs, which IEEE 754 arithmetic defines and GCC and Clang follow; see open item 6 |
+| `presets/rga3/motions.hpp:62-68` | Why `rotation` returns a plain `Motor`, and that a subnormal length passes the check and loses accuracy | Not a precondition: a reason, kept, and a remark that ends the Requires paragraph, as at `metric.hpp:127-128`. The precondition before them, `:48-61`, is in the first table |
 
 ### Assertions with no Requires clause above them
 

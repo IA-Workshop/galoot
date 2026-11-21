@@ -351,6 +351,7 @@ KEPT_IN_FULL = tuple(
         ("core/plan.hpp", "303-304"),
         ("core/plan.hpp", "664-665"),
         ("core/plan.hpp", "698-699"),
+        ("presets/rga3/motions.hpp", "48-61"),
     ))
 
 
