@@ -20,7 +20,7 @@ The research note behind this record is [0028](../../../research-notes/0028-conv
 2. **Where the scripts live.** The rerunnable scripts are on the math-tools branch `tools/conventions-rederived` in the worktree `math-tools-worktrees/conventions-rederived`, not merged (the brief says I merge none of the branches). Until the coordinator merges it, the commands below run from that worktree; after the merge the path is the same under `math-tools/`.
 3. **The antiexomorphism is read, not given.** CONVENTIONS 3.2 says the weight "applies the antiexomorphism" and describes it only for a diagonal metric. The derivation reads it as the complement conjugate left ∘ G ∘ right. That reading reproduces 3.2's diagonal description exactly, equals det(G) times the exomorphism of G⁻¹ on every nondegenerate form tried, and is the definition `golden.hpp` states in its `duals` comment (seen only at the comparison step). Every row on the weight, the weight duals, the antidot and the projections rests on it.
 4. **The antireverse and the antigrade involution are derived as complement conjugates** (left ∘ op ∘ right). CONVENTIONS defines them by their signs. The derivation shows the two agree on every blade; it does not show that the complement conjugate is the only reasonable definition.
-5. **Section 6 is outside criterion 5** and was derived only where it is specified: the round point's square (6.1) and, up to a scale the specification does not fix, the bulk dual of a sphere. 6.2 and 6.4 are Study and not specified.
+5. **Section 6 is outside criterion 5** and was derived only where it is specified: the round point's square (6.1) and, up to a factor (sign included) the specification does not fix, the bulk dual of a sphere. 6.2 and 6.4 are Study; of 6.2 only one consequence is derived (section 7, m2), and 6.4 is not specified.
 6. **Not derivable, and said so in the row**: the bitmask encoding (1.1), the order of untyped results (1.7), the operator table (7.1) and the printed form (7.2) are naming or interface choices; 4.4's compile-time rejection and checking mode and all of 4.5 are interface behavior. For these the row says what was checked instead (consistency with other items, the C++ precedence claim on both compilers), or "not derivable".
 7. **The International Tables were not read** (as for research note 0023). G17 is closed for the realization of Hestenes' angles that the earlier rebuild used, not for the Tables' standard settings.
 8. **Lengyel's wiki was not re-read.** Rows whose label is Confirmed are confirmed here by derivation, not by a fresh reading of the source; the reading of note 0005 stands as it was.
@@ -45,7 +45,7 @@ From `math-core/`, with the shared Python environment (`math-tools/toolset/env/p
 MT_SRC=$PWD/math-tools GALOOT=$PWD/galoot math-tools-worktrees/conventions-rederived/exercises/ga/ga-E22-conventions-rederived/run_all.sh
 ```
 
-It ends in `PASS ga-E22`. One script: `math-tools/toolset/env/py/.venv/bin/python -I <folder>/<script>.py`, and for `c1_compare_golden.py` and `c3_point_group_settings.py` add the path of `golden.hpp`. About 11 s on one core on a quiet machine (21 s at load average 11), peak memory 83 MiB.
+It ends in `PASS ga-E22`. One script: `math-tools/toolset/env/py/.venv/bin/python -I <folder>/<script>.py`, and for `c1_compare_golden.py` and `c3_point_group_settings.py` add the path of `golden.hpp`. About 11 s on one core on a quiet machine (21 s at load average 11), peak memory 83 MiB; the rerun of section 7 took 12.1 s at load average 3.7, peak 77 MiB.
 
 Tools (the Tool column of [rows.md](rows.md)):
 
@@ -69,7 +69,7 @@ Scripts (the Rerun column): `s0` engine self-checks; `s1` section 1; `s23` secti
 | G2, antiproduct, antiwedge and De Morgan on non-diagonal forms | **Narrowed.** Derived for a general symmetric Gram matrix: the De Morgan laws with both complements on every blade pair for n = 3 and 4, symbolically; antiproduct associativity on all 512 blade triples for n = 3 and on 768 of 4,096 for n = 4, symbolically; numerically on every blade pair of 16 forms. The geometric product under it was checked against galgebra on four non-diagonal forms. Remaining: n = 4 associativity symbolically on the other 3,328 triples, and n ≥ 5 symbolically; a published table for non-diagonal antiproducts is still not known to exist (none was sought in this unit) | rows 4.2a to 4.2c |
 | G3, grade and antigrade involutions | **Grade involution: derived and read.** Shirokov (arXiv:1109.2322v1, section 2) defines it as the unique automorphism α with α ∘ α = id and α(v) = −v; on a wedge of k vectors that gives (−1)^k, as 2.1 states. **Antigrade involution: derived, no source.** It is the complement conjugate of the grade involution, and an automorphism of the antiproduct; no published source defining it was found or sought beyond the knowledge base's list. The status labels stay as they are; only the owner changes CONVENTIONS | rows 2.1c, 2.1d; research note 0028 section 3 |
 | G5, meets validated up to sign only | **Closed for the sign.** Derived symbolically in rigid(3): g ∨ h has direction n_h × n_g and moment h_w n_g − g_w n_h; (g ∨ h) ∨ k has weight det[n_g; n_h; n_k] and its unitized point solves the three plane equations (Cramer); l ∨ g has weight −(v · n_g); p ∧ q ∧ r ∧ s has the determinant of the 4 × 4 coordinate matrix on 𝟙; l1 ∨ l2 = −(v1 · m2 + v2 · m1). Each equals the formula `golden.hpp` states in `rigid_meets` and `rigid_incidence` and all 48 seeded values there | rows G5a to G5e; worked examples |
-| G17, three point groups differ from the table by setting | **Closed for the realization compared.** For 2/m, −42m and 32 a unitized motor is exhibited exactly that conjugates the library's group onto the group of Hestenes' Table 2 code in the realization of the earlier rebuild, as sets, and each library generator conjugated by it acts as an element of that group. All three motors are half-turns: 2/m about (1, 0, −1)/√2; −42m about (cos 22.5°, sin 22.5°, 0); 32 about the unit axis ((3 + √3)/6, (√3 − 3)/6, −√3/3) | row G17; `c3` |
+| G17, three point groups differ from the table by setting | **Closed for the realization compared.** For 2/m, −42m and 32 a unitized motor is exhibited exactly that conjugates the library's group onto the group of Hestenes' Table 2 code in the realization of the earlier rebuild, as sets, and each library generator conjugated by it acts as an element of that group. All three motors are half-turns: 2/m about (1, 0, −1)/√2; −42m about (cos 22.5°, sin 22.5°, 0); 32 about the unit axis ((3 + √3)/6, (√3 − 3)/6, −√3/3). Hestenes' code fixes angles, not coordinates, so each library group is itself a realization of the code (`c3` exhibits the vectors; for 2/m also a = e3, b = e1, c = e2): the groups differ from the earlier rebuild's coordinates, not from Hestenes | row G17; `c3` |
 
 ## 5. Open items for the owner
 
@@ -84,3 +84,49 @@ None of these is a disagreement; each is a choice the specification leaves open.
 - That the specification is the mathematics users mean (validation): the derivation checks the specification against its own definitions and against classical facts (Rodrigues' formula, Cramer's rule, determinants), not against users' intent.
 - That the library's code computes what the golden values say: the comparison is with `golden.hpp` and the tests' stated values, not with the library's output. The tests compare the library with those values.
 - Universal statements over all inputs where a row says "random inputs" or "on these forms": those rows are sampled (seeded), and the general statement rests on the derivation written in research note 0028.
+
+## 7. Corrections after the sample check (2026-11-21)
+
+An independent sample check by a second math-expert agent (branch `review/conventions-rederived`, `docs/agent/records/reviews/2026-11-21-0047-v3-sample-check.md`) sampled 51 of the 67 rows, found none wrong in value, sign, verdict or classification, and made five minor findings, m1 to m5. Each was judged here against the rows, CONVENTIONS 1.18 and, where a value was at stake, a rerun. All five are confirmed and corrected; none is rejected. The exercise changes are math-tools commit `5785b29` on `tools/conventions-rederived`.
+
+**m1 (coverage, row 1.8e): confirmed, corrected.** Of the 12 changes, the condition P⁻ᵀ G′ P⁻¹ = G held on six, all with d = ±1, where 1/d = d and 1/d² = d², so the check could not tell the stated factors from d and d². Such a change must be degenerate: det G = d² det G′ and the condition gives det G = det G′ / d², so d⁴ = 1 whenever det G ≠ 0. For G′ = diag(I, 0) and P = [[R, U], [0, S]] the condition holds exactly when R is orthogonal and U = 0, for any invertible S (derived by hand; checked with sympy for symbolic U). `s1` now adds three such changes: rigid(3) with e4 scaled by 2 (d = 2), a 3-4-5 rotation of rigid(3) with e4 scaled by −3 (d = −3), and R(2,0,2) with its radical mixed by [[1, 2], [3, 4]] (d = −2). On each, all eight operations are nonzero on the sampled inputs, equal with the stated factor, and differ with d or d² in its place. A negative control (a copy of `s1` that expects d and d²) fails on all eight operations of all three changes. Rows 1.8a to 1.8h now say 15 changes.
+
+**m2 (scope, row 6.2): confirmed, corrected.** The row said "not derived" while one consequence is cheap to derive. `s67` now derives it symbolically: for round points a, b, c of any weight and radius, a ∧ e5, a ∧ b ∧ e5 and a ∧ b ∧ c ∧ e5 are the rigid(3) joins of their (x, y, z, w) parts wedged with e5, with the same coefficients (by hand, e5 ∧ e5 = 0 removes every e5 term of a round point). A negative control that wedges with e4 + e5 instead fails. The row's Spec cell now reads "n/d for the definition; agree for the consequence". 6.2 stays a Study definition; nothing in CONVENTIONS changes.
+
+**m3 (wording, row 6.1b): confirmed, corrected.** "Up to the sphere's scale" hid that the factor includes the sign, which follows the order of the four points: exchanging two of them negates the wedge and so its bulk dual. The Spec cell now reads "agree up to a factor, sign included, that 6.1 does not fix; with the test's sphere coordinates, exactly", and the result cell says the −54 is for the script's order.
+
+**m4 (wording, G17): confirmed, corrected with a run.** Hestenes' Table 2 code fixes angles, not coordinates. `c3` now carries the realization's vectors by the conjugating rotation and shows that the carried vectors have the code's angles and generate exactly the library's group, for all three classes, and that for 2/m the rational realization a = e3, b = e1, c = e2 does too. So each library group is itself a realization of the code, and "differs by setting" means differs from the earlier rebuild's coordinates. Row G17, section 4 above, the 2/m worked example, and note 0028 D11 now say so.
+
+**m5 (rendering, row 1.8f): confirmed, corrected.** The cell "|d| = 1" had unescaped pipes, which split the row into 12 cells under a 10-column header. It now reads `\|d\|`, and its wording is corrected as well: with the m1 changes, the condition also holds with |d| ≠ 1, on degenerate forms, which the item's "for a nondegenerate form" excludes. Every table of this record and of note 0028 was then checked by splitting each row on unescaped pipes (code spans included, as GitHub does): the seven tables of `rows.md`, the three of this README, the one of `worked-examples.md` and the one of note 0028 each have the same cell count in every row as in their header. No Markdown renderer was available on the machine, so the rendering itself was not viewed.
+
+**The rerun.** From `math-core/`, after removing the exercise's `out/` and `__pycache__/`, under `memguard.sh`:
+
+```
+$ MT_SRC=$PWD/math-tools GALOOT=$PWD/galoot math-tools-worktrees/conventions-rederived/exercises/ga/ga-E22-conventions-rederived/run_all.sh
+PASS s0_engine
+PASS s1_blades_and_bases
+PASS s2_s3_grades_complements
+PASS s4_products
+PASS s5_rigid
+PASS s6_s7_conformal_operators
+PASS c2_compare_tests
+PASS c1_compare_golden
+PASS c3_point_group_settings
+PASS ga-E22
+```
+
+12.1 s wall, peak tree memory 77 MiB, load average 3.7; the job pool read 23 of 23 slots free and was not used. `golden.hpp` on `main` (`c9e03bc`) is identical to the base `01dce7f`. The outputs of every script not changed (`s0`, `s23`, `s4`, `s5`, `c1`, `c2`) were reproduced byte for byte, so the counts of 3,109 golden comparisons and 43 hand values stand. The changed rows print:
+
+```
+[1.8/C1] yes: ... preserved exactly when P^-T G' P^-1 = G -> preserved iff condition on all 15 changes (condition held on 9)
+[1.8/C1-factors] yes: the factors are 1/d (antiproduct, antidot, weight duals, compose) and 1/d^2 (transform, project, antiproject), not d and d^2 -> rigid(3) scale e4 by 2 (d = 2): all eight nonzero with the stated factor, wrong factor fails; rigid(3) 3-4-5 rotation, e4 scaled by -3 (d = -3): all eight nonzero with the stated factor, wrong factor fails; R(2,0,2) mix the radical e3, e4 (d = -2): all eight nonzero with the stated factor, wrong factor fails
+[1.8/complements] yes: complements preserved (factor d) exactly when P orthogonal -> iff on all 15 changes (condition held on 2)
+[1.8/bulk] yes: bulk preserved (factor 1) exactly when P P^T G = G -> iff on all 15 changes (condition held on 5)
+[1.8/weight] yes: weight preserved (factor 1) exactly when G' P^T P = G' -> iff on all 15 changes (condition held on 5)
+[6.2] n/a: ... a^e5, a^b^e5 and a^b^c^e5 equal the rigid(3) joins of their (x, y, z, w) parts wedged with e5, same coefficients: True
+[G17/realizations] n/a: ... 2/m: ... True; -42m: ... True; 32: ... True; 2/m also with a = e3, b = e1, c = e2: True
+```
+
+The sha256 prefixes of the changed scripts: `s1_blades_and_bases.py` `702b69d6370f675b`, `s6_s7_conformal_operators.py` `a4cf604f5331480a`, `c3_point_group_settings.py` `a7c137aefcdc7977`.
+
+What the corrections do not show: the "only if" halves of 1.8 are still sampled, now on 15 changes; the three new changes are all block-diagonal on the radical, so a degenerate change with a non-diagonal G′ on which the condition holds with |d| ≠ 1 was not tried.

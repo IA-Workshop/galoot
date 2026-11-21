@@ -74,7 +74,7 @@ Why the reverse sign: reversing e1 ∧ e2 ∧ e3 to e3 ∧ e2 ∧ e1 takes three
 
 **Motors and flectors close.** A motor has the eight even-grade blades and a flector the eight odd ones. In rigid(3) the antiproduct adds antigrades mod 2 and n = 4 is even, so grade parity and antigrade parity agree: motor ⟇ motor is a motor, and motor ⟇ flector a flector. [s5]
 
-**A crystal class in two settings.** The class 2/m is a twofold axis with a mirror perpendicular to it. With the axis along z or along x, the two groups are different sets of matrices, but the half-turn about (1, 0, −1)/√2 swaps x and −z and carries one group onto the other. Same order, same traces, and an explicit conjugating motor: that is what "differs only by setting" means. [c3]
+**A crystal class in two settings.** The class 2/m is a twofold axis with a mirror perpendicular to it. With the axis along z or along x, the two groups are different sets of matrices, but the half-turn about (1, 0, −1)/√2 swaps x and −z and carries one group onto the other. Same order, same traces, and an explicit conjugating motor: that is what "differs only by setting" means. Both groups realize Hestenes' code for 2/m, which fixes the angles between the unit vectors a, b and c but not their coordinates: a = e1, b = e2, c = e3 puts the axis along x, and a = e3, b = e1, c = e2 puts it along z. A setting is a choice of those coordinates, so neither group differs from Hestenes' code. [c3]
 
 ## 6. The round point (cga3, not yet a preset)
 
