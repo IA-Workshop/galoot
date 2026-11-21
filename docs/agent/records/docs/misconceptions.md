@@ -1,6 +1,6 @@
 # The misconceptions the documentation refutes
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Section 5 brought in step with the owner's rulings on `transform` and the first-things page (decision 0258 section 4 items 1 and 11) on 2026-11-21 by Claude (agent, Opus 5.5, math-expert and hci-expert roles).
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Section 5 brought in step with the owner's rulings on `transform` and the first-things page (decision 0258 section 4 items 1 and 11) on 2026-11-21 by Claude (agent, Opus 5.5, math-expert and hci-expert roles); section 5 and row M15 corrected after the independent check of those changes the same day, as `checks/README.md` lists.
 
 A misconception is a wrong idea a reader brings to a page. The pedagogical skill asks that each be refuted where the reader has the words for the correct idea: the page states the wrong idea, says plainly that it is wrong, gives the correct idea, and says why the wrong one is tempting. A refutation with a number the reader can run is stronger than one in words, so each entry here has a value that tells the two ideas apart.
 
