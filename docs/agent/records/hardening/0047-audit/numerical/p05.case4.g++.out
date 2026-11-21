@@ -40,7 +40,7 @@ include/galoot/core/assert.hpp:140:50: error: call to non-‘constexpr’ functi
       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   141 |                                                   __LINE__))
 exit status: 1
-error lines: 14
+errors: 13
 error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
 error: no matching function for call to ‘filled_plan<galoot::core::detail::BinaryOperation::geometric_product, count, capacity>(const galoot::core::metric<5>&, const std::array<galoot::core::oriented_blade, 1>&, const std::array<galoot::core::oriented_blade, 1>&)’
 error: non-constant condition for static assertion

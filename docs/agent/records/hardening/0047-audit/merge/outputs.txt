@@ -9,9 +9,8 @@ galoot/core/mv.hpp:313:53: runtime error: signed integer overflow: 32775 * 65535
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior galoot/core/mv.hpp:313:53 
 uint16 (65535 e12)(e12) on the scalar: 32761 (2^16-modular answer 32761)
 == clang++, constant evaluation
-m01_uint16_coefficient.cpp:25:16: error: constexpr variable 'constant_square' must be init
+m01_uint16_coefficient.cpp:25:16: error: constexpr variable 'constant_square' must be initialized by a constant expression
 galoot/core/mv.hpp:313:53: note: value 2147909625 is outside the range of representable values of type 'int'
-1 error generated.
 #### m02: GALOOT_FORCE_INLINE mixed (H0-29)
 == g++ -O0: weak galoot symbols, forced 23, free 32, in both 23
    link order forced_first: 0 of 100000 inputs differ in some bit
@@ -60,13 +59,13 @@ edited copy: messages changed: 2
 == clang++ -O2 -flto -Wodr, v100 edited, link old new: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
 == clang++ -O2 -flto -Wodr, v100 edited, link new old: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
 #### m04: forced inlining into a narrower target (H0-31)
-== g++ GALOOT_FORCE_INLINE=1: exit 1, 1 error lines
-galoot/core/transform.hpp:773:1: error: inlining failed in call to ‘always_inline’ ‘constexpr galoot::core::mv<Alg, A, T> galoot
-== g++ GALOOT_FORCE_INLINE=0: exit 0, 0 error lines
-== clang++ GALOOT_FORCE_INLINE=1: exit 1, 18 error lines
-m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires tar
-m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires tar
-== clang++ GALOOT_FORCE_INLINE=0: exit 0, 0 error lines
+== g++ GALOOT_FORCE_INLINE=1: exit 1, 1 error
+galoot/core/transform.hpp:773:1: error: inlining failed in call to ‘always_inline’ ‘constexpr galoot::core::mv<Alg, A, T> galoot::core::transform(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg 
+== g++ GALOOT_FORCE_INLINE=0: exit 0, 0 errors
+== clang++ GALOOT_FORCE_INLINE=1: exit 1, 17 errors
+m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires target feature 'movbe', but would be inlined into function 'fallback' that is compiled without support for 'movbe
+m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires target feature 'sse3', but would be inlined into function 'fallback' that is compiled without support for 'sse3'
+== clang++ GALOOT_FORCE_INLINE=0: exit 0, 0 errors
 #### m05: the rounding check under other environments (H0-32, D09, O01)
 == g++ -O2 -frounding-math 
    r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000

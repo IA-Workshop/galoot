@@ -40,5 +40,5 @@ In file included from include/galoot/core/basis_change.hpp:130,
       include/galoot/core/mv.hpp:675:46:
         675 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
 exit status: 1
-error lines: 1
+errors: 1
 error: no matching function for call to ‘galoot::core::mv<r300, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}, ring>::mv(<brace-enclosed initializer list>)’

@@ -25,5 +25,5 @@ include/galoot/core/mv.hpp:366:58: error: overflow in constant expression [-fper
   366 |        out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),
       |                                           ~~~~~~~~~~~~~~~^~~~
 exit status: 1
-error lines: 1
+errors: 1
 error: overflow in constant expression [-fpermissive]

@@ -28,7 +28,7 @@ docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:56:7: erro
    56 | const M m{};
       |       ^
 exit status: 1
-error lines: 3
+errors: 3
 error: template constraint failure for ‘template<class Alg, blade_set<...auto...> Blades, class T>  requires (metric_like<Alg>) && (destructible<T>) struct galoot::core::mv’
 error: expected type-specifier
 error: ‘M’ does not name a type

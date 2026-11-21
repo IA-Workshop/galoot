@@ -1,5 +1,5 @@
 $ build/audit-numerical/p03.table.g++ float
 galoot: assertion failed: transform: v is not a versor on x within rounding (include/galoot/core/transform.hpp:618)
 exit status: 134
-error lines: 0
+errors: 0
 assertion failed: transform: v is not a versor on x within rounding (include/galoot/core/transform.hpp:618)

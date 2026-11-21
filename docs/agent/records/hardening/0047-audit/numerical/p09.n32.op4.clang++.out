@@ -40,8 +40,8 @@ include/galoot/core/plan.hpp:196:12: note: in call to 'blade_product<2147483648U
       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 include/galoot/core/plan.hpp:280:11: note: in call to 'pair_terms<galoot::core::detail::BinaryOperation::geometric_product, 2147483648UL, 32UL>(value, 1, 4294967295)'
 exit status: 1
-error lines: 4
+errors: 3
 error: constexpr variable 'count' must be initialized by a constant expression
 error: no matching function for call to 'filled_plan'
 error: no matching function for call to 'bulk_dual'
-memguard: peak_tree_rss_kib 10932 exit 1
+memguard: peak_tree_rss_kib 8488 exit 1

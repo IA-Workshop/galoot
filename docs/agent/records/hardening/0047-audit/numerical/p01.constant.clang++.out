@@ -28,5 +28,5 @@ docs/agent/records/hardening/0047-audit/numerical/p01_narrow_unsigned.cpp:23:34:
       |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 1 error generated.
 exit status: 1
-error lines: 2
+errors: 1
 error: constexpr variable 'constant_square' must be initialized by a constant expression

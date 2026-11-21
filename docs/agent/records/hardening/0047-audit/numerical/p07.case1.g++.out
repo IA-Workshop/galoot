@@ -22,5 +22,5 @@ include/galoot/core/blade_set.hpp:513:25: error: static assertion failed: blades
       |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
   • ‘(((galoot::core::detail::NameError)error) != galoot::core::detail::NameError::bad_index)’ evaluates to false
 exit status: 1
-error lines: 3
+errors: 1
 error: static assertion failed: blades: after the e, a name lists generator indices, each a digit from 1 to 9

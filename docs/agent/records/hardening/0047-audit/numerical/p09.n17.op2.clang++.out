@@ -3,7 +3,7 @@ docs/agent/records/hardening/0047-audit/numerical/p09_wide_algebras.cpp:27:24: w
    27 | constexpr core::mask_t all = core::detail::low_bits(WIDE_N);
       |                        ^~~
 1 warning generated.
-timed: probe p09.n17.op2.clang++ took 0.148 s (exit 0); row in docs/agent/records/hardening/0047-audit/numerical/p09.timed.tsv
+timed: probe p09.n17.op2.clang++ took 0.310 s (exit 0); row in docs/agent/records/hardening/0047-audit/numerical/p09.timed.tsv
 exit status: 0
-error lines: 0
-memguard: peak_tree_rss_kib 9432 exit 0
+errors: 0
+memguard: peak_tree_rss_kib 10396 exit 0

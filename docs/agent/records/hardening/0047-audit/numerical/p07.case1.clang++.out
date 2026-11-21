@@ -22,5 +22,5 @@ include/galoot/core/blade_set.hpp:513:25: note: expression evaluates to '3 != 3'
       |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
 1 error generated.
 exit status: 1
-error lines: 4
+errors: 1
 error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::bad_index': blades: after the e, a name lists generator indices, each a digit from 1 to 9

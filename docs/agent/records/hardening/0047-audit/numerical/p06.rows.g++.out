@@ -25,5 +25,5 @@ include/galoot/core/basis_change.hpp:719:21: error: static assertion failed: bas
       |                     ^~~~
   • ‘fits’ evaluates to false
 exit status: 1
-error lines: 1
+errors: 1
 error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries

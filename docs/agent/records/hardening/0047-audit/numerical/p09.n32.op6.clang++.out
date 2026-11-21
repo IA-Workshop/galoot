@@ -40,8 +40,8 @@ include/galoot/core/blade_product.hpp:245:3: note: in call to 'add_blade_product
       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 include/galoot/core/blade_product.hpp:245:3: note: (skipping 26 calls in backtrace; use -fconstexpr-backtrace-limit=0 to see all)
 exit status: 1
-error lines: 4
+errors: 3
 error: constexpr variable 'count' must be initialized by a constant expression
 error: no matching function for call to 'filled_plan'
 error: no matching function for call to 'geometric_antiproduct'
-memguard: peak_tree_rss_kib 11188 exit 1
+memguard: peak_tree_rss_kib 11788 exit 1

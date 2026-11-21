@@ -10,5 +10,5 @@ docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:29:2
       |                            ^
 1 error generated.
 exit status: 1
-error lines: 2
+errors: 1
 error: static assertion failed due to requirement 'scalar_holds_every_coefficient_of_the_product': a * b: the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integers exactly

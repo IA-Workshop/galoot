@@ -9,5 +9,5 @@ docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:47:39: not
       |                                       ^
 1 error generated.
 exit status: 1
-error lines: 2
+errors: 1
 error: invalid operands to binary expression ('ring' and 'ring')

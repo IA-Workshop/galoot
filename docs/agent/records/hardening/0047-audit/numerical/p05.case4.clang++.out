@@ -40,7 +40,7 @@ include/galoot/core/plan.hpp:196:12: note: in call to 'blade_product<16UL, 5UL>(
       |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 include/galoot/core/plan.hpp:280:11: note: in call to 'pair_terms<galoot::core::detail::BinaryOperation::geometric_product, 16UL, 5UL>(value, 31, 31)'
 exit status: 1
-error lines: 4
+errors: 3
 error: constexpr variable 'count' must be initialized by a constant expression
 error: no matching function for call to 'filled_plan'
 error: invalid operands to binary expression ('B' (aka 'core::mv<diagonal<32767>, core::blades<A, "e12345">, long>') and 'B')

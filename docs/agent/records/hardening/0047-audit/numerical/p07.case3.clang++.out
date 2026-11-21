@@ -40,5 +40,5 @@ include/galoot/core/mv.hpp:456:39: note: because '!std::constructible_from<ring,
       |                                       ^
 include/galoot/core/mv.hpp:713:22: note: candidate template ignored: could not match 'std::remove_cvref_t<ring>[N]' (aka 'ring[N]') against 'int'
 exit status: 1
-error lines: 2
+errors: 1
 error: no matching constructor for initialization of 'const E1' (aka 'const core::mv<r300, core::blades<r300, "e1">, ring>')

@@ -24,5 +24,5 @@ docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp:36
       |                    ^
 1 error generated.
 exit status: 1
-error lines: 2
+errors: 1
 error: static assertion failed due to requirement 'fits': basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries

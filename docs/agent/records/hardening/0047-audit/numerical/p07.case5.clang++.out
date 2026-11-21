@@ -13,6 +13,6 @@ docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:56:7: erro
       |       ^
 2 errors generated.
 exit status: 1
-error lines: 3
+errors: 2
 error: constraints not satisfied for class template 'mv' [with Alg = big, Blades = blade_set<4>{{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}}}, T = double]
 error: unknown type name 'M'

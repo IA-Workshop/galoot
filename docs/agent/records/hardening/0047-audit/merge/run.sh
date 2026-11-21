@@ -11,6 +11,11 @@ inc="$repo/include"
 py=/home/brianm/projects/utils/math-core/math-tools/toolset/env/py/.venv/bin/python
 mkdir -p "$out"
 strip() { sed -e "s|$inc/||g" -e "s|$here/||g" -e "s|$out/||g"; }
+# An error is a line that starts with a location and "error:". A count of the
+# lines that contain "error" would also take in Clang's closing "N errors
+# generated." and read too high. Paths are stripped before a line is cut, so
+# that the output does not depend on where the repository is.
+diagnostic='^[^[:space:]]+: (fatal )?error: '
 
 echo "#### m01: uint16 coefficient path (N01)"
 for cxx in g++ clang++; do
@@ -20,7 +25,7 @@ for cxx in g++ clang++; do
   echo "== $cxx, constant evaluation"
   $cxx -std=c++23 -I"$inc" -fsyntax-only -DCONSTANT_CASE \
     "$here/m01_uint16_coefficient.cpp" 2>&1 |
-    grep -E 'error|note: value' | head -3 | cut -c1-200 | strip
+    grep -E "$diagnostic|note: value" | head -3 | strip | cut -c1-200
 done
 
 echo "#### m02: GALOOT_FORCE_INLINE mixed (H0-29)"
@@ -35,8 +40,10 @@ for cxx in g++ clang++; do
     log=$($cxx -std=c++23 -O2 -march=x86-64-v3 -I"$inc" \
       -DGALOOT_FORCE_INLINE=$fi -c "$here/m04_target_mismatch_fail.cpp" \
       -o /dev/null 2>&1)
-    echo "== $cxx GALOOT_FORCE_INLINE=$fi: exit $?, $(grep -c 'error' <<<"$log") error lines"
-    grep -m2 'error' <<<"$log" | cut -c1-200 | strip
+    status=$?
+    count=$(grep -cE "$diagnostic" <<<"$log")
+    echo "== $cxx GALOOT_FORCE_INLINE=$fi: exit $status, $count error$([ "$count" = 1 ] || echo s)"
+    grep -m2 -E "$diagnostic" <<<"$log" | strip | cut -c1-200
   done
 done
 

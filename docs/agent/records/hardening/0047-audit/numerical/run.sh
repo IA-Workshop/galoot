@@ -20,7 +20,11 @@ mkdir -p "$out_dir"
 std=(-std=c++23 -I"$root/include" -Wall -Wextra)
 ubsan=(-fsanitize=undefined -g)
 
-# record <case> <command...>: runs the command, keeps its output and status.
+# record <case> <command...>: runs the command, keeps its output and status,
+# and counts its errors. An error is a line that starts with a location and
+# "error:"; a count of the lines that contain "error" would also take in
+# Clang's closing "N errors generated.", GCC's note "... resulted in errors
+# seen above", and a sanitizer's "runtime error" lines, and read too high.
 record() {
   local name=$1
   shift
@@ -33,7 +37,7 @@ record() {
     status=$?
     head -n 40 "$log"
     printf 'exit status: %s\n' "$status"
-    printf 'error lines: %s\n' "$(grep -c 'error' "$log")"
+    printf 'errors: %s\n' "$(grep -cE '^[^[:space:]]+: (fatal )?error: ' "$log")"
     grep -m 3 -o "error: .*\|static assertion failed.*\|assertion failed: .*" "$log"
   } | sed "s|$root/||g" > "$here/$name.out"
 }

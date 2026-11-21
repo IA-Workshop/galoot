@@ -40,7 +40,7 @@ In file included from include/galoot/core/basis_change.hpp:130,
       include/galoot/core/mv.hpp:650:22:
         650 |   constexpr explicit mv(const mv<OtherAlg, From, U>& /*source*/) {
 exit status: 1
-error lines: 4
+errors: 4
 error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
 error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
 error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
