@@ -1,0 +1,10 @@
+$ g++ p02_bits_unchecked.cpp -fsanitize=undefined -g -D_GLIBCXX_ASSERTIONS -DGALOOT_CHECKING=0
+--- run
+include/galoot/core/bits.hpp:50:21: runtime error: shift exponent 32 is too large for 32-bit type 'unsigned int'
+complement_mask(0b1, 0) = 0xfffffffe
+complement_mask(0b1, 33) = 0
+antigrade(0b1, 0) = -1
+right_complement_sign(0b1, 0) = 1
+canonical_name(1 << 9) = "e"
+/usr/include/c++/16/array:219: constexpr const std::array<_Tp, _Nm>::value_type& std::array<_Tp, _Nm>::operator[](size_type) const [with _Tp = std::array<int, 3>; long unsigned int _Nm = 3; const_reference = const std::array<int, 3>&; size_type = long unsigned int]: Assertion '__n < this->size()' failed.
+exit status: 134

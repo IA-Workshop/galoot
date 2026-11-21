@@ -1,0 +1,3 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=3 docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp
+exit status: 0
+errors: 0

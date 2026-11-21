@@ -1,0 +1,26 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=1 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:5:
+In file included from include/galoot/presets/rga3.hpp:10:
+In file included from include/galoot/presets/rga3/motions.hpp:26:
+In file included from include/galoot/core.hpp:8:
+In file included from include/galoot/core/basis_change.hpp:127:
+In file included from include/galoot/core/blade_product.hpp:43:
+include/galoot/core/blade_set.hpp:513:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::bad_index': blades: after the e, a name lists generator indices, each a digit from 1 to 9
+  513 |     static_assert(error != NameError::bad_index,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/blade_set.hpp:553:12: note: in instantiation of function template specialization 'galoot::core::detail::make_blades<3UL, detail::name_list<6>{{"e1\te2"}}>' requested here
+  553 |     return make_blades<
+      |            ^
+include/galoot/core/blade_set.hpp:641:40: note: in instantiation of function template specialization 'galoot::core::detail::make_blades_of_tag<r300, detail::name_list<6>{{"e1\te2"}}>' requested here
+  641 | inline constexpr auto blades = detail::make_blades_of_tag<Alg, Names>();
+      |                                        ^
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:29:28: note: in instantiation of variable template specialization 'galoot::core::blades' requested here
+   29 | constexpr auto set = core::blades<r300, "e1\te2">;
+      |                            ^
+include/galoot/core/blade_set.hpp:513:25: note: expression evaluates to '3 != 3'
+  513 |     static_assert(error != NameError::bad_index,
+      |                   ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+exit status: 1
+errors: 1
+error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::bad_index': blades: after the e, a name lists generator indices, each a digit from 1 to 9

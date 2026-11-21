@@ -1,0 +1,18 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=5 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:55:17: error: constraints not satisfied for class template 'mv' [with Alg = big, Blades = blade_set<4>{{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}}}, T = double]
+   55 | using M = core::mv<big, core::full<2>, double>;
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:507:11: note: because 'big' does not satisfy 'metric_like'
+  507 | template <metric_like Alg, blade_set Blades, std::destructible T>
+      |           ^
+include/galoot/core/metric.hpp:314:10: note: because 'detail::is_valid_form_v<big>' evaluated to false
+  314 |     } && detail::is_valid_form_v<Alg>;
+      |          ^
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:56:7: error: unknown type name 'M'
+   56 | const M m{};
+      |       ^
+2 errors generated.
+exit status: 1
+errors: 2
+error: constraints not satisfied for class template 'mv' [with Alg = big, Blades = blade_set<4>{{{{0, 1}, {1, 1}, {2, 1}, {3, 1}}}}, T = double]
+error: unknown type name 'M'
