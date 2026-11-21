@@ -1,6 +1,6 @@
 # The learner contracts of the user documentation
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction.
 
 A learner contract is what a page declares about its reader: the level, what the reader is assumed to know, and what the reader will be able to do afterward. An author writes to the contract, the cold reader of plan 0049 section 9.1 is given the contract and nothing more, and a stumble is settled by changing the page or by changing the contract in the open. This record fixes the readers, the contract of each kind of page, the contract of each tutorial chapter, and the form in which a page shows its contract.
 
@@ -75,7 +75,7 @@ Each chapter may assume section 2 and the chapters before it. Its objectives are
 - multiply two vectors by three rules on paper and predict which parts the result has;
 - compute the same product in a program and check each part;
 - show with numbers that the product depends on the order of its factors;
-- take one part of a result, choosing between the operation that checks what it drops and the one that does not;
+- take one part of a result, choosing between the operation that checks what it drops, in whole numbers at compile time, and the one that never checks;
 - undo a multiplication by a vector.
 
 **4. Reflections and rotors.** After it the reader can:
@@ -124,7 +124,7 @@ Each chapter may assume section 2 and the chapters before it. Its objectives are
 
 **10. A robot arm.** After it the reader can:
 - model an arm of three joints as three turns about three lines, and compute where its tip is;
-- check the model exactly with quarter turns;
+- check the model exactly, with quarter turns, whose results can be found by hand, and with a turn that is not a multiple of a quarter turn, such as the turn with cosine 3/5 and sine 4/5, so that no coincidence of quarter turns can pass the check (rule A2);
 - run it with real angles and judge the result.
 
 ## 5 The form of "Before you start"

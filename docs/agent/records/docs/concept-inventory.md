@@ -1,12 +1,12 @@
 # The concept inventory of the user documentation, and its order
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed. Research note [0029](../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction. Research note [0029](../../research-notes/0029-docs-design-transform-and-the-classical-sandwich.md) gives the reasons for the order; this record is the order.
 
 Every term, symbol, notation, named result, and technique that the documentation introduces is a row here, with what it rests on. The tutorial is written in the order of part 2: a row may use only the prerequisites of part 1 and rows above it. The glossary (unit U3) is built from this record, one row per term, and `tests.docs_terms` then holds the pages to the same order.
 
 How to read a row: **ID**, the **concept** as the reader will meet it, its **kind** (term, symbol, C++ name, rule, technique, result, or warning), what it **rests on** (IDs), and the **public names** of the library it brings in. A concept taught first in a simple form and refined later has two rows, and the second rests on the first.
 
-`checks/inventory_check.py` reads this file and fails if an ID repeats, a row rests on an ID that does not exist, or a row of part 2 rests on a row below it. That shows the order has no cycle and no forward reference. It cannot show that no concept is missing; that is the independent reviewer's question.
+`checks/inventory_check.py` reads this file and fails if an ID repeats, a row rests on an ID that does not exist, or a row of part 2 rests on a row below it. That shows the order has no cycle and no forward reference by ID. It also fails if a tutorial row's text uses a term above the row that defines it, for the terms it can read: the headword before the first colon of a row of kind term or symbol. So a row that defines a term names it first, followed by a colon, and a term met first in a simple form names the first form there ("Blade, first form:"). A term named later in a cell is not seen. The script cannot show that no concept is missing; that is the independent reviewer's question.
 
 ## 1 Prerequisites
 
@@ -42,9 +42,9 @@ R(2, 0, 0), then R(3, 0, 0), over `int`. No new mathematics: Galoot's C++ on wha
 
 | ID | Concept | Kind | Rests on | Public names |
 | --- | --- | --- | --- | --- |
-| K101 | Generator: one of the unit directions e1, e2, … that an algebra is built from | term | P01, P02, P03 | |
+| K101 | Generator: one of the unit directions e1, e2, … from which everything in the tutorial is built | term | P01, P02, P03 | |
 | K102 | Algebra, first form: a choice of generators, declared as a tag, a `struct` whose `value` holds the choice | term | K101, Q03 | |
-| K103 | `R<P, Q, Z>()`, first form: P perpendicular unit generators; the other two counts are zero until chapter 7 | C++ name | K102 | `R` |
+| K103 | `R<P, Q, Z>()`, first form: P perpendicular unit generators; the other two counts are zero, and chapter 7 says what they count | C++ name | K102 | `R` |
 | K104 | Layout: the list of things a type stores, written `blades<Tag, "e1 e2">` | term | K101, K102, Q04 | `blades` |
 | K105 | Multivector, first form: a value that holds one number for each entry of its layout, `mv<Tag, Layout, T>` | term | K104 | `mv` |
 | K106 | Coefficient; scalar, a plain number; scalar type | term | K105, Q08 | |
@@ -70,13 +70,13 @@ R(2, 0, 0) for the first picture, then R(3, 0, 0).
 | K201 | Bivector: an oriented area, a piece of a plane with a sense of turning | term | P07, P01, P03 | |
 | K202 | The wedge a ∧ b of two vectors, the bivector they span; `wedge(a, b)` and `a ^ b` | symbol | K201, K105 | `wedge` |
 | K203 | Antisymmetry: b ∧ a = −(a ∧ b), and a ∧ a = 0 | result | K202 | |
-| K204 | The basis bivectors e12, e13, e23, each the wedge of two generators; a blade's name lists its generators | term | K202, K101 | |
+| K204 | Blade, first form: a wedge of distinct generators, also called a basis blade, such as e1 and the basis bivectors e12, e13, e23; a blade's name lists its generators | term | K202, K101 | |
 | K205 | Oriented and canonical names: e21 = −e12; the canonical name lists indices in increasing order | rule | K204, K203 | |
 | K206 | The coefficients of a ∧ b, each a 2 × 2 difference of products; in the plane, the signed area | result | K204, K203, P07 | |
 | K207 | Result layouts: a wedge is on the canonical layout of the blades it can reach, and `auto` keeps it there | rule | K113, K205 | |
 | K208 | Conversion with braces to a type of the reader's own, `Bivector{a ^ b}`; conversions are explicit | rule | K207, K107 | |
 | K209 | `^` binds more loosely than `==`, `+`, and `*`: parentheses around every wedge beside another operator | rule | K202, Q07 | |
-| K210 | Blade: a wedge of vectors; grade: how many; the scalar has grade 0, a vector 1, a bivector 2 | term | K202 | |
+| K210 | Blade, refined: a wedge of any vectors, not only of generators; grade: how many vectors; the scalar has grade 0, a vector 1, a bivector 2 | term | K202, K204 | |
 | K211 | Trivector: an oriented volume, e123; a ∧ b ∧ c | term | K210, P07 | |
 | K212 | The wedge of three vectors is the determinant of their coordinates, on e123 | result | K211, K206 | |
 | K213 | The wedge and the cross product: the same three numbers on e23, e31, e12, a different object | result | K206, K205, P06 | |
@@ -95,7 +95,7 @@ R(2, 0, 0), then R(3, 0, 0).
 | K304 | For two vectors, u v = u · v + u ∧ v | result | K303, K112, K202 | |
 | K305 | Multivector, refined: a sum of blades of several grades, on a layout such as `1 e12 e13 e23` | term | K304, K210, K105 | |
 | K306 | The product is associative and does not commute | result | K303 | |
-| K307 | Taking a part: `part<Type>(x)` drops the rest without a check; `truncate<Type>(x)` checks that what it drops is zero | C++ name | K305, K208 | `part`, `truncate` |
+| K307 | Taking a part: `part<Type>(x)` drops the rest without a check; `truncate<Type>(x)`, over an exact scalar such as `int`, checks that what it drops is zero in a constant expression; chapter 9 adds the same check at run time | C++ name | K305, K208 | `part`, `truncate` |
 | K308 | A vector squares to its squared length; the bivector e12 squares to −1 | result | K304, K301, K115 | |
 | K309 | The inverse of a vector, v divided by v · v, written by hand; in integers, keep the factor instead of dividing | technique | K308, K109 | |
 
@@ -149,7 +149,7 @@ R(3, 0, 0). The same reflections and turns as chapter 4, with each mirror given 
 | K603 | The complement carries one product to the other: right(b a) = right(b) ⟇ right(a) | result | K602 | |
 | K604 | Antireverse: the reverse with the antigrade in place of the grade; `antireverse(x)` | term | K404, K502 | `antireverse` |
 | K605 | Versor: an antiproduct of mirror planes; even or odd, by how many | term | K602, K601 | |
-| K606 | `transform(x, V)`: for an even V, V ⟇ x ⟇ antireverse(V); for a mirror, the same with the sign that makes it the reflection | C++ name | K605, K604, K405 | `transform` |
+| K606 | `transform(x, V)`: for an even V, V ⟇ x ⟇ antireverse(V); for an odd V, such as a mirror, the same with a sign set by the antigrade of each part of x, −1 where it is even and +1 where it is odd, so −V ⟇ v ⟇ antireverse(V) for a vector v of R(3, 0, 0) | C++ name | K605, K604, K502, K405 | `transform` |
 | K607 | The bridge: `transform(v, !r)` is `r * v * ~r`, and `transform(v, !a)` is −a v a | result | K606, K603, K405, K401 | |
 | K608 | `compose(V2, V1)` is V2 ⟇ V1 and applies V1 first, as r2 r1 does | C++ name | K602, K408 | `compose` |
 | K609 | `transform` gives x's own type and does not divide: the factor V ⟇ antireverse(V) = λ 𝟙 stays, the factor r r̃ of chapter 4 | rule | K606, K406 | |
@@ -162,8 +162,8 @@ rigid(3), through the rga3 preset, over `int`.
 
 | ID | Concept | Kind | Rests on | Public names |
 | --- | --- | --- | --- | --- |
-| K701 | A fourth coordinate w: (x, y, z, w) stands for the position (x/w, y/w, z/w); weight | term | P01, K106 | |
-| K702 | A generator that squares to zero, e4; rigid(3) is R(3, 0, 1), and the three counts of `R<P, Q, Z>` now all have a meaning | term | K114, K103, K701 | `rigid` |
+| K701 | Weight, first form: a fourth coordinate w, with (x, y, z, w) standing for the position (x/w, y/w, z/w) | term | P01, K106 | |
+| K702 | A generator that squares to zero, e4; rigid(3) is R(3, 0, 1); `R<P, Q, Z>` counts P generators that square to 1, Q that square to −1, and Z that square to 0, and the tutorial's Q is always 0 | term | K114, K103, K701 | `rigid` |
 | K703 | Point: x e1 + y e2 + z e3 + w e4; unitized when w = 1; (2, 4, 6, 2) and (1, 2, 3, 1) are one point and two values | term | K701, K702 | |
 | K704 | The rga3 preset: `<galoot/presets/rga3.hpp>`, its tag `rga3::algebra`, and `rga3::Point<T>` | C++ name | K703, K104 | `algebra`, `Point` |
 | K705 | Join: p ∧ q is the line through p and q, from p to q | result | K703, K202 | |
@@ -174,7 +174,7 @@ rigid(3), through the rga3 preset, over `int`.
 | K710 | Meet in rigid(3): a line and a plane meet in a point, two planes in a line | result | K507, K706, K708 | |
 | K711 | Incidence: a point lies on a plane exactly when their meet, a scalar, is zero | result | K710, K113 | |
 | K712 | Converting to the named types, `Line{p ^ q}` and `Point{l & g}`; a join kept with `auto` reads −1 on e24 where the `Line` reads 1 on e42 | rule | K208, K707 | |
-| K713 | Bulk and weight: the part without e4 and the part with it; `bulk(x)` and `weight(x)` | term | K702, K703 | `bulk`, `weight` |
+| K713 | Bulk and weight, refined: the part without e4 and the part with it, so that a point's weight is now w e4 and not the number w; `bulk(x)` and `weight(x)` | term | K702, K703 | `bulk`, `weight` |
 | K714 | Parallel planes meet too, in a line with zero direction | result | K710, K713 | |
 | K715 | The sign and size of a meet carry the orientations of what met; the point is the same | result | K710, K703 | |
 
@@ -197,7 +197,7 @@ rigid(3), over `int` and then `double`.
 | K809 | `rga3::rotation(l, theta)` and `rga3::translation(dx, dy, dz)`: full angles and distances in, halves stored | C++ name | K805, K407, K706, P04 | `rotation`, `translation` |
 | K810 | The weight factor λ, with Q ⟇ antireverse(Q) = λ 𝟙; a unitized motor has λ = 1 | term | K609, K805, K703 | |
 | K811 | A turn about a line that misses the origin | technique | K809, K808, K804 | |
-| K812 | The other convention, in two sentences: a null generator named e0 and put first, planes as the vectors, the geometric product; the complement carries one to the other | warning | K702, K805, K503 | |
+| K812 | The other convention, in two sentences: e0 for the generator that squares to zero, put first; planes as the vectors; the geometric product; the complement carries one to the other | warning | K702, K805, K503 | |
 
 Likely mistake shown: `const Motor m = compose(b, a);`, an implicit conversion, and the order of `compose`.
 
@@ -250,7 +250,7 @@ These rows belong to the conventions chapter, the concepts pages, and the first-
 
 ## 4 What the order was checked against
 
-- No cycle and no forward reference: `checks/inventory_check.py`, run on this file.
+- No cycle, no forward reference by ID, and no headword used above its defining row: `checks/inventory_check.py`, run on this file; `checks/inventory_mutants.py` shows that it fails on three broken copies.
 - Each concept of plan 0049 section 4.2's table has a row. Three of its entries moved: "why `!!x` is not always x" needs two or four generators, so K505 uses R(2, 0, 0) for it; the antiproduct, the antireverse, `transform`, and `compose` moved from the plan's chapter 8 to the new chapter 6; and the plan's chapters 1 and 2 are one chapter.
 - The public names the tutorial brings in are counted by the same script. The reference documents the rest.
 - Not checked: that a reader at the declared level can take each step. That is what the cold reads of plan section 9.1 test.

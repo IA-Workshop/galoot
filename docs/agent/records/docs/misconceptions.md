@@ -1,6 +1,6 @@
 # The misconceptions the documentation refutes
 
-Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Not yet reviewed.
+Written by: Claude (agent, Fable 5.2, math-expert and hci-expert roles), 2026-11-21, for unit U1 of plan 0049. Checked by an independent math review on 2026-11-21 and corrected the same day by Claude (agent, Opus 5.5); `checks/README.md` lists each correction.
 
 A misconception is a wrong idea a reader brings to a page. The pedagogical skill asks that each be refuted where the reader has the words for the correct idea: the page states the wrong idea, says plainly that it is wrong, gives the correct idea, and says why the wrong one is tempting. A refutation with a number the reader can run is stronger than one in words, so each entry here has a value that tells the two ideas apart.
 
@@ -40,7 +40,7 @@ Plan 0049 section 4.2 lists fourteen. This record keeps them as fifteen entries 
 | M21 | A product returns the named type: `p ^ q` is a `Line`, `compose` gives a `Motor` | The mathematics says a line | A result is on the canonical layout of the blades it reaches, and converts to a named type with braces: `Line{p ^ q}` | chapter 2, again in 7 and 8 | K207, K712 | guide |
 | M22 | `!x` is a truth value | It is for every built-in type | It is the right complement, a multivector: `if (!x)` does not compile, and `!x == y` needs parentheses | chapter 5 | K509 | guide |
 | M23 | A name such as e14 reads the blade whichever way the type stores it | A blade is a blade | Names are oriented: a `Line` stores e41 = −e14, and `get<"e14">` is rejected with a message that says so | chapter 7 | K707 | guide |
-| M24 | `truncate` and `part` round | The names | They drop blades, never digits; `truncate` checks that what it drops is zero and `part` does not | chapter 3 | K307 | guide |
+| M24 | `truncate` and `part` round | The names | They drop blades, never digits; over an exact scalar, `truncate` checks that what it drops is zero in a constant expression, and at run time only in checking mode, and `part` never checks | chapter 3 | K307 | guide |
 
 ## 3 Held by the arriver
 
