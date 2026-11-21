@@ -1,0 +1,202 @@
+#### c01: an overflowing product coefficient, this correction's input (E1, A38)
+== g++: 13 errors in 181 lines of output; 14 lines contain "error"
+galoot/core/assert.hpp:140:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+galoot/core/plan.hpp:556:41: error: no matching function for call to ‘filled_plan<galoot::core::detail::BinaryOperation::geometric_product, count, capacity>(con
+galoot/core/plan.hpp:560:19: error: non-constant condition for static assertion
+      • substitution of deduced template arguments resulted in errors seen above
+   the library's message is in the output: 1 time(s)
+== clang++: 3 errors in 100 lines of output; 4 lines contain "error"
+galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression
+galoot/core/plan.hpp:556:9: error: no matching function for call to 'filled_plan'
+c01_overflow_cascade_fail.cpp:21:25: error: invalid operands to binary expression ('B' (aka 'core::mv<six, core::blades<six, "e123456">, long>') and 'B')
+3 errors generated.
+   the library's message is in the output: 1 time(s)
+#### count_check: every failing compile of the audit, counted three ways (E1)
+g++      cpp/repro/r01_one_blade_explicit_fail.cpp                                     lines  2  errors  2  own  2
+g++      cpp/repro/r02_many_blades_explicit_fail.cpp                                   lines  2  errors  2  own  2
+g++      cpp/repro/r09_get_derived_fail.cpp                                            lines  1  errors  1  own  1
+g++      cpp/repro/r10_scale_derived_fail.cpp                                          lines  1  errors  1  own  1
+g++      cpp/repro/r12_orthogonal_change_overflow_fail.cpp  -DW=79                     lines  1  errors  1  own  1
+g++      cpp/repro/r15_translation_bool_fail.cpp                                       lines  2  errors  2  own  2
+g++      cpp/repro/r21_tab_separator_fail.cpp                                          lines  3  errors  1  own  1
+g++      numerical/p01_narrow_unsigned.cpp                  -DCONSTANT_CASE            lines  1  errors  1  own  1
+g++      numerical/p05_coefficient_edges.cpp                -DCASE=2                   lines  1  errors  1  own  1
+g++      numerical/p05_coefficient_edges.cpp                -DCASE=4                   lines 14  errors 13  own 13
+g++      numerical/p05_coefficient_edges.cpp                -DCASE=5                   lines  1  errors  1  own  1
+g++      numerical/p06_change_extreme_rows.cpp              -DCASE=1                   lines  1  errors  1  own  1
+g++      numerical/p07_diagnostics.cpp                      -DCASE=1                   lines  3  errors  1  own  1
+g++      numerical/p07_diagnostics.cpp                      -DCASE=3                   lines  1  errors  1  own  1
+g++      numerical/p07_diagnostics.cpp                      -DCASE=4                   lines  4  errors  4  own  4
+g++      numerical/p07_diagnostics.cpp                      -DCASE=5                   lines  3  errors  3  own  3
+g++      merge/m01_uint16_coefficient.cpp                   -DCONSTANT_CASE            lines  1  errors  1  own  1
+g++      merge/m04_target_mismatch_fail.cpp                 -DGALOOT_FORCE_INLINE=1    lines  1  errors  1  own  1
+g++      correction/c01_overflow_cascade_fail.cpp                                      lines 14  errors 13  own 13
+clang++  cpp/repro/r01_one_blade_explicit_fail.cpp                                     lines  2  errors  1  own  1
+clang++  cpp/repro/r02_many_blades_explicit_fail.cpp                                   lines  2  errors  1  own  1
+clang++  cpp/repro/r09_get_derived_fail.cpp                                            lines  2  errors  1  own  1
+clang++  cpp/repro/r10_scale_derived_fail.cpp                                          lines  2  errors  1  own  1
+clang++  cpp/repro/r12_orthogonal_change_overflow_fail.cpp  -DW=79                     lines  2  errors  1  own  1
+clang++  cpp/repro/r15_translation_bool_fail.cpp                                       lines  3  errors  2  own  2
+clang++  cpp/repro/r21_tab_separator_fail.cpp                                          lines  4  errors  1  own  1
+clang++  numerical/p01_narrow_unsigned.cpp                  -DCONSTANT_CASE            lines  2  errors  1  own  1
+clang++  numerical/p05_coefficient_edges.cpp                -DCASE=2                   lines  2  errors  1  own  1
+clang++  numerical/p05_coefficient_edges.cpp                -DCASE=4                   lines  4  errors  3  own  3
+clang++  numerical/p05_coefficient_edges.cpp                -DCASE=5                   lines  2  errors  1  own  1
+clang++  numerical/p06_change_extreme_rows.cpp              -DCASE=1                   lines  2  errors  1  own  1
+clang++  numerical/p07_diagnostics.cpp                      -DCASE=1                   lines  4  errors  1  own  1
+clang++  numerical/p07_diagnostics.cpp                      -DCASE=3                   lines  2  errors  1  own  1
+clang++  numerical/p07_diagnostics.cpp                      -DCASE=4                   lines  2  errors  1  own  1
+clang++  numerical/p07_diagnostics.cpp                      -DCASE=5                   lines  3  errors  2  own  2
+clang++  merge/m01_uint16_coefficient.cpp                   -DCONSTANT_CASE            lines  2  errors  1  own  1
+clang++  merge/m04_target_mismatch_fail.cpp                 -DGALOOT_FORCE_INLINE=1    lines 18  errors 17  own 17
+clang++  correction/c01_overflow_cascade_fail.cpp                                      lines  4  errors  3  own  3
+clang++  cpp/repro/r17_wide_algebra_capacity.cpp            -DGEN=22                   lines  4  errors  3  own  3
+clang++  cpp/repro/r20_wide_vectors_wedge.cpp               -DGEN=20                   lines  4  errors  3  own  3
+clang++  numerical/p09_wide_algebras.cpp                    -DWIDE_N=22 -DWIDE_OP=4    lines  4  errors  3  own  3
+clang++  numerical/p09_wide_algebras.cpp                    -DWIDE_N=24 -DWIDE_OP=4    lines  4  errors  3  own  3
+clang++  numerical/p09_wide_algebras.cpp                    -DWIDE_N=32 -DWIDE_OP=4    lines  4  errors  3  own  3
+clang++  numerical/p09_wide_algebras.cpp                    -DWIDE_N=24 -DWIDE_OP=6    lines  4  errors  3  own  3
+clang++  numerical/p09_wide_algebras.cpp                    -DWIDE_N=32 -DWIDE_OP=6    lines  4  errors  3  own  3
+g++      cpp/repro/r20_wide_vectors_wedge.cpp               -DGEN=31                   lines 39  errors 21  own 21
+#### c02: the float16 padding and the floor it puts under a tolerance (M1, A22)
+padding tau = 0.125
+roundings K of the dropped coefficients: 3 3 3 3 3 3
+tolerances at v = x = 0 (the floor): 0.0004892 0.0004892 0.0004892 0.0004892 0.0004892 0.0004892
+s = 1     dropped / tolerance:  -2 / 0.00489  -4 / 0.00905  -6 / 0.0132  0 / 0.00905  0 / 0.0132  0 / 0.0252  -> caught
+s = 0.1   dropped / tolerance:  -0.002 / 0.000542  -0.004 / 0.00057  -0.00599 / 0.000599  0 / 0.00057  0 / 0.000599  0 / 0.000635  -> caught
+s = 0.05  dropped / tolerance:  -0.00025 / 0.000514  -0.0005 / 0.000526  -0.000749 / 0.000539  0 / 0.000526  0 / 0.000539  0 / 0.000553  -> caught
+s = 0.03  dropped / tolerance:  -5.4e-05 / 0.000504  -0.000108 / 0.000511  -0.000162 / 0.000519  0 / 0.000511  0 / 0.000519  0 / 0.000526  -> passed
+s = 0.01  dropped / tolerance:  -2.03e-06 / 0.000494  -4.05e-06 / 0.000496  -5.96e-06 / 0.000499  0 / 0.000496  0 / 0.000499  0 / 0.000502  -> passed
+galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+   exit status 134
+s = 0.0299988: transform returned 0.000350714 on e1, no abort
+   exit status 0
+#### c03: canonical_name with a generator beyond e9 (M2, A06)
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0
+canonical_name(e10) = "e"
+canonical_name(e10 e11) = "e"
+canonical_name(e1 e10) = "e1"
+canonical_name(e2 e9 e12) = "e29"
+canonical_name(e1 (for comparison)) = "e1"
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1
+galoot: assertion failed: canonical_name: a generator beyond e9 (galoot/core/blade_set.hpp:133)
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0
+canonical_name(e10) = "e"
+canonical_name(e10 e11) = "e"
+canonical_name(e1 e10) = "e1"
+canonical_name(e2 e9 e12) = "e29"
+canonical_name(e1 (for comparison)) = "e1"
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1
+galoot: assertion failed: canonical_name: a generator beyond e9 (galoot/core/blade_set.hpp:133)
+#### c04: rotation about an l that is not a line (M4, A49)
+== g++ -O0, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+the z axis: v . m = 0, motor defect Qv . Qm = 0
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 0.000000 0.000000 2.000000, its v . m = 0
+  join of the images: -2.223244 0.239134 -0.000000 0.000000 -0.000000 2.000000
+direction z, moment z: v . m = 1, motor defect Qv . Qm = 0.229849
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 -1.223244 -1.760866 2.000000, its v . m = 2.29849
+  join of the images: -2.223244 0.239134 -0.000000 -0.201224 -1.870796 2.000000
+a join in floating point: v . m = 2.77556e-17, motor defect Qv . Qm = 3.46945e-18
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997902 after
+  image of p ^ r:     -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733, its v . m = -1.66533e-16
+  join of the images: -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733
+   exit status 0
+== g++ -O2, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+the z axis: v . m = 0, motor defect Qv . Qm = 0
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 0.000000 0.000000 2.000000, its v . m = 0
+  join of the images: -2.223244 0.239134 -0.000000 0.000000 -0.000000 2.000000
+direction z, moment z: v . m = 1, motor defect Qv . Qm = 0.229849
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 -1.223244 -1.760866 2.000000, its v . m = 2.29849
+  join of the images: -2.223244 0.239134 -0.000000 -0.201224 -1.870796 2.000000
+a join in floating point: v . m = 2.77556e-17, motor defect Qv . Qm = 3.46945e-18
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997902 after
+  image of p ^ r:     -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733, its v . m = -1.66533e-16
+  join of the images: -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733
+   exit status 0
+== clang++ -O0, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+the z axis: v . m = 0, motor defect Qv . Qm = 0
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 0.000000 0.000000 2.000000, its v . m = 0
+  join of the images: -2.223244 0.239134 -0.000000 0.000000 -0.000000 2.000000
+direction z, moment z: v . m = 1, motor defect Qv . Qm = 0.229849
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 -1.223244 -1.760866 2.000000, its v . m = 2.29849
+  join of the images: -2.223244 0.239134 -0.000000 -0.201224 -1.870796 2.000000
+a join in floating point: v . m = 2.77556e-17, motor defect Qv . Qm = 3.46945e-18
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997902 after
+  image of p ^ r:     -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733, its v . m = -1.66533e-16
+  join of the images: -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733
+   exit status 0
+== clang++ -O2, GALOOT_CHECKING=1
+GALOOT_CHECKING = 1
+the z axis: v . m = 0, motor defect Qv . Qm = 0
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 0.000000 0.000000 2.000000, its v . m = 0
+  join of the images: -2.223244 0.239134 -0.000000 0.000000 -0.000000 2.000000
+direction z, moment z: v . m = 1, motor defect Qv . Qm = 0.229849
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997898 after
+  image of p ^ r:     -2.223244 0.239134 0.000000 -1.223244 -1.760866 2.000000, its v . m = 2.29849
+  join of the images: -2.223244 0.239134 -0.000000 -0.201224 -1.870796 2.000000
+a join in floating point: v . m = 2.77556e-17, motor defect Qv . Qm = 3.46945e-18
+  points: weights of the images 1 and 1, distance 2.2360679774997898 before and 2.2360679774997902 after
+  image of p ^ r:     -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733, its v . m = -1.66533e-16
+  join of the images: -2.059845 0.868414 -0.053805 -0.516871 -1.092928 2.147733
+   exit status 0
+#### c05: the bit functions with a mask beyond e_n (A05)
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0
+antigrade(e123, 2) = -1 (guarantee: 0 to 2)
+complement_mask(e3, 2) = 3, and e3 | it = 7 (guarantee: 3, the antiscalar)
+complement_mask applied twice to e3 = 0 (guarantee: 4, e3 again)
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1
+galoot: assertion failed: blade has a generator beyond e_n (galoot/core/bits.hpp:85)
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0
+antigrade(e123, 2) = -1 (guarantee: 0 to 2)
+complement_mask(e3, 2) = 3, and e3 | it = 7 (guarantee: 3, the antiscalar)
+complement_mask applied twice to e3 = 0 (guarantee: 4, e3 again)
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1
+galoot: assertion failed: blade has a generator beyond e_n (galoot/core/bits.hpp:85)
+#### c06: a search for a versor the check rejects under directed rounding (A46)
+== g++ -O2 -frounding-math: rounding near: roundings K = 7, largest |d|/tol 0.213, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding up: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding down: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== g++ -O2 -frounding-math: rounding zero: roundings K = 7, largest |d|/tol 0.310, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding near: roundings K = 7, largest |d|/tol 0.213, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding up: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding down: roundings K = 7, largest |d|/tol 0.452, over 1 in 0 of 2000000
+== clang++ -O2 -frounding-math: rounding zero: roundings K = 7, largest |d|/tol 0.310, over 1 in 0 of 2000000
+#### c07: x / s over an integer scalar with a zero divisor and min() / -1 (A34)
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, zero
+galoot/core/linear.hpp:421:60: runtime error: division by zero
+   exit status 136
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 136
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, zero
+galoot: assertion failed: a / s: an integer scalar cannot divide by zero (galoot/core/linear.hpp:417)
+   exit status 134
+== g++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 136
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, zero
+galoot/core/linear.hpp:421:60: runtime error: division by zero
+   exit status 1
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=0, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 1
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, zero
+galoot: assertion failed: a / s: an integer scalar cannot divide by zero (galoot/core/linear.hpp:417)
+   exit status 134
+== clang++ -O0 -fsanitize=undefined, GALOOT_CHECKING=1, min
+SHRT_MIN / -1 over short returned -32768
+galoot/core/linear.hpp:421:60: runtime error: division of -2147483648 by -1 cannot be represented in type 'int'
+   exit status 1

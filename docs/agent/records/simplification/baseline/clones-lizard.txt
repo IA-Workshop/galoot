@@ -1,0 +1,20 @@
+minimum_tokens	rate_percent	clusters	copies
+30	12.03	51	117
+50	7.19	20	52
+70	2.78	5	17
+100	1.94	3	11
+150	0.00	0	0
+
+Clusters at 70 tokens (file:first ~ last line of each copy)
+  core/dual.hpp:616 ~ 634; core/dual.hpp:654 ~ 672
+  core/linear.hpp:287 ~ 312; core/linear.hpp:312 ~ 332
+  core/mv.hpp:1047 ~ 1053; core/mv.hpp:1108 ~ 1114
+  core/product.hpp:242 ~ 254; core/product.hpp:296 ~ 307; core/product.hpp:360 ~ 371; core/product.hpp:420 ~ 431
+  core/product.hpp:257 ~ 267; core/product.hpp:278 ~ 286; core/product.hpp:308 ~ 314; core/product.hpp:325 ~ 349; core/product.hpp:374 ~ 389; core/product.hpp:400 ~ 410; core/product.hpp:432 ~ 440
+
+Lines inside a copy, per header, at 70 tokens
+  core/dual.hpp	38
+  core/linear.hpp	46
+  core/mv.hpp	14
+  core/product.hpp	137
+  total	235

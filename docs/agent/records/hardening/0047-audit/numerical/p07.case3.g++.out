@@ -1,0 +1,44 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=3 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:43:13: error: no matching function for call to ‘galoot::core::mv<r300, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}, ring>::mv(<brace-enclosed initializer list>)’
+   43 | const E1 x{1};
+      |             ^
+  • there are 12 candidates
+In file included from include/galoot/core/basis_change.hpp:130,
+                 from include/galoot/core.hpp:8,
+                 from include/galoot/presets/rga3/motions.hpp:26,
+                 from include/galoot/presets/rga3.hpp:10,
+                 from docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:5:
+    • candidate 1: ‘template<long unsigned int N> constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<T> (&)[N]) [with long unsigned int N = N; Alg = r300; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:713:22:
+        713 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+            |                      ^~
+      • template argument deduction/substitution failed:
+        •   mismatched types ‘std::remove_cvref_t<ring> [N]’ and ‘int’
+          docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:43:13:
+             43 | const E1 x{1};
+                |             ^
+    • candidate 2: ‘template<class Value>  requires  not_a_coefficient<Value, T> constexpr galoot::core::mv<Alg, Blades, T>::mv(Value&&) [with Alg = r300; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:690:22:
+        690 |   constexpr explicit mv(Value&& /*value*/) {
+            |                      ^~
+      • template argument deduction/substitution failed:
+        • constraints not satisfied
+          • include/galoot/core/mv.hpp: In substitution of ‘template<class Value>  requires  not_a_coefficient<Value, T> constexpr galoot::core::mv<r300, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}, ring>::mv(Value&&) [with Value = int]’:
+          • required from here
+            docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:43:13:   
+               43 | const E1 x{1};
+                  |             ^
+          • required for the satisfaction of ‘not_a_coefficient<Value, T>’ [with Value = int; T = ring]
+            include/galoot/core/mv.hpp:455:9:   
+              455 | concept not_a_coefficient =
+                  |         ^~~~~~~~~~~~~~~~~
+          • the expression ‘!(constructible_from<T, Value>) [with T = ring; Value = int]’ evaluated to ‘false’
+            include/galoot/core/mv.hpp:456:39:
+              456 |     !multivector_or_derived<Value> && !std::constructible_from<T, Value>;
+                  |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    • candidate 3: ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector_or_derived<Values> && ...))) && !(sizeof ... (Values ...) == 1 && ((not_a_coefficient<Values, T> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {Values ...}; Alg = r300; blade_set<...auto...> Blades = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:675:46:
+        675 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+exit status: 1
+errors: 1
+error: no matching function for call to ‘galoot::core::mv<r300, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{1, 1}}}}, ring>::mv(<brace-enclosed initializer list>)’
