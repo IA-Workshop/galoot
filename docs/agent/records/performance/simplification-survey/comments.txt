@@ -1,0 +1,79 @@
+file	prologue	doc_pub	doc_detail	inline_pub	inline_detail	NOLINT	example_lines	longest_block
+core.hpp	3	0	0	0	0	0	0	3
+assert.hpp	29	38	11	5	3	6	0	30
+basis_change.hpp	112	162	15	12	137	13	29	112
+bits.hpp	18	67	7	5	1	0	0	18
+blade_product.hpp	30	10	72	0	20	1	3	30
+blade_set.hpp	22	101	0	3	59	2	0	22
+dual.hpp	88	141	7	6	23	5	27	88
+format.hpp	24	43	0	2	21	0	14	41
+linear.hpp	62	96	8	0	28	3	16	62
+metric.hpp	13	77	0	17	11	3	3	13
+mv.hpp	42	209	54	10	147	13	16	42
+plan.hpp	63	0	236	0	67	8	0	63
+product.hpp	47	88	7	7	2	3	16	47
+transform.hpp	70	120	26	12	117	8	46	94
+unary.hpp	27	35	0	6	0	2	9	27
+rga3.hpp	5	0	0	0	0	0	0	5
+motions.hpp	17	84	0	4	0	0	5	47
+objects.hpp	30	67	0	0	0	0	5	30
+TOTAL {'prologue': 702, 'nolint': 67, 'doc_pub': 1338, 'inline_pub': 89, 'doc_detail': 443, 'inline_detail': 636, 'example': 189}
+cite-pattern hits 35
+('assert.hpp', 80, '/// file built with -march=x86-64-v3, a fallback declared')
+('basis_change.hpp', 24, '//   Point p2 = galoot::core::change_basis_back<cga3_to_r410>(q);  // p2 == p')
+('basis_change.hpp', 1000, '// clang-tidy reads the layout, once substituted, as a C-style cast of its')
+('basis_change.hpp', 1002, '// NOLINTNEXTLINE(modernize-avoid-c-style-cast)')
+('basis_change.hpp', 1081, '// once substituted, as a C-style cast of its value, which the source does')
+('basis_change.hpp', 1083, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('basis_change.hpp', 1106, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('dual.hpp', 171, '// clang-tidy reads the operation, once substituted, as a C-style cast of its')
+('dual.hpp', 173, '// NOLINTNEXTLINE(modernize-avoid-c-style-cast)')
+('dual.hpp', 289, '// C-style cast of its value, which the source does not have.')
+('dual.hpp', 290, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('dual.hpp', 361, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('mv.hpp', 799, '// clang-tidy reads the operation, once substituted, as a C-style cast of its')
+('mv.hpp', 801, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('mv.hpp', 804, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('mv.hpp', 833, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('mv.hpp', 836, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('mv.hpp', 860, '// NOLINTNEXTLINE(modernize-avoid-c-style-cast)')
+('plan.hpp', 632, '// clang-tidy reads the operation, once substituted, as a C-style cast of its')
+('plan.hpp', 634, '// NOLINTNEXTLINE(modernize-avoid-c-style-cast)')
+('plan.hpp', 942, '// clang-tidy reads the operation, once substituted, as a C-style cast of its')
+('plan.hpp', 944, '// NOLINTNEXTLINE(modernize-avoid-c-style-cast)')
+('product.hpp', 185, '// a C-style cast of its value, which the source does not have.')
+('product.hpp', 186, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('product.hpp', 217, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('transform.hpp', 366, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('transform.hpp', 372, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('transform.hpp', 445, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('transform.hpp', 455, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('transform.hpp', 624, '// clang-tidy reads the operation, once substituted, as a C-style cast of its')
+('transform.hpp', 626, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('transform.hpp', 635, '// NOLINTEND(modernize-avoid-c-style-cast)')
+('unary.hpp', 41, '// operation, once substituted, as a C-style cast of its value, which the')
+('unary.hpp', 43, '// NOLINTBEGIN(modernize-avoid-c-style-cast)')
+('unary.hpp', 59, '// NOLINTEND(modernize-avoid-c-style-cast)')
+process-pattern hits 22
+('assert.hpp', 62, '/// that the structure test found out of line, so that an operation')
+('assert.hpp', 66, "/// share of the operation's time. That no call is left is checked for a")
+('basis_change.hpp', 113, '// raise those limits, and the sizes measured on each compiler, with how a')
+('blade_set.hpp', 266, '// order, skipping a mask already in the list. Each listed blade records which')
+('blade_set.hpp', 366, '// Evaluated once for each set, however many lookups use it. Measured over a')
+('blade_set.hpp', 577, '/// -fconstexpr-ops-limit raise those limits, and the sizes measured on each')
+('blade_set.hpp', 590, '/// the sizes measured on Clang are in docs/guide/limits.md, under')
+('blade_set.hpp', 607, '/// limits, and the sizes measured on each compiler are in')
+('dual.hpp', 82, '// -fconstexpr-ops-limit raise those limits, and the sizes measured on each')
+('linear.hpp', 63, '// sizes measured on each compiler are in docs/guide/limits.md, under')
+('linear.hpp', 108, '/// the sizes measured on each compiler, with how a failure is reported, are')
+('metric.hpp', 52, '/// says otherwise. Galoot is tested up to 16 generators; a factory given a')
+('mv.hpp', 98, "/// on the fewest declarations is tested first, so that a compiler's account")
+('mv.hpp', 492, '/// limits, and the sizes measured on each compiler, for a layout and for a')
+('mv.hpp', 884, "/// but in every measurement on the limits page the plan's limits are reached")
+('mv.hpp', 890, "/// measured on each compiler, the fold's limit, and how a failure is reported")
+('mv.hpp', 946, '/// the sizes measured on each compiler are in docs/guide/limits.md, under')
+('plan.hpp', 622, '/// the sizes measured on each compiler, with how each reports a failure, are')
+('plan.hpp', 931, '/// sizes measured on each compiler are in docs/guide/limits.md, under')
+('product.hpp', 48, '// -fconstexpr-ops-limit raise those limits, and the sizes measured on each')
+('product.hpp', 344, "/// GCC's -fconstexpr-ops-limit raise those limits, and the sizes measured on")
+('transform.hpp', 72, '// the sizes measured on each compiler, with how a failure is reported, are')

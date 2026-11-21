@@ -1,0 +1,29 @@
+# unpinned, shared mode, timing lock held, 2026-11-21; instruction counts of these rows are not comparable (the process moved between core kinds)
+base	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.5s	rss=0.80GiB	inst=57.63G	rc=0
+nocheck	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.3s	rss=0.80GiB	inst=56.88G	rc=0
+nocomment	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.5s	rss=0.80GiB	inst=71.79G	rc=0
+base	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.7s	rss=0.31GiB	inst=37.85G	rc=0
+nocheck	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.4s	rss=0.31GiB	inst=34.73G	rc=0
+nocomment	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.7s	rss=0.31GiB	inst=35.96G	rc=0
+base	g++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=13.1s	rss=1.41GiB	inst=178.30G	rc=0
+nocheck	g++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.9s	rss=1.37GiB	inst=211.89G	rc=0
+nocomment	g++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=13.2s	rss=1.41GiB	inst=231.48G	rc=0
+base	clang++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=8.1s	rss=0.53GiB	inst=124.31G	rc=0
+nocheck	clang++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=7.9s	rss=0.54GiB	inst=121.59G	rc=0
+nocomment	clang++	transform_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=8.1s	rss=0.53GiB	inst=124.40G	rc=0
+base	g++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.0s	rss=1.01GiB	inst=169.50G	rc=0
+nocheck	g++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=11.7s	rss=0.87GiB	inst=162.95G	rc=0
+nocomment	g++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.1s	rss=1.01GiB	inst=169.41G	rc=0
+base	clang++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.4s	rss=0.53GiB	inst=183.71G	rc=0
+nocheck	clang++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.0s	rss=0.53GiB	inst=176.59G	rc=0
+nocomment	clang++	dual_identities_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=12.6s	rss=0.53GiB	inst=214.11G	rc=0
+# pinned to one performance core (taskset -c 4), timing lock held, 2026-11-21
+base	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.6s	rss=0.80GiB	inst=57.59G	rc=0
+base	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.6s	rss=0.31GiB	inst=35.58G	rc=0
+nocheck	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.5s	rss=0.80GiB	inst=56.72G	rc=0
+nocheck	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.6s	rss=0.31GiB	inst=34.71G	rc=0
+base	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.5s	rss=0.80GiB	inst=57.60G	rc=0
+base	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.7s	rss=0.31GiB	inst=35.54G	rc=0
+nocheck	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=4.5s	rss=0.80GiB	inst=56.71G	rc=0
+nocheck	clang++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1	wall=2.6s	rss=0.31GiB	inst=34.73G	rc=0
+base	g++	product_test.cpp	-O0 -g -DGALOOT_CHECKING=1 -DGALOOT_FORCE_INLINE=0	wall=2.2s	rss=0.40GiB	inst=31.54G	rc=0

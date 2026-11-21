@@ -1,0 +1,37 @@
+file static_assert-msgs GALOOT_ASSERT-msgs distinct
+core.hpp 0 0 0
+assert.hpp 0 0 0
+basis_change.hpp 23 2 24
+bits.hpp 1 4 3
+blade_product.hpp 0 4 3
+blade_set.hpp 19 1 20
+dual.hpp 18 0 18
+format.hpp 4 0 4
+linear.hpp 11 1 10
+metric.hpp 6 3 7
+mv.hpp 33 1 33
+plan.hpp 21 4 24
+product.hpp 20 0 20
+transform.hpp 9 2 11
+unary.hpp 0 0 0
+rga3.hpp 0 0 0
+motions.hpp 5 1 6
+objects.hpp 0 0 0
+total 193 distinct 179
+distinct after stripping prefix 133
+16 the operands are in different algebras; give both types the same algebra tag
+16 the operands have different scalar types; give both types the same scalar type
+6 blade has a generator beyond e_n
+3 n is larger than the number of bits in a blade mask
+3 n must be from 1 to 32
+3 the scalar is not of the multivector's scalar type, the second of the two types shown; convert it to that type
+3 n is larger than MaxN, the largest number of generators accepted (max_generators unless MaxN is given)
+3 the scalar type cannot hold one of the product's exact coefficients; use a scalar type that holds larger integ
+2 an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+2 the blade set holds a sign other than +1 or -1; give each blade of a set written out by hand the sign +1 or -1
+2 the scalar type cannot hold one of the change's exact coefficients; use a scalar type that holds larger intege
+2 the change divides by an integer on this layout, which the scalar type cannot do exactly; use a rational or fl
+2 the template argument is not a change of basis; give a tag with source, target, and value, as in struct cga3_t
+2 the template argument is a value, not a change tag; put it in a tag, as in struct cga3_to_r410 { using source 
+cannot-hold family 19
+mismatch family 32
