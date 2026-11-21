@@ -1,0 +1,20 @@
+file	lines	blank	doc///	cmt//	code	cmt/code	static_assert	template<	concepts	macros
+assert.hpp	143	12	49	37	45	1.91	0	0	0	10
+basis_change.hpp	1285	83	177	261	764	0.57	27	47	4	1
+bits.hpp	186	23	74	24	65	1.51	1	0	0	1
+blade_product.hpp	301	28	82	50	141	0.94	0	4	0	1
+blade_set.hpp	645	55	101	84	405	0.46	21	22	2	1
+dual.hpp	679	47	148	117	367	0.72	18	34	0	1
+format.hpp	272	22	43	47	160	0.56	4	10	4	1
+linear.hpp	482	41	104	90	247	0.79	11	26	6	1
+metric.hpp	318	37	77	41	163	0.72	7	11	2	1
+mv.hpp	1342	102	263	199	778	0.59	33	77	34	1
+plan.hpp	949	54	236	130	529	0.69	22	19	0	1
+product.hpp	457	32	95	56	274	0.55	20	21	0	1
+transform.hpp	845	51	146	199	449	0.77	9	34	2	1
+unary.hpp	132	16	35	33	48	1.42	0	9	0	1
+core.hpp	21	3	0	3	15	0.20	0	0	0	1
+rga3.hpp	13	3	0	5	5	1.00	0	0	0	1
+motions.hpp	194	14	84	21	75	1.40	5	7	0	1
+objects.hpp	146	18	67	30	31	3.13	0	5	0	1
+TOTAL	8410	641	1781	1427	4561	0.70

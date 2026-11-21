@@ -1,0 +1,190 @@
+tier	kind	name	location	role	signature
+ns	TypeAliasDecl	mask_t	include/galoot/core/bits.hpp:35		std::uint32_t
+ns	VarDecl	mask_bits	include/galoot/core/bits.hpp:38		const std::size_t
+ns	FunctionDecl	grade	include/galoot/core/bits.hpp:73	operation	int (mask_t) noexcept
+ns	FunctionDecl	antigrade	include/galoot/core/bits.hpp:83	operation	int (mask_t, std::size_t) noexcept
+ns	FunctionDecl	reorder_sign	include/galoot/core/bits.hpp:101	operation	int (mask_t, mask_t) noexcept
+ns	FunctionDecl	complement_mask	include/galoot/core/bits.hpp:119	operation	mask_t (mask_t, std::size_t) noexcept
+ns	FunctionDecl	right_complement_sign	include/galoot/core/bits.hpp:133	operation	int (mask_t, std::size_t) noexcept
+ns	FunctionDecl	left_complement_sign	include/galoot/core/bits.hpp:148	operation	int (mask_t, std::size_t) noexcept
+ns	FunctionDecl	reverse_sign	include/galoot/core/bits.hpp:158	operation	int (mask_t) noexcept
+ns	FunctionDecl	antireverse_sign	include/galoot/core/bits.hpp:170	operation	int (mask_t, std::size_t) noexcept
+ns	FunctionDecl	grade_involution_sign	include/galoot/core/bits.hpp:180	operation	int (mask_t) noexcept
+ns	TypeAliasDecl	entry_type	include/galoot/core/metric.hpp:29		int
+ns	VarDecl	max_generators	include/galoot/core/metric.hpp:55		const std::size_t
+ns	VarDecl	max_form_entry	include/galoot/core/metric.hpp:61		const entry_type
+ns	ClassTemplateDecl	metric	include/galoot/core/metric.hpp:74		
+ns	FunctionTemplateDecl	R	include/galoot/core/metric.hpp:174	operation	metric<P + Q + Z> ()
+ns	FunctionTemplateDecl	rigid	include/galoot/core/metric.hpp:200	operation	metric<D + 1> ()
+ns	FunctionTemplateDecl	conformal	include/galoot/core/metric.hpp:214	operation	metric<D + 2> ()
+ns	FunctionTemplateDecl	from_gram	include/galoot/core/metric.hpp:244	operation	metric<N> (const entry_type (&)[N][N])
+ns	ConceptDecl	metric_like	include/galoot/core/metric.hpp:300		
+ns	CXXRecordDecl	oriented_blade	include/galoot/core/blade_set.hpp:47		
+ns	ClassTemplateDecl	blade_set	include/galoot/core/blade_set.hpp:69		
+ns	VarDecl	max_compact_generators	include/galoot/core/blade_set.hpp:84		const std::size_t
+ns	FunctionDecl	canonical_less	include/galoot/core/blade_set.hpp:96	operation	bool (mask_t, mask_t) noexcept
+ns	CXXRecordDecl	blade_name	include/galoot/core/blade_set.hpp:113		
+ns	FunctionDecl	canonical_name	include/galoot/core/blade_set.hpp:131	operation	blade_name (mask_t) noexcept
+ns	VarTemplateDecl	full	include/galoot/core/blade_set.hpp:581		
+ns	VarTemplateDecl	of_grade	include/galoot/core/blade_set.hpp:593		
+ns	VarTemplateDecl	merge	include/galoot/core/blade_set.hpp:610		
+ns	VarTemplateDecl	index_of	include/galoot/core/blade_set.hpp:619		
+ns	VarTemplateDecl	blades	include/galoot/core/blade_set.hpp:640		
+ns	TypeAliasDecl	coefficient_type	include/galoot/core/blade_product.hpp:58		std::int64_t
+ns	ConceptDecl	ring_scalar	include/galoot/core/mv.hpp:102		
+ns	ConceptDecl	exact_scalar	include/galoot/core/mv.hpp:113		
+ns	ClassTemplateDecl	mv	include/galoot/core/mv.hpp:117		
+ns	ConceptDecl	multivector	include/galoot/core/mv.hpp:132		
+ns	ClassTemplateDecl (redeclaration)	mv	include/galoot/core/mv.hpp:507		
+ns	FunctionTemplateDecl	truncate	include/galoot/core/mv.hpp:1046	operation	mv<Alg, To, T> (const mv<Alg, From, T> &)
+ns	FunctionTemplateDecl	truncate	include/galoot/core/mv.hpp:1061	operation	std::remove_cvref_t<Target> (const mv<Alg, From, T> &)
+ns	FunctionTemplateDecl	truncate	include/galoot/core/mv.hpp:1076	rejects	auto (const mv<Alg, From, T> &)
+ns	FunctionTemplateDecl	part	include/galoot/core/mv.hpp:1107	operation	mv<Alg, To, T> (const mv<Alg, From, T> &)
+ns	FunctionTemplateDecl	part	include/galoot/core/mv.hpp:1119	operation	std::remove_cvref_t<Target> (const mv<Alg, From, T> &)
+ns	FunctionTemplateDecl	part	include/galoot/core/mv.hpp:1133	rejects	auto (const mv<Alg, From, T> &)
+ns	ConceptDecl	has_name	include/galoot/core/mv.hpp:1259		
+ns	FunctionTemplateDecl	get	include/galoot/core/mv.hpp:1285	operation	detail::coefficient_reference<X> (X &&) noexcept
+ns	FunctionTemplateDecl	get	include/galoot/core/mv.hpp:1299	rejects	detail::coefficient_reference<X> (X &&) noexcept
+ns	ClassTemplateDecl	basis_change	include/galoot/core/basis_change.hpp:155		
+ns	FunctionTemplateDecl	same_rows	include/galoot/core/basis_change.hpp:184	operation	bool (const basis_change<N> &, const basis_change<N> &) noexcept
+ns	FunctionTemplateDecl	from_rows	include/galoot/core/basis_change.hpp:208	operation	basis_change<N> (const entry_type (&)[N][N], const entry_type (&)[N])
+ns	FunctionTemplateDecl	conformal_change	include/galoot/core/basis_change.hpp:235	operation	basis_change<D + 2> ()
+ns	ConceptDecl	basis_change_like	include/galoot/core/basis_change.hpp:601		
+ns	VarTemplateDecl	change_basis_layout	include/galoot/core/basis_change.hpp:1095		
+ns	VarTemplateDecl	change_basis_back_layout	include/galoot/core/basis_change.hpp:1102		
+ns	FunctionTemplateDecl	change_basis	include/galoot/core/basis_change.hpp:1140	operation	mv<typename C::target, change_basis_layout<C, S>, T> (const mv<typename C::source, S, T> &)
+ns	FunctionTemplateDecl	change_basis_back	include/galoot/core/basis_change.hpp:1176	operation	mv<typename C::source, change_basis_back_layout<C, S>, T> (const mv<typename C::target, S, T> &)
+ns	FunctionTemplateDecl	change_basis	include/galoot/core/basis_change.hpp:1207	rejects	std::remove_cvref_t<X> (const X &)
+ns	FunctionTemplateDecl	change_basis_back	include/galoot/core/basis_change.hpp:1220	rejects	std::remove_cvref_t<X> (const X &)
+ns	FunctionTemplateDecl	change_basis	include/galoot/core/basis_change.hpp:1234	rejects	std::remove_cvref_t<X> (const X &)
+ns	FunctionTemplateDecl	change_basis_back	include/galoot/core/basis_change.hpp:1247	rejects	std::remove_cvref_t<X> (const X &)
+ns	FunctionTemplateDecl	change_basis	include/galoot/core/basis_change.hpp:1262	rejects	std::remove_cvref_t<X> (const X &)
+ns	FunctionTemplateDecl	change_basis_back	include/galoot/core/basis_change.hpp:1273	rejects	std::remove_cvref_t<X> (const X &)
+ns	VarTemplateDecl	geometric_product_layout	include/galoot/core/product.hpp:193		
+ns	VarTemplateDecl	wedge_layout	include/galoot/core/product.hpp:199		
+ns	VarTemplateDecl	geometric_antiproduct_layout	include/galoot/core/product.hpp:206		
+ns	VarTemplateDecl	antiwedge_layout	include/galoot/core/product.hpp:213		
+ns	FunctionTemplateDecl	geometric_product	include/galoot/core/product.hpp:229	operation	mv<Alg, geometric_product_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	geometric_product	include/galoot/core/product.hpp:252	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	wedge	include/galoot/core/product.hpp:266	operation	mv<Alg, wedge_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	wedge	include/galoot/core/product.hpp:275	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/product.hpp:284	operation	mv<Alg, geometric_product_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/product.hpp:305	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator^	include/galoot/core/product.hpp:313	operation	mv<Alg, wedge_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator^	include/galoot/core/product.hpp:322	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	geometric_antiproduct	include/galoot/core/product.hpp:347	operation	mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	geometric_antiproduct	include/galoot/core/product.hpp:369	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	antiwedge	include/galoot/core/product.hpp:387	operation	mv<Alg, antiwedge_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	antiwedge	include/galoot/core/product.hpp:397	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator%	include/galoot/core/product.hpp:408	operation	mv<Alg, geometric_antiproduct_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator%	include/galoot/core/product.hpp:429	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator&	include/galoot/core/product.hpp:438	operation	mv<Alg, antiwedge_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator&	include/galoot/core/product.hpp:448	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	VarTemplateDecl	right_complement_layout	include/galoot/core/unary.hpp:49		
+ns	VarTemplateDecl	left_complement_layout	include/galoot/core/unary.hpp:55		
+ns	FunctionTemplateDecl	reverse	include/galoot/core/unary.hpp:70	operation	mv<Alg, S, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	antireverse	include/galoot/core/unary.hpp:78	operation	mv<Alg, S, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	grade_involution	include/galoot/core/unary.hpp:85	operation	mv<Alg, S, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	right_complement	include/galoot/core/unary.hpp:95	operation	mv<Alg, right_complement_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	left_complement	include/galoot/core/unary.hpp:107	operation	mv<Alg, left_complement_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	operator~	include/galoot/core/unary.hpp:115	operation	mv<Alg, S, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	operator!	include/galoot/core/unary.hpp:124	operation	mv<Alg, right_complement_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	VarTemplateDecl	bulk_layout	include/galoot/core/dual.hpp:296		
+ns	VarTemplateDecl	weight_layout	include/galoot/core/dual.hpp:302		
+ns	VarTemplateDecl	bulk_dual_layout	include/galoot/core/dual.hpp:310		
+ns	VarTemplateDecl	weight_dual_layout	include/galoot/core/dual.hpp:316		
+ns	VarTemplateDecl	left_bulk_dual_layout	include/galoot/core/dual.hpp:321		
+ns	VarTemplateDecl	left_weight_dual_layout	include/galoot/core/dual.hpp:327		
+ns	VarTemplateDecl	dot_layout	include/galoot/core/dual.hpp:335		
+ns	VarTemplateDecl	antidot_layout	include/galoot/core/dual.hpp:341		
+ns	VarTemplateDecl	project_layout	include/galoot/core/dual.hpp:349		
+ns	VarTemplateDecl	antiproject_layout	include/galoot/core/dual.hpp:357		
+ns	FunctionTemplateDecl	bulk	include/galoot/core/dual.hpp:377	operation	mv<Alg, bulk_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	weight	include/galoot/core/dual.hpp:402	operation	mv<Alg, weight_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	bulk_dual	include/galoot/core/dual.hpp:427	operation	mv<Alg, bulk_dual_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	weight_dual	include/galoot/core/dual.hpp:449	operation	mv<Alg, weight_dual_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	left_bulk_dual	include/galoot/core/dual.hpp:472	operation	mv<Alg, left_bulk_dual_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	left_weight_dual	include/galoot/core/dual.hpp:494	operation	mv<Alg, left_weight_dual_layout<Alg, S>, T> (const mv<Alg, S, T> &)
+ns	FunctionTemplateDecl	dot	include/galoot/core/dual.hpp:526	operation	mv<Alg, dot_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	dot	include/galoot/core/dual.hpp:554	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	antidot	include/galoot/core/dual.hpp:571	operation	mv<Alg, antidot_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	antidot	include/galoot/core/dual.hpp:592	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	project	include/galoot/core/dual.hpp:613	operation	mv<Alg, project_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	project	include/galoot/core/dual.hpp:632	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	antiproject	include/galoot/core/dual.hpp:651	operation	mv<Alg, antiproject_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	antiproject	include/galoot/core/dual.hpp:670	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	VarTemplateDecl	sum_layout	include/galoot/core/linear.hpp:113		
+ns	VarTemplatePartialSpecializationDecl	sum_layout	include/galoot/core/linear.hpp:118		const auto
+ns	FunctionTemplateDecl	operator+	include/galoot/core/linear.hpp:247	operation	mv<Alg, sum_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator+	include/galoot/core/linear.hpp:257	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator-	include/galoot/core/linear.hpp:268	operation	mv<Alg, sum_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator-	include/galoot/core/linear.hpp:276	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	operator+	include/galoot/core/linear.hpp:296	rejects	mv<Alg, B, T> (const mv<Alg, B, T> &, const S &)
+ns	FunctionTemplateDecl	operator+	include/galoot/core/linear.hpp:306	rejects	mv<Alg, B, T> (const S &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator-	include/galoot/core/linear.hpp:316	rejects	mv<Alg, B, T> (const mv<Alg, B, T> &, const S &)
+ns	FunctionTemplateDecl	operator-	include/galoot/core/linear.hpp:326	rejects	mv<Alg, B, T> (const S &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/linear.hpp:359	operation	mv<Alg, A, T> (const T &, const mv<Alg, A, T> &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/linear.hpp:373	operation	mv<Alg, A, T> (const mv<Alg, A, T> &, const T &)
+ns	FunctionTemplateDecl	operator/	include/galoot/core/linear.hpp:412	operation	mv<Alg, A, T> (const mv<Alg, A, T> &, const T &)
+ns	FunctionTemplateDecl	operator-	include/galoot/core/linear.hpp:429	operation	mv<Alg, A, T> (const mv<Alg, A, T> &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/linear.hpp:443	rejects	X (const S &, const X &)
+ns	FunctionTemplateDecl	operator*	include/galoot/core/linear.hpp:456	rejects	X (const X &, const S &)
+ns	FunctionTemplateDecl	operator/	include/galoot/core/linear.hpp:469	rejects	X (const X &, const S &)
+ns	VarTemplateDecl	compose_layout	include/galoot/core/transform.hpp:632		
+ns	FunctionTemplateDecl	compose	include/galoot/core/transform.hpp:651	operation	mv<Alg, compose_layout<Alg, A, B>, T> (const mv<Alg, A, T> &, const mv<Alg, B, T> &)
+ns	FunctionTemplateDecl	transform	include/galoot/core/transform.hpp:771	operation	mv<Alg, X, T> (const mv<Alg, X, T> &, const mv<Alg, V, T> &)
+ns	FunctionTemplateDecl	transform	include/galoot/core/transform.hpp:825	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	FunctionTemplateDecl	compose	include/galoot/core/transform.hpp:836	rejects	std::remove_cvref_t<X> (const X &, const Y &)
+ns	CXXRecordDecl	algebra	include/galoot/presets/rga3/objects.hpp:45		
+ns	VarDecl	point_layout	include/galoot/presets/rga3/objects.hpp:62		const blade_set<name_count(detail::name_list<12>{{"e1 e2 e3 e4"}}.text())>
+ns	VarDecl	line_layout	include/galoot/presets/rga3/objects.hpp:69		const blade_set<name_count(detail::name_list<24>{{"e41 e42 e43 e23 e31 e12"}}.text())>
+ns	VarDecl	plane_layout	include/galoot/presets/rga3/objects.hpp:78		const blade_set<name_count(detail::name_list<20>{{"e423 e431 e412 e321"}}.text())>
+ns	VarDecl	motor_layout	include/galoot/presets/rga3/objects.hpp:91		const blade_set<name_count(detail::name_list<32>{{"e41 e42 e43 e1234 e23 e31 e12 1"}}.text())>
+ns	VarDecl	flector_layout	include/galoot/presets/rga3/objects.hpp:104		const blade_set<name_count(detail::name_list<32>{{"e1 e2 e3 e4 e423 e431 e412 e321"}}.text())>
+ns	TypeAliasTemplateDecl	Point	include/galoot/presets/rga3/objects.hpp:111		
+ns	TypeAliasTemplateDecl	Line	include/galoot/presets/rga3/objects.hpp:119		
+ns	TypeAliasTemplateDecl	Plane	include/galoot/presets/rga3/objects.hpp:126		
+ns	TypeAliasTemplateDecl	Motor	include/galoot/presets/rga3/objects.hpp:133		
+ns	TypeAliasTemplateDecl	Flector	include/galoot/presets/rga3/objects.hpp:141		
+ns	FunctionTemplateDecl	rotation	include/galoot/presets/rga3/motions.hpp:79	operation	Motor<T> (const Line<T> &, T)
+ns	FunctionTemplateDecl	rotation	include/galoot/presets/rga3/motions.hpp:103	rejects	Motor<T> (const Line<T> &, const S &)
+ns	FunctionTemplateDecl	rotation	include/galoot/presets/rga3/motions.hpp:118	rejects	Motor<T> (const Line<T> &, const S &)
+ns	FunctionTemplateDecl	rotation	include/galoot/presets/rga3/motions.hpp:135	rejects	Motor<typename X::scalar_type> (const X &, const S &)
+ns	FunctionTemplateDecl	translation	include/galoot/presets/rga3/motions.hpp:158	operation	Motor<T> (T, T, T)
+ns	FunctionTemplateDecl	translation	include/galoot/presets/rga3/motions.hpp:170	rejects	Motor<T> (T, T, T)
+ns	FunctionTemplateDecl	translation	include/galoot/presets/rga3/motions.hpp:182	rejects	Motor<X> (const X &, const Y &, const Z &)
+member	FieldDecl	gram	include/galoot/core/metric.hpp:81		std::array<std::array<entry_type, N>, N>
+member	VarDecl	generator_count	include/galoot/core/metric.hpp:84		const std::size_t
+member	CXXMethodDecl	is_symmetric	include/galoot/core/metric.hpp:87	operation	bool () const noexcept
+member	CXXMethodDecl	entries_in_range	include/galoot/core/metric.hpp:99	operation	bool () const noexcept
+member	CXXMethodDecl	is_diagonal	include/galoot/core/metric.hpp:113	operation	bool () const noexcept
+member	CXXMethodDecl	is_null	include/galoot/core/metric.hpp:129	operation	bool (std::size_t) const noexcept
+member	CXXMethodDecl	operator==	include/galoot/core/metric.hpp:136	operation	bool (const metric<N> &) const
+member	FieldDecl	mask	include/galoot/core/blade_set.hpp:49		mask_t
+member	FieldDecl	sign	include/galoot/core/blade_set.hpp:52		int
+member	CXXMethodDecl	operator==	include/galoot/core/blade_set.hpp:55	operation	bool (const oriented_blade &) const noexcept
+member	FieldDecl	blades	include/galoot/core/blade_set.hpp:72		std::array<oriented_blade, K>
+member	CXXMethodDecl	size	include/galoot/core/blade_set.hpp:75	operation	std::size_t () const noexcept
+member	CXXMethodDecl	operator==	include/galoot/core/blade_set.hpp:78	operation	bool (const blade_set<K> &) const
+member	FieldDecl	chars	include/galoot/core/blade_set.hpp:116		std::array<char, 1 + max_compact_generators>
+member	FieldDecl	length	include/galoot/core/blade_set.hpp:118		std::size_t
+member	CXXMethodDecl	text	include/galoot/core/blade_set.hpp:121	operation	std::string_view () const noexcept
+member	TypeAliasDecl	algebra_type	include/galoot/core/mv.hpp:583		Alg
+member	TypeAliasDecl	scalar_type	include/galoot/core/mv.hpp:585		T
+member	VarDecl	layout	include/galoot/core/mv.hpp:587		const auto
+member	VarDecl	component_count	include/galoot/core/mv.hpp:589		const std::size_t
+member	CXXConstructorDecl	mv	include/galoot/core/mv.hpp:592	operation	void ()
+member	UnresolvedUsingValueDecl	detail::storage_of	include/galoot/core/mv.hpp:603		<dependent type>
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:615	operation	void (const mv<Alg, From, T> &)
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:634	rejects	void (const mv<Alg, From, T> &)
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:648	rejects	void (const mv<OtherAlg, From, U> &)
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:669	rejects	void (Values &&...)
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:688	rejects	void (Value &&)
+member	FunctionTemplateDecl	mv	include/galoot/core/mv.hpp:711	rejects	void (const std::remove_cvref_t<T> (&)[N])
+member	FieldDecl	rows	include/galoot/core/basis_change.hpp:162		std::array<std::array<entry_type, N>, N>
+member	FieldDecl	denominators	include/galoot/core/basis_change.hpp:166		std::array<entry_type, N>
+member	VarDecl	generator_count	include/galoot/core/basis_change.hpp:169		const std::size_t
+member	CXXMethodDecl	operator==	include/galoot/core/basis_change.hpp:177	operation	bool (const basis_change<N> &) const
+member	VarDecl	value	include/galoot/presets/rga3/objects.hpp:47		const metric<3UL + 1>
+member	VarDecl	names	include/galoot/presets/rga3/objects.hpp:56		const char *const
+std	ClassTemplatePartialSpecializationDecl	formatter	include/galoot/core/format.hpp:188		
