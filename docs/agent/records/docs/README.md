@@ -11,6 +11,7 @@ The table is a plan. No header was edited.
 | [comment-moves.tsv](comment-moves.tsv) | One row for each comment block, or part of a block, of every header under `include/galoot/`: 887 rows |
 | [check_comment_moves.py](check_comment_moves.py) | Checks that the rows cover every comment line exactly once at the named revision and that every checked precondition is accounted for, then prints the sums below and the boundary report. It holds its own copy of the list of preconditions kept in full |
 | [boundary-report.tsv](boundary-report.tsv) | The checker's boundary report: each place where a sentence runs from one row into a neighbor with another class or another condition |
+| [readme_figures.py](readme_figures.py) | Prints every other figure this README states from the table: the stages, the candidates against plan 0048, the pointer estimates, the restated totals, and the counts the prose quotes. `--compare REV` lists the rows whose class or condition differ from the table at a revision |
 
 ## The revision
 
@@ -40,7 +41,7 @@ Every line range is at `01dce7f` on `main`. Its `include/` tree is identical to 
 | --- | --- |
 | `header` | The header's path |
 | `lines` | A range `a-b`, a single line, or a comma list (used only for trailing comments) |
-| `position` | `prologue` (before the first `#include`), `detail` (inside a `detail` namespace), `public` (elsewhere), or `trailing`. These are the line census's rules, so the sums compare with plan 0048 section 3.1 |
+| `position` | `prologue` (before the first `#include`), `detail` (inside a `detail` namespace), `public` (elsewhere), or `trailing`. These are the line census's rules, so the sums compare with plan 0048 section 3.1. The rule takes a namespace alias for a namespace, so `format.hpp:215`, in a public member function after the alias `namespace detail = galoot::core::detail;` on line 211, is labeled `detail`; it is the only comment line affected, and its row's note says so |
 | `kind` | What the text is (below) |
 | `class` | `keep`, `summary`, `move`, or `delete` (below) |
 | `descriptor` | One line on what the text says |
@@ -72,22 +73,31 @@ Every line range is at `01dce7f` on `main`. Its `include/` tree is identical to 
 | move | Its content belongs in user documentation, at `target` under `heading` |
 | delete | Narration, or a repeat of text that `target` already holds |
 
-The owner's ruling, decision 0253 item 14, is applied as follows:
+The owner's ruling, decision 0253 item 14, with the S11 wording the owner ratified in decision 0258 section 2, is applied as follows:
 - A public declaration keeps one sentence, as a summary row or a keep row, and the rest moves to its reference entry.
-- A precondition that is undefined behavior when broken in an unchecked build stays on the declaration in full, as a keep row whose note says so.
-- A reason stays: S11's first paragraph asks for it, and the prepared wording of the amendment moves only the contract.
+- A precondition that is undefined behavior when broken in an unchecked build stays on the declaration in full, as a keep row whose note says so. The table reads "undefined behavior" in the C++ standard's sense (see [The precondition check](#the-precondition-check)). Decision 0258 item 4.4 ruled two places by name and stated no general rule: the standard's sense for `rotation`'s zero direction, which stays, and the supported compilers' for the unchecked floating division of `linear.hpp:397-406`, which moves.
+- A reason stays: S11's first paragraph asks for it, and the ratified wording moves only the contract.
+- The contract sentence does not apply inside a `detail` namespace (decision 0258 item 4.2), so a `///` comment on a `detail` entity may be deleted or shortened now; plan 0048's rule 4 still keeps one whose behavior, bound, or cost is not obvious.
 
 ### What a row waits for
 
 | Value | Meaning |
 | --- | --- |
-| none | Nothing. A keep row, or a delete that moves nothing |
+| none | Nothing. A keep row, or a delete that moves nothing. Since the owner ruled that S11's contract sentence does not apply inside a `detail` namespace (decision 0258 item 4.2), this includes the deletions and summaries of `///` comments on `detail` entities that waited for that ruling |
 | B9 | A cast marker and its reason. They go when plan 0048's unit B9 has confirmed every report is false and added the exclusion to `.clang-tidy`, as decision 0253 item 19 rules |
-| the detail ruling | Removes or shortens a `///` comment on a `detail` entity. That waits for the owner's answer to open item 2 of [restated-targets.md](../simplification/restated-targets.md): whether S11's contract sentence covers `detail` |
-| the S11 amendment | Deletes public contract text that the guide already holds. Decision 0253 says no unit removes a contract from a header until the amendment is applied |
-| D1, D3 | A move whose receiving page is in that milestone of plan 0049. Decision 0253 lets phase 4 move text only after its receiving page has passed review |
-| D3 and the S11 amendment | Both of the above: public contract moving to a reference page |
-| D3 and the detail ruling | A `detail` `///` comment moving to a concepts page |
+| the S11 amendment | Deletes of text that the guide already holds, held for one of the two reasons below: it is contract text, or a declaration's comment points to it. No unit removes a contract from a header until the amendment is applied, and decision 0258 section 3 applies it only once its no-drift checks run as tests (see [Before a contract leaves a header](#before-a-contract-leaves-a-header)) |
+| D1, D3 | A move whose receiving page is in that milestone of plan 0049. Decision 0253 lets phase 4 move text only after its receiving page has passed review. Two deletes wait for D3 as well, the prologue illustrations that a reference entry must hold first (decision 0255 part A item 10). None of these rows holds contract text, or text a pointer names, in the sense below |
+| D3 and the S11 amendment | Both of the above: text held for one of the two reasons below, moving to a guide page, almost always a reference page. One delete waits for both, `basis_change.hpp:51-65`, so that it never goes before the comment that points to it may (below) |
+
+The checker accepts only these values. Two values are gone: "the detail ruling", whose 36 rows now wait for nothing, and "D3 and the detail ruling", whose three rows now wait for D3 and the S11 amendment (`assert.hpp:77-83`, on a macro in no `detail` namespace, and `mv.hpp:880-882` and `:895-899`, a requirement and a guarantee that every product inherits from `detail::apply`).
+
+A row waits for the amendment for one of two reasons. The first is that it is contract text. Contract text, for these conditions, is text that states what a public declaration requires, guarantees, or preserves (the sense of decision 0258 section 2), wherever it sits, when the headers would hold no other statement of it once the row is acted on. Decision 0258 section 3 says that no unit removes a contract from a header until the no-drift checks exist, and does not limit that to the `///` comment on a declaration. So such text waits for the amendment in two places besides a declaration's own comment:
+- **A prologue or `detail` comment that is the only statement of a contract in the headers**, such as the rule for classes derived from `mv` (`linear.hpp:51-53`, `unary.hpp:25-27`, `product.hpp:35-43`), what every product requires of and guarantees for its scalar (`mv.hpp:880-882`, `:895-899`), what `transform` preserves in any algebra (`transform.hpp:41-46`), or the limit on what a result layout holds over a scalar in which an integer can vanish (`plan.hpp:47-56`).
+- **The lookup caveats of a prologue**, since the same caveat on `reverse`'s declaration (`unary.hpp:63-69`) is public contract, and so is the statement of how a call is found (`part`'s, `mv.hpp:1097-1101`): `rotation`'s, that argument-dependent lookup finds it through its `Line` (`presets/rga3/motions.hpp:17-20`), is said nowhere else in the headers.
+
+The second reason is **the pointer rule**: text that a declaration's comment sends the reader to waits for at least the condition of that comment, so it never goes while the pointer may still stand, whether or not it is contract text. `change_basis` (`basis_change.hpp:1113-1115`), `bulk` (`dual.hpp:368`), and `transform` (`transform.hpp:752-754`) each say that another comment of the header lists part of what they do. `dual.hpp:44-59` and `basis_change.hpp:51-82` wait for D3 and the S11 amendment, as `bulk`'s and `change_basis`'s comments do. `transform.hpp:590-610` waits for D3 and the S11 amendment, and the sentence that points to it is part of row `751-763`, which is deleted under the amendment alone, so the pointer may go first but never after. Of these rows, `dual.hpp:44-59` and `transform.hpp:590-610` wait only for this reason; the change-of-basis rows are contract text as well.
+
+A prologue sentence that a declaration's own comment also states is a repeat, not the only statement: the sums' operand rule (`linear.hpp:36-43`) is said again on each rejecting overload, so the contract stays in the header on the declarations until the amendment, and the prologue's copy goes with its own condition. The headers are read together: `presets/rga3/objects.hpp:30-33` repeats `transform.hpp:59-65`, which waits for the amendment, so it may go first. Two kinds of text are not contracts in this sense: worked cases of a definition that the declaration's comment keeps (the bulk's in other metrics, `dual.hpp:44-59`, is held back only because `bulk`'s comment points to it) and explanations of why a stated guarantee holds (the derivations that move under D3). An explanation that ends by limiting the guarantee is contract text for that limit: `plan.hpp:47-56` proves that a result layout holds no blade a product cannot make nonzero, and then says that where an integer such as 2 can vanish a result blade may always be zero, which no layout's comment says.
 
 ### Target pages
 
@@ -122,6 +132,14 @@ It checks:
 
 It then prints the boundary report, which never fails; `--boundaries FILE` also writes it to a file, and [boundary-report.tsv](boundary-report.tsv) is that file.
 
+The figures outside the checker's sums come from
+
+```sh
+python3 -I docs/agent/records/docs/readme_figures.py
+```
+
+which reads the same table and the headers at the same revision, and the inventory of the first part's records for the declarations under the `///` blocks.
+
 ### The precondition check
 
 The check finds the text that states a checked precondition, then asks the three tables under [Preconditions kept in full](#preconditions-kept-in-full) where each line of it stands.
@@ -137,7 +155,7 @@ Every line taken must be in the first table (undefined behavior when broken in a
 
 The checker holds the first table's places a second time, in its list `KEPT_IN_FULL`. Each place there must be a comment line with a keep row, and the first table must name exactly the same places. So a comment unit that demotes a kept precondition and deletes its line from this README, or moves the line to the second table, fails the check until it also edits the checker's list, and the change to the check is what its reviewer sees. Many of the places have no assertion behind them, or their clause leads only to the second table, so without that list this README's line would be their only guard. A comment unit does not edit the list; a change to it is a change to the check, made with the table, as the corrections below were. A line in both tables, a place in the second that no assertion leads to, or a place in the third that is not such an assertion, is an error.
 
-The rule behind the first table: a precondition is undefined behavior when broken if a call that breaks it, at run time with `GALOOT_CHECKING` 0, reaches an operation the standard leaves undefined. A `constexpr` function in `detail` is judged as if it were called at run time, since nothing stops a call, though the generator calls them in constant evaluation, where every assertion checks. A `consteval` function is never unchecked, so its preconditions are not undefined behavior in any build.
+The rule behind the first table: a precondition is undefined behavior when broken if a call that breaks it, at run time with `GALOOT_CHECKING` 0, reaches an operation the standard leaves undefined. That is this record's rule, not a ruling. Decision 0258 item 4.4 ruled two places and stated no general rule: `rotation`'s zero direction follows the standard and stays (`motions.hpp:48-61`), and the unchecked floating division of `x / s` (`linear.hpp:397-406`) follows the supported compilers, which define it for IEEE 754 types, so its text moves. No other row turns on the difference at `01dce7f`: no other comment in the headers states a floating-point division by zero, overflow, infinity or NaN as a precondition that goes unchecked. A later precondition of that kind is not settled by these two rulings. A `constexpr` function in `detail` is judged as if it were called at run time, since nothing stops a call, though the generator calls them in constant evaluation, where every assertion checks. A `consteval` function is never unchecked, so its preconditions are not undefined behavior in any build.
 
 What the method can miss:
 - **A precondition with no assertion behind it** that is not named in the first table and whose clause does not name `GALOOT_ASSERT`, such as one marked "not checked here". Only reading finds those; the first table, and the checker's copy of it, name the ones found that way.
@@ -175,9 +193,9 @@ Full-line comment lines, from the checker:
 | `core/transform.hpp` | 127 | 10 | 102 | 106 | 345 |
 | `core/unary.hpp` | 21 | 8 | 7 | 32 | 68 |
 | `presets/rga3.hpp` | 5 | 0 | 0 | 0 | 5 |
-| `presets/rga3/motions.hpp` | 32 | 0 | 58 | 15 | 105 |
+| `presets/rga3/motions.hpp` | 46 | 0 | 44 | 15 | 105 |
 | `presets/rga3/objects.hpp` | 40 | 0 | 7 | 50 | 97 |
-| **All** | **1,581** | **295** | **666** | **666** | **3,208** |
+| **All** | **1,595** | **295** | **652** | **666** | **3,208** |
 
 The 73 trailing comments are all kept.
 
@@ -185,8 +203,8 @@ By kind:
 
 | Kind | Keep | Summary | Move | Delete | All |
 | --- | --- | --- | --- | --- | --- |
-| public contract | 250 | 266 | 485 | 100 | 1,101 |
-| internal contract | 495 | 0 | 12 | 37 | 544 |
+| public contract | 264 | 266 | 483 | 100 | 1,113 |
+| internal contract | 495 | 0 | 0 | 37 | 532 |
 | equation or convention | 364 | 0 | 54 | 70 | 488 |
 | file prologue | 86 | 0 | 83 | 192 | 361 |
 | reason | 298 | 29 | 21 | 10 | 358 |
@@ -201,15 +219,13 @@ By what the rows wait for:
 
 | Waits for | Lines | Of which delete |
 | --- | --- | --- |
-| none (kept) | 1,581 | |
-| none (delete or summary now) | 447 | 441 |
+| none (kept) | 1,595 | |
+| none (delete or summary now) | 489 | 466 |
 | B9 | 45 | 45 |
-| the detail ruling | 97 | 80 |
 | D1 | 26 | |
-| D3 | 149 | |
-| D3 and the detail ruling | 15 | |
-| the S11 amendment | 100 | 100 |
-| D3 and the S11 amendment | 748 | |
+| D3 | 87 | 17 |
+| the S11 amendment | 123 | 123 |
+| D3 and the S11 amendment | 843 | 15 |
 
 ## Against plan 0048 and the restated targets
 
@@ -217,49 +233,48 @@ Plan 0048 section 5.4 estimated its four comment candidates from position alone.
 
 | Candidate | Now | Plan, S11 as ratified (a) | Plan, one sentence and a pointer (b) | Table, S11 as ratified, after D3 | Table, after the amendment |
 | --- | --- | --- | --- | --- | --- |
-| D1 prologues | 702 | 90 | 90 | 176 | 165 |
-| D2 `///` on `detail` | 443 | 110 | 110 | 344 | 344 |
-| D3 `//` elsewhere | 725 | 330 | 330 | 634 | 634 |
-| D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,285 | 538 |
-| **Total** | **3,208** | **about 1,620** | **about 870** | **about 2,440** | **about 1,680** |
+| D1 prologues | 702 | 90 | 90 | 272 | 165 |
+| D2 `///` on `detail` | 443 | 110 | 110 | 352 | 344 |
+| D3 `//` elsewhere | 725 | 330 | 330 | 655 | 634 |
+| D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,292 | 552 |
+| **Total** | **3,208** | **about 1,620** | **about 870** | **2,571** | **1,695** |
 
-The amended S11 also asks each public declaration's comment to name its guide page and heading. Each pointer on a line of its own adds lines:
-- **A pointer on every declaration:** about 190 lines. There are 157 public `///` blocks at namespace scope, 37 of them on rejecting overloads, and 36 on members.
-- **A pointer per reference entry:** about 120 lines, with members and rejecting overloads covered by the entry of the declaration they belong to.
+The ratified S11 wording also asks each declaration that has a reference entry to name its guide page and heading, and the owner ruled one pointer on each such declaration, with members and rejecting overloads covered by the entry of the declaration they belong to (decision 0258 item 4.3). There are 157 public `///` blocks at namespace scope, 37 of them on rejecting overloads, and 36 on members. With each pointer on a line of its own:
+- **A pointer per reference entry, as ruled:** about 120 lines, one for each of the 120 blocks at namespace scope that are not on a rejecting overload. One of them, on `GALOOT_ALWAYS_INLINE`, documents a macro that is not part of the interface, so the figure is an upper bound by one.
+- **A pointer on every declaration, the option not taken:** about 190 lines (157 and 36).
 
-So the realistic end state is about **1,800 to 1,870 comment lines**, a fall of 42% to 44%. The plan estimated about 870, a fall of 73%.
+So the realistic end state is about **1,815 comment lines**: 1,695 kept lines and about 120 pointers, a fall of 43%. The plan estimated about 870, a fall of 73%.
 
 Stage by stage, as each condition is met (kept lines, no pointers):
 
 | Stage | Comment lines | Change |
 | --- | --- | --- |
 | Now | 3,208 | |
-| Deletions that wait for nothing, and B9 | 2,718 | -15% |
-| The detail ruling, if it is (a) | 2,627 | -18% |
-| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,439 | -24% |
-| The S11 amendment applied | 1,681 | -48% |
-| The same with pointers | about 1,800 to 1,870 | -42% to -44% |
+| Deletions that wait for nothing, with those of `detail` comments, and B9 | 2,682 | -16% |
+| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,571 | -20% |
+| The S11 amendment applied, once its no-drift checks run | 1,695 | -47% |
+| The same with one pointer per reference entry | about 1,815 | -43% |
 
 The first part's [restated targets](../simplification/restated-targets.md) gave the comment column as follows:
-- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says about 2,630: the deletions that wait for nothing, B9, and the detail ruling.
-- **After D3 and the amendment:** about 870. The table says about 1,800.
+- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says 2,682: the deletions that wait for nothing, including those of `detail` comments, and B9.
+- **After D3 and the amendment:** about 870. The table says about 1,815, pointers included.
 
-So the restated totals' comment column should read about 2,630 and about 1,800. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 6,950 and about 6,120, not 5,940 and 5,190.
+So the restated totals' comment column should read 2,682 and about 1,815. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 7,002 and about 6,135, not 5,940 and 5,190. The owner accepted the targets as D0 measured them, about 6,120 lines and about 1,800 comment lines (decision 0258 item 4.6); the 14 lines of `rotation`'s precondition, kept in full by item 4.4 of the same decision, are most of the difference, which is within the precision of those figures.
 
 ### Why the estimate and the reading differ
 
 | Class | Gap | Where it comes from |
 | --- | --- | --- |
-| D3, `//` | about 300 lines | The plan expected to drop narration and repeats and to move derivations. Read block by block, the `//` lines inside functions are mostly reasons (a GCC 16 miscompilation, why a first term is assigned, why a check is a variable template), equations applied where they are applied, and internal contracts of the generator. Only 54 delete and 33 move. The 42 marker lines that stay are suppressions and formatting directives, each suppression with the reason the static-check rule requires beside it |
+| D3, `//` | about 300 lines (304) | The plan expected to drop narration and repeats and to move derivations. Read block by block, the `//` lines inside functions are mostly reasons (a GCC 16 miscompilation, why a first term is assigned, why a check is a variable template), equations applied where they are applied, and internal contracts of the generator. Only 54 delete and 33 move. The 46 marker lines that stay are suppressions and formatting directives, each suppression with the reason the static-check rule requires beside it |
 | D2, `///` on `detail` | 234 lines | Most `detail` comments describe the generator: `generate_plan`'s count-then-fill protocol, the capacity proofs, the self-checks and the conditions they test, the rounding counts, the elimination. Plan 0048's own rule 4 keeps a `detail` comment whose behavior, bound, or cost is not obvious, and these are the least obvious code in the library. What goes is "Requires: nothing", "an aggregate, equal when every member is", and member comments that repeat their class |
-| D4, public `///` | about 200 lines, before pointers | Four things stay that the estimate of 340 lines did not allow for: the one sentence of each of 42 rejecting overloads; one-line comments on 36 members; summary sentences that are themselves the formula, such as the sign rules of `bits.hpp` and the coefficient orders of the rga3 layouts; and ten preconditions on public declarations kept in full under the ruling |
-| D1, prologues | 75 lines | Prologues keep the conventions they apply and the reasons for them: the mask convention in `bits.hpp`; why a blade is a wedge and not a product, with the integer-polynomial invariant, in `blade_product.hpp`; why the complement reverses canonical order, in `plan.hpp`; why the odd form of `transform` has its sign. The precondition of `GALOOT_FORCE_INLINE` (`assert.hpp:30-32`) stays in full. The examples, the restated guide text, and the cost paragraphs go: 427 of 702 lines are deleted |
+| D4, public `///` | about 210 lines (212), before pointers | Four things stay that the estimate of 340 lines did not allow for: the one sentence of each of 42 rejecting overloads; one-line comments on 36 members; summary sentences that are themselves the formula, such as the sign rules of `bits.hpp` and the coefficient orders of the rga3 layouts; and eleven preconditions on public declarations kept in full under the ruling |
+| D1, prologues | 75 lines | Prologues keep the conventions they apply and the reasons for them: the mask convention in `bits.hpp`; why a blade is a wedge and not a product, with the integer-polynomial invariant, in `blade_product.hpp`; why the complement reverses canonical order, in `plan.hpp`; why the odd form of `transform` has its sign. The precondition of `GALOOT_FORCE_INLINE` (`assert.hpp:30-32`) stays in full. The examples, the restated guide text, and the cost paragraphs go: 427 of 702 lines are deleted. Of these, 17, the two illustrations, go only once D3's reference entries hold them, and 38 only under the S11 amendment, since they are contract text no other header line states: what a change of basis preserves, which `change_basis`'s comment points to, what `transform` preserves in any algebra, and three lookup statements. The first, 15 lines, waits for D3 as well, as that comment does |
 
 A tighter pass is possible:
-- **Cut every kept `detail` `///` block to two lines:** about 177 lines more.
-- **Exclude `performance-enum-size` in `.clang-tidy`:** 14 more. That needs a ruling like O6.
+- **Cut every kept `detail` `///` row to two lines:** 178 lines more.
+- **Exclude `performance-enum-size` in `.clang-tidy`:** 14 more. That needs a ruling like O6, and decision 0255 part A item 10 keeps the suppressions' reasons.
 
-It would bring the end state to about 1,600 lines. It would remove the generator's internal contracts, the text that explains the items plan 0048 section 5.5 protects. This record does not recommend it.
+It would bring the end state to about 1,620 lines. It would remove the generator's internal contracts, the text that explains the items plan 0048 section 5.5 protects. This record does not recommend it, and the owner did not take it (decision 0258 item 4.6).
 
 ## What a reader of a header would lose
 
@@ -292,7 +307,7 @@ A maintainer keeps the following:
 
 ## Preconditions kept in full
 
-Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"). The precondition check found six more, and reading where they lead found a seventh, all generator contracts in `detail` whose rows were already keep (marked "checked"). After the delta check, four more that were already keep rows with this reason are listed, so that the checker guards them too (marked "guarded"). The checker reads this table, and the two below it, and holds its own copy of this one:
+Undefined behavior when broken in an unchecked build, kept under the ruling. Plan 0048 named two (the first two rows). Reading found fourteen more, five of them on `detail` helpers. Three of these were added after the sample check (marked "added"), and two more were already kept with that reason in their notes but missing from this list (marked "listed"). The precondition check found six more, and reading where they lead found a seventh, all generator contracts in `detail` whose rows were already keep (marked "checked"). After the delta check, four more that were already keep rows with this reason are listed, so that the checker guards them too (marked "guarded"). The owner's ruling on "undefined behavior" (decision 0258 item 4.4) added `rotation`'s, which was a move row (marked "ruled"). The checker reads this table, and the two below it, and holds its own copy of this one:
 
 | Place | Precondition |
 | --- | --- |
@@ -320,6 +335,7 @@ Undefined behavior when broken in an unchecked build, kept under the ruling. Pla
 | `blade_product.hpp:117-118` (guarded) | A `term_list` starts empty: one made at run time without `{}` has an indeterminate `length`, which `add` reads and writes past |
 | `basis_change.hpp:258-259` (guarded) | `multiply_noting`'s operands lie within -max to max, since negating the most negative value is undefined |
 | `plan.hpp:160` (guarded) | `plan_capacity` requires what `pair_capacity` requires of each pair, whose n out of range reaches `complement_mask`'s shifts |
+| `presets/rga3/motions.hpp:48-61` (ruled) | `rotation`'s floating T, its line, and a direction whose length is finite and nonzero: with checking off, a zero direction divides by zero, which [expr.mul] leaves undefined, and squares that overflow give a result outside the type's range, which [expr.pre] leaves undefined, whatever IEEE 754 says |
 
 The two cases of `bits.hpp` were confirmed by a probe built with GCC 16.2.1, `-fsanitize=undefined` and `GALOOT_CHECKING` 0, which reports a signed overflow for `antigrade(1, 2^31)` and for `antireverse_sign(0, 50000)`.
 
@@ -334,14 +350,14 @@ The precondition check leads to these lines too. Breaking what they state is dia
 | `blade_product.hpp:134-135` | `term_list::add`'s coefficient lies within -max to max | The same: the sum goes through `add_checked`. A full list is the case listed above, at `:139-140` |
 | `blade_set.hpp:129-130` | `canonical_name`'s mask names only e1 to e9 | The loop stops at e9 and does not overrun |
 | `linear.hpp:389-391` | `x / s`: s has x's scalar type, and T has a `/` | A call that breaks it does not compile |
-| `linear.hpp:397-406` | Which integer types the zero-divisor check reads, and that a floating T is not checked | Not a precondition but the scope of the check; the undefined case is kept at `:392-396` |
+| `linear.hpp:397-406` | Which integer types the zero-divisor check reads, and that a floating T is not checked | Not a precondition but the scope of the check; the undefined case is kept at `:392-396`. An unchecked floating division by zero is undefined in the standard, but the owner ruled that here the supported compilers decide, and GCC and Clang define it for IEEE 754 types (decision 0258 item 4.4), so the text moves |
 | `metric.hpp:127-128` | A null generator need not make the form degenerate | A remark that ends the Requires paragraph, not a precondition |
 | `metric.hpp:239-242` | `from_gram`'s form is square, of a valid size, symmetric, with entries in range | `from_gram` is `consteval`, so every check runs at compile time in every build |
 | `mv.hpp:1035-1044` | `truncate` drops only zero coefficients of an exact scalar | With checking off they are dropped unchecked: a defined result |
 | `transform.hpp:697-711` | `transform` checks that an exact scalar's dropped coefficients are zero | With checking off the dropped terms are not computed; the result is defined |
 | `transform.hpp:713-728` | `transform` checks a rounding scalar's dropped coefficients against a bound | The same |
 | `basis_change.hpp:285-287` | `check_fits`: a value the change computes fits `coefficient_type` | The arithmetic that sets the flag returns 0 instead of overflowing, so a broken condition gives a wrong value, not undefined behavior; the change tables are built in constant evaluation, where it always checks |
-| `presets/rga3/motions.hpp:48-68` | `rotation`'s line, and a direction of finite nonzero length | A zero or overflowing length gives infinities and NaNs, which IEEE 754 arithmetic defines and GCC and Clang follow; see open item 6 |
+| `presets/rga3/motions.hpp:62-68` | Why `rotation` returns a plain `Motor`, and that a subnormal length passes the check and loses accuracy | Not a precondition: a reason, kept, and a remark that ends the Requires paragraph, as at `metric.hpp:127-128`. The precondition before them, `:48-61`, is in the first table |
 
 ### Assertions with no Requires clause above them
 
@@ -362,24 +378,39 @@ The precondition check leads to these lines too. Breaking what they state is dia
 6. **The seven "An int, so that a compiler prints its values and not a byte": keep.** The plan lists them as a repeat. Each one sits beside a `performance-enum-size` suppression, and the static-check rule asks for the reason beside the suppression. They go only if the check is excluded in `.clang-tidy` (open item 3 below).
 7. **The "message on the line of its GALOOT_ASSERT" rule: one home, at `assert.hpp:126-129`, kept as a reason.** Its five repeats point there. It is also part of `GALOOT_ASSERT`'s contract, but a maintainer adding an assertion needs it at the macro.
 8. **`blade_set.hpp:21-25`, canonical order in the prologue: keep.** `canonical_less` states the order again in its one sentence. The prologue alone warns that canonical order is not mask order, and so says twice what plan 0048's rule 3 would say once.
-9. **`linear.hpp:396-406`, which integer types the zero-divisor check reads: move.** The undefined behavior stays (`:392-396`). Which types are checked goes to the reference, so a reader with a big-integer type learns there, not here, that its division by zero is its own affair.
+9. **`linear.hpp:397-406`, which integer types the zero-divisor check reads: move.** The undefined behavior stays (`:392-396`). Which types are checked goes to the reference, so a reader with a big-integer type learns there, not here, that its division by zero is its own affair. The owner confirmed that the floating case moves too (decision 0258 item 4.4).
 10. **`dual.hpp:25-42`, the table of definitions: delete as a repeat of core 'Bulk, weight, and their duals'.** Every function keeps its own formula. The table is the one place a reader sees the eight side by side. It survives in the guide, and plan 0049's conventions chapter receives it from there.
 11. **`rotation`'s reason for returning a plain `Motor`: keep (`motions.hpp:62-66`).** It explains a departure from the rule that a degenerate input returns a failure value. That is the kind of reason a reviewer asks for, in the place the reviewer reads.
 
 ## For the units that use the table
 
-- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 53 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
+- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 54 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
 - **Cross-references inside kept text.**
-  - `dual.hpp:368` sends the reader to the header's own prologue, which moves. Its row moves with it.
-  - `change_basis`'s pointer to the prologue becomes a pointer to the concepts heading (`basis_change.hpp:1113-1115`).
+  - `dual.hpp:368` sends the reader to the header's own prologue (`:44-59`), which moves. Its row moves with it: both wait for D3 and the S11 amendment.
+  - `change_basis`'s pointer to the prologue becomes a pointer to the concepts heading (`basis_change.hpp:1113-1115`). The pointer and the prologue rows it points to (`:51-65`, `:66-73`, `:74-82`) wait for D3 and the S11 amendment together. `:66-82` move to that heading; `:51-65`, the list of factors, is deleted as a repeat of core 'Change of basis', so the heading the pointer names must hold that list too, or the pointer names the heading that does.
+  - `transform`'s pointer to the comment at the rounding check (`transform.hpp:752-754`) is part of row `751-763`, a delete to limits 'The rounding check' that waits for the S11 amendment. The comment it points to (`:590-610`) moves to the diagnostics heading under D3 and the S11 amendment. So the pointer is deleted with its row, never rewritten, and it may go before the causes, never after; the causes are then reached from `transform`'s reference entry.
   - Several pointer rows say "reword to stand alone" where the sentence they finish goes.
-- **Plan 0049's U9 and U10.** The reference pages receive 482 lines of public contract, by page in the table's `target` column. The diagnostics page receives 54 lines, almost all about the two `transform` messages.
-- **Illustrations for the reference.** Two prologue deletes carry a concrete case that no guide page has: `transform.hpp:24-29` (a motor of rigid(2) or conformal(3) has blades of odd grade) and `dual.hpp:60-70` (the bulk of a rigid(3) line holds e12, e13, e23, with the moment on e31 negated on e13). Both follow from rules the guide states, so neither is a lost fact. Their notes name the reference entries for `transform` and `bulk` as the place for them; U9's author takes them from the header at `01dce7f`.
+- **Plan 0049's U9 and U10.** The reference pages receive 450 lines, 433 of them public contract, by page in the table's `target` column. The diagnostics page receives 54 lines, almost all about the two `transform` messages. (Earlier versions of this record gave 482, the lines of every move that waits for D3 and the S11 amendment, some of which go to concepts and diagnostics pages.)
+- **Illustrations for the reference.** Two prologue deletes carry a concrete case that no guide page has: `transform.hpp:24-29` (a motor of rigid(2) or conformal(3) has blades of odd grade) and `dual.hpp:60-70` (the bulk of a rigid(3) line holds e12, e13, e23, with the moment on e31 negated on e13). Both follow from rules the guide states, so neither is a lost fact. Their notes name the reference entries for `transform` and `bulk` as the place for them; U9's author takes them from the header at `01dce7f`. Both rows wait for D3: no comment unit deletes them before those entries hold the illustrations (decision 0255 part A item 10).
 - **The pointer test.** The kept pointer sentences to `limits.md` use the form `docs/guide/limits.md, under 'Heading'`. One, `mv.hpp:889-891`, names two headings in another wording and needs rewriting into that form. Several others finish a sentence that goes, and their notes say to reword them to stand alone.
+
+### Before a contract leaves a header
+
+The owner ratified the S11 wording on the condition that the header and the guide do not drift apart (decision 0258 sections 2 and 3). The wording is applied to STYLE.md, and a contract leaves a header, only when every check below exists; until then no unit removes a contract from a header, whichever plan it belongs to. In this table that means no unit acts on a row that waits for the S11 amendment, alone or with D3. Each check exists as a test that runs at each merge into `main`; plan 0049's U9 and plan 0048's phase 4 design and build them, and their plans state each as an acceptance criterion before either unit starts:
+
+1. **Pointers resolve.** Each pointer in a header names a guide page and a heading that exist.
+2. **Coverage both ways.** Each public declaration in the interface manifest has a reference entry, or is a member or rejecting overload covered by its owner's entry under a stated rule. Each reference entry names a declaration that exists.
+3. **One sentence, one text.** The sentence on a declaration and the opening sentence of its reference entry are the same text, compared by a test.
+4. **Signatures agree.** The signature a reference entry prints is the declared one, compared by the tool that writes the manifest.
+5. **Preconditions kept in full read the same.** A precondition that stays on a declaration appears in its entry in the same words. Of the 28 places in the first table of [Preconditions kept in full](#preconditions-kept-in-full), this reaches the 11 on public `///` comments, each on a public declaration that check 2 gives an entry or covers by its owner's. The other 17 have no entry and stay in the header alone: 14 are `///` comments on `detail` helpers, one is a `//` comment in `detail` (`basis_change.hpp:258-259`), and two are prologue text on no declaration (`assert.hpp:30-32`, `bits.hpp:14-15`). The guide does not receive the generator's contracts (decision 0258 item 4.2).
+6. **Messages agree.** Each diagnostic text a guide page quotes is compared with the literal in the header.
+7. **Stated contracts are exercised.** Each requirement an entry states with a checkable violation names a compiled example or a compile-fail test that exercises it.
+
+Two process rules go with them: a contract moves out of a header only after the page that receives it has passed review, and a unit that changes what a declaration requires, guarantees or preserves changes its entry in the same unit, and the blind reviewer's checklist asks for it. Until the checks exist, S11 stands as ratified on 2026-11-01 and no unit removes a contract from a header; the reference pages are in plan 0049's D3, which is not yet authorized. The decision's list is the coordinator's reading of the owner's condition and the owner can change it; if it changes, this list follows it.
 
 ### Sentences that cross a row boundary
 
-A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence: [boundary-report.tsv](boundary-report.tsv) lists the 104 the checker finds, with both rows, their verdicts, and the two lines on either side. A unit acting on a row reads that list for the row's number first.
+A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence: [boundary-report.tsv](boundary-report.tsv) lists the 103 the checker finds, with both rows, their verdicts, and the two lines on either side. A unit acting on a row reads that list for the row's number first.
 
 ## Corrections after the sample check
 
@@ -429,20 +460,83 @@ The other findings:
 | 6. "Eleven preconditions on public declarations" in the D4 row counted `assert.hpp:30-32`, a `//` prologue line | Confirmed | The D4 row says ten, and the D1 row names the prologue's precondition. Its count of deleted prologue lines is now 427, the checker's figure after finding 3 |
 | 7. Eight of the eleven commits named the agent only in the `Co-Authored-By` trailer | Not a defect. WORKFLOW W7 asks that a change made by an agent be "identified as such in its message", and the trailer, which names the model, is part of the message. History is not rewritten for it | None to those commits. Each commit of this correction also says in a sentence that an agent made it |
 
-The sums, the stage figures, and the counts above are the checker's output after these changes: 666 lines move and 666 delete; the stages are 2,718, 2,627, 2,439 and 1,681; 53 delete rows cite `core.md`, `rga3.md` or the first page (43, 8 and 2); the boundary report lists 104 places.
+The sums, the stage figures, and the counts were then the checker's output after these changes (the owner's rulings changed them since; see the next section): 666 lines move and 666 delete; the stages are 2,718, 2,627, 2,439 and 1,681; 53 delete rows cite `core.md`, `rga3.md` or the first page (43, 8 and 2); the boundary report lists 104 places.
+
+## Changes after the owner's rulings, 2026-11-21
+
+The owner ruled the open items below that went to them (decision 0258 section 4, which rules part B of decision 0255), ratified the S11 wording with a condition that header and guide not drift apart (sections 2 and 3), and left the coordinator's readings of decision 0255 part A standing. The table, the checker, and this README were brought in step, by an agent (Claude Opus 5.5, cpp-expert role):
+
+| Ruling | Rows | Change |
+| --- | --- | --- |
+| S11's contract sentence does not apply inside `detail` (item 4.2) | The 36 rows that waited for "the detail ruling" alone: 33 deletes (80 lines) and three summaries (17 lines) | Wait for nothing |
+| The same | `mv.hpp:895-899`, an internal contract of the product kernel moving to a concepts page | Waits for D3 alone |
+| The same | `assert.hpp:77-83`, on `GALOOT_ALWAYS_INLINE`, and `mv.hpp:880-882`, the requirement every product puts on a scalar the exactness check cannot read | Wait for D3 and the S11 amendment. The first is on a macro, in no `detail` namespace, so the ruling does not reach it; the second sits in `detail` but is public contract, stated in no public comment. Both are the only statement in the headers of something a user meets, so both leave a header only under the no-drift condition |
+| "Undefined behavior" in the standard's sense for `rotation` (item 4.4) | `motions.hpp:48-61` | Keep, in the first table of [Preconditions kept in full](#preconditions-kept-in-full) and in the checker's `KEPT_IN_FULL`, now 28 places. The rest of the clause, `:62-68`, stays in the second table |
+| The supported compilers' sense for the floating division (item 4.4) | `linear.hpp:397-406` | Still moves; its note and the second table name the ruling |
+| One pointer per reference entry (item 4.3) | None | The end state counts about 120 pointer lines, not a range |
+| Decision 0255 part A item 10, the two prologue illustrations | `transform.hpp:24-29`, `dual.hpp:60-70` | Still deletes of a repeat, with the same homes; they wait for D3. The item placed this change in the commit that renames the targets after U3; it is made now, so the wait holds from today |
+
+Two changes to the check go with them. The checker now accepts only the waiting conditions in [What a row waits for](#what-a-row-waits-for); this README already said it checked them, but it checked only that a value was given. And [readme_figures.py](readme_figures.py) computes the figures above that the checker does not print, so every figure here is a script's. Writing it corrected three figures of earlier versions, by stating how each is counted: the marker lines kept among the `//` comments are 46, not 42; cutting every kept `detail` `///` row to two lines saves 178, not about 177; and the reference pages receive 450 lines, where 482 counted every move that waits for D3 and the S11 amendment.
+
+After these changes (the corrections in the next section changed some since): 652 lines move and 666 delete; 1,595 are kept; the stages are 2,644, 2,449 and 1,695, and about 1,815 with the pointers; 53 delete rows cite `core.md`, `rga3.md` or the first page (43, 8 and 2); the boundary report lists 103 places. The checker passes. A copy of the table with `motions.hpp:48-61` demoted to move fails it, and so does one in which a row waits for "the detail ruling" again. No build or test ran, and no header changed.
+
+## Corrections after the rulings check, 2026-11-21
+
+An independent check of the changes above (the review record `docs/agent/records/reviews/2026-11-21-0048-d0-rulings-check.md`, on branch `review/comment-table-rulings` at `196b2a8`) found three minor errors and four nits. Each was judged against the headers at `01dce7f` and decision 0258, by an agent (Claude Opus 5.5, cpp-expert role). The table's corrections:
+
+| Finding | Verdict | Correction |
+| --- | --- | --- |
+| 3. The criterion that kept `assert.hpp:77-83` and `mv.hpp:880-882` under the S11 amendment, "contract text a user needs", was not applied to four rows of the same kind that waited for D3 alone: `linear.hpp:51-53`, `unary.hpp:25-27`, `product.hpp:35-43`, `mv.hpp:895-899` | Confirmed. No other header line states what the sums, the scaling, the involutions and the complements do with a derived class, that a product takes no scalar operand, or that a product agrees between constant evaluation and run time unless multiply-adds are fused (`transform.hpp:764-770` says it for `transform` only). Decision 0258 section 3 says no unit removes a contract from a header, not only from a declaration's comment | The four rows wait for D3 and the S11 amendment. `mv.hpp:895-899` is public contract, as `:880-882` in the same comment is. [What a row waits for](#what-a-row-waits-for) now defines contract text for these conditions, and the definition was applied to every row that left before the amendment (below) |
+| 4. `assert.hpp:77-83` was "internal contract", text on a `detail` entity, though the macro is in no `detail` namespace | Confirmed. It states what a caller of each operation the macro marks must arrange | Kind public contract: 7 lines move between the two rows of the by-kind table, with the 5 of `mv.hpp:895-899` |
+| 6. `format.hpp:215` has position `detail` because the census rule takes the namespace alias on line 211 for a namespace | Confirmed, and the only comment line it affects | Left as the census labels it, so that the sums still compare with plan 0048 section 3.1. The row's note and the `position` column above say so |
+
+The definition was then applied to every row that a unit may act on before the amendment: the 81 rows that wait for nothing, B9, D1 or D3 and are not keep rows, examples, markers or narration. The 52 in prologues and the 9 public ones were read beside the declarations of their header and searched for in the other headers. The 20 in `detail` were judged from their text and the rulings check's reading of the rows the detail ruling freed. That found seven more rows of finding 3's kind:
+- **Text a declaration's comment sends the reader to.** `change_basis`'s comment says that "the header's comment lists the operations it preserves, with their factors, and those it does not" (`basis_change.hpp:1113-1115`, which waits for the amendment). That list, `:51-65`, was deleted with nothing to wait for, and `:66-73` and `:74-82`, the conditions under which the complements, the bulk and the weight are preserved, waited for D3; no other header line states any of it. Likewise `bulk`'s comment points to `dual.hpp:44-59` (D3), and `transform`'s to the causes and remedies at `transform.hpp:590-610` (D3). All five now wait for the amendment, with D3 where they move. The README already said that `dual.hpp:368`'s row "moves with" the prologue; it did not, and now does.
+- **Lookup caveats.** `transform.hpp:59-65` (the clash with `std::ranges`) and `dual.hpp:86-91` (a variable named `bulk`, `weight` or `dot`, and `std::execution::bulk`) were deleted with nothing to wait for. The same caveat on `reverse`'s declaration, `unary.hpp:63-69`, is public contract and waits for the amendment, and no other header line states these two, so both now wait for it. `presets/rga3/objects.hpp:30-33` repeats `transform.hpp:59-65` and still waits for nothing; its note says why.
+
+Rows read and left as they were, with the reason:
+- the other prologue deletes, each of whose contract text a declaration's comment in the same header also states (the result layouts, the operand rules, the scalar rules, `truncate` and `part`, the forms of `transform` and `compose`, the checks of a change of basis), or which is an example, a cost paragraph with its pointer kept, or a convention stated where it is applied;
+- `unary.hpp:28-30`, that the involutions and complements read only n: each operation's own comment defines it without the metric;
+- `transform.hpp:41-46`, the outermorphism property: a consequence of the formula `transform`'s comment keeps;
+- `plan.hpp:47-56`, why a result layout holds no blade a product cannot reach, and the D3 moves of derivations, design reasons and costs;
+- the five D1 conventions: `format.hpp:158-169` and `blade_set.hpp:624-629` are restated in kept comments on the helpers that apply them (`format.hpp:95-98`, `blade_set.hpp:421-425`), and the rest are consequences of formulas their declarations keep.
+
+28 lines (three rows) move from the deletions that wait for nothing to those that wait for the amendment, and 74 lines (eight rows) from D3 to D3 and the amendment. So the stages are 2,672 (-17%) and 2,551 (-20%), and the end state is unchanged at 1,695, about 1,815 with the pointers. The restated "all lines" before D3 is about 6,992. The boundary report still lists 103 places; three of them now name the new conditions. No build or test ran, and no header changed.
+
+The other findings are in this README's wording, and change no row or figure:
+
+| Finding | Verdict | Correction |
+| --- | --- | --- |
+| 1. Check 5 of [Before a contract leaves a header](#before-a-contract-leaves-a-header) said that each place in the first table of preconditions kept in full is on a declaration with a reference entry; 17 of the 28 are not | Confirmed: 14 are `///` comments on `detail` helpers, `basis_change.hpp:258-259` is a `//` comment in `detail`, and `assert.hpp:30-32` and `bits.hpp:14-15` are prologue text | Check 5 now says what decision 0258 section 3 says, then which 11 places it reaches and why the other 17 have no entry |
+| 2. The same section dropped "and the blind reviewer's checklist asks for it" from the second process rule, and bound "phase 4" and "the rows that wait for the amendment" where the decision says that no unit removes a contract from a header | Confirmed | The section restores the clause and says "no unit", whichever plan it belongs to; the rows that wait for the amendment are named as what that means in this table. Plan 0048's outcome line said "the no-drift checks phase 4 needs" and now says the same |
+| 5. Hard call 9 named `linear.hpp:396-406`, which overlaps the kept row `:392-396` | Confirmed | `:397-406`, the moving row |
+| 7. The README turned item 4.4, which ruled two named places, into a general rule with one exception | Confirmed. A search of the headers for unchecked floating divisions, overflows, infinities and NaNs found no other row the difference decides, as the check found | The two sentences, under [Classes](#classes) and in [The precondition check](#the-precondition-check), say that the standard's sense is the table's own rule and that the owner ruled two places and stated no general rule |
+
+## Corrections after the second rulings check, 2026-11-21
+
+A second independent check of the changes above (the review record `docs/agent/records/reviews/2026-11-21-0048-d0-rulings-check-2.md`, on branch `review/comment-table-rulings` at `1066d72`) found one important error, two minor errors, and one plausible error of judgment. Each was judged against the headers at `01dce7f` and decision 0258, by an agent (Claude Opus 5.5, cpp-expert role). All four are confirmed; none is rejected.
+
+| Finding | Verdict | Correction |
+| --- | --- | --- |
+| 1. The README said that pointed-to text waits for the same condition as its pointer, and that `transform`'s pointer (`transform.hpp:752-754`) and `:590-610` wait for D3 and the S11 amendment together, the pointer becoming one to the diagnostics heading. The table did neither: the pointer is in row `751-763`, a delete that waits for the amendment alone, and `basis_change.hpp:51-65`, the list `change_basis`'s comment points to, waited for the amendment alone while that comment waits for D3 as well | Confirmed. At `01dce7f`, `basis_change.hpp:1113-1115` says that "the header's comment lists the operations it preserves, with their factors", and `:51-65` is that list. If the amendment came before the concepts page passed review, a unit could delete the list while the sentence still pointed to it. The transform pair is no dangling pointer, since the pointer waits for less than what it names, but the README told a unit to rewrite a line the row deletes. A search of all 18 headers for comments that point to other comments found no pair besides these three and `transform.hpp:679-680`, whose target `:37-40` is kept | `basis_change.hpp:51-65` waits for D3 and the S11 amendment, still a delete of a repeat of core 'Change of basis'. The rule now says "at least the condition of the comment that points to it", and [For the units that use the table](#for-the-units-that-use-the-table) describes the transform pair as the table has it |
+| 2. The notes of `unary.hpp:18-24` and `transform.hpp:589` said that their neighbors wait for D3; the note of `basis_change.hpp:1113-1116` said that the prologue's list moves to the concepts heading | Confirmed. Both neighbors wait for D3 and the S11 amendment, and `:51-65` is a delete; only `:66-82` move there | The notes give the neighbors' conditions. The third says that the conditions move to that heading and that the heading must also hold the list, or the sentence names the heading that does |
+| 3. Three rows a unit may act on before the amendment may be the only header statement of a guarantee: `transform.hpp:41-46`, `plan.hpp:47-56`, `presets/rga3/motions.hpp:17-18` | Confirmed for all three, though the reviewer offered it as a judgment. `:41-46` states what `transform` preserves in any algebra; `transform`'s comment does not, and `objects.hpp:84-86` and `:97-99` state it for rga3 only. The earlier reason, a consequence of the formula `transform` keeps, would also clear the change-of-basis list, which this README holds. `plan.hpp:47-56` ends by limiting what every result layout holds, and the layouts' comments (`product.hpp:188-212` and the others) and core 'Result layouts' do not state the limit. `motions.hpp:17-18` is the only statement that argument-dependent lookup finds `rotation`; `rotation`'s comment (`:32-78`) does not say it, and `part`'s statement of its lookup is public contract. Decision 0258 section 3 says that no unit removes a contract from a header before the checks exist | `transform.hpp:41-46` and `motions.hpp:17-20` wait for the S11 amendment; `plan.hpp:47-56` for D3 and the amendment. The motions row is held whole, since its line 18 holds both sentences, and its home is now rga3 'Rotation and translation', which states both; the cited `:155-157` covers `translation` only. The README's definition names the three, and no longer gives `plan.hpp:47-56` as an example of an explanation that is not contract |
+| 4. The waiting table called the rows that wait for D3 and the S11 amendment "contract text", though `dual.hpp:44-59` and `transform.hpp:590-610` are held only because a declaration's comment points to them | Confirmed | [What a row waits for](#what-a-row-waits-for) now gives two reasons to wait for the amendment, contract text and the pointer rule, and says which rows the pointer rule alone holds |
+
+The figures, from [readme_figures.py](readme_figures.py) after these changes: the rows that wait for nothing and delete or shorten now hold 489 lines (466 delete); D3, 87; the S11 amendment, 123; D3 and the S11 amendment, 843, of which 15 delete. So the stages are 2,682 (-16%) and 2,571 (-20%), the D1 candidate after D3 is 272, and the end state is unchanged at 1,695, about 1,815 with the pointers. The restated "all lines" before D3 is about 7,002. Of the 427 prologue lines that delete, 372 wait for nothing, 17 for D3, 23 for the amendment and 15 for D3 and the amendment. 54 delete rows now cite `core.md`, `rga3.md` or the first page (43, 9 and 2), since the motions row cites rga3. The checker passes, and the boundary report is unchanged at 103 places. The restated targets and plan 0048's outcome line give the new figures. No build or test ran, and no header changed.
 
 ## Open items
 
-Each item has its options, their tradeoffs, and a recommendation.
+Each item has its options, their tradeoffs, and a recommendation. The owner has ruled items 1, 2, 5 and 6 (decision 0258); each says how, and the table follows the ruling. Items 3, 4 and 7 remain open.
 
-1. **Where the pointers go, under the prepared S11 wording.**
+1. **Where the pointers go, under the prepared S11 wording.** Ruled: option (b), one pointer on each declaration that has a reference entry (decision 0258 item 4.3, deciding decision 0255 part B item 3). The ratified wording says so (decision 0258 section 2), and the end state above counts about 120 pointer lines. Plan 0049's pointer test still needs its rule for which members and rejecting overloads an entry covers; check 2 of [Before a contract leaves a header](#before-a-contract-leaves-a-header) asks for that rule to be stated.
    - **The problem.** The prepared wording (decision 0253 item 14) says each declaration in a public header names its guide page and heading. Read strictly, that covers 36 members and 37 rejecting overloads as well as the 120 or so declarations a reference entry describes.
    - **The options.**
      - (a) A pointer on every declaration: about 190 lines. Uniform and easy to check, but a member's or a rejecting overload's pointer repeats its owner's.
      - (b) A pointer on each declaration that has a reference entry, with members and rejecting overloads covered by it: about 120 lines. Plan 0049's pointer test then needs a rule for what counts as covered.
    - **Recommendation:** (b). Put it to the owner with the confirmation of the wording, which decision 0253 already reserves.
-2. **The detail ruling** (open item 2 of [restated-targets.md](../simplification/restated-targets.md)). The table marks 97 lines as waiting for it alone, and 15 more as waiting for it and D3. The recommendation there stands: S11's contract sentence applies outside `detail`.
-3. **The seven `performance-enum-size` suppressions.**
+2. **The detail ruling** (open item 2 of [restated-targets.md](../simplification/restated-targets.md)). Ruled: S11's contract sentence does not apply inside a `detail` namespace, the recommendation made there (decision 0258 item 4.2, deciding decision 0255 part B item 2). The table had 97 lines waiting for it alone and 15 waiting for it and D3; [Changes after the owner's rulings](#changes-after-the-owners-rulings-2026-11-21) says what became of each row.
+3. **The seven `performance-enum-size` suppressions.** Open: the owner was not asked. Decision 0255 part A item 10 settled it for now at the recommendation, so the suppressions keep their reasons; the owner can reverse it.
    - **The options.**
      - (a) Keep each with its reason: 14 lines. Nothing changes.
      - (b) Exclude the check in `.clang-tidy` with the reason once, as decision 0253 item 19 does for the cast check. The check then no longer reports a real oversized enumeration in a header. The core has seven enumerations, all reviewed.
@@ -452,21 +546,21 @@ Each item has its options, their tradeoffs, and a recommendation.
    - **The options.**
      - (a) When U3 publishes its heading list and its map of where each old heading went, one commit renames the table's targets. The checker's page list changes in the same commit.
      - (b) Leave the targets as they are and let each comment unit translate them.
-   - **Recommendation:** (a). It gives the pointer test and the received-rows check one set of names.
-5. **The comment targets of plan 0048.**
+   - **Recommendation:** (a). It gives the pointer test and the received-rows check one set of names. Decision 0255 part A item 10 already assumes such a commit, after U3's published headings.
+5. **The comment targets of plan 0048.** Ruled: option (a), the targets as D0 measured them, about 6,120 lines and about 1,800 comment lines, restated with M1 (decision 0258 item 4.6, deciding decision 0255 part B item 6). The tighter pass, option (b), was not taken. The ruling does not mention (c); the recommendation's second reader, folded into the review of the first comment unit that opens `plan.hpp`, `mv.hpp` or `basis_change.hpp`, is left to that unit's brief. With the later rulings the table gives about 1,815 comment lines and about 6,135 in all, within that precision.
    - **The problem.** Section 5.4 and the restated targets expect about 870 comment lines at the end. The verdicts here give about 1,800.
    - **The options.**
      - (a) Accept the table and restate the targets with M1, as decision 0253 asks for the other figures.
      - (b) Ask for the tighter pass described above, about 1,600 lines. It cuts the generator's internal contracts.
      - (c) Have a second reader, the cpp-expert as plan 0048 section 7 pairs it with D0, reread the keep verdicts on `plan.hpp`, `mv.hpp`, and `basis_change.hpp` before phase 4.
    - **Recommendation:** (a), with (c) folded into the review of the first comment unit that opens those headers. One independent sample check has read the table (see [Corrections after the sample check](#corrections-after-the-sample-check)); it read 106 rows at random and every delete row, not the keep verdicts this item is about.
-6. **Floating division by zero and overflow, read by the standard.**
+6. **Floating division by zero and overflow, read by the standard.** Ruled, by neither of the two options below but by a third that decision 0255 part B item 4 offered: the standard's sense decides for `rotation`'s zero direction, so `motions.hpp:48-61` stays in full, and the supported compilers' sense decides for the floating division of `linear.hpp:397-406`, whose text moves (decision 0258 item 4.4). Both places were changed, one commit per header.
    - **The problem.** The table treats `rotation`'s zero direction (`motions.hpp:48-68`) and an unchecked floating `x / 0.0` (`linear.hpp:397-406`) as defined, giving infinities and NaNs, and moves both texts. The C++ standard does not define them: [expr.mul] makes a division by zero undefined, and [expr.pre] does the same for a result outside the type's range, with no exception for IEEE 754 types. GCC documents `-fsanitize=float-divide-by-zero` as left out of `-fsanitize=undefined` because such a division "can be a legitimate way of obtaining infinities and NaNs" (read in the GCC 16.2.1 manual); Clang's documentation is recalled to say the same, and was not read for this record. The header's own text at `linear.hpp:403-405` relies on the standard's reading for a constant evaluation, where the division is not a constant expression.
    - **The options.**
      - (a) Keep the verdicts: both compilers Galoot supports define the result for IEEE 754 types, and the ruling's purpose, that nothing that can corrupt a program is hidden from the header, is met.
      - (b) Read "undefined behavior" in decision 0253 item 14 as the standard's term, and keep `motions.hpp:48-61` and `linear.hpp:397-406` in full: about 24 lines more in the end state.
    - **Recommendation:** (a), with the owner's confirmation that the ruling means behavior the supported compilers leave undefined. If the answer is (b), the two places move from the second table to the first and their rows become keep, one commit per header.
-7. **Undefined behavior stated as a guarantee.**
+7. **Undefined behavior stated as a guarantee.** Open: the owner was not asked. Decision 0255 part A item 11 asks B5's author to keep the statement at `coefficient_type`, the second half of the recommendation. Since the detail ruling, both rows wait for nothing, so a comment unit may delete them before B5 runs.
    - **The problem.** `add_checked` and `multiply_checked` (`blade_product.hpp:66-68`, `:84-86`) say in their `Guarantees:` that a result out of range fails `GALOOT_ASSERT`. With checking off at run time that result is a signed overflow. Both rows are deleted as narration, and the precondition check does not see them, since they are not Requires clauses. The undefined behavior is stated once, in full, at `coefficient_type` (`blade_product.hpp:49-57`), which is kept.
    - **The options.**
      - (a) Leave the rows: the one kept statement covers every coefficient the generator forms, and plan 0048's B5 rewrites both functions.
