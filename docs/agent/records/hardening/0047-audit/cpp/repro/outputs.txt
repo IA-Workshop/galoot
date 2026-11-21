@@ -1,0 +1,197 @@
+== r01_one_blade_explicit_fail.cpp, g++ : 2 error lines
+r01_one_blade_explicit_fail.cpp:8:38: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blade_
+r01_one_blade_explicit_fail.cpp:8:38: error: could not convert ‘{1}’ from ‘<brace-enclosed initializer list>’ to ‘const Sc
+== r02_many_blades_explicit_fail.cpp, g++ : 2 error lines
+r02_many_blades_explicit_fail.cpp:7:46: error: no matching function for call to ‘galoot::core::mv<rga3, galoot::core::blad
+r02_many_blades_explicit_fail.cpp:7:46: error: could not convert ‘{1, 2, 3, 4}’ from ‘<brace-enclosed initializer list>’ t
+== r01_one_blade_explicit_fail.cpp, clang++ : 2 error lines
+r01_one_blade_explicit_fail.cpp:8:35: error: no matching constructor for initialization of 'const Scalar' (aka 'const galo
+1 error generated.
+== r02_many_blades_explicit_fail.cpp, clang++ : 2 error lines
+r02_many_blades_explicit_fail.cpp:7:34: error: no matching constructor for initialization of 'const Point' (aka 'const gal
+1 error generated.
+== g++, link order checked_first
+galoot: assertion failed: n must be from 1 to 32 (galoot/core/bits.hpp:121)
+r03_checking_mixed/run.sh: line N: Aborted                    (core dumped) "$out/$order"
+exit status 134
+== g++, link order unchecked_first
+checked unit returned 254
+unchecked unit returned 4294967294
+exit status 0
+== clang++, link order checked_first
+galoot: assertion failed: n must be from 1 to 32 (galoot/core/bits.hpp:121)
+r03_checking_mixed/run.sh: line N: Aborted                    (core dumped) "$out/$order"
+exit status 134
+== clang++, link order unchecked_first
+checked unit returned 254
+unchecked unit returned 4294967294
+exit status 0
+== r04_bits_unchecked_ub.cpp, g++ -O0 -fsanitize=undefined
+galoot/core/bits.hpp:50:21: runtime error: shift exponent 32 is too large for 32-bit type 'unsigned int'
+complement_mask(1, 0) = 4294967294
+complement_mask(1, 40) = 254
+right_complement_sign(1, 0) = 1
+antigrade(1, 40) = 39
+exit status 0
+== r05_canonical_name_unchecked.cpp, g++ -O0
+canonical_name(e1 e10) = "e1"
+canonical_name(e10) = "e"
+exit status 0
+== r06_is_null_unchecked.cpp, g++ -O0 -D_GLIBCXX_ASSERTIONS
+/usr/include/c++/16/array:219: constexpr const std::array<_Tp, _Nm>::value_type& std::array<_Tp, _Nm>::operator[](size_type) const [with _Tp = std::array<int, 4>; long unsigned int _Nm = 4; const_reference = const std::array<int, 4>&; size_type = long unsigned int]: Assertion '__n < this->size()' failed.
+exit status 134
+== r07_char_scalar_format.cpp, g++ 
+length 14: 7b 65 31 3a 20 41 2c 20 65 32 3a 20 00 7d
+exit status 0
+== r08_unterminated_names.cpp, g++ 
+blades<rga3, {'e','1','2'}> holds mask 1
+exit status 0
+== r09_get_derived_fail.cpp, g++ : 1 error lines
+r09_get_derived_fail.cpp:7:53: error: no matching function for call to ‘get<"e1">(const NamedPoint&)’
+== r10_scale_derived_fail.cpp, g++ : 1 error lines
+r10_scale_derived_fail.cpp:8:45: error: no match for ‘operator*’ (operand types are ‘int’ and ‘const NamedPoint’)
+== r11_repeated_mask_layouts.cpp, g++ 
+exit status 0
+== r12_orthogonal_change_overflow_fail.cpp, g++ -DW=79: 1 error lines
+galoot/core/basis_change.hpp:719:21: error: static assertion failed: basis_change: an exact value the change computes does not fit coefficient_type; use rows with s
+== r12_orthogonal_change_overflow_fail.cpp, g++ -DW=78: 0 error lines
+== r12_orthogonal_change_overflow_fail.cpp, g++ -DW=79 -DPROBE
+W=79 N=6247: elimination fits 0, inner products fit 1 hold 1
+exit status 0
+== r12_orthogonal_change_overflow_fail.cpp, g++ -DW=78 -DPROBE
+W=78 N=6090: elimination fits 1, inner products fit 1 hold 1
+exit status 0
+== r14_rotation_angle_not_finite.cpp, g++ -DGALOOT_CHECKING=1
+GALOOT_CHECKING=1, rotation(z, inf): e43 -nan, e1234 -nan
+exit status 0
+== r15_translation_bool_fail.cpp, g++ : 2 error lines
+galoot/core/mv.hpp:535:17: error: static assertion failed: mv: bool cannot be the scalar type, since true + true is true; use an integer type such as int
+galoot/presets/rga3/motions.hpp:172:17: error: static assertion failed: translation: halving d would truncate in an integer scalar type; use a floating or exact rat
+== r16_empty_layout.cpp, g++ -Wall -Wextra -Werror
+{} {} {} {} {} {} {} {} 1
+exit status 0
+== r19_int_scalar_overflow.cpp, g++ -O0 -fsanitize=undefined
+galoot/core/mv.hpp:366:58: runtime error: signed integer overflow: 65536 * 65536 cannot be represented in type 'int'
+e1 ^ e2 scaled by 2^16 each: 0 on e12
+exit status 0
+== r21_tab_separator_fail.cpp, g++ : 3 error lines
+galoot/core/blade_set.hpp:513:25: error: static assertion failed: blades: after the e, a name lists generator indices, each a digit from 1 to 9
+  513 |     static_assert(error != NameError::bad_index,
+  • ‘(((galoot::core::detail::NameError)error) != galoot::core::detail::NameError::bad_index)’ evaluates to false
+== r04_bits_unchecked_ub.cpp, clang++ -O0 -fsanitize=undefined
+galoot/core/bits.hpp:50:21: runtime error: shift exponent 32 is too large for 32-bit type 'mask_t' (aka 'unsigned int')
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior galoot/core/bits.hpp:50:21 
+complement_mask(1, 0) = 4294967294
+complement_mask(1, 40) = 254
+right_complement_sign(1, 0) = 1
+antigrade(1, 40) = 39
+exit status 0
+== r05_canonical_name_unchecked.cpp, clang++ -O0
+canonical_name(e1 e10) = "e1"
+canonical_name(e10) = "e"
+exit status 0
+== r06_is_null_unchecked.cpp, clang++ -O0 -D_GLIBCXX_ASSERTIONS
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:219: const_reference std::array<std::array<int, 4>, 4>::operator[](size_type) const [_Tp = std::array<int, 4>, _Nm = 4]: Assertion '__n < this->size()' failed.
+exit status 134
+== r07_char_scalar_format.cpp, clang++ 
+length 14: 7b 65 31 3a 20 41 2c 20 65 32 3a 20 00 7d
+exit status 0
+== r08_unterminated_names.cpp, clang++ 
+blades<rga3, {'e','1','2'}> holds mask 1
+exit status 0
+== r09_get_derived_fail.cpp, clang++ : 2 error lines
+r09_get_derived_fail.cpp:7:44: error: no matching function for call to 'get'
+1 error generated.
+== r10_scale_derived_fail.cpp, clang++ : 2 error lines
+r10_scale_derived_fail.cpp:8:45: error: invalid operands to binary expression ('int' and 'const NamedPoint')
+1 error generated.
+== r11_repeated_mask_layouts.cpp, clang++ 
+exit status 0
+== r12_orthogonal_change_overflow_fail.cpp, clang++ -DW=79: 2 error lines
+galoot/core/basis_change.hpp:719:21: error: static assertion failed due to requirement 'fits': basis_change: an exact value the change computes does not fit coeffic
+1 error generated.
+== r12_orthogonal_change_overflow_fail.cpp, clang++ -DW=78: 0 error lines
+== r12_orthogonal_change_overflow_fail.cpp, clang++ -DW=79 -DPROBE
+W=79 N=6247: elimination fits 0, inner products fit 1 hold 1
+exit status 0
+== r12_orthogonal_change_overflow_fail.cpp, clang++ -DW=78 -DPROBE
+W=78 N=6090: elimination fits 1, inner products fit 1 hold 1
+exit status 0
+== r14_rotation_angle_not_finite.cpp, clang++ -DGALOOT_CHECKING=1
+GALOOT_CHECKING=1, rotation(z, inf): e43 -nan, e1234 -nan
+exit status 0
+== r15_translation_bool_fail.cpp, clang++ : 3 error lines
+galoot/core/mv.hpp:535:17: error: static assertion failed due to requirement 'scalar_is_not_bool': mv: bool cannot be the scalar type, since true + true is true; us
+galoot/presets/rga3/motions.hpp:172:17: error: static assertion failed due to requirement '!std::integral<bool>': translation: halving d would truncate in an intege
+2 errors generated.
+== r16_empty_layout.cpp, clang++ -Wall -Wextra -Werror
+{} {} {} {} {} {} {} {} 1
+exit status 0
+== r19_int_scalar_overflow.cpp, clang++ -O0 -fsanitize=undefined
+galoot/core/mv.hpp:366:58: runtime error: signed integer overflow: 65536 * 65536 cannot be represented in type 'value_type' (aka 'int')
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior galoot/core/mv.hpp:366:58 
+e1 ^ e2 scaled by 2^16 each: 0 on e12
+exit status 0
+== r21_tab_separator_fail.cpp, clang++ : 4 error lines
+galoot/core/blade_set.hpp:513:19: error: static assertion failed due to requirement 'error != galoot::core::detail::NameError::bad_index': blades: after the e, a na
+  513 |     static_assert(error != NameError::bad_index,
+  513 |     static_assert(error != NameError::bad_index,
+== r13_bitint_change_truncates.cpp, clang++ 
+image of the origin over _BitInt(128): 0 0
+exit status 0
+== r18_float16_rounding_floor.cpp, g++ -DGALOOT_CHECKING=1 -DSCALE=0.1f
+galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+exit status 134
+== r18_float16_rounding_floor.cpp, g++ -DGALOOT_CHECKING=1 -DSCALE=0.05f
+checked: 1, padding: 0.125
+a = 0.0499878: the check passed, result 0.000249863
+exit status 0
+== r17_wide_algebra_capacity.cpp, g++ -DGEN=21: 0 error lines
+== r17_wide_algebra_capacity.cpp, g++ -DGEN=22: 0 error lines
+== r20_wide_vectors_wedge.cpp, g++ -DGEN=19: 0 error lines
+== r20_wide_vectors_wedge.cpp, g++ -DGEN=20: 0 error lines
+== r17_wide_algebra_capacity.cpp, clang++ -DGEN=21: 0 error lines
+== r17_wide_algebra_capacity.cpp, clang++ -DGEN=22: 4 error lines
+galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression
+galoot/core/plan.hpp:556:9: error: no matching function for call to 'filled_plan'
+r17_wide_algebra_capacity.cpp:16:37: error: no matching function for call to 'bulk_dual'
+== r20_wide_vectors_wedge.cpp, clang++ -DGEN=19: 0 error lines
+== r20_wide_vectors_wedge.cpp, clang++ -DGEN=20: 4 error lines
+galoot/core/plan.hpp:571:27: error: constexpr variable 'found' must be initialized by a constant expression
+galoot/core/plan.hpp:572:34: error: no matching function for call to 'typed'
+r20_wide_vectors_wedge.cpp:15:54: error: no matching function for call to 'wedge'
+== r20_wide_vectors_wedge.cpp, g++ -DGEN=30: 0 error lines
+== r20_wide_vectors_wedge.cpp, g++ -DGEN=31: 39 error lines
+galoot/core/plan.hpp:362:53: error: ‘constexpr’ evaluation operation count exceeds limit of 33554432 (use ‘-fconstexpr-ops-limit=’ to increase the limit)
+galoot/core/plan.hpp:575:19: error: non-constant condition for static assertion
+galoot/core/plan.hpp:578:19: error: non-constant condition for static assertion
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[1], g++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[1], clang++: builds, exit status 134
+== GALOOT_CHECKING=[0], g++: builds, exit status 40
+== GALOOT_CHECKING=[0], clang++: builds, exit status 40
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[true], g++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[true], clang++: builds, exit status 134
+== GALOOT_CHECKING=[false], g++: builds, exit status 40
+== GALOOT_CHECKING=[false], clang++: builds, exit status 40
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[01], g++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[01], clang++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[0x1], g++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[0x1], clang++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[1-0], g++: builds, exit status 134
+./run.sh: line N: Aborted                    (core dumped) "$out/spelling" > /dev/null 2>&1
+== GALOOT_CHECKING=[1-0], clang++: builds, exit status 134
+== GALOOT_CHECKING=[ON], g++: <command-line>: error: ‘ON’ was not declared in this scope
+== GALOOT_CHECKING=[ON], clang++: galoot/core/assert.hpp:119:10: error: use of undeclared identifier 'ON'
+== GALOOT_CHECKING=[], g++: galoot/core/assert.hpp:16:21: error: operator ‘!=’ has no left operand
+== GALOOT_CHECKING=[], clang++: galoot/core/assert.hpp:16:21: error: invalid token at start of a preprocessor expres
+== GALOOT_CHECKING=[2], g++: galoot/core/assert.hpp:17:2: error: #error "GALOOT_CHECKING must be 0 or 1"
+== GALOOT_CHECKING=[2], clang++: galoot/core/assert.hpp:17:2: error: "GALOOT_CHECKING must be 0 or 1"

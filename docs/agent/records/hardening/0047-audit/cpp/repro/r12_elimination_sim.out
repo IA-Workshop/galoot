@@ -1,0 +1,6 @@
+(79, 2, 1, 1): reduced rows [[6243, -154, 162], [162, 6237, -314], [-154, 318, 6237]] over [6247, 6247, 6247]
+  overflow at step 2, row 0, column 0 (left block): 9498647429306155197
+  overflow at step 2, row 1, column 1 (left block): 9498647429306155197
+(w, w-1, w-2, w-3) first refused: (155, 154, 153, 152) N = 94254 largest reduced entry 47126
+(w, 2, 1, 1) first refused: (79, 2, 1, 1) N = 6247 largest reduced entry 6243
+(w, w/2, w/3, 1) first refused: (77, 38, 25, 1) N = 7999 largest reduced entry 6747
