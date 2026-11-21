@@ -34,40 +34,33 @@
 //     and b = 42 for what they move.
 // The test build compiles without contraction of multiply-add, and the
 // bounds would hold with it.
-#include <algorithm>
-#include <cmath>
+//
+// The comparison of the two sides and the laws of associativity and the De
+// Morgan laws are in identities_rounding_checks.hpp, each law compiled in a
+// source of its own, identities_rounding_<part>_test.cpp. This source holds
+// the test case, which draws every input, and the compositions.
 #include <cstddef>
 #include <cstdint>
 #include <format>
 #include <random>
 #include <string>
-#include <type_traits>
 
-#include <galoot/core/bits.hpp>
 #include <galoot/core/blade_set.hpp>
-#include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
 #include <galoot/core/product.hpp>
 #include <galoot/core/transform.hpp>
-#include <galoot/core/unary.hpp>
 
 #include <doctest/doctest.h>
 
+#include "identities_rounding_checks.hpp"
 #include <support/rational.hpp>
 #include <support/tracked.hpp>
 
+namespace galoot_test::identities_rounding {
+
 namespace {
 
-namespace core = galoot::core;
 using test_support::rational;
-using test_support::tracked;
-
-struct rga3 {
-  static constexpr auto value = core::rigid<3>();
-};
-struct cga3 {
-  static constexpr auto value = core::conformal<3>();
-};
 
 inline constexpr auto point_layout = core::blades<rga3, "e1 e2 e3 e4">;
 inline constexpr auto line_layout =
@@ -77,39 +70,6 @@ inline constexpr auto motor_layout =
     core::blades<rga3, "e41 e42 e43 e1234 e23 e31 e12 1">;
 inline constexpr auto flector_layout =
     core::blades<rga3, "e1 e2 e3 e4 e423 e431 e412 e321">;
-
-// The number of generators of an algebra.
-template <class Alg>
-inline constexpr std::size_t generators =
-    std::remove_cvref_t<decltype(Alg::value)>::generator_count;
-
-// The name of the canonical blade of a mask: e followed by the indices of
-// its generators, or 1.
-std::string blade_name(core::mask_t mask) {
-  if (mask == 0) {
-    return "1";
-  }
-  std::string name = "e";
-  for (unsigned i = 0; i < 32; ++i) {
-    if (((mask >> i) & 1U) != 0) {
-      name += std::to_string(i + 1);
-    }
-  }
-  return name;
-}
-
-// The coefficient of x on the canonical blade of this mask, or zero, with
-// K = 0 and M = 0 for a tracked one, when the layout lacks the blade.
-template <class X>
-X::scalar_type value_on(const X& x, core::mask_t mask) {
-  for (std::size_t k = 0; k < X::component_count; ++k) {
-    const core::oriented_blade blade = X::layout.blades.at(k);
-    if (blade.mask == mask) {
-      return blade.sign < 0 ? -x.coefficients.at(k) : x.coefficients.at(k);
-    }
-  }
-  return typename X::scalar_type{};
-}
 
 // p / 2^bits with p uniform in -(2^bits - 1) to 2^bits - 1, exact in double.
 rational draw(std::mt19937_64& source, int bits) {
@@ -152,72 +112,6 @@ auto doubles_of(const X& x) {
   return d;
 }
 
-// What the comparisons found, over every coefficient of every identity.
-struct tally {
-  int coefficients = 0;
-  int problems = 0;
-  int equal_sides = 0;
-  // The largest ratio of |L - R| to the sum of the two bounds
-  // gamma_(K_L) M_L + gamma_(K_R) M_R, computed in double.
-  double largest_ratio = 0.0;
-};
-
-double gamma_of(int k) {
-  const double ku = k * test_support::unit_roundoff;
-  return ku / (1.0 - ku);
-}
-
-// Compares the sides of one identity, blade by blade over both layouts:
-// tl and tr over tracked, dl and dr the same over double.
-template <class TL, class TR, class DL, class DR>
-void compare(const std::string& identity, const TL& tl, const TR& tr,
-             const DL& dl, const DR& dr, tally& out) {
-  const auto at = [&](core::mask_t mask) {
-    const tracked l = value_on(tl, mask);
-    const tracked r = value_on(tr, mask);
-    const double ld = value_on(dl, mask);
-    const double rd = value_on(dr, mask);
-    ++out.coefficients;
-    const bool exact_equal = l.value == r.value;
-    const bool left_within = test_support::within_rounding_bound(
-        ld, l.value, l.roundings, l.magnitude);
-    const bool right_within = test_support::within_rounding_bound(
-        rd, r.value, r.roundings, r.magnitude);
-    const bool sides_within = test_support::within_identity_bound(
-        ld, l.roundings, l.magnitude, rd, r.roundings, r.magnitude);
-    if (!(exact_equal && left_within && right_within && sides_within)) {
-      ++out.problems;
-      const std::string problem = std::format(
-          "{} on {}: exact sides equal {}, left within {}, right within {}, "
-          "sides within {}; L = {} with K = {}, R = {} with K = {}",
-          identity, blade_name(mask), exact_equal, left_within, right_within,
-          sides_within, ld, l.roundings, rd, r.roundings);
-      FAIL_CHECK(problem);
-    }
-    if (l.roundings <= 1 && r.roundings <= 1) {
-      ++out.equal_sides;
-    } else if (ld != rd) {
-      const double bound =
-          (gamma_of(l.roundings) * test_support::nearest_double(l.magnitude)) +
-          (gamma_of(r.roundings) * test_support::nearest_double(r.magnitude));
-      out.largest_ratio =
-          std::max(out.largest_ratio, std::abs(ld - rd) / bound);
-    }
-  };
-  for (const core::oriented_blade& blade : TL::layout.blades) {
-    at(blade.mask);
-  }
-  for (const core::oriented_blade& blade : TR::layout.blades) {
-    bool in_left = false;
-    for (const core::oriented_blade& other : TL::layout.blades) {
-      in_left = in_left || other.mask == blade.mask;
-    }
-    if (!in_left) {
-      at(blade.mask);
-    }
-  }
-}
-
 // Associativity of ⟑ and ⟇ on random full multivectors of Alg.
 template <class Alg>
 void check_associativity(std::mt19937_64& source, int samples, int bits,
@@ -230,10 +124,8 @@ void check_associativity(std::mt19937_64& source, int samples, int bits,
     const auto da = doubles_of(a);
     const auto db = doubles_of(b);
     const auto dc = doubles_of(c);
-    compare(form + " (a ⟑ b) ⟑ c = a ⟑ (b ⟑ c)", (a * b) * c, a * (b * c),
-            (da * db) * dc, da * (db * dc), out);
-    compare(form + " (a ⟇ b) ⟇ c = a ⟇ (b ⟇ c)", (a % b) % c, a % (b % c),
-            (da % db) % dc, da % (db % dc), out);
+    product_associativity<Alg>(a, b, c, da, db, dc, form, out);
+    antiproduct_associativity<Alg>(a, b, c, da, db, dc, form, out);
   }
 }
 
@@ -242,42 +134,20 @@ void check_associativity(std::mt19937_64& source, int samples, int bits,
 template <class Alg>
 void check_de_morgan(std::mt19937_64& source, int samples,
                      const std::string& form, tally& out) {
-  using core::left_complement;
-  using core::right_complement;
   using X = core::mv<Alg, core::full<generators<Alg>>, tracked>;
   for (int k = 0; k < samples; ++k) {
     const X a = random_input<X>(source, 27);
     const X b = random_input<X>(source, 27);
     const auto da = doubles_of(a);
     const auto db = doubles_of(b);
-    compare(form + " right(a ⟑ b)", right_complement(a * b),
-            right_complement(a) % right_complement(b),
-            right_complement(da * db),
-            right_complement(da) % right_complement(db), out);
-    compare(form + " right(a ^ b)", right_complement(a ^ b),
-            right_complement(a) & right_complement(b),
-            right_complement(da ^ db),
-            right_complement(da) & right_complement(db), out);
-    compare(form + " left(a ⟑ b)", left_complement(a * b),
-            left_complement(a) % left_complement(b), left_complement(da * db),
-            left_complement(da) % left_complement(db), out);
-    compare(form + " left(a ^ b)", left_complement(a ^ b),
-            left_complement(a) & left_complement(b), left_complement(da ^ db),
-            left_complement(da) & left_complement(db), out);
-    compare(form + " right(a ⟇ b)", right_complement(a % b),
-            right_complement(a) * right_complement(b),
-            right_complement(da % db),
-            right_complement(da) * right_complement(db), out);
-    compare(form + " right(a v b)", right_complement(a & b),
-            right_complement(a) ^ right_complement(b),
-            right_complement(da & db),
-            right_complement(da) ^ right_complement(db), out);
-    compare(form + " left(a ⟇ b)", left_complement(a % b),
-            left_complement(a) * left_complement(b), left_complement(da % db),
-            left_complement(da) * left_complement(db), out);
-    compare(form + " left(a v b)", left_complement(a & b),
-            left_complement(a) ^ left_complement(b), left_complement(da & db),
-            left_complement(da) ^ left_complement(db), out);
+    right_complement_of_product<Alg>(a, b, da, db, form, out);
+    right_complement_of_wedge<Alg>(a, b, da, db, form, out);
+    left_complement_of_product<Alg>(a, b, da, db, form, out);
+    left_complement_of_wedge<Alg>(a, b, da, db, form, out);
+    right_complement_of_antiproduct<Alg>(a, b, da, db, form, out);
+    right_complement_of_antiwedge<Alg>(a, b, da, db, form, out);
+    left_complement_of_antiproduct<Alg>(a, b, da, db, form, out);
+    left_complement_of_antiwedge<Alg>(a, b, da, db, form, out);
   }
 }
 
@@ -389,3 +259,5 @@ TEST_CASE("the identities hold over double within their forward error "
   CHECK(out.coefficients > 0);
   CHECK(out.problems == 0);
 }
+
+} // namespace galoot_test::identities_rounding
