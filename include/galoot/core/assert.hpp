@@ -6,7 +6,8 @@
 // GALOOT_CHECKING selects the checking mode. It is 1 for a checking build and
 // 0 for an unchecked one. When it has no value, this header uses 0, so that a
 // project that only adds Galoot's headers gets an unchecked build without
-// configuring anything. Galoot's own builds give it a value in every preset.
+// configuring anything. Galoot's own builds give it a value in every build
+// preset.
 #ifndef GALOOT_CHECKING
 // A macro, because users set the mode with -D and the preprocessor tests it.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -34,20 +35,6 @@
 // A macro, because users set the mode with -D and the preprocessor tests it.
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define GALOOT_FORCE_INLINE 1
-#endif
-
-// The mode is pasted onto a name defined only for 0 and 1, because a numeric
-// #if reads a name it does not know, such as ON, as 0, takes 01 and 0x1 for
-// 1, and reports an empty value with an error of its own.
-// NOLINTBEGIN(*-macro-usage,*-macro-to-enum): only the preprocessor can test
-// the spelling of a macro's value, and #if cannot see an enumerator.
-#define GALOOT_DETAIL_PASTE_(a, b) a##b
-#define GALOOT_DETAIL_PASTE(a, b) GALOOT_DETAIL_PASTE_(a, b)
-#define GALOOT_DETAIL_FORCE_INLINE_IS_0 1
-#define GALOOT_DETAIL_FORCE_INLINE_IS_1 1
-// NOLINTEND(*-macro-usage,*-macro-to-enum)
-#if !GALOOT_DETAIL_PASTE(GALOOT_DETAIL_FORCE_INLINE_IS_, GALOOT_FORCE_INLINE)
-#error "GALOOT_FORCE_INLINE must be 0 or 1"
 #endif
 
 #include <cstdio>
@@ -83,11 +70,35 @@
 /// the fallback in a file of its own built for the fallback's target.
 // A macro, because the attribute is written only for the compilers that
 // know it, and only in the forced-inline mode.
-#if GALOOT_FORCE_INLINE == 1 && (defined(__GNUC__) || defined(__clang__))
+//
+// The mode is first checked by pasting it onto a name defined only for 0 and
+// 1, because a numeric #if reads a name it does not know, such as ON, as 0,
+// takes 01 and 0x1 for 1, and reports an empty value with an error of its
+// own. The check and the choice of attribute are one #if chain, so that a
+// mode the check rejects is never compared with 1: once a group of the chain
+// is taken, the conditions after it are not evaluated. After the error the
+// attribute is still defined, as nothing, so that the headers that use it
+// add no errors of their own. The helper names are removed after the chain,
+// so that none is left among a program's macros.
+// NOLINTBEGIN(*-macro-usage,*-macro-to-enum): only the preprocessor can test
+// the spelling of a macro's value, and #if cannot see an enumerator.
+#define GALOOT_DETAIL_PASTE_(a, b) a##b
+#define GALOOT_DETAIL_PASTE(a, b) GALOOT_DETAIL_PASTE_(a, b)
+#define GALOOT_DETAIL_FORCE_INLINE_IS_0 1
+#define GALOOT_DETAIL_FORCE_INLINE_IS_1 1
+// NOLINTEND(*-macro-usage,*-macro-to-enum)
+#if !GALOOT_DETAIL_PASTE(GALOOT_DETAIL_FORCE_INLINE_IS_, GALOOT_FORCE_INLINE)
+#error "GALOOT_FORCE_INLINE must be 0 or 1"
+#define GALOOT_ALWAYS_INLINE
+#elif GALOOT_FORCE_INLINE == 1 && (defined(__GNUC__) || defined(__clang__))
 #define GALOOT_ALWAYS_INLINE [[gnu::always_inline]]
 #else
 #define GALOOT_ALWAYS_INLINE
 #endif
+#undef GALOOT_DETAIL_PASTE_
+#undef GALOOT_DETAIL_PASTE
+#undef GALOOT_DETAIL_FORCE_INLINE_IS_0
+#undef GALOOT_DETAIL_FORCE_INLINE_IS_1
 
 namespace galoot::core::detail {
 

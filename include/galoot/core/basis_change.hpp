@@ -539,14 +539,14 @@ keeps_inner_products(const basis_change<N>& change, const metric<N>& source,
   bool fits = true;
   std::array<std::array<coefficient_type, N>, N> rows_times_target{};
   for (std::size_t i = 0; i < N; ++i) {
-    for (std::size_t l = 0; l < N; ++l) {
+    for (std::size_t c = 0; c < N; ++c) {
       coefficient_type sum = 0;
       for (std::size_t k = 0; k < N; ++k) {
         sum = add_noting(
-            sum, multiply_noting(change.rows[i][k], target.gram[k][l], fits),
+            sum, multiply_noting(change.rows[i][k], target.gram[k][c], fits),
             fits);
       }
-      rows_times_target[i][l] = sum;
+      rows_times_target[i][c] = sum;
     }
   }
 
@@ -554,10 +554,10 @@ keeps_inner_products(const basis_change<N>& change, const metric<N>& source,
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
       coefficient_type left = 0;
-      for (std::size_t l = 0; l < N; ++l) {
+      for (std::size_t c = 0; c < N; ++c) {
         left = add_noting(
             left,
-            multiply_noting(rows_times_target[i][l], change.rows[j][l], fits),
+            multiply_noting(rows_times_target[i][c], change.rows[j][c], fits),
             fits);
       }
       const coefficient_type right = multiply_noting(

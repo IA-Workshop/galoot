@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+propagation_dropped	clang-release	44d0f25c9a65	killed	killed	core.force_inline_build	-	-	GALOOT_ALWAYS_INLINE is the always_inline attribute exactly when the forced-inline mode is on	-	-

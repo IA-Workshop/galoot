@@ -1,5 +1,5 @@
-// e12 e12 = -4096^2 = -2^24 in diag(4096, 4096), which short cannot
-// hold. This file must not compile.
+// e12 e12 = -4096^2 = -2^24 in diag(4096, 4096), written onto the scalar,
+// which short cannot hold. This file must not compile.
 #include <galoot/core/blade_set.hpp>
 #include <galoot/core/metric.hpp>
 #include <galoot/core/mv.hpp>
@@ -15,11 +15,13 @@ struct diagonal {
 };
 
 inline constexpr auto layout = galoot::core::blades<diagonal, "e12">;
+inline constexpr auto scalar_layout = galoot::core::blades<diagonal, "1">;
 using Blade = galoot::core::mv<diagonal, layout, short>;
 
 [[maybe_unused]] Blade::scalar_type square(const Blade& x) {
   using galoot::core::detail::BinaryOperation;
-  return galoot::core::detail::apply<BinaryOperation::geometric_product>(x, x)
+  return galoot::core::detail::apply<BinaryOperation::geometric_product,
+                                     scalar_layout>(x, x)
       .coefficients[0];
 }
 

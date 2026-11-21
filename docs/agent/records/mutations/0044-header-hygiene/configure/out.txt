@@ -1,0 +1,11 @@
+gcc-debug: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+gcc-release: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+gcc-asan: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=OFF
+clang-debug: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+clang-release: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=OFF
+clang-asan: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=OFF
+lint: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+gcc-measure: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+gcc-measure-o3: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+clang-measure: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON
+clang-measure-o3: commands identical, cache identical, GALOOT_FORCE_INLINE:BOOL=ON

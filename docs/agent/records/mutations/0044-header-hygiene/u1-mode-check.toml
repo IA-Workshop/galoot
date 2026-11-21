@@ -1,0 +1,47 @@
+# Plan 0044, unit U1: the mutants of the forced-inline mode's check, now one
+# #if chain with the choice of attribute, and of the removal of its helper
+# macros, on both debug presets. Each counts when the test it was written
+# for is among those it fails.
+presets = ["gcc-debug", "clang-debug"]
+
+[selection.assert]
+targets = ["core_assert_mode_0", "core_assert_mode_1",
+  "core_force_inline_off", "core_force_inline_default",
+  "core_force_inline_build"]
+labels = '^core\.assert$'
+
+# One helper left defined after the headers.
+[[mutant]]
+name = "undef_dropped"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#undef GALOOT_DETAIL_PASTE_
+''', replacement = '''''' }]
+expect = "killed"
+killers = ["core.public_macros"]
+
+# The attribute left undefined after the #error, so that every header that
+# uses it adds errors of its own.
+[[mutant]]
+name = "error_group_undefined"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#error "GALOOT_FORCE_INLINE must be 0 or 1"
+#define GALOOT_ALWAYS_INLINE
+#elif''', replacement = '''#error "GALOOT_FORCE_INLINE must be 0 or 1"
+#elif''' }]
+expect = "killed"
+killers = ["core.force_inline_on"]
+
+# The check split from the choice of attribute, as before: a mode the check
+# rejects is then compared with 1, and an empty one gives a second error.
+[[mutant]]
+name = "elif_split"
+selection = "assert"
+file = "include/galoot/core/assert.hpp"
+edits = [{ anchor = '''#define GALOOT_ALWAYS_INLINE
+#elif GALOOT_FORCE_INLINE == 1''', replacement = '''#define GALOOT_ALWAYS_INLINE
+#endif
+#if GALOOT_FORCE_INLINE == 1''' }]
+expect = "killed"
+killers = ["core.force_inline_empty"]

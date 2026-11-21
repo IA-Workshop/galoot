@@ -142,13 +142,30 @@ galoot_add_compile_fail_test(NAME force_inline_on
   SOURCE core/force_inline_on_fail.cpp
   MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
   ONE_ERROR)
-# core.force_inline_empty: the same message for a mode defined with no value.
-# The header's later #if on the mode then has no left operand, which the
-# compiler reports as a second error, so this test does not ask for one.
+# core.force_inline_empty: the same for a mode defined with no value.
 galoot_add_compile_fail_test(NAME force_inline_empty
   MODULE core COMPONENT assert
   SOURCE core/force_inline_empty_fail.cpp
-  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1")
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
+  ONE_ERROR)
+
+# core.public_macros: after every header is included, the only macros named
+# GALOOT_ that remain are the include guards, the two modes, the inlining
+# attribute and GALOOT_ASSERT, so that no helper of the headers is left in a
+# user's namespace of macros. -dM prints each macro defined at the end of the
+# file, and an empty definition with a space after its name. A new public
+# macro or a guard of another form needs its line added here.
+add_test(NAME core.public_macros
+  COMMAND ${expect_output} 0 ONLY "^#define GALOOT_"
+    "_HPP "
+    "#define GALOOT_CHECKING "
+    "#define GALOOT_FORCE_INLINE "
+    "#define GALOOT_ALWAYS_INLINE "
+    "#define GALOOT_ASSERT("
+    -- ${CMAKE_CXX_COMPILER} -std=c++23 -I ${PROJECT_SOURCE_DIR}/include
+      -dM -E ${CMAKE_CURRENT_SOURCE_DIR}/core/public_macros.cpp)
+set_tests_properties(core.public_macros PROPERTIES
+  LABELS "core;core.assert;core.headers")
 
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
@@ -253,6 +270,30 @@ add_test(NAME tools.compile_fail_literal_in_path_accepts
 set_tests_properties(tools.compile_fail_literal_in_path_rejects
   tools.compile_fail_literal_in_path_accepts PROPERTIES
   LABELS "tools;tools.compile_fail")
+
+# tools.configure_rejects_*: a cache option of the two modes that is neither
+# ON nor OFF stops the configuration with a message that names the option
+# and the value, instead of being read as a boolean. Each test configures
+# the project again in a scratch tree of its own, which the script removes;
+# the configuration stops at the check, after the compiler is detected.
+set(configure_check
+  ${CMAKE_COMMAND} -DSOURCE=${PROJECT_SOURCE_DIR}
+  -DCOMPILER=${CMAKE_CXX_COMPILER})
+add_test(NAME tools.configure_rejects_force_inline
+  COMMAND ${expect_output} 1 "GALOOT_FORCE_INLINE must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_force_inline
+      -DCHECKING=ON -DFORCE_INLINE=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+add_test(NAME tools.configure_rejects_checking
+  COMMAND ${expect_output} 1 "GALOOT_CHECKING must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_checking
+      -DCHECKING=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+set_tests_properties(tools.configure_rejects_force_inline
+  tools.configure_rejects_checking PROPERTIES
+  LABELS "tools;tools.configure")
 
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
@@ -1783,6 +1824,11 @@ target_link_libraries(core_linear_test PRIVATE galoot_test_support)
 # library's names that a user's short names could be taken for.
 add_library(core_linear_user_names OBJECT core/linear_user_names.cpp)
 target_link_libraries(core_linear_user_names PRIVATE galoot::presets::rga3)
+
+# A second user's unit, naming a pseudoscalar I and rn, for the names that
+# the first cannot declare beside its own l.
+add_library(core_user_names OBJECT core/user_names.cpp)
+target_link_libraries(core_user_names PRIVATE galoot::presets::rga3)
 
 # core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
 # from two algebras or with two scalar types fails to compile with one
