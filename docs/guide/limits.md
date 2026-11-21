@@ -406,8 +406,8 @@ precision, to nearest, with gradual underflow, and with IEEE 754's NaN and
 infinity. A build that flushes subnormal numbers to zero is outside it, and a
 checking build under `-ffast-math` or `-ffinite-math-only` does not compile.
 Options the compiler does not report, such as `-fassociative-math` alone, are
-outside this test. The tests run on x86-64, and Galoot's presets build for
-baseline x86-64, where nothing is fused, with `-ffp-contract=off`.
+outside this test. The tests run on x86-64, and Galoot's build presets compile
+for baseline x86-64, where nothing is fused, with `-ffp-contract=off`.
 
 The rounding check's bound holds with or without multiply-add contraction (`-ffp-contract=off`, `on`, or `fast`), provided each fused multiply-add rounds once to the scalar's own precision: fusing a multiplication into an addition removes a rounding and never adds one, so the check never rejects what a versor drops. This is derived, and was checked with GCC 16.2.1 and Clang 23.1.4 at `-O2 -march=x86-64-v3`, where no check fired on exact versors and every rigid(3) result stayed within its bound.
 
