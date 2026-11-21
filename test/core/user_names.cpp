@@ -6,6 +6,7 @@
 // It cannot share a file with linear_user_names.cpp, whose l and ls would
 // clash with the I declared here.
 #include <galoot/core.hpp>
+#include <galoot/core/format.hpp> // IWYU pragma: keep
 #include <galoot/presets/rga3.hpp>
 
 namespace rga3 = galoot::presets::rga3;
