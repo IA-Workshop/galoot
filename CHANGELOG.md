@@ -8,7 +8,8 @@ still change.
 ## 1.0.1 (2026-11-21)
 
 A patch release. No public name is added, removed, or changed, and a program
-that compiled with 1.0.0 compiles with 1.0.1.
+that uses only Galoot's public names and compiled with 1.0.0 compiles with
+1.0.1.
 
 ### Headers
 
@@ -21,12 +22,12 @@ that compiled with 1.0.0 compiles with 1.0.1.
   where 1.0.0 printed two. A value that does not paste into one token, such as
   `-1`, still gets the preprocessor's own single error. The guide says which
   spellings are accepted and what each rejected one gives.
-- Two local names in `core/basis_change.hpp` and `core/bits.hpp`, and three
-  more in `core/metric.hpp` and the rga3 preset, are renamed. A linter that
-  checks for confusable identifiers, with Galoot's headers not marked as
-  system headers, no longer reports them against a name of yours such as `I`
-  or `rn`. A parameter's name is not part of a C++ interface, so no call
-  changes.
+- Some local names in `core/basis_change.hpp`, `core/bits.hpp` and
+  `core/metric.hpp`, and a parameter name in the rga3 preset, are renamed.
+  A linter that checks for confusable identifiers, with Galoot's headers not
+  marked as system headers, no longer reports them against a name of yours
+  such as `I` or `rn`. A parameter's name is not part of a C++ interface, so
+  no call changes.
 - Two overloads of `galoot::core::detail::apply` that nothing calls are
   removed. Nothing in `detail` is public.
 
@@ -40,9 +41,10 @@ that compiled with 1.0.0 compiles with 1.0.1.
   `FetchContent` is not affected.
 - Galoot's own tests compile in smaller pieces. The largest single compile of
   the test suite drops from 5.9 GiB to 3.0 GiB with GCC in a debug build, and
-  the Clang optimized builds of the tests take about a fifth of the time they
-  took. This changes nothing for a program that uses the library. Compile
-  time and memory for a program with very many operations are as in 1.0.0;
+  the two Clang measurement builds of the tests (the presets `clang-measure`
+  and `clang-measure-o3`) take about a fifth of the time they took. This
+  changes nothing for a program that uses the library. Compile time and
+  memory for a program with very many operations are as in 1.0.0;
   `GALOOT_FORCE_INLINE` defined as 0 remains the remedy.
 
 ### Documentation

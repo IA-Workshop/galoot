@@ -20,8 +20,9 @@ them in the layouts of Eric Lengyel's rigid geometric algebra
 coefficients of its published formulas carry over in the order and with the
 signs in which they are written there.
 
-This is the 1.0.1 release of the core. The rga3 preset ships in the same
-tree but is below 1.0, and its interface may still change.
+This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+changed in each release. The rga3 preset ships in the same tree but is below
+1.0, and its interface may still change.
 
 ## Using Galoot
 
@@ -35,9 +36,9 @@ install. Include the preset or the core:
 
 There are three ways to bring the headers into a project.
 
-**Copy the headers.** Copy or vendor the `include/galoot` directory, keeping
-its name, `galoot`, into a directory on your include path, and compile as
-C++23. No build system is needed. With the copy at `third_party/galoot`:
+**Copy the headers.** Copy the `include/galoot` directory, keeping the name
+`galoot`, into a directory on your include path, and compile as C++23. No
+build system is needed. With the copy at `third_party/galoot`:
 
 ```text
 g++ -std=c++23 -I third_party main.cpp -o main
