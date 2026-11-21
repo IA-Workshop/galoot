@@ -1,0 +1,209 @@
+#### m01: uint16 coefficient path (N01)
+== g++, run time, -fsanitize=undefined
+galoot/core/mv.hpp:313:53: runtime error: signed integer overflow: 65535 * 32775 cannot be represented in type 'int'
+uint16 (65535 e12)(e12) on the scalar: 32761 (2^16-modular answer 32761)
+== g++, constant evaluation
+galoot/core/mv.hpp:313:53: error: overflow in constant expression [-fpermissive]
+== clang++, run time, -fsanitize=undefined
+galoot/core/mv.hpp:313:53: runtime error: signed integer overflow: 32775 * 65535 cannot be represented in type 'int'
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior galoot/core/mv.hpp:313:53 
+uint16 (65535 e12)(e12) on the scalar: 32761 (2^16-modular answer 32761)
+== clang++, constant evaluation
+m01_uint16_coefficient.cpp:25:16: error: constexpr variable 'constant_square' must be init
+galoot/core/mv.hpp:313:53: note: value 2147909625 is outside the range of representable values of type 'int'
+1 error generated.
+#### m02: GALOOT_FORCE_INLINE mixed (H0-29)
+== g++ -O0: weak galoot symbols, forced 23, free 32, in both 23
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== g++ -O2: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== g++ -O2 -march=x86-64-v3 -ffp-contract=off: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== g++ -O2 -march=x86-64-v3 -ffp-contract=fast: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== clang++ -O0: weak galoot symbols, forced 7, free 12, in both 7
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== clang++ -O2: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== clang++ -O2 -march=x86-64-v3 -ffp-contract=off: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+== clang++ -O2 -march=x86-64-v3 -ffp-contract=fast: weak galoot symbols, forced 0, free 0, in both 0
+   link order forced_first: 0 of 100000 inputs differ in some bit
+   link order free_first: 0 of 100000 inputs differ in some bit
+#### m03: two versions in one program (H0-30)
+edited copy: messages changed: 2
+== g++, one unit, v100 then v101: the unit used 1.0.0's assert.hpp, 0 diagnostics
+== g++, one unit, v101 then v100: the unit used the 1.0.1 candidate's assert.hpp, 0 diagnostics
+== g++ -O0, v100 v101, link old new: galoot functions in both objects 9, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O0, v100 v101, link new old: galoot functions in both objects 9, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O2 -flto -Wodr, v100 v101, link old new: galoot functions in both objects 4, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O2 -flto -Wodr, v100 v101, link new old: galoot functions in both objects 4, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O0, v100 edited, link old new: galoot functions in both objects 9, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O0, v100 edited, link new old: galoot functions in both objects 9, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (edited copy) (]
+== g++ -O2 -flto -Wodr, v100 edited, link old new: galoot functions in both objects 4, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== g++ -O2 -flto -Wodr, v100 edited, link new old: galoot functions in both objects 4, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (edited copy) (]
+== clang++, one unit, v100 then v101: the unit used 1.0.0's assert.hpp, 0 diagnostics
+== clang++, one unit, v101 then v100: the unit used the 1.0.1 candidate's assert.hpp, 0 diagnostics
+== clang++ -O0, v100 v101, link old new: galoot functions in both objects 8, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O0, v100 v101, link new old: galoot functions in both objects 8, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O2 -flto -Wodr, v100 v101, link old new: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O2 -flto -Wodr, v100 v101, link new old: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O0, v100 edited, link old new: galoot functions in both objects 8, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O0, v100 edited, link new old: galoot functions in both objects 8, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (edited copy) (]
+== clang++ -O2 -flto -Wodr, v100 edited, link old new: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+== clang++ -O2 -flto -Wodr, v100 edited, link new old: galoot functions in both objects 1, link diagnostics 0, n = 3 gives [old -6, new -6], n = 40 gives [assertion failed: n must be from 1 to 32 (]
+#### m04: forced inlining into a narrower target (H0-31)
+== g++ GALOOT_FORCE_INLINE=1: exit 1, 1 error lines
+galoot/core/transform.hpp:773:1: error: inlining failed in call to ‘always_inline’ ‘constexpr galoot::core::mv<Alg, A, T> galoot
+== g++ GALOOT_FORCE_INLINE=0: exit 0, 0 error lines
+== clang++ GALOOT_FORCE_INLINE=1: exit 1, 18 error lines
+m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires tar
+m04_target_mismatch_fail.cpp:17:10: error: always_inline function 'transform' requires tar
+== clang++ GALOOT_FORCE_INLINE=0: exit 0, 0 error lines
+#### m05: the rounding check under other environments (H0-32, D09, O01)
+== g++ -O2 -frounding-math 
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding up: largest |d|/tol 0.467, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding down: largest |d|/tol 0.417, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding zero: largest |d|/tol 0.347, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding up: largest |d|/tol 0.482, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding down: largest |d|/tol 0.489, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding zero: largest |d|/tol 0.304, over 1 in 0 of 200000
+== g++ -O2 -frounding-math -fassociative-math -fno-signed-zeros -fno-trapping-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.292, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.292, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.214, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.214, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== g++ -O2 -frounding-math -freciprocal-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== g++ -O2 -frounding-math -fno-signed-zeros
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== g++ -O2 -frounding-math -march=x86-64-v3 -ffp-contract=fast
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.24, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.24, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.193, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.193, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== clang++ -O2 -frounding-math 
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding up: largest |d|/tol 0.467, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding down: largest |d|/tol 0.417, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 0 rounding zero: largest |d|/tol 0.347, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding up: largest |d|/tol 0.482, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding down: largest |d|/tol 0.489, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding zero: largest |d|/tol 0.304, over 1 in 0 of 200000
+== clang++ -O2 -frounding-math -fassociative-math -fno-signed-zeros -fno-trapping-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.214, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.214, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== clang++ -O2 -frounding-math -freciprocal-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== clang++ -O2 -frounding-math -fno-signed-zeros
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== clang++ -O2 -frounding-math -march=x86-64-v3 -ffp-contract=fast
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.241, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 6.94e-18, over 1 in 0 of 200000
+   r3 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 1 rounding near: largest |d|/tol 0.206, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 0 rounding near: largest |d|/tol 5.77e-18, over 1 in 0 of 200000
+   r4 v*1e-160 x*0.1 ftz 1 rounding near: largest |d|/tol 0, over 1 in 0 of 200000
+== g++ -O2 -fassociative-math -fno-signed-zeros -fno-trapping-math, without -frounding-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.292, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.216, over 1 in 0 of 200000
+== clang++ -O2 -fassociative-math -fno-signed-zeros -fno-trapping-math, without -frounding-math
+   r3 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.265, over 1 in 0 of 200000
+   r4 v*1 x*1 ftz 0 rounding near: largest |d|/tol 0.189, over 1 in 0 of 200000
+#### m06: special values in the rounding check (H0-33)
+== g++ nan-x: galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+== g++ inf-v: galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+== g++ huge-x: returned 1.2e+308 e1 + -1.2e+308 e2 + 0 e3, no abort
+== g++ subnormal-x: returned 0 e1 + -9.88131e-324 e2 + -0 e3, no abort
+== g++ tiny-nonversor: returned 0 e1, no abort
+== clang++ nan-x: galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+== clang++ inf-v: galoot: assertion failed: transform: v is not a versor on x within rounding (galoot/core/transform.hpp:618)
+== clang++ huge-x: returned 1.2e+308 e1 + -1.2e+308 e2 + 0 e3, no abort
+== clang++ subnormal-x: returned 0 e1 + -9.88131e-324 e2 + -0 e3, no abort
+== clang++ tiny-nonversor: returned 0 e1, no abort
+#### m07: rga3::rotation campaign (O01)
+== g++: 1000000 motors: largest |w - 1| / u 6.13 (direction length 2.02e+25, angle 15.6)
+== clang++: 1000000 motors: largest |w - 1| / u 6.13 (direction length 2.02e+25, angle 15.6)
+#### m08: the margin inequality (D06)
+f - stated expands to: 0
+u = 2^-53, K = 1: holds exactly: True
+u = 2^-53, K = 2: holds exactly: True
+u = 2^-53, K = 10: holds exactly: True
+u = 2^-53, K = 67108862 (largest admitted 67108863): holds at 60 digits: True, lhs / rhs - 1 = 7.7716e-16
+u = 2^-53, K = 67108863 (largest admitted 67108863): holds at 60 digits: True, lhs / rhs - 1 = 3.3307e-16
+u = 2^-24, K = 1: holds exactly: True
+u = 2^-24, K = 2: holds exactly: True
+u = 2^-24, K = 10: holds exactly: True
+u = 2^-24, K = 2894 (largest admitted 2895): holds at 60 digits: True, lhs / rhs - 1 = 4.9113e-7
+u = 2^-24, K = 2895 (largest admitted 2895): holds at 60 digits: True, lhs / rhs - 1 = 2.5261e-7
+u = 2^-11, K = 1: holds exactly: True
+u = 2^-11, K = 2: holds exactly: True
+u = 2^-11, K = 10: holds exactly: True
+u = 2^-11, K = 30 (largest admitted 31): holds at 60 digits: True, lhs / rhs - 1 = 0.0034992
+u = 2^-11, K = 31 (largest admitted 31): holds at 60 digits: True, lhs / rhs - 1 = 0.0014765
