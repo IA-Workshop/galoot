@@ -26,7 +26,7 @@ The invalid spellings were probed by hand on the same compilers with the whole c
 
 ## U2: the cache options (`u2-configure-checks.toml`, `u2-propagation.toml`)
 
-At `44d0f25` (the U2 commits: the two tests, the check and the presets, then the specs), on the same worktree. `tools/mutate` exited 0 on both specs: every verdict is as declared and each declared killer killed its mutant. The pool read 21 of 23 slots free before the first run and 22 after, with one other workstream's `ninja` as a client; the load average was about 8 to 10 from other sessions.
+The configure spec ran at `c2f0f96` and the propagation spec at `44d0f25` (the commits after the two tests, the check and the presets; neither commit touched `CMakeLists.txt`, the presets or `test/`), on the same worktree. `tools/mutate` exited 0 on both specs: every verdict is as declared and each declared killer killed its mutant. The pool read 21 of 23 slots free before the first run and 22 after, with one other workstream's `ninja` as a client; the load average was about 8 to 10 from other sessions.
 
 | Mutant | Edit | Presets | Verdict | Written for |
 | --- | --- | --- | --- | --- |
