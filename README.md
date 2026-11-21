@@ -35,9 +35,9 @@ install. Include the preset or the core:
 
 There are three ways to bring the headers into a project.
 
-**Copy the headers.** Copy or vendor the `include/galoot` directory, with its
-name, into a directory on your include path, and compile as C++23. No build
-system is needed. With the copy at `third_party/galoot`:
+**Copy the headers.** Copy or vendor the `include/galoot` directory, keeping
+its name, `galoot`, into a directory on your include path, and compile as
+C++23. No build system is needed. With the copy at `third_party/galoot`:
 
 ```text
 g++ -std=c++23 -I third_party main.cpp -o main
