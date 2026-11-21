@@ -400,3 +400,15 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0048-D0-rulings-check-2	reviewer	opus	217535	69	630	review/comment-table-rulings 1066d72; 1 important, 3 minor; workflow agent, harness token count
 2026-11-21	0049-U1-rulings-check-2	reviewer	opus	210165	63	794	review/docs-design-rulings 981dd71; no error, 8 minor; workflow agent, harness token count
 2026-11-21	0048-D0-rulings-fix-2	cpp-expert	opus	168012	54	409	records/comment-table-rulings 4e73a11; workflow agent, harness token count
+2026-11-21	0044-U5-user-docs	hci-expert	sonnet	99743	29	133	feature/header-hygiene-1-0-1--docs a79b475; halted on the rejected block (decision 0257); workflow agent, harness token count
+2026-11-21	0044-U1-helper-macros	cpp-expert	opus	206805	95	757	feature/header-hygiene-1-0-1 06ff369; workflow agent, harness token count
+2026-11-21	0043-U1-rounding-split	build-expert	opus	272524	114	8038	feature/cost-cleanup-1-0-1--rounding 003ab3d; workflow agent, harness token count
+2026-11-21	0043-U3-U5-tools	build-expert	sonnet	180730	128	5084	feature/cost-cleanup-1-0-1--tools 8f48b32; workflow agent, harness token count
+2026-11-21	0044-U2-cache-option	build-expert	sonnet	118395	34	242	feature/header-hygiene-1-0-1 f78b54d; workflow agent, harness token count
+2026-11-21	0044-U3-confusable-names	cpp-expert	sonnet	138518	58	772	feature/header-hygiene-1-0-1 32d53b9; workflow agent, harness token count
+2026-11-21	0044-U4-apply-overloads	doctest-expert	opus	185461	79	2294	feature/header-hygiene-1-0-1 c7551b6; workflow agent, harness token count
+2026-11-21	0043-tools-blind-review	reviewer	sonnet	102009	44	381	review/cost-cleanup-1-0-1-tools 9d1a7b3; approve; workflow agent, harness token count
+2026-11-21	0043-U2-transform-split	build-expert	opus	291869	137	8007	feature/cost-cleanup-1-0-1--transform e6ea5b2; workflow agent, harness token count
+2026-11-21	0043-tests-blind-review	reviewer	opus	247124	65	632	review/cost-cleanup-1-0-1-tests abcd856; approve; workflow agent, harness token count
+2026-11-21	0043-merge-gate	performance-engineer	opus	195868	72	2030	gate at 05229a7; merged into main as 26cd467; workflow agent, harness token count
+2026-11-21	0043-U6-records	planner	sonnet	181389	45	317	records/cost-cleanup-1-0-1 0af3419; workflow agent, harness token count
