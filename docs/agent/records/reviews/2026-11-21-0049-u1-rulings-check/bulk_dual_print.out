@@ -1,0 +1,2 @@
+R300 classical (6 4 10) transform(x, bulk_dual) (6 4 10)
+diag(2,1,1) classical (16 10 30) transform(x, bulk_dual) (40 28 60)
