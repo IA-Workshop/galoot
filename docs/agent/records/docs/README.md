@@ -165,7 +165,7 @@ Full-line comment lines, from the checker:
 | `core/blade_set.hpp` | 106 | 49 | 23 | 7 | 185 |
 | `core/dual.hpp` | 88 | 17 | 88 | 72 | 265 |
 | `core/format.hpp` | 31 | 11 | 30 | 18 | 90 |
-| `core/linear.hpp` | 79 | 25 | 20 | 70 | 194 |
+| `core/linear.hpp` | 79 | 25 | 23 | 67 | 194 |
 | `core/metric.hpp` | 61 | 8 | 41 | 8 | 118 |
 | `core/mv.hpp` | 246 | 97 | 60 | 59 | 462 |
 | `core/plan.hpp` | 270 | 0 | 31 | 65 | 366 |
@@ -175,7 +175,7 @@ Full-line comment lines, from the checker:
 | `presets/rga3.hpp` | 5 | 0 | 0 | 0 | 5 |
 | `presets/rga3/motions.hpp` | 32 | 0 | 58 | 15 | 105 |
 | `presets/rga3/objects.hpp` | 40 | 0 | 7 | 50 | 97 |
-| **All** | **1,581** | **295** | **663** | **669** | **3,208** |
+| **All** | **1,581** | **295** | **666** | **666** | **3,208** |
 
 The 73 trailing comments are all kept.
 
@@ -183,10 +183,10 @@ By kind:
 
 | Kind | Keep | Summary | Move | Delete | All |
 | --- | --- | --- | --- | --- | --- |
-| public contract | 250 | 266 | 485 | 97 | 1,098 |
+| public contract | 250 | 266 | 485 | 100 | 1,101 |
 | internal contract | 495 | 0 | 12 | 37 | 544 |
-| equation or convention | 364 | 0 | 54 | 73 | 491 |
-| file prologue | 86 | 0 | 80 | 195 | 361 |
+| equation or convention | 364 | 0 | 54 | 70 | 488 |
+| file prologue | 86 | 0 | 83 | 192 | 361 |
 | reason | 298 | 29 | 21 | 10 | 358 |
 | example | 0 | 0 | 2 | 167 | 169 |
 | marker | 51 | 0 | 0 | 45 | 96 |
@@ -200,13 +200,13 @@ By what the rows wait for:
 | Waits for | Lines | Of which delete |
 | --- | --- | --- |
 | none (kept) | 1,581 | |
-| none (delete or summary now) | 453 | 447 |
+| none (delete or summary now) | 447 | 441 |
 | B9 | 45 | 45 |
 | the detail ruling | 97 | 80 |
 | D1 | 26 | |
-| D3 | 146 | |
+| D3 | 149 | |
 | D3 and the detail ruling | 15 | |
-| the S11 amendment | 97 | 97 |
+| the S11 amendment | 100 | 100 |
 | D3 and the S11 amendment | 748 | |
 
 ## Against plan 0048 and the restated targets
@@ -218,7 +218,7 @@ Plan 0048 section 5.4 estimated its four comment candidates from position alone.
 | D1 prologues | 702 | 90 | 90 | 176 | 165 |
 | D2 `///` on `detail` | 443 | 110 | 110 | 344 | 344 |
 | D3 `//` elsewhere | 725 | 330 | 330 | 634 | 634 |
-| D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,282 | 538 |
+| D4 `///` on public declarations | 1,338 | 1,090 | 340 | 1,285 | 538 |
 | **Total** | **3,208** | **about 1,620** | **about 870** | **about 2,440** | **about 1,680** |
 
 The amended S11 also asks each public declaration's comment to name its guide page and heading. Each pointer on a line of its own adds lines:
@@ -232,17 +232,17 @@ Stage by stage, as each condition is met (kept lines, no pointers):
 | Stage | Comment lines | Change |
 | --- | --- | --- |
 | Now | 3,208 | |
-| Deletions that wait for nothing, and B9 | 2,712 | -15% |
-| The detail ruling, if it is (a) | 2,621 | -18% |
-| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,436 | -24% |
+| Deletions that wait for nothing, and B9 | 2,718 | -15% |
+| The detail ruling, if it is (a) | 2,627 | -18% |
+| Plan 0049's D1 and D3 pages received, S11 as ratified | 2,439 | -24% |
 | The S11 amendment applied | 1,681 | -48% |
 | The same with pointers | about 1,800 to 1,870 | -42% to -44% |
 
 The first part's [restated targets](../simplification/restated-targets.md) gave the comment column as follows:
-- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says about 2,620: the deletions that wait for nothing, B9, and the detail ruling.
+- **Before D3:** "at least about 1,620, and more by whatever the comment table marks move". The table says about 2,630: the deletions that wait for nothing, B9, and the detail ruling.
 - **After D3 and the amendment:** about 870. The table says about 1,800.
 
-So the restated totals' comment column should read about 2,620 and about 1,800. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 6,940 and about 6,120, not 5,940 and 5,190.
+So the restated totals' comment column should read about 2,630 and about 1,800. With the code figures unchanged and blank lines scaled as there, that makes the restated "all lines" about 6,950 and about 6,120, not 5,940 and 5,190.
 
 ### Why the estimate and the reading differ
 
@@ -277,7 +277,7 @@ These are the losses after every row is applied, with the amendment in force:
 5. **The proofs that join the equations.**
    - The derivation of the blade-product recursion moves to the generation concepts page, though each equation stays where it is applied.
    - The derivation of the rounding bound moves to the exactness page. Its statement, its published source, and the reason the margin is 1 stay.
-6. **The generic-code caveat on each rejecting overload.** "A requires-expression that asks is told yes" is said once, at the products' operand rule, and moves to the reference. A reader of one rejecting overload learns it from there.
+6. **The generic-code caveat on each rejecting overload.** "A requires-expression that asks is told yes" is said once in the guide, in core 'Writing generic code', and at the products' operand rule, which moves to the reference. A reader of one rejecting overload learns it from there.
 7. **Lookup caveats at the declaration.** The `std::ranges` clash of `reverse` and `transform`, and `part` against a variable named `part`, leave the header. Both are in the guide already. The `part` caveat moves with its entry.
 
 A maintainer keeps the following:
@@ -298,7 +298,7 @@ Undefined behavior when broken in an unchecked build, kept under the ruling. Pla
 | `linear.hpp:392-396` | An integer division by zero |
 | `linear.hpp:407-411` | `min() / -1` for a signed type at least as wide as `int` (not checked in any build) |
 | `bits.hpp:115-116`, `:130-131`, `:143-144` | `complement_mask`, `right_complement_sign`, `left_complement_sign` with n of 0 or above 32: `low_bits` then shifts by the width of the mask |
-| `bits.hpp:80-81` (added) | `antigrade` with n of 2^31 or more: `static_cast<int>(n) - grade(a)` overflows `int` |
+| `bits.hpp:80-81` (added) | `antigrade` with some n of 2^31 or more: `static_cast<int>(n)` is n modulo 2^32, so `static_cast<int>(n) - grade(a)` overflows `int` when n modulo 2^32 is from 2^31 to 2^31 + grade(a) − 1 |
 | `bits.hpp:167-168` (added) | `antireverse_sign` with an antigrade above 46341: m(m − 1) overflows `int` |
 | `bits.hpp:45-47`, `:58-60` | The same requirement on the `detail` helpers that the shift sits in |
 | `plan.hpp:303-304` (added) | `collect_result`'s `out` must have a place for every distinct blade, or it is written past its end |
@@ -362,7 +362,7 @@ The precondition check leads to these lines too. Breaking what they state is dia
 
 ## For the units that use the table
 
-- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 45 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
+- **Repeats cited in `core.md`, `rga3.md`, and the first page.** 53 delete rows name `docs/guide/core.md`, `docs/guide/rga3.md`, or `docs/guide/README.md` as the place that already says the text. Plan 0049's U3 splits and deletes the first two and moves the first page's nine facts to `howto/first-things.md`. By the time phase 4 runs, each such row must name the page and heading the text went to. U3's list of where each old heading went is the input to that rename.
 - **Cross-references inside kept text.**
   - `dual.hpp:368` sends the reader to the header's own prologue, which moves. Its row moves with it.
   - `change_basis`'s pointer to the prologue becomes a pointer to the concepts heading (`basis_change.hpp:1113-1115`).
@@ -373,7 +373,7 @@ The precondition check leads to these lines too. Breaking what they state is dia
 
 ### Sentences that cross a row boundary
 
-A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence: [boundary-report.tsv](boundary-report.tsv) lists the 105 the checker finds, with both rows, their verdicts, and the two lines on either side. A unit acting on a row reads that list for the row's number first.
+A row's range is whole lines, and a sentence may start on the last line of one row and end on the first line of the next. Where the two rows wait for different conditions, or are classed differently, the unit that acts on one of them first must not delete or move the shared line alone. It rewrites that line, and the neighbor's part of the sentence, so that what stays is whole sentences; the neighbor row's own verdict then applies to the rewritten text. Some notes name such lines (`unary.hpp:24`, `transform.hpp:589`, `blade_set.hpp:577`, `plan.hpp:627`), but the rule holds at every boundary, named or not. Boundaries of this kind are common, since most comments wrap mid-sentence: [boundary-report.tsv](boundary-report.tsv) lists the 104 the checker finds, with both rows, their verdicts, and the two lines on either side. A unit acting on a row reads that list for the row's number first.
 
 ## Corrections after the sample check
 
@@ -400,6 +400,23 @@ The checker's precondition check (see [How to check it](#how-to-check-it)) found
 
 Every other failure of the first run was the record's, not the table's: six Requires clauses of generator contracts whose violation is undefined behavior were keep rows but missing from the list of preconditions kept in full, and are now in it, with the capacity guarantee of `term_list::add` that they lead to; the other clauses the check reached, and the four assertions with no clause of their own, are now named in the two tables after it, each with its reason. No other row changed class.
 
+## Corrections after the delta check, 2026-11-21
+
+An independent delta check of the corrections above (the review record `docs/agent/records/reviews/2026-11-21-0048-d0-delta-check.md`, on branch `review/simplification-survey-fix` at `0a1505e`) found three minor errors and four nits. Each was judged against the headers at `01dce7f` and decision 0253 item 14. The table's corrections:
+
+| Finding | Verdict | Correction |
+| --- | --- | --- |
+| 2. `objects.hpp:97-99`, the flector's transform rule, was an equation that deleted with nothing to wait for, while the motor's rule at `:84-86` is a public contract that waits for the S11 amendment | Confirmed. Both sentences say what `transform` does with a value of the layout they sit on, so they are the same kind of text; read as the motor's is, the flector's is part of `flector_layout`'s contract, and item 14 lets no unit remove it before the amendment | Kind public contract, waits for the S11 amendment, and the home is rga3 'Reflections', which states it in full. Its boundary with `:100-103` is gone, since both rows now wait for the same thing |
+| 3. `linear.hpp:51-53` deleted "a class derived from mv is accepted as its mv base" for the sums and scaling, citing `unary.hpp:25-26`, which says it only for the involutions and complements | Confirmed. No other header line and no guide page states it for the sums; `product.hpp:41-42` says something else for the products | Move to `reference/index.md`, under a proposed heading 'Classes derived from mv', after D3. `unary.hpp:25-27`, whose note already proposed that the index state the rule once, moves to the same heading |
+| 4. `linear.hpp:36-43` cited `product.hpp:35-42`, which covers products only | Confirmed | The home is core 'Writing generic code', which has the rejection by an overload, the requires-expression caveat, and the question to ask for a sum. The note names core 'Sums and scaling' for the number case and the kept lines on the rejecting overloads |
+| 5. The overflow range of `antigrade` was overstated | Confirmed. `n` is a `std::size_t`, and the conversion to `int` is modular since C++20, so only n modulo 2^32 from 2^31 to 2^31 + grade(a) − 1 overflows; n = 2^32 converts to 0 | The first table's entry and the row's note give that range. The verdict, keep, is unchanged |
+
+Rows of the same kinds were looked for:
+- **Public `///` deletes that wait for nothing.** Four remain: `metric.hpp:66` and `objects.hpp:87-90` restate a convention that is stated where it is applied (`bits.hpp:9-13` and `rotation` and `translation` in `motions.hpp`, both kept), and `metric.hpp:256-257` is a `//` reason inside a function, with its home at `assert.hpp:126-129`. None of them says what a declaration requires, guarantees, or preserves. `objects.hpp:87-90`, the half angles of a motor, is the one the delta check asked about; it is left as a delete that waits for nothing, since STYLE S11 asks for a convention where it is applied, and it is applied in `motions.hpp:32-34` and in `translation`'s comment.
+- **Deletes whose cited header range covers another case.** Every delete or summary row that cited a header range once the corrections in the table above were made (38 rows) was reread beside that range. Six more had the error of finding 4: the requires-expression caveat on the rejecting overloads of the sums and scaling (`linear.hpp:255-256`, `:295`, `:440-441`), of the dot (`dual.hpp:550-551`), and of `transform` and `compose` (`transform.hpp:823-824`, `:834-835`) cited `product.hpp:35-42`, which states it for the products only. Each now cites core 'Writing generic code', which states it for every rejecting overload; they still wait for the S11 amendment. The other header homes hold what their rows delete.
+
+The sums, the stage figures, and the counts above are the checker's output after these changes: 666 lines move and 666 delete; the stages are 2,718, 2,627, 2,439 and 1,681; 53 delete rows cite `core.md`, `rga3.md` or the first page (43, 8 and 2); the boundary report lists 104 places.
+
 ## Open items
 
 Each item has its options, their tradeoffs, and a recommendation.
@@ -417,7 +434,7 @@ Each item has its options, their tradeoffs, and a recommendation.
      - (b) Exclude the check in `.clang-tidy` with the reason once, as decision 0253 item 19 does for the cast check. The check then no longer reports a real oversized enumeration in a header. The core has seven enumerations, all reviewed.
    - **Recommendation:** (a). The saving is small, and the reason is local to each enumeration.
 4. **The headings.**
-   - **The problem.** Every target heading here is a proposal, and so are the file names of the reference and concepts pages. 45 repeats cite pages that U3 removes or splits.
+   - **The problem.** Every target heading here is a proposal, and so are the file names of the reference and concepts pages. 53 repeats cite pages that U3 removes or splits.
    - **The options.**
      - (a) When U3 publishes its heading list and its map of where each old heading went, one commit renames the table's targets. The checker's page list changes in the same commit.
      - (b) Leave the targets as they are and let each comment unit translate them.
