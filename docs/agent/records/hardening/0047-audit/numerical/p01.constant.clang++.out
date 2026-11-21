@@ -1,0 +1,32 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCONSTANT_CASE docs/agent/records/hardening/0047-audit/numerical/p01_narrow_unsigned.cpp
+docs/agent/records/hardening/0047-audit/numerical/p01_narrow_unsigned.cpp:23:16: error: constexpr variable 'constant_square' must be initialized by a constant expression
+   23 | constexpr auto constant_square = core::geometric_product(
+      |                ^                 ~~~~~~~~~~~~~~~~~~~~~~~~
+   24 |     Vector{U16{65535}, U16{0}}, Vector{U16{65535}, U16{0}});
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/mv.hpp:366:58: note: value 4294836225 is outside the range of representable values of type 'int'
+  366 |        out[Kernel[K].out], static_cast<T>(x[Kernel[K].a] * y[Kernel[K].b])),
+      |                                                          ^
+include/galoot/core/mv.hpp:920:9: note: in call to 'run_product<galoot::core::detail::product_kernel, 2UL, unsigned short, 2UL, 2UL, 0UL, 1UL, 2UL, 3UL>(Vector{U16{65535}, U16{0}}.coefficient_storage::coefficients, Vector{U16{65535}, U16{0}}.coefficient_storage::coefficients, {})'
+  920 |         run_product<product_kernel<Op, Alg, A, B, Target>, Target.size()>(
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  921 |             x.coefficients, y.coefficients,
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  922 |             std::make_index_sequence<
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+  923 |                 product_kernel<Op, Alg, A, B, Target>.size()>{});
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/product.hpp:241:12: note: in call to 'apply<galoot::core::detail::BinaryOperation::geometric_product, blade_set<2>{{{{0, 1}, {3, 1}}}}, r200, blade_set<2>{{{{1, 1}, {2, 1}}}}, blade_set<2>{{{{1, 1}, {2, 1}}}}, unsigned short>(Vector{U16{65535}, U16{0}}, Vector{U16{65535}, U16{0}})'
+  241 |     return detail::apply<detail::BinaryOperation::geometric_product,
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  242 |                          geometric_product_layout<Alg, A, B>>(x, y);
+      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docs/agent/records/hardening/0047-audit/numerical/p01_narrow_unsigned.cpp:23:34: note: in call to 'geometric_product<r200, blade_set<2>{{{{1, 1}, {2, 1}}}}, blade_set<2>{{{{1, 1}, {2, 1}}}}, unsigned short>(Vector{U16{65535}, U16{0}}, Vector{U16{65535}, U16{0}})'
+   23 | constexpr auto constant_square = core::geometric_product(
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~~~
+   24 |     Vector{U16{65535}, U16{0}}, Vector{U16{65535}, U16{0}});
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+exit status: 1
+error lines: 2
+error: constexpr variable 'constant_square' must be initialized by a constant expression

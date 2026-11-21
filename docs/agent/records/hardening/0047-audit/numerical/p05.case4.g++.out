@@ -1,0 +1,46 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=4 docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp
+In file included from include/galoot/core/basis_change.hpp:125,
+                 from include/galoot/core.hpp:8,
+                 from docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:6:
+include/galoot/core/blade_product.hpp: In instantiation of ‘consteval auto galoot::core::detail::make_product_plan() [with BinaryOperation Op = galoot::core::detail::BinaryOperation::geometric_product; Alg = diagonal<32767>; blade_set<...auto...> A = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}; blade_set<...auto...> B = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}]’:
+include/galoot/core/plan.hpp:635:70:   required from ‘constexpr const auto galoot::core::detail::product_plan<galoot::core::detail::BinaryOperation::geometric_product, diagonal<32767>, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}>’
+  635 | inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
+      |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+include/galoot/core/product.hpp:195:13:   required from ‘constexpr const auto galoot::core::geometric_product_layout<diagonal<32767>, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}, galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}>’
+  195 |     detail::product_plan<detail::BinaryOperation::geometric_product, Alg, A, B>.result;
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/product.hpp:231:33:   required by substitution of ‘template<class Alg, blade_set<...auto...> A, blade_set<...auto...> B, class T>  requires (metric_like<Alg>) && (ring_scalar<T>) constexpr galoot::core::mv<Alg, geometric_product_layout<Alg, A, B>, T> galoot::core::operator*(const mv<Alg, A, T>&, const mv<Alg, B, T>&) [with Alg = diagonal<32767>; blade_set<...auto...> A = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}; blade_set<...auto...> B = galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}; T = long int]’
+  231 | [[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:43:30:   required from here
+   43 | constexpr auto r = B{1} * B{1};
+      |                              ^
+include/galoot/core/plan.hpp:554:36:   in ‘constexpr’ expansion of ‘galoot::core::detail::generate_plan<galoot::core::detail::BinaryOperation::geometric_product, 16, 5>(diagonal<32767>::value, std::span<const galoot::core::oriented_blade>(galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}.galoot::core::blade_set<1>::blades), std::span<const galoot::core::oriented_blade>(galoot::core::blade_set<1>{std::array<galoot::core::oriented_blade, 1>{std::__array_traits<galoot::core::oriented_blade, 1>::_Type{galoot::core::oriented_blade{31, 1}}}}.galoot::core::blade_set<1>::blades), std::span<galoot::core::detail::plan_term>())’
+  554 |         generate_plan<Op, capacity>(Alg::value, A.blades, B.blades, {});
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:280:51:   in ‘constexpr’ expansion of ‘galoot::core::detail::pair_terms<galoot::core::detail::BinaryOperation::geometric_product, 16, 5>((* & g), ((galoot::core::mask_t)first.galoot::core::detail::term::blade), ((galoot::core::mask_t)second.galoot::core::detail::term::blade))’
+  280 |           pair_terms<base_operation(Op), Capacity>(g, first.blade,
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  281 |                                                    second.blade);
+      |                                                    ~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:196:35:   in ‘constexpr’ expansion of ‘galoot::core::detail::blade_product<16, 5>((* & g), a, b)’
+  196 |     return blade_product<Capacity>(g, a, b);
+      |            ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+include/galoot/core/blade_product.hpp:293:20:   in ‘constexpr’ expansion of ‘galoot::core::detail::add_blade_product<16, 5>(out, (* & g), a, b, 1)’
+  293 |   add_blade_product(out, g, a, b, 1);
+      |   ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:246:24:   in ‘constexpr’ expansion of ‘galoot::core::detail::add_generator_product<16, 5>((* & out), (* & g), ((long unsigned int)low), rest_product, scale)’
+  246 |   add_generator_product(out, g, low, rest_product, scale);
+      |   ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:222:33:   in ‘constexpr’ expansion of ‘galoot::core::detail::multiply_checked(galoot::core::detail::multiply_checked(sign, ((galoot::core::coefficient_type)entry)), ((galoot::core::coefficient_type)c))’
+  222 |                 multiply_checked(multiply_checked(sign, entry), c));
+      |                 ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/assert.hpp:140:50: error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+  140 |        : ::galoot::core::detail::assertion_failed(message, __FILE__,           \
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  141 |                                                   __LINE__))
+exit status: 1
+error lines: 14
+error: call to non-‘constexpr’ function ‘void galoot::core::detail::assertion_failed(const char*, const char*, int)’
+error: no matching function for call to ‘filled_plan<galoot::core::detail::BinaryOperation::geometric_product, count, capacity>(const galoot::core::metric<5>&, const std::array<galoot::core::oriented_blade, 1>&, const std::array<galoot::core::oriented_blade, 1>&)’
+error: non-constant condition for static assertion

@@ -1,0 +1,11 @@
+$ clang++ p02_bits_unchecked.cpp -fsanitize=undefined -g -D_GLIBCXX_ASSERTIONS -DGALOOT_CHECKING=0
+--- run
+include/galoot/core/bits.hpp:50:21: runtime error: shift exponent 32 is too large for 32-bit type 'mask_t' (aka 'unsigned int')
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior include/galoot/core/bits.hpp:50:21 
+complement_mask(0b1, 0) = 0xfffffffe
+complement_mask(0b1, 33) = 0
+antigrade(0b1, 0) = -1
+right_complement_sign(0b1, 0) = 1
+canonical_name(1 << 9) = "e"
+/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/16/../../../../include/c++/16/array:219: const_reference std::array<std::array<int, 3>, 3>::operator[](size_type) const [_Tp = std::array<int, 3>, _Nm = 3]: Assertion '__n < this->size()' failed.
+exit status: 134

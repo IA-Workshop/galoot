@@ -1,0 +1,28 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=1 docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp:19:
+In file included from include/galoot/core.hpp:8:
+include/galoot/core/basis_change.hpp:719:21: error: static assertion failed due to requirement 'fits': basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries
+  719 |       static_assert(fits, "basis_change: an exact value the change computes "
+      |                     ^~~~
+include/galoot/core/basis_change.hpp:744:40: note: in instantiation of function template specialization 'galoot::core::detail::make_checked_change<extreme>' requested here
+  744 | inline constexpr auto checked_change = make_checked_change<C>();
+      |                                        ^
+include/galoot/core/basis_change.hpp:954:42: note: in instantiation of variable template specialization 'galoot::core::detail::checked_change' requested here
+  954 |   static constexpr const auto& checked = checked_change<C>;
+      |                                          ^
+include/galoot/core/basis_change.hpp:1003:39: note: in instantiation of function template specialization 'galoot::core::detail::make_change_map<extreme, false, blade_set<1>{{{{1, 1}}}}>' requested here
+ 1003 | inline constexpr auto change_map_of = make_change_map<C, Back, S>();
+      |                                       ^
+include/galoot/core/basis_change.hpp:1097:13: note: in instantiation of variable template specialization 'galoot::core::detail::change_map_of' requested here
+ 1097 |     detail::change_map_of<C, false, S>.result;
+      |             ^
+include/galoot/core/basis_change.hpp:1141:48: note: in instantiation of variable template specialization 'galoot::core::change_basis_layout' requested here
+ 1141 | [[nodiscard]] constexpr mv<typename C::target, change_basis_layout<C, S>, T>
+      |                                                ^
+docs/agent/records/hardening/0047-audit/numerical/p06_change_extreme_rows.cpp:36:20: note: while substituting deduced template arguments into function template 'change_basis' [with C = extreme, S = blade_set<1>{{{{1, 1}}}}, T = double]
+   36 | const auto image = core::change_basis<extreme>(P{1.0});
+      |                    ^
+1 error generated.
+exit status: 1
+error lines: 2
+error: static assertion failed due to requirement 'fits': basis_change: an exact value the change computes does not fit coefficient_type; use rows with smaller entries

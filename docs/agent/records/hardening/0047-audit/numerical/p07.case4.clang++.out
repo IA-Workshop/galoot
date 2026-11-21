@@ -1,0 +1,13 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=4 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:5:
+In file included from include/galoot/presets/rga3.hpp:10:
+include/galoot/presets/rga3/motions.hpp:162:34: error: invalid operands to binary expression ('ring' and 'ring')
+  162 |       T{0}, T{0}, T{0}, T{1}, dx / T{2}, dy / T{2}, dz / T{2}, T{0},
+      |                               ~~ ^ ~~~~
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:47:39: note: in instantiation of function template specialization 'galoot::presets::rga3::translation<ring>' requested here
+   47 | const auto t = galoot::presets::rga3::translation(ring{1}, ring{2}, ring{3});
+      |                                       ^
+1 error generated.
+exit status: 1
+error lines: 2
+error: invalid operands to binary expression ('ring' and 'ring')

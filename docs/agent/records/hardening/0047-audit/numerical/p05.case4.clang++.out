@@ -1,0 +1,46 @@
+$ clang++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=4 docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp
+In file included from docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:6:
+In file included from include/galoot/core.hpp:8:
+In file included from include/galoot/core/basis_change.hpp:130:
+In file included from include/galoot/core/mv.hpp:61:
+include/galoot/core/plan.hpp:553:34: error: constexpr variable 'count' must be initialized by a constant expression
+  553 |     static constexpr std::size_t count =
+      |                                  ^
+  554 |         generate_plan<Op, capacity>(Alg::value, A.blades, B.blades, {});
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:635:38: note: in instantiation of function template specialization 'galoot::core::detail::make_product_plan<galoot::core::detail::BinaryOperation::geometric_product, diagonal<32767>, blade_set<1>{{{{31, 1}}}}, blade_set<1>{{{{31, 1}}}}>' requested here
+  635 | inline constexpr auto product_plan = make_product_plan<Op, Alg, A, B>();
+      |                                      ^
+include/galoot/core/product.hpp:195:13: note: in instantiation of variable template specialization 'galoot::core::detail::product_plan' requested here
+  195 |     detail::product_plan<detail::BinaryOperation::geometric_product, Alg, A, B>.result;
+      |             ^
+include/galoot/core/product.hpp:286:33: note: in instantiation of variable template specialization 'galoot::core::geometric_product_layout' requested here
+  286 | [[nodiscard]] constexpr mv<Alg, geometric_product_layout<Alg, A, B>, T>
+      |                                 ^
+docs/agent/records/hardening/0047-audit/numerical/p05_coefficient_edges.cpp:43:25: note: while substituting deduced template arguments into function template 'operator*' [with Alg = diagonal<32767>, A = blade_set<1>{{{{31, 1}}}}, B = blade_set<1>{{{{31, 1}}}}, T = long]
+   43 | constexpr auto r = B{1} * B{1};
+      |                         ^
+include/galoot/core/blade_product.hpp:94:3: note: non-constexpr function 'assertion_failed' cannot be used in a constant expression
+   94 |   GALOOT_ASSERT(fits, "a product coefficient does not fit coefficient_type");
+      |   ^
+include/galoot/core/assert.hpp:140:10: note: expanded from macro 'GALOOT_ASSERT'
+  140 |        : ::galoot::core::detail::assertion_failed(message, __FILE__,           \
+      |          ^
+include/galoot/core/blade_product.hpp:222:17: note: in call to 'multiply_checked(32767, 1152780773560811521)'
+  222 |                 multiply_checked(multiply_checked(sign, entry), c));
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:246:3: note: in call to 'add_generator_product<16UL, 5UL>(out, value, 0, rest_product, 1)'
+  246 |   add_generator_product(out, g, low, rest_product, scale);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/blade_product.hpp:293:3: note: in call to 'add_blade_product<16UL, 5UL>(out, value, 31, 31, 1)'
+  293 |   add_blade_product(out, g, a, b, 1);
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:196:12: note: in call to 'blade_product<16UL, 5UL>(value, 31, 31)'
+  196 |     return blade_product<Capacity>(g, a, b);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/core/plan.hpp:280:11: note: in call to 'pair_terms<galoot::core::detail::BinaryOperation::geometric_product, 16UL, 5UL>(value, 31, 31)'
+exit status: 1
+error lines: 4
+error: constexpr variable 'count' must be initialized by a constant expression
+error: no matching function for call to 'filled_plan'
+error: invalid operands to binary expression ('B' (aka 'core::mv<diagonal<32767>, core::blades<A, "e12345">, long>') and 'B')
