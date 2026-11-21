@@ -1,0 +1,2 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+column_index_l_restored	lint	e63e3fd1106c	unjudged	killed	-	test/CMakeFiles/core_user_names.dir/core/user_names.cpp.o: invalid: include/galoot/core/basis_change.hpp:542:22: error: 'l' is confusable with 'I' [misc-confusable-identifiers,-warnings-as-errors]	-	-	-	unjudged
