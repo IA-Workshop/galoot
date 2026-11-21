@@ -81,13 +81,13 @@ The owner's ruling, decision 0253 item 14, is applied as follows:
 
 | Value | Meaning |
 | --- | --- |
-| none | Nothing. A keep row, or a delete that moves nothing |
+| none | Nothing. A keep row, or a delete that moves nothing. Since the owner ruled that S11's contract sentence does not apply inside a `detail` namespace (decision 0258 item 4.2), this includes the deletions and summaries of `///` comments on `detail` entities that waited for that ruling |
 | B9 | A cast marker and its reason. They go when plan 0048's unit B9 has confirmed every report is false and added the exclusion to `.clang-tidy`, as decision 0253 item 19 rules |
-| the detail ruling | Removes or shortens a `///` comment on a `detail` entity. That waits for the owner's answer to open item 2 of [restated-targets.md](../simplification/restated-targets.md): whether S11's contract sentence covers `detail` |
-| the S11 amendment | Deletes public contract text that the guide already holds. Decision 0253 says no unit removes a contract from a header until the amendment is applied |
-| D1, D3 | A move whose receiving page is in that milestone of plan 0049. Decision 0253 lets phase 4 move text only after its receiving page has passed review |
-| D3 and the S11 amendment | Both of the above: public contract moving to a reference page |
-| D3 and the detail ruling | A `detail` `///` comment moving to a concepts page |
+| the S11 amendment | Deletes public contract text that the guide already holds. No unit removes a contract from a header until the amendment is applied, and decision 0258 section 3 applies it only once its no-drift checks run as tests (see [Before a contract leaves a header](#before-a-contract-leaves-a-header)) |
+| D1, D3 | A move whose receiving page is in that milestone of plan 0049. Decision 0253 lets phase 4 move text only after its receiving page has passed review. Two deletes wait for D3 as well, the prologue illustrations that a reference entry must hold first (decision 0255 part A item 10) |
+| D3 and the S11 amendment | Both of the above: contract text a user needs, moving to a guide page, almost always a reference page |
+
+The checker accepts only these values. Two values are gone: "the detail ruling", whose 36 rows now wait for nothing, and "D3 and the detail ruling", whose three rows now wait for D3 (`mv.hpp:895-899`) or, being text a user needs, for D3 and the S11 amendment (`assert.hpp:77-83`, on a macro in no `detail` namespace, and `mv.hpp:880-882`, a requirement every product puts on its scalar).
 
 ### Target pages
 
@@ -377,6 +377,20 @@ The precondition check leads to these lines too. Breaking what they state is dia
 - **Plan 0049's U9 and U10.** The reference pages receive 482 lines of public contract, by page in the table's `target` column. The diagnostics page receives 54 lines, almost all about the two `transform` messages.
 - **Illustrations for the reference.** Two prologue deletes carry a concrete case that no guide page has: `transform.hpp:24-29` (a motor of rigid(2) or conformal(3) has blades of odd grade) and `dual.hpp:60-70` (the bulk of a rigid(3) line holds e12, e13, e23, with the moment on e31 negated on e13). Both follow from rules the guide states, so neither is a lost fact. Their notes name the reference entries for `transform` and `bulk` as the place for them; U9's author takes them from the header at `01dce7f`.
 - **The pointer test.** The kept pointer sentences to `limits.md` use the form `docs/guide/limits.md, under 'Heading'`. One, `mv.hpp:889-891`, names two headings in another wording and needs rewriting into that form. Several others finish a sentence that goes, and their notes say to reword them to stand alone.
+
+### Before a contract leaves a header
+
+The owner ratified the S11 wording on the condition that the header and the guide do not drift apart (decision 0258 sections 2 and 3). Phase 4 must have the following before it acts on any row that waits for the S11 amendment, alone or with D3, and so before any contract leaves a header. Each check exists as a test that runs at each merge into `main`; plan 0049's U9 and plan 0048's phase 4 design and build them, and their plans state each as an acceptance criterion before either unit starts:
+
+1. **Pointers resolve.** Each pointer in a header names a guide page and a heading that exist.
+2. **Coverage both ways.** Each public declaration in the interface manifest has a reference entry, or is a member or rejecting overload covered by its owner's entry under a stated rule. Each reference entry names a declaration that exists.
+3. **One sentence, one text.** The sentence on a declaration and the opening sentence of its reference entry are the same text, compared by a test.
+4. **Signatures agree.** The signature a reference entry prints is the declared one, compared by the tool that writes the manifest.
+5. **Preconditions kept in full read the same.** A precondition that stays on a declaration, as each place in the first table of [Preconditions kept in full](#preconditions-kept-in-full) does, appears in its entry in the same words.
+6. **Messages agree.** Each diagnostic text a guide page quotes is compared with the literal in the header.
+7. **Stated contracts are exercised.** Each requirement an entry states with a checkable violation names a compiled example or a compile-fail test that exercises it.
+
+Two process rules go with them: a contract moves out of a header only after the page that receives it has passed review, and a unit that changes what a declaration requires, guarantees or preserves changes its entry in the same unit. Until the checks exist, S11 stands as ratified on 2026-11-01, and the rows that wait for the amendment stay where they are. The decision's list is the coordinator's reading of the owner's condition and the owner can change it; if it changes, this list follows it.
 
 ### Sentences that cross a row boundary
 
