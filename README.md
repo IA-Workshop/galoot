@@ -20,7 +20,7 @@ them in the layouts of Eric Lengyel's rigid geometric algebra
 coefficients of its published formulas carry over in the order and with the
 signs in which they are written there.
 
-This is the 1.0.0 release of the core. The rga3 preset ships in the same
+This is the 1.0.1 release of the core. The rga3 preset ships in the same
 tree but is below 1.0, and its interface may still change.
 
 ## Using Galoot
@@ -59,18 +59,19 @@ target_link_libraries(my_program PRIVATE galoot::presets::rga3)
 ```
 
 **Fetch it with CMake.** `FetchContent` downloads the source tree at
-configure time and adds it in the same way. The repository below is a
-placeholder to replace with Galoot's repository; the tag names this release:
+configure time and adds it in the same way. The tag names this release, and
+`GIT_SHALLOW TRUE` fetches only the tagged commit, not the repository's
+history:
 
 ```cmake
 cmake_minimum_required(VERSION 4.4)
 project(my_program LANGUAGES CXX)
 
 include(FetchContent)
-# Replace the placeholder URL with Galoot's repository.
 FetchContent_Declare(galoot
-  GIT_REPOSITORY "<galoot-repository-url>"
-  GIT_TAG "1.0.0")
+  GIT_REPOSITORY "https://github.com/IA-Workshop/galoot.git"
+  GIT_TAG "1.0.1"
+  GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(galoot)
 
 add_executable(my_program main.cpp)
