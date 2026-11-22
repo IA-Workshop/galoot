@@ -1,0 +1,9 @@
+mk: master-in-worktree ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: master-in-worktree
+--- $ close-out-master-in-worktree.sh '--dry-run'
+close-out: master is checked out in a worktree
+exit=1
+--- $ close-out-master-in-worktree.sh 
+close-out: master is checked out in a worktree
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

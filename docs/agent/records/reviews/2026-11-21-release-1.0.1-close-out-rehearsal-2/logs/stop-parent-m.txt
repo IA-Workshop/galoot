@@ -1,0 +1,40 @@
+mk: stop-parent-m ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== step 5 stop: parent-m
+(hook post-merge installed in the clone)
+--- $ close-out-stop-parent-m.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-stop-parent-m.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+rehearsal: post-merge hook added a commit 5223002d03da3b5d4f5f90171f0af959bff6b288 on master with parents (the merge, M)
+done: master is at 5223002d, tag 1.0.1 -> 5223002d. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- state after the run (diff against before)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master 5223002d03da3b5d4f5f90171f0af959bff6b288
+4a5
+> refs/tags/1.0.1 1d718070d00bee64312dd40efbcff1f6bb62fc30
+master parents: 5223002d03da3b5d4f5f90171f0af959bff6b288 6db6aa00c043d6ab36ec8d391e54c4f9623ed207 704f152c64fd3f01e39a66640a254443f3421c0a
+--- W is absent
+--- $ close-out-stop-parent-m.sh --dry-run   (a rerun before the recovery)
+close-out: tag 1.0.1 exists
+exit=1
+--- recovery, from the header comment, paths adapted (cwd = the clone, W = /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-parent-m-master)
+(no stop is expected: no recovery)
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: 5223002d03da3b5d4f5f90171f0af959bff6b288 6db6aa00c043d6ab36ec8d391e54c4f9623ed207 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: NO
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object 5223002d03da3b5d4f5f90171f0af959bff6b288 (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: rehearsal: a second merge of M on master
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+master's tree is M's: yes
+W absent
+worktrees: 1

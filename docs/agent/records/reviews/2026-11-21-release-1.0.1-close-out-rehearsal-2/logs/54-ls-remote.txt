@@ -1,0 +1,14 @@
+$ GIT_TERMINAL_PROMPT=0 git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git
+c95fee51248839a81c7ab28e7de610376bcba603	HEAD
+c95fee51248839a81c7ab28e7de610376bcba603	refs/heads/main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/tags/1.0.0^{}
+exit=0
+$ git -C <real> rev-parse origin/main origin/master
+c95fee51248839a81c7ab28e7de610376bcba603
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+$ git -C <real> merge-base --is-ancestor origin/main main; echo $?
+0
+$ git -C <real> rev-list --count origin/main..main
+238

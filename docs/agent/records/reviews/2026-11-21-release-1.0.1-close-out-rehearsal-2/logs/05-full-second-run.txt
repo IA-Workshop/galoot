@@ -1,0 +1,14 @@
+$ close-out-full.sh --dry-run   (second run)
+close-out: tag 1.0.1 exists
+exit=1
+$ close-out-full.sh   (second run)
+close-out: tag 1.0.1 exists
+exit=1
+--- clone state unchanged by the second runs
+--- state before the first run against after the second (what the release changed)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master fd385392631f02da6fb5f88f42db0d354018e64b
+4a5
+> refs/tags/1.0.1 d63d48b0aa8642877e6796ae0768278a03801a15

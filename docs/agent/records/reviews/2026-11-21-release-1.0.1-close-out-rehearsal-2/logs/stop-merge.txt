@@ -1,0 +1,61 @@
+mk: stop-merge ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== step 5 stop: merge
+(hook pre-merge-commit installed in the clone)
+--- $ close-out-stop-merge.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-stop-merge.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: pre-merge-commit hook refuses
+Not committing merge; use 'git commit' to complete the merge.
+close-out: stopped in step 5; the comment at the top of /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-merge.sh says how to recover
+exit=1
+--- state after the run (diff against before)
+9a10,12
+> worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-merge-master
+> HEAD 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+> branch refs/heads/master
+10a14
+> worktrees
+master parents: 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 9a4e0cd056f1f68188acca8edfd206d4037c73b9 a4cd99dd98f8e5b25759d743dfa99d10f8a89994
+--- W is present; git -C W status:
+On branch master
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+	modified:   .claude/agents/auditor.md
+AUTO_MERGE commondir gitdir HEAD index logs MERGE_HEAD MERGE_MODE MERGE_MSG ORIG_HEAD refs 
+--- $ close-out-stop-merge.sh --dry-run   (a rerun before the recovery)
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-merge-master exists
+exit=1
+--- recovery, from the header comment, paths adapted (cwd = the clone, W = /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-merge-master)
+$ git -C /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-merge-master merge --abort
+exit=0
+$ git worktree remove --force /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-merge-master
+exit=0
+(cause fixed: the hook removed)
+--- the clone is back to its state before the run
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-merge.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-merge.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at eb0bda3b, tag 1.0.1 -> eb0bda3b. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: eb0bda3bbfc5f9a33f184be55489c721b160d252 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object eb0bda3bbfc5f9a33f184be55489c721b160d252 (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+master's tree is M's: yes
+W absent
+worktrees: 1

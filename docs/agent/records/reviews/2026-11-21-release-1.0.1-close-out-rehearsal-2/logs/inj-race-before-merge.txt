@@ -1,0 +1,65 @@
+mk: race-before-merge ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: race-before-merge
+--- $ close-out-race-before-merge.sh '--dry-run'
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-race-before-merge.sh 
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: post-checkout hook moved main to 9906ad9015394b64133d859eb24bb696f6242db5
+Merge made by the 'ort' strategy.
+done: master is at 8f9d021f, tag 1.0.1 -> 8f9d021f. Nothing was pushed.
+note: main moved during the run. The release is the checked commit 704f152c; main now holds more, which the push below would also send.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- clone state CHANGED:
+--- /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-race-before-merge-before.txt	2026-11-21 20:11:50.649802862 -0500
++++ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-race-before-merge-after.txt	2026-11-21 20:11:51.983805448 -0500
+@@ -1,10 +1,12 @@
+-HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+-refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+-refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
++HEAD refs/heads/main 9906ad9015394b64133d859eb24bb696f6242db5
++refs/heads/main 9906ad9015394b64133d859eb24bb696f6242db5
++refs/heads/master 8f9d021f1dfd2b91df56c5ec71a97620443e456a
+ refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
++refs/tags/1.0.1 430dfbb006501c45412e759b1d925373ea11a8e0
+ status:
++D  include/galoot/rehearsal_unchecked.hpp
+ worktrees:
+ worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/race-before-merge
+-HEAD 704f152c64fd3f01e39a66640a254443f3421c0a
++HEAD 9906ad9015394b64133d859eb24bb696f6242db5
+ branch refs/heads/main
+ prune:
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: 8f9d021f1dfd2b91df56c5ec71a97620443e456a 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 95329f1b932706da988e2cbc842c2dc845ac9468
+tag 1.0.1: objecttype tag, object 8f9d021f1dfd2b91df56c5ec71a97620443e456a (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 9906ad9015394b64133d859eb24bb696f6242db5
+--- after the race run
+$ git rev-parse master^2 1.0.1^{commit} main
+704f152c64fd3f01e39a66640a254443f3421c0a
+8f9d021f1dfd2b91df56c5ec71a97620443e456a
+9906ad9015394b64133d859eb24bb696f6242db5
+$ git log --format="%h %s" 704f152c..main
+9906ad90 rehearsal: unchecked commit outside docs/agent
+$ git diff --stat 75b9a030 1.0.1 -- . ":!docs/agent"   (empty: the tag holds no unchecked file)
+(end)
+$ git ls-tree -r --name-only 1.0.1 include/galoot | grep rehearsal
+(none)
+$ git ls-tree -r --name-only main include/galoot | grep rehearsal
+include/galoot/rehearsal_unchecked.hpp
+$ git rev-list --count master..main ; git merge-base --is-ancestor master main; echo $?
+1
+1
+$ git status --short   (the main checkout index still at the old main; the hook moved the ref only)
+D  include/galoot/rehearsal_unchecked.hpp
+(end)
+$ close-out-race-before-merge.sh --dry-run   (a rerun)
+close-out: working tree not clean
+exit=1

@@ -1,0 +1,11 @@
+mk: matrix-row-extra ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: matrix-row-extra
+--- $ close-out-matrix-row-extra.sh '--dry-run'
+matrix rows 34, failed 0
+close-out: matrix rows
+exit=1
+--- $ close-out-matrix-row-extra.sh 
+matrix rows 34, failed 0
+close-out: matrix rows
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

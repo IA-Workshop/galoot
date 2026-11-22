@@ -1,0 +1,3 @@
+$ /home/brianm/projects/utils/math-core/galoot/docs/agent/records/release/close-out-1.0.1.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0

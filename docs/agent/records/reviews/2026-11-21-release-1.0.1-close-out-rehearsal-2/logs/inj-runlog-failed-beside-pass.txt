@@ -1,0 +1,13 @@
+mk: runlog-failed-beside-pass ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: runlog-failed-beside-pass
+replaced 75b9a030 (tree 16e23f43 now) by 669f40dc
+--- $ close-out-old-runlog-failed-beside-pass.sh --dry-run   (the first version, 1655ef33, for comparison; dry run only)
+dry run: every check passed; nothing merged or tagged
+exit=0
+--- $ close-out-runlog-failed-beside-pass.sh '--dry-run'
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- $ close-out-runlog-failed-beside-pass.sh 
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

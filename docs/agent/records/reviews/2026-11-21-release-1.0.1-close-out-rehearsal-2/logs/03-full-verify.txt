@@ -1,0 +1,67 @@
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: fd385392631f02da6fb5f88f42db0d354018e64b 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object fd385392631f02da6fb5f88f42db0d354018e64b (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+$ git rev-list --parents -n1 master
+fd385392631f02da6fb5f88f42db0d354018e64b 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+$ git cat-file -p master | grep -c ^parent
+2
+$ git rev-parse master^{tree} main^{tree} 704f152c^{tree}
+3f4026e87357671c5c382b51c14bc11266331eec
+3f4026e87357671c5c382b51c14bc11266331eec
+3f4026e87357671c5c382b51c14bc11266331eec
+$ git diff --stat 704f152c master
+exit=0
+$ git diff --quiet 704f152c master; echo $?
+0
+$ runs.tsv blob at M, master and 1.0.0
+c6eaf953df98edf6d604ab429d0923da4a245394
+c6eaf953df98edf6d604ab429d0923da4a245394
+0178e5d8f8636917c89c70e8c20c3c6b19c98704
+$ wc -l of runs.tsv at master and M
+5581
+5581
+$ git cat-file -t 1.0.1
+tag
+$ the tag object without its tagger line
+object fd385392631f02da6fb5f88f42db0d354018e64b
+type commit
+tag 1.0.1
+
+galoot core 1.0.1, CONVENTIONS 1.18
+$ git rev-parse 1.0.1^{commit} master
+fd385392631f02da6fb5f88f42db0d354018e64b
+fd385392631f02da6fb5f88f42db0d354018e64b
+$ for comparison, 1.0.0 without its tagger line
+object 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+type commit
+tag 1.0.0
+
+galoot core 1.0.0, CONVENTIONS 1.18
+$ git log --first-parent --format="%h %s" master
+fd385392 Release galoot core 1.0.1
+2383e6df Release galoot core 1.0.0
+9a4e0cd0 Add governance, style configuration, and conventions proposal
+$ git rev-parse main (did not move)
+704f152c64fd3f01e39a66640a254443f3421c0a
+$ W
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/full-master': No such file or directory
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/full/.git/worktrees': No such file or directory
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/full 704f152c [main]
+$ git worktree prune --dry-run -v
+(end)
+$ nothing outside docs/agent since R in the tag
+exit=0
+$ tagged versions
+1.0.1:CMakeLists.txt:6:project(galoot VERSION 1.0.1 LANGUAGES CXX)
+1.0.1:README.md:23:This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+1.0.1:README.md:73:  GIT_REPOSITORY "https://github.com/IA-Workshop/galoot.git"
+1.0.1:README.md:74:  GIT_TAG "1.0.1"
+1.0.1:CHANGELOG.md:8:## 1.0.1 (2026-11-21)
+1.0.1:docs/agent/governance/CONVENTIONS.md:3:Status: version 1.18, ... (line cut here)
+$ git status --short
+(end)

@@ -1,0 +1,13 @@
+main at start: 704f152c64fd3f01e39a66640a254443f3421c0a; master at start: 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+$ close-out-full.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+$ close-out-full.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at fd385392, tag 1.0.1 -> fd385392. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+wall: 1.073533962 s

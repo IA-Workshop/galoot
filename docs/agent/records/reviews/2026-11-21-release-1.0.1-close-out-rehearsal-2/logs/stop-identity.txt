@@ -1,0 +1,69 @@
+mk: stop-identity ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== step 5 stop: identity
+(the run without any user identity: no identity variables, no global or system configuration)
+--- $ close-out-stop-identity.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-stop-identity.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Committer identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got (withheld))
+close-out: stopped in step 5; the comment at the top of /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-identity.sh says how to recover
+exit=128
+--- state after the run (diff against before)
+9a10,12
+> worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-identity-master
+> HEAD 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+> branch refs/heads/master
+10a14
+> worktrees
+master parents: 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 9a4e0cd056f1f68188acca8edfd206d4037c73b9 a4cd99dd98f8e5b25759d743dfa99d10f8a89994
+--- W is present; git -C W status:
+On branch master
+nothing to commit, working tree clean
+commondir gitdir HEAD index logs ORIG_HEAD refs 
+--- $ close-out-stop-identity.sh --dry-run   (a rerun before the recovery)
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-identity-master exists
+exit=1
+--- recovery, from the header comment, paths adapted (cwd = the clone, W = /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-identity-master)
+$ git -C /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-identity-master merge --abort
+fatal: There is no merge to abort (MERGE_HEAD missing).
+exit=128
+$ git worktree remove --force /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/stop-identity-master
+exit=0
+(cause fixed: the run has an identity again)
+--- the clone is back to its state before the run
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-identity.sh --dry-run
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/scripts/close-out-stop-identity.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at 0b950998, tag 1.0.1 -> 0b950998. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: 0b95099843cec06da04e9f0ee19af59513daec34 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object 0b95099843cec06da04e9f0ee19af59513daec34 (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+master's tree is M's: yes
+W absent
+worktrees: 1

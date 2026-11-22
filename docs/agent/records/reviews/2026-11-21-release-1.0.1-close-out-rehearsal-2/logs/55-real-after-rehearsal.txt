@@ -1,0 +1,11 @@
+### 2026-11-22T01:16:49Z real repository after the rehearsal (before this record's worktree)
+HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees: 47
+no worktree has master
+galoot-master absent
+no MERGE_* or TAG_EDITMSG in .git
+index sha256 prefix: 9cd8889d993385ff

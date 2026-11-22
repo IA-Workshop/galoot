@@ -1,0 +1,10 @@
+mk: runlog-extra-failed ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: runlog-extra-failed
+replaced 75b9a030 (tree 454d1ee6 now) by 710f7b4c
+--- $ close-out-runlog-extra-failed.sh '--dry-run'
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- $ close-out-runlog-extra-failed.sh 
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)
