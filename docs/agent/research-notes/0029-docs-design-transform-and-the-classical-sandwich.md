@@ -2,6 +2,8 @@
 
 Written by: Claude (agent, Fable 5.2, in the math-expert and hci-expert roles; the Fable level was authorized by the owner for this unit, decision 0253 item 32), 2026-11-21, for unit U1 of plan 0049, on `records/docs-design` from `main` at `01dce7f`. Not yet reviewed. The five design records this note supports are in [`records/docs/`](../records/docs/): `learner-contracts.md`, `concept-inventory.md`, `misconceptions.md`, `authoring-rules.md`, and `notation-key.md`.
 
+Status, added 2026-11-21 after the release audit (its note N6): this note has since been reviewed three times, by `records/reviews/2026-11-21-0049-u1-check.md`, `2026-11-21-0049-u1-rulings-check.md` and `2026-11-21-0049-u1-rulings-check-2.md`; "Not yet reviewed" above and "it has not run" in departure 5 describe the note as first written.
+
 ## Departures and open points first (C20)
 
 1. **The plan's statement about `transform` is wrong, and its probe was a coincidence.** Plan 0049 section 4.2 point 2 reports that `r * v * ~r` and `transform(v, r)` gave the same vector for the rotor r = b a of chapter 5. They do for that vector and that rotor only. In R(3, 0, 0), `transform(x, r)` is the reverse of r applied to the grade involution of x (section 2.3): for a vector, the opposite turn, negated. It equals the classical turn on a vector exactly when the rotor turns that vector's plane by a quarter turn, which is the case the probe happened to try. On (0, 0, 1) the two differ in sign, and for any other angle they differ in the plane too. The correct relation needs a complement: `transform(x, !r)` is `r * x * ~r` (section 2.4).

@@ -423,3 +423,10 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0045-G2-second-run	auditor	sonnet	144504	41	193	ready at R 578aa15; workflow agent, transcript token count
 2026-11-21	0045-R6-release-matrix	performance-engineer	opus	266551	97	3543	matrix passed at R; feature/release-1.0.1 6d09c0e; workflow agent, transcript token count
 2026-11-21	0045-R7-release-records	planner	opus	266073	62	656	release record written; halted before the compaction (decision 0263); 4cf4bcf; workflow agent, transcript token count
+2026-11-21	0045-R7-compaction	planner	opus	178752	88	595	compaction at 5fcc5d8, trial merge, closing gates; feature/release-1.0.1 dbf4353; workflow agent, transcript token count
+2026-11-21	0045-R8-release-audit	auditor	opus	285856	91	813	gate/release-1.0.1 859f03a; no blocking finding, three rulings; workflow agent, transcript token count
+2026-11-21	0049-U2-step-1	build-expert	opus	316790	124	1706	names spike (decision 0262), cost of the documentation tests, four modes; feature/docs--tooling a07345e; workflow agent, transcript token count
+2026-11-21	0049-U2-step-2	build-expert	opus	325991	94	1764	four modes, mutants, records; feature/docs--tooling fdd1557; workflow agent, transcript token count
+2026-11-21	0049-U2-blind-review	reviewer	opus	257169	63	794	review/docs-tooling 9e60dca; changes requested; workflow agent, transcript token count
+2026-11-21	0049-U2-fix-1	build-expert	opus	275775	108	1250	feature/docs--tooling 4ba7753; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-1	reviewer	opus	185248	58	580	review/docs-tooling da97079; approve with minor findings; workflow agent, transcript token count
