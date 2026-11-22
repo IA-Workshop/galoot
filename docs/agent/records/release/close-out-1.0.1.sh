@@ -14,31 +14,44 @@
 # Run it while no other session is committing to this repository.
 #
 # If it stops during step 5, a rerun refuses, because the worktree exists or
-# `master` has moved. From /home/brianm/projects/utils/math-core/galoot:
-#   the merge stopped:
+# `master` has moved. Nothing has been pushed at that point. To see which
+# state it stopped in, from /home/brianm/projects/utils/math-core/galoot:
+#     ls -d /home/brianm/projects/utils/math-core/galoot-master
+#     git rev-parse master 1.0.0^{commit}
+#     git tag -l 1.0.1
+#   the directory exists, master is 1.0.0's commit:  entry 1
+#   the directory exists, master has moved:          entry 2
+#   no directory, master has moved, no tag 1.0.1:    entry 3, or entry 4 if
+#                                                    the script's last line
+#                                                    names a comparison
+#
+#   1. the merge stopped:
 #     git -C /home/brianm/projects/utils/math-core/galoot-master merge --abort
 #       (skip this if git says no merge is under way)
 #     git worktree remove --force /home/brianm/projects/utils/math-core/galoot-master
 #     then run the script again
-#   the merge was made but the worktree was not removed:
+#   2. the merge was made but the worktree was not removed:
 #     git worktree remove --force /home/brianm/projects/utils/math-core/galoot-master
+#     then continue with entry 3
+#   3. only the tag is missing:
 #     git rev-list --parents -n1 master
 #       (must print the new commit, then 1.0.0's commit 2383e6d..., then the
-#       commit the dry run named as main)
+#       commit the run named in its line "merging ... into master")
 #     git diff master^2 master --stat
 #       (must print nothing)
 #     git tag -a 1.0.1 master -m "galoot core 1.0.1, CONVENTIONS 1.18"
-#     then publish and check as the last lines of this file print them,
-#     with master^2 in place of the commit
-#   only the tag failed:
-#     the same checks, the same git tag command, the same publish and check
-#   a comparison after the merge failed, or to undo the merge:
+#     then publish and check:
+#     git push --atomic origin master^2:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+#     git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+#   4. a comparison after the merge failed, or to undo the merge before
+#      anything is pushed:
 #     git worktree remove --force /home/brianm/projects/utils/math-core/galoot-master
 #       (if it is still there)
 #     git tag -d 1.0.1
 #       (if the tag was made)
 #     git branch -f master 1.0.0
-#     then find out what moved `master` before running the script again
+#     then, if a comparison failed, find out what moved `master` before
+#     running the script again
 set -euo pipefail
 cd /home/brianm/projects/utils/math-core/galoot
 T=75b9a030b5d484b5e32bd88ca2e6e13e48717ff0   # the records tip T
@@ -52,7 +65,7 @@ URL=https://github.com/IA-Workshop/galoot.git
 RUNS=docs/agent/records/performance/runs.tsv
 W=/home/brianm/projects/utils/math-core/galoot-master
 
-SELF=docs/agent/records/release/close-out-$V.sh
+SELF=$PWD/docs/agent/records/release/close-out-$V.sh
 RECOVER="close-out: stopped in step 5; the comment at the top of $SELF says how to recover"
 STEP5=
 fail() {
@@ -129,7 +142,7 @@ done
 git merge-base --is-ancestor refs/heads/master^2 "$M" || fail "main does not hold master^2"
 [ -z "$(git diff refs/heads/master refs/heads/master^2)" ] || fail "master's tree is not its second parent's"
 [ ! -e "$W" ] && [ ! -L "$W" ] || fail "$W exists"
-worktrees=$(git worktree list --porcelain)
+worktrees=$(git worktree list --porcelain) || fail "cannot list the worktrees"
 if grep -qx 'branch refs/heads/master' <<<"$worktrees"; then
   fail "master is checked out in a worktree"
 fi
@@ -142,7 +155,9 @@ fi
 # 5. Merge M and tag the merge.
 STEP5=1
 trap 'echo "$RECOVER" >&2' ERR
-trap 'echo "$RECOVER" >&2; exit 130' INT TERM
+trap 'echo "$RECOVER" >&2; exit 130' INT
+trap 'echo "$RECOVER" >&2; exit 143' TERM
+echo "merging $(git rev-parse --short "$M") into master"
 git worktree add "$W" master
 git -C "$W" merge --no-ff --no-stat "$M" -m "Release galoot core $V"
 git worktree remove "$W"
@@ -159,3 +174,6 @@ if [ "$(git rev-parse 'refs/heads/main^{commit}')" != "$M" ]; then
 fi
 echo "To publish:   git push --atomic origin $M:refs/heads/main refs/heads/master refs/tags/$PREV refs/tags/$V"
 echo "Then check:   git -c credential.helper= ls-remote $URL refs/heads/main refs/heads/master refs/tags/$PREV refs/tags/$V"
+echo "It must list: main $M"
+echo "              master $(git rev-parse refs/heads/master)"
+echo "              $PREV $(git rev-parse "refs/tags/$PREV") and $V $(git rev-parse "refs/tags/$V") (the tag objects, not the commits they name)"
