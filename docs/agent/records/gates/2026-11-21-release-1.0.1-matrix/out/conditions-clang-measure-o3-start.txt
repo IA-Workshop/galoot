@@ -1,0 +1,33 @@
+2026-11-21T23:36:29Z
+ 18:36:29 up 23:10,  1 user,  load average: 20.59, 15.77, 12.77
+running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+clients: 1223315 (ninja)
+               total        used        free      shared  buff/cache   available
+Mem:          128485       26084       28763        1751       75997      102400
+Swap:         128484        5185      123299
+top - 18:36:29 up 23:10,  1 user,  load average: 20.59, 15.77, 12.77
+Tasks: 680 total, 25 running, 655 sleep, 0 d-sleep, 0 stopped, 0 zombie
+%Cpu(s): 16.2 us,  0.9 sy, 62.6 ni, 20.2 id,  0.0 wa,  0.1 hi,  0.0 si,  0.0 st 
+MiB Mem : 128485.1 total,  28692.7 free,  26155.8 used,  75997.7 buff/cache     
+MiB Swap: 128485.0 total, 123299.3 free,   5185.7 used. 102329.3 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+3211483 brianm    16  -4 1995608 675440 142700 S 148.9   0.5      7,19 python
+1254568 brianm    16  -4 1127408 930468 103528 R 100.0   0.7   0:14.37 clang++
+1249889 brianm    36  16  417164 243204  94240 R 100.0   0.2   0:44.69 clang-tidy
+1249897 brianm    36  16  462796 288580  95096 R 100.0   0.2   0:44.79 clang-tidy
+1249957 brianm    36  16  608852 432392  95844 R 100.0   0.3   0:44.75 clang-tidy
+1251897 brianm    36  16  506836 331896  96144 R 100.0   0.3   0:34.48 clang-tidy
+1253293 brianm    36  16  684120 509624  97864 R 100.0   0.4   0:24.04 clang-tidy
+1254941 brianm    36  16  415864 242316  94736 R 100.0   0.2   0:12.54 clang-tidy
+1254956 brianm    36  16  415644 242136  94740 R 100.0   0.2   0:12.35 clang-tidy
+1254968 brianm    36  16  596052 421572  97484 R 100.0   0.3   0:12.31 clang-tidy
+1255788 brianm    36  16  534660 358600  95924 R 100.0   0.3   0:07.10 clang-tidy
+1255799 brianm    16  -4  808776 640424 102932 R 100.0   0.5   0:06.96 clang++
+1255857 brianm    36  16  458600 281792  93604 R 100.0   0.2   0:06.27 clang-tidy
+ 969201 brianm    16  -4 1178208 989.6m  18180 S  96.0   0.8      6,17 cpptools
+1250242 brianm    36  16  495768 320500  95616 R  96.0   0.2   0:44.13 clang-tidy
+1255869 brianm    36  16  446168 268904  93420 R  96.0   0.2   0:05.84 clang-tidy
+1256472 brianm    16  -4  374732 204540  92012 R  96.0   0.2   0:01.13 clang++
+1249920 brianm    36  16  771152 596416  97496 R  91.2   0.5   0:44.67 clang-tidy

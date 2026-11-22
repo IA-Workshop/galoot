@@ -1,0 +1,200 @@
+UpdateCTestConfiguration  from :/home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/DartConfiguration.tcl
+Test project /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+Connected to MAKE jobserver
+test 619
+      Start 619: bench.wedge_point_point_galoot_throughput
+
+619: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_wedge_point_point "galoot" "throughput" "4096" "20261110"
+619: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+619: Test timeout computed to be: 10000000
+619: wedge_point_point galoot throughput 524288 20261110 1.483 0x8f9d5c48b9f31f60
+ 1/22 Test #619: bench.wedge_point_point_galoot_throughput ............   Passed    0.00 sec
+test 620
+      Start 620: bench.wedge_point_point_reference_throughput
+
+620: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_wedge_point_point "reference" "throughput" "4096" "20261110"
+620: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+620: Test timeout computed to be: 10000000
+620: wedge_point_point reference throughput 524288 20261110 1.480 0x8f9d5c48b9f31f60
+ 2/22 Test #620: bench.wedge_point_point_reference_throughput .........   Passed    0.00 sec
+test 623
+      Start 623: bench.wedge_point_point_point_galoot_throughput
+
+623: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_wedge_point_point_point "galoot" "throughput" "4096" "20261110"
+623: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+623: Test timeout computed to be: 10000000
+623: wedge_point_point_point galoot throughput 524288 20261110 2.816 0x87048eb3cb7916a0
+ 3/22 Test #623: bench.wedge_point_point_point_galoot_throughput ......   Passed    0.00 sec
+test 624
+      Start 624: bench.wedge_point_point_point_reference_throughput
+
+624: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_wedge_point_point_point "reference" "throughput" "4096" "20261110"
+624: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+624: Test timeout computed to be: 10000000
+624: wedge_point_point_point reference throughput 524288 20261110 3.032 0x87048eb3cb7916a0
+ 4/22 Test #624: bench.wedge_point_point_point_reference_throughput ...   Passed    0.00 sec
+test 627
+      Start 627: bench.antiwedge_line_plane_galoot_throughput
+
+627: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_antiwedge_line_plane "galoot" "throughput" "4096" "20261110"
+627: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+627: Test timeout computed to be: 10000000
+627: antiwedge_line_plane galoot throughput 524288 20261110 1.522 0xd60f397d0c04b0c0
+ 5/22 Test #627: bench.antiwedge_line_plane_galoot_throughput .........   Passed    0.00 sec
+test 628
+      Start 628: bench.antiwedge_line_plane_reference_throughput
+
+628: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_antiwedge_line_plane "reference" "throughput" "4096" "20261110"
+628: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+628: Test timeout computed to be: 10000000
+628: antiwedge_line_plane reference throughput 524288 20261110 1.673 0xd60f397d0c04b0c0
+ 6/22 Test #628: bench.antiwedge_line_plane_reference_throughput ......   Passed    0.00 sec
+test 631
+      Start 631: bench.transform_point_galoot_throughput
+
+631: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_point "galoot" "throughput" "4096" "20261110"
+631: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+631: Test timeout computed to be: 10000000
+631: transform_point galoot throughput 524288 20261110 5.972 0x9e6fe6ac50697560
+ 7/22 Test #631: bench.transform_point_galoot_throughput ..............   Passed    0.00 sec
+test 632
+      Start 632: bench.transform_point_galoot_latency
+
+632: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_point "galoot" "latency" "4096" "20261110"
+632: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+632: Test timeout computed to be: 10000000
+632: transform_point galoot latency 524288 20261110 8.890 0x0cb641c4683ee7b0
+ 8/22 Test #632: bench.transform_point_galoot_latency .................   Passed    0.01 sec
+test 633
+      Start 633: bench.transform_point_reference_throughput
+
+633: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_point "reference" "throughput" "4096" "20261110"
+633: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+633: Test timeout computed to be: 10000000
+633: transform_point reference throughput 524288 20261110 5.856 0x9e6fe6ac50697560
+ 9/22 Test #633: bench.transform_point_reference_throughput ...........   Passed    0.00 sec
+test 634
+      Start 634: bench.transform_point_reference_latency
+
+634: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_point "reference" "latency" "4096" "20261110"
+634: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+634: Test timeout computed to be: 10000000
+634: transform_point reference latency 524288 20261110 6.973 0x0cb641c4683ee7b0
+10/22 Test #634: bench.transform_point_reference_latency ..............   Passed    0.00 sec
+test 637
+      Start 637: bench.transform_line_galoot_throughput
+
+637: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_line "galoot" "throughput" "4096" "20261110"
+637: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+637: Test timeout computed to be: 10000000
+637: transform_line galoot throughput 524288 20261110 9.026 0xae9ce24c13b7fac0
+11/22 Test #637: bench.transform_line_galoot_throughput ...............   Passed    0.01 sec
+test 638
+      Start 638: bench.transform_line_galoot_latency
+
+638: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_line "galoot" "latency" "4096" "20261110"
+638: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+638: Test timeout computed to be: 10000000
+638: transform_line galoot latency 524288 20261110 12.114 0xf3361de375da2662
+12/22 Test #638: bench.transform_line_galoot_latency ..................   Passed    0.01 sec
+test 639
+      Start 639: bench.transform_line_reference_throughput
+
+639: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_line "reference" "throughput" "4096" "20261110"
+639: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+639: Test timeout computed to be: 10000000
+639: transform_line reference throughput 524288 20261110 9.216 0xae9ce24c13b7fac0
+13/22 Test #639: bench.transform_line_reference_throughput ............   Passed    0.01 sec
+test 640
+      Start 640: bench.transform_line_reference_latency
+
+640: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_line "reference" "latency" "4096" "20261110"
+640: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+640: Test timeout computed to be: 10000000
+640: transform_line reference latency 524288 20261110 11.916 0xf3361de375da2662
+14/22 Test #640: bench.transform_line_reference_latency ...............   Passed    0.01 sec
+test 643
+      Start 643: bench.transform_plane_galoot_throughput
+
+643: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_plane "galoot" "throughput" "4096" "20261110"
+643: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+643: Test timeout computed to be: 10000000
+643: transform_plane galoot throughput 524288 20261110 5.708 0x617dc2cc9493aae0
+15/22 Test #643: bench.transform_plane_galoot_throughput ..............   Passed    0.00 sec
+test 644
+      Start 644: bench.transform_plane_galoot_latency
+
+644: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_plane "galoot" "latency" "4096" "20261110"
+644: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+644: Test timeout computed to be: 10000000
+644: transform_plane galoot latency 524288 20261110 6.420 0x5c4a4cc158f2e230
+16/22 Test #644: bench.transform_plane_galoot_latency .................   Passed    0.00 sec
+test 645
+      Start 645: bench.transform_plane_reference_throughput
+
+645: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_plane "reference" "throughput" "4096" "20261110"
+645: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+645: Test timeout computed to be: 10000000
+645: transform_plane reference throughput 524288 20261110 5.707 0x617dc2cc9493aae0
+17/22 Test #645: bench.transform_plane_reference_throughput ...........   Passed    0.00 sec
+test 646
+      Start 646: bench.transform_plane_reference_latency
+
+646: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_transform_plane "reference" "latency" "4096" "20261110"
+646: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+646: Test timeout computed to be: 10000000
+646: transform_plane reference latency 524288 20261110 6.800 0x5c4a4cc158f2e230
+18/22 Test #646: bench.transform_plane_reference_latency ..............   Passed    0.00 sec
+test 649
+      Start 649: bench.compose_motors_galoot_throughput
+
+649: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_compose_motors "galoot" "throughput" "4096" "20261110"
+649: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+649: Test timeout computed to be: 10000000
+649: compose_motors galoot throughput 524288 20261110 6.190 0xc4834e7b9cd960a0
+19/22 Test #649: bench.compose_motors_galoot_throughput ...............   Passed    0.00 sec
+test 650
+      Start 650: bench.compose_motors_galoot_latency
+
+650: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_compose_motors "galoot" "latency" "4096" "20261110"
+650: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+650: Test timeout computed to be: 10000000
+650: compose_motors galoot latency 524288 20261110 7.310 0x0cec668d31a215b6
+20/22 Test #650: bench.compose_motors_galoot_latency ..................   Passed    0.00 sec
+test 651
+      Start 651: bench.compose_motors_reference_throughput
+
+651: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_compose_motors "reference" "throughput" "4096" "20261110"
+651: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+651: Test timeout computed to be: 10000000
+651: compose_motors reference throughput 524288 20261110 5.690 0xc4834e7b9cd960a0
+21/22 Test #651: bench.compose_motors_reference_throughput ............   Passed    0.00 sec
+test 652
+      Start 652: bench.compose_motors_reference_latency
+
+652: Test command: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench/bench_compose_motors "reference" "latency" "4096" "20261110"
+652: Working Directory: /home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1/build/clang-measure/test/bench
+652: Test timeout computed to be: 10000000
+652: compose_motors reference latency 524288 20261110 7.307 0x0cec668d31a215b6
+22/22 Test #652: bench.compose_motors_reference_latency ...............   Passed    0.00 sec
+
+100% tests passed out of 22
+
+Label Time Summary:
+bench                            =   0.08 sec*proc (22 tests)
+bench.antiwedge_line_plane       =   0.00 sec*proc (2 tests)
+bench.compose_motors             =   0.02 sec*proc (4 tests)
+bench.transform_line             =   0.02 sec*proc (4 tests)
+bench.transform_plane            =   0.02 sec*proc (4 tests)
+bench.transform_point            =   0.02 sec*proc (4 tests)
+bench.wedge_point_point          =   0.00 sec*proc (2 tests)
+bench.wedge_point_point_point    =   0.00 sec*proc (2 tests)
+
+Total Test time (real) =   0.10 sec
+timed: test gate:bench@578aa15 took 0.157 s (exit 0)

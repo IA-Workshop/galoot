@@ -1,0 +1,87 @@
+lock.sh: taken after 1s
+2026-11-21T23:12:32Z lock taken at f6e00fb962bc; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:12:32 gcc-debug configure start; pool: running: 22 of 23 slots free at /run/user/1000/jobserver.fifo
+23:12:34 gcc-debug configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:12:34 gcc-debug build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:13:52 gcc-debug build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+gcc-debug after build: copied 149 rows of revision f6e00fb962bc
+23:13:52 gcc-debug test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:14:57 gcc-debug test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+gcc-debug after test: copied 334 rows of revision f6e00fb962bc
+100% tests passed out of 660
+23:14:58 clang-debug configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:15:00 clang-debug configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:15:00 clang-debug build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:15:26 clang-debug build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+clang-debug after build: copied 149 rows of revision f6e00fb962bc
+23:15:26 clang-debug test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:16:31 clang-debug test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+clang-debug after test: copied 336 rows of revision f6e00fb962bc
+100% tests passed out of 660
+23:16:32 gcc-release configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:16:34 gcc-release configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:16:34 gcc-release build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:17:25 gcc-release build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:17:25 gcc-release test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:18:31 gcc-release test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 660
+23:18:31 gcc-asan configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:18:33 gcc-asan configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:18:33 gcc-asan build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:20:45 gcc-asan build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:20:45 gcc-asan test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:21:51 gcc-asan test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 652
+23:21:52 clang-release configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:21:54 clang-release configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:21:54 clang-release build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:22:28 clang-release build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:22:28 clang-release test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:23:33 clang-release test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 660
+23:23:34 clang-asan configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:23:36 clang-asan configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:23:36 clang-asan build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:25:11 clang-asan build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:25:11 clang-asan test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:26:16 clang-asan test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 660
+23:26:17 lint configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:26:19 lint configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:26:19 lint build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:29:03 lint build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:29:03 lint test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:30:08 lint test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 660
+23:30:08 gcc-measure configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:30:10 gcc-measure configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:30:10 gcc-measure build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:31:02 gcc-measure build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:31:02 gcc-measure test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:32:07 gcc-measure test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 652
+23:32:08 gcc-measure-o3 configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:32:10 gcc-measure-o3 configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:32:10 gcc-measure-o3 build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:33:15 gcc-measure-o3 build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:33:15 gcc-measure-o3 test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:34:21 gcc-measure-o3 test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 652
+23:34:21 clang-measure configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:34:23 clang-measure configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:34:23 clang-measure build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:35:24 clang-measure build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:35:24 clang-measure test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:36:29 clang-measure test exit 0; pool: running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 652
+23:36:29 clang-measure-o3 configure start; pool: running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+23:36:32 clang-measure-o3 configure exit 0; pool: running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+23:36:32 clang-measure-o3 build start; pool: running: 0 of 23 slots free at /run/user/1000/jobserver.fifo
+23:39:01 clang-measure-o3 build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:39:01 clang-measure-o3 test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+23:40:06 clang-measure-o3 test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+100% tests passed out of 652
+23:40:06 format-check; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+format-check exit 0
+2026-11-21T23:40:08Z lock released; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+2026-11-21T23:40:08Z phase presets done
