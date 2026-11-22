@@ -414,3 +414,12 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0043-U6-records	planner	sonnet	181389	45	317	records/cost-cleanup-1-0-1 0af3419; workflow agent, harness token count
 2026-11-21	0044-U7-merge-gate	performance-engineer	opus	201516	83	1480	gate at 41d8029; merged into main as c6e3b18; workflow agent, harness token count
 2026-11-21	0044-U8-records	planner	sonnet	158676	30	187	records/header-hygiene-1-0-1 3c0455d; workflow agent, harness token count
+2026-11-21	0045-R5-first-attempt	build-expert	sonnet	109962	25	109	halted on the catalogue record (ruled in decision 0261 item 1); workflow agent, harness token count
+2026-11-21	0045-R5-release-commit	build-expert	sonnet	135355	40	187	feature/release-1.0.1 8685f78, first release commit 2b3af4f; workflow agent, transcript token count
+2026-11-21	0045-R5-blind-review	reviewer	sonnet	169813	48	312	review/release-1.0.1 6745da5; approve with minor findings; workflow agent, transcript token count
+2026-11-21	0045-G2-first-run	auditor	sonnet	156024	39	241	not ready on one finding (ruled in decision 0261 item 3); workflow agent, transcript token count
+2026-11-21	0045-R5-polish-fix	build-expert	sonnet	88679	24	112	R = 578aa15, tip f6e00fb; workflow agent, transcript token count
+2026-11-21	0045-R5-polish-delta-review	reviewer	sonnet	83101	19	105	review/release-1.0.1 9f8a70f; approve; workflow agent, transcript token count
+2026-11-21	0045-G2-second-run	auditor	sonnet	144504	41	193	ready at R 578aa15; workflow agent, transcript token count
+2026-11-21	0045-R6-release-matrix	performance-engineer	opus	266551	97	3543	matrix passed at R; feature/release-1.0.1 6d09c0e; workflow agent, transcript token count
+2026-11-21	0045-R7-release-records	planner	opus	266073	62	656	release record written; halted before the compaction (decision 0263); 4cf4bcf; workflow agent, transcript token count
