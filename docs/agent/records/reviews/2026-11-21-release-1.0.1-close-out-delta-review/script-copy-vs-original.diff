@@ -1,0 +1,8 @@
+35c35
+< cd <scratch>/clone
+---
+> cd /home/brianm/projects/utils/math-core/galoot
+45c45
+< W=<scratch>/clone-master
+---
+> W=/home/brianm/projects/utils/math-core/galoot-master

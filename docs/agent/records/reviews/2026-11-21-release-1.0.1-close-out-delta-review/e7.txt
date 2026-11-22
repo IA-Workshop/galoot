@@ -1,0 +1,8 @@
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+error: gpg failed to sign the data:
+(no gpg output)
+error: unable to sign the tag
+The tag message has been left in .git/TAG_EDITMSG
+close-out: stopped in step 5; the comment at the top of <scratch>/close-out-copy.sh says how to recover
