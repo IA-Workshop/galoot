@@ -1,0 +1,14 @@
+$ git -C clones/full worktree add --detach /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/full-master-tree-check master
+Preparing worktree (detached HEAD c21186d4)
+HEAD is now at c21186d4 Release galoot core 1.0.1
+$ git rev-parse HEAD HEAD^{tree}
+c21186d4747f973f2cc9643e84f3acb10a26c315
+6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+$ tools/timed --log <scratch>/logs/rehearsal-runs.tsv check - gate:rehearsal-runlog@c21186d4 -- tools/runlog check
+runlog: docs/agent/records/performance/runs.tsv: 2 eras match the history; 5555 kept rows present once; no removed row present
+timed: check gate:rehearsal-runlog@c21186d4 took 2.950 s (exit 0); row in /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/logs/rehearsal-runs.tsv
+exit=0
+$ git status --short
+$ git -C clones/full worktree remove /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/full-master-tree-check
+exit=0
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full 1655ef33 [main]

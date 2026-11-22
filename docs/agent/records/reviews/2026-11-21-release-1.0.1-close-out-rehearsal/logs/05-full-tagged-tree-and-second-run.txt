@@ -1,0 +1,55 @@
+$ git show 1.0.1:CMakeLists.txt | grep -n "project(galoot"
+6:project(galoot VERSION 1.0.1 LANGUAGES CXX)
+$ git show 1.0.1:README.md | grep -n "release of the core\|GIT_"
+23:This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+64:`GIT_SHALLOW TRUE` fetches only the tagged commit, not the repository's
+73:  GIT_REPOSITORY "https://github.com/IA-Workshop/galoot.git"
+74:  GIT_TAG "1.0.1"
+75:  GIT_SHALLOW TRUE)
+$ git show 1.0.1:CHANGELOG.md | grep -n "^## "
+8:## 1.0.1 (2026-11-21)
+63:## 1.0.0 (2026-11-15)
+$ git show 1.0.1:docs/agent/governance/CONVENTIONS.md | grep ^Status
+Status: version 1.18
+$ git diff 1.0.0 1.0.1 --stat -- include
+ include/galoot/core/assert.hpp          | 35 ++++++++++++++++++++++-----------
+ include/galoot/core/basis_change.hpp    | 10 +++++-----
+ include/galoot/core/bits.hpp            |  6 +++---
+ include/galoot/core/metric.hpp          | 34 ++++++++++++++++----------------
+ include/galoot/core/mv.hpp              | 18 -----------------
+ include/galoot/presets/rga3/motions.hpp | 32 +++++++++++++++---------------
+ 6 files changed, 65 insertions(+), 70 deletions(-)
+$ git diff 1.0.0 1.0.1 --stat -- include/ docs/guide/
+ docs/guide/core.md                      | 15 ++++++++++----
+ docs/guide/limits.md                    |  4 ++--
+ include/galoot/core/assert.hpp          | 35 ++++++++++++++++++++++-----------
+ include/galoot/core/basis_change.hpp    | 10 +++++-----
+ include/galoot/core/bits.hpp            |  6 +++---
+ include/galoot/core/metric.hpp          | 34 ++++++++++++++++----------------
+ include/galoot/core/mv.hpp              | 18 -----------------
+ include/galoot/presets/rga3/motions.hpp | 32 +++++++++++++++---------------
+ 8 files changed, 78 insertions(+), 76 deletions(-)
+$ git diff 1.0.0 578aa15 --stat -- include/ docs/guide/
+ docs/guide/core.md                      | 15 ++++++++++----
+ docs/guide/limits.md                    |  4 ++--
+ include/galoot/core/assert.hpp          | 35 ++++++++++++++++++++++-----------
+ include/galoot/core/basis_change.hpp    | 10 +++++-----
+ include/galoot/core/bits.hpp            |  6 +++---
+ include/galoot/core/metric.hpp          | 34 ++++++++++++++++----------------
+ include/galoot/core/mv.hpp              | 18 -----------------
+ include/galoot/presets/rga3/motions.hpp | 32 +++++++++++++++---------------
+ 8 files changed, 78 insertions(+), 76 deletions(-)
+$ git diff --quiet 578aa15 1.0.1 -- . ":!docs/agent"; exit
+exit=0
+$ close-out-full.sh --dry-run (second run)
+close-out: tag 1.0.1 exists
+exit=1
+$ close-out-full.sh (second run)
+close-out: tag 1.0.1 exists
+exit=1
+$ refs after the second run
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master c21186d4747f973f2cc9643e84f3acb10a26c315
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 f45425374600de472b3cfd2dcf433857dfa80435
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full 1655ef33 [main]

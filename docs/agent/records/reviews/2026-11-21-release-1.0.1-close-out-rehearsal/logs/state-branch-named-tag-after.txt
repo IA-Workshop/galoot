@@ -1,0 +1,12 @@
+HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/1.0.1 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master 6658533eb541a9d8dbc78baa05eea9fde95dc399
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 6351ca4f67c40223cd09f7987218b345f829f0e7
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/branch-named-tag
+HEAD 1655ef33ee461785e4d75a88b21f27579fb0e79c
+branch refs/heads/main
+prune:

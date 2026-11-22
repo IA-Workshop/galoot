@@ -1,0 +1,30 @@
+mk: stop-tag ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-tag, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-stop-tag.sh
+$ git config tag.gpgSign true; git config gpg.program false   (in the clone only)
+$ close-out-stop-tag.sh --dry-run
+dry run: every check passed; nothing merged or tagged
+exit=0
+$ close-out-stop-tag.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+error: gpg failed to sign the data:
+(no gpg output)
+error: unable to sign the tag
+The tag message has been left in .git/TAG_EDITMSG
+exit=128
+--- state after
+HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master 470868796d5dad374909b9907b3b5d2873b881e8
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-tag
+HEAD 1655ef33ee461785e4d75a88b21f27579fb0e79c
+branch refs/heads/main
+prune:
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-tag-master': No such file or directory
+470868796d5dad374909b9907b3b5d2873b881e8 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 1655ef33ee461785e4d75a88b21f27579fb0e79c
+--- rerun refuses:
+close-out: master moved since 1.0.0
+exit=1

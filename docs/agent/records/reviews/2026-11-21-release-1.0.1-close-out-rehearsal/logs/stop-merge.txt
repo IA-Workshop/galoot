@@ -1,0 +1,37 @@
+mk: stop-merge ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-merge, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-stop-merge.sh
+$ close-out-stop-merge.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: pre-merge-commit hook refuses
+Not committing merge; use 'git commit' to complete the merge.
+exit=1
+--- state after
+HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-merge
+HEAD 1655ef33ee461785e4d75a88b21f27579fb0e79c
+branch refs/heads/main
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-merge-master
+HEAD 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+branch refs/heads/master
+prune:
+worktrees
+--- W
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-merge-master
+On branch master
+All conflicts fixed but you are still merging.
+  (use "git commit" to conclude merge)
+
+Changes to be committed:
+	modified:   .claude/agents/auditor.md
+	modified:   .claude/agents/blind-reviewer.md
+	modified:   .claude/agents/cpp-expert.md
+820
+AUTO_MERGE commondir gitdir HEAD index logs MERGE_HEAD MERGE_MODE MERGE_MSG ORIG_HEAD refs 
+--- dry run now
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-merge-master exists
+exit=1

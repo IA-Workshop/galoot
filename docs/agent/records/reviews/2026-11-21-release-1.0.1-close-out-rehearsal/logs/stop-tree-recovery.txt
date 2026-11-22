@@ -1,0 +1,28 @@
+--- simulation cleanup (not a recovery step): the "other session" checkout catches up, and its hook is removed
+removed '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-tree/.git/hooks/post-merge'
+--- recovery
+$ git branch -f master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+exit=0
+HEAD refs/heads/main 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+refs/heads/main 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+$ close-out-stop-tree.sh --dry-run
+dry run: every check passed; nothing merged or tagged
+exit=0
+$ close-out-stop-tree.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at d7002a46, tag 1.0.1 -> d7002a46. Nothing was pushed.
+To publish:   git push origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+d7002a4695ece045b3b865126c4ab2b98e88e6af 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+c2bcd3ea05910e63c57b9c40dbeb1b122bb57579
+c2bcd3ea05910e63c57b9c40dbeb1b122bb57579
+$ git log -g --format="%h %gs" master (reflog)
+d7002a46 merge main: Merge made by the 'ort' strategy.
+2383e6df branch: Reset to 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+50e30437 merge main: Merge made by the 'ort' strategy.
+2383e6df branch: Created from origin/master

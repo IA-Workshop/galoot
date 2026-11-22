@@ -1,0 +1,29 @@
+mk: full ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-full.sh
+--- diff of the copy against the original
+11c11
+< cd /home/brianm/projects/utils/math-core/galoot
+---
+> cd /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full
+20c20
+< W=/home/brianm/projects/utils/math-core/galoot-master
+---
+> W=/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/full-master
+diff exit=1
+--- hashes real vs clone
+main real=1655ef33ee461785e4d75a88b21f27579fb0e79c clone=1655ef33ee461785e4d75a88b21f27579fb0e79c
+master real=2383e6df5e9dd9e79832a8dbb3d8af9207a5913f clone=2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+1.0.0 real=95a088ec9a15d505b9e150cd103d2d726b7503b0 clone=95a088ec9a15d505b9e150cd103d2d726b7503b0
+1.0.0^{commit} real=2383e6df5e9dd9e79832a8dbb3d8af9207a5913f clone=2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+origin	https://github.com/IA-Workshop/galoot.git (fetch)
+origin	https://github.com/IA-Workshop/galoot.git (push)
+--- state before
+HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full
+HEAD 1655ef33ee461785e4d75a88b21f27579fb0e79c
+branch refs/heads/main
+prune:

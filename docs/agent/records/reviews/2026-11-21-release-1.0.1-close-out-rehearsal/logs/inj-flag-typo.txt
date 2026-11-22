@@ -1,0 +1,19 @@
+mk: flag-typo ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/flag-typo, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-flag-typo.sh
+$ close-out-flag-typo.sh --dryrun
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at babb0361, tag 1.0.1 -> babb0361. Nothing was pushed.
+To publish:   git push origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master babb03615d7119251f0af76ed6be66892d3eb0f5
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 16bac20c8d842bc2a9ed1f77321bdd93874c02f1
+--- real repository: refs named 1.0.0, 1.0.1, main or master in any namespace
+refs/heads/main
+refs/heads/master
+refs/remotes/origin/main
+refs/remotes/origin/master
+refs/tags/1.0.0

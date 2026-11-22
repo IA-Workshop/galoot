@@ -1,0 +1,16 @@
+$ close-out-race-before-merge.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: post-checkout hook moved main to 5772ca2751a38ebcb0d0e978fa5c3e0ff17b5626
+Merge made by the 'ort' strategy.
+done: master is at 1bf8679c, tag 1.0.1 -> 1bf8679c. Nothing was pushed.
+To publish:   git push origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+$ git rev-list --parents -n1 master
+1bf8679c7a4f3743e9a63131e067f23688de0a9f 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 5772ca2751a38ebcb0d0e978fa5c3e0ff17b5626
+$ git rev-parse 1.0.1^{commit}
+1bf8679c7a4f3743e9a63131e067f23688de0a9f
+$ git diff --stat 75b9a030 1.0.1 -- . ":!docs/agent"
+ include/galoot/rehearsal_unchecked.hpp | 1 +
+ 1 file changed, 1 insertion(+)

@@ -1,0 +1,11 @@
+mk: matrix-row-removed ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/matrix-row-removed, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-matrix-row-removed.sh
+=== injection: matrix-row-removed
+--- $ close-out-matrix-row-removed.sh --dry-run
+matrix rows 32, failed 0
+close-out: matrix rows
+exit=1
+--- $ close-out-matrix-row-removed.sh
+matrix rows 32, failed 0
+close-out: matrix rows
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

@@ -1,0 +1,18 @@
+--- recovery route A: finish the last step by hand
+$ git rev-list --parents -n1 master; git diff --stat main master
+470868796d5dad374909b9907b3b5d2873b881e8 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 1655ef33ee461785e4d75a88b21f27579fb0e79c
+diff exit=0
+$ git config --unset tag.gpgSign   (the fault, removed; or fix the signing setup)
+$ git tag -a 1.0.1 master -m "galoot core 1.0.1, CONVENTIONS 1.18"
+exit=0
+object 470868796d5dad374909b9907b3b5d2873b881e8
+type commit
+tag 1.0.1
+tagger (withheld)
+
+galoot core 1.0.1, CONVENTIONS 1.18
+470868796d5dad374909b9907b3b5d2873b881e8
+470868796d5dad374909b9907b3b5d2873b881e8
+--- second run of the script refuses:
+close-out: tag 1.0.1 exists
+exit=1
