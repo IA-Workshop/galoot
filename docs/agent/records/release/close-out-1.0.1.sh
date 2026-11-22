@@ -33,7 +33,7 @@ git merge-base --is-ancestor "$T" main || fail "main does not hold T"
 grep -qF "project(galoot VERSION $V LANGUAGES CXX)" CMakeLists.txt || fail "CMake version"
 grep -qF "This is the $V release of the core." README.md || fail "README status line"
 grep -qF "GIT_REPOSITORY \"$URL\"" README.md || fail "README repository URL"
-grep -qF "GIT_TAG \"$V\")" README.md || fail "README tag"
+grep -qxF "  GIT_TAG \"$V\"" README.md || fail "README tag"
 if grep -qF '<galoot-repository-url>' README.md; then fail "README placeholder left"; fi
 grep -qF "## $V " CHANGELOG.md || fail "CHANGELOG.md has no entry for $V"
 [ "$(git remote get-url origin)" = "$URL" ] || fail "origin is not $URL"
