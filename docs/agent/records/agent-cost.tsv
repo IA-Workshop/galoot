@@ -430,3 +430,5 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0049-U2-blind-review	reviewer	opus	257169	63	794	review/docs-tooling 9e60dca; changes requested; workflow agent, transcript token count
 2026-11-21	0049-U2-fix-1	build-expert	opus	275775	108	1250	feature/docs--tooling 4ba7753; workflow agent, transcript token count
 2026-11-21	0049-U2-delta-review-1	reviewer	opus	185248	58	580	review/docs-tooling da97079; approve with minor findings; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-review	reviewer	sonnet	143602	37	388	review/release-1.0.1-close-out 5631cc9; approve, two major findings fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-rehearsal	auditor	opus	181252	61	726	review/release-1.0.1-close-out-rehearsal ffcd457; full run and 31 failure injections in scratch clones; approve, one major finding fixed after it; workflow agent, transcript token count
