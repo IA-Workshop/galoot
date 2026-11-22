@@ -1,0 +1,45 @@
+mk: branch-named-prev ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: branch-named-prev
+--- $ close-out-branch-named-prev.sh '--dry-run'
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-branch-named-prev.sh 
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at 0ff9f52e, tag 1.0.1 -> 0ff9f52e. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- clone state CHANGED:
+--- /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-branch-named-prev-before.txt	2026-11-21 20:12:54.855927751 -0500
++++ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-branch-named-prev-after.txt	2026-11-21 20:12:56.054930092 -0500
+@@ -1,8 +1,9 @@
+ HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+ refs/heads/1.0.0 704f152c64fd3f01e39a66640a254443f3421c0a
+ refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+-refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
++refs/heads/master 0ff9f52e89db36a9bebc2e68fb1fcf965ac7558a
+ refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
++refs/tags/1.0.1 7a32625221589933e61e9b4630733af2eb76b408
+ status:
+ worktrees:
+ worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/branch-named-prev
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: 0ff9f52e89db36a9bebc2e68fb1fcf965ac7558a 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object 0ff9f52e89db36a9bebc2e68fb1fcf965ac7558a (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+--- refs the printed push names, as git would resolve them
+$ git for-each-ref refs/heads/main refs/tags/main
+refs/heads/main 704f152c
+$ git for-each-ref refs/heads/master refs/tags/master
+refs/heads/master 0ff9f52e
+$ git for-each-ref refs/heads/1.0.0 refs/tags/1.0.0
+refs/heads/1.0.0 704f152c
+refs/tags/1.0.0 95a088ec
+$ git for-each-ref refs/heads/1.0.1 refs/tags/1.0.1
+refs/tags/1.0.1 7a326252

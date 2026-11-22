@@ -1,0 +1,20 @@
+# Line 86: the CHANGELOG heading test, fed by hand
+'## 1.0.1 (2026-11-21)'      found
+'### 1.0.1 (2026-11-21)'     not found
+' ## 1.0.1 (2026-11-21)'     not found
+'## 1.0.10 (2027-01-01)'     not found
+'## 1.0.1'                   not found
+'## 1.0.1x'                  not found
+
+# Line 119: `git worktree list --porcelain | grep -qx ...` under pipefail, when the match comes early and the writer still has text to write
+# (the writer: a printf of the matching line, then a python3 -I one-liner writing N bytes of text lines; the statuses are of writer and grep)
+8000 further bytes, try 1: detected (statuses: 0 0)
+8000 further bytes, try 2: detected (statuses: 0 0)
+8000 further bytes, try 3: detected (statuses: 0 0)
+70000 further bytes, try 1: detected (statuses: 0 0)
+70000 further bytes, try 2: detected (statuses: 0 0)
+70000 further bytes, try 3: detected (statuses: 0 0)
+2000000 further bytes, try 1: NOT detected (statuses: 1 0)
+2000000 further bytes, try 2: NOT detected (statuses: 1 0)
+2000000 further bytes, try 3: NOT detected (statuses: 1 0)
+the real repository's porcelain listing is 7814 bytes, 47 worktrees

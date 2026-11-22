@@ -1,0 +1,11 @@
+HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+refs/heads/master 9bd840b53dabd9229c8d7c33a4841aaa9215559f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 6bb7068523f6cdf464ff2a45fbc92b7f4e7f884d
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/arg-empty
+HEAD 704f152c64fd3f01e39a66640a254443f3421c0a
+branch refs/heads/main
+prune:

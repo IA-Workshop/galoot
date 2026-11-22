@@ -1,0 +1,11 @@
+mk: matrix-row-failed ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/matrix-row-failed, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-matrix-row-failed.sh
+=== injection: matrix-row-failed
+--- $ close-out-matrix-row-failed.sh --dry-run
+matrix rows 33, failed 1
+close-out: matrix rows
+exit=1
+--- $ close-out-matrix-row-failed.sh
+matrix rows 33, failed 1
+close-out: matrix rows
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

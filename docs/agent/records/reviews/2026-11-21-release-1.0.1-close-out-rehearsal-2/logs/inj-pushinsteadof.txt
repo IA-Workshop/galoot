@@ -1,0 +1,9 @@
+mk: pushinsteadof ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: pushinsteadof
+--- $ close-out-pushinsteadof.sh '--dry-run'
+close-out: origin's push URL is not https://github.com/IA-Workshop/galoot.git
+exit=1
+--- $ close-out-pushinsteadof.sh 
+close-out: origin's push URL is not https://github.com/IA-Workshop/galoot.git
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

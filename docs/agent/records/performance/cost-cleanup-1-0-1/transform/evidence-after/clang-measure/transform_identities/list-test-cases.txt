@@ -1,0 +1,6 @@
+[doctest] listing all test case names
+===============================================================================
+versors of hyperplanes act as outermorphisms and compose over many forms
+versors of hyperplanes act as outermorphisms and compose at the seeds that once overflowed the test rational
+===============================================================================
+[doctest] unskipped test cases passing the current filters: 2

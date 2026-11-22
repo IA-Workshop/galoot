@@ -1,0 +1,44 @@
+mk: assume-unchanged-edit ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: assume-unchanged-edit
+--- $ close-out-assume-unchanged-edit.sh '--dry-run'
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+--- $ close-out-assume-unchanged-edit.sh 
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at c4f72258, tag 1.0.1 -> c4f72258. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- clone state CHANGED:
+--- /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-assume-unchanged-edit-before.txt	2026-11-21 20:12:35.590890180 -0500
++++ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-assume-unchanged-edit-after.txt	2026-11-21 20:12:36.546892042 -0500
+@@ -1,7 +1,8 @@
+ HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+ refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+-refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
++refs/heads/master c4f722581e403e25b9d2013b86498dfb945231c0
+ refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
++refs/tags/1.0.1 11144f6092501fb1e40f583a49ae008cbbc6f78b
+ status:
+ worktrees:
+ worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/assume-unchanged-edit
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: c4f722581e403e25b9d2013b86498dfb945231c0 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object c4f722581e403e25b9d2013b86498dfb945231c0 (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a
+--- the hidden edit and the release: README.md
+$ git ls-files -v README.md
+h README.md
+$ git diff --quiet 704f152c 1.0.1^{tree}; echo $?
+0
+$ diff <(git show 1.0.1:README.md) README.md
+23c23
+< This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+---
+> This is the 1.0.2 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what

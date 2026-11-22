@@ -1,0 +1,30 @@
+$ git -C W merge --abort
+exit=0
+$ git -C C worktree remove W
+exit=0
+$ git worktree prune --dry-run -v
+--- state
+HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-merge
+HEAD 1655ef33ee461785e4d75a88b21f27579fb0e79c
+branch refs/heads/main
+prune:
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-merge-master': No such file or directory
+--- remove the injected hook (the fault), then the script again
+removed '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-merge/.git/hooks/pre-merge-commit'
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at 1ed99673, tag 1.0.1 -> 1ed99673. Nothing was pushed.
+To publish:   git push origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+1ed9967311762879d4d2d73bc7f919da356ab8dc 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 1655ef33ee461785e4d75a88b21f27579fb0e79c
+6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+1ed9967311762879d4d2d73bc7f919da356ab8dc

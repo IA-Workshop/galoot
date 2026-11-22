@@ -1,0 +1,46 @@
+$ g++ -std=c++23 -Iinclude -Wall -Wextra -fsyntax-only -DCASE=4 docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp
+In file included from include/galoot/presets/rga3.hpp:10,
+                 from docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:5:
+include/galoot/presets/rga3/motions.hpp: In instantiation of ‘constexpr galoot::presets::rga3::Motor<T> galoot::presets::rga3::translation(T, T, T) [with T = ring; Motor<T> = galoot::core::mv<algebra, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}, ring>]’:
+docs/agent/records/hardening/0047-audit/numerical/p07_diagnostics.cpp:47:50:   required from here
+   47 | const auto t = galoot::presets::rga3::translation(ring{1}, ring{2}, ring{3});
+      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+include/galoot/presets/rga3/motions.hpp:162:34: error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
+  162 |       T{0}, T{0}, T{0}, T{1}, dx / T{2}, dy / T{2}, dz / T{2}, T{0},
+      |                               ~~~^~~~~~
+include/galoot/presets/rga3/motions.hpp:162:45: error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
+  162 |       T{0}, T{0}, T{0}, T{1}, dx / T{2}, dy / T{2}, dz / T{2}, T{0},
+      |                                          ~~~^~~~~~
+include/galoot/presets/rga3/motions.hpp:162:56: error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
+  162 |       T{0}, T{0}, T{0}, T{1}, dx / T{2}, dy / T{2}, dz / T{2}, T{0},
+      |                                                     ~~~^~~~~~
+include/galoot/presets/rga3/motions.hpp:163:3: error: no matching function for call to ‘galoot::core::mv<galoot::presets::rga3::algebra, galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}, ring>::mv(<brace-enclosed initializer list>)’
+  163 |   };
+      |   ^
+  • there are 12 candidates
+In file included from include/galoot/core/basis_change.hpp:130,
+                 from include/galoot/core.hpp:8,
+                 from include/galoot/presets/rga3/motions.hpp:26:
+    • candidate 1: ‘template<long unsigned int N> constexpr galoot::core::mv<Alg, Blades, T>::mv(std::remove_cvref_t<T> (&)[N]) [with long unsigned int N = N; Alg = galoot::presets::rga3::algebra; blade_set<...auto...> Blades = galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:713:22:
+        713 |   constexpr explicit mv(const std::remove_cvref_t<T> (& /*values*/)[N]) {
+            |                      ^~
+      • candidate expects 1 argument, 8 provided
+    • candidate 2: ‘template<class Value>  requires  not_a_coefficient<Value, T> constexpr galoot::core::mv<Alg, Blades, T>::mv(Value&&) [with Alg = galoot::presets::rga3::algebra; blade_set<...auto...> Blades = galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:690:22:
+        690 |   constexpr explicit mv(Value&& /*value*/) {
+            |                      ^~
+      • candidate expects 1 argument, 8 provided
+    • candidate 3: ‘template<class ... Values>  requires  sizeof ... (Values ...) > 0 && sizeof ... (Values ...) != galoot::core::mv<Alg, Blades, T>::component_count && !(sizeof ... (Values ...) == 1 && ((multivector_or_derived<Values> && ...))) && !(sizeof ... (Values ...) == 1 && ((not_a_coefficient<Values, T> && ...))) constexpr galoot::core::mv<Alg, Blades, T>::mv(Values&& ...) [with Values = {Values ...}; Alg = galoot::presets::rga3::algebra; blade_set<...auto...> Blades = galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:675:46:
+        675 |   constexpr explicit(sizeof...(Values) == 1) mv(Values&&... /*values*/) {
+            |                                              ^~
+      • template argument deduction/substitution failed:
+    • candidate 4: ‘template<class OtherAlg, blade_set<...auto...> From, class U>  requires (metric_like<OtherAlg>) && (destructible<U>) && (!(same_as<OtherAlg, Alg>) || !(same_as<U, T>)) constexpr galoot::core::mv<Alg, Blades, T>::mv(const galoot::core::mv<OtherAlg, From, U>&) [with blade_set<...auto...> From = OtherAlg; U = From; Alg = galoot::presets::rga3::algebra; blade_set<...auto...> Blades = galoot::core::blade_set<8>{std::array<galoot::core::oriented_blade, 8>{std::__array_traits<galoot::core::oriented_blade, 8>::_Type{galoot::core::oriented_blade{9, -1}, galoot::core::oriented_blade{10, -1}, galoot::core::oriented_blade{12, -1}, galoot::core::oriented_blade{15, 1}, galoot::core::oriented_blade{6, 1}, galoot::core::oriented_blade{5, -1}, galoot::core::oriented_blade{3, 1}, galoot::core::oriented_blade{0, 1}}}}; T = ring]’
+      include/galoot/core/mv.hpp:650:22:
+        650 |   constexpr explicit mv(const mv<OtherAlg, From, U>& /*source*/) {
+exit status: 1
+errors: 4
+error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
+error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)
+error: no match for ‘operator/’ (operand types are ‘ring’ and ‘ring’)

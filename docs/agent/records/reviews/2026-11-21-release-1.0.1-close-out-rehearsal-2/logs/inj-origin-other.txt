@@ -1,0 +1,9 @@
+mk: origin-other ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: origin-other
+--- $ close-out-origin-other.sh '--dry-run'
+close-out: origin is not https://github.com/IA-Workshop/galoot.git
+exit=1
+--- $ close-out-origin-other.sh 
+close-out: origin is not https://github.com/IA-Workshop/galoot.git
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

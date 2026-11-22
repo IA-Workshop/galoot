@@ -1,0 +1,10 @@
+mk: w-link-to-dir ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: w-link-to-dir
+--- $ close-out-w-link-to-dir.sh '--dry-run'
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/w-link-to-dir-master exists
+exit=1
+--- $ close-out-w-link-to-dir.sh 
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/w-link-to-dir-master exists
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)
+--- W after the runs: lrwxrwxrwx 0 entries

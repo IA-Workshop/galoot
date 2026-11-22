@@ -185,11 +185,11 @@ template <std::size_t P, std::size_t Q, std::size_t Z,
     detail::check_generator_count<P + Q + Z, MaxN>();
   }
 
-  metric<P + Q + Z> m{};
+  metric<P + Q + Z> result{};
   for (std::size_t i = 0; i < P + Q; ++i) {
-    m.gram[i][i] = i < P ? 1 : -1;
+    result.gram[i][i] = i < P ? 1 : -1;
   }
-  return m;
+  return result;
 }
 
 /// The rigid algebra rigid(D), which is R(D, 0, 1) with D + 1 generators.
@@ -221,13 +221,13 @@ template <std::size_t D, std::size_t MaxN = max_generators>
     detail::check_generator_count<D + 2, MaxN>();
   }
 
-  metric<D + 2> m{};
+  metric<D + 2> result{};
   for (std::size_t i = 0; i < D; ++i) {
-    m.gram[i][i] = 1;
+    result.gram[i][i] = 1;
   }
-  m.gram[D][D + 1] = -1;
-  m.gram[D + 1][D] = -1;
-  return m;
+  result.gram[D][D + 1] = -1;
+  result.gram[D + 1][D] = -1;
+  return result;
 }
 
 /// The metric whose Gram matrix is `gram`, for a form that no other factory
@@ -246,32 +246,32 @@ template <std::size_t N, std::size_t MaxN = max_generators>
 // NOLINTNEXTLINE(*-avoid-c-arrays): a C array lets N be deduced from braces.
 from_gram(const entry_type (&gram)[N][N]) {
   detail::check_generator_count<N, MaxN>();
-  metric<N> m{};
+  metric<N> result{};
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j < N; ++j) {
-      m.gram[i][j] = gram[i][j];
+      result.gram[i][j] = gram[i][j];
     }
   }
 
   // Each message stays on the line of its GALOOT_ASSERT, because a compiler
   // shows only that line of a failed constant evaluation.
-  const bool in_range = m.entries_in_range();
-  GALOOT_ASSERT(m.is_symmetric(), "from_gram: the form must be symmetric");
+  const bool in_range = result.entries_in_range();
+  GALOOT_ASSERT(result.is_symmetric(), "from_gram: the form must be symmetric");
   GALOOT_ASSERT(in_range, "from_gram: an entry is beyond max_form_entry");
-  return m;
+  return result;
 }
 
 namespace detail {
 
-// Whether m is symmetric with every entry within max_form_entry, in one pass
+// Whether form is symmetric with every entry within max_form_entry, in one pass
 // over the pairs g_ij, g_ji with j <= i. When the two entries of a pair are
 // equal, the range check of one covers both, so every entry is checked.
 template <std::size_t N>
-constexpr bool is_valid_form(const metric<N>& m) noexcept {
+constexpr bool is_valid_form(const metric<N>& form) noexcept {
   for (std::size_t i = 0; i < N; ++i) {
     for (std::size_t j = 0; j <= i; ++j) {
-      const entry_type a = m.gram[i][j];
-      const entry_type b = m.gram[j][i];
+      const entry_type a = form.gram[i][j];
+      const entry_type b = form.gram[j][i];
       if (a != b || a < -max_form_entry || a > max_form_entry) {
         return false;
       }

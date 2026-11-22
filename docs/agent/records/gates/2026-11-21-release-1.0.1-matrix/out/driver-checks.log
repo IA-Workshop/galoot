@@ -1,0 +1,15 @@
+23:40:29 conventions_check exit 0: timed: check conventions_check@578aa15 took 2.787 s (exit 0)
+23:40:29 gate:comments_test exit 0: timed: check gate:comments_test@578aa15 took 0.160 s (exit 0)
+23:40:29 gate:cost-comments-plan exit 0: timed: check gate:cost-comments-plan@578aa15 took 0.061 s (exit 0)
+23:40:29 gate:cost-comments-limits exit 0: timed: check gate:cost-comments-limits@578aa15 took 0.069 s (exit 0)
+23:41:53 gate:cost-selfcheck-clang exit 0: timed: check gate:cost-selfcheck-clang@578aa15 took 83.112 s (exit 0)
+23:43:16 gate:cost-selfcheck-gcc exit 0: timed: check gate:cost-selfcheck-gcc@578aa15 took 83.380 s (exit 0)
+23:43:29 gate:jobserver-check exit 0: timed: check gate:jobserver-check@578aa15 took 12.669 s (exit 0)
+2026-11-21T23:43:29Z seeds start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+00:01:58 core_identities_test: 50 seeds, 0 failed
+00:02:11 core_dual_identities_test: 50 seeds, 0 failed
+00:02:24 core_transform_identities_test: 50 seeds, 0 failed
+00:02:35 core_identities_rounding_test: 50 seeds, 0 failed
+00:02:40 core_basis_change_test: 50 seeds, 0 failed
+00:02:52 core_basis_change_identities_test: 50 seeds, 0 failed
+2026-11-22T00:02:53Z phase checks done

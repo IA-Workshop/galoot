@@ -1,0 +1,26 @@
+ninja: Entering directory `build/gcc-debug'
+[0/2] Re-checking globbed directories...
+-- GLOB mismatch!
+The following files were added:
+  +<worktree>/test/core/identities_rounding_antiproduct_test.cpp
+  +<worktree>/test/core/identities_rounding_complement_antiproduct_test.cpp
+  +<worktree>/test/core/identities_rounding_complement_product_test.cpp
+  +<worktree>/test/core/identities_rounding_complement_wedge_test.cpp
+  +<worktree>/test/core/identities_rounding_product_test.cpp
+-- GLOB mismatch!
+The following files were added:
+  +<worktree>/test/core/identities_rounding_checks.hpp
+[1/2] Re-running CMake...
+-- Configuring done (0.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: <worktree>/build/gcc-debug
+[0/4] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_complement_wedge_test.cpp.o
+[2/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_test.cpp.o
+[3/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_antiproduct_test.cpp.o
+[4/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_product_test.cpp.o
+[5/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_complement_antiproduct_test.cpp.o
+[6/10] Building CXX object test/CMakeFiles/core_identities_rounding_test.dir/core/identities_rounding_complement_product_test.cpp.o
+[7/10] Linking CXX executable test/core_identities_rounding_test
+timed: build core_identities_rounding_test took 7.215 s (exit 0)

@@ -1,0 +1,28 @@
+### 2026-11-22T01:19:25Z real repository: configuration keys read (values shown; unset prints nothing after '=')
+core.hooksPath=
+tag.gpgSign=
+tag.forceSignAnnotated=
+commit.gpgSign=
+gpg.format=
+gpg.program=
+user.signingkey=
+merge.ff=
+merge.verifySignatures=
+merge.log=
+merge.stat=
+diff.external=
+status.showUntrackedFiles=
+init.templateDir=
+core.fsmonitor=
+push.default=
+push.followTags=
+push.gpgSign=
+remote.origin.url=https://github.com/IA-Workshop/galoot.git 
+remote.origin.pushurl=
+remote.origin.push=
+remote.origin.mirror=
+$ git config --get-regexp ^url\.
+(none)
+user.name set: yes; user.email set: yes (values withheld)
+$ ls .git/hooks | grep -v .sample
+(only samples)

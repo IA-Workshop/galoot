@@ -1,0 +1,28 @@
+mk: branch-named-tag ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/branch-named-tag, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-branch-named-tag.sh
+=== injection: branch-named-tag
+--- $ close-out-branch-named-tag.sh --dry-run
+dry run: every check passed; nothing merged or tagged
+exit=0
+--- $ close-out-branch-named-tag.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+warning: refname '1.0.1' is ambiguous.
+done: master is at 6658533e, tag 1.0.1 -> 6658533e. Nothing was pushed.
+To publish:   git push origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- clone state CHANGED:
+--- /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/logs/state-branch-named-tag-before.txt	2026-11-21 19:54:13.243063395 -0500
++++ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/logs/state-branch-named-tag-after.txt	2026-11-21 19:54:14.084064299 -0500
+@@ -1,8 +1,9 @@
+ HEAD refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+ refs/heads/1.0.1 1655ef33ee461785e4d75a88b21f27579fb0e79c
+ refs/heads/main 1655ef33ee461785e4d75a88b21f27579fb0e79c
+-refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
++refs/heads/master 6658533eb541a9d8dbc78baa05eea9fde95dc399
+ refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
++refs/tags/1.0.1 6351ca4f67c40223cd09f7987218b345f829f0e7
+ status:
+ worktrees:
+ worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/branch-named-tag

@@ -1,0 +1,32 @@
+$ git rev-list --count origin/main..main
+234
+$ git rev-list --count main..origin/main
+0
+$ git merge-base --is-ancestor origin/main main; echo $?
+0
+$ git rev-list --count origin/master..master
+0
+$ git rev-parse origin/main origin/master master 1.0.0 main
+c95fee51248839a81c7ab28e7de610376bcba603
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+95a088ec9a15d505b9e150cd103d2d726b7503b0
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+$ git tag -l
+1.0.0
+$ git for-each-ref refs/remotes
+refs/remotes/origin/HEAD c95fee51
+refs/remotes/origin/main c95fee51
+refs/remotes/origin/master 2383e6df
+$ git rev-list --count main ^origin/main ^origin/master (commits a push of main would send)
+234
+$ estimated thin pack for main over the remote state (bytes)
+4155179
+--- closing-gate rows at T^ in T log
+P=334ec448a7a6
+2026-11-22T00:46:50Z	334ec448a7a6	feature/release-1.0.1	check	-	gate:runlog@334ec44	2.931	0
+2026-11-22T00:46:53Z	334ec448a7a6	feature/release-1.0.1	trace	-	gate:trace@334ec44	0.306	0
+2026-11-22T00:46:54Z	334ec448a7a6	feature/release-1.0.1	check	-	gate:citations@334ec44	0.654	1
+2026-11-22T00:47:04Z	334ec448a7a6	feature/release-1.0.1	check	-	gate:citations-code-paths@334ec44	0.632	0
+--- matrix rows at main
+33 rows, 0 nonzero

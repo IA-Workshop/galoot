@@ -1,0 +1,62 @@
+$ git status (short, untracked all)
+(end status)
+$ git tag -l
+1.0.0
+$ git rev-parse master main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+e6320526f198e1f714a78a2787198495f78f119e
+$ git worktree list
+/home/brianm/projects/utils/math-core/galoot                                               e6320526 [main]
+/home/brianm/projects/utils/math-core/galoot-wt/comment-table-rulings                      ab3e0523 [records/comment-table-rulings]
+/home/brianm/projects/utils/math-core/galoot-wt/conventions-rederived                      105bbfca [research/conventions-rederived]
+/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup                               3a7d1224 [feature/cost-cleanup-1-0-1]
+/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding                     003ab3df [feature/cost-cleanup-1-0-1--rounding]
+/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--tools                        8f48b32d [feature/cost-cleanup-1-0-1--tools]
+/home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--transform                    e6ea5b27 [feature/cost-cleanup-1-0-1--transform]
+/home/brianm/projects/utils/math-core/galoot-wt/docs                                       3a30f14f [feature/docs]
+/home/brianm/projects/utils/math-core/galoot-wt/docs--tooling                              243ed654 [feature/docs--tooling]
+/home/brianm/projects/utils/math-core/galoot-wt/docs-design                                384bb76e [records/docs-design]
+/home/brianm/projects/utils/math-core/galoot-wt/docs-design-rulings                        45ec4cc5 [records/docs-design-rulings]
+/home/brianm/projects/utils/math-core/galoot-wt/gap-register                               7914f555 [records/gap-register]
+/home/brianm/projects/utils/math-core/galoot-wt/gate-release-1.0.1                         859f03a0 [gate/release-1.0.1]
+/home/brianm/projects/utils/math-core/galoot-wt/hardening-audit                            e59488ba [records/hardening-audit]
+/home/brianm/projects/utils/math-core/galoot-wt/hardening-audit-cpp                        4df8976e [records/hardening-audit-cpp]
+/home/brianm/projects/utils/math-core/galoot-wt/hardening-audit-numerical                  ea2847a2 [records/hardening-audit-numerical]
+/home/brianm/projects/utils/math-core/galoot-wt/header-hygiene                             415470e3 [feature/header-hygiene-1-0-1]
+/home/brianm/projects/utils/math-core/galoot-wt/header-hygiene--docs                       86ba743b [feature/header-hygiene-1-0-1--docs]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0043                                  0d066fd1 [plan/0043]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0044                                  8eb88faf [plan/0044]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0045                                  4f7f744b [plan/0045]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0046                                  6e32aa4d [plan/0046]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0047                                  e41f173d [plan/0047]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0048                                  945e86fb [plan/0048]
+/home/brianm/projects/utils/math-core/galoot-wt/plan-0049                                  0f0b6e50 [plan/0049]
+/home/brianm/projects/utils/math-core/galoot-wt/records-cost-cleanup                       0af3419c [records/cost-cleanup-1-0-1]
+/home/brianm/projects/utils/math-core/galoot-wt/records-costs                              807a0e38 [records/costs-2026-11-16]
+/home/brianm/projects/utils/math-core/galoot-wt/records-header-hygiene                     3c0455d5 [records/header-hygiene-1-0-1]
+/home/brianm/projects/utils/math-core/galoot-wt/release-1.0.1                              e6320526 [feature/release-1.0.1]
+/home/brianm/projects/utils/math-core/galoot-wt/review-comment-table-rulings               1066d721 [review/comment-table-rulings]
+/home/brianm/projects/utils/math-core/galoot-wt/review-conventions-rederived               8a68b53b [review/conventions-rederived]
+/home/brianm/projects/utils/math-core/galoot-wt/review-cost-cleanup-tests                  abcd8568 [review/cost-cleanup-1-0-1-tests]
+/home/brianm/projects/utils/math-core/galoot-wt/review-cost-cleanup-tools                  9d1a7b39 [review/cost-cleanup-1-0-1-tools]
+/home/brianm/projects/utils/math-core/galoot-wt/review-docs-design                         78c45dad [review/docs-design]
+/home/brianm/projects/utils/math-core/galoot-wt/review-docs-design-rulings                 981dd71b [review/docs-design-rulings]
+/home/brianm/projects/utils/math-core/galoot-wt/review-docs-tooling                        7f8d654b [review/docs-tooling]
+/home/brianm/projects/utils/math-core/galoot-wt/review-gap-register                        17d762e2 [review/gap-register]
+/home/brianm/projects/utils/math-core/galoot-wt/review-hardening-audit                     df93ace1 [review/hardening-audit]
+/home/brianm/projects/utils/math-core/galoot-wt/review-header-hygiene                      3df1e813 [review/header-hygiene-1-0-1]
+/home/brianm/projects/utils/math-core/galoot-wt/review-release-1.0.1                       9f8a70f2 [review/release-1.0.1]
+/home/brianm/projects/utils/math-core/galoot-wt/review-release-1.0.1-close-out             5631cc97 [review/release-1.0.1-close-out]
+/home/brianm/projects/utils/math-core/galoot-wt/review-release-1.0.1-close-out-2           668314f2 [review/release-1.0.1-close-out-2]
+/home/brianm/projects/utils/math-core/galoot-wt/review-release-1.0.1-close-out-rehearsal   ffcd457a [review/release-1.0.1-close-out-rehearsal]
+/home/brianm/projects/utils/math-core/galoot-wt/review-release-1.0.1-close-out-rehearsal-2 606d9113 [review/release-1.0.1-close-out-rehearsal-2]
+/home/brianm/projects/utils/math-core/galoot-wt/review-simplification-survey               cfad408b [review/simplification-survey]
+/home/brianm/projects/utils/math-core/galoot-wt/review-simplification-survey-fix           63e8c8ec [review/simplification-survey-fix]
+/home/brianm/projects/utils/math-core/galoot-wt/simplification-survey                      d345390a [records/simplification-survey]
+/home/brianm/projects/utils/math-core/galoot-wt/simplification-survey-fix                  e9216178 [records/simplification-survey-fix]
+--- extra
+HEAD refs/heads/main
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+galoot-master absent
+no MERGE_* or TAG_EDITMSG in .git
+index sha256 ec48336f5b35e9e4

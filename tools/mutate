@@ -37,15 +37,15 @@ tree exists, each selection selects at least one test, and each selected
 test runs only programs that its selection's targets build. Then, per build
 preset: the unmutated baseline must build and pass; each mutant is applied,
 the selection's programs are deleted and rebuilt with `ninja -k 0`, CTest
-runs the selected tests whose programs now exist (so no test runs a program
-left from an earlier build), and the file is restored byte for byte; at the
-end the targets are rebuilt. Every build and test goes through tools/timed
-as mutant:<name>, mutant:baseline, or mutant:restore. Edited files are
-restored after each mutant and on SIGINT or SIGTERM, and a run that stops
-early rebuilds the targets too, so that no program is left deleted; after a
-SIGKILL, `git status` shows any file left mutated. A test that CTest names
-as failed, one that timed out among them, is a kill; a CTest run that fails
-without naming a test leaves its mutant unjudged.
+runs the selected tests whose programs now exist, in parallel on the pool (so
+no test runs a program left from an earlier build), and the file is restored
+byte for byte; at the end the targets are rebuilt. Every build and test goes
+through tools/timed as mutant:<name>, mutant:baseline, or mutant:restore.
+Edited files are restored after each mutant and on SIGINT or SIGTERM, and a
+run that stops early rebuilds the targets too, so that no program is left
+deleted; after a SIGKILL, `git status` shows any file left mutated. A test
+that CTest names as failed, one that timed out among them, is a kill; a CTest
+run that fails without naming a test leaves its mutant unjudged.
 
 Each failed object is classified by its first error line: `warning` if it
 carries [-Werror; `assert` if it is a failed static assertion or a call to
@@ -439,10 +439,13 @@ class Run:
         with tempfile.NamedTemporaryFile("w", suffix=".txt") as listing:
             listing.write("".join(f"{test}\n" for test in tests))
             listing.flush()
+            # --parallel with no number takes one slot of the shared pool
+            # per test, as the presets' runs do, so the tests of a
+            # selection run at once without oversubscribing the machine.
             result = self.timed("test", tree.preset, name,
                                 ["ctest", "--test-dir", str(tree.path),
                                  "--tests-from-file", listing.name,
-                                 "--output-on-failure"])
+                                 "--parallel", "--output-on-failure"])
         return result.returncode, result.stdout
 
     def preset(self, preset):

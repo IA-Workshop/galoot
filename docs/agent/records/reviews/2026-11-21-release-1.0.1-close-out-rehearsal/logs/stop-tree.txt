@@ -1,0 +1,25 @@
+$ close-out-stop-tree.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+rehearsal: post-merge hook moved main to 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+close-out: master's tree differs from main's
+exit=1
+--- state after
+HEAD refs/heads/main 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+refs/heads/main 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+refs/heads/master 50e304372fba16ddd091be73080838ca06060246
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+D  docs/agent/records/rehearsal-concurrent.txt
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/stop-tree
+HEAD 90152aacf69b4a931c4af1dbbe7afbc6d18b910c
+branch refs/heads/main
+prune:
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/stop-tree-master': No such file or directory
+$ git -C C rev-list --parents -n1 master
+50e304372fba16ddd091be73080838ca06060246 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 1655ef33ee461785e4d75a88b21f27579fb0e79c
+$ git -C C diff --stat main master
+ docs/agent/records/rehearsal-concurrent.txt | 1 -
+ 1 file changed, 1 deletion(-)

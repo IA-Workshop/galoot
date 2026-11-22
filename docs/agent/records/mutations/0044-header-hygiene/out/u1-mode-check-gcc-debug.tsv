@@ -1,0 +1,4 @@
+mutant	preset	revision	verdict	expected	killers	build_failures	not_run	failed_cases	leaks	problems
+undef_dropped	gcc-debug	97dd59709ea5	killed	killed	core.public_macros	-	-	-	-	-
+error_group_undefined	gcc-debug	97dd59709ea5	killed	killed	core.force_inline_on	-	-	-	-	-
+elif_split	gcc-debug	97dd59709ea5	killed	killed	core.force_inline_empty	-	-	-	-	-

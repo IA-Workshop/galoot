@@ -1,0 +1,44 @@
+--- origin/main in the clone: e6320526f198e1f714a78a2787198495f78f119e (the real repository's main; the real repository's own origin/main is c95fee51248839a81c7ab28e7de610376bcba603)
+$ git push scratch c95fee51...:refs/heads/main 2383e6df...:refs/heads/master refs/tags/1.0.0:refs/tags/1.0.0
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/full.git
+ * [new branch]        c95fee51248839a81c7ab28e7de610376bcba603 -> main
+ * [new branch]        2383e6df5e9dd9e79832a8dbb3d8af9207a5913f -> master
+ * [new tag]           1.0.0 -> 1.0.0
+$ git ls-remote /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/full.git   (before the printed push)
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	HEAD
+c95fee51248839a81c7ab28e7de610376bcba603	refs/heads/main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/tags/1.0.0^{}
+--- the printed push, remote name origin -> scratch
+$ git push --atomic scratch e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/full.git
+   c95fee51..e6320526  e6320526f198e1f714a78a2787198495f78f119e -> main
+   2383e6df..310e4eaa  master -> master
+ * [new tag]           1.0.1 -> 1.0.1
+exit=0
+--- the same push again with --porcelain --dry-run (flags show ff/up-to-date per ref; nothing sent)
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/full.git
+=	e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main	[up to date]
+=	refs/heads/master:refs/heads/master	[up to date]
+=	refs/tags/1.0.0:refs/tags/1.0.0	[up to date]
+=	refs/tags/1.0.1:refs/tags/1.0.1	[up to date]
+Done
+exit=0
+--- the bare repository afterwards
+$ git -C <bare> for-each-ref
+refs/heads/main commit e6320526f198e1f714a78a2787198495f78f119e
+refs/heads/master commit 310e4eaa24dc5a5dbcfeb284094432de43bb366f
+refs/tags/1.0.0 tag 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 tag 4f407956a0d2c496ce7053a5a18f303ad13cde90
+main = M: yes
+master = clone master: yes
+tag 1.0.0 = 95a088ec: yes
+tag 1.0.1 = clone's tag object: yes; peeled 310e4eaa24dc5a5dbcfeb284094432de43bb366f
+--- the printed check line, local equivalent
+$ git -c credential.helper= ls-remote <bare> refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+e6320526f198e1f714a78a2787198495f78f119e	refs/heads/main
+310e4eaa24dc5a5dbcfeb284094432de43bb366f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+4f407956a0d2c496ce7053a5a18f303ad13cde90	refs/tags/1.0.1
+exit=0

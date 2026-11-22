@@ -1,0 +1,12 @@
+mk: pushurl-wrong-first ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: pushurl-wrong-first
+M (main before the runs): e6320526f198e1f714a78a2787198495f78f119e
+--- $ close-out-pushurl-wrong-first.sh '--dry-run'   ($# = 1)
+close-out: origin's push URL is not https://github.com/IA-Workshop/galoot.git alone
+exit=1
+(clone state unchanged)
+--- $ close-out-pushurl-wrong-first.sh    ($# = 0)
+close-out: origin's push URL is not https://github.com/IA-Workshop/galoot.git alone
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

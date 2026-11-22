@@ -1,0 +1,9 @@
+mk: detached-head ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/detached-head, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-detached-head.sh
+=== injection: detached-head
+--- $ close-out-detached-head.sh --dry-run
+close-out: not on main
+exit=1
+--- $ close-out-detached-head.sh
+close-out: not on main
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

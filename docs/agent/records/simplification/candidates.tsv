@@ -1,0 +1,148 @@
+unit	class	file	lines	entity	action	replaced_by	test_files	stays	generator	condition
+A1	a	include/galoot/core/basis_change.hpp	304-310	change_add	delete	nothing; no header or test calls it	0	no	no
+A1	a	include/galoot/core/basis_change.hpp	794-798	blade_image	delete	callers write blade_image<Capacity>(widened(change), a)	1	no	no	the plan says no caller; test/core/basis_change_identities_test.cpp:75 calls it with a basis_change (from :222), so that test changes first (W9) or the overload stays
+B5	b	include/galoot/core/blade_product.hpp	69-77	add_checked	wrap	two lines: the recording add, then GALOOT_ASSERT with the same message	1	no	pinned
+B5	b	include/galoot/core/blade_product.hpp	87-96	multiply_checked	wrap	two lines: the recording multiply, then GALOOT_ASSERT with the same message	2	no	pinned	at run time without checking the wrapper returns 0 where today the overflow is undefined; constant evaluation is unchanged, since GALOOT_ASSERT always checks there
+B5	b	include/galoot/core/basis_change.hpp	263-273	multiply_noting	move	the one recording multiply, moved down to blade_product.hpp	0	no	yes
+B5	b	include/galoot/core/basis_change.hpp	275-283	add_noting	move	the one recording add, moved down to blade_product.hpp	0	no	yes
+B5	b	include/galoot/core/basis_change.hpp	296-302	change_multiply	keep	already the wrapper shape (record, then check_fits); calls the moved function	0	no	yes
+B1	b	include/galoot/core/plan.hpp	723-734	map_term	delete	typed_term with b left 0	2	no	pinned
+B1	b	include/galoot/core/plan.hpp	741-750	typed_map	delete	typed_plan<R, K>	1	no	pinned
+B1	b	include/galoot/core/plan.hpp	844-851	filled_map	delete	the fill step the product path uses (generate_map already writes plan_term)	0	no	pinned
+B1	b	include/galoot/core/plan.hpp	853-871	typed_map_of	delete	typed<R>(generated, found), as make_product_plan does	0	no	pinned
+B1	b	include/galoot/core/plan.hpp	877-914	make_unary_map	rewrite	builds a typed_plan through collected and typed; returns typed_plan<0, 0> on a bad set	0	no	pinned	core.plan_cost_model.reverse_full7 and .right_complement_full8 read this path
+B1	b	include/galoot/core/plan.hpp	941-945	unary_map	keep	same name and .result; .terms becomes typed_term	8	yes	pinned
+B1	b	include/galoot/core/mv.hpp	839-856	make_map_kernel	rewrite	reads typed_term; its loop becomes make_product_kernel's (merged in B2)	0	no	yes
+B6	b	include/galoot/core/plan.hpp	406-412	plan_defects	merge	one defects structure for the three self-checks	0	no	pinned
+B6	b	include/galoot/core/plan.hpp	418-439	defects_of	merge	the shared order loop, written once	1	no	pinned
+B6	b	include/galoot/core/plan.hpp	443-449	typed_defects	merge	the one defects structure	1	no	pinned
+B6	b	include/galoot/core/plan.hpp	456-491	typed_defects_of	merge	the shared result-set loop and used-blade loop, written once	1	no	pinned
+B6	b	include/galoot/core/plan.hpp	773-781	map_defects	merge	the one defects structure	1	no	pinned
+B6	b	include/galoot/core/plan.hpp	793-842	map_defects_of	merge	the shared loops plus the map's own checks (per input, blade, complement sign)	1	no	pinned
+B6	b	include/galoot/core/plan.hpp	558-586	make_product_plan (its static_asserts)	keep	all ten messages stay (test/internal_messages.txt)	0	no	pinned	class (e) item 7
+B6	b	include/galoot/core/plan.hpp	891-909	make_unary_map (its static_asserts)	keep	all seven messages stay	0	no	pinned	class (e) item 7
+B2	b	include/galoot/core/mv.hpp	810-828	make_product_kernel	merge	one builder: reindex a table onto a target layout with its orientation signs, then mark_first_terms	0	no	yes	product_kernel (830-835) stays a variable template
+B2	b	include/galoot/core/mv.hpp	839-856	make_map_kernel	merge	the one builder (after B1 it is make_product_kernel's twin)	0	no	yes	map_kernel (858-861) stays
+B2	b	include/galoot/core/mv.hpp	249-269	make_identity_kernel	merge	the one builder over the identity table	0	no	yes	identity_kernel (272-273) stays
+B2	b	include/galoot/core/linear.hpp	129-143	make_second_operand_kernel	merge	the one builder, with the sign and the first-term rule of a sum	0	no	yes	its first flag is not mark_first_terms's, so the builder needs a parameter or this stays
+B2	b	include/galoot/core/dual.hpp	148-168	make_scalar_part_kernel	merge	the one builder over a selection of the product plan's terms	1	no	yes	the plan counts five builders without naming them; this row and the next are the reading that fits its four headers
+B2	b	include/galoot/core/basis_change.hpp	904-913	typed_change (its kernel_term loop)	merge	the one builder, after the denominators are set	0	no	yes	see the row above
+B3	b	include/galoot/core/mv.hpp	240-247	kept_count	delete	the builder writes while there is room and returns its count, as generate_plan does	0	no	yes	measure on transform_test.cpp (an instantiation per kernel must not be added)
+B3	b	include/galoot/core/mv.hpp	276-287	make_dropped_positions	rewrite	sized by the shared count-then-fill helper	1	no	yes	dropped_positions is named by 1 test file
+B3	b	include/galoot/core/dual.hpp	133-142	scalar_term_count	delete	the shared helper	0	no	yes
+B3	b	include/galoot/core/dual.hpp	178-185	make_scalar_part_layout	rewrite	reads the helper's count	0	no	yes
+B3	b	include/galoot/core/transform.hpp	219-226	second_term_count	delete	the shared helper	0	no	yes
+B3	b	include/galoot/core/transform.hpp	320-328	first_term_count	delete	the shared helper	0	no	yes
+B3	b	include/galoot/core/transform.hpp	230-238	dropped_blade_count	delete	the shared helper	2	no	yes	transform_test.cpp:1326 and transform_rounding_test.cpp:802, :1071 name it
+B3	b	include/galoot/core/transform.hpp	242-254	make_dropped_places	rewrite	the shared helper	0	no	yes
+B3	b	include/galoot/core/transform.hpp	271-301	make_second_kernel	rewrite	sized by the helper	0	no	yes	second_kernel stays (6.2)
+B3	b	include/galoot/core/transform.hpp	336-362	make_first_kernel	rewrite	sized by the helper	0	no	yes	first_kernel stays (6.2)
+B4	b	include/galoot/core/mv.hpp	1046-1057	truncate	merge	part's body plus the check of dropped coefficients	0	no	no
+B4	b	include/galoot/core/mv.hpp	1107-1115	part	merge	the one body	0	no	no
+B4	b	include/galoot/core/mv.hpp	1061-1066	truncate	merge	the Target form over the one body	0	no	no
+B4	b	include/galoot/core/mv.hpp	1119-1124	part	merge	the Target form over the one body	0	no	no
+B4	b	include/galoot/core/mv.hpp	1076-1087	truncate	merge	one rejecting body, where the two literals allow	0	no	no	the literals differ ("truncate:" and "part:"); under O2 as ruled (C) they may become one
+B4	b	include/galoot/core/mv.hpp	1133-1144	part	merge	the same	0	no	no
+B4	b	include/galoot/core/basis_change.hpp	1140-1163	change_basis	merge	one detail body parameterized by direction, as change_map_of<C, Back, S> is	0	no	no
+B4	b	include/galoot/core/basis_change.hpp	1176-1200	change_basis_back	merge	the same body	0	no	no
+B4	b	include/galoot/core/basis_change.hpp	1207-1281	change_basis, change_basis_back (six rejecting overloads)	keep	declarations stay; bodies merge only where the literals allow	0	no	no
+B7	b	include/galoot/core/mv.hpp	513-562	mv (scalar checks)	rewrite	nine assertions on the fault value instead of nine named booleans	0	no	no	GCC prints the asserted expression; keep a name where both compilers' full output gets worse
+B7	b	include/galoot/core/linear.hpp	359-367	operator*	rewrite	one coefficient-wise helper	0	no	no
+B7	b	include/galoot/core/linear.hpp	373-381	operator*	rewrite	the same helper	0	no	no
+B7	b	include/galoot/core/linear.hpp	412-424	operator/	rewrite	the same helper (the division-by-zero assertion stays)	0	no	no
+B7	b	include/galoot/core/linear.hpp	429-436	operator-	rewrite	the same helper	0	no	no
+B9	b	include/galoot/core/basis_change.hpp	1000-1002	(lint marker and its reason)	delete	one exclusion with its reason in .clang-tidy	-	no	no	O6 ruled: exclude, after B9 confirms every report is the false one
+B9	b	include/galoot/core/basis_change.hpp	1079-1083	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/basis_change.hpp	1106	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/dual.hpp	171-173	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/dual.hpp	286-290	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/dual.hpp	361	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/mv.hpp	799-801	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/mv.hpp	804	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/mv.hpp	833	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/mv.hpp	836	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/mv.hpp	860	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/plan.hpp	632-634	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/plan.hpp	942-944	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/product.hpp	181-186	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/product.hpp	217	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	366	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	372	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	445	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	455	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	624-626	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/transform.hpp	635	(lint marker)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/unary.hpp	39-43	(lint marker and its reason)	delete	the same	-	no	no	as above
+B9	b	include/galoot/core/unary.hpp	59	(lint marker)	delete	the same	-	no	no	as above
+B8	b	include/galoot/core/mv.hpp	346-356	run_map	merge	one pack-expansion runner for a kernel of one or two operands	0	no	no	only if object code is identical on both compilers (6.4); otherwise closed as rejected
+B8	b	include/galoot/core/mv.hpp	358-369	run_product	merge	the one runner	0	no	no	as above
+B8	b	include/galoot/core/linear.hpp	154-167	run_sum	merge	the one runner, run twice on one result	0	no	no	as above
+B8	b	include/galoot/core/basis_change.hpp	1021-1028	run_change	merge	the one runner, then the divisions	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	69-78	ProductSpelling	delete	nothing; the message no longer names the spelling	0	no	no	O2 ruled C; after M1 and G1
+E1	b	include/galoot/core/product.hpp	85-177	reject_product	delete	one shared rejection holding the two literals, written once	0	no	no	as above; 16 of the 32 mismatch literals are here
+E1	b	include/galoot/core/product.hpp	252-258	geometric_product	rewrite	returns the shared rejection	0	no	no	as above; the declaration stays (S7)
+E1	b	include/galoot/core/product.hpp	275-280	wedge	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	305-310	operator*	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	322-327	operator^	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	369-375	geometric_antiproduct	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	397-402	antiwedge	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	429-434	operator%	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/product.hpp	448-453	operator&	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/dual.hpp	218-223	DualSpelling	delete	nothing	0	no	no	as above
+E1	b	include/galoot/core/dual.hpp	230-282	reject_dual_operands	delete	the shared rejection	0	no	no	as above; 8 literals
+E1	b	include/galoot/core/dual.hpp	554-559	dot	rewrite	returns the shared rejection	0	no	no	as above
+E1	b	include/galoot/core/dual.hpp	592-597	antidot	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/dual.hpp	632-637	project	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/dual.hpp	670-675	antiproject	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/transform.hpp	147-150	TransformSpelling	delete	nothing	0	no	no	as above
+E1	b	include/galoot/core/transform.hpp	158-190	reject_transform_operands	delete	the shared rejection	0	no	no	as above; 4 literals
+E1	b	include/galoot/core/transform.hpp	825-830	transform	rewrite	returns the shared rejection	0	no	no	as above
+E1	b	include/galoot/core/transform.hpp	836-841	compose	rewrite	the same	0	no	no	as above
+E1	b	include/galoot/core/linear.hpp	194-197	SumSpelling	delete	nothing	0	no	no	as above
+E1	b	include/galoot/core/linear.hpp	205-236	reject_sum	delete	the shared rejection	0	no	no	as above; 4 literals
+E1	b	include/galoot/core/linear.hpp	257-261	operator+	rewrite	returns the shared rejection	0	no	no	as above
+E1	b	include/galoot/core/linear.hpp	276-280	operator-	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/mv.hpp	900-926	apply	rewrite	holds the one exactness check and its one message	7	yes	no	O2 ruled C; the "apply:" literal at :912 becomes the one message; apply stays (6.2)
+E2	b	include/galoot/core/mv.hpp	930-936	apply	keep	unchanged	7	yes	no
+E2	b	include/galoot/core/product.hpp	229-246	geometric_product	rewrite	returns the kernel's result directly, no check of its own	0	no	no	as above
+E2	b	include/galoot/core/product.hpp	284-300	operator*	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/product.hpp	347-364	geometric_antiproduct	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/product.hpp	408-424	operator%	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	377-392	bulk	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	402-416	weight	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	427-441	bulk_dual	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	449-463	weight_dual	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	472-486	left_bulk_dual	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	494-509	left_weight_dual	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	526-546	dot	rewrite	the check moves into its kernel's run	0	no	no	as above; dot runs its own kernel, not apply
+E2	b	include/galoot/core/dual.hpp	571-588	antidot	rewrite	returns the composed result directly	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	613-628	project	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	651-666	antiproject	rewrite	the same	0	no	no	as above
+E2	b	include/galoot/core/dual.hpp	189-212	kernel_held_exactly, bulk_coefficients_exact, weight_coefficients_exact	delete	the one check in the kernel, if nothing else reads them	0	no	no	as above
+E2	b	include/galoot/core/transform.hpp	651-675	compose	rewrite	the parity check stays; the exactness check is the kernel's	0	no	no	as above
+E2	b	include/galoot/core/transform.hpp	771-819	transform	rewrite	the parity check stays; one exactness check over its two plans	0	no	no	as above
+E2	b	include/galoot/core/basis_change.hpp	1140-1163	change_basis	rewrite	the change's exactness and division checks made once, in the shared body of B4	0	no	no	as above
+E2	b	include/galoot/core/basis_change.hpp	1176-1200	change_basis_back	rewrite	the same	0	no	no	as above
+C1b	c	include/galoot/core/dual.hpp	109-212	antiscalar_of to weight_coefficients_exact	rewrite	the kernel primitives (before, after, bind)	1	no	yes	only if C0 passes its rule and the owner says go (O3)
+C1b	c	include/galoot/core/dual.hpp	377-675	bulk to antiproject	rewrite	one composed kernel each; the two projections stay two kernels in sequence	0	no	yes	as above
+C1c	c	include/galoot/core/plan.hpp	644-945	UnaryOperation to unary_map	rewrite	the unary path expressed through the primitives	11	yes	pinned	as above; UnaryOperation and unary_map stay (6.2)
+C1c	c	include/galoot/core/transform.hpp	271-301	make_second_kernel	rewrite	a selection over the second plan	0	no	yes	as above
+C1c	c	include/galoot/core/transform.hpp	336-362	make_first_kernel	rewrite	a selection over the first plan	0	no	yes	as above
+K1	d	include/galoot/core/assert.hpp	1-51	(prologue)	rewrite	two to five lines and a pointer to the guide page	-	no	no	examples and narration go now; a contract moves only after its receiving page passes review
+K1	d	include/galoot/core/bits.hpp	1-21	(prologue)	rewrite	the same	-	no	no	as above
+K1	d	include/galoot/core/metric.hpp	1-16	(prologue)	rewrite	the same	-	no	no	as above
+K2	d	include/galoot/core/blade_set.hpp	1-25	(prologue)	rewrite	the same	-	no	no	as above
+K3	d	include/galoot/core/blade_product.hpp	1-33	(prologue)	rewrite	the same	-	no	no	as above
+K3	d	include/galoot/core/plan.hpp	1-66	(prologue)	rewrite	the same	-	no	no	as above
+K4	d	include/galoot/core/mv.hpp	1-45	(prologue)	rewrite	the same	-	no	no	as above
+K5	d	include/galoot/core/unary.hpp	1-30	(prologue)	rewrite	the same	-	no	no	as above
+K5	d	include/galoot/core/product.hpp	1-50	(prologue)	rewrite	the same	-	no	no	as above
+K5	d	include/galoot/core/linear.hpp	1-65	(prologue)	rewrite	the same	-	no	no	as above
+K6	d	include/galoot/core/dual.hpp	1-91	(prologue)	rewrite	the same	-	no	no	as above
+K7	d	include/galoot/core/transform.hpp	1-73	(prologue)	rewrite	the same	-	no	no	as above
+K8	d	include/galoot/core/basis_change.hpp	1-115	(prologue)	rewrite	the same	-	no	no	as above
+K8	d	include/galoot/core/format.hpp	1-27	(prologue)	rewrite	the same	-	no	no	as above
+K8	d	include/galoot/core.hpp	1-6	(prologue)	keep	already three lines	-	no	no
+K8	d	include/galoot/presets/rga3.hpp	1-8	(prologue)	keep	already five lines	-	no	no
+K8	d	include/galoot/presets/rga3/objects.hpp	1-33	(prologue)	rewrite	two to five lines and a pointer to the guide page	-	no	no	as above
+K8	d	include/galoot/presets/rga3/motions.hpp	1-20	(prologue)	rewrite	the same	-	no	no	as above

@@ -1,0 +1,9 @@
+inventory itself: passes
+mutant, K204 rests on K210, a later row: fails as expected
+  ERROR line 73: K204 rests on K210, which comes later
+mutant, K305 rests on K299, which has no row: fails as expected
+  ERROR line 96: K305 rests on K299, which has no row
+mutant, K204 as it read before finding 1 was corrected: fails as expected
+  ERROR line 73: K204 uses 'blade' before K210, which defines it
+  ERROR line 76: K207 uses 'blade' before K210, which defines it
+all mutants caught

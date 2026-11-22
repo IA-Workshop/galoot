@@ -1,0 +1,25 @@
+$ mk.sh full
+mk: full ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+mk exit=0
+$ diff <the clone's script> <the copy>
+35c35
+< cd /home/brianm/projects/utils/math-core/galoot
+---
+> cd /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/full
+45c45
+< W=/home/brianm/projects/utils/math-core/galoot-master
+---
+> W=/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/full-master
+diff exit=1
+$ the script blob at main, clone and real repository
+d06017f1c652014dbe7c59665fd29c3a03602f2b
+d06017f1c652014dbe7c59665fd29c3a03602f2b
+$ git remote -v
+origin	https://github.com/IA-Workshop/galoot.git (fetch)
+origin	https://github.com/IA-Workshop/galoot.git (push)
+$ refs
+refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+$ hooks in the clone
+(only samples)

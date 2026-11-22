@@ -1,0 +1,37 @@
+mk: args ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: args
+(argument forms only; no fault in the clone)
+M (main before the runs): e6320526f198e1f714a78a2787198495f78f119e
+--- $ close-out-args.sh ''   ($# = 1)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '--dry-run' 'x'   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh 'x' '--dry-run'   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '' ''   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '--dry-run' '--dry-run'   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '--dry-run' ''   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '' '--dry-run'   ($# = 2)
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+(clone state unchanged)
+--- $ close-out-args.sh '--dry-run'   ($# = 1)
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

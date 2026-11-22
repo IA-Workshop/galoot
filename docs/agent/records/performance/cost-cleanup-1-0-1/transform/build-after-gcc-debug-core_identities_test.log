@@ -1,0 +1,16 @@
+ninja: Entering directory `build/gcc-debug'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_test.cpp.o
+[2/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_sparse_test.cpp.o
+[3/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_six_drawn_test.cpp.o
+[4/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_six_test.cpp.o
+[5/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_dense_test.cpp.o
+[6/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_conformal3_test.cpp.o
+[7/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_up_to_three_test.cpp.o
+[8/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_drawn_test.cpp.o
+[9/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_four_diagonal_test.cpp.o
+[10/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_five_diagonal_test.cpp.o
+[11/13] Building CXX object test/CMakeFiles/core_identities_test.dir/core/identities_four_other_test.cpp.o
+[12/13] Linking CXX executable test/core_identities_test
+timed: build core_identities_test took 51.314 s (exit 0)

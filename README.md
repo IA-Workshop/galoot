@@ -20,8 +20,9 @@ them in the layouts of Eric Lengyel's rigid geometric algebra
 coefficients of its published formulas carry over in the order and with the
 signs in which they are written there.
 
-This is the 1.0.0 release of the core. The rga3 preset ships in the same
-tree but is below 1.0, and its interface may still change.
+This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+changed in each release. The rga3 preset ships in the same tree but is below
+1.0, and its interface may still change.
 
 ## Using Galoot
 
@@ -35,11 +36,12 @@ install. Include the preset or the core:
 
 There are three ways to bring the headers into a project.
 
-**Copy the headers.** Copy or vendor the `include/` directory, put it on the
-include path, and compile as C++23. No build system is needed:
+**Copy the headers.** Copy the `include/galoot` directory, keeping the name
+`galoot`, into a directory on your include path, and compile as C++23. No
+build system is needed. With the copy at `third_party/galoot`:
 
 ```text
-g++ -std=c++23 -I galoot/include main.cpp -o main
+g++ -std=c++23 -I third_party main.cpp -o main
 ```
 
 **Add the source tree with CMake.** With Galoot's source tree in the
@@ -58,18 +60,19 @@ target_link_libraries(my_program PRIVATE galoot::presets::rga3)
 ```
 
 **Fetch it with CMake.** `FetchContent` downloads the source tree at
-configure time and adds it in the same way. The repository below is a
-placeholder to replace with Galoot's repository; the tag names this release:
+configure time and adds it in the same way. The tag names this release, and
+`GIT_SHALLOW TRUE` fetches only the tagged commit, not the repository's
+history:
 
 ```cmake
 cmake_minimum_required(VERSION 4.4)
 project(my_program LANGUAGES CXX)
 
 include(FetchContent)
-# Replace the placeholder URL with Galoot's repository.
 FetchContent_Declare(galoot
-  GIT_REPOSITORY "<galoot-repository-url>"
-  GIT_TAG "1.0.0")
+  GIT_REPOSITORY "https://github.com/IA-Workshop/galoot.git"
+  GIT_TAG "1.0.1"
+  GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(galoot)
 
 add_executable(my_program main.cpp)

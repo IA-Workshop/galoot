@@ -1,0 +1,45 @@
+--- test/core/transform_identities_test.cpp	2026-11-16 04:41:05.034761130 -0500
++++ probe/transform.cpp	2026-11-16 04:43:16.424649280 -0500
+@@ -317,18 +317,30 @@
+ 
+ // The identities over every form of the lists above, drawn from `source`.
+ void check_all_forms(std::mt19937_64& source) {
+-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+-    (check_identities<
+-         form<G>, core::of_grade<generators<form<G>>, generators<form<G>> - 1>,
+-         generators<form<G>>>(s),
+-     ...);
+-  }(small_forms{}, source);
+-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+-    (check_identities<form<G>, core::of_grade<5, 4>, 3, 2>(s), ...);
+-  }(dense_forms{}, source);
+-  []<auto... G>(forms<G...>, std::mt19937_64& s) {
+-    (check_identities<form<G>, sparse_hyperplanes, 2>(s), ...);
+-  }(large_forms{}, source);
++  []<auto... G, std::size_t... I>(forms<G...>, std::index_sequence<I...>,
++                                  std::mt19937_64& s) {
++    ([&]<auto H, std::size_t J>() {
++      if constexpr (J == PROBE) {
++        check_identities<form<H>,
++                         core::of_grade<generators<form<H>>,
++                                        generators<form<H>> - 1>,
++                         generators<form<H>>>(s);
++      }
++    }.template operator()<G, I>(), ...);
++  }(small_forms{}, std::make_index_sequence<22>{}, source);
++  if constexpr (PROBE == 22) {
++    []<auto... G>(forms<G...>, std::mt19937_64& s) {
++      (check_identities<form<G>, core::of_grade<5, 4>, 3, 2>(s), ...);
++    }(dense_forms{}, source);
++  }
++  []<auto... G, std::size_t... I>(forms<G...>, std::index_sequence<I...>,
++                                  std::mt19937_64& s) {
++    ([&]<auto H, std::size_t J>() {
++      if constexpr (J + 23 == PROBE) {
++        check_identities<form<H>, sparse_hyperplanes, 2>(s);
++      }
++    }.template operator()<G, I>(), ...);
++  }(large_forms{}, std::make_index_sequence<2>{}, source);
+ }
+ 
+ } // namespace

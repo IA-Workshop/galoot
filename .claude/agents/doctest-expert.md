@@ -34,7 +34,7 @@ Read before writing a test, and cite provisions by number in what you report:
 ## Running tests
 
 - Run every build and test command through `tools/timed <step> <preset> <selection> -- <command>` (P13), and note the wall time in your report. Times are tracked, never asserted on.
-- Run only what the change can affect (P8), widened at each merge level (P9). Name selections by CTest labels, such as `ctest --preset <preset> -L <component>`. Run a whole suite only at a merge into `develop` or a release.
+- Run only what the change can affect (P8), widened at each merge level (P9). Name selections by CTest labels, such as `ctest --preset <preset> -L <component>`. Run a whole suite only at a merge into `main` or a release.
 - Do not rerun a passing run on an unchanged revision and configuration (P10). After a fix, run the failed tests first (`ctest --rerun-failed`), then the selection.
 - Respect the shared machine (P11). Add no `-j` of your own, so that CTest draws from the machine's shared jobserver where one is exported. Never pass `--test-load` below the current load, because CTest then starts nothing. Do not start a run alongside a performance measurement.
 - A filter that matches nothing exits 0. Confirm that the number of test cases run is not zero.

@@ -1,0 +1,34 @@
+mk: arg-empty ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: arg-empty
+--- $ close-out-arg-empty.sh ''
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at 9bd840b5, tag 1.0.1 -> 9bd840b5. Nothing was pushed.
+To publish:   git push --atomic origin main master 1.0.0 1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- $ close-out-arg-empty.sh ''
+close-out: tag 1.0.1 exists
+exit=1
+--- clone state CHANGED:
+--- /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-arg-empty-before.txt	2026-11-21 20:12:33.984887051 -0500
++++ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/logs/state-arg-empty-after.txt	2026-11-21 20:12:34.651888350 -0500
+@@ -1,7 +1,8 @@
+ HEAD refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+ refs/heads/main 704f152c64fd3f01e39a66640a254443f3421c0a
+-refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
++refs/heads/master 9bd840b53dabd9229c8d7c33a4841aaa9215559f
+ refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
++refs/tags/1.0.1 6bb7068523f6cdf464ff2a45fbc92b7f4e7f884d
+ status:
+ worktrees:
+ worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-2/clones/arg-empty
+--- release check (M = 704f152c64fd3f01e39a66640a254443f3421c0a)
+master parents: 9bd840b53dabd9229c8d7c33a4841aaa9215559f 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 704f152c64fd3f01e39a66640a254443f3421c0a
+master^1 = old master: yes
+master^2 = M: yes
+trees: master 3f4026e87357671c5c382b51c14bc11266331eec, M 3f4026e87357671c5c382b51c14bc11266331eec, main now 3f4026e87357671c5c382b51c14bc11266331eec
+tag 1.0.1: objecttype tag, object 9bd840b53dabd9229c8d7c33a4841aaa9215559f (commit), message "galoot core 1.0.1, CONVENTIONS 1.18"
+merge message: Release galoot core 1.0.1
+main now: 704f152c64fd3f01e39a66640a254443f3421c0a

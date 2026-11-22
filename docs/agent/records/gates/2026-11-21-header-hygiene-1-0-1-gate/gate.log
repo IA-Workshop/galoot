@@ -1,0 +1,51 @@
+2026-11-21T22:18:50Z gate start at 41d8029
+gcc-debug: existing tree (incremental)
+gcc-debug compile.tsv rows before: 2318
+22:18:50 gcc-debug configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:18:52 gcc-debug configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:18:52 gcc-debug build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:19:58 gcc-debug build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:19:58 gcc-debug test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:21:04 gcc-debug test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+clang-debug: existing tree (incremental)
+clang-debug compile.tsv rows before: 286
+22:21:05 clang-debug configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:21:07 clang-debug configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:21:07 clang-debug build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:21:33 clang-debug build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:21:33 clang-debug test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:22:40 clang-debug test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+gcc-asan: empty tree
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/gate/gate.sh: line 43: /home/brianm/projects/utils/math-core/galoot-wt/header-hygiene/build/gcc-asan/compile.tsv: No such file or directory
+gcc-asan compile.tsv rows before: 0
+22:22:41 gcc-asan configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:22:43 gcc-asan configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:22:43 gcc-asan build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:25:01 gcc-asan build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:25:01 gcc-asan test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:26:07 gcc-asan test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+clang-measure: empty tree
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/gate/gate.sh: line 43: /home/brianm/projects/utils/math-core/galoot-wt/header-hygiene/build/clang-measure/compile.tsv: No such file or directory
+clang-measure compile.tsv rows before: 0
+22:26:07 clang-measure configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:26:10 clang-measure configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:26:10 clang-measure build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:27:06 clang-measure build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:27:06 clang-measure test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:28:11 clang-measure test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+lint: existing tree (incremental)
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/gate/gate.sh: line 43: /home/brianm/projects/utils/math-core/galoot-wt/header-hygiene/build/lint/compile.tsv: No such file or directory
+lint compile.tsv rows before: 0
+22:28:12 lint configure start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:28:14 lint configure exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:28:14 lint build start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:30:49 lint build exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:30:49 lint test start; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:31:54 lint test exit 0; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+22:31:54 format-check; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+format-check exit 0
+trace exit 0
+runlog exit 0
+ M docs/agent/records/performance/runs.tsv
+?? docs/agent/records/gates/2026-11-21-header-hygiene-1-0-1-gate/
+2026-11-21T22:31:59Z done; pool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo

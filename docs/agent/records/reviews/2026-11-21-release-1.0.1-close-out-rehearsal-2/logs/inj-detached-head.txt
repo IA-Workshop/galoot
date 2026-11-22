@@ -1,0 +1,9 @@
+mk: detached-head ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: detached-head
+--- $ close-out-detached-head.sh '--dry-run'
+close-out: not on main
+exit=1
+--- $ close-out-detached-head.sh 
+close-out: not on main
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

@@ -1,6 +1,6 @@
 ---
 name: blind-reviewer
-description: Reviews a Galoot change it did not write, before the change merges into its parent branch, without seeing the author's verdict. Use for the independent review that WORKFLOW W5 requires before a merge into develop, or for any feature merge that needs one. Give it the branch or commit range, the acceptance criteria, and the author's list of departures only. Not for writing or fixing code.
+description: Reviews a Galoot change it did not write, before the change merges into its parent branch, without seeing the author's verdict. Use for the independent review that WORKFLOW W5 requires before a merge into main, or for any feature merge that needs one. Give it the branch or commit range, the acceptance criteria, and the author's list of departures only. Not for writing or fixing code.
 tools: Read, Grep, Glob, Bash
 disallowedTools: Edit, Write, NotebookEdit
 model: opus

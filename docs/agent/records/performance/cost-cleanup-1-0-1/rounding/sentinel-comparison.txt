@@ -1,0 +1,5 @@
+same      ./count.txt
+same      ./ctest-labels.tsv
+same      ./ctest-listing.txt
+same      ./list-test-cases.txt
+DIFFERENT ./seeds.tsv

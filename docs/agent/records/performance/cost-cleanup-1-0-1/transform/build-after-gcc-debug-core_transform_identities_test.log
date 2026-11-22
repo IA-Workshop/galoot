@@ -1,0 +1,12 @@
+ninja: Entering directory `build/gcc-debug'
+[0/2] Re-checking globbed directories...
+ninja: Jobserver mode detected: -j24 --jobserver-auth=fifo:/run/user/1000/jobserver.fifo
+[1/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_test.cpp.o
+[2/9] Building CXX object test/CMakeFiles/galoot_doctest_main.dir/__/include/ext/doctest/doctest.cpp.o
+[3/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_up_to_three_test.cpp.o
+[4/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_four_gram_test.cpp.o
+[5/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_four_named_test.cpp.o
+[6/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_five_rigid_conformal_test.cpp.o
+[7/9] Building CXX object test/CMakeFiles/core_transform_identities_test.dir/core/transform_identities_five_dense_large_test.cpp.o
+[8/9] Linking CXX executable test/core_transform_identities_test
+timed: build core_transform_identities_test took 23.929 s (exit 0)

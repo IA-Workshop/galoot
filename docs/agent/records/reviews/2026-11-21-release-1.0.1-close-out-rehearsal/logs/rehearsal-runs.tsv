@@ -1,0 +1,2 @@
+utc_start	revision	branch	step	preset	selection	wall_s	exit	host	mode	cpus	user_s	sys_s	maxrss_kib	inst_p_u	inst_e_u	cycles_u	l1d_loads_u	l1d_misses_u	l2_refs_u	l2_misses_u	llc_refs_u	llc_misses_u	energy_pkg_j	other_cpu_s	sibling_busy_s	pinned_other_s	options
+2026-11-22T00:51:55Z	c21186d4747f	detached	check	-	gate:rehearsal-runlog@c21186d4	2.950	0	ds-001	shared	0-31	2.644	0.319	749412	36196154858	11658064	unavailable	unavailable	unavailable	unavailable	unavailable	unavailable	unavailable	360.343	8.68	unavailable	unavailable	-

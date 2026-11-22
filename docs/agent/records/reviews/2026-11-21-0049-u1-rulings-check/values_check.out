@@ -1,0 +1,57 @@
+ok   right(e1) = e23
+ok   right(e2) = e31
+ok   right(e1 + e2) = e23 + e31
+ok   b a = (1,1,0)(1,0,0) = 1 - e12
+ok   (e23 + e31) anti e23 = e123 - e3
+ok   e123 - e3 = right(1 - e12)
+ok   antireverse(e123 - e3) = e123 + e3
+ok   (e123 - e3) % e3 % (e123 + e3) = 2 e3 (left)
+ok   same grouped right
+ok   V antigrades even, so transform(e3, V) is that sandwich = 2 e3
+ok   De Morgan with either complement (4.2), 50 random pairs
+ok   s = (2,1,0)(1,0,0) = 2 - e12
+ok   !s = 2 e123 - e3
+ok   T1 classical (0, 0, 2)
+ok   T1 transform(v, V) (0, 0, -2)
+ok   T1 transform(v, !V) (0, 0, 2)
+ok   T2 classical (0, 2, 0)
+ok   T2 transform(v, V) (0, 2, 0)
+ok   T2 transform(v, !V) (0, 2, 0)
+ok   T3 classical (18, -1, 25)
+ok   T3 transform(v, V) (6, 17, -25)
+ok   T3 transform(v, !V) (18, -1, 25)
+ok   T4 classical (3, 4, 0)
+ok   T4 transform(v, V) (-3, 4, 0)
+ok   T4 transform(v, !V) (3, 4, 0)
+ok   T5 -a v a = (-1,2,3)
+ok   T5 classical (-1, 2, 3)
+ok   T5 transform(v, V) (1, -2, -3)
+ok   T5 transform(v, !V) (-1, 2, 3)
+ok   s~ = 2 + e12
+ok   s e1 s~ = 3e1 + 4e2
+ok   s e2 s~ = -4e1 + 3e2
+ok   s e3 s~ = 5e3
+ok   s s~ = 5
+ok   s~ e1 = 2e1 - e2
+ok   s~ e1 s = 3e1 - 4e2
+ok   s~ e2 s = 4e1 + 3e2
+ok   s~ v s = (-6,-17,25)
+ok   transform(v, s) = -s~ v s
+ok   cos 3/5, sin 4/5 for s/|s|: 3e1+4e2 /5 is unit
+ok   R(n,0,0), n=1..5: transform(x, !V) = classical(x, V), all x
+ok   R(1, 1, -1): transform(x, bulk_dual V) = classical
+ok   R(1, 1, -1): with ! in place of bulk_dual fails (indefinite)
+ok   R(1, -1): transform(x, bulk_dual V) = classical
+ok   R(1, -1): with ! in place of bulk_dual fails (indefinite)
+ok   R(1, 1, 1, -1): transform(x, bulk_dual V) = classical
+ok   R(1, 1, 1, -1): with ! in place of bulk_dual fails (indefinite)
+ok   R(-1, -1): transform(x, bulk_dual V) = classical
+ok   R(-1, -1): with ! in place of bulk_dual holds (definite)
+ok   R(-1, -1, -1): transform(x, bulk_dual V) = classical
+ok   R(-1, -1, -1): with ! in place of bulk_dual holds (definite)
+ok   R(1, -1, -1): transform(x, bulk_dual V) = classical
+ok   R(1, -1, -1): with ! in place of bulk_dual fails (indefinite)
+ok   R(1, 1, -1, -1): transform(x, bulk_dual V) = classical
+ok   R(1, 1, -1, -1): with ! in place of bulk_dual fails (indefinite)
+ok   rigid(3): transform(point, !V) = (classical(v), lambda) with lambda = V V~
+ALL HOLD

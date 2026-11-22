@@ -1,0 +1,35 @@
+Test project <worktree>/build/gcc-debug
+  Test #301: core.identities_rounding
+Could not find executable <worktree>/build/gcc-debug/test/core_transform_identities_test
+Looked in the following places:
+<worktree>/build/gcc-debug/test/core_transform_identities_test
+<worktree>/build/gcc-debug/test/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Release/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Release/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Debug/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Debug/core_transform_identities_test
+<worktree>/build/gcc-debug/test/MinSizeRel/core_transform_identities_test
+<worktree>/build/gcc-debug/test/MinSizeRel/core_transform_identities_test
+<worktree>/build/gcc-debug/test/RelWithDebInfo/core_transform_identities_test
+<worktree>/build/gcc-debug/test/RelWithDebInfo/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Deployment/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Deployment/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Development/core_transform_identities_test
+<worktree>/build/gcc-debug/test/Development/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Release/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Release/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Debug/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Debug/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/MinSizeRel/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/MinSizeRel/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/RelWithDebInfo/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/RelWithDebInfo/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Deployment/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Deployment/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Development/core_transform_identities_test
+home/brianm/projects/utils/math-core/galoot-wt/cost-cleanup--rounding/build/gcc-debug/test/Development/core_transform_identities_test
+  Test #464: core.transform_identities
+
+Total Tests: 2

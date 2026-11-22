@@ -1,0 +1,17 @@
+mk: rm-changelog ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: rm-changelog
+(git replace: 578aa15b now has tree 783adfd7, via 6e56a1b7)
+(git replace: 75b9a030 now has tree 0ccb41c1, via 7016d5c7)
+(R and T replaced by trees without CHANGELOG.md; CHANGELOG.md removed on main)
+M (main before the runs): eefa0f68c02d7a66d6cdefc3ee1a146105202a1c
+--- $ close-out-rm-changelog.sh '--dry-run'   ($# = 1)
+fatal: path 'CHANGELOG.md' does not exist in 'eefa0f68c02d7a66d6cdefc3ee1a146105202a1c'
+close-out: no CHANGELOG.md at main
+exit=1
+(clone state unchanged)
+--- $ close-out-rm-changelog.sh    ($# = 0)
+fatal: path 'CHANGELOG.md' does not exist in 'eefa0f68c02d7a66d6cdefc3ee1a146105202a1c'
+close-out: no CHANGELOG.md at main
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

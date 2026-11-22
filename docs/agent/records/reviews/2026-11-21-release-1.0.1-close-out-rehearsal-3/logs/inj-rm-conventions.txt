@@ -1,0 +1,16 @@
+mk: rm-conventions ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: rm-conventions
+(git replace: 75b9a030 now has tree 25f5dc04, via c3d7f426)
+(T replaced by a tree without CONVENTIONS.md; the file removed on main)
+M (main before the runs): 2fb1e373f6904159d0d0599eba16101f76e39551
+--- $ close-out-rm-conventions.sh '--dry-run'   ($# = 1)
+fatal: path 'docs/agent/governance/CONVENTIONS.md' does not exist in '2fb1e373f6904159d0d0599eba16101f76e39551'
+close-out: no CONVENTIONS.md at main
+exit=1
+(clone state unchanged)
+--- $ close-out-rm-conventions.sh    ($# = 0)
+fatal: path 'docs/agent/governance/CONVENTIONS.md' does not exist in '2fb1e373f6904159d0d0599eba16101f76e39551'
+close-out: no CONVENTIONS.md at main
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

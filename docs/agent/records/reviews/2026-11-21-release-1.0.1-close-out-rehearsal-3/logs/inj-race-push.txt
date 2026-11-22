@@ -1,0 +1,26 @@
+main now: 47577516b06b7fb36ad4fd01b7b26320e2a0a8bb (the hook's commit); the checked commit: e6320526f198e1f714a78a2787198495f78f119e
+$ git push scratch c95fee51...:refs/heads/main 2383e6df...:refs/heads/master refs/tags/1.0.0:refs/tags/1.0.0
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/race.git
+ * [new branch]        c95fee51248839a81c7ab28e7de610376bcba603 -> main
+ * [new branch]        2383e6df5e9dd9e79832a8dbb3d8af9207a5913f -> master
+ * [new tag]           1.0.0 -> 1.0.0
+$ git ls-remote /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/race.git   (before the printed push)
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	HEAD
+c95fee51248839a81c7ab28e7de610376bcba603	refs/heads/main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/tags/1.0.0^{}
+$ git push --atomic scratch e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1   (the printed push, origin -> scratch)
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/race.git
+   c95fee51..e6320526  e6320526f198e1f714a78a2787198495f78f119e -> main
+   2383e6df..ee617254  master -> master
+ * [new tag]           1.0.1 -> 1.0.1
+exit=0
+$ git -c credential.helper= ls-remote <bare> refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+e6320526f198e1f714a78a2787198495f78f119e	refs/heads/main
+ee61725439214b37b49751007235ecd22a94d7b6	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+a399105727eebe85c04104207fcf871e00a84f07	refs/tags/1.0.1
+bare main = checked commit: yes
+bare holds the hook's commit 47577516: no
+bare holds include/galoot/rehearsal_unchecked.hpp in any ref: 0 0 0 

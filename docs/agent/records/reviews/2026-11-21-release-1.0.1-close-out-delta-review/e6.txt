@@ -1,0 +1,5 @@
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+fatal: '<scratch>/clone-master' contains modified or untracked files, use --force to delete it
+close-out: stopped in step 5; the comment at the top of <scratch>/close-out-copy.sh says how to recover

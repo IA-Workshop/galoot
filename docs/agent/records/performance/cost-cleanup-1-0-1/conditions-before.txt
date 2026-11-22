@@ -1,0 +1,17 @@
+utc: 2026-11-16T09:43:36Z
+loadavg: 5.00 4.67 3.27
+jobpool: running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+lock: held
+governor/epp cpu0: powersave/power
+no_turbo: 0  thp: [always] madvise never  aslr: 2
+busy>10%: cpu0=63% cpu2=13% cpu4=22% cpu5=44% cpu6=24% cpu7=68% cpu8=19% cpu10=11% cpu12=85% cpu14=39% cpu16=15% cpu17=13% cpu21=10% cpu24=11% cpu28=10% cpu29=17% cpu31=10% 
+top: 150%@14:bash 99.6%@5:python 99.5%@0:python 75.0%@6:bash 42.8%@6:bash 
+    PID %CPU     ELAPSED COMMAND
+2805866 99.6    02:20:56 python
+2805867 99.5    02:20:56 python
+2918494 85.7       00:00 bash
+2918412 46.1       00:00 bash
+2918322 31.5       00:00 bash
+2918231 23.0       00:00 bash
+2918142 18.7       00:00 bash

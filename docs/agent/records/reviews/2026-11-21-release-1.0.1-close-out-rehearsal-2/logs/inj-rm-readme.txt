@@ -1,0 +1,9 @@
+mk: rm-readme ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: rm-readme
+--- $ close-out-rm-readme.sh '--dry-run'
+close-out: non-records change after R
+exit=1
+--- $ close-out-rm-readme.sh 
+close-out: non-records change after R
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

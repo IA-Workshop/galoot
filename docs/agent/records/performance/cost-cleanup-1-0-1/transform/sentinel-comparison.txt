@@ -1,0 +1,6 @@
+== transform_identities
+seeds.tsv differs: 51 of 51 seeds' assertion counts differ; seed 0 after: [doctest] assertions: 10728 | 10728 passed | 0 failed |, sentinel: [doctest] assertions: 9260 | 9260 passed | 0 failed |
+engine states differ at 51 of 51 seeds
+== identities
+seeds.tsv differs: 51 of 51 seeds' assertion counts differ; seed 0 after: [doctest] assertions: 5074 | 5074 passed | 0 failed |, sentinel: [doctest] assertions: 4584 | 4584 passed | 0 failed |
+engine states differ at 51 of 51 seeds

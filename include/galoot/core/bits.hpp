@@ -161,15 +161,15 @@ namespace detail {
 }
 
 /// The sign by which the antireverse multiplies the blade of `a` in an algebra
-/// of n generators: (-1)^(m(m-1)/2) for its antigrade m, the reverse's sign
+/// of n generators: (-1)^(k(k-1)/2) for its antigrade k, the reverse's sign
 /// with the antigrade in place of the grade.
 ///
 /// Requires: 1 <= n <= mask_bits, and `a` names only e_1 to e_n; checked by
 /// GALOOT_ASSERT in antigrade.
 /// Guarantees: returns -1 or +1.
 [[nodiscard]] constexpr int antireverse_sign(mask_t a, std::size_t n) noexcept {
-  const int m = antigrade(a, n);
-  return (m * (m - 1) / 2) % 2 == 0 ? 1 : -1;
+  const int k = antigrade(a, n);
+  return (k * (k - 1) / 2) % 2 == 0 ? 1 : -1;
 }
 
 /// The sign by which the grade involution multiplies the blade of `a`:

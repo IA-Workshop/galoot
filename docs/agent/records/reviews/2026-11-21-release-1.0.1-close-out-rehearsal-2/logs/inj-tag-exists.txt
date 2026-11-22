@@ -1,0 +1,9 @@
+mk: tag-exists ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: tag-exists
+--- $ close-out-tag-exists.sh '--dry-run'
+close-out: tag 1.0.1 exists
+exit=1
+--- $ close-out-tag-exists.sh 
+close-out: tag 1.0.1 exists
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

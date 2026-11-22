@@ -321,3 +321,121 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-11	plan-0042-u4-rulings	coordinator	sonnet	not tracked	not tracked	not tracked	direct work on develop: decision 0248 (a73cd4e) and the plan 0001 M7 addendum (c41ed75), both with a Sonnet 5.5 trailer; the coordinator did not track this work apart from its session; row added 2026-11-12 by plan 0042 U11 from the release audit m9
 2026-11-12	plan-0042-18eb677-readme-rows	coordinator	sonnet	not visible	not visible	not visible	feature/release-1.0.0 18eb677: run rows 21958 and 21959 (gate:docs@8118033), run by the coordinator, commit trailer Sonnet 5.5; the tokens are unknown; row added 2026-11-12 by plan 0042 U11 from the release audit m5
 2026-11-12	plan-0042-u11-release-records	planner	opus	326712	137	1250	feature/release-1.0.0 ff1d49f (T) fast-forwarded into develop
+2026-11-16	plan-0043-cost-cleanup	planner	opus	274727	117	1394	harness subagent_tokens; branch plan/0043 0d066fd
+2026-11-16	plan-0044-header-hygiene	planner	opus	233416	64	777	harness subagent_tokens; branch plan/0044 8eb88fa
+2026-11-16	plan-0045-release-procedure	planner	opus	197564	43	647	harness subagent_tokens; branch plan/0045 4f7f744
+2026-11-16	learn-mesh-generation	collector	opus	314473	98	1744	harness subagent_tokens; kb/mesh-generation d9f1ec6 and tools/mesh-generation 3b204c7, merged 2026-11-21
+2026-11-16	learn-cg-kernels	collector	opus	273978	77	1334	harness subagent_tokens; kb/cg-kernels a516690, merged 2026-11-21
+2026-11-16	learn-ga-geometry-applications	collector	opus	323593	78	2270	harness subagent_tokens; kb/ga-geometry-applications 11b295a and tools/ga-geometry-applications 44f53e5, merged 2026-11-21
+2026-11-16	learn-meshing-oracles	collector	opus	412102	233	5802	harness subagent_tokens; tools/meshing-oracles 119cdb8 plus findings note 3770e27 by the coordinator, merged 2026-11-21; includes the 101 GB memory incident
+2026-11-16	learn-cg-kernels-helper-cgal	reading helper	sonnet	157753	36	204	low effort; reported by the parent agent
+2026-11-16	learn-cg-kernels-helper-predicates-libs	reading helper	sonnet	153153	40	273	low effort; Shewchuk, Triangle, TetGen, Boost, libigl, OpenMesh; reported by the parent agent
+2026-11-16	learn-cg-kernels-helper-geogram-eigen-langs	reading helper	sonnet	97908	19	143	low effort; Geogram, Eigen, JS, Rust, Julia; reported by the parent agent
+2026-11-16	learn-mesh-generation-helpers	reading helpers	sonnet	777000	164	not reported	six helpers at low effort, about 136k, 203k, 116k, 146k, 112k and 64k tokens (rounded, as reported by the parent agent), calls 30, 45, 23, 35, 23, 8
+2026-11-16	learn-ga-geometry-applications-helpers	reading helpers	sonnet	411000	96	not reported	four helpers at low effort, about 93k, 99k, 100k and 119k tokens (rounded, as reported by the parent agent; the last was the reviewer), calls 14, 20, 38, 24
+2026-11-21	knowledge-merges-memguard	coordinator	sonnet	not tracked	not tracked	not tracked	merged the kb and tools learning branches, reconciled MeshingGenie, added upstream-awareness rows, and wrote the memguard per-job change (tools/memguard-per-job 0de726a); the coordinator did not track this apart from its session
+2026-11-21	plan-0046-garnet-architecture	planner	fable	188850	20	600	harness total, first pass
+2026-11-21	plan-0046-revision	planner	fable	100478	15	300	harness total 289328 less first pass; revision with four closing notes
+2026-11-21	learn-quad-hex-meshing	researcher	opus	213310	60	1233	harness total
+2026-11-21	learn-quad-hex-meshing-helpers	reading helpers	sonnet	580117	148	not reported	four helpers: 113524, 167680, 185535 and 113378 tokens; 34, 49, 47 and 18 calls
+2026-11-21	learn-frame-fields	researcher	opus	291305	89	1905	harness total
+2026-11-21	learn-frame-fields-helpers	reading helpers	sonnet	354912	90	not reported	four helpers: 89584, 77850, 99790 and 87688 tokens; 32, 19, 32 and 7 calls
+2026-11-21	learn-parallel-meshing	researcher	opus	342066	142	7389	harness total; wall includes waiting for the timing lock
+2026-11-21	learn-parallel-meshing-helpers	reading helpers	sonnet	433000	131	not reported	four helpers, rounded: about 104k, 128k, 121k and 80k tokens; 34, 31, 49 and 17 calls
+2026-11-21	learn-modern-mesher-implementations	oracle	opus	486422	296	9097	harness total; includes one Sonnet helper of 55101 tokens and 15 calls
+2026-11-21	plan-0047-core-hardening	planner	fable	197368	27	508	plan/0047 e41f173; harness subagent_tokens; owner-authorized Fable
+2026-11-21	plan-0048-simplification	planner	fable	337001	67	1046	plan/0048 945e86f; harness subagent_tokens; owner-authorized Fable
+2026-11-21	plan-0049-user-docs	planner	fable	273963	35	634	plan/0049 0f0b6e5; harness subagent_tokens; owner-authorized Fable
+2026-11-21	kb-doc-pedagogy	researcher	opus	182499	74	865	kb/doc-pedagogy c4607f6; plus 5 Sonnet helpers, 300000 tokens, 122 tool calls
+2026-11-21	kb-complexity-reduction	researcher	opus	292278	163	9332	kb/complexity-reduction 56daebb and tools/complexity-reduction b1ac42b; plus 4 Sonnet helpers, 194204 tokens, 49 tool calls
+2026-11-21	0047-V1-gap-register	planner	sonnet	258725	69	517	records/gap-register 186f019; workflow agent, harness token count
+2026-11-21	0047-V3-conventions-rederived	math-expert	opus	407777	135	1987	research/conventions-rederived 75664ef; math-tools tools/conventions-rederived ea3e0c4; kb/conventions-rederived efb3ac7; workflow agent, harness token count
+2026-11-21	0048-D0-candidates-baselines	cpp-expert	opus	392804	139	1583	records/simplification-survey a4c18f1; workflow agent, harness token count
+2026-11-21	0049-U1-docs-design	math-expert	fable	469762	71	2021	records/docs-design 5175316; owner-authorized Fable (decision 0253 item 32); workflow agent, harness token count
+2026-11-21	0047-H0-read-cpp	cpp-expert	opus	430656	102	1658	records/hardening-audit-cpp 4df8976; workflow agent, harness token count
+2026-11-21	0047-H0-read-numerical	numerical-expert	opus	396147	89	1404	records/hardening-audit-numerical ea2847a; workflow agent, harness token count
+2026-11-21	0048-D0-comment-table	hci-expert	opus	443255	89	1730	records/simplification-survey d345390; workflow agent, harness token count
+2026-11-21	0047-H0-register	cpp-expert	opus	315271	102	1530	records/hardening-audit 1e1a77b; workflow agent, harness token count
+2026-11-21	0047-V3-sample-check	reviewer	opus	212704	56	908	review/conventions-rederived 44252f9; no error found, 5 minor; workflow agent, harness token count
+2026-11-21	0049-U1-check	reviewer	opus	221017	47	687	review/docs-design e0ee3b4; 1 important, 4 minor; workflow agent, harness token count
+2026-11-21	0047-H0-sample-check	reviewer	opus	217167	74	773	review/hardening-audit 819d898; errors found (E1, M1 to M4); workflow agent, harness token count
+2026-11-21	0048-D0-sample-check	reviewer	sonnet	287533	79	553	review/simplification-survey cfad408; errors found (F1 to F6); workflow agent, harness token count
+2026-11-21	0048-D0-correction	cpp-expert	opus	201804	62	633	records/simplification-survey-fix 335d489; workflow agent, harness token count
+2026-11-21	0047-H0-correction	cpp-expert	fable	434974	103	2114	records/hardening-audit 3da5b43; Fable under decision 0253 item 12 after the sample check found errors; workflow agent, harness token count
+2026-11-21	0047-H0-sample-check-2	reviewer	opus	248534	84	901	review/hardening-audit df93ace; no error found, 4 minor; workflow agent, harness token count
+2026-11-21	0047-V3-corrections	math-expert	opus	169551	60	587	research/conventions-rederived e3ed781; math-tools 5785b29; workflow agent, harness token count
+2026-11-21	0047-H0-corrections-2	cpp-expert	opus	241435	92	966	records/hardening-audit f6ec74e; new row A50; workflow agent, harness token count
+2026-11-21	0049-U1-corrections	math-expert	opus	145737	41	530	records/docs-design 774049c; note renumbered 0029; workflow agent, harness token count
+2026-11-21	0048-D0-checker-extension	cpp-expert	opus	199634	71	885	records/simplification-survey-fix 0a1505e; workflow agent, harness token count
+2026-11-21	0047-V1-sample-check	reviewer	opus	206250	56	500	review/gap-register 17d762e; errors found (1 important, 8 minor); workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-review	reviewer	opus	94419	27	250	knowledge base and math-tools branches; 1 important (home path in logs), 5 minor; workflow agent, harness token count
+2026-11-21	kb-conventions-rederived-fix	collector	opus	108985	31	288	kb/conventions-rederived 313b847; tools/conventions-rederived cf17fc2; workflow agent, harness token count
+2026-11-21	0047-V1-corrections-addendum	planner	opus	154055	35	468	records/gap-register 3bed4b7; plan 0047 addendum; workflow agent, harness token count
+2026-11-21	0048-D0-delta-check	reviewer	opus	276000	82	899	review/simplification-survey-fix 63e8c8e; 3 minor findings, 4 nits; workflow agent, harness token count
+2026-11-21	0048-D0-delta-fix	cpp-expert	opus	198752	67	563	records/simplification-survey-fix 9a3c0bc; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review	reviewer	sonnet	138833	44	272	kb/doc-pedagogy; merge after fixes, 1 important, 8 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review	reviewer	sonnet	155477	49	561	kb and tools complexity-reduction; merge after fixes, 10 findings; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix	collector	sonnet	85503	23	114	kb/doc-pedagogy 651c538; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix	collector	sonnet	182830	67	716	kb/complexity-reduction 5a84842; tools/complexity-reduction 562a6f3; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin	cpp-expert	opus	515495	236	12628	kb/constexpr-step-margin a8eaf61; tools/constexpr-step-margin 0c37d04; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse	cpp-expert	opus	399576	195	5775	kb/wrapper-collapse baff6c1; tools/wrapper-collapse 4e9d012; experiment on a copy of Galoot; workflow agent, harness token count
+2026-11-21	0044-integration	build-expert	sonnet	64955	21	105	feature/header-hygiene-1-0-1 67907a5; docs subfeature merged; workflow agent, harness token count
+2026-11-21	0044-blind-review	reviewer	opus	211215	69	837	review/header-hygiene-1-0-1 5019bff; approve, 5 minor, 8 notes; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-review-2	reviewer	opus	140225	49	457	kb/doc-pedagogy; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-review-2	reviewer	opus	174618	47	503	kb and tools complexity-reduction; 4 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-review	reviewer	opus	191412	71	1130	kb and tools constexpr-step-margin; figures reproduced; 2 important, 7 minor; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-review	reviewer	opus	193405	58	660	kb and tools wrapper-collapse; figures reproduced; 3 important, 5 minor; workflow agent, harness token count
+2026-11-21	kb-doc-pedagogy-fix-2	collector	opus	160210	69	611	kb/doc-pedagogy 2d79a40; workflow agent, harness token count
+2026-11-21	kb-complexity-reduction-fix-2	collector	opus	172825	53	760	kb/complexity-reduction f0137c5; tools/complexity-reduction 795ad32; workflow agent, harness token count
+2026-11-21	kb-wrapper-collapse-fix	collector	opus	174397	67	614	kb/wrapper-collapse 3f4324a; tools/wrapper-collapse 34f3baf; workflow agent, harness token count
+2026-11-21	kb-constexpr-step-margin-fix	collector	opus	181155	75	933	kb/constexpr-step-margin 48cd438; tools/constexpr-step-margin 7892f3c; workflow agent, harness token count
+2026-11-21	0048-D0-apply-rulings	cpp-expert	opus	218851	68	812	records/comment-table-rulings f661ef2; workflow agent, harness token count
+2026-11-21	0049-U1-apply-rulings	hci-expert	opus	259669	68	999	records/docs-design-rulings 74fd859; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-check	reviewer	opus	200068	50	644	review/comment-table-rulings 196b2a8; 7 minor; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-check	reviewer	opus	216848	63	710	review/docs-design-rulings 6bef164; 3 important, 6 minor; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-fix	cpp-expert	opus	225564	81	808	records/comment-table-rulings 7b99a2f; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-fix	hci-expert	opus	161865	58	444	records/docs-design-rulings ad0bf70; workflow agent, harness token count
+2026-11-21	0044-fix-round	cpp-expert	opus	206448	74	1001	feature/header-hygiene-1-0-1 3aa9208; workflow agent, harness token count
+2026-11-21	0044-delta-review-1	reviewer	opus	198192	74	1115	review/header-hygiene-1-0-1 3df1e81; approve; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-check-2	reviewer	opus	217535	69	630	review/comment-table-rulings 1066d72; 1 important, 3 minor; workflow agent, harness token count
+2026-11-21	0049-U1-rulings-check-2	reviewer	opus	210165	63	794	review/docs-design-rulings 981dd71; no error, 8 minor; workflow agent, harness token count
+2026-11-21	0048-D0-rulings-fix-2	cpp-expert	opus	168012	54	409	records/comment-table-rulings 4e73a11; workflow agent, harness token count
+2026-11-21	0044-U5-user-docs	hci-expert	sonnet	99743	29	133	feature/header-hygiene-1-0-1--docs a79b475; halted on the rejected block (decision 0257); workflow agent, harness token count
+2026-11-21	0044-U1-helper-macros	cpp-expert	opus	206805	95	757	feature/header-hygiene-1-0-1 06ff369; workflow agent, harness token count
+2026-11-21	0043-U1-rounding-split	build-expert	opus	272524	114	8038	feature/cost-cleanup-1-0-1--rounding 003ab3d; workflow agent, harness token count
+2026-11-21	0043-U3-U5-tools	build-expert	sonnet	180730	128	5084	feature/cost-cleanup-1-0-1--tools 8f48b32; workflow agent, harness token count
+2026-11-21	0044-U2-cache-option	build-expert	sonnet	118395	34	242	feature/header-hygiene-1-0-1 f78b54d; workflow agent, harness token count
+2026-11-21	0044-U3-confusable-names	cpp-expert	sonnet	138518	58	772	feature/header-hygiene-1-0-1 32d53b9; workflow agent, harness token count
+2026-11-21	0044-U4-apply-overloads	doctest-expert	opus	185461	79	2294	feature/header-hygiene-1-0-1 c7551b6; workflow agent, harness token count
+2026-11-21	0043-tools-blind-review	reviewer	sonnet	102009	44	381	review/cost-cleanup-1-0-1-tools 9d1a7b3; approve; workflow agent, harness token count
+2026-11-21	0043-U2-transform-split	build-expert	opus	291869	137	8007	feature/cost-cleanup-1-0-1--transform e6ea5b2; workflow agent, harness token count
+2026-11-21	0043-tests-blind-review	reviewer	opus	247124	65	632	review/cost-cleanup-1-0-1-tests abcd856; approve; workflow agent, harness token count
+2026-11-21	0043-merge-gate	performance-engineer	opus	195868	72	2030	gate at 05229a7; merged into main as 26cd467; workflow agent, harness token count
+2026-11-21	0043-U6-records	planner	sonnet	181389	45	317	records/cost-cleanup-1-0-1 0af3419; workflow agent, harness token count
+2026-11-21	0044-U7-merge-gate	performance-engineer	opus	201516	83	1480	gate at 41d8029; merged into main as c6e3b18; workflow agent, harness token count
+2026-11-21	0044-U8-records	planner	sonnet	158676	30	187	records/header-hygiene-1-0-1 3c0455d; workflow agent, harness token count
+2026-11-21	0045-R5-first-attempt	build-expert	sonnet	109962	25	109	halted on the catalogue record (ruled in decision 0261 item 1); workflow agent, harness token count
+2026-11-21	0045-R5-release-commit	build-expert	sonnet	135355	40	187	feature/release-1.0.1 8685f78, first release commit 2b3af4f; workflow agent, transcript token count
+2026-11-21	0045-R5-blind-review	reviewer	sonnet	169813	48	312	review/release-1.0.1 6745da5; approve with minor findings; workflow agent, transcript token count
+2026-11-21	0045-G2-first-run	auditor	sonnet	156024	39	241	not ready on one finding (ruled in decision 0261 item 3); workflow agent, transcript token count
+2026-11-21	0045-R5-polish-fix	build-expert	sonnet	88679	24	112	R = 578aa15, tip f6e00fb; workflow agent, transcript token count
+2026-11-21	0045-R5-polish-delta-review	reviewer	sonnet	83101	19	105	review/release-1.0.1 9f8a70f; approve; workflow agent, transcript token count
+2026-11-21	0045-G2-second-run	auditor	sonnet	144504	41	193	ready at R 578aa15; workflow agent, transcript token count
+2026-11-21	0045-R6-release-matrix	performance-engineer	opus	266551	97	3543	matrix passed at R; feature/release-1.0.1 6d09c0e; workflow agent, transcript token count
+2026-11-21	0045-R7-release-records	planner	opus	266073	62	656	release record written; halted before the compaction (decision 0263); 4cf4bcf; workflow agent, transcript token count
+2026-11-21	0045-R7-compaction	planner	opus	178752	88	595	compaction at 5fcc5d8, trial merge, closing gates; feature/release-1.0.1 dbf4353; workflow agent, transcript token count
+2026-11-21	0045-R8-release-audit	auditor	opus	285856	91	813	gate/release-1.0.1 859f03a; no blocking finding, three rulings; workflow agent, transcript token count
+2026-11-21	0049-U2-step-1	build-expert	opus	316790	124	1706	names spike (decision 0262), cost of the documentation tests, four modes; feature/docs--tooling a07345e; workflow agent, transcript token count
+2026-11-21	0049-U2-step-2	build-expert	opus	325991	94	1764	four modes, mutants, records; feature/docs--tooling fdd1557; workflow agent, transcript token count
+2026-11-21	0049-U2-blind-review	reviewer	opus	257169	63	794	review/docs-tooling 9e60dca; changes requested; workflow agent, transcript token count
+2026-11-21	0049-U2-fix-1	build-expert	opus	275775	108	1250	feature/docs--tooling 4ba7753; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-1	reviewer	opus	185248	58	580	review/docs-tooling da97079; approve with minor findings; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-review	reviewer	sonnet	143602	37	388	review/release-1.0.1-close-out 5631cc9; approve, two major findings fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-rehearsal	auditor	opus	181252	61	726	review/release-1.0.1-close-out-rehearsal ffcd457; full run and 31 failure injections in scratch clones; approve, one major finding fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-delta-review	reviewer	sonnet	160971	39	390	review/release-1.0.1-close-out-2 668314f; approve, minor findings fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-rehearsal-2	auditor	opus	241454	61	1066	review/release-1.0.1-close-out-rehearsal-2 606d911; full run, 31 earlier and about 42 new injections; approve, minor findings fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-rehearsal-3	auditor	opus	212408	45	885	review/release-1.0.1-close-out-rehearsal-3; approve, comment-level findings fixed after it; workflow agent, harness token count
+2026-11-21	0049-U2-fix-2	doctest-expert	opus	218203	68	789	feature/docs--tooling 44b80d3; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-2	reviewer	opus	204785	71	1059	review/docs-tooling 7f8d654; changes requested (format-check failed on fixture headers); workflow agent, transcript token count
+2026-11-21	0049-U2-fix-3	doctest-expert	opus	207278	80	978	feature/docs--tooling 243ed65; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-3	reviewer	opus	183807	59	985	review/docs-tooling ef48b1d; approve with one minor finding left for U3; workflow agent, transcript token count

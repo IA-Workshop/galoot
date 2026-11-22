@@ -39,7 +39,7 @@ Verification follows the dependency order: basis rules, signatures, basis sets, 
 
 ### V6 Conventions under test
 
-Each convention in the conventions specification has a test that fails if the convention changes. Each recorded disagreement between sources (C11) has a test that tells the alternatives apart. Code conventions are checked mechanically, by the formatter and static checks of [STYLE.md](STYLE.md) (S3, S4), before a change merges to `develop`.
+Each convention in the conventions specification has a test that fails if the convention changes. Each recorded disagreement between sources (C11) has a test that tells the alternatives apart. Code conventions are checked mechanically, by the formatter and static checks of [STYLE.md](STYLE.md) (S3, S4), before a change merges to `main`.
 
 ### V7 Reproducible randomized tests
 

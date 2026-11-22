@@ -1078,6 +1078,22 @@ constexpr auto map_by_loop(const std::array<T, S.size()>& x) {
   return out;
 }
 
+// The product Op of x and y written onto its plan's result set, the blades
+// its terms reach in canonical order: the layout that the public function for
+// Op returns, such as geometric_product_layout for geometric_product.
+template <BinaryOperation Op, class Alg, core::blade_set A, core::blade_set B,
+          class T>
+constexpr auto product_on_result(const core::mv<Alg, A, T>& x,
+                                 const core::mv<Alg, B, T>& y) {
+  return apply<Op, product_plan<Op, Alg, A, B>.result>(x, y);
+}
+
+// The map Op of x written onto its result set, as for a product.
+template <UnaryOperation Op, class Alg, core::blade_set S, class T>
+constexpr auto map_on_result(const core::mv<Alg, S, T>& x) {
+  return apply<Op, unary_map<Op, Alg, S>.result>(x);
+}
+
 // A multivector of integer type with every coefficient drawn from -9 to 9.
 template <class Type>
 Type random_integers(std::mt19937_64& source) {
@@ -1090,12 +1106,13 @@ Type random_integers(std::mt19937_64& source) {
 }
 
 // The number of inputs, over every pair of basis blades of Set and 16 pairs
-// of random inputs, where apply<Op> and the loop over the plan differ.
+// of random inputs, where the product on the plan's result set and the loop
+// over the plan differ.
 template <BinaryOperation Op, class Alg, core::blade_set Set>
 int product_mismatches(std::mt19937_64& source) {
   using X = core::mv<Alg, Set, std::int64_t>;
   const auto differs = [](const X& x, const X& y) {
-    return apply<Op>(x, y).coefficients !=
+    return product_on_result<Op>(x, y).coefficients !=
            product_by_loop<Op, Alg, Set, Set>(x.coefficients, y.coefficients);
   };
   int mismatches = 0;
@@ -1120,7 +1137,7 @@ template <UnaryOperation Op, class Alg, core::blade_set Set>
 int map_mismatches(std::mt19937_64& source) {
   using X = core::mv<Alg, Set, std::int64_t>;
   const auto differs = [](const X& x) {
-    return apply<Op>(x).coefficients !=
+    return map_on_result<Op>(x).coefficients !=
            map_by_loop<Op, Alg, Set>(x.coefficients);
   };
   int mismatches = 0;
@@ -1226,7 +1243,7 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
   constexpr Point<double> minus_one{-1.0, 0.0, 0.0, 0.0};
   constexpr Point<double> zero{};
   constexpr auto product =
-      apply<BinaryOperation::geometric_product>(minus_one, zero);
+      product_on_result<BinaryOperation::geometric_product>(minus_one, zero);
   static_assert(std::signbit(get<"e12">(product)));
   static_assert(!std::signbit(get<"1">(product)));
   static_assert(!std::signbit(
@@ -1235,7 +1252,8 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
           .at(1)));
   // The reverse negates e12 and e23 of a line's canonical blades, as a
   // first term of -1.
-  constexpr auto reversed = apply<UnaryOperation::reverse>(Line<double>{});
+  constexpr auto reversed =
+      map_on_result<UnaryOperation::reverse>(Line<double>{});
   static_assert(std::signbit(get<"e12">(reversed)));
   static_assert(std::signbit(get<"e23">(reversed)));
   static_assert(!std::signbit(get<"e13">(reversed)));
@@ -1243,11 +1261,12 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
   const volatile double negative_zero = -0.0;
   const Point<double> p{1.0, negative_zero, 3.0, 1.0};
   const Point<double> q{4.0, 5.0, 6.0, 1.0};
-  CHECK(
-      apply<BinaryOperation::geometric_product>(p, q) ==
-      apply<BinaryOperation::geometric_product>(Point<double>{1, 0, 3, 1}, q));
-  CHECK(std::signbit(get<"e12">(apply<BinaryOperation::geometric_product>(
-      Point<double>{-1.0 * (1.0 + negative_zero), 0, 0, 0}, zero))));
+  CHECK(product_on_result<BinaryOperation::geometric_product>(p, q) ==
+        product_on_result<BinaryOperation::geometric_product>(
+            Point<double>{1, 0, 3, 1}, q));
+  CHECK(std::signbit(
+      get<"e12">(product_on_result<BinaryOperation::geometric_product>(
+          Point<double>{-1.0 * (1.0 + negative_zero), 0, 0, 0}, zero))));
   CHECK(first_terms_marked(
       core::detail::product_kernel<BinaryOperation::geometric_product, rga3,
                                    point_layout, point_layout, plan.result>));
@@ -1261,10 +1280,10 @@ TEST_CASE("apply assigns the first term of each output and adds the rest") {
 TEST_CASE("apply multiplies the inputs before the coefficient") {
   using One = core::mv<doubled1, core::blades<doubled1, "e1">, double>;
   constexpr double largest = std::numeric_limits<double>::max();
-  static_assert(get<"1">(apply<BinaryOperation::geometric_product>(
+  static_assert(get<"1">(product_on_result<BinaryOperation::geometric_product>(
                     One{largest}, One{0.25})) == largest / 2);
   const volatile double quarter = 0.25;
-  CHECK(get<"1">(apply<BinaryOperation::geometric_product>(
+  CHECK(get<"1">(product_on_result<BinaryOperation::geometric_product>(
             One{largest}, One{quarter})) == largest / 2);
 }
 
@@ -1279,8 +1298,9 @@ TEST_CASE("apply multiplies the inputs before the coefficient") {
 TEST_CASE("apply gives the products of two points of rigid(3)") {
   constexpr Point<double> p{1, 2, 3, 1};
   constexpr Point<double> q{4, 5, 6, 1};
-  constexpr auto product = apply<BinaryOperation::geometric_product>(p, q);
-  constexpr auto wedge = apply<BinaryOperation::wedge>(p, q);
+  constexpr auto product =
+      product_on_result<BinaryOperation::geometric_product>(p, q);
+  constexpr auto wedge = product_on_result<BinaryOperation::wedge>(p, q);
   static_assert(decltype(product)::layout.blades == std::to_array({
                                                         plus(0),
                                                         plus(0b0011),
@@ -1301,9 +1321,9 @@ TEST_CASE("apply gives the products of two points of rigid(3)") {
   const volatile double one = 1.0;
   const Point<double> pv{one, 2 * one, 3 * one, one};
   const Point<double> qv{4 * one, 5 * one, 6 * one, one};
-  CHECK(apply<BinaryOperation::geometric_product>(pv, qv).coefficients ==
-        std::array<double, 7>{32, -3, -6, -3, -3, -3, -3});
-  CHECK(Line<double>{apply<BinaryOperation::wedge>(pv, qv)} ==
+  CHECK(product_on_result<BinaryOperation::geometric_product>(pv, qv)
+            .coefficients == std::array<double, 7>{32, -3, -6, -3, -3, -3, -3});
+  CHECK(Line<double>{product_on_result<BinaryOperation::wedge>(pv, qv)} ==
         Line<double>{3, 3, 3, -3, 6, -3});
 }
 
@@ -1316,7 +1336,8 @@ TEST_CASE("apply gives the products of two points of rigid(3)") {
 TEST_CASE("apply gives the geometric product of two conformal(3) vectors") {
   constexpr ConformalVector<double> v{1, 2, 3, 4, 5};
   constexpr ConformalVector<double> w{1, 0, 0, 1, 1};
-  constexpr auto product = apply<BinaryOperation::geometric_product>(v, w);
+  constexpr auto product =
+      product_on_result<BinaryOperation::geometric_product>(v, w);
   static_assert(decltype(product)::layout.blades == std::to_array({
                                                         plus(0),
                                                         plus(0b00011),
@@ -1336,7 +1357,8 @@ TEST_CASE("apply gives the geometric product of two conformal(3) vectors") {
 
   const volatile double one = 1.0;
   const ConformalVector<double> vv{one, 2 * one, 3 * one, 4 * one, 5 * one};
-  CHECK(apply<BinaryOperation::geometric_product>(vv, w).coefficients ==
+  CHECK(product_on_result<BinaryOperation::geometric_product>(vv, w)
+            .coefficients ==
         std::array<double, 11>{-8, -2, -3, -3, -4, 0, 2, 2, 3, 3, -1});
 }
 
@@ -1348,7 +1370,7 @@ TEST_CASE("apply gives the geometric product of two conformal(3) vectors") {
 //   is (-6, 5, 1, -4, 2, 3)
 TEST_CASE("apply gives the reverse of a line") {
   constexpr Line<double> l{1, 2, 3, 4, 5, 6};
-  constexpr auto canonical = apply<UnaryOperation::reverse>(l);
+  constexpr auto canonical = map_on_result<UnaryOperation::reverse>(l);
   static_assert(canonical.coefficients ==
                 std::array<double, 6>{-6, 5, 1, -4, 2, 3});
   static_assert(apply<UnaryOperation::reverse, line_layout>(l) ==
@@ -1356,7 +1378,7 @@ TEST_CASE("apply gives the reverse of a line") {
 
   const volatile double one = 1.0;
   const Line<double> lv{one, 2 * one, 3, 4, 5, 6};
-  CHECK(apply<UnaryOperation::reverse>(lv).coefficients ==
+  CHECK(map_on_result<UnaryOperation::reverse>(lv).coefficients ==
         std::array<double, 6>{-6, 5, 1, -4, 2, 3});
   CHECK(apply<UnaryOperation::reverse, line_layout>(lv) ==
         Line<double>{-1, -2, -3, -4, -5, -6});
@@ -1466,7 +1488,7 @@ Type random_fractions(std::mt19937_64& source) {
   return x;
 }
 
-// Whether apply<geometric_product> of `pairs` pairs of random fractions on
+// Whether the geometric product of `pairs` pairs of random fractions on
 // full<n> in the form Alg equals their product composed from `table`.
 template <class Alg, std::size_t N>
 bool matches_table(std::span<const golden::product> table,
@@ -1475,9 +1497,10 @@ bool matches_table(std::span<const golden::product> table,
   for (int k = 0; k < pairs; ++k) {
     const X x = random_fractions<X>(source);
     const X y = random_fractions<X>(source);
-    if (!holds_composed(apply<BinaryOperation::geometric_product>(x, y),
-                        composed_product(table, N, X::layout, X::layout,
-                                         x.coefficients, y.coefficients))) {
+    if (!holds_composed(
+            product_on_result<BinaryOperation::geometric_product>(x, y),
+            composed_product(table, N, X::layout, X::layout, x.coefficients,
+                             y.coefficients))) {
       return false;
     }
   }
@@ -1583,7 +1606,7 @@ Type bounded_input(const std::array<std::int64_t, K>& re,
   return x;
 }
 
-// Whether apply<Op>(x, y) over T equals the product composed in
+// Whether product_on_result<Op>(x, y) over T equals the product composed in
 // std::int64_t from `table` (and, for an antiproduct, `complements`),
 // converted to T: for std::complex<double>, by bilinearity, the real part
 // is P(re x, re y) - P(im x, im y) and the imaginary part P(re x, im y) +
@@ -1610,8 +1633,8 @@ bool exact_in(std::span<const golden::product> table, std::size_t n,
   for (std::size_t m = 0; m < rr.size(); ++m) {
     expected.at(m) = scalar_from<T>(rr.at(m) - ii.at(m), ri.at(m) + ir.at(m));
   }
-  const auto r =
-      apply<Op>(bounded_input<A>(x_re, x_im), bounded_input<B>(y_re, y_im));
+  const auto r = product_on_result<Op>(bounded_input<A>(x_re, x_im),
+                                       bounded_input<B>(y_re, y_im));
   return holds_composed(r, expected);
 }
 
@@ -1767,8 +1790,8 @@ template <int G1, int G2, int G3, int G4, class T>
 constexpr T e1234_squared() {
   using Diagonal = diagonal4<G1, G2, G3, G4>;
   using E1234 = core::mv<Diagonal, core::blades<Diagonal, "e1234">, T>;
-  return get<"1">(
-      apply<BinaryOperation::geometric_product>(E1234{T(1)}, E1234{T(1)}));
+  return get<"1">(product_on_result<BinaryOperation::geometric_product>(
+      E1234{T(1)}, E1234{T(1)}));
 }
 
 // The scalar of e12 e12 in diag(G1, G2), computed by apply over T.
@@ -1776,8 +1799,8 @@ template <int G1, int G2, class T>
 constexpr T e12_squared() {
   using E12 =
       core::mv<diagonal2<G1, G2>, core::blades<diagonal2<G1, G2>, "e12">, T>;
-  return get<"1">(
-      apply<BinaryOperation::geometric_product>(E12{T(1)}, E12{T(1)}));
+  return get<"1">(product_on_result<BinaryOperation::geometric_product>(
+      E12{T(1)}, E12{T(1)}));
 }
 
 } // namespace
@@ -1970,7 +1993,7 @@ TEST_CASE_TEMPLATE("A conversion between layouts keeps every coefficient", T,
 //   -3), the direction q - p and the moment p x q; contract: the result of
 //   a product converts to a named layout that holds its blades
 TEST_CASE("A product's result converts to a named layout") {
-  constexpr auto wedge = apply<BinaryOperation::wedge>(
+  constexpr auto wedge = product_on_result<BinaryOperation::wedge>(
       Point<double>{1, 2, 3, 1}, Point<double>{4, 5, 6, 1});
   static_assert(Line<double>{wedge} == Line<double>{3, 3, 3, -3, 6, -3});
   static_assert(Line<double>(wedge) == static_cast<Line<double>>(wedge));
@@ -1989,11 +2012,12 @@ constexpr bool onto_equals_converted(const A& a, const B& b) {
   using enum BinaryOperation;
   constexpr auto layout = Target::layout;
   return apply<geometric_product, layout>(a, b) ==
-             Target{apply<geometric_product>(a, b)} &&
-         apply<wedge, layout>(a, b) == Target{apply<wedge>(a, b)} &&
+             Target{product_on_result<geometric_product>(a, b)} &&
+         apply<wedge, layout>(a, b) == Target{product_on_result<wedge>(a, b)} &&
          apply<geometric_antiproduct, layout>(a, b) ==
-             Target{apply<geometric_antiproduct>(a, b)} &&
-         apply<antiwedge, layout>(a, b) == Target{apply<antiwedge>(a, b)};
+             Target{product_on_result<geometric_antiproduct>(a, b)} &&
+         apply<antiwedge, layout>(a, b) ==
+             Target{product_on_result<antiwedge>(a, b)};
 }
 
 // A layout of every blade of rigid(3), named as the published formulas
@@ -2021,19 +2045,24 @@ TEST_CASE("apply onto a target layout equals the converted result") {
   static_assert(onto_equals_converted<Every<double>>(m, p));
   static_assert(onto_equals_converted<Every<double>>(p, m));
   static_assert(onto_equals_converted<Every<double>>(l, l));
-  static_assert(apply<BinaryOperation::geometric_product, motor_layout>(p, q) ==
-                Motor<double>{apply<BinaryOperation::geometric_product>(p, q)});
+  static_assert(
+      apply<BinaryOperation::geometric_product, motor_layout>(p, q) ==
+      Motor<double>{
+          product_on_result<BinaryOperation::geometric_product>(p, q)});
   static_assert(
       apply<BinaryOperation::geometric_product, flector_layout>(m, p) ==
-      Flector<double>{apply<BinaryOperation::geometric_product>(m, p)});
-  static_assert(apply<UnaryOperation::right_complement, plane_layout>(p) ==
-                Plane<double>{apply<UnaryOperation::right_complement>(p)});
+      Flector<double>{
+          product_on_result<BinaryOperation::geometric_product>(m, p)});
+  static_assert(
+      apply<UnaryOperation::right_complement, plane_layout>(p) ==
+      Plane<double>{map_on_result<UnaryOperation::right_complement>(p)});
 
   const volatile double one = 1.0;
   const Motor<double> mv{one, 2, -3, 4, 5, 6, -7, 8};
   CHECK(onto_equals_converted<Every<double>>(mv, p));
   CHECK(apply<BinaryOperation::geometric_product, flector_layout>(mv, p) ==
-        Flector<double>{apply<BinaryOperation::geometric_product>(mv, p)});
+        Flector<double>{
+            product_on_result<BinaryOperation::geometric_product>(mv, p)});
 }
 
 // Reference: contract: the wedge of a line and a plane of rigid(3) has no
@@ -2041,7 +2070,7 @@ TEST_CASE("apply onto a target layout equals the converted result") {
 //   holds no coefficient, it is made by default, and two such results are
 //   equal
 TEST_CASE("apply gives an empty result where no term exists") {
-  constexpr auto none = apply<BinaryOperation::wedge>(
+  constexpr auto none = product_on_result<BinaryOperation::wedge>(
       Line<double>{1, 2, 3, 4, 5, 6}, Plane<double>{1, 2, 3, 4});
   static_assert(decltype(none)::component_count == 0);
   static_assert(none == std::remove_cvref_t<decltype(none)>{});

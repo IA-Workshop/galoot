@@ -1,0 +1,9 @@
+mk: rm-conventions ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: rm-conventions
+--- $ close-out-rm-conventions.sh '--dry-run'
+close-out: governance changed after T
+exit=1
+--- $ close-out-rm-conventions.sh 
+close-out: governance changed after T
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

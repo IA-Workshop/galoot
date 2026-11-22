@@ -1,0 +1,4 @@
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Not committing merge; use 'git commit' to complete the merge.
+close-out: stopped in step 5; the comment at the top of <scratch>/close-out-copy.sh says how to recover

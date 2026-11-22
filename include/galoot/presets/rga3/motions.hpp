@@ -29,26 +29,26 @@
 
 namespace galoot::presets::rga3 {
 
-/// The rotor that turns by the angle theta, in radians, about the line l:
-/// (l / |v|) sin(theta/2) + e1234 cos(theta/2), with v the direction of l
-/// (its coefficients on e41, e42, e43) and the half angle in the
-/// coefficients. Dividing all six coefficients of l by |v| unitizes the
+/// The rotor that turns by the angle theta, in radians, about the line `axis`:
+/// (axis / |v|) sin(theta/2) + e1234 cos(theta/2), with v the direction of
+/// `axis` (its coefficients on e41, e42, e43) and the half angle in the
+/// coefficients. Dividing all six coefficients of `axis` by |v| unitizes the
 /// line, so the result is a unitized motor, up to rounding, for a direction
 /// of any positive length. So the join of two points needs no division by
 /// its length; it has a layout of its own, the wedge's, and is passed
 /// converted, as Line{p ^ q}. The turn is counterclockwise when seen from
-/// the tip of l's direction, so a positive theta about (0, 0, 1) takes the x
-/// axis toward the y axis. theta has the line's scalar type exactly: 0.5
-/// over double, 0.5f over float.
+/// the tip of the direction of `axis`, so a positive theta about (0, 0, 1)
+/// takes the x axis toward the y axis. theta has the line's scalar type
+/// exactly: 0.5 over double, 0.5f over float.
 ///
 /// Cost: besides std::sin, std::cos, and halving theta, one std::sqrt, one
 /// division, by the length, nine multiplications, and two additions; with
 /// GALOOT_CHECKING 1, also the std::isnormal test of the length and a branch.
 ///
 /// Requires: T is a floating type, since the coefficients need std::sin,
-/// std::cos, and std::sqrt. l must be a line, its direction and moment
+/// std::cos, and std::sqrt. `axis` must be a line, its direction and moment
 /// orthogonal (v . m = 0, as every join of two points is); this is not
-/// checked, and about an l that is not a line the result distorts what it
+/// checked, and about an `axis` that is not a line the result distorts what it
 /// moves. The length of the direction must lie between about 1e-150 and
 /// 1e150 in double, or 1e-18 and 1e18 in float, so that the sum of its
 /// squares neither underflows nor overflows. A computed length that is zero
@@ -68,17 +68,17 @@ namespace galoot::presets::rga3 {
 /// covers that case.
 ///
 /// Rounding: when the computed length is a power of 2, as for (0, 0, 1) or
-/// (0, 0, 2), the result is bit for bit the rotor of l divided by that
+/// (0, 0, 2), the result is bit for bit the rotor of `axis` divided by that
 /// length; otherwise the square root and the division add a rounding each,
 /// so for a direction of length 1 not along an axis the result may differ in
-/// the last bit from l sin(theta/2) + e1234 cos(theta/2).
+/// the last bit from `axis` sin(theta/2) + e1234 cos(theta/2).
 ///
 /// Evaluated at run time only. std::sin and std::cos are not usable in a
 /// constant expression on every compiler, so this function is not constexpr;
 /// for a motor in a constant expression, write its coefficients.
 template <std::floating_point T>
-[[nodiscard]] inline Motor<T> rotation(const Line<T>& l, T theta) {
-  const auto& v = l.coefficients;
+[[nodiscard]] inline Motor<T> rotation(const Line<T>& axis, T theta) {
+  const auto& v = axis.coefficients;
   const T length = std::sqrt(((v[0] * v[0]) + (v[1] * v[1])) + (v[2] * v[2]));
   // A square root is never subnormal, so a length that is not normal is
   // zero, infinite, or NaN.
@@ -102,7 +102,7 @@ template <std::floating_point T>
 /// ask std::floating_point of the scalar type instead.
 template <class T, class S>
   requires(!std::floating_point<T>)
-Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
+Motor<T> rotation(const Line<T>& /*axis*/, const S& /*theta*/) {
   static_assert(std::floating_point<T>,
                 "rotation: sin and cos of the angle do not give values of this "
                 "scalar type, which is not a floating type; use Line<double> "
@@ -117,7 +117,7 @@ Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
 /// ask whether the two types are the same instead.
 template <std::floating_point T, class S>
   requires(!std::same_as<S, T>)
-Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
+Motor<T> rotation(const Line<T>& /*axis*/, const S& /*theta*/) {
   static_assert(std::is_same_v<S, T>,
                 "rotation: the angle is not of the line's scalar type, the "
                 "second of the two types shown; give it in radians as that "
@@ -134,7 +134,7 @@ Motor<T> rotation(const Line<T>& /*l*/, const S& /*theta*/) {
 /// for any multivector; it is told no for an axis that is not a multivector.
 template <core::multivector X, class S>
   requires(!std::same_as<X, Line<typename X::scalar_type>>)
-Motor<typename X::scalar_type> rotation(const X& /*l*/, const S& /*theta*/) {
+Motor<typename X::scalar_type> rotation(const X& /*axis*/, const S& /*theta*/) {
   static_assert(false, "rotation: the axis is not an rga3 Line; give a "
                        "Line<T>, and convert a join such as p ^ q with "
                        "Line<T>{p ^ q}");

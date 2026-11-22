@@ -1,0 +1,57 @@
+$ git rev-parse master main master^1 master^2
+c21186d4747f973f2cc9643e84f3acb10a26c315
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+$ git cat-file -p master | grep -v ^author/committer
+tree 6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+parent 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+parent 1655ef33ee461785e4d75a88b21f27579fb0e79c
+author (withheld)
+committer (withheld)
+
+Release galoot core 1.0.1
+$ git rev-list --parents -n1 master
+c21186d4747f973f2cc9643e84f3acb10a26c315 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 1655ef33ee461785e4d75a88b21f27579fb0e79c
+$ git rev-parse master^{tree} main^{tree}
+6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+6f7ddff979d4f3145e2410a3b6fa085a73d6e885
+$ git diff --stat main master; exit
+exit=0
+$ git diff --quiet main master -- docs/agent/records/performance; exit
+exit=0
+$ git rev-parse main:docs/agent/records/performance/runs.tsv master:docs/agent/records/performance/runs.tsv 1.0.0:docs/agent/records/performance/runs.tsv
+c6eaf953df98edf6d604ab429d0923da4a245394
+c6eaf953df98edf6d604ab429d0923da4a245394
+0178e5d8f8636917c89c70e8c20c3c6b19c98704
+$ line counts of runs.tsv at main, master, 1.0.0
+main 5581
+master 5581
+1.0.0 21979
+$ git cat-file -t 1.0.1; git cat-file -p 1.0.1 (tagger withheld)
+tag
+object c21186d4747f973f2cc9643e84f3acb10a26c315
+type commit
+tag 1.0.1
+tagger (withheld)
+
+galoot core 1.0.1, CONVENTIONS 1.18
+$ git rev-parse 1.0.1^{commit}
+c21186d4747f973f2cc9643e84f3acb10a26c315
+$ git for-each-ref refs/heads refs/tags
+refs/heads/main commit 1655ef33ee461785e4d75a88b21f27579fb0e79c
+refs/heads/master commit c21186d4747f973f2cc9643e84f3acb10a26c315
+refs/tags/1.0.0 tag 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 tag f45425374600de472b3cfd2dcf433857dfa80435
+$ git worktree list; git worktree prune --dry-run -v
+/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/full 1655ef33 [main]
+prune exit=0
+$ ls -d W
+ls: cannot access '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/full-master': No such file or directory
+ls: cannot access '.git/worktrees': No such file or directory
+$ git status --short
+(end status)
+$ git log --first-parent --format="%h %s" -3 master
+c21186d4 Release galoot core 1.0.1
+2383e6df Release galoot core 1.0.0
+9a4e0cd0 Add governance, style configuration, and conventions proposal

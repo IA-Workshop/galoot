@@ -1,0 +1,55 @@
+# Read-only commands in the real repository (main checkout), 2026-11-22T00:58:07Z
+$ git rev-parse HEAD main master 1.0.0 1.0.0^{commit}
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+95a088ec9a15d505b9e150cd103d2d726b7503b0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+$ git branch --show-current; git status --short | wc -l
+main
+0
+$ docs/agent/records/release/close-out-1.0.1.sh --dry-run
+dry run: every check passed; nothing merged or tagged
+exit=0
+$ git rev-parse HEAD master; git tag -l; ls -d ../galoot-master
+1655ef33ee461785e4d75a88b21f27579fb0e79c
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+1.0.0
+ls: cannot access '/home/brianm/projects/utils/math-core/galoot-master': No such file or directory
+$ git config --get tag.gpgSign / tag.forceSignAnnotated / commit.gpgSign / gpg.format / user.signingkey / core.hooksPath / status.showUntrackedFiles
+tag.gpgSign=(unset)
+tag.forceSignAnnotated=(unset)
+commit.gpgSign=(unset)
+gpg.format=(unset)
+user.signingkey=(unset)
+core.hooksPath=(unset)
+status.showUntrackedFiles=(unset)
+$ git config --show-scope --list --name-only (branch.* omitted)
+global	user.name
+global	user.email
+local	core.repositoryformatversion
+local	core.filemode
+local	core.bare
+local	core.logallrefupdates
+local	remote.origin.url
+local	remote.origin.fetch
+$ ls .git/hooks | grep -v sample
+(none)
+$ git worktree list | grep -c .; grep master/detached/prunable
+47
+/home/brianm/projects/utils/math-core/galoot-wt/scratch-u2-delta2                        44b80d36 (detached HEAD)
+$ git worktree prune --dry-run -v
+exit=0
+$ git merge-base --all master main
+a4cd99dd98f8e5b25759d743dfa99d10f8a89994
+$ git diff --stat 578aa15 75b9a030 -- . ":!docs/agent" (prints nothing)
+$ git log --format="%h %s" 75b9a030..main
+1655ef33 Close-out script: the README's tag line no longer ends the fetch block
+a4dfba1a Release 1.0.1: the close-out script, filled with T, R and the row count
+$ GIT_TERMINAL_PROMPT=0 git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git
+c95fee51248839a81c7ab28e7de610376bcba603	HEAD
+c95fee51248839a81c7ab28e7de610376bcba603	refs/heads/main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/tags/1.0.0^{}
+exit=0

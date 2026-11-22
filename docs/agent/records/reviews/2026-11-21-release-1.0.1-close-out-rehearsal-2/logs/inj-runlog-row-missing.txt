@@ -1,0 +1,13 @@
+mk: runlog-row-missing ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: runlog-row-missing
+replaced 75b9a030 (tree a0046952 now) by 0f5960f2
+--- $ close-out-old-runlog-row-missing.sh --dry-run   (the first version, 1655ef33, for comparison; dry run only)
+dry run: every check passed; nothing merged or tagged
+exit=0
+--- $ close-out-runlog-row-missing.sh '--dry-run'
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- $ close-out-runlog-row-missing.sh 
+close-out: no passing gate:runlog@ row at 334ec448a7a6
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

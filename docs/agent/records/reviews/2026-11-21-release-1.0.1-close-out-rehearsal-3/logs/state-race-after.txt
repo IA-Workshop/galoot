@@ -1,0 +1,12 @@
+HEAD refs/heads/main 47577516b06b7fb36ad4fd01b7b26320e2a0a8bb
+refs/heads/main 47577516b06b7fb36ad4fd01b7b26320e2a0a8bb
+refs/heads/master ee61725439214b37b49751007235ecd22a94d7b6
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+refs/tags/1.0.1 a399105727eebe85c04104207fcf871e00a84f07
+status:
+D  include/galoot/rehearsal_unchecked.hpp
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/race
+HEAD 47577516b06b7fb36ad4fd01b7b26320e2a0a8bb
+branch refs/heads/main
+prune:

@@ -1,0 +1,32 @@
+2026-11-21T23:26:16Z
+ 18:26:16 up 23:00,  1 user,  load average: 7.72, 11.50, 9.33
+running: 23 of 23 slots free at /run/user/1000/jobserver.fifo
+stops itself after 30 minutes without a client
+               total        used        free      shared  buff/cache   available
+Mem:          128485       17971       38917        1751       73992      110513
+Swap:         128484        5189      123295
+top - 18:26:17 up 23:00,  1 user,  load average: 7.72, 11.50, 9.33
+Tasks: 643 total, 2 running, 641 sleep, 0 d-sleep, 0 stopped, 0 zombie
+%Cpu(s): 11.0 us,  0.4 sy,  0.0 ni, 88.3 id,  0.0 wa,  0.1 hi,  0.1 si,  0.0 st 
+MiB Mem : 128485.1 total,  38924.1 free,  17964.9 used,  73992.6 buff/cache     
+MiB Swap: 128485.0 total, 123295.2 free,   5189.8 used. 110520.2 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+3211483 brianm    16  -4 1800900 505488 142700 R 246.8   0.4      7,00 python
+ 969201 brianm    16  -4 1505876   1.2g  18180 S 101.6   1.0      6,07 cpptools
+ 949427 brianm    16  -4 1448.5g 755204 178776 S   4.8   0.6  11:24.23 code
+ 950147 brianm    16  -4  352064 198788  14068 S   4.8   0.2   6:01.90 tombi
+      1 root      20   0   23088  16536  11328 S   0.0   0.0   0:24.94 systemd
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.13 kthreadd
+      3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_release
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_gp
+      5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-sync_wq
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-kvfree_rcu_reclaim
+      7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-slub_flushwq
+      8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-netns
+     10 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-kblockd
+     13 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-mm_percpu_wq
+     15 root      20   0       0      0      0 S   0.0   0.0   0:02.13 ksoftirqd/0
+     16 root      -2   0       0      0      0 I   0.0   0.0   0:49.90 rcu_preempt
+     17 root      -2   0       0      0      0 S   0.0   0.0   0:00.01 rcub/1
+     18 root      20   0       0      0      0 S   0.0   0.0   0:01.03 rcu_exp_par_gp_kthread_worker/1

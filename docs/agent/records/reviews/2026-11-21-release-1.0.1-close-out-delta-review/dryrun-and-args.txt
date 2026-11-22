@@ -1,0 +1,23 @@
+=== args: [--dry-run]
+dry run: every check passed at main = 704f152c; nothing merged or tagged
+exit=0
+=== args: [--dryrun]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: [-n]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: [--dry-run extra]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: [--dry-run --dry-run]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: [x]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: [--help]
+close-out: usage: close-out-1.0.1.sh [--dry-run]
+exit=1
+=== args: []
+(skip no-arg: real run)

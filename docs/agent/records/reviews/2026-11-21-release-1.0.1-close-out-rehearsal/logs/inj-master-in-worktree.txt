@@ -1,0 +1,10 @@
+mk: master-in-worktree ready: clone /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/clones/master-in-worktree, script /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/scripts/close-out-master-in-worktree.sh
+=== injection: master-in-worktree
+--- $ close-out-master-in-worktree.sh --dry-run
+dry run: every check passed; nothing merged or tagged
+exit=0
+--- $ close-out-master-in-worktree.sh
+Preparing worktree (checking out 'master')
+fatal: 'master' is already used by worktree at '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal/master-in-worktree-other-wt'
+exit=128
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

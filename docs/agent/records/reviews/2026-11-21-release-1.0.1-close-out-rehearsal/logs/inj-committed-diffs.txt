@@ -1,0 +1,33 @@
+== matrix-row-removed
+ 1 file changed, 1 deletion(-)
+-2026-11-21T23:12:32Z	f6e00fb962bc	feature/release-1.0.1	configure	gcc-debug	gate:all@578aa15	0.488	0	ds-001	shared	0-31
+== matrix-row-failed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-2026-11-21T23:12:32Z	f6e00fb962bc	feature/release-1.0.1	configure	gcc-debug	gate:all@578aa15	0.488	0	ds-001	shared	0-31
++2026-11-21T23:12:32Z	f6e00fb962bc	feature/release-1.0.1	configure	gcc-debug	gate:all@578aa15	0.488	1	ds-001	shared	0-31
+== readme-status-committed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-This is the 1.0.1 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
++This is the 1.0.2 release of the core. [CHANGELOG.md](CHANGELOG.md) lists what
+== readme-url-committed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-  GIT_REPOSITORY "https://github.com/IA-Workshop/galoot.git"
++  GIT_REPOSITORY "https://example.invalid/galoot.git"
+== readme-tag-committed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-  GIT_TAG "1.0.1"
++  GIT_TAG "1.0.0"
+== changelog-committed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-## 1.0.1 (2026-11-21)
++## Unreleased
+== cmake-committed
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+-project(galoot VERSION 1.0.1 LANGUAGES CXX)
++project(galoot VERSION 1.0.2 LANGUAGES CXX)
+== outside-records
+ 1 file changed, 1 insertion(+)
++// rehearsal
+== governance
+ 1 file changed, 1 insertion(+)
++rehearsal

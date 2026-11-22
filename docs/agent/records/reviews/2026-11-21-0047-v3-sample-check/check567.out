@@ -1,0 +1,29 @@
+PASS 5.1 weight(point) = w e4
+PASS 5.2 p^q: direction w_p q - w_q p on e41,e42,e43; moment p x q on e23,e31,e12
+PASS 5.3a p v g = gx x + gy y + gz z + gw w (a scalar)
+PASS 5.3b p^q^r ccw from +z has normal +z: 1*e124
+PASS 5.3b generic: normal of p^q^r = (q-p) x (r-p)
+PASS 5.5a translator moves by 2t: 6*e1 + 1*e2 + 12*e3 + 1*e4
+PASS 5.5b z-axis rotor takes (1,0,0) to (cos2phi, sin2phi, 0) = (-7/25, 24/25, 0): -7/25*e1 + 24/25*e2 + 1*e4
+PASS 5.7 rotation by theta about l (|v| = 2) turns (offset 1,0) to (cos theta, sin theta): 18/25*e1 + 74/25*e2 + 7*e3 + 1*e4
+PASS 5.7 translation(1,-2,4) moves by (1,-2,4)
+PASS 5.6 reflection in e412 (z=0): (1,2,3,1) -> 1*e1 + 2*e2 + -3*e3 + 1*e4
+PASS 5.6 single-sign form gives weight -1: -1*e1 + -2*e2 + 3*e3 + -1*e4
+PASS 5.6 reflected line = span of reflected points (lambda^1)
+PASS 5.6 reflected plane = span of reflected points (lambda^2)
+PASS 5.6 reflected point keeps positive weight (lambda>0)
+PASS 5.6 agrees with 4.4 transform for this odd V
+PASS 5.8 motor blades = the 8 even-grade blades
+PASS 5.8 flector blades = the 8 odd-grade blades
+PASS 5.8 closure under the antiproduct
+PASS G5a g v h: direction n_h x n_g, moment h_w n_g - g_w n_h
+PASS G5b (g v h) v k: weight det[n_g; n_h; n_k], point solves the three planes
+PASS G5c l v g weight = -(v . n_g)
+PASS G5d p^q^r^s antiscalar = det of rows (x,y,z,w)
+PASS G5e l1 v l2 = -(v1.m2 + v2.m1), a scalar
+PASS 6.1a round point P.P = -r^2 (dot and matrix square)
+PASS 6.1b bulk dual of the sphere through 4 points is proportional to sigma (ratio 54)
+   sphere S = 54*e1234 + 81*e1235 + 54*e1245 + 108*e1345 + -54*e2345
+   bulk dual of the round point = -1*e1234 + 15/2*e1235 + -1*e1245 + -2*e1345 + 1*e2345
+PASS 6.2 (probe) flats through round points = rigid objects (e4 for the projective generator) wedged with e5
+SUMMARY 26 / 26

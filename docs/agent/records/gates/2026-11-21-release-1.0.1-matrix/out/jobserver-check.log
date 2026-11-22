@@ -1,0 +1,6 @@
+kill: setup ok, Ninja held the FIFO: True, exit -9, tokens back 0 of 3, most jobs at once 4
+interrupt: setup ok, Ninja held the FIFO: True, exit 130, tokens back 3 of 3, most jobs at once 4
+terminate: setup ok, Ninja held the FIFO: True, exit 130, tokens back 3 of 3, most jobs at once 4
+restart: exits 0 and 0, most jobs at once across both builds 8 (one pool allows 5 for two clients), tokens back in the new pool 3 of 3
+missing: exit 0, most jobs at once 34 on 32 CPUs, Ninja said: ['ninja: Jobserver mode detected: -j4 --jobserver-auth=fifo:/tmp/pool-check-6ap3ygb_/no-such.fifo', 'ninja: error: Could not initialize jobserver: Error opening fifo for reading: No such file or directory']
+timed: check gate:jobserver-check@578aa15 took 12.669 s (exit 0)

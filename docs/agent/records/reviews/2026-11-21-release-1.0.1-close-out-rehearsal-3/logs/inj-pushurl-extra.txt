@@ -1,0 +1,14 @@
+--- (in clone args) url.https://example.invalid/.pushInsteadOf https://github.com/
+$ git remote get-url --push --all origin
+https://example.invalid/IA-Workshop/galoot.git
+$ close-out-args.sh --dry-run
+close-out: origin's push URL is not https://github.com/IA-Workshop/galoot.git alone
+exit=1
+--- pushurl set once, to the right URL (url unchanged)
+$ git remote get-url --push --all origin
+https://github.com/IA-Workshop/galoot.git
+$ close-out-args.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+$ git remote get-url --push --all origin   (config restored)
+https://github.com/IA-Workshop/galoot.git

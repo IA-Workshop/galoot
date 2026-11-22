@@ -1,0 +1,13 @@
+mk: r-between ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: r-between
+replaced 75b9a030 (tree a4bd1260 now) by 25e86579
+--- $ close-out-old-r-between.sh --dry-run   (the first version, 1655ef33, for comparison; dry run only)
+dry run: every check passed; nothing merged or tagged
+exit=0
+--- $ close-out-r-between.sh '--dry-run'
+close-out: non-records change after R
+exit=1
+--- $ close-out-r-between.sh 
+close-out: non-records change after R
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

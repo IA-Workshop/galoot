@@ -1,0 +1,27 @@
+# Checks for the merge into feature/cost-cleanup-1-0-1, at a766447 (fresh trees except gcc-debug and clang-measure), 2026-11-21 19:07 to 19:10 UTC, light load
+# preset, build target core_identities_rounding_test, ctest -L '^core\.identities_rounding$'; selection gate:rounding-subfeature
+gcc-debug: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.369 s (exit 0)
+gcc-release: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.137 s (exit 0)
+gcc-asan: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.197 s (exit 0)
+clang-debug: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.188 s (exit 0)
+clang-release: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.127 s (exit 0)
+clang-asan: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.161 s (exit 0)
+lint: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.187 s (exit 0)
+gcc-measure: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.135 s (exit 0)
+gcc-measure-o3: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.253 s (exit 0)
+clang-measure: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.141 s (exit 0)
+clang-measure-o3: 100% tests passed out of 1 | timed: test gate:rounding-subfeature took 0.141 s (exit 0)
+exit 0
+# The program's units in each tree's compile.tsv (instructions in 10^9, performance plus efficiency cores)
+gcc-debug: 6 units, total 333.7, largest 66.9, peak 1003260 KiB
+gcc-release: 6 units, total 461.9, largest 92.8, peak 762548 KiB
+gcc-asan: 6 units, total 1439.8, largest 380.7, peak 1154284 KiB
+clang-debug: 6 units, total 193.8, largest 41.4, peak 383228 KiB
+clang-release: 6 units, total 256.6, largest 60.2, peak 318960 KiB
+clang-asan: 6 units, total 768.3, largest 175.6, peak 745776 KiB
+gcc-measure: 6 units, total 454.7, largest 92.0, peak 747088 KiB
+gcc-measure-o3: 6 units, total 584.4, largest 119.1, peak 904992 KiB
+clang-measure: 6 units, total 530.2, largest 105.0, peak 645884 KiB
+clang-measure-o3: 6 units, total 531.4, largest 105.2, peak 635668 KiB
+lint: compiles through clang-tidy, no compile.tsv
+# memguard peak tree RSS: peak_tree_rss_kib 3766896 exit 0

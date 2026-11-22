@@ -1,0 +1,10 @@
+mk: trace-failed ready: main 704f152c, master 2383e6df, 1.0.0 95a088ec (all as in the real repository)
+=== injection: trace-failed
+replaced 75b9a030 (tree c85e6bda now) by ee9ee651
+--- $ close-out-trace-failed.sh '--dry-run'
+close-out: no passing gate:trace@ row at 334ec448a7a6
+exit=1
+--- $ close-out-trace-failed.sh 
+close-out: no passing gate:trace@ row at 334ec448a7a6
+exit=1
+--- clone state unchanged by both runs (refs, HEAD, status, worktrees)

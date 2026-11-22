@@ -1,0 +1,2 @@
+1235 measured cases predicted; 9 whole units whose largest evaluation is the metric's check, not compared; 0 differences
+timed: check gate:cost-selfcheck-gcc@578aa15 took 83.380 s (exit 0)

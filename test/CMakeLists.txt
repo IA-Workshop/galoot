@@ -142,13 +142,30 @@ galoot_add_compile_fail_test(NAME force_inline_on
   SOURCE core/force_inline_on_fail.cpp
   MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
   ONE_ERROR)
-# core.force_inline_empty: the same message for a mode defined with no value.
-# The header's later #if on the mode then has no left operand, which the
-# compiler reports as a second error, so this test does not ask for one.
+# core.force_inline_empty: the same for a mode defined with no value.
 galoot_add_compile_fail_test(NAME force_inline_empty
   MODULE core COMPONENT assert
   SOURCE core/force_inline_empty_fail.cpp
-  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1")
+  MESSAGE "GALOOT_FORCE_INLINE must be 0 or 1"
+  ONE_ERROR)
+
+# core.public_macros: after every header is included, the only macros named
+# GALOOT_ that remain are the include guards, the two modes, the inlining
+# attribute and GALOOT_ASSERT, so that no helper of the headers is left in a
+# user's namespace of macros. -dM prints each macro defined at the end of the
+# file, and an empty definition with a space after its name. A new public
+# macro or a guard of another form needs its line added here.
+add_test(NAME core.public_macros
+  COMMAND ${expect_output} 0 ONLY "^#define GALOOT_"
+    "_HPP "
+    "#define GALOOT_CHECKING "
+    "#define GALOOT_FORCE_INLINE "
+    "#define GALOOT_ALWAYS_INLINE "
+    "#define GALOOT_ASSERT("
+    -- ${CMAKE_CXX_COMPILER} -std=c++23 -I ${PROJECT_SOURCE_DIR}/include
+      -dM -E ${CMAKE_CURRENT_SOURCE_DIR}/core/public_macros.cpp)
+set_tests_properties(core.public_macros PROPERTIES
+  LABELS "core;core.assert;core.headers")
 
 # core.bits: the blade-mask functions against their definitions and against
 # the golden values (galoot_golden, below).
@@ -253,6 +270,30 @@ add_test(NAME tools.compile_fail_literal_in_path_accepts
 set_tests_properties(tools.compile_fail_literal_in_path_rejects
   tools.compile_fail_literal_in_path_accepts PROPERTIES
   LABELS "tools;tools.compile_fail")
+
+# tools.configure_rejects_*: a cache option of the two modes that is neither
+# ON nor OFF stops the configuration with a message that names the option
+# and the value, instead of being read as a boolean. Each test configures
+# the project again in a scratch tree of its own, which the script removes;
+# the configuration stops at the check, after the compiler is detected.
+set(configure_check
+  ${CMAKE_COMMAND} -DSOURCE=${PROJECT_SOURCE_DIR}
+  -DCOMPILER=${CMAKE_CXX_COMPILER})
+add_test(NAME tools.configure_rejects_force_inline
+  COMMAND ${expect_output} 1 "GALOOT_FORCE_INLINE must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_force_inline
+      -DCHECKING=ON -DFORCE_INLINE=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+add_test(NAME tools.configure_rejects_checking
+  COMMAND ${expect_output} 1 "GALOOT_CHECKING must be ON or OFF, not '2'"
+    -- ${configure_check}
+      -DSCRATCH=${CMAKE_CURRENT_BINARY_DIR}/configure_checking
+      -DCHECKING=2
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tools/configure_check.cmake)
+set_tests_properties(tools.configure_rejects_force_inline
+  tools.configure_rejects_checking PROPERTIES
+  LABELS "tools;tools.configure")
 
 # core.bare_compile: the core works with no build system and no options
 # beyond the language edition, so a user can add its headers to any project.
@@ -1638,11 +1679,18 @@ target_link_libraries(core_unary_test PRIVATE galoot_golden)
 # assertions are on and about 1,092,000 without them, so at the default only
 # the configurations with the assertions would build these cases; at the
 # raised limit every configuration builds them, and none skips them. GCC
-# builds them at its own defaults.
+# builds them at its own defaults. Every source of core.identities_rounding
+# takes the limit, although two of them build neither product, so that a law
+# moved from one of its sources to another keeps it.
 set(full_conformal3_steps
   "$<$<CXX_COMPILER_ID:Clang>:-fconstexpr-steps=1200000>")
 set_source_files_properties(core/identities_conformal3_test.cpp
   core/product_conformal3_test.cpp core/identities_rounding_test.cpp
+  core/identities_rounding_product_test.cpp
+  core/identities_rounding_antiproduct_test.cpp
+  core/identities_rounding_complement_product_test.cpp
+  core/identities_rounding_complement_antiproduct_test.cpp
+  core/identities_rounding_complement_wedge_test.cpp
   PROPERTIES COMPILE_OPTIONS "${full_conformal3_steps}")
 
 # core.identities: the De Morgan laws, the associativity of the products and
@@ -1660,7 +1708,8 @@ set_source_files_properties(core/identities_conformal3_test.cpp
 galoot_add_test(MODULE core COMPONENT identities)
 target_sources(core_identities_test PRIVATE
   core/identities_up_to_three_test.cpp
-  core/identities_four_test.cpp
+  core/identities_four_diagonal_test.cpp
+  core/identities_four_other_test.cpp
   core/identities_five_diagonal_test.cpp
   core/identities_conformal3_test.cpp
   core/identities_five_dense_test.cpp
@@ -1677,8 +1726,19 @@ set_property(TEST core.identities APPEND PROPERTY LABELS core.product
 # bound and the two sides within the sum of their bounds, with the bounds
 # taken from a run over the tracking scalar. It builds the geometric
 # antiproduct of two full<5> multivectors of conformal(3), so it takes the
-# raised step limit above.
+# raised step limit above. Its test case is in identities_rounding_test.cpp,
+# and each law of associativity and each De Morgan law is a function of its
+# own in one of the sources identities_rounding_<part>_test.cpp: Clang at -O2,
+# with the products inlined, takes several times the work over one function
+# that holds the laws of conformal(3) together as over the same laws one
+# function each, and the sources compile in parallel.
 galoot_add_test(MODULE core COMPONENT identities_rounding)
+target_sources(core_identities_rounding_test PRIVATE
+  core/identities_rounding_product_test.cpp
+  core/identities_rounding_antiproduct_test.cpp
+  core/identities_rounding_complement_product_test.cpp
+  core/identities_rounding_complement_antiproduct_test.cpp
+  core/identities_rounding_complement_wedge_test.cpp)
 target_link_libraries(core_identities_rounding_test PRIVATE
   galoot_test_support)
 set_property(TEST core.identities_rounding APPEND PROPERTY LABELS
@@ -1783,6 +1843,11 @@ target_link_libraries(core_linear_test PRIVATE galoot_test_support)
 # library's names that a user's short names could be taken for.
 add_library(core_linear_user_names OBJECT core/linear_user_names.cpp)
 target_link_libraries(core_linear_user_names PRIVATE galoot::presets::rga3)
+
+# A second user's unit, naming a pseudoscalar I and rn, for the names that
+# the first cannot declare beside its own l.
+add_library(core_user_names OBJECT core/user_names.cpp)
+target_link_libraries(core_user_names PRIVATE galoot::presets::rga3)
 
 # core.linear_mixed_<cause>_<spelling>: a sum or a difference of operands
 # from two algebras or with two scalar types fails to compile with one
@@ -2367,8 +2432,18 @@ set_tests_properties(core.transform_fast_math
 # core.transform_identities: the outermorphism and composition identities of
 # transform over many signatures. A program of its own, so that a change to
 # the tests of transform_test.cpp does not rebuild it; it also carries the
-# label core.transform.
+# label core.transform. Its test cases are in transform_identities_test.cpp,
+# and each group of forms is checked in a source of its own,
+# transform_identities_<group>_test.cpp: at -O0 GCC holds the code of every
+# form until the end of its source, so one source for all of them needed
+# about 6 GB, and the groups compile in parallel.
 galoot_add_test(MODULE core COMPONENT transform_identities)
+target_sources(core_transform_identities_test PRIVATE
+  core/transform_identities_up_to_three_test.cpp
+  core/transform_identities_four_named_test.cpp
+  core/transform_identities_four_gram_test.cpp
+  core/transform_identities_five_rigid_conformal_test.cpp
+  core/transform_identities_five_dense_large_test.cpp)
 target_link_libraries(core_transform_identities_test PRIVATE
   galoot_test_support)
 set_property(TEST core.transform_identities APPEND PROPERTY LABELS
