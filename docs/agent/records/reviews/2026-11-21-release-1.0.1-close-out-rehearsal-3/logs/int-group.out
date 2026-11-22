@@ -1,0 +1,4 @@
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: pre-merge-commit hook sleeping 6 s
+close-out: stopped in step 5; the comment at the top of docs/agent/records/release/close-out-1.0.1.sh says how to recover

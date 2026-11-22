@@ -1,0 +1,11 @@
+mk: full ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+$ diff <original> <copy>
+43c43
+< cd /home/brianm/projects/utils/math-core/galoot
+---
+> cd /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/full
+53c53
+< W=/home/brianm/projects/utils/math-core/galoot-master
+---
+> W=/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/full-master
+diff exit=1

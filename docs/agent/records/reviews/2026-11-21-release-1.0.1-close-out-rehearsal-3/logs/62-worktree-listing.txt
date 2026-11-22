@@ -1,0 +1,21 @@
+mk: wt-many ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+listing: 125847 bytes, 602 worktrees; 'branch refs/heads/master' at byte 422
+$ close-out-wt-many.sh --dry-run
+close-out: master is checked out in a worktree
+exit=1
+$ close-out-wt-many.sh
+close-out: master is checked out in a worktree
+exit=1
+master unmoved: yes
+--- the replaced idiom on the same listing, 5 tries: git worktree list --porcelain | grep -qx 'branch refs/heads/master' under pipefail
+try 1: found
+try 2: found
+try 3: found
+try 4: found
+try 5: found
+--- the new idiom on the same listing, 5 tries
+try 1: found
+try 2: found
+try 3: found
+try 4: found
+try 5: found

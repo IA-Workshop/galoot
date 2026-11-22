@@ -1,0 +1,11 @@
+--- (rerun) caller loops, SIGINT once to the caller's whole process group at 0.5 s, as a terminal's Ctrl-C sends it
+--- caller.sh: for i in 1 2; do "traps.sh" step5-sleep; echo "caller: iteration $i ended with $?"; done
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+caller: iteration 1 ended with 130
+done
+end
+caller: iteration 2 ended with 0
+caller: went on to its end
+caller exit=0
+--- caller2.sh: for i in 1 2; do "plain.sh"; echo "caller: iteration $i ended with $?"; done
+caller exit=130

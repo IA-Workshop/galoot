@@ -1,0 +1,56 @@
+mk: stop-parent-m ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== step 5: parent-m
+(hook post-merge installed in the clone)
+--- $ close-out-stop-parent-m.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+--- $ close-out-stop-parent-m.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+rehearsal: post-merge hook added a commit 138f5be755581544df31af396d449938907734f4 on master with parents (the merge, M)
+close-out: master's first parent is not 1.0.0
+close-out: stopped in step 5; the comment at the top of docs/agent/records/release/close-out-1.0.1.sh says how to recover
+exit=1
+--- state after the run (diff against before)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master 138f5be755581544df31af396d449938907734f4
+master parents: 138f5be755581544df31af396d449938907734f4 7ad47496bb493289bc6ae37bf5ec74016c998f26 e6320526f198e1f714a78a2787198495f78f119e
+--- W is absent
+--- $ close-out-stop-parent-m.sh --dry-run   (a rerun before the recovery)
+close-out: master moved since 1.0.0
+exit=1
+--- recovery, from the header comment, paths adapted
+(entry: a comparison after the merge failed, or to undo the merge)
+(W is not there; its removal is skipped, as the comment allows)
+(no tag 1.0.1; its deletion is skipped, as the comment allows)
+$ git branch -f master 1.0.0
+exit=0
+master is now 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f (commit)
+(cause fixed: any hook removed)
+--- the clone is back to its state before the run
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-stop-parent-m.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-stop-parent-m.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at 207d3028, tag 1.0.1 -> 207d3028. Nothing was pushed.
+To publish:   git push --atomic origin e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- release check (M = e6320526f198e1f714a78a2787198495f78f119e)
+$ git rev-list --parents -n1 master: 207d302826d63d6b61b775725600885ca8dd69fd 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+master^1 = 1.0.0's commit: yes
+master^2 = M: yes
+parent count: 2
+trees: master ee181c2b8679d107c4a4e1b6f476a0950ece5d46, M ee181c2b8679d107c4a4e1b6f476a0950ece5d46
+git diff --quiet M master: exit 0 (trees equal)
+tag 1.0.1: objecttype tag, object 207d302826d63d6b61b775725600885ca8dd69fd (commit), tagger rehearsal, message "galoot core 1.0.1, CONVENTIONS 1.18"
+tag 1.0.1 names master: yes
+merge message: Release galoot core 1.0.1
+main now: e6320526f198e1f714a78a2787198495f78f119e
+W absent

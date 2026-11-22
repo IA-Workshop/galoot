@@ -1,0 +1,14 @@
+HEAD refs/heads/main e6320526f198e1f714a78a2787198495f78f119e
+refs/heads/main e6320526f198e1f714a78a2787198495f78f119e
+refs/heads/master 80187ac6a9d32d443bc20670bd7662176b656bbb
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/term-pid
+HEAD e6320526f198e1f714a78a2787198495f78f119e
+branch refs/heads/main
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/term-pid-master
+HEAD 80187ac6a9d32d443bc20670bd7662176b656bbb
+branch refs/heads/master
+prune:
+worktrees

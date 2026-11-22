@@ -1,0 +1,60 @@
+mk: stop-undo ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== step 5: undo
+(no fault: a completed run, then the undo entry)
+--- $ close-out-stop-undo.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+--- $ close-out-stop-undo.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at e468c024, tag 1.0.1 -> e468c024. Nothing was pushed.
+To publish:   git push --atomic origin e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- state after the run (diff against before)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master e468c02412d9fdb76fa787c0c2f1ee96597be85f
+4a5
+> refs/tags/1.0.1 9ea6dfbcb304d1465155476875df9e9b7f6f82a1
+master parents: e468c02412d9fdb76fa787c0c2f1ee96597be85f 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+--- W is absent
+--- $ close-out-stop-undo.sh --dry-run   (a rerun before the recovery)
+close-out: tag 1.0.1 exists
+exit=1
+--- recovery, from the header comment, paths adapted
+(entry: a comparison after the merge failed, or to undo the merge)
+(W is not there; its removal is skipped, as the comment allows)
+$ git tag -d 1.0.1
+Deleted tag '1.0.1' (was 9ea6dfbc)
+exit=0
+$ git branch -f master 1.0.0
+exit=0
+master is now 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f (commit)
+(cause fixed: any hook removed)
+--- the clone is back to its state before the run
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-stop-undo.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-stop-undo.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at e468c024, tag 1.0.1 -> e468c024. Nothing was pushed.
+To publish:   git push --atomic origin e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- release check (M = e6320526f198e1f714a78a2787198495f78f119e)
+$ git rev-list --parents -n1 master: e468c02412d9fdb76fa787c0c2f1ee96597be85f 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+master^1 = 1.0.0's commit: yes
+master^2 = M: yes
+parent count: 2
+trees: master ee181c2b8679d107c4a4e1b6f476a0950ece5d46, M ee181c2b8679d107c4a4e1b6f476a0950ece5d46
+git diff --quiet M master: exit 0 (trees equal)
+tag 1.0.1: objecttype tag, object e468c02412d9fdb76fa787c0c2f1ee96597be85f (commit), tagger rehearsal, message "galoot core 1.0.1, CONVENTIONS 1.18"
+tag 1.0.1 names master: yes
+merge message: Release galoot core 1.0.1
+main now: e6320526f198e1f714a78a2787198495f78f119e
+W absent

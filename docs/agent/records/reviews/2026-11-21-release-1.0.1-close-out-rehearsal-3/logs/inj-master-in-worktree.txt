@@ -1,0 +1,13 @@
+mk: master-in-worktree ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: master-in-worktree
+(master checked out in /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/master-in-worktree-other-wt)
+M (main before the runs): e6320526f198e1f714a78a2787198495f78f119e
+--- $ close-out-master-in-worktree.sh '--dry-run'   ($# = 1)
+close-out: master is checked out in a worktree
+exit=1
+(clone state unchanged)
+--- $ close-out-master-in-worktree.sh    ($# = 0)
+close-out: master is checked out in a worktree
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

@@ -1,0 +1,93 @@
+mk: stop-remove ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== step 5: remove
+(hook post-merge installed in the clone)
+--- $ close-out-stop-remove.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+--- $ close-out-stop-remove.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+rehearsal: post-merge hook left an untracked file in W
+fatal: '/tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/stop-remove-master' contains modified or untracked files, use --force to delete it
+close-out: stopped in step 5; the comment at the top of docs/agent/records/release/close-out-1.0.1.sh says how to recover
+exit=128
+--- state after the run (diff against before)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master 3e744b0122d0acff3e49526779fb16365132bdbe
+9a10,12
+> worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/stop-remove-master
+> HEAD 3e744b0122d0acff3e49526779fb16365132bdbe
+> branch refs/heads/master
+10a14
+> worktrees
+master parents: 3e744b0122d0acff3e49526779fb16365132bdbe 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+--- W is present; git -C W status:
+On branch master
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	rehearsal-untracked.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+--- $ close-out-stop-remove.sh --dry-run   (a rerun before the recovery)
+close-out: master moved since 1.0.0
+exit=1
+--- recovery, from the header comment, paths adapted
+(entry: the merge was made but the worktree was not removed)
+$ git worktree remove --force /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/stop-remove-master
+exit=0
+(the hook removed)
+$ git rev-list --parents -n1 master
+3e744b0122d0acff3e49526779fb16365132bdbe 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+exit=0
+(must print: the new commit, then 2383e6d..., then the commit the dry run named as main, e6320526 above)
+(it does)
+$ git diff master^2 master --stat   (must print nothing)
+[0 bytes] exit=0
+$ git tag -a 1.0.1 master -m galoot core 1.0.1, CONVENTIONS 1.18
+exit=0
+$ git push scratch c95fee51...:refs/heads/main 2383e6df...:refs/heads/master refs/tags/1.0.0:refs/tags/1.0.0
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/stop-remove.git
+ * [new branch]        c95fee51248839a81c7ab28e7de610376bcba603 -> main
+ * [new branch]        2383e6df5e9dd9e79832a8dbb3d8af9207a5913f -> master
+ * [new tag]           1.0.0 -> 1.0.0
+$ git ls-remote /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/stop-remove.git   (before the printed push)
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	HEAD
+c95fee51248839a81c7ab28e7de610376bcba603	refs/heads/main
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+2383e6df5e9dd9e79832a8dbb3d8af9207a5913f	refs/tags/1.0.0^{}
+--- publish, as the file's last line prints it, master^2 for the commit, origin -> scratch
+$ git push --atomic scratch master^2:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+To /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/stop-remove.git
+   c95fee51..e6320526  master^2 -> main
+   2383e6df..3e744b01  master -> master
+ * [new tag]           1.0.1 -> 1.0.1
+exit=0
+--- check, as the file's last line prints it, the URL -> the bare repository
+$ git -c credential.helper= ls-remote /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/remotes/stop-remove.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+e6320526f198e1f714a78a2787198495f78f119e	refs/heads/main
+3e744b0122d0acff3e49526779fb16365132bdbe	refs/heads/master
+95a088ec9a15d505b9e150cd103d2d726b7503b0	refs/tags/1.0.0
+5bcfa26e9ce7eb3b7d1f2e07f27a077c111b3aad	refs/tags/1.0.1
+exit=0
+bare main = M: yes
+bare master = local master: yes
+bare 1.0.1 = local tag object: yes
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-stop-remove.sh --dry-run
+close-out: tag 1.0.1 exists
+exit=1
+--- release check (M = e6320526f198e1f714a78a2787198495f78f119e)
+$ git rev-list --parents -n1 master: 3e744b0122d0acff3e49526779fb16365132bdbe 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+master^1 = 1.0.0's commit: yes
+master^2 = M: yes
+parent count: 2
+trees: master ee181c2b8679d107c4a4e1b6f476a0950ece5d46, M ee181c2b8679d107c4a4e1b6f476a0950ece5d46
+git diff --quiet M master: exit 0 (trees equal)
+tag 1.0.1: objecttype tag, object 3e744b0122d0acff3e49526779fb16365132bdbe (commit), tagger rehearsal, message "galoot core 1.0.1, CONVENTIONS 1.18"
+tag 1.0.1 names master: yes
+merge message: Release galoot core 1.0.1
+main now: e6320526f198e1f714a78a2787198495f78f119e
+W absent

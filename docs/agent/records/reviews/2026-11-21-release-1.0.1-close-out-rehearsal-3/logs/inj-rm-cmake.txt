@@ -1,0 +1,17 @@
+mk: rm-cmake ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: rm-cmake
+(git replace: 578aa15b now has tree 7786c696, via a8f99c64)
+(git replace: 75b9a030 now has tree bb3c5bc1, via 629735b0)
+(R and T replaced by trees without CMakeLists.txt; CMakeLists.txt removed on main)
+M (main before the runs): 5615a811393d1706ea7dbed82348e6734a416c7b
+--- $ close-out-rm-cmake.sh '--dry-run'   ($# = 1)
+fatal: path 'CMakeLists.txt' does not exist in '5615a811393d1706ea7dbed82348e6734a416c7b'
+close-out: no CMakeLists.txt at main
+exit=1
+(clone state unchanged)
+--- $ close-out-rm-cmake.sh    ($# = 0)
+fatal: path 'CMakeLists.txt' does not exist in '5615a811393d1706ea7dbed82348e6734a416c7b'
+close-out: no CMakeLists.txt at main
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

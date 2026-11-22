@@ -1,0 +1,68 @@
+mk: int-group ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+(hook pre-merge-commit installed: marker, then sleep 6)
+--- $ close-out-int-group.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+--- $ close-out-int-group.sh   (pid 1959285, pgid 1959285)
+script process: 1959285 1959285 bash; SigIgn 0000000000000004 (bit 2 = SIGINT ignored: 0), SigCgt 0000000000014002 (INT caught: 1, TERM caught: 1)
+process group at the signal (pid pgid ppid command):
+  1959285 1959285 1959144 bash /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-int-group.sh
+  1959356 1959285 1959285 git -C /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-group-master merge --no-ff --no-stat e6320526f198e1f714a78a2787198495f78f119e -m Release galoot core 1.0.1
+  1959393 1959285 1959356 bash /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/int-group/.git/hooks/pre-merge-commit
+  1959396 1959285 1959393 sleep 6
+(sending SIGINT to process group 1959285)
+(the script ended .002 s after the signal)
+--- printed by the script (stdout and stderr):
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: pre-merge-commit hook sleeping 6 s
+close-out: stopped in step 5; the comment at the top of docs/agent/records/release/close-out-1.0.1.sh says how to recover
+exit=130
+--- state after the run (diff against before)
+9a10,12
+> worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-group-master
+> HEAD 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+> branch refs/heads/master
+10a14
+> worktrees
+master parents: 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f 9a4e0cd056f1f68188acca8edfd206d4037c73b9 a4cd99dd98f8e5b25759d743dfa99d10f8a89994
+--- W is present; git -C W status:
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   .claude/agents/auditor.md
+--- $ close-out-int-group.sh --dry-run   (a rerun before the recovery)
+close-out: /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-group-master exists
+exit=1
+(the hook removed)
+--- recovery, from the header comment, paths adapted
+(entry: the merge stopped)
+$ git -C /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-group-master merge --abort
+fatal: There is no merge to abort (MERGE_HEAD missing).
+exit=128
+$ git worktree remove --force /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-group-master
+exit=0
+--- the clone is back to its state before the run
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-int-group.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-int-group.sh
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+Merge made by the 'ort' strategy.
+done: master is at cb500cd2, tag 1.0.1 -> cb500cd2. Nothing was pushed.
+To publish:   git push --atomic origin e6320526f198e1f714a78a2787198495f78f119e:refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+Then check:   git -c credential.helper= ls-remote https://github.com/IA-Workshop/galoot.git refs/heads/main refs/heads/master refs/tags/1.0.0 refs/tags/1.0.1
+exit=0
+--- release check (M = e6320526f198e1f714a78a2787198495f78f119e)
+$ git rev-list --parents -n1 master: cb500cd2221bcfabdad9406fe03e8fba2ec0cea2 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+master^1 = 1.0.0's commit: yes
+master^2 = M: yes
+parent count: 2
+trees: master ee181c2b8679d107c4a4e1b6f476a0950ece5d46, M ee181c2b8679d107c4a4e1b6f476a0950ece5d46
+git diff --quiet M master: exit 0 (trees equal)
+tag 1.0.1: objecttype tag, object cb500cd2221bcfabdad9406fe03e8fba2ec0cea2 (commit), tagger rehearsal, message "galoot core 1.0.1, CONVENTIONS 1.18"
+tag 1.0.1 names master: yes
+merge message: Release galoot core 1.0.1
+main now: e6320526f198e1f714a78a2787198495f78f119e
+W absent

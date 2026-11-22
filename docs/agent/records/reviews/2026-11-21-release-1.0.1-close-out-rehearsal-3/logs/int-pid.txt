@@ -1,0 +1,67 @@
+mk: int-pid ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+(hook pre-merge-commit installed: marker, then sleep 6)
+--- $ close-out-int-pid.sh --dry-run
+dry run: every check passed at main = e6320526; nothing merged or tagged
+exit=0
+--- $ close-out-int-pid.sh   (pid 1958106, pgid 1958106)
+script process: 1958106 1958106 bash; SigIgn 0000000000000004 (bit 2 = SIGINT ignored: 0), SigCgt 0000000000014002 (INT caught: 1, TERM caught: 1)
+process group at the signal (pid pgid ppid command):
+  1958106 1958106 1957979 bash /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-int-pid.sh
+  1958170 1958106 1958106 git -C /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-pid-master merge --no-ff --no-stat e6320526f198e1f714a78a2787198495f78f119e -m Release galoot core 1.0.1
+  1958206 1958106 1958170 bash /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/int-pid/.git/hooks/pre-merge-commit
+  1958209 1958106 1958206 sleep 6
+(sending SIGINT to pid 1958106 only)
+(the script ended 5.96 s after the signal)
+--- printed by the script (stdout and stderr):
+Preparing worktree (checking out 'master')
+HEAD is now at 2383e6df Release galoot core 1.0.0
+rehearsal: pre-merge-commit hook sleeping 6 s
+rehearsal: pre-merge-commit hook done
+Merge made by the 'ort' strategy.
+close-out: stopped in step 5; the comment at the top of docs/agent/records/release/close-out-1.0.1.sh says how to recover
+exit=130
+--- state after the run (diff against before)
+3c3
+< refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+---
+> refs/heads/master 842355c4aa3082829777462232f49bfee0e39738
+9a10,12
+> worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-pid-master
+> HEAD 842355c4aa3082829777462232f49bfee0e39738
+> branch refs/heads/master
+10a14
+> worktrees
+master parents: 842355c4aa3082829777462232f49bfee0e39738 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+--- W is present; git -C W status:
+On branch master
+nothing to commit, working tree clean
+--- $ close-out-int-pid.sh --dry-run   (a rerun before the recovery)
+close-out: master moved since 1.0.0
+exit=1
+(the hook removed)
+--- recovery, from the header comment, paths adapted
+(entry: the merge was made but the worktree was not removed)
+$ git worktree remove --force /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/int-pid-master
+exit=0
+$ git rev-list --parents -n1 master
+842355c4aa3082829777462232f49bfee0e39738 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+exit=0
+$ git diff master^2 master --stat   (must print nothing)
+[0 bytes] exit=0
+$ git tag -a 1.0.1 master -m galoot core 1.0.1, CONVENTIONS 1.18
+exit=0
+$ /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/scripts/close-out-int-pid.sh --dry-run
+close-out: tag 1.0.1 exists
+exit=1
+--- release check (M = e6320526f198e1f714a78a2787198495f78f119e)
+$ git rev-list --parents -n1 master: 842355c4aa3082829777462232f49bfee0e39738 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f e6320526f198e1f714a78a2787198495f78f119e
+master^1 = 1.0.0's commit: yes
+master^2 = M: yes
+parent count: 2
+trees: master ee181c2b8679d107c4a4e1b6f476a0950ece5d46, M ee181c2b8679d107c4a4e1b6f476a0950ece5d46
+git diff --quiet M master: exit 0 (trees equal)
+tag 1.0.1: objecttype tag, object 842355c4aa3082829777462232f49bfee0e39738 (commit), tagger rehearsal, message "galoot core 1.0.1, CONVENTIONS 1.18"
+tag 1.0.1 names master: yes
+merge message: Release galoot core 1.0.1
+main now: e6320526f198e1f714a78a2787198495f78f119e
+W absent

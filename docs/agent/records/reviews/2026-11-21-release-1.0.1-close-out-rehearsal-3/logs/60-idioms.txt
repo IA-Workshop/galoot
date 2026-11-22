@@ -1,0 +1,56 @@
+=== the step-5 trap structure, isolated (idiom/traps.sh)
+--- case guarded-sub-pass
+passed: x=content
+done
+end
+exit=0
+--- case guarded-sub-fail
+fatal: git-like error
+close-out: no FILE at main
+exit=1
+--- case unguarded-sub-fail
+exit=128
+--- case step5-unguarded
+fatal: a git command failed
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+exit=128
+--- case step5-fail
+close-out: master's first parent is not 1.0.0
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+exit=1
+--- case step5-sub-in-test
+close-out: a comparison
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+exit=1
+--- case success
+done
+end
+exit=0
+--- case after-success-fail
+done
+exit=3
+--- case step5-sleep, SIGINT to the process (job control on)
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+exit=130
+--- case step5-sleep, SIGTERM to the process (job control on)
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+exit=130
+--- for comparison: a bash script with no INT/TERM trap, killed the same way
+SIGINT: exit=0
+SIGTERM: exit=143
+--- a caller loop: does it go on after the script ends by the INT trap? (SIGINT to the whole group, as a terminal sends it)
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+caller: iteration 1 ended with 130
+done
+end
+caller: iteration 2 ended with 0
+caller: went on to its end
+caller exit=0
+--- the same caller around plain.sh (no trap)
+close-out: stopped in step 5; the comment at the top of SELF says how to recover
+caller: iteration 1 ended with 130
+done
+end
+caller: iteration 2 ended with 0
+caller: went on to its end
+caller exit=0

@@ -1,0 +1,16 @@
+mk: rm-runs-at-T ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: rm-runs-at-T
+(git replace: 75b9a030 now has tree 7e534994, via d4ee1f14)
+(T replaced by a tree without the run log; main unchanged)
+M (main before the runs): e6320526f198e1f714a78a2787198495f78f119e
+--- $ close-out-rm-runs-at-T.sh '--dry-run'   ($# = 1)
+fatal: path 'docs/agent/records/performance/runs.tsv' exists on disk, but not in '75b9a030b5d484b5e32bd88ca2e6e13e48717ff0'
+close-out: no run log at T
+exit=1
+(clone state unchanged)
+--- $ close-out-rm-runs-at-T.sh    ($# = 0)
+fatal: path 'docs/agent/records/performance/runs.tsv' exists on disk, but not in '75b9a030b5d484b5e32bd88ca2e6e13e48717ff0'
+close-out: no run log at T
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)

@@ -1,0 +1,12 @@
+HEAD refs/heads/main 91e62316a7510915529f4ae2a67ac9c7c3f6ef5d
+refs/heads/main 91e62316a7510915529f4ae2a67ac9c7c3f6ef5d
+refs/heads/master 2383e6df5e9dd9e79832a8dbb3d8af9207a5913f
+refs/replace/578aa15bdb6a1f30c2e9de491a757eb6bb9aea8c cad8671df9a7b842910dbc0cc2fb61582f769d2e
+refs/replace/75b9a030b5d484b5e32bd88ca2e6e13e48717ff0 eb9de3675c7d531c07e06d7181ace581dae2f8c0
+refs/tags/1.0.0 95a088ec9a15d505b9e150cd103d2d726b7503b0
+status:
+worktrees:
+worktree /tmp/claude-1000/-home-brianm-projects-utils-math-core/20d19078-8b10-4646-bf3c-dde482e5309c/scratchpad/close-out-rehearsal-3/clones/rm-readme
+HEAD 91e62316a7510915529f4ae2a67ac9c7c3f6ef5d
+branch refs/heads/main
+prune:

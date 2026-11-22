@@ -1,0 +1,15 @@
+mk: rm-runs-at-main ready: main e6320526, master 2383e6df, 1.0.0 95a088ec; script blob 3ea57051; copy differs in the cd and W= lines only
+=== injection: rm-runs-at-main
+(the run log removed on main by a commit)
+M (main before the runs): 1c359b8f4f2685c9e2fa123669402a8167bd54da
+--- $ close-out-rm-runs-at-main.sh '--dry-run'   ($# = 1)
+fatal: path 'docs/agent/records/performance/runs.tsv' does not exist in '1c359b8f4f2685c9e2fa123669402a8167bd54da'
+close-out: no run log at main
+exit=1
+(clone state unchanged)
+--- $ close-out-rm-runs-at-main.sh    ($# = 0)
+fatal: path 'docs/agent/records/performance/runs.tsv' does not exist in '1c359b8f4f2685c9e2fa123669402a8167bd54da'
+close-out: no run log at main
+exit=1
+(clone state unchanged)
+--- clone state unchanged by every run (refs, HEAD, status, worktrees)
