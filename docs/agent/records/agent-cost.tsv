@@ -434,3 +434,8 @@ date	unit	role	model	tokens	tool_calls	wall_s	note
 2026-11-21	0045-R10-close-out-rehearsal	auditor	opus	181252	61	726	review/release-1.0.1-close-out-rehearsal ffcd457; full run and 31 failure injections in scratch clones; approve, one major finding fixed after it; workflow agent, transcript token count
 2026-11-21	0045-R10-close-out-delta-review	reviewer	sonnet	160971	39	390	review/release-1.0.1-close-out-2 668314f; approve, minor findings fixed after it; workflow agent, transcript token count
 2026-11-21	0045-R10-close-out-rehearsal-2	auditor	opus	241454	61	1066	review/release-1.0.1-close-out-rehearsal-2 606d911; full run, 31 earlier and about 42 new injections; approve, minor findings fixed after it; workflow agent, transcript token count
+2026-11-21	0045-R10-close-out-rehearsal-3	auditor	opus	212408	45	885	review/release-1.0.1-close-out-rehearsal-3; approve, comment-level findings fixed after it; workflow agent, harness token count
+2026-11-21	0049-U2-fix-2	doctest-expert	opus	218203	68	789	feature/docs--tooling 44b80d3; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-2	reviewer	opus	204785	71	1059	review/docs-tooling 7f8d654; changes requested (format-check failed on fixture headers); workflow agent, transcript token count
+2026-11-21	0049-U2-fix-3	doctest-expert	opus	207278	80	978	feature/docs--tooling 243ed65; workflow agent, transcript token count
+2026-11-21	0049-U2-delta-review-3	reviewer	opus	183807	59	985	review/docs-tooling ef48b1d; approve with one minor finding left for U3; workflow agent, transcript token count
